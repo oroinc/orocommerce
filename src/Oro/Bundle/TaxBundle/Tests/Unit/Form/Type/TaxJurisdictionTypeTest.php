@@ -3,16 +3,13 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -20,42 +17,14 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction';
-    const ZIP_CODE_DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ZipCode';
+    /** @var TaxJurisdictionType */
+    private $formType;
 
-    /**
-     * @var TaxJurisdictionType
-     */
-    protected $formType;
-
-    /**
-     * @var Country
-     */
-    protected $country;
-
-    /**
-     * @var Region
-     */
-    protected $region;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new TaxJurisdictionType(new AddressCountryAndRegionSubscriberStub());
-        $this->formType->setDataClass(static::DATA_CLASS);
+        $this->formType->setDataClass(TaxJurisdiction::class);
         parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testBuildForm()
@@ -88,13 +57,14 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         $form = $this->factory->create(TaxJurisdictionType::class, $defaultData);
 
         $formConfig = $form->getConfig();
-        $this->assertEquals(static::DATA_CLASS, $formConfig->getOption('data_class'));
+        $this->assertEquals(TaxJurisdiction::class, $formConfig->getOption('data_class'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
 
         $form->submit($submittedData);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         foreach ($expectedData as $field => $data) {
             $this->assertTrue($form->has($field));
@@ -103,10 +73,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $taxJurisdiction = new TaxJurisdiction();
         $zipCodes = [
@@ -116,7 +83,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
             ZipCodeTestHelper::getSingleValueZipCode('89')->setTaxJurisdiction($taxJurisdiction),
         ];
 
-        list($country, $region) = $this->getValidCountryAndRegion();
+        [$country, $region] = $this->getValidCountryAndRegion();
 
         return [
             'valid tax jurisdiction' => [
@@ -159,32 +126,23 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigProvider $configProvider */
-        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator $translator */
-        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $zipCodeType = new ZipCodeType();
-        $zipCodeType->setDataClass(self::ZIP_CODE_DATA_CLASS);
+        $zipCodeType->setDataClass(ZipCode::class);
 
         return array_merge([
             new PreloadedExtension(
                 [
                     $this->formType,
                     TaxJurisdictionType::class => $this->formType,
-                    ZipCodeType::class => $zipCodeType
+                    $zipCodeType
                 ],
                 [
                     HiddenType::class => [new AdditionalAttrExtension()],
-                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             )
         ], parent::getExtensions());

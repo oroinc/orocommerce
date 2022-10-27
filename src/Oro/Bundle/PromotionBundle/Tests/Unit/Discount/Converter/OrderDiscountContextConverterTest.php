@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -12,28 +11,25 @@ use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineIt
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\OrderStub;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var OrderLineItemsToDiscountLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var OrderLineItemsToDiscountLineItemsConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemsConverter;
 
-    /**
-     * @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemsSubtotalProvider;
 
-    /**
-     * @var OrderDiscountContextConverter
-     */
+    /** @var OrderDiscountContextConverter */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);
         $this->lineItemsSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
+
         $this->converter = new OrderDiscountContextConverter(
             $this->lineItemsConverter,
             $this->lineItemsSubtotalProvider
@@ -42,7 +38,7 @@ class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvert()
     {
-        $sourceEntity = new Order();
+        $sourceEntity = new OrderStub();
         $sourceEntity->setEstimatedShippingCostAmount(20);
         $sourceEntity->setCurrency('USD');
         $subtotalAmount = 100.0;
@@ -71,35 +67,41 @@ class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertUnsupportedException()
     {
-        $entity = new \stdClass();
         $this->expectException(UnsupportedSourceEntityException::class);
         $this->expectExceptionMessage('Source entity "stdClass" is not supported.');
 
-        $this->converter->convert($entity);
+        $this->converter->convert(new \stdClass());
     }
 
     /**
      * @dataProvider supportsDataProvider
-     * @param object $entity
-     * @param boolean $isSupported
      */
-    public function testSupports($entity, $isSupported)
+    public function testSupports(object $entity, bool $isSupported)
     {
         $this->assertSame($isSupported, $this->converter->supports($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             'supported entity' => [
-                'entity' => new Order(),
+                'entity' => new OrderStub(),
                 'isSupported' => true
             ],
             'not supported entity' => [
                 'entity' => new \stdClass(),
+                'isSupported' => false
+            ],
+            'not supported order' => [
+                'entity' => (new OrderStub())->setSourceEntityClass(Quote::class),
+                'isSupported' => false
+            ],
+            'order with disabled promotions' => [
+                'entity' => (new OrderStub())->setDisablePromotions(true),
+                'isSupported' => false
+            ],
+            'order with disabled promotions and not supported order' => [
+                'entity' => (new OrderStub())->setDisablePromotions(true)->setSourceEntityClass(Quote::class),
                 'isSupported' => false
             ],
         ];

@@ -50,12 +50,6 @@ class QuoteType extends AbstractType
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /**
-     * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-     * @param ConfigManager $configManager
-     * @param EventSubscriberInterface $quoteFormSubscriber
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
         ConfigManager $configManager,
@@ -176,6 +170,7 @@ class QuoteType extends AbstractType
             ->add('shippingMethodType', HiddenType::class)
             ->add('estimatedShippingCostAmount', HiddenType::class)
             ->add('overriddenShippingCostAmount', PriceType::class, [
+                'label' => 'oro.sale.quote.overridden_shipping_cost_amount.label',
                 'required' => false,
                 'validation_groups' => ['Optional'],
                 'hide_currency' => true,
@@ -205,14 +200,6 @@ class QuoteType extends AbstractType
             'allow_prices_override' => $this->authorizationChecker->isGranted('oro_quote_prices_override'),
             'allow_add_free_form_items' => $this->authorizationChecker->isGranted('oro_quote_add_free_form_items'),
         ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     /**

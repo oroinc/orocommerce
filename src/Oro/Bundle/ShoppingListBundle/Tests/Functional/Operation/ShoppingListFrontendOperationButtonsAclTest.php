@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
@@ -15,7 +15,7 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -26,7 +26,13 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
 
         $user = $this->getCustomerUser();
 
-        $token = new UsernamePasswordOrganizationToken($user, false, 'k', $user->getOrganization(), $user->getRoles());
+        $token = new UsernamePasswordOrganizationToken(
+            $user,
+            false,
+            'k',
+            $user->getOrganization(),
+            $user->getUserRoles()
+        );
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
     }
 
@@ -40,7 +46,7 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->assertActionButton($operationName, $product->getId(), Product::class, $params);
+        self::assertActionButton($operationName, $product->getId(), Product::class, $params);
     }
 
     /**
@@ -73,7 +79,7 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
      */
     public function getCustomerUser()
     {
-        return $this->getContainer()
+        return self::getContainer()
             ->get('doctrine')
             ->getRepository(CustomerUser::class)
             ->findOneBy(['email' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);

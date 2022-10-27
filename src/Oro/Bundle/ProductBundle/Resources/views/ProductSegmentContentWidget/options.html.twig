@@ -1,0 +1,53 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if product_segment is defined and product_segment is not empty %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.segment.label'|trans,
+        product_segment.name|default('N/A'|trans),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.segment.tooltip')}
+    ) }}
+{% endif %}
+
+{% if maximum_items is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.maximum_items.label'|trans,
+        maximum_items,
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.maximum_items.tooltip')}) }}
+{% endif %}
+
+{% if minimum_items is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.minimum_items.label'|trans,
+        minimum_items,
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.minimum_items.tooltip')}) }}
+{% endif %}
+
+{% if use_slider_on_mobile is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.use_slider_on_mobile.label'|trans,
+        use_slider_on_mobile
+            ? 'oro.product.content_widget_type.product_segment.options.use_slider_on_mobile.value.yes'|trans
+            : 'oro.product.content_widget_type.product_segment.options.use_slider_on_mobile.value.no'|trans,
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.use_slider_on_mobile.tooltip')}
+    ) }}
+{% endif %}
+
+{% if show_add_button is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.show_add_button.label'|trans,
+        show_add_button
+            ? 'oro.product.content_widget_type.product_segment.options.show_add_button.value.yes'|trans
+            : 'oro.product.content_widget_type.product_segment.options.show_add_button.value.no'|trans,
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.show_add_button.tooltip')}
+    ) }}
+{% endif %}

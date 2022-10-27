@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
-    var unitAndCurrencyVisibleLength = 12;
-    var ExpressionFieldSwitcher;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
+
+    const unitAndCurrencyVisibleLength = 12;
+    const $ = require('jquery');
+    const AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
 
     /**
      * @export oropricing/js/app/views/expression-field-switcher
      * @extends oroui.app.views.base.View
      * @class oropricing.app.views.ExpressionFieldSwitcher
      */
-    ExpressionFieldSwitcher = AbstractSwitcher.extend({
+    const ExpressionFieldSwitcher = AbstractSwitcher.extend({
         options: {
             selectors: {
                 fieldType: null,
@@ -22,25 +21,25 @@ define(function(require) {
         visibleClass: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ExpressionFieldSwitcher() {
-            ExpressionFieldSwitcher.__super__.constructor.apply(this, arguments);
+        constructor: function ExpressionFieldSwitcher(options) {
+            ExpressionFieldSwitcher.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        initialize: function() {
-            ExpressionFieldSwitcher.__super__.initialize.apply(this, arguments);
-            this.initLayout().done(_.bind(this.initSwitcher, this));
-            this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
+        initialize: function(options) {
+            ExpressionFieldSwitcher.__super__.initialize.call(this, options);
+            this.initLayout().done(this.initSwitcher.bind(this));
+            this.$form.on('submit' + this.eventNamespace(), e => {
                 this.onSubmit(e);
-            }, this));
+            });
         },
 
         addValidationError: function($identifier) {
-            var $field = this.$el.closest('.price_rule')
+            const $field = this.$el.closest('.price_rule')
                 .find('div.error-block' + $identifier);
 
             $field.addClass(this.visibleClass).append($('<span></span>')
@@ -48,16 +47,16 @@ define(function(require) {
         },
 
         initSwitcher: function() {
-            var $expressionIdentifier = this.options.selectors.expressionType;
-            this.expressionLink.click(_.bind(function() {
+            const $expressionIdentifier = this.options.selectors.expressionType;
+            this.expressionLink.click(() => {
                 this.changeFieldVisibility(this.field, this.expression);
                 this.expressionInput.val('');
                 $('div.error-block' + $expressionIdentifier).find('.validation-failed').remove();
-            }, this));
+            });
 
-            this.fieldLink.click(_.bind(function() {
+            this.fieldLink.click(() => {
                 this.changeFieldVisibility(this.expression, this.field);
-            }, this));
+            });
 
             if (this.expressionInput.val() === '') {
                 this.changeFieldVisibility(this.field, this.expression);
@@ -69,11 +68,11 @@ define(function(require) {
         },
 
         bindTooltipEvents: function($expressionInput) {
-            $expressionInput.mouseenter(_.bind(function() {
+            $expressionInput.mouseenter(() => {
                 if ($expressionInput.val().length > unitAndCurrencyVisibleLength) {
                     this.showTooltip($expressionInput);
                 }
-            }, this));
+            });
 
             this.setMouseLeaveEvent($expressionInput);
         },
@@ -94,7 +93,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function(options) {
             if (this.disposed) {
@@ -106,7 +105,7 @@ define(function(require) {
 
             this.$form.off(this.eventNamespace());
 
-            AbstractSwitcher.__super__.dispose.apply(this, arguments);
+            AbstractSwitcher.__super__.dispose.call(this);
         }
     });
 

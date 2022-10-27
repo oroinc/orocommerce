@@ -24,7 +24,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->filtersPurifier = $this->createMock(SegmentFiltersPurifier::class);
         $this->definitionConverter = new ProductCollectionDefinitionConverter($this->filtersPurifier);

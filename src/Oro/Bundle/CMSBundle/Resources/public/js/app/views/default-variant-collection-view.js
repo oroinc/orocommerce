@@ -1,58 +1,70 @@
 define(function(require) {
     'use strict';
 
-    var DefaultVariantCollectionView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    DefaultVariantCollectionView = BaseView.extend({
+    const DefaultVariantCollectionView = BaseView.extend({
         $collection: null,
 
         options: {
             defaultSelector: '[name$="[default]"]',
             itemSelector: '[data-role="content-variant-item"]',
-            defaultItemClass: 'content-variant-item-default'
+            itemContent: '[name$="[content]"]',
+            activeItemSelector: '.content-variant-item-content.show',
+            defaultItemClass: 'content-variant-item-default',
+            defaultItemCollapseSelector: '.content-variant-item-default .collapse'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function DefaultVariantCollectionView() {
-            DefaultVariantCollectionView.__super__.constructor.apply(this, arguments);
+        events() {
+            return {
+                [`shown.bs.collapse ${this.options.itemSelector}`]: 'handleToggleCollapse',
+                [`hide.bs.collapse ${this.options.itemSelector}`]: 'handleToggleCollapse',
+                [`click ${this.options.defaultSelector}`]: event => this.onDefaultChange($(event.target))
+            };
+        },
+
+        listen: {
+            'cms:content-variant-collection:add mediator': 'handleChange',
+            'cms:content-variant-collection:remove mediator': 'handleChange'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function DefaultVariantCollectionView(options) {
+            DefaultVariantCollectionView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-
-            this.$el.on(
-                'click',
-                this.options.defaultSelector,
-                _.bind(
-                    function(e) {
-                        this.onDefaultChange($(e.target));
-                    },
-                    this
-                )
-            );
-            mediator.on('cms:content-variant-collection:add', this.handleAdd, this);
-            mediator.on('cms:content-variant-collection:remove', this.handleRemove, this);
-
-            this.handleAdd();
+            this.handleChange();
+            this.enableActiveItem();
+            this.handleToggleCollapse = _.debounce(this.handleToggleCollapse, 300);
+            DefaultVariantCollectionView.__super__.initialize.call(this, options);
         },
 
-        handleRemove: function($container) {
-            // Check is default variant removed
-            if ($container.find(this.options.defaultSelector + ':checked').length === 0) {
-                this.checkDefaultVariant();
+        handleToggleCollapse(event) {
+            if (event.namespace !== 'bs.collapse') {
+                return;
             }
+
+            const target = $(event.currentTarget);
+            target.find(this.options.itemContent).trigger(
+                event.type === 'hide'
+                    ? 'wysiwyg:disable'
+                    : 'wysiwyg:enable'
+            );
         },
 
-        handleAdd: function() {
+        handleChange() {
             if (this.$el.find(this.options.itemSelector).length &&
                 this.$el.find(this.options.defaultSelector + ':checked').length === 0
             ) {
@@ -61,7 +73,7 @@ define(function(require) {
         },
 
         checkDefaultVariant: function() {
-            var $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
+            const $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
             $default.prop('checked', true).trigger('change');
 
             this.onDefaultChange($default);
@@ -70,6 +82,13 @@ define(function(require) {
         onDefaultChange: function($default) {
             this.$el.find('.' + this.options.defaultItemClass).removeClass(this.options.defaultItemClass);
             $default.closest(this.options.itemSelector).addClass(this.options.defaultItemClass);
+        },
+
+        enableActiveItem() {
+            const activeItem = this.$el.find(this.options.activeItemSelector);
+            if (activeItem.length) {
+                activeItem.find(this.options.itemContent).trigger('wysiwyg:enable');
+            }
         }
     });
 

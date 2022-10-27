@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: 'content_widget_root.html.twig'
+        - '@addTree':
+              items:
+                  content_widget_container:
+                      blockType: container
+                  content_widget_default_template:
+                      blockType: content_widget_default_template
+                      options:
+                          defaultTemplate: '=data["content_widget_data"].getDefaultTemplate(context["content_widget"])'
+              tree:
+                  content_widget_root:
+                      content_widget_container:
+                          content_widget_default_template: ~

@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\ProductBundle\Provider\GridCountProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxGetProductsCountController extends Controller
+/**
+ * Implements the following AJAX actions:
+ * - get number of rows in submitted grid without filters
+ */
+class AjaxGetProductsCountController extends AbstractController
 {
     /**
      * @Route(
@@ -24,8 +29,21 @@ class AjaxGetProductsCountController extends Controller
     public function getAction($gridName, Request $request)
     {
         $params = $request->get('params', []);
-        $count = $this->get('oro_product.provider.grid_count_provider')->getGridCount($gridName, $params);
+        $count = $this->get(GridCountProvider::class)->getGridCount($gridName, $params);
 
         return new JsonResponse($count);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                GridCountProvider::class,
+            ]
+        );
     }
 }

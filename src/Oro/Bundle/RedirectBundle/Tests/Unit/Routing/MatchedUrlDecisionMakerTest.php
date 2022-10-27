@@ -7,12 +7,10 @@ use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 
 class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $frontendHelper;
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
             ->disableOriginalConstructor()
@@ -21,18 +19,10 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider urlDataProvider
-     * @param bool $installed
-     * @param bool $isFrontend
-     * @param array $skippedUrl
-     * @param string $url
-     * @param bool $expected
      */
-    public function testMatches($installed, $isFrontend, array $skippedUrl, $url, $expected)
+    public function testMatches(bool $isFrontend, array $skippedUrlPatterns, string $url, bool $expected)
     {
-        $maker = new MatchedUrlDecisionMaker($this->frontendHelper, $installed);
-        foreach ($skippedUrl as $urlPattern) {
-            $maker->addSkippedUrlPattern($urlPattern);
-        }
+        $maker = new MatchedUrlDecisionMaker($skippedUrlPatterns, $this->frontendHelper);
         $this->frontendHelper->expects($this->any())
             ->method('isFrontendUrl')
             ->with($url)
@@ -48,20 +38,11 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
         return [
             'allowed url' => [
                 true,
-                true,
                 [],
                 '/test',
                 true
             ],
-            'not installed' => [
-                false,
-                true,
-                [],
-                '/test',
-                false
-            ],
             'not frontend' => [
-                true,
                 false,
                 [],
                 '/test',
@@ -69,11 +50,27 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
             ],
             'skipped frontend' => [
                 true,
-                true,
                 ['/api/'],
                 '/api/test',
                 false
             ],
         ];
+    }
+
+    public function testShouldResetInternalCacheWhenNewPatternIsAdded()
+    {
+        $this->frontendHelper->expects($this->any())
+            ->method('isFrontendUrl')
+            ->willReturn(true);
+
+        $maker = new MatchedUrlDecisionMaker(['/folder1/'], $this->frontendHelper);
+        $this->assertFalse($maker->matches('/folder1/file.html'));
+        $this->assertTrue($maker->matches('/folder2/file.html'));
+        $this->assertTrue($maker->matches('/folder3/file.html'));
+
+        $maker->addSkippedUrlPattern('/folder2/');
+        $this->assertFalse($maker->matches('/folder1/file.html'));
+        $this->assertFalse($maker->matches('/folder2/file.html'));
+        $this->assertTrue($maker->matches('/folder3/file.html'));
     }
 }

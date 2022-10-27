@@ -23,13 +23,13 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
  * | 2       |         |         |
  * |         | 3       |         |
  * |         |         |         |
- *
  */
 class InlineMatrix extends Table
 {
     const TABLE_HEADER_ELEMENT = 'InlineMatrixHeader';
     const TABLE_ROW_HEADER_ELEMENT = 'InlineMatrixRowHeader';
     const TABLE_ROW_ELEMENT = 'InlineMatrixRow';
+    const TABLE_ROW_STRICT_ELEMENT = 'InlineMatrixRow';
 
     /**
      * @param string $elementName
@@ -101,9 +101,6 @@ class InlineMatrix extends Table
         return $this->getRowByNumber($rowNumber + 1);
     }
 
-    /**
-     * @param TableNode $tableNode
-     */
     public function fill(TableNode $tableNode)
     {
         if ($this->isRowHeaderExists()) {
@@ -113,9 +110,6 @@ class InlineMatrix extends Table
         }
     }
 
-    /**
-     * @param TableNode $tableNode
-     */
     protected function fillWithNamedRows(TableNode $tableNode)
     {
         $rowsToFill = $tableNode->getRows();
@@ -139,9 +133,6 @@ class InlineMatrix extends Table
         }
     }
 
-    /**
-     * @param TableNode $tableNode
-     */
     protected function fillWithoutNamedRows(TableNode $tableNode)
     {
         /** @var InlineMatrixRow[] $rows */

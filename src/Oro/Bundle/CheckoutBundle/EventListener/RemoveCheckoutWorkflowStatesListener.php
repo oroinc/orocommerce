@@ -28,9 +28,6 @@ class RemoveCheckoutWorkflowStatesListener
         $this->checkoutWorkflowStateClassName = $checkoutWorkflowStateClassName;
     }
 
-    /**
-     * @param Checkout $entity
-     */
     public function preRemove(Checkout $entity)
     {
         /** @var CheckoutWorkflowStateRepository $repository */

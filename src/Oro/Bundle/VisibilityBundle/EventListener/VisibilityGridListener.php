@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -31,11 +31,6 @@ class VisibilityGridListener
      */
     protected $scopeManager;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param VisibilityChoicesProvider $visibilityChoicesProvider
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(
         ManagerRegistry $registry,
         VisibilityChoicesProvider $visibilityChoicesProvider,
@@ -60,9 +55,6 @@ class VisibilityGridListener
         ];
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
@@ -107,9 +99,6 @@ class VisibilityGridListener
         $config->offsetSetByPath($path, $pathConfig);
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onDatagridBuildAfter(BuildAfter $event)
     {
         $datasource = $event->getDatagrid()->getDatasource();

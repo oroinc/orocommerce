@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setOption':
+              id: payment_methods
+              optionName: attr.class
+              optionValue: 'grid-col-10'
+
+    conditions: 'context["workflowName"]!="b2b_flow_checkout_single_page"'

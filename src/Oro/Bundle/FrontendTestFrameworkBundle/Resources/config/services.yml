@@ -1,3 +1,9 @@
+parameters:
+    optional_search_listeners:
+        - 'oro_search.index_listener'
+        - 'oro_website.indexation_request_listener'
+        - 'oro_website_search.reindex_request.listener'
+
 services:
     oro_product.alias.provider.content_variant_segment_provider:
         alias: oro_product.provider.content_variant_segment_provider
@@ -10,4 +16,8 @@ services:
         decorates: oro_website.manager
         decoration_priority: -256 # should be at the top of the decoration chain
         arguments:
-            - '@oro_website.manager.stub.inner'
+            - '@.inner'
+            - '@oro_website.cache.website'
+
+    oro_promotion.alias.provider.matching_products_provider:
+        alias: oro_promotion.provider.matching_products_provider

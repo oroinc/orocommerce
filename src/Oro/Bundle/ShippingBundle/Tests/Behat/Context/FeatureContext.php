@@ -4,9 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
@@ -16,19 +14,17 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
-    /**
-     * @var OroMainContext
-     */
-    private $oroMainContext;
+    private ?OroMainContext $oroMainContext = null;
 
     /**
      * @BeforeScenario
@@ -64,15 +60,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * Assert that given shippingType is shown
      *
      * @Then Shipping Type :shippingType is shown for Buyer selection
+     * @param string $shippingType
      */
     public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
     {
-        $element= $this->createElement('CheckoutFormRow');
-        self::assertContains(
-            $shippingType,
-            $element->getText(),
-            "Shipping type '$shippingType' not found on checkout form"
-        );
+        $elements = $this->findAllElements('CheckoutFormRow');
+        foreach ($elements as $element) {
+            if (str_contains($element->getText(), $shippingType)) {
+                return;
+            }
+        }
+
+        self::fail(sprintf('Shipping type "%s" not found on checkout form', $shippingType));
     }
 
     /**
@@ -179,7 +178,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fillField('Name', $shoppingRuleName);
 
         foreach ($table->getColumn(0) as $columnItem) {
-            if (false !== strpos($columnItem, 'Country')) {
+            if (str_contains($columnItem, 'Country')) {
                 $destinationAdd = $form->find('css', '.add-list-item');
                 $destinationAdd->click();
             }
@@ -203,6 +202,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then Buyer is on Shipping Method Checkout step
+     */
+    public function assertBuyerIsOnShippingMethodCheckoutStep()
+    {
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $checkoutStep->assertTitle('Shipping Method');
+    }
+
+    /**
      * @When Buyer is again on Shipping Method Checkout step on :shoppingListName
      */
     public function buyerIsAgainOnShippingMethodCheckoutStepOn($shoppingListName)
@@ -219,7 +228,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     protected function createOrderFromShoppingList($shoppingListName)
     {
         /** @var ObjectManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        $manager = $this->getAppContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
         $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());
@@ -250,7 +259,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         /** @var Form $form */
         $form = $this->createElement('Address');
-        $form->fillField('SELECT SHIPPING ADDRESS', 'New address');
+        $form->fillField('Select Shipping Address', 'New address');
         $this->waitForAjax();
         /** @var int $row */
         if ($row = array_search('Country', $table->getColumn(0))) {
@@ -303,5 +312,39 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $saveLink = $this->getPage()->find('css', '.oro-modal-normal .ok.btn-primary');
         self::assertNotNull($saveLink, "Can't find modal window or 'Save' button");
         $saveLink->click();
+    }
+
+    /**
+     * Assert product shipping options
+     * Example: And I should see following product shipping options:
+     *            | item | 9 lbs | 9 x 8 x 6 cm | parcel |
+     *            | set  | 3 lbs | 2 x 5 x 3 cm | parcel |
+     *
+     * @Then /^(?:|I )should see following product shipping options:$/
+     */
+    public function iShouldSeeFollowingAdditionalUnits(TableNode $table)
+    {
+        $element = $this->getPage()->find('xpath', '//table[contains(@class, "shipping-options-result-grid")]/tbody');
+
+        self::assertNotNull($element, 'Shipping options table not found on the page.');
+
+        $crawler = new Crawler($element->getHtml());
+        $results = [];
+        $crawler->filter('tr')->each(function (Crawler $tr) use (&$results) {
+            $row = [];
+            $tr->filter('td')->each(function (Crawler $td) use (&$row) {
+                $row[] = trim($td->filter('td')->first()->text());
+            });
+
+            $results[] = $row;
+        });
+
+        foreach ($table->getRows() as $key => $row) {
+            foreach ($row as &$value) {
+                $value = trim($value);
+            }
+
+            self::assertEquals($results[$key], $row, sprintf('Result "%s" not found', $table->getRowAsString($key)));
+        }
     }
 }

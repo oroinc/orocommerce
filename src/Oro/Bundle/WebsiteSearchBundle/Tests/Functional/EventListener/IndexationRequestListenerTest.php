@@ -17,7 +17,7 @@ class IndexationRequestListenerTest extends WebTestCase
 {
     use UserUtilityTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
     }
@@ -34,7 +34,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -59,7 +59,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -92,7 +92,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -104,10 +104,10 @@ class IndexationRequestListenerTest extends WebTestCase
         $product->setName($product->getName() . '-changed');
 
         // trigger beforeEntityFlush with same entity to ensure that entity will be indexed only once
-        $eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterFormProcessEvent(
+        $eventDispatcher->dispatch(new AfterFormProcessEvent(
             $this->getMockBuilder(FormInterface::class)->getMock(),
             $product
-        ));
+        ), Events::BEFORE_FLUSH);
         $em->persist($product);
         $em->flush();
 
@@ -131,7 +131,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -162,7 +162,7 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (&$triggeredEvent) {
             $triggeredEvent = $event;
         });
 

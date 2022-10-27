@@ -24,22 +24,22 @@ Oro\Bundle\WebsiteBundle\Entity\Website:
 Oro\Bundle\ScopeBundle\Entity\Scope:
   scopeCustomer:
     customer: '@customer1'
-    website: 1
+    website: '@website1'
   scopeCustomerGroup:
     customerGroup: '@customerGroup1'
-    website: 1
+    website: '@website1'
 
 Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved:
   productVisibilityResolved1:
-    __construct: [2, '@product1']
+    __construct: ['@first_website_scope', '@product1']
     visibility: 1
     category: '@categoryLightingProducts'
   productVisibilityResolved2:
-    __construct: [2, '@product2']
+    __construct: ['@first_website_scope', '@product2']
     visibility: 1
     category: '@categoryRetailSupplies'
   productVisibilityResolved3:
-    __construct: [2, '@product3']
+    __construct: ['@first_website_scope', '@product3']
     visibility: 1
     category: '@categoryPrinters'
 

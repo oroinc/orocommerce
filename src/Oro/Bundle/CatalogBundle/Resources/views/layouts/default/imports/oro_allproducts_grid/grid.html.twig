@@ -1,0 +1,56 @@
+{% block __oro_product_grid__datagrid_widget %}
+    {% set compact_view = '' %}
+    {% set buttonsId = 'datagrid_row_product_line_item_form_buttons' %}
+    {% set themeOptions = grid_render_parameters.themeOptions|default({})|merge({
+        'headerHide': true,
+        'disableGridScrollbar': true,
+        'disableStickedScrollbar': true,
+        'enabledAccessibilityPlugin': false,
+        'currentRowView': current_row_view,
+        'bodyClassName': 'grid-body product-list product-list--' ~ current_row_view,
+        'rowClassName': 'grid-row product-item product-item--' ~ current_row_view ~ compact_view,
+        'rowAttributes': {
+        'data-layout-model': 'productModel'
+        },
+        'categoryTitleClassName': 'category-title category-title--divide-content',
+    }) %}
+    {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions}) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _product_datagrid_category_product_list_widget %}
+    <div class="{{ themeOptions.bodyClassName }}">
+        {% set categoryId = 0 %}
+        {% for datagrid_row in datagridData.data %}
+            {% set child = block[id ~'_row'] %}
+
+            {% set childAttr = layout_attr_defaults(child.vars.attr, {
+                'class': themeOptions.rowClassName
+            }) %}
+
+            {% set childAttr = layout_attr_defaults(childAttr, themeOptions.rowAttributes) %}
+
+            {% do child|merge_context({
+                'datagrid_row': datagrid_row,
+                'themeOptions': themeOptions
+            }) %}
+
+            {% if (categoryId != datagrid_row.categoryId) %}
+                {{ block_widget(block[id ~ '_category_title'], {
+                    'datagrid_row': datagrid_row,
+                    'themeOptions': themeOptions
+                }) }}
+            {% endif %}
+            {% set categoryId = datagrid_row.categoryId %}
+
+            {{ block_widget(child, {'attr': childAttr}) }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block _product_datagrid_category_title_widget %}
+    <h1 class="{{ themeOptions.categoryTitleClassName }}">
+        {{ datagrid_row.categoryTitle }}
+    </h1>
+{% endblock %}

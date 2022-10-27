@@ -22,7 +22,11 @@ class ImagesCollection extends CollectionField
             /** @var Element $row */
             $row = $rows[$existingRowsCount + $key];
 
-            $row->getElement('ImageCollectionFileField')->setValue($value['File']);
+            $fileField = $row->getElement('ImageCollectionFileField');
+            if ($fileField->isValid()) {
+                $fileField->setValue($value['File']);
+            }
+
             if ($value['Main']) {
                 $row->find('xpath', '//input[contains(@id,"main")]')->setValue($value['Main']);
             }

@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@add':
+            id: meta_title
+            parentId: head
+            blockType: meta
+            options:
+                name: 'title'
+                content: '=data["seo"].getMetaInformationFromContentNode("metaTitles")'
+        - '@add':
+            id: meta_description
+            parentId: head
+            blockType: meta
+            options:
+                name: 'description'
+                content: '=data["seo"].getMetaInformationFromContentNode("metaDescriptions")'
+        - '@add':
+            id: meta_keywords
+            parentId: head
+            blockType: meta
+            options:
+                name: 'keywords'
+                content: '=data["seo"].getMetaInformationFromContentNode("metaKeywords")'

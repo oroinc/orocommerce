@@ -1,0 +1,132 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '1'
+    precision4:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: Product1
+    locvalue2:
+        string: Product2
+    locvalue3:
+        string: Product3
+    locvalue4:
+        string: Product4
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
+    product2:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA2'
+        primaryUnitPrecision: '@precision2'
+        __calls:
+            - addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
+    product3:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA3'
+        primaryUnitPrecision: '@precision3'
+        __calls:
+            - addName: ['@locvalue3']
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+        status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
+    product4:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA4'
+        primaryUnitPrecision: '@precision4'
+        __calls:
+            - addName: ['@locvalue4']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'disabled'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'Shopping List A'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+    shoppinglist2:
+        label: 'Shopping List B'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+    shoppinglist3:
+        label: 'Shopping List C'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1_1:
+        product: '@product1'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+    lineitem1_2:
+        product: '@product3'
+        quantity: '20'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+    lineitem2_1:
+        product: '@product2'
+        quantity: '30'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
+    lineitem2_2:
+        product: '@product3'
+        quantity: '40'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
+    lineitem3_1:
+        product: '@product2'
+        quantity: '50'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'
+    lineitem3_2:
+        product: '@product4'
+        quantity: '50'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist3'
+        organization: '@organization'

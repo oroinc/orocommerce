@@ -4,6 +4,9 @@ namespace Oro\Bundle\ProductBundle\Helper;
 
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
+/**
+ * Provides a method to get product ids from collection of product holders.
+ */
 trait ProductHolderTrait
 {
     /**
@@ -12,7 +15,7 @@ trait ProductHolderTrait
      */
     protected function getProductIdsFromProductHolders($productHolderIterator): array
     {
-        if (!(is_array($productHolderIterator) || $productHolderIterator instanceof \Traversable)) {
+        if (!is_iterable($productHolderIterator)) {
             return [];
         }
 

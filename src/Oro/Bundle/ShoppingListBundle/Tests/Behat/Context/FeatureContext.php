@@ -4,13 +4,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ConfigurableProductTableRowAwareInterface;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTableRow;
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList as ShoppingListElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
@@ -18,13 +18,15 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
  * The context for testing Shopping List related features.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /**
-     * @When /^Buyer is on (?P<shoppingListLabel>[\w\s]+)$/
+     * @When /^Buyer is on "(?P<shoppingListLabel>[\w\s]+)" shopping list$/
      *
      * @param string $shoppingListLabel
      */
@@ -34,7 +36,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->visitPath($this->getShoppingListViewUrl($shoppingList));
         $this->waitForAjax();
 
-        /* @var $element ShoppingListElement */
+        /* @var ShoppingListElement $element */
         $element = $this->createElement('ShoppingList');
         $element->assertTitle($shoppingListLabel);
     }
@@ -47,7 +49,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->getSession()->getPage()->clickLink('Request Quote');
         $this->waitForAjax();
 
-        /* @var $page RequestForQuote */
+        /* @var RequestForQuote $page */
         $page = $this->createElement('RequestForQuote');
         $page->assertTitle('Request A Quote');
         $this->waitForAjax();
@@ -63,11 +65,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function buyerIsViewRequestForQuote($message)
     {
-        /* @var $page RequestForQuote */
+        /* @var RequestForQuote $page */
         $page = $this->createElement('RequestForQuote');
         $page->assertTitle('Request For Quote');
 
-        /* @var $element Element */
         $element = $this->findElementContains('RequestForQuoteFlashMessage', $message);
         $this->assertTrue($element->isValid(), sprintf('Title "%s", was not match to current title', $message));
     }
@@ -86,11 +87,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         /** @var Table $shoppingListItemsTableElement */
         $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
 
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
         /** @var TableRow $row */
         $row = $rows[$itemPosition - 1];
-        $button = $row->find('css', 'button');
+        $button = $row->find('css', 'button.item-remove');
 
         $button->click();
     }
@@ -104,39 +109,134 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iShouldSeeFollowingLineItemsIn($shoppingList, TableNode $table)
     {
         /** @var Table $shoppingListItemsTableElement */
-        $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+        $shoppingListItemsTableElement = $this->createValidShoppingListTableElement($shoppingList);
 
         $rows = $this->getShoppingListLineItemsTableDirectRows($shoppingListItemsTableElement);
+        $tableRows = $table->getRows();
+        $columnHeaders = reset($tableRows);
 
+        $actualRows = [];
         foreach ($rows as $rowElement) {
-            self::assertTrue(
-                $this->currentLineItemRowAppearsInExpectedLineItems($rowElement, $table),
-                vsprintf(
-                    'Row "%s, %s, %s" isn\'t expected',
-                    [
-                        $this->getLineItemSKU($rowElement),
-                        $this->getLineItemUnit($rowElement),
-                        $this->getLineItemQuantity($rowElement),
-                    ]
-                )
-            );
+            $actualRows[] = $this->getLineItemRowColumnsValues($rowElement, $columnHeaders);
         }
+
+        self::assertEquals($table->getHash(), $actualRows);
     }
 
     /**
      * @When /^(?:|I )should see following header in shopping list line items table:$/
-     *
-     * @param TableNode $table
      */
     public function iShouldSeeFollowingColumns(TableNode $table)
     {
         $rows = $table->getRows();
         self::assertNotEmpty($rows);
 
-        /* @var $element ShoppingListElement */
+        /* @var ShoppingListElement $element */
         $element = $this->createElement('ShoppingList');
 
         self::assertEquals(reset($rows), $element->getLineItemsHeader());
+    }
+
+    /**
+     * @Then I open shopping list widget
+     * @Then I close shopping list widget
+     */
+    public function iOpenShoppingListWidget()
+    {
+        $this->createElement('ShoppingListWidget')->click();
+    }
+
+    /**
+     * Opens shopping list from widget
+     * Example: And I click "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )click "(?P<name>[\w\s]*)" on shopping list widget$/
+     */
+    public function iClickShoppingListOnListsDropdown($name)
+    {
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+        $link->click();
+    }
+
+    /**
+     * Example: I should see "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )should see "(?P<name>[\w\s\W\S]*)" on shopping list widget$/
+     */
+    public function iShouldSeeOnShoppingListWidget($name)
+    {
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+
+        self::assertNotNull($link, sprintf('"%s" list item was not found in shopping list widget', $name));
+    }
+
+    /**
+     * Example: I should not see "Shopping List 1" on shopping list widget
+     *
+     * @Given /^(?:|I )should not see "(?P<name>[\w\s\W\S]*)" on shopping list widget$/
+     */
+    public function iShouldNotSeeOnShoppingListWidget($name)
+    {
+        $link = $this->getShoppingListLinkFromShoppingListWidgetByName($name);
+
+        self::assertNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)"(?:| with the following attributes:)$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, TableNode $table = null)
+    {
+        $attributeLabels = [];
+        if ($table) {
+            foreach ($table->getRows() as $row) {
+                [$attribute, $value] = $row;
+                $attributeLabels[] = sprintf('%s: %s', $attribute, $value);
+            }
+        }
+
+        /** @var ProductTable $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->createValidShoppingListTableElement($tableName);
+        /** @var ConfigurableProductTableRowAwareInterface[] $rows */
+        $rows = $shoppingListItemsTableElement->getProductRows();
+
+        foreach ($rows as $rowElement) {
+            if ($rowElement->getProductSku() !== $sku) {
+                continue;
+            }
+
+            if ($rowElement->isRowContainingAttributes($attributeLabels)) {
+                $rowElement->clickProductLink();
+
+                return;
+            }
+        }
+
+        self::fail(sprintf(
+            'Could not find product with the given "%s" sku and attributes "%s"',
+            $sku,
+            implode(', ', $attributeLabels)
+        ));
+    }
+
+    /**
+     * @When /^(?:|I )click on "(?P<sku>[^"]+)" product in "(?P<tableName>[^"]+)"$/
+     */
+    public function iClickOnProductInShoppingList(string $sku, string $tableName)
+    {
+        /** @var ProductTable $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->createValidShoppingListTableElement($tableName);
+        /** @var ProductTableRow[] $rows */
+        $rows = $shoppingListItemsTableElement->getProductRows();
+
+        foreach ($rows as $rowElement) {
+            if ($rowElement->getProductSku() !== $sku) {
+                continue;
+            }
+            $rowElement->clickProductLink();
+        }
     }
 
     /**
@@ -145,7 +245,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     protected function getShoppingListByLabel($label)
     {
-        return $this->getContainer()
+        return $this->getAppContainer()
             ->get('doctrine')
             ->getManagerForClass(ShoppingList::class)
             ->getRepository(ShoppingList::class)
@@ -158,9 +258,26 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     protected function getShoppingListViewUrl(ShoppingList $shoppingList)
     {
-        return $this->getContainer()
+        return $this->getAppContainer()
             ->get('router')
             ->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+    }
+
+    /**
+     * @param string $shoppingList
+     * @return Table
+     */
+    private function createValidShoppingListTableElement(string $shoppingList)
+    {
+        /** @var Table $shoppingListItemsTableElement */
+        $shoppingListItemsTableElement = $this->elementFactory->createElement($shoppingList);
+
+        self::assertTrue(
+            $shoppingListItemsTableElement->isValid(),
+            sprintf('Element "%s" was not found', $shoppingList)
+        );
+
+        return $shoppingListItemsTableElement;
     }
 
     /**
@@ -171,7 +288,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private function getShoppingListLineItemsTableDirectRows(Table $table)
     {
         return array_map(function (NodeElement $element) {
-            return $this->elementFactory->wrapElement(Table::TABLE_ROW_ELEMENT, $element);
+            return $this->elementFactory->wrapElement(Table::TABLE_ROW_STRICT_ELEMENT, $element);
         }, $table->findAll('css', '.shopping-list-line-items .shopping-list-line-items__item-wrapper'));
     }
 
@@ -211,73 +328,64 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @param TableRow  $rowElement
-     * @param TableNode $expectedLineItemsTable
+     * @param TableRow $tableRowElement
      *
-     * @return bool
+     * @return string
      */
-    private function currentLineItemRowAppearsInExpectedLineItems(
-        TableRow $rowElement,
-        TableNode $expectedLineItemsTable
-    ) {
-        $sku = $this->getLineItemSKU($rowElement);
-        $quantity = $this->getLineItemQuantity($rowElement);
-        $unit = $this->getLineItemUnit($rowElement);
-        $allElementAppear = false;
-        foreach ($expectedLineItemsTable as $index => $row) {
-            $skuAppear = false;
-            $quantityAppear = false;
-            $unitAppear = false;
-            foreach ($row as $columnTitle => $value) {
-                switch (strtolower($columnTitle)) {
-                    case 'sku':
-                        $skuAppear = $value === $sku;
-                        break;
-                    case 'quantity':
-                        $quantityAppear = $value === $quantity;
-                        break;
-                    case 'unit':
-                        $unitAppear = $value === $unit;
-                        break;
-                    default:
-                        throw new \InvalidArgumentException(
-                            sprintf(
-                                '%s column is not supported, supported columns is %s',
-                                $columnTitle,
-                                implode(', ', ['Sku', 'Quantity', 'Unit'])
-                            )
-                        );
-                        break;
-                }
+    private function getLineItemPrice(TableRow $tableRowElement)
+    {
+        return $this->createElement('Shopping List Line Item Product Price', $tableRowElement)->getText();
+    }
+
+    private function getLineItemRowColumnsValues(TableRow $rowElement, array $columns): array
+    {
+        $values = [];
+        foreach ($columns as $columnTitle) {
+            switch (strtolower($columnTitle)) {
+                case 'sku':
+                    $currentValue = $this->getLineItemSKU($rowElement);
+                    break;
+                case 'quantity':
+                    $currentValue = $this->getLineItemQuantity($rowElement);
+                    break;
+                case 'unit':
+                    $currentValue = $this->getLineItemUnit($rowElement);
+                    break;
+                case 'price':
+                    $currentValue = $this->getLineItemPrice($rowElement);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            '%s column is not supported, supported columns is %s',
+                            $columnTitle,
+                            implode(', ', ['Sku', 'Quantity', 'Unit', 'Price'])
+                        )
+                    );
+                    break;
             }
-            if ($quantityAppear && $unitAppear && $skuAppear) {
-                $allElementAppear = true;
-            }
+
+            $values[$columnTitle] = $currentValue;
         }
 
-        return $allElementAppear;
+        return $values;
     }
 
     /**
-     * @Then I open shopping list widget
+     * @param $name
+     * @return null|NodeElement
      */
-    public function iOpenShoppingListWidget()
-    {
-        $this->createElement('ShoppingListWidget')->click();
-    }
-
-    /**
-     * Opens shopping list from widget
-     * Example: And I click "Shopping List 1" on shopping list widget
-     *
-     * @Given /^(?:|I )click "(?P<name>[\w\s]*)" on shopping list widget$/
-     */
-    public function iClickShoppingListOnListsDropdown($name)
+    protected function getShoppingListLinkFromShoppingListWidgetByName($name)
     {
         $widget = $this->createElement('ShoppingListWidgetContainer');
-        $link = $widget->find('xpath', "//span[@data-role='shopping-list-title'][text()='{$name}']");
+        $xpath = sprintf(
+            '//span[' .
+                "@data-role='shopping-list-title'" .
+                "and translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='%s'" .
+            ']',
+            strtolower($name)
+        );
 
-        self::assertNotNull($link, sprintf('"%s" list item was found in shopping list widget', $name));
-        $link->click();
+        return $widget->find('xpath', $xpath);
     }
 }

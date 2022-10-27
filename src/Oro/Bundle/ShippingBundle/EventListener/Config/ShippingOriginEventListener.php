@@ -4,47 +4,38 @@ namespace Oro\Bundle\ShippingBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\ShippingBundle\DependencyInjection\OroShippingExtension;
+use Oro\Bundle\ShippingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
+/**
+ * Transforms shipping origin ID to ShippingOrigin entity and vise versa for the "shipping origin" configuration option.
+ */
 class ShippingOriginEventListener
 {
-    const KEY = 'shipping_origin';
+    private const KEY = 'shipping_origin';
 
-    /** @var ShippingOriginModelFactory */
-    protected $shippingOriginModelFactory;
+    private ShippingOriginModelFactory $shippingOriginFactory;
 
-    /**
-     * @param ShippingOriginModelFactory $shippingOriginModelFactory
-     */
-    public function __construct(ShippingOriginModelFactory $shippingOriginModelFactory)
+    public function __construct(ShippingOriginModelFactory $shippingOriginFactory)
     {
-        $this->shippingOriginModelFactory = $shippingOriginModelFactory;
+        $this->shippingOriginFactory = $shippingOriginFactory;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
-    public function formPreSet(ConfigSettingsUpdateEvent $event)
+    public function formPreSet(ConfigSettingsUpdateEvent $event): void
     {
+        $settingsKey = Configuration::ROOT_NODE . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
         $settings = $event->getSettings();
-        $key = OroShippingExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
-        if (!array_key_exists($key, $settings)) {
-            return;
+        if (\array_key_exists($settingsKey, $settings)) {
+            $settings[$settingsKey]['value'] = $this->shippingOriginFactory->create($settings[$settingsKey]['value']);
+            $event->setSettings($settings);
         }
-        $settings[$key]['value'] = $this->shippingOriginModelFactory->create($settings[$key]['value']);
-        $event->setSettings($settings);
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
-    public function beforeSave(ConfigSettingsUpdateEvent $event)
+    public function beforeSave(ConfigSettingsUpdateEvent $event): void
     {
         $settings = $event->getSettings();
-
-        if (!array_key_exists('value', $settings)) {
+        if (!\array_key_exists('value', $settings)) {
             return;
         }
 
@@ -52,6 +43,7 @@ class ShippingOriginEventListener
         if (!$shippingOrigin instanceof ShippingOrigin) {
             return;
         }
+
         $settings['value'] = [
             'country' => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
             'region' => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,

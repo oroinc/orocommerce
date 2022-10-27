@@ -19,8 +19,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processConfigurationDataProvider
-     * @param array $configs
-     * @param array $expected
      */
     public function testProcessConfiguration(array $configs, array $expected)
     {
@@ -48,6 +46,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
+                        'single_page_checkout_increase_performance' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
                         'registration_allowed' => [
                             'value' => true,
                             'scope' => 'app'
@@ -59,6 +61,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                         ],
                         'allow_checkout_without_email_confirmation' => [
                             'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'frontend_show_open_orders' => [
+                            'value' => true,
+                            'scope' => 'app'
+                        ],
+                        'checkout_max_line_items_per_page' => [
+                            'value' => 1000,
                             'scope' => 'app'
                         ]
                     ]

@@ -7,6 +7,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Product autocomplete.
+ */
 class ProductAutocompleteType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_autocomplete';
@@ -48,7 +51,7 @@ class ProductAutocompleteType extends AbstractProductAwareType
                         'name' => 'oro_product_visibility_limited',
                     ],
                     'selection_template_twig' =>
-                        'OroProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
+                        '@OroProduct/Product/Autocomplete/autocomplete_selection.html.twig',
                     'componentModule' => 'oroproduct/js/app/components/product-autocomplete-component',
                 ],
                 'attr' => ['spellcheck' => 'false'],

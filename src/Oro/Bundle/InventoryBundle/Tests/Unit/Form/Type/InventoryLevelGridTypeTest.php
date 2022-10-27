@@ -21,36 +21,29 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var InventoryLevelGridType
-     */
-    protected $type;
+    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $formFactory;
 
-    /**
-     * @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $formFactory;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var InventoryLevelGridType */
+    private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->type = new InventoryLevelGridType($this->formFactory, $this->doctrineHelper);
+
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([
@@ -66,25 +59,21 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $options
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $options, $submittedData, $expectedData)
+    public function testSubmit(array $options, mixed $submittedData, mixed $expectedData)
     {
         $form = $this->factory->create(InventoryLevelGridType::class, null, $options);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
-        /** @var ProductUnitPrecision $firstPrecision */
-        $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
-        /** @var ProductUnitPrecision $secondPrecision */
-        $secondPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
+        $firstPrecision = $this->getEntity(ProductUnitPrecision::class, ['id' => 11]);
+        $secondPrecision = $this->getEntity(ProductUnitPrecision::class, ['id' => 12]);
 
         $product = new Product();
         $product->addUnitPrecision($firstPrecision)
@@ -106,7 +95,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
                 'submittedData' => json_encode([
                     '1_11' => ['levelQuantity' => '42'],
                     '2_12' => ['levelQuantity' => null],
-                ]),
+                ], JSON_THROW_ON_ERROR),
                 'expectedData' => new ArrayCollection([
                     '1_11' => [
                         'data' => ['levelQuantity' => '42'],
@@ -133,15 +122,14 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
         $itemPrecision->setUnit($itemUnit)->setPrecision(0);
 
         $productId = 42;
-        /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId]);
+        $product = $this->getEntity(Product::class, ['id' => $productId]);
         $product->addUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
 
         $constraints = ['some' => 'constraints'];
         $constraintsView = new FormView();
-        $constraintsView->vars['attr']['data-validation'] = json_encode($constraints);
+        $constraintsView->vars['attr']['data-validation'] = json_encode($constraints, JSON_THROW_ON_ERROR);
 
-        $constraintsForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $constraintsForm = $this->createMock(FormInterface::class);
         $constraintsForm->expects($this->once())
             ->method('createView')
             ->willReturn($constraintsView);
@@ -152,8 +140,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
             ->willReturn($constraintsForm);
 
         $view = new FormView();
-        /** @var FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $options = ['product' => $product];
 
         $this->type->finishView($view, $form, $options);

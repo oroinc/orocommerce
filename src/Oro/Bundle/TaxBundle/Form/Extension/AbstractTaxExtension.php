@@ -2,90 +2,42 @@
 
 namespace Oro\Bundle\TaxBundle\Form\Extension;
 
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * The base class for handling tax code for different entities.
+ */
 abstract class AbstractTaxExtension extends AbstractTypeExtension
 {
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var string */
-    protected $taxCodeClass;
-
-    /** @var EntityRepository */
-    protected $repository;
-
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param string $taxCodeClass
+     * {@inheritDoc}
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxCodeClass)
-    {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->taxCodeClass = $taxCodeClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->addTaxCodeField($builder);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    abstract protected function addTaxCodeField(FormBuilderInterface $builder);
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSetData(FormEvent $event)
+    public function onPostSetData(FormEvent $event): void
     {
         $entity = $event->getData();
-        if (!$entity || !$this->doctrineHelper->getEntityIdentifier($entity)) {
+        if (null === $entity) {
             return;
         }
 
         $taxCode = $this->getTaxCode($entity);
-
         $event->getForm()->get('taxCode')->setData($taxCode);
     }
 
-    /**
-     * @param object $object
-     * @return AbstractTaxCode|null
-     */
-    abstract protected function getTaxCode($object);
-
-    /**
-     * @return EntityRepository
-     */
-    protected function getRepository()
-    {
-        if (!$this->repository) {
-            $this->repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-        }
-
-        return $this->repository;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSubmit(FormEvent $event)
+    public function onPostSubmit(FormEvent $event): void
     {
         $entity = $event->getData();
-        if (!$entity) {
+        if (null === $entity) {
             return;
         }
 
@@ -96,18 +48,16 @@ abstract class AbstractTaxExtension extends AbstractTypeExtension
 
         $taxCodeNew = $form->get('taxCode')->getData();
         $taxCode = $this->getTaxCode($entity);
-
         $this->handleTaxCode($entity, $taxCode, $taxCodeNew);
     }
 
-    /**
-     * @param object $entity
-     * @param AbstractTaxCode $taxCode
-     * @param AbstractTaxCode $taxCodeNew
-     */
+    abstract protected function addTaxCodeField(FormBuilderInterface $builder): void;
+
+    abstract protected function getTaxCode(object $entity): ?AbstractTaxCode;
+
     abstract protected function handleTaxCode(
-        $entity,
-        AbstractTaxCode $taxCode = null,
-        AbstractTaxCode $taxCodeNew = null
-    );
+        object $entity,
+        ?AbstractTaxCode $taxCode,
+        ?AbstractTaxCode $taxCodeNew
+    ): void;
 }

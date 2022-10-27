@@ -7,26 +7,19 @@ use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class SingleUnitModeProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @internal */
-    const SINGLE_UNIT_MODE = true;
-
-    /** @internal */
-    const CODE_VISIBLE = false;
-
-    /** @internal */
-    const CONFIG_DEFAULT_UNIT = 'item';
-
-    /** @var SingleUnitModeProvider */
-    private $provider;
+    private const SINGLE_UNIT_MODE = true;
+    private const CODE_VISIBLE = false;
+    private const CONFIG_DEFAULT_UNIT = 'item';
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|SingleUnitModeService */
     private $singleUnitService;
 
-    public function setUp()
+    /** @var SingleUnitModeProvider */
+    private $provider;
+
+    protected function setUp(): void
     {
-        $this->singleUnitService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Service\SingleUnitModeService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->singleUnitService = $this->createMock(SingleUnitModeService::class);
 
         $this->provider = new SingleUnitModeProvider($this->singleUnitService);
     }

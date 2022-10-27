@@ -1,0 +1,3 @@
+dynamic-imports:
+    orocheckout:
+        - orotax/js/app/components/order-taxes-component

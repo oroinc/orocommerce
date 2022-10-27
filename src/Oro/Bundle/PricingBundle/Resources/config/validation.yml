@@ -5,6 +5,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         - Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference:
             fields:
                 - productAssignmentRule
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductAssignmentRuleExpression: ~
     properties:
         name:
             - NotBlank: ~
@@ -80,6 +81,7 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
                 - { currency: 'oro.pricing.pricerule.currency.label', currencyExpression: 'oro.pricing.pricerule.currency_expression.label' }
                 - { productUnit: 'oro.pricing.pricerule.product_unit.label', productUnitExpression: 'oro.pricing.pricerule.product_unit_expression.label' }
         - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressions: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressions: ~
     properties:
         currency:
             - Currency: ~
@@ -125,7 +127,7 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
             - Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax:
                 groups: [Default, NotCircularReference]
             - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
-                fieldLabel: 'oro.pricing.pricerule.calculate_as.label'
+                fieldLabel: 'oro.pricing.pricerule.rule.label'
                 numericOnly: true
                 withRelations: true
                 groups: [Default, NotCircularReference]
@@ -135,6 +137,9 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
             - NotBlank: ~
             - Type:
                 type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
 
 Oro\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
@@ -150,6 +155,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
     properties:
         sortOrder:
             - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
         website:
@@ -171,6 +181,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
     properties:
         sortOrder:
             - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
         website:
@@ -200,6 +215,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     properties:
         sortOrder:
             - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
         website:
@@ -232,6 +252,9 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         - Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity:
             groups: [Default]
             fields: [ product, priceList, quantity, unit, currency ]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
+            groups: [Default, ProductPriceCollection]
     properties:
         product:
             - NotBlank:
@@ -268,6 +291,9 @@ Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig:
             - NotBlank: ~
             - Type:
                 type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
 

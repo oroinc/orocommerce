@@ -6,20 +6,37 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 {
+    public function testOnCustomerGroupViewFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
+
+        $this->requestStack->expects($this->never())
+            ->method('getCurrentRequest');
+
+        $event = $this->createEvent($this->env);
+        $listener->onCustomerGroupView($event);
+    }
+
     /**
-     * @param RequestStack $requestStack
      * @return CustomerGroupFormViewListener
      */
-    protected function getListener(RequestStack $requestStack)
+    protected function getListener()
     {
         return new CustomerGroupFormViewListener(
-            $requestStack,
+            $this->requestStack,
             $this->translator,
             $this->doctrineHelper,
             $this->websiteProvider
@@ -46,18 +63,12 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
         $fallbackEntity->setCustomerGroup($customerGroup);
         $fallbackEntity->setFallback(PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY);
 
-        $priceToCustomerGroupRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceToCustomerGroupRepository = $this->createMock(PriceListToCustomerGroupRepository::class);
         $priceToCustomerGroupRepository->expects($this->once())
             ->method('findBy')
             ->with(['customerGroup' => $customerGroup, 'website' => $websites])
             ->willReturn($priceListsToCustomerGroup);
-        $fallbackRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fallbackRepository = $this->createMock(PriceListToCustomerGroupRepository::class);
         $fallbackRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['customerGroup' => $customerGroup, 'website' => $websites])
@@ -67,14 +78,10 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
             ->willReturn($customerGroup);
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['OroPricingBundle:PriceListToCustomerGroup', $priceToCustomerGroupRepository],
-                        ['OroPricingBundle:PriceListCustomerGroupFallback', $fallbackRepository]
-                    ]
-                )
-            );
+            ->willReturnMap([
+                ['OroPricingBundle:PriceListToCustomerGroup', $priceToCustomerGroupRepository],
+                ['OroPricingBundle:PriceListCustomerGroupFallback', $fallbackRepository]
+            ]);
 
         return [$priceListToCustomerGroup1, $priceListToCustomerGroup2];
     }
@@ -82,9 +89,16 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
     /**
      * {@inheritdoc}
      */
-    protected function processEvent(RequestStack $requestStack, BeforeListRenderEvent $event)
+    protected function processEvent(BeforeListRenderEvent $event)
     {
-        $listener = $this->getListener($requestStack);
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
         $listener->onCustomerGroupView($event);
     }
 

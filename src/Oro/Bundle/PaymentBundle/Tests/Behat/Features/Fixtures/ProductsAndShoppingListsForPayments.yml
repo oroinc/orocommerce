@@ -1,0 +1,21 @@
+include:
+    - '@OroTaxBundle:products_and_shopping_lists.yml'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        vatId: 'TESTVATID'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product:
+        sku: 'SKU123'
+        primaryUnitPrecision: '@precision'
+        __calls:
+            - addName: ['@locValue']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        owner: '@business_unit'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'

@@ -15,8 +15,6 @@ class AddingUpdatedAtToShippingRule implements Migration, OrderedMigrationInterf
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)

@@ -2,34 +2,87 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\Testing\ReflectionUtil;
 
-class ProductNormalizerEventListenerTest extends AbstractProductImportEventListenerTest
+class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CATEGORY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
 
-    /**
-     * @var ProductNormalizerEventListener
-     */
-    protected $listener;
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $categoryRepository;
 
-    public function setUp()
+    /** @var ProductNormalizerEventListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        parent::setUp();
-        $this->listener = new ProductNormalizerEventListener($this->registry, self::CATEGORY_CLASS);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
+        $this->listener = new ProductNormalizerEventListener(
+            $registry,
+            $this->aclHelper,
+            Category::class
+        );
     }
 
-    public function tearDown()
+    private function getProduct(): Product
     {
-        unset($this->listener);
-        parent::tearDown();
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+        $product->setSku(uniqid('', true));
+
+        return $product;
+    }
+
+    private function getCategory(Product $product): Category
+    {
+        $category = new CategoryStub();
+        $category->addTitle(new CategoryTitle());
+        $category->addProduct($product);
+
+        return $category;
     }
 
     public function testOnNormalize()
     {
-        $product = $this->getPreparedProduct();
+        $product = $this->getProduct();
+        $category = $this->getCategory($product);
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->categoryRepository->expects($this->once())
+            ->method('findOneByProductSkuQueryBuilder')
+            ->with($product->getSku(), $this->isTrue())
+            ->willReturn($queryBuilder);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($category);
+        $this->aclHelper->expects($this->once())
+            ->method('apply')
+            ->with($this->identicalTo($queryBuilder))
+            ->willReturn($query);
+
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);
         $this->assertEquals($product, $event->getProduct());
@@ -37,29 +90,56 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
         $plainData = $event->getPlainData();
         $this->assertArrayHasKey(ProductNormalizerEventListener::CATEGORY_KEY, $plainData);
         $this->assertEquals(
-            $this->categoriesByProduct[$product->getSku()]->getDefaultTitle(),
+            $category->getDefaultTitle(),
             $plainData[ProductNormalizerEventListener::CATEGORY_KEY]
         );
 
-        // Should be used cache
+        // test that a cache is used
         $this->listener->onNormalize($event);
-        $this->assertEquals(1, $this->findByProductSkuCalls[$product->getSku()]);
     }
 
     public function testOnClear()
     {
-        $product = $this->getPreparedProduct();
+        $product = $this->getProduct();
+        $category = $this->getCategory($product);
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->categoryRepository->expects($this->exactly(2))
+            ->method('findOneByProductSkuQueryBuilder')
+            ->with($product->getSku(), $this->isTrue())
+            ->willReturn($queryBuilder);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->exactly(2))
+            ->method('getOneOrNullResult')
+            ->willReturn($category);
+        $this->aclHelper->expects($this->exactly(2))
+            ->method('apply')
+            ->with($this->identicalTo($queryBuilder))
+            ->willReturn($query);
+
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);
         $this->listener->onClear();
         $this->listener->onNormalize($event);
-        $this->assertEquals(2, $this->findByProductSkuCalls[$product->getSku()]);
     }
 
     public function testOnNormalizeWithoutCategory()
     {
-        $product = (new Product())
-            ->setSku('test');
+        $product = $this->getProduct();
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->categoryRepository->expects($this->once())
+            ->method('findOneByProductSkuQueryBuilder')
+            ->with($product->getSku(), $this->isTrue())
+            ->willReturn($queryBuilder);
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn(null);
+        $this->aclHelper->expects($this->once())
+            ->method('apply')
+            ->with($this->identicalTo($queryBuilder))
+            ->willReturn($query);
 
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);

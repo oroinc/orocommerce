@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -79,15 +79,15 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $this->manager = $manager;
-        /* @var $owner User */
+        /* @var User $owner */
         $owner = $manager->getRepository(User::class)->findOneBy([]);
-        /* @var $workflowManager WorkflowManager */
+        /* @var WorkflowManager $workflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
         $this->clearPreconditions();
         $defaultCustomerUser = $this->getDefaultCustomerUser($manager);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
-            /* @var $customerUser CustomerUser */
+            /* @var CustomerUser $customerUser */
             $customerUser = isset($checkoutData['customerUser']) ?
                 $this->getReference($checkoutData['customerUser']) :
                 $defaultCustomerUser;
@@ -129,10 +129,13 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
 
             $manager->persist($checkout);
             $this->setReference($name, $checkout);
-
-            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
         }
         $manager->flush();
+
+        foreach ($this->getData() as $name => $checkoutData) {
+            $checkout = $this->getReference($name);
+            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
+        }
     }
 
     protected function clearPreconditions()

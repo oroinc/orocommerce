@@ -23,6 +23,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
@@ -39,8 +42,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @BeforeScenario
-     *
-     * @param BeforeScenarioScope $scope
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
@@ -67,8 +68,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for checkout:$/
-     *
-     * @param TableNode $table
      */
     public function assertCheckoutStepLineItemDiscount(TableNode $table)
     {
@@ -80,8 +79,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for order:$/
-     *
-     * @param TableNode $table
      */
     public function assertOrderLineItemDiscount(TableNode $table)
     {
@@ -93,7 +90,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for backoffice order:$/
-     * @param TableNode $table
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {
@@ -188,6 +184,30 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * @Given /^(?:|I )go through the order completion, and should be on order view page$/
+     */
+    public function iGoThroughTheOrderCompletionAndShouldBeOnOrderViewPage()
+    {
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Shipping Information - Checkout');
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Shipping Method - Checkout');
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Payment - Checkout');
+        $this->oroMainContext->pressButton('Continue');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPageTitle('Order Review - Checkout');
+        $this->oroMainContext->pressButton('Submit Order');
+        $this->waitForAjax();
+        $this->oroMainContext->clickLink('click here to review');
+        $this->waitForAjax();
+        $this->oroMainContext->assertPage('Order Frontend View');
+    }
+
+    /**
      * @When /^(?:|I )save order without discounts recalculation$/
      */
     public function iSaveOrderWithoutDiscountsRecalculation()
@@ -230,7 +250,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $pattern = '/^' . $codePrefix . $pattern . $codeSuffix . '$/';
 
         $element = $this->elementFactory->createElement('couponCodePreview');
-        static::assertRegExp($pattern, $element->getText());
+        static::assertMatchesRegularExpression($pattern, $element->getText());
     }
 
     /**
@@ -243,7 +263,9 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         /** @var PromotionShoppingListLineItem $lineItem */
         foreach ($element->getLineItems() as $lineItem) {
             $sku = $lineItem->getProductSKU();
-            $expectedDiscounts[$sku] = ['sku' => $sku, 'discount' => $lineItem->getDiscount()];
+            if ($sku) {
+                $expectedDiscounts[$sku] = ['sku' => $sku, 'discount' => $lineItem->getDiscount()];
+            }
         }
 
         $rows = $table->getRows();

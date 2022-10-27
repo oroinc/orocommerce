@@ -1,0 +1,91 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCheckout/layouts/default/imports/checkout_line_items_grid/layout.html.twig'
+
+        - '@setOption':
+            id: __page_content
+            optionName: attr.class
+            optionValue: 'page-content--has-sidebar-right'
+
+        - '@setOption':
+            id: page_main_content
+            optionName: attr.class
+            optionValue: 'responsive-checkout-layout'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-checkout-line-items-grid
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_parameters
+            optionValue:
+                checkout_id: '=data["checkout"].getId()'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: split_to_cells
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid responsive-shopping-list-grid-view responsive-checkout-grid'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addDatagridSettingsManager
+            optionValue: false
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addRefreshAction
+            optionValue: false
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.addResetAction
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
+            optionValue: true
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.responsiveGrids.enable
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                cellActionsHideCount: 4
+                cellLauncherOptions:
+                    launcherMode: 'icon-only'
+                tableClassName: 'table-sm'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.enableViews
+            optionValue: false
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_list_line_items'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                className: 'datagrid-tool datagrid-tool--short'

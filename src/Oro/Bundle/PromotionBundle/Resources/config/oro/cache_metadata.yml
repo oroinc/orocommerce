@@ -1,0 +1,196 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  attributes:
+    id:
+      groups: ['promotion']
+    totals:
+      groups: ['promotion']
+    lineItems:
+      groups: ['promotion']
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+  attributes:
+    subtotal:
+      groups: ['promotion']
+
+Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal:
+  attributes:
+    currency:
+      groups: ['promotion']
+    amount:
+      groups: ['promotion']
+    data:
+      groups: ['promotion']
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  attributes:
+    id:
+      groups: ['promotion']
+    quantity:
+      groups: ['promotion']
+    product:
+      groups: ['promotion']
+    unit:
+      groups: ['promotion']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+  attributes:
+    code:
+      groups: ['promotion']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['promotion']
+
+Oro\Bundle\CheckoutBundle\Entity\Checkout:
+  attributes:
+    id:
+      groups: ['promotion']
+    shipToBillingAddress:
+      groups: ['promotion']
+    billingAddress:
+      groups: ['promotion']
+    shippingAddress:
+      groups: ['promotion']
+    shippingMethod:
+      groups: ['promotion']
+    shippingMethodType:
+      groups: ['promotion']
+    paymentMethod:
+      groups: ['promotion']
+    shippingCost:
+      groups: ['promotion']
+    currency:
+      groups: ['promotion']
+    lineItems:
+      groups: ['promotion']
+    subtotals:
+      groups: ['promotion']
+    appliedCoupons:
+      groups: ['checkout', 'promotion']
+
+Oro\Bundle\PromotionBundle\Entity\AppliedCoupon:
+  attributes:
+    couponCode:
+      groups: ['checkout', 'promotion']
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+  attributes:
+    id:
+      groups: ['promotion']
+    street:
+      groups: ['promotion']
+    street2:
+      groups: ['promotion']
+    city:
+      groups: ['promotion']
+    postalCode:
+      groups: ['promotion']
+    country:
+      groups: ['promotion']
+    region:
+      groups: ['promotion']
+    organization:
+      groups: ['promotion']
+    regionText:
+      groups: ['promotion']
+    namePrefix:
+      groups: ['promotion']
+    firstName:
+      groups: ['promotion']
+    middleName:
+      groups: ['promotion']
+    lastName:
+      groups: ['promotion']
+    nameSuffix:
+      groups: ['promotion']
+    phone:
+      groups: ['promotion']
+
+Oro\Bundle\AddressBundle\Entity\Region:
+  attributes:
+    code:
+      groups: ['promotion']
+
+Oro\Bundle\AddressBundle\Entity\Country:
+  attributes:
+    iso2Code:
+      groups: ['promotion']
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+  attributes:
+    id:
+      groups: ['promotion']
+    product:
+      groups: ['promotion']
+    productSku:
+      groups: ['promotion']
+    freeFormProduct:
+      groups: ['promotion']
+    quantity:
+      groups: ['promotion']
+    productUnit:
+      groups: ['promotion']
+    productUnitCode:
+      groups: ['promotion']
+    value:
+      groups: ['promotion']
+    currency:
+      groups: ['promotion']
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal:
+  attributes:
+    subtotal:
+      groups: ['promotion']
+
+Oro\Bundle\OrderBundle\Entity\Order:
+  attributes:
+    id:
+      groups: ['promotion']
+    billingAddress:
+      groups: ['promotion']
+    shippingAddress:
+      groups: ['promotion']
+    poNumber:
+      groups: ['promotion']
+    currency:
+      groups: ['promotion']
+    subtotal:
+      groups: ['promotion']
+    baseSubtotalValue:
+      groups: ['promotion']
+    baseTotalValue:
+      groups: ['promotion']
+    lineItems:
+      groups: ['promotion']
+    shippingMethod:
+      groups: ['promotion']
+    shippingMethodType:
+      groups: ['promotion']
+    estimatedShippingCostAmount:
+      groups: ['promotion']
+    overriddenShippingCostAmount:
+      groups: ['promotion']
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+  attributes:
+    id:
+      groups: ['promotion']
+    product:
+      groups: ['promotion']
+    productSku:
+      groups: ['promotion']
+    productName:
+      groups: ['promotion']
+    freeFormProduct:
+      groups: ['promotion']
+    quantity:
+      groups: ['promotion']
+    productUnit:
+      groups: ['promotion']
+    productUnitCode:
+      groups: ['promotion']
+    value:
+      groups: ['promotion']
+    currency:
+      groups: ['promotion']

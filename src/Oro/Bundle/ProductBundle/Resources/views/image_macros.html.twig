@@ -1,26 +1,7 @@
-{% macro url(file, filter) -%}
-    {%- if file is not null %}
-        {{- filtered_image_url(file, filter) -}}
-    {% else %}
-        {{- _self.urlFromString('', filter) -}}
-    {% endif %}
-{%- endmacro -%}
-
-{% macro urlFromString(file, filter) -%}
-    {%- if file is empty %}
-        {% set file = '/bundles/oroproduct/default/images/no_image.png' %}
-    {% endif %}
-    {{- file|imagine_filter(filter) -}}
-{%- endmacro -%}
-
-{% macro image(file, filter) -%}
-    <img src="{{ _self.url(file, filter) }}"/>
-{%- endmacro -%}
-
 {% macro renderProductImages(productImages, imageTypes) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div class="image-collection view">
-        <table class="grid table table-bordered">
+        <table class="grid grid-main-container table table-bordered">
             <thead>
                 <tr>
                     <th>{{ 'oro.product.productimage.file.label'|trans }}</th>
@@ -34,7 +15,9 @@
                 {% for productImage in productImages %}
                     <tr>
                         <td>
-                            {{ oro_file_view(productImage, 'image', productImage.image, {'galleryId' : 'images'} ) }}
+                            <span {% if productImage.image.uuid is not null %}data-ie-preview="{{ file_url(productImage.image) }}"{% endif %}>
+                                {{ oro_file_view(productImage.image, {'galleryId' : 'images'} ) }}
+                            </span>
                         </td>
 
                         {% for imageType in imageTypes %}

@@ -1,31 +1,25 @@
+/* @theme: default; */
+
 .checkout-navigation {
     @include list-normalize();
 
-    margin: 0 0 0 15px;
-    border-left: 2px solid get-color('additional', 'light');
+    margin: 0 0 0 13px;
+    border-left: $checkout-navigation-border-left;
 
     word-wrap: break-word;
 
     &__step {
         position: relative;
 
-        padding: 0 0 30px 24px;
+        padding: 0 0 28px 20px;
 
         &:last-child {
             padding-bottom: 0;
         }
 
         &--past {
-            padding: 0 0 20px 24px;
+            padding-bottom: 20px;
         }
-    }
-
-    &__title {
-        color: get-color('additional', 'dark');
-        font-size: 16px;
-        line-height: 1.875;
-
-        white-space: nowrap;
     }
 
     &__content {
@@ -33,24 +27,25 @@
     }
 
     &__icon {
-        $checkout-navigation-icon-size: 30px !default;
-
         position: absolute;
         top: 0;
-        left: -$checkout-navigation-icon-size / 2;
+        left: -$checkout-navigation-icon-size * .5;
 
-        font-weight: 700;
+        font-weight: font-weight('bold');
 
-        @include badge($checkout-navigation-icon-size, 16px, get-color('additional', 'middle'));
+        @include badge(
+            $checkout-navigation-icon-size,
+            $checkout-navigation-icon-font-size,
+            get-color('additional', 'middle')
+        );
 
         &--current {
-            background-color: get-color('primary', 'base');
+            background-color: $checkout-navigation-icon-current-background-color;
         }
 
         &--complete {
-            color: get-color('additional', 'ultra');
-            background-color: get-color('secondary', 'light');
+            color: $checkout-navigation-complete-color;
+            background-color: $checkout-navigation-complete-background-color;
         }
-
     }
 }

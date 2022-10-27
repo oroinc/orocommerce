@@ -18,7 +18,7 @@ class CategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /** @var Category */
     protected $category;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->category = new Category();
         $this->categoryVisibilityResolved = new CategoryVisibilityResolved($this->category);
@@ -27,7 +27,7 @@ class CategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity, $this->category);
     }

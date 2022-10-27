@@ -2,18 +2,29 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
+/**
+ * Abstract implementation of search placeholder.
+ */
 abstract class AbstractPlaceholder implements PlaceholderInterface
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function replaceDefault($string)
     {
-        return $this->replaceValue($string, $this->getDefaultValue());
+        if (str_contains($string, $this->getPlaceholder())) {
+            return $this->replaceValue($string, $this->getDefaultValue());
+        }
+
+        return $string;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function replace($string, array $values)
     {
-        if (!array_key_exists($this->getPlaceholder(), $values)) {
+        if (!\array_key_exists($this->getPlaceholder(), $values)) {
             return $string;
         }
 

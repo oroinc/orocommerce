@@ -3,22 +3,23 @@
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Twig extension that provides payment term
+ * Provides a Twig function to get payment term from an entity:
+ *   - get_payment_term
  */
-class PaymentTermExtension extends \Twig_Extension
+class PaymentTermExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var PaymentTermProvider */
-    protected $dataProvider;
+    private ContainerInterface $container;
 
-    /**
-     * @param PaymentTermProvider $dataProvider
-     */
-    public function __construct(PaymentTermProvider $dataProvider)
+    public function __construct(ContainerInterface $container)
     {
-        $this->dataProvider = $dataProvider;
+        $this->container = $container;
     }
 
     /**
@@ -26,7 +27,9 @@ class PaymentTermExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return [new \Twig_SimpleFunction('get_payment_term', [$this, 'getPaymentTerm'])];
+        return [
+            new TwigFunction('get_payment_term', [$this, 'getPaymentTerm'])
+        ];
     }
 
     /**
@@ -36,6 +39,21 @@ class PaymentTermExtension extends \Twig_Extension
      */
     public function getPaymentTerm($object)
     {
-        return $this->dataProvider->getObjectPaymentTerm($object);
+        return $this->getPaymentTermProvider()->getObjectPaymentTerm($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_payment_term.provider.payment_term' => PaymentTermProviderInterface::class,
+        ];
+    }
+
+    private function getPaymentTermProvider(): PaymentTermProviderInterface
+    {
+        return $this->container->get('oro_payment_term.provider.payment_term');
     }
 }

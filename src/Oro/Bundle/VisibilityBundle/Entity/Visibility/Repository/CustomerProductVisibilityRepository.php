@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 
 class CustomerProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     const BATCH_SIZE = 1000;
-    
+
     /**
      * Delete from CustomerProductVisibility visibilities with fallback to 'category' when category is absent
      */
@@ -24,9 +23,6 @@ class CustomerProductVisibilityRepository extends AbstractProductVisibilityRepos
         }
     }
 
-    /**
-     * @param Product $product
-     */
     public function setToDefaultWithoutCategoryByProduct(Product $product)
     {
         $qb = $this->createQueryBuilder('entity');

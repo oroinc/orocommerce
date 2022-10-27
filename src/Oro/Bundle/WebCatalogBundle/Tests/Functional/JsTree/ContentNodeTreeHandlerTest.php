@@ -18,31 +18,26 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFixtures()
+    protected function getFixtures(): array
     {
-        return [
-            LoadContentNodesData::class
-        ];
+        return [LoadContentNodesData::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getHandlerId()
+    protected function getHandlerId(): string
     {
         return 'oro_web_catalog.content_node_tree_handler';
     }
 
     /**
      * @dataProvider createDataProvider
-     * @param string|null $entityReference
-     * @param bool $includeRoot
-     * @param array $expectedData
      */
-    public function testCreateTree($entityReference, $includeRoot, array $expectedData)
+    public function testCreateTree(?string $entityReference, bool $includeRoot, array $expectedData)
     {
         $entity = null;
-        if ($entityReference !== null) {
+        if (null !== $entityReference) {
             /** @var ContentNode $entity */
             $entity = $this->getReference($entityReference);
         }
@@ -68,10 +63,7 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertEquals([], $this->handler->createTree());
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
+    public function createDataProvider(): array
     {
         return [
             'CATALOG_1_ROOT without root' => [
@@ -154,14 +146,14 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
 
     /**
      * @dataProvider moveDataProvider
-     * @param string $entityReference
-     * @param string $parent
-     * @param int $position
-     * @param array $expectedStatus
-     * @param array $expectedData
      */
-    public function testMove($entityReference, $parent, $position, array $expectedStatus, array $expectedData)
-    {
+    public function testMove(
+        string $entityReference,
+        string $parent,
+        int $position,
+        array $expectedStatus,
+        array $expectedData
+    ) {
         $entityId = $this->getReference($entityReference)->getId();
         if ($parent !== AbstractTreeHandler::ROOT_PARENT_VALUE) {
             $parent = $this->getReference($parent)->getId();
@@ -170,10 +162,7 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertNodeMove($expectedStatus, $expectedData, $entityId, $parent, $position);
     }
 
-    /**
-     * @return array
-     */
-    public function moveDataProvider()
+    public function moveDataProvider(): array
     {
         return [
             [
@@ -204,7 +193,7 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getActualNodeHierarchy($entityId, $parentId, $position)
+    protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
         $entities = $this->getContainer()->get('doctrine')
             ->getManagerForClass(ContentNode::class)
@@ -232,11 +221,7 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertEquals($expectedRoot, $this->handler->getTreeRootByWebCatalog($webCatalog));
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @return string
-     */
-    protected function getTitle(ContentNode $contentNode)
+    protected function getTitle(ContentNode $contentNode): string
     {
         $titleValue = $this->getContainer()
             ->get('oro_locale.helper.localization')

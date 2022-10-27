@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductDBQueryRestrictionEvent extends Event
 {
@@ -16,10 +16,6 @@ class ProductDBQueryRestrictionEvent extends Event
     /** @var ParameterBag */
     protected $dataParameters;
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param ParameterBag $dataParameters
-     */
     public function __construct(QueryBuilder $queryBuilder, ParameterBag $dataParameters)
     {
         $this->queryBuilder = $queryBuilder;
@@ -42,9 +38,6 @@ class ProductDBQueryRestrictionEvent extends Event
         return $this->dataParameters;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
     public function setQueryBuilder(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;

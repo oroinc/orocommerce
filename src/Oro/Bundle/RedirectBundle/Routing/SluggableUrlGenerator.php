@@ -2,13 +2,18 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
+use Oro\Component\Routing\UrlUtil;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
+/**
+ * Generate Sluggable URLs for given route and parameters
+ */
 class SluggableUrlGenerator implements UrlGeneratorInterface
 {
     const DEFAULT_LOCALIZATION_ID = 0;
@@ -16,49 +21,38 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     const CONTEXT_TYPE = 'context_type';
     const CONTEXT_DATA = 'context_data';
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $generator;
+    private UrlGeneratorInterface $generator;
 
-    /**
-     * @var ContextUrlProviderRegistry
-     */
-    private $contextUrlProvider;
+    private ContextUrlProviderRegistry $contextUrlProvider;
 
-    /**
-     * @var SluggableUrlProviderInterface
-     */
-    private $sluggableUrlProvider;
+    private SluggableUrlProviderInterface $sluggableUrlProvider;
 
-    /**
-     * @var UserLocalizationManager
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
-    /**
-     * @param SluggableUrlProviderInterface $sluggableUrlProvider
-     * @param ContextUrlProviderRegistry $contextUrlProvider
-     * @param UserLocalizationManager $userLocalizationManager
-     */
+    private ConfigManager $configManager;
+
+    private ?bool $sluggableUrlsEnabled = null;
+
     public function __construct(
         SluggableUrlProviderInterface $sluggableUrlProvider,
         ContextUrlProviderRegistry $contextUrlProvider,
-        UserLocalizationManager $userLocalizationManager
+        LocalizationProviderInterface $localizationProvider,
+        ConfigManager $configManager
     ) {
         $this->sluggableUrlProvider = $sluggableUrlProvider;
         $this->contextUrlProvider = $contextUrlProvider;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
+        $this->configManager = $configManager;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
     {
         UrlParameterHelper::normalizeNumericTypes($parameters);
 
-        if ($referenceType === self::ABSOLUTE_PATH || $referenceType === false) {
+        if ($referenceType === self::ABSOLUTE_PATH) {
             return $this->generateSluggableUrl($name, $parameters);
         }
 
@@ -73,19 +67,20 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private function generateSluggableUrl($name, $parameters)
     {
         $contextUrl = $this->getContextUrl($parameters);
-        $localizationId = $this->getLocalizationId();
+        if (!$this->isSluggableUrlsEnabled()) {
+            return $this->addContextUrl($this->generator->generate($name, $parameters), $contextUrl);
+        }
 
-        $url = null;
+        $localizationId = $this->getLocalizationId();
 
         $this->sluggableUrlProvider->setContextUrl($contextUrl);
 
         $url = $this->sluggableUrlProvider->getUrl($name, $parameters, $localizationId);
-        // Fallback to default localization
+        // fallback to default localization
         if (!$url) {
             $url = $this->sluggableUrlProvider->getUrl($name, $parameters, self::DEFAULT_LOCALIZATION_ID);
         }
-
-        // If no Slug based URL is available - generate URL with base generator logic
+        // if no Slug based URL is available - generate URL with base generator logic
         if (!$url) {
             $url = $this->generator->generate($name, $parameters);
         }
@@ -109,9 +104,6 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         return $this->generator->getContext();
     }
 
-    /**
-     * @param UrlGeneratorInterface $generator
-     */
     public function setBaseGenerator(UrlGeneratorInterface $generator)
     {
         $this->generator = $generator;
@@ -138,34 +130,30 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
 
     /**
      * @param string $url
-     * @param string $contextUrl
+     * @param string|null $contextUrl
      * @return string
      */
     private function addContextUrl($url, $contextUrl)
     {
         $baseUrl = $this->getContext()->getBaseUrl();
-        if ($baseUrl) {
-            if (strpos($url, $baseUrl) === 0) {
-                $url = substr($url, strlen($baseUrl));
-            }
-            $urlParts = [trim($baseUrl, '/')];
-        }
-
         if ($contextUrl) {
-            $urlParts[] = trim($contextUrl, '/');
-            $urlParts[] = self::CONTEXT_DELIMITER;
+            $url = UrlUtil::join($contextUrl, self::CONTEXT_DELIMITER, UrlUtil::getPathInfo($url, $baseUrl));
         }
-        $urlParts[] = ltrim($url, '/');
 
-        return '/' . implode('/', $urlParts);
+        return UrlUtil::getAbsolutePath($url, $baseUrl);
     }
 
-    /**
-     * @return null|int
-     */
-    private function getLocalizationId()
+    private function getLocalizationId(): ?int
     {
-        $localization = $this->userLocalizationManager->getCurrentLocalization();
-        return $localization ? $localization->getId() : null;
+        return $this->localizationProvider->getCurrentLocalization()?->getId();
+    }
+
+    private function isSluggableUrlsEnabled(): bool
+    {
+        if ($this->sluggableUrlsEnabled === null) {
+            $this->sluggableUrlsEnabled = $this->configManager->get('oro_redirect.enable_direct_url');
+        }
+
+        return $this->sluggableUrlsEnabled;
     }
 }

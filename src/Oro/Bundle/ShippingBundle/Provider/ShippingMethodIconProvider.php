@@ -16,9 +16,6 @@ class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface,
      */
     private $shippingMethodProvider;
 
-    /**
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->shippingMethodProvider = $shippingMethodProvider;

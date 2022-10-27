@@ -36,7 +36,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
@@ -70,6 +70,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -101,14 +102,9 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @dataProvider optionsDataProvider
-     *
-     * @param array $options
-     * @param array $expectedOptions
-     */
-    public function testOptions(array $options, array $expectedOptions)
+    public function testDefaultOptions()
     {
+        $options = [];
         $this->provider
             ->expects($this->any())
             ->method('getShippingMethods')
@@ -116,30 +112,15 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(ShippingMethodTypesChoiceType::class, null, $options);
 
-        $this->assertArraySubset($expectedOptions, $form->getConfig()->getOptions());
-    }
+        $formOptions = $form->getConfig()->getOptions();
 
-    /**
-     * @return array
-     */
-    public function optionsDataProvider()
-    {
-        return [
-            'test default options' => [
-                'options' => [],
-                'expectedOptions' => [
-                    'placeholder' => false,
-                    'choices' => [
-                        'UPS 2 Day Air' => '{"shipping_method":"ups_4","shipping_method_type":"02"}',
-                        'UPS 3 Day Select' => '{"shipping_method":"ups_4","shipping_method_type":"12"}',
-                    ],
-                    'configs' => [
-                        'showIcon' => true,
-                        'minimumResultsForSearch' => 1
-                    ]
-                ]
-            ],
-        ];
+        $this->assertEquals(false, $formOptions['placeholder']);
+        $this->assertSame(true, $formOptions['configs']['showIcon']);
+        $this->assertSame(1, $formOptions['configs']['minimumResultsForSearch']);
+        $this->assertSame([
+            'UPS 2 Day Air' => '{"shipping_method":"ups_4","shipping_method_type":"02"}',
+            'UPS 3 Day Select' => '{"shipping_method":"ups_4","shipping_method_type":"12"}',
+        ], $formOptions['choices']);
     }
 
     public function testGetParent()

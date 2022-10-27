@@ -30,9 +30,6 @@ class OroShoppingListBundle implements Migration, ExtendExtensionAwareInterface
         $this->addShoppingListCustomerVisitor($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addShoppingListCustomerVisitor(Schema $schema)
     {
         $table = $schema->getTable('oro_customer_visitor');

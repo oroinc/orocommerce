@@ -4,15 +4,15 @@ services:
         arguments:
             - '@router'
         calls:
-            - [setDataClass, ['%oro_catalog.entity.category.class%']]
-            - [setProductClass, ['%oro_product.entity.product.class%']]
+            - [setDataClass, ['Oro\Bundle\CatalogBundle\Entity\Category']]
+            - [setProductClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
         tags:
             - { name: form.type, alias: oro_catalog_category }
 
     oro_catalog.form.type.category_default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType'
         calls:
-            - [setDataClass, ['%oro_catalog.entity.category_default_product_options.class%']]
+            - [setDataClass, ['Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions']]
         tags:
             - { name: form.type, alias: oro_catalog_category_default_product_options }
 
@@ -21,7 +21,7 @@ services:
         arguments:
             - '@oro_catalog.visibility.default_product_options'
         calls:
-            - [setDataClass, ['%oro_catalog.entity.category_unit_precision.class%']]
+            - [setDataClass, ['Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision']]
         tags:
             - { name: form.type, alias: oro_catalog_category_unit_precision }
 
@@ -35,14 +35,16 @@ services:
     oro_catalog.form.extension.product_type:
         class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension'
         arguments:
-            - "@doctrine"
+            - '@doctrine'
+            - '@security.authorization_checker'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_catalog.form.extension.product_step_one_type:
         class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
         arguments:
-            - "@oro_catalog.provider.default_product_unit_provider.category"
+            - '@oro_catalog.provider.default_product_unit_provider.category'
+            - '@security.authorization_checker'
         public: true
         tags:
             - { name: form.type_extension, alias: oro_product_step_one, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType }

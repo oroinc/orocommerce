@@ -333,11 +333,9 @@ Feature: Frontend workflow configuration
 
     And save and close form
     And click "Activate"
-    And click "Activate"
+    And I click "Activate" in modal window
     # for now, in UI no way to change applications
     And I allow workflow "Workflow Button Titles" for "commerce" application
-    And go to System/ Localization/ Translations
-    And click "Update Cache"
     # start workflow to see it on frontend
     And I go to Sales/ Requests For Quote
     And click View 0110 in grid
@@ -345,16 +343,16 @@ Feature: Frontend workflow configuration
 
   Scenario: Check Button Title on the entity view with Name in the transition
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Requests For Quote"
     And click View 0110 in grid
     Then I should see "Popup transition with only name" button with attributes:
-      | title | Popup transition with only name |
+      | title | ~ |
     When I click "Popup transition with only name"
 
   Scenario: Check Button Title on the entity view with Message and Label in the transition
     Then I should see "Label TML" button with attributes:
-      | title | Label TML |
+      | title | ~ |
     When I click "Label TML"
     Then I should see "UiWindow" with elements:
       | Title        | Label TML                |
@@ -387,7 +385,7 @@ Feature: Frontend workflow configuration
 
   Scenario: Check Button Title on the entity view with Attribute in the transition
     Then I should see "Popup transition with Attribute" button with attributes:
-      | title | Popup transition with Attribute |
+      | title | ~ |
     When I click "Popup transition with Attribute"
     Then I should see "UiDialog" with elements:
       | Title    | Popup transition with Attribute |
@@ -396,7 +394,7 @@ Feature: Frontend workflow configuration
 
   Scenario: Check Button Title on the entity view with Attribute and Label in the transition
     Then I should see "Label TAL" button with attributes:
-      | title | Label TAL |
+      | title | ~ |
     When I click "Label TAL"
     Then I should see "UiDialog" with elements:
       | Title    | Label TAL |
@@ -433,16 +431,16 @@ Feature: Frontend workflow configuration
 
   Scenario: Check Button Title on the entity view with Original Page and only Name in the transition
     Then I should see "Page Original transition with only name" button with attributes:
-      | title | Page Original transition with only name |
+      | title | ~ |
     When I click "Page Original transition with only name"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / PAGE ORIGINAL TRANSITION WITH ONLY NAME"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Page Original transition with only name"
     And click "Submit"
 
   Scenario: Check Button Title on the entity view with View Page and Message and Label in the transition
     Then I should see "Label TPML" button with attributes:
-      | title | Label TPML |
+      | title | ~ |
     When I click "Label TPML"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / LABEL TPML"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Label TPML"
     And I should see "warning message text View Page and Message and Label"
     And click "Submit"
 
@@ -450,7 +448,7 @@ Feature: Frontend workflow configuration
     Then I should see "Page Index transition with Message and Title" button with attributes:
       | title | Title TPMT |
     When I click "Page Index transition with Message and Title"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / PAGE INDEX TRANSITION WITH MESSAGE AND TITLE"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Page Index transition with Message and Title"
     And I should see "warning message text Index Page and Message and Title"
     And click "Submit"
 
@@ -458,42 +456,42 @@ Feature: Frontend workflow configuration
     Then I should see "Label TPMTL" button with attributes:
       | title | Title TPMTL |
     When I click "Label TPMTL"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / LABEL TPMTL"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Label TPMTL"
     And I should see "warning message text Original Page and Message and Title and Label"
     And click "Submit"
 
   Scenario: Check Button Title on the entity view with View Page and Attribute in the transition
     Then I should see "Page View transition with Attribute" button with attributes:
-      | title | Page View transition with Attribute |
+      | title | ~ |
     When I click "Page View transition with Attribute"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / PAGE VIEW TRANSITION WITH ATTRIBUTE"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Page View transition with Attribute"
     And click "Submit"
 
   Scenario: Check Button Title on the entity view with Index Page and Attribute and Label in the transition
     Then I should see "Label TPAL" button with attributes:
-      | title | Label TPAL |
+      | title | ~ |
     When I click "Label TPAL"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / LABEL TPAL"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Label TPAL"
     And click "Submit"
 
   Scenario: Check Button Title on the entity view with Original Page and Attribute and Title in the transition
     Then I should see "Page Original transition with Attribute and Title" button with attributes:
       | title | Title TPAT |
     When I click "Page Original transition with Attribute and Title"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / PAGE ORIGINAL TRANSITION WITH ATTRIBUTE AND TITLE"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Page Original transition with Attribute and Title"
     And click "Submit"
 
   Scenario: Check Button Title on the entity view with View Page and Attribute and Title and Label in the transition
     Then I should see "Label TPATL" button with attributes:
       | title | Title TPATL |
     When I click "Label TPATL"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / LABEL TPATL"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Label TPATL"
     And click "Submit"
 
   Scenario: Check Button Title on the entity view with Index Page and Message, Attribute, Title and Label in the transition
     Then I should see "Label TPMATL" button with attributes:
       | title | Title TPMATL |
     When I click "Label TPMATL"
-    Then I should see that "Workflow Page Title" contains "WORKFLOW BUTTON TITLES / LABEL TPMATL"
+    Then I should see that "Workflow Page Title" contains "Workflow Button Titles / Label TPMATL"
     And I should see "warning message text - Page and Message, Attribute, Title and Label"
     And click "Submit"

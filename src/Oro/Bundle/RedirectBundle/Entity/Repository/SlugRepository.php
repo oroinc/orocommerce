@@ -2,69 +2,52 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
+use Oro\Bundle\RedirectBundle\Model\SlugQueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
-class SlugRepository extends EntityRepository
+/**
+ * Repository for Slug entity
+ */
+class SlugRepository extends ServiceEntityRepository
 {
-    /**
-     * @param string $url
-     * @return QueryBuilder
-     */
-    public function getSlugByUrlQueryBuilder($url)
+    private SlugQueryBuilderModifierInterface $slugQueryBuilderModifier;
+
+    public function setSlugQueryBuilderModifier(SlugQueryBuilderModifierInterface $slugQueryBuilderModifier): void
     {
-        $qb = $this->createQueryBuilder('slug');
-
-        $qb->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
-            ->andWhere($qb->expr()->eq('slug.url', ':url'))
-            ->setParameter('url', $url)
-            ->setParameter('urlHash', md5($url));
-
-        return $qb;
+        $this->slugQueryBuilderModifier = $slugQueryBuilderModifier;
     }
 
-    /**
-     * @param string $slug
-     * @param SlugAwareInterface|null $restrictedEntity
-     * @param ScopeCriteria|null $scopeCriteria
-     * @return null|Slug
-     */
-    public function findOneDirectUrlBySlug(
-        $slug,
+    public function getOneDirectUrlBySlugQueryBuilder(
+        string $slug,
         SlugAwareInterface $restrictedEntity = null,
         ScopeCriteria $scopeCriteria = null
-    ) {
+    ): QueryBuilder {
         $qb = $this->getSlugByUrlQueryBuilder($slug);
         $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
 
         $qb->setMaxResults(1);
         $this->restrictByEntitySlugs($qb, $restrictedEntity);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb;
     }
 
-    /**
-     * @param string $pattern
-     * @param SlugAwareInterface|null $restrictedEntity
-     * @param ScopeCriteria|null $scopeCriteria
-     * @return array|\string[]
-     */
     public function findAllDirectUrlsByPattern(
-        $pattern,
+        string $pattern,
         SlugAwareInterface $restrictedEntity = null,
         ScopeCriteria $scopeCriteria = null
-    ) {
+    ): array {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from($this->getEntityName(), 'slug')
             ->select('slug.url')
@@ -74,42 +57,31 @@ class SlugRepository extends EntityRepository
 
         $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
         $this->restrictByEntitySlugs($qb, $restrictedEntity);
+        $this->slugQueryBuilderModifier->modify($qb);
 
-        return array_map(
-            function ($item) {
-                return $item['url'];
-            },
-            $qb->getQuery()->getArrayResult()
-        );
+        $rawResult = $qb->getQuery()->getArrayResult();
+
+        return \array_column($rawResult, 'url');
     }
 
-    /**
-     * @param string $url
-     * @param ScopeCriteria $scopeCriteria
-     * @return Slug|null
-     */
-    public function getSlugByUrlAndScopeCriteria($url, ScopeCriteria $scopeCriteria)
+    public function getSlugByUrlAndScopeCriteria(string $url, ScopeCriteria $scopeCriteria): ?Slug
     {
         $qb = $this->getSlugByUrlQueryBuilder($url);
-
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
             ->addSelect('scopes.id as matchedScopeId');
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
 
-    /**
-     * @param string $slugPrototype
-     * @param ScopeCriteria $scopeCriteria
-     * @return Slug|null
-     */
-    public function getSlugBySlugPrototypeAndScopeCriteria($slugPrototype, ScopeCriteria $scopeCriteria)
+    public function getSlugBySlugPrototypeAndScopeCriteria(string $slugPrototype, ScopeCriteria $scopeCriteria): ?Slug
     {
         $qb = $this->createQueryBuilder('slug');
-        $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
-            ->addSelect('scopes.id as matchedScopeId')
-            ->where($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
+        $this->applyDirectUrlScopeCriteria($qb);
+        $qb->addSelect('scopes.id as matchedScopeId')
+            ->andWhere($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
             ->setParameter('slugPrototype', $slugPrototype);
+
+        $this->slugQueryBuilderModifier->modify($qb);
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
@@ -178,22 +150,15 @@ class SlugRepository extends EntityRepository
     /**
      * Doctrine cannot handle searching by "array" columns, therefore
      * we need a low-level query here.
-     *
-     * @param string $name
-     * @param array $parameters
-     * @param int $localizationId
-     * @return null|array
      */
-    public function getRawSlug($name, $parameters, $localizationId)
+    public function getRawSlug(string $name, array $parameters, ?int $localizationId): ?array
     {
-        /** @var Connection $connection */
-        $connection = $this->_em->getConnection();
+        $connection = $this->getEntityManager()->getConnection();
 
         $localizationIdSortOrder = 'DESC';
-        if ($this->_em->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+        if ($connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
             $localizationIdSortOrder .= ' NULLS LAST';
         }
-        $hashParameters = UrlParameterHelper::hashParams($parameters);
         $qb = $connection->createQueryBuilder()
             ->select('slug.url', 'slug.slug_prototype')
             ->from('oro_redirect_slug', 'slug')
@@ -205,41 +170,42 @@ class SlugRepository extends EntityRepository
             ->andWhere('slug.localization_id = :localizationId OR slug.localization_id IS NULL')
             ->setParameters(
                 [
-                    'parametersHash' => $hashParameters,
+                    'parametersHash' => UrlParameterHelper::hashParams($parameters),
                     'routeName' => $name,
                     'routeParameters' => $parameters,
                     'localizationId' => $localizationId
                 ],
                 [
-                    'parametersHash' => Type::STRING,
-                    'routeName' => Type::STRING,
-                    'routeParameters' => Type::TARRAY,
-                    'localizationId' => Type::INTEGER
+                    'parametersHash' => Types::STRING,
+                    'routeName' => Types::STRING,
+                    'routeParameters' => Types::ARRAY,
+                    'localizationId' => Types::INTEGER
                 ]
             )
             ->addOrderBy('slug.localization_id', $localizationIdSortOrder)
+            ->addOrderBy('slug.id')
             ->setMaxResults(1);
 
-        return $qb->execute()->fetch(\PDO::FETCH_ASSOC);
+        $result = $qb->execute()->fetch(\PDO::FETCH_ASSOC);
+        if (false === $result) {
+            $result = null;
+        }
+
+        return $result;
     }
 
-    /**
-     * @return QueryBuilder
-     */
-    private function getUsedScopesQueryBuilder()
+    public function isSlugForRouteExists(string $routeName): bool
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb = $this->getEntityManager()->getConnection()->createQueryBuilder()
+            ->select('1')
+            ->from('oro_redirect_slug', 'slug')
+            ->leftJoin('slug', 'oro_slug_scope', 'scope', 'scope.slug_id = slug.id')
+            ->where('scope.slug_id IS NULL')
+            ->andWhere('slug.route_name = :routeName')
+            ->setParameter('routeName', $routeName)
+            ->setMaxResults(1);
 
-        $qb->from(Scope::class, 'scope')
-            ->select('scope')
-            ->innerJoin(
-                $this->getEntityName(),
-                'slug',
-                Join::WITH,
-                $qb->expr()->isMemberOf('scope', 'slug.scopes')
-            );
-
-        return $qb;
+        return (bool)$qb->execute()->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -279,6 +245,21 @@ class SlugRepository extends EntityRepository
         $qb->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Find all most suitable scopes that fit the criteria.
+     *
+     * @param ScopeCriteria $criteria
+     *
+     * @return Scope[]
+     */
+    public function findMostSuitableUsedScopes(ScopeCriteria $criteria): array
+    {
+        $qb = $this->getUsedScopesQueryBuilder();
+        $criteria->applyWhereWithPriorityForScopes($qb, 'scope');
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -328,33 +309,49 @@ class SlugRepository extends EntityRepository
         return array_map('current', $qb->getQuery()->getArrayResult());
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param ScopeCriteria $scopeCriteria
-     * @return null|Slug
-     */
-    private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria)
+    private function getSlugByUrlQueryBuilder(string $url): QueryBuilder
     {
-        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
+        $qb = $this->createQueryBuilder('slug');
+        $qb
+            ->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
+            ->andWhere($qb->expr()->eq('slug.url', ':url'))
+            ->setParameter('url', $url)
+            ->setParameter('urlHash', md5($url));
 
-        $results = $qb->getQuery()->getResult();
-        foreach ($results as $result) {
-            /** @var Slug $slug */
-            $slug = $result[0];
-            $matchedScopeId = $result['matchedScopeId'];
-            if ($matchedScopeId || $slug->getScopes()->isEmpty()) {
-                return $slug;
-            }
-        }
+        $this->slugQueryBuilderModifier->modify($qb);
 
-        return null;
+        return $qb;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param SlugAwareInterface $restrictedEntity
-     */
-    private function restrictByEntitySlugs(QueryBuilder $qb, SlugAwareInterface $restrictedEntity = null)
+    private function getUsedScopesQueryBuilder(): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Scope::class, 'scope')
+            ->select('scope')
+            ->innerJoin(
+                $this->getEntityName(),
+                'slug',
+                Join::WITH,
+                $qb->expr()->isMemberOf('scope', 'slug.scopes')
+            );
+
+        return $qb;
+    }
+
+    private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria): ?Slug
+    {
+        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
+        $qb->addOrderBy('slug.id');
+
+        $result = $qb->getQuery()->getResult(MatchingSlugHydrator::NAME);
+        if (!$result) {
+            return null;
+        }
+
+        return reset($result);
+    }
+
+    private function restrictByEntitySlugs(QueryBuilder $qb, SlugAwareInterface $restrictedEntity = null): void
     {
         if ($restrictedEntity && count($restrictedEntity->getSlugs())) {
             $qb->andWhere($qb->expr()->notIn('slug', ':slugs'))
@@ -362,11 +359,7 @@ class SlugRepository extends EntityRepository
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param ScopeCriteria|null $scopeCriteria
-     */
-    private function applyDirectUrlScopeCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria = null)
+    private function applyDirectUrlScopeCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria = null): void
     {
         if (null === $scopeCriteria) {
             $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)

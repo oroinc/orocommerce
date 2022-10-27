@@ -2,39 +2,52 @@
 
 namespace Oro\Bundle\VisibilityBundle\Acl\Voter;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
-class ProductVisibilityVoter extends AbstractEntityVoter
+/**
+ * Prevents direct access to the products with disabled visibility.
+ */
+class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    const ATTRIBUTE_VIEW = 'VIEW';
+    /** {@inheritDoc} */
+    protected $supportedAttributes = [BasicPermission::VIEW];
+
+    private FrontendHelper $frontendHelper;
+    private ContainerInterface $container;
+
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        FrontendHelper $frontendHelper,
+        ContainerInterface $container
+    ) {
+        parent::__construct($doctrineHelper);
+        $this->frontendHelper = $frontendHelper;
+        $this->container = $container;
+    }
 
     /**
-     * @var array
+     * {@inheritDoc}
      */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_VIEW,
-    ];
-
-    /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
-
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
-     * {@inheritdoc}
-    */
-    public function vote(TokenInterface $token, $object, array $attributes)
+    public static function getSubscribedServices()
     {
-        if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
+        return [
+            'oro_visibility.provider.resolved_product_visibility_provider' => ResolvedProductVisibilityProvider::class
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function vote(TokenInterface $token, $object, array $attributes): int
+    {
+        if ($this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
 
@@ -42,41 +55,17 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    protected function getPermissionForAttribute($class, $identifier, $attribute)
+    protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
-        if (in_array($attribute, $this->supportedAttributes, true)) {
-            $repository = $this->doctrineHelper
-                ->getEntityRepository($class);
-            /** @var $repository ProductRepository */
-            $qb = $repository->getProductsQueryBuilder([$identifier]);
-            $this->modifier->modify($qb);
-            $product = $qb->getQuery()->getOneOrNullResult();
-
-            if ($product) {
-                return self::ACCESS_GRANTED;
-            }
-
-            return self::ACCESS_DENIED;
-        }
-
-        return self::ACCESS_ABSTAIN;
+        return $this->getResolvedProductVisibilityProvider()->isVisible($identifier)
+            ? self::ACCESS_GRANTED
+            : self::ACCESS_DENIED;
     }
 
-    /**
-     * @param ProductVisibilityQueryBuilderModifier $modifier A ProductVisibilityQueryBuilderModifier instance
-     */
-    public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
+    private function getResolvedProductVisibilityProvider(): ResolvedProductVisibilityProvider
     {
-        $this->modifier = $modifier;
-    }
-
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
-    {
-        $this->frontendHelper = $frontendHelper;
+        return $this->container->get('oro_visibility.provider.resolved_product_visibility_provider');
     }
 }

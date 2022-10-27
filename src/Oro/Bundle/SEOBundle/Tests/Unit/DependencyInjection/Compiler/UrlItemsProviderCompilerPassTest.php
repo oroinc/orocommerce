@@ -4,139 +4,77 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class UrlItemsProviderCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
-    const PROVIDER_REGISTRY = 'test_service_registry';
-    const TAG = 'test_tag';
+    private const REGISTRY_SERVICE_ID = 'test_service_registry';
+    private const TAG_NAME            = 'test_tag';
 
-    /**
-     * @var UrlItemsProviderCompilerPass
-     */
-    private $compilerPass;
-
-    /**
-     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $containerBuilder;
+    /** @var UrlItemsProviderCompilerPass */
+    private $compiler;
 
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->containerBuilder = $this
-            ->getMockBuilder(ContainerBuilder::class)
-            ->getMock();
-
-        $this->compilerPass = new UrlItemsProviderCompilerPass(self::PROVIDER_REGISTRY, self::TAG);
+        $this->compiler = new UrlItemsProviderCompilerPass(self::REGISTRY_SERVICE_ID, self::TAG_NAME);
     }
 
     public function testProcessCompositeDoesNotExist()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
-            ->willReturn(false);
+        $container = new ContainerBuilder();
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('getDefinition');
-
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('findTaggedServiceIds');
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 
     public function testProcessNoTaggedServicesFound()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $registryDef = $container->register(self::REGISTRY_SERVICE_ID)
+            ->addArgument([]);
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with(self::TAG)
-            ->willReturn([]);
+        $this->compiler->process($container);
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('getDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        self::assertSame([], $registryDef->getArgument(0));
     }
 
     public function testProcessWithTaggedServices()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $registryDef = $container->register(self::REGISTRY_SERVICE_ID)
+            ->addArgument([]);
 
-        $compositeServiceDefinition = $this->createMock(Definition::class);
+        $container->register('service.name.1')
+            ->addTag(self::TAG_NAME, ['alias' => 'taggedService1Alias']);
+        $container->register('service.name.2')
+            ->addTag(self::TAG_NAME, ['alias' => 'taggedService2Alias']);
 
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('getDefinition')
-            ->with(self::PROVIDER_REGISTRY)
-            ->willReturn($compositeServiceDefinition);
+        $this->compiler->process($container);
 
-        $taggedServices = [
-            'service.name.1' => [['alias' => 'taggedService1Alias']],
-            'service.name.2' => [['alias' => 'taggedService2Alias']],
-        ];
-
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with(self::TAG)
-            ->willReturn($taggedServices);
-
-        $compositeServiceDefinition
-            ->expects($this->once())
-            ->method('replaceArgument')
-            ->with(
-                0,
-                [
-                    'taggedService1Alias' => new Reference('service.name.1'),
-                    'taggedService2Alias' => new Reference('service.name.2')
-                ]
-            );
-
-        $this->compilerPass->process($this->containerBuilder);
+        self::assertEquals(
+            [
+                'taggedService1Alias' => new Reference('service.name.1'),
+                'taggedService2Alias' => new Reference('service.name.2')
+            ],
+            $registryDef->getArgument(0)
+        );
     }
 
-    /**
-     * @expectedException LogicException
-     * @expectedExceptionMessage Could not retrieve "alias" attribute for "service.name.1"
-     */
     public function testProcessWithTaggedServicesWithoutAlias()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
-            ->willReturn(true);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Could not retrieve "alias" attribute for "service.name.1"');
 
-        $taggedServices = [
-            'service.name.1' => ['not_alias' => 'test'],
-        ];
+        $container = new ContainerBuilder();
+        $container->register(self::REGISTRY_SERVICE_ID)
+            ->addArgument([]);
 
-        $this->containerBuilder
-            ->expects($this->any())
-            ->method('findTaggedServiceIds')
-            ->willReturn($taggedServices);
+        $container->register('service.name.1')
+            ->addTag(self::TAG_NAME);
 
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 }

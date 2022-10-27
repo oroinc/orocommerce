@@ -1,0 +1,69 @@
+<div class="choice-filter number-range-filter" data-pricing-range-filter-template>
+    <% if (showChoices && choices.length > 1) { %>
+        <div class="filter-select-oro-wrapper">
+            <select name="<%- name %>" class="select select--size-s select--full oro-select2 oro-select2--size-s" data-choice-value-select
+                <% if (_.isMobile()) { %>
+                    data-skip-input-widgets
+                <% } %>
+                aria-label="<%- choiceAriaLabel %>"
+            >
+                <% _.each(choices, function (option) { %>
+                    <option value="<%- option.value %>"
+                        <% if (option.value == selectedChoice) { %>
+                            selected="selected"
+                        <% } %>
+                    >
+                        <%- option.label %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+    <% } else if ((!showChoices && choices.length > 1) || (showChoices && choices.length === 1)) { %>
+        <input name="<%- name %>" type="hidden" value="<%- choices[0].value %>" data-choice-value-select>
+    <% } else { %>
+        <input name="<%- name %>" type="hidden" value="7" data-choice-value-select>
+    <% } %>
+
+    <div class="value-field-frame">
+        <div class="filter-value">
+            <div class="filter-value-range">
+                <div class="filter-start input-group">
+                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>"
+                        aria-hidden="true"
+                    >
+                        <span class="input-group-text"><%- currency.symbol %></span>
+                    </div>
+                    <input class="input input--size-s input--full" type="number"
+                       placeholder="<%- _.__('oro.pricing.filter.product_price.min') %>"
+                       value="<%- value.value %>"
+                       name="value"
+                       aria-label="<%- rangeStartFieldAriaLabel %>"
+                    >
+                </div>
+                <span class="filter-separator" aria-hidden="true">-</span>
+                <div class="filter-end input-group">
+                    <div class="input-group-<%- currency.isPrepend ? 'prepend' : 'append' %> <%- currency.extended ? 'extended' : '' %>"
+                        aria-hidden="true"
+                    >
+                        <span class="input-group-text"><%- currency.symbol %></span>
+                    </div>
+                    <input class="input input--size-s input--full"
+                       type="number"
+                       placeholder="<%- _.__('oro.pricing.filter.product_price.max') %>"
+                       value="<%- value.value_end %>"
+                       name="value_end"
+                       aria-label="<%- rangeEndFieldAriaLabel %>"
+                    >
+                </div>
+            </div>
+        </div>
+        <% if (renderMode !== 'toggle-mode') { %>
+            <div class="filter-action-row">
+                <button type="button"
+                    class="btn btn--action btn--size-s filter-update"
+                    aria-label="<%- updateButtonAriaLabel %>"
+                ><%- _.__("oro.filter.updateButton.text") %></button>
+            </div>
+        <% } %>
+    </div>
+</div>

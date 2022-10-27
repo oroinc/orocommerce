@@ -1,24 +1,49 @@
 services:
-    Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand:
+    _defaults:
         public: false
-        class: Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand
+
+    Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand:
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_pricing.resolver.combined_product_schedule_resolver'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
         tags:
             - { name: console.command }
 
     Oro\Bundle\PricingBundle\Command\PriceListImportCommand:
-        public: false
-        class: Oro\Bundle\PricingBundle\Command\PriceListImportCommand
+        arguments:
+            - '@oro_importexport.file.file_manager'
+            - '@oro_importexport.handler.import'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_user.manager'
         tags:
             - { name: console.command }
 
-    Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand:
-        public: false
-        class: Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand
+    Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand:
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.dependent_price_lists'
+            - '@oro_pricing.price_list_relation_trigger_handler.combined'
         tags:
             - { name: console.command }
 
     Oro\Bundle\PricingBundle\Command\PriceListStorageReorganizeCommand:
-        public: false
-        class: Oro\Bundle\PricingBundle\Command\PriceListStorageReorganizeCommand
+        arguments:
+            - '@oro_pricing.shard_manager'
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\RemoveUnusedCombinedPriceListsCommand:
+        arguments:
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+        tags:
+            - { name: console.command }
+
+    Oro\Bundle\PricingBundle\Command\SwitchPricingStorageCommand:
+        arguments:
+            - '@oro_config.global'
+            - '@oro_pricing.pricing_storage_switch_handler'
         tags:
             - { name: console.command }

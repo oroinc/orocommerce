@@ -1,7 +1,9 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{%- if feature_resource_enabled('oro_product_visibility_edit', 'routes') -%}
 {{ UI.link({
     'path': path('oro_product_visibility_edit', { 'id': entity.id }),
     'label': 'oro.visibility.product.visibility.label'|trans,
     'aCss': 'dropdown-item',
     'iCss': 'fa-eye'
 }) }}
+{%- endif -%}

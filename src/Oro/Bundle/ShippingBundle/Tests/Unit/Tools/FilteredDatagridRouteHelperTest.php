@@ -1,38 +1,26 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Helper;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Tools;
 
-use Oro\Bundle\DataGridBundle\Extension\Pager\PagerInterface;
 use Oro\Bundle\DataGridBundle\Tools\DatagridRouteHelper;
 use Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper;
 use Symfony\Component\Routing\RouterInterface;
 
 class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DatagridRouteHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DatagridRouteHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $datagridRouteHelper;
 
-    /**
-     * @var string $gridRouteName
-     */
+    /** @var string */
     protected $gridRouteName;
 
-    /**
-     * @var string $gridName
-     */
+    /** @var string $gridName */
     protected $gridName;
 
-    /**
-     * @var FilteredDatagridRouteHelper
-     */
+    /** @var FilteredDatagridRouteHelper */
     protected $helper;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->datagridRouteHelper = $this->createMock(DatagridRouteHelper::class);
 
@@ -49,7 +37,7 @@ class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->datagridRouteHelper, $this->helper);
     }

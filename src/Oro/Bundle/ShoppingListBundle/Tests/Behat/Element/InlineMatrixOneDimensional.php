@@ -18,12 +18,12 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
  * Then I should see next rows in "Matrix Grid Form" table
  * | Value A | Value B | Value C |
  * | 2       | 3       |         |
- *
  */
 class InlineMatrixOneDimensional extends Table
 {
     const TABLE_HEADER_ELEMENT = 'InlineMatrixHeaderOneDimensional';
     const TABLE_ROW_ELEMENT = 'InlineMatrixRowOneDimensional';
+    const TABLE_ROW_STRICT_ELEMENT = 'InlineMatrixRowOneDimensional';
 
     /**
      * @param string $elementName
@@ -48,9 +48,6 @@ class InlineMatrixOneDimensional extends Table
         );
     }
 
-    /**
-     * @param TableNode $tableNode
-     */
     public function fill(TableNode $tableNode)
     {
         /** @var InlineMatrixRow[] $rows */

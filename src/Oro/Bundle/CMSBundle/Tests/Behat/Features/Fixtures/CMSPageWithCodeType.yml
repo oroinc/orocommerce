@@ -1,0 +1,13 @@
+Oro\Bundle\CMSBundle\Entity\Page:
+    page:
+        __calls:
+            - addTitle: ['@title']
+        content: '\<pre\>\<code\>Type code here\</code\>\</pre\>' # Need to initialize 'code(pre)' component in WYSIWYG editor
+        organization: '@organization'
+        slugPrototypes: ['@slugPrototype']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    slugPrototype:
+        string: 'landing-page'
+    title:
+        string: 'Landing page'

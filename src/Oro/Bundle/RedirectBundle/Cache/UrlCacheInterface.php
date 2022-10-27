@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
+/**
+ * Interface for URL Caches
+ */
 interface UrlCacheInterface
 {
     const SLUG_KEY = 's';
     const URL_KEY = 'u';
+    const SLUG_ROUTES_KEY = '__slug_routes__';
 
     /**
      * @param string $routeName

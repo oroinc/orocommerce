@@ -2,6 +2,7 @@ oro.cms:
     page:
         entity_label:           'Landing Page'
         entity_plural_label:    'Landing Pages'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         id.label:               'ID'
         titles:
             label:              'Titles'
@@ -20,10 +21,24 @@ oro.cms:
         alias.label:            'Alias'
         text_content_variants.label: 'Text Content Variants'
         default.label: Default
+        information_message: Current content view is simplified, please check the page on the Storefront to see the actual result
+        draft_owner.label: 'Draft Owner'
+        draft_project.label: 'Draft Project'
+        draft_source.label: 'Draft Source'
+        draft_uuid.label: 'Draft ID'
+        draft:
+            entity_label:        'Landing Page Draft'
+            entity_plural_label: 'Landing Page Drafts'
+            entity_grid_all_view_label: 'All Landing Page Drafts'
+            owner.label:         'Owner'
+        feature:
+            label: Landing Pages
+            description: Enables creating and managing landing pages.
 
     contentblock:
         entity_label: Content Block
         entity_plural_label: Content Blocks
+        entity_grid_all_view_label: All %entity_plural_label%
         id.label: Id
         alias.label: Alias
         createdat.label: Created At
@@ -31,11 +46,14 @@ oro.cms:
         content_variants:
             label: Content Variant
             entity_plural_label: Content Variants
+            entity_grid_all_view_label: All %entity_plural_label%
             no_content_variants.label: No content variants
             default:
                 label: Default Variant
                 yes.label: Yes
                 no.label: No
+            make_default:
+                label: Make Default
         organization.label: Organization
         owner.label: Owner
         titles:
@@ -51,17 +69,131 @@ oro.cms:
             label: Enabled
             yes.label: Yes
             no.label: No
+        filters:
+            enabled: Enabled
+            disabled: Disabled
         no_restrictions.label: No restrictions
+        feature:
+            label: Content Blocks
+            description: Enables creating and managing content blocks that help create a custom content layout.
         form:
             add_variant.label: Add Content
         sections:
             general.label: General
             use_for.label: Restrictions
 
+    contentwidget:
+        entity_label: Content Widget
+        entity_plural_label: Content Widgets
+        entity_grid_all_view_label: All %entity_plural_label%
+        id.label: ID
+        name.label: Name
+        description.label: Description
+        created_at.label: Created At
+        updated_at.label: Updated At
+        organization.label: Organization
+        widget_type.label: Type
+        layout.label: Layout
+        settings.label: Settings
+        feature:
+            label: Content Widgets
+            description: Enables creating and managing content widgets, such an image slider, contact us form, product mini block, and a product segment.
+        form:
+            choose_content_widget_type: Choose a content widget type...
+            choose_content_widget_layout: Choose a content widget layout...
+            no_available_content_widget_types: No content widget types available
+
+        sections:
+            general.label: General
+            additional_information.label: Additional Information
+            image_slides.label: Slides
+            usages.label: Usages
+            slider_options.label: Slider Options
+            tabbed_content_items.label: Tabs
+
+        layouts:
+            tabbed_content:
+                tabs.label: Tabs mode
+                accordion.label: Accordion mode
+
+    content_widget_type:
+        image_slider.label: Image Slider
+        tabbed_content.label: Tabbed Content
+
+        slider_options:
+            slides_to_show.label: 'Number of Slides to Show'
+            slides_to_scroll.label: 'Number of Slides to Scroll'
+            autoplay.label: 'Enable Autoplay'
+            autoplay_speed.label: 'Autoplay Speed (milliseconds)'
+            arrows.label: 'Show Arrows'
+            dots.label: 'Show Dots'
+            infinite.label: 'Enable Infinite Scroll'
+
+    imageslide:
+        entity_label: Image Slide
+        entity_plural_label: Image Slides
+        entity_grid_all_view_label: All %entity_plural_label%
+        id.label: ID
+        content_widget.label: Content Widget
+        slide_order.label: Slide Order
+        url.label: URL
+        display_in_same_window.label: Target Window
+        title.label: Title
+        text.label: Text
+        text_alignment:
+            label: Text Alignment
+            value:
+                center: Center
+                left: Left
+                right: Right
+                top_left: Top-Left
+                top_center: Top-Center
+                top_right: Top-Right
+                bottom_left: Bottom-Left
+                bottom_center: Bottom-Center
+                bottom_right: Bottom-Right
+        main_image.label: Main Image
+        medium_image.label: Medium Image
+        small_image.label: Small Image
+        organization.label: Organization
+
+        form.tooltip:
+            slide_order.label: When "1" is the leftmost slide, choose the preferred order of slides within the slider.
+            url.label: Enter an URL of the page to which a user will be redirected after clicking on the slide.
+            display_in_same_window.label: Set how to open the slide link. Select "Same Window" to open it in the current browser window. Select "Blank" to open it in a new browser tab.
+            title.label: Provide alternative text for the slide image. This text is displayed as image "Alt".
+            text.label: Add text content to the slide.
+            text_alignment.label: Set where to position text within the slide.
+            main_image.label: Upload a background image for the slide, or select an existing one.
+            medium_image.label: Upload a background image for the slide, or select an existing one.
+            small_image.label: Upload a background image for the slide, or select an existing one.
+
+    tabbedcontentitem:
+        entity_label: Tabbed Content Item
+        entity_plural_label: Tabbed Content Items
+        entity_grid_all_view_label: All %entity_plural_label%
+        id.label: ID
+        title:
+            label: Title
+            tooltip: Name to be displayed in the tab title
+        item_order:
+            label: Tab order
+            tooltip: Order of the current item in the widget
+        content:
+            label: Content
+            tooltip: Content of the tab, visible upon triggering it
+        content_style.label: Content Style
+        content_properties.label: Content Properties
+        content_widget.label: Content Widget
+        organization.label: Organization
+
     textcontentvariant:
         entity_label: Content Variant
         entity_plural_label: Content Variants
+        entity_grid_all_view_label: All %entity_plural_label%
         content.label: Content
+        content_style.label: Content Style
+        content_properties.label: Content Properties
         default.label: Default
         id.label: Id
         content_block.label: Content Block
@@ -70,19 +202,25 @@ oro.cms:
     controller:
         page.saved.message: 'Page has been saved'
         contentblock.saved.message: 'Content block has been saved'
+        contentwidget.saved.message: 'Content widget has been saved'
+        contenttemplate.saved.message: 'Content template has been saved'
+        contenttemplate.updated.message: 'Content template has been updated'
 
     menu:
         marketing_tab.label: 'Marketing'
         page_list.description: 'List of landing pages'
         loginpage_list.description: 'List of login pages'
         shortcut_page_list.description: 'Shows list of existing landing pages'
+        content_template.description: 'Content Templates'
 
     sections:
         general: 'General'
         content: 'Content'
+        drafts: 'Drafts'
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         entity_label: 'Customer Login Page'
         id.label: 'Id'
         top_content.label: 'Top content'
@@ -91,10 +229,64 @@ oro.cms:
         logo_image.label: 'Logo'
         background_image.label: 'Background image'
         save.message: 'Login form has been saved'
+        feature:
+            label: Customer Login Pages
+            description: Enables creating and managing customer login pages.
 
     system_configuration:
         fields:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
 
-oro.scope.content_block.label: Content Block
+    privilege:
+        category:
+            cms.label: CMS
 
+    wysiwyg:
+        formatted_twig_error_line: 'Line #{{ line }}: Invalid Twig syntax. Replace with a valid Twig code or use {{ twig escaping link }}.'
+        twig_escaping_link_text: 'escaping for "{{", "{%" and "{#"'
+
+    contenttemplate:
+        entity_label: 'Content Template'
+        entity_plural_label: 'Content Templates'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
+        information_message: 'Current content view is simplified, please check the page on the Storefront to see the actual result'
+        id:
+            label: 'ID'
+        name:
+            label: 'Name'
+        content:
+            label: 'Content'
+        owner:
+            label: 'Owner'
+        organization:
+            label: 'Organization'
+        tags:
+            label: 'Tags'
+            singular_label: 'Tag'
+        enabled:
+            label: 'Enabled'
+            yes.label: 'Yes'
+            no.label: 'No'
+        disabled:
+            label: 'Disabled'
+        cloned_name_suffix: ' (Copy)'
+        preview_image.label: Preview
+        feature:
+            label: Content Templates
+            description: Enables creating and managing content templates.
+
+oro.entity_extend.form.data_type:
+    wysiwyg: WYSIWYG
+    wysiwyg_style: WYSIWYG Style
+    wysiwyg_properties: WYSIWYG Properties
+oro.scope.content_block.label: Content Block
+oro.locale.localizedfallbackvalue:
+    wysiwyg:
+        label: 'WYSIWYG value'
+        description: The text value for the curent localization, can contain html tags
+    wysiwyg_style:
+        label: 'WYSIWYG Style value'
+        description: The text value for the curent localization, can contain css data
+    wysiwyg_properties:
+        label: 'WYSIWYG Properties'
+        description: The text value for the curent localization, can contain additional WYSIWYG data

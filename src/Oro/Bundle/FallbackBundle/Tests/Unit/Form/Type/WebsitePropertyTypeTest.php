@@ -2,69 +2,69 @@
 
 namespace Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
 use Oro\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
 use Oro\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackValueType;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
-    const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $websiteCollection = new WebsiteCollectionType($this->registry);
-        $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface $translator */
-        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $websiteCollection->setWebsiteClass(Website::class);
 
         return [
             new PreloadedExtension(
                 [
-                    FallbackPropertyType::class => new FallbackPropertyType($translator),
-                    FallbackValueType::class => new FallbackValueType(),
-                    WebsiteCollectionType::class => $websiteCollection,
-                    CheckboxTypeStub::class => new CheckboxTypeStub(),
+                    new FallbackPropertyType($this->createMock(TranslatorInterface::class)),
+                    new FallbackValueType(),
+                    $websiteCollection,
+                    new CheckboxTypeStub(),
                 ],
-                []
+                [
+                    FormType::class => [new TooltipFormExtensionStub($this)]
+                ]
             )
         ];
     }
 
     /**
-     * @param array $options
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $options, $defaultData, $viewData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        array $options,
+        ?array $defaultData,
+        array $viewData,
+        ?array $submittedData,
+        array $expectedData
+    ) {
         $this->setRegistryExpectations();
 
         $form = $this->factory->create(WebsitePropertyType::class, $defaultData, $options);
@@ -76,13 +76,11 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'text with null data' => [
@@ -123,9 +121,9 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     WebsitePropertyType::FIELD_DEFAULT => 't',
                     WebsitePropertyType::FIELD_WEBSITES => [
-                        1 => ['fallback' => FallbackType::SYSTEM],
-                        2 => ['fallback' => ''],
-                        3 => ['fallback' => FallbackType::SYSTEM],
+                        1 => ['fallback' => FallbackType::SYSTEM, 'use_fallback' => true],
+                        2 => ['fallback' => '', 'use_fallback' => true],
+                        3 => ['fallback' => FallbackType::SYSTEM, 'use_fallback' => true],
                     ]
                 ],
                 'expectedData' => [
@@ -138,45 +136,38 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    protected function setRegistryExpectations()
+    private function setRegistryExpectations()
     {
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getResult'])
-            ->getMockForAbstractClass();
+        $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($this->getWebsites()));
+            ->willReturn($this->getWebsites());
 
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->expects($this->once())
             ->method('addOrderBy')
             ->with('website.id', 'ASC')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $queryBuilder->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects($this->once())
             ->method('createQueryBuilder')
             ->with('website')
-            ->will($this->returnValue($queryBuilder));
+            ->willReturn($queryBuilder);
 
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with(self::WEBSITE_CLASS)
-            ->will($this->returnValue($repository));
+            ->with(Website::class)
+            ->willReturn($repository);
     }
 
     /**
      * @return Website[]
      */
-    protected function getWebsites()
+    private function getWebsites(): array
     {
         $first  = $this->createWebsite(1, 'first');
         $second = $this->createWebsite(2, 'second');
@@ -185,22 +176,15 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         return [$first, $second, $third];
     }
 
-    /**
-     * @param int $id
-     * @param string $name
-     * @return Website
-     */
-    protected function createWebsite($id, $name)
+    private function createWebsite(int $id, string $name): Website
     {
-        $website = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Website')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $website = $this->createMock(Website::class);
         $website->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue($id));
+            ->willReturn($id);
         $website->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
 
         return $website;
     }

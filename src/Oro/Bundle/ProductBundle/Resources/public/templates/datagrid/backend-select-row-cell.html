@@ -1,28 +1,4 @@
-<% if (_.isMobile()) { %>
-    <label class="custom-checkbox">
-        <input type="checkbox"
-               tabindex="-1"
-               data-role="select-row-cell"
-               class="custom-checkbox__input"
-            <% if (checked) { %>
-               checked="checked"
-            <% } %>
-        >
-        <span class="custom-checkbox__icon custom-checkbox__icon--circle custom-checkbox__icon--size-l"></span>
-    </label>
-<% } else { %>
-    <label class="custom-checkbox">
-        <input type="checkbox"
-               tabindex="-1"
-               data-role="select-row-cell"
-               class="custom-checkbox__input"
-            <% if (checked) { %>
-               checked="checked"
-            <% } %>
-        >
-        <span class="custom-checkbox__icon"></span>
-        <% if (!_.isUndefined(obj.text)) { %>
-            <span class="custom-checkbox__text"><%- text %></span>
-        <% } %>
-    </label>
-<% } %>
+<label class="checkbox-label">
+    <input type="checkbox" data-role="select-row-cell"<% if (obj.isSimple) { %> class="checkbox-round"<% } %><% if (checked) { %> checked="checked"<% } %>>
+    <% if (!obj.isSimple && !_.isUndefined(obj.text)) { %><%- text %><% } %>
+</label>

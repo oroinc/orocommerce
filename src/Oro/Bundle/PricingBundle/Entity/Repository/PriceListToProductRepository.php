@@ -3,19 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * PriceListToProduct entity Repository
+ */
 class PriceListToProductRepository extends EntityRepository
 {
     /**
@@ -59,10 +61,25 @@ class PriceListToProductRepository extends EntityRepository
         $query = $this->getProductsWithoutPricesQueryBuilder($priceList)
             ->getQuery();
         $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         return new BufferedIdentityQueryResultIterator($query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductIdsByPriceList(int|PriceList $priceList): array
+    {
+        $this->_em->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
+
+        return $qb->select('IDENTITY(productToPriceList.product) as productId')
+            ->from(PriceListToProduct::class, 'productToPriceList')
+            ->where($qb->expr()->eq('productToPriceList.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList)
+            ->getQuery()
+            ->getSingleColumnResult();
     }
 
     /**
@@ -111,11 +128,6 @@ class PriceListToProductRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
 
-    /**
-     * @param PriceList $sourcePriceList
-     * @param PriceList $targetPriceList
-     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
-     */
     public function copyRelations(
         PriceList $sourcePriceList,
         PriceList $targetPriceList,
@@ -124,6 +136,7 @@ class PriceListToProductRepository extends EntityRepository
         $qb = $this->createQueryBuilder('priceListToProduct');
         $qb
             ->select(
+                'UUID()',
                 'IDENTITY(priceListToProduct.product)',
                 (string)$qb->expr()->literal($targetPriceList->getId()),
                 'priceListToProduct.manual'
@@ -133,6 +146,7 @@ class PriceListToProductRepository extends EntityRepository
             ->setParameter('sourcePriceList', $sourcePriceList)
             ->setParameter('isManual', true);
         $fields = [
+            'id',
             'product',
             'priceList',
             'manual',
@@ -153,43 +167,40 @@ class PriceListToProductRepository extends EntityRepository
 
         $platform = $this->getEntityManager()->getConnection()->getDatabasePlatform();
         if ($platform instanceof MySqlPlatform) {
-            $sql = sprintf('INSERT IGNORE INTO %s (price_list_id, product_id, is_manual) VALUES (?, ?, ?)', $table);
+            $sql = sprintf(
+                'INSERT IGNORE INTO %s (price_list_id, product_id, is_manual, id) VALUES (?, ?, ?, uuid())',
+                $table
+            );
             $params = [
                 $priceList->getId(),
                 $product->getId(),
                 $isManual
             ];
             $types = [
-                Type::INTEGER,
-                Type::INTEGER,
-                Type::BOOLEAN
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::BOOLEAN
             ];
         } else {
             $sql = sprintf(
-                'INSERT INTO %s (price_list_id, product_id, is_manual) SELECT ?, ?, ? WHERE NOT EXISTS (%s)',
-                $table,
-                sprintf('SELECT id FROM %s WHERE price_list_id = ? AND product_id = ? LIMIT ?', $table)
+                'INSERT INTO %s (price_list_id, product_id, is_manual, id) values (?, ?, ?, uuid_generate_v4())'
+                . ' ON CONFLICT (product_id, price_list_id) DO NOTHING',
+                $table
             );
             $params = [
                 $priceList->getId(),
                 $product->getId(),
-                $isManual,
-                $priceList->getId(),
-                $product->getId(),
-                1
+                $isManual
             ];
             $types = [
-                Type::INTEGER,
-                Type::INTEGER,
-                Type::BOOLEAN,
-                Type::INTEGER,
-                Type::INTEGER,
-                Type::INTEGER,
+                Types::INTEGER,
+                Types::INTEGER,
+                Types::BOOLEAN
             ];
         }
 
         return $this->getEntityManager()
             ->getConnection()
-            ->executeUpdate($sql, $params, $types);
+            ->executeStatement($sql, $params, $types);
     }
 }

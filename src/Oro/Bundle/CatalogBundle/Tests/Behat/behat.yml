@@ -13,7 +13,7 @@ oro_behat_extension:
     All Products:
       selector:
         type: xpath
-        locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "All Products")]'
+        locator: '//li[contains(@class, "breadcrumbs__item")]/a[contains(., "All Products")]'
 
     Search:
       selector:
@@ -42,28 +42,53 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_action_operation_language_code-uid")]//input'
 
+    Title Fallback Status:
+      selector:
+        type: xpath
+        locator: '//label[text()="Title"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
+
     URL Slug Fallback Status:
       selector:
         type: xpath
-        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+        locator: '//label[text()="URL Slug"]/ancestor::div[contains(@class, "control-group control-group-oro_redirect_localized_slug_with_redirect")]//button[contains(@class, "fallback-status")]'
 
     URL Slug Form:
       selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Default Value: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
-          French Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
-          French: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+          URL Slug default value: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          URL Slug English (United States) value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug English (United States) use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+          URL Slug French value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug French use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
 
     Category URL Slug Form:
       selector: 'form[name="oro_catalog_category"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Default Value: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
-          French Default: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
-          French: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+          URL Slug default value: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          URL Slug English (United States) value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug English (United States) use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+          URL Slug French value:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+          URL Slug French use fallback:
+            type: 'xpath'
+            locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
 
     Product1:
       selector:
@@ -73,7 +98,7 @@ oro_behat_extension:
     Localization dropdown:
       selector:
         type: xpath
-        locator: '//div[@class="oro-toolbar__content"]'
+        locator: '//div[contains(@class, "localization-switcher")]'
 
 
     Include SubCategories:
@@ -83,18 +108,90 @@ oro_behat_extension:
       selector: '.include-not-categorized-product-choice input[type="checkbox"]'
 
     CategoryItem:
-      selector: 'div.featured-categories div.embedded-list__item'
+      selector: 'div.featured-categories [data-name="embedded-list-item"]'
+
+    Category Long Description:
+      selector: '.category-long-description'
 
     SubcategoriesFilter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/..'
+        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Sub-Categories")]/..'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\MultipleChoice
 
     SubcategoriesFilterSelect:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/div[contains(@class,"filter-select") and contains(text(),"Filter By Sub-Categories")]/select'
+        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[ contains(text(),"Filter By Sub-Categories")]/../../select'
+
+    Uploaded Featured Category Image:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class,"featured-category")]/picture/img[contains (@src,"/media/cache/attachment")]'
+
+    Uploaded Featured Category Picture:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class,"featured-category")]/picture'
+
+    Empty Featured Category Image:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class,"featured-category")]/picture/img[contains (@src,"no_image.png")]'
+
+    Category Image Placeholder Config:
+      selector: 'form[name="theme"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Image: 'theme[oro_catalog___category_image_placeholder][value][file]'
+
+    Category Form:
+      selector: 'form[name="oro_catalog_category"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Visibility To All: 'oro_catalog_category[visibility][all]'
+          Visibility To Customers First:
+            locator: '#CustomerCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
+            type: css
+          Visibility To Customers Second:
+            locator: '#CustomerCategoryVisibility tr:contains(second) .grid-body-cell-visibility select'
+            type: css
+          Visibility To Customer First Group:
+            locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
+            type: css
+          Title: 'oro_catalog_category[titles][values][default]'
+          Title English (United States): 'oro_catalog_category[titles][values][localizations][1][value]'
+          Title English (United States) fallback selector: 'oro_catalog_category[titles][values][localizations][1][use_fallback]'
+          URL Slug: 'oro_catalog_category[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
+          Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
+          Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
+          Managed Inventory Fallback: 'oro_catalog_category[manageInventory][fallback]'
+          Backorders Fallback: 'oro_catalog_category[backOrder][fallback]'
+          Short Description: 'oro_catalog_category[shortDescriptions][values][default]'
+          Short Description English (United States): 'oro_catalog_category[shortDescriptions][values][localizations][1][value]'
+          Short Description English (United States) fallback selector: 'oro_catalog_category[shortDescriptions][values][localizations][1][fallback]'
+          Long Description:
+            type: 'css'
+            locator: '[name="oro_catalog_category[longDescriptions][values][default][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description English (United States):
+            type: 'css'
+            locator: '[name="oro_catalog_category[longDescriptions][values][localizations][1][value][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description English (United States) fallback selector: 'oro_catalog_category[longDescriptions][values][localizations][1][fallback]'
+          Long Description Localization 2:
+            type: 'css'
+            locator: '[name="oro_catalog_category[longDescriptions][values][localizations][2][value][wysiwyg]"]'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Long Description Localization 2 fallback selector: 'oro_catalog_category[longDescriptions][values][localizations][2][fallback]'
+
+  pages:
+    Category Update:
+      class: Oro\Bundle\CatalogBundle\Tests\Behat\Page\CategoryUpdate
+      route: 'oro_catalog_category_update'
 
   suites:
     OroCatalogBundle:
@@ -102,13 +199,22 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroUIBundle::BreadcrumbContext
-        - OroNavigationBundle::ScrollspyContext
-        - OroConfigBundle::FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroCatalogBundle::FeatureContext
-        - OroProductBundle::FeatureContext
-        - OroWebCatalogBundle::FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\BreadcrumbContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
       paths:
         - '@OroCatalogBundle/Tests/Behat/Features'

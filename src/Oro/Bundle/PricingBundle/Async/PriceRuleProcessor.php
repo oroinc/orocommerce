@@ -2,86 +2,55 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
- * Resolve price lists rules and update actuality of price lists
+ * Resolves price lists rules and updates actuality of price lists.
  */
-class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class PriceRuleProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface,
+    FeatureToggleableInterface
 {
-    /**
-     * @var PriceListTriggerFactory
-     */
-    protected $triggerFactory;
+    use LoggerAwareTrait, FeatureCheckerHolderTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private ManagerRegistry $doctrine;
+    private ProductPriceBuilder $priceBuilder;
+    private NotificationAlertManager $notificationAlertManager;
+    private PriceListTriggerHandler $triggerHandler;
+    private MessageProducerInterface $producer;
 
-    /**
-     * @var ProductPriceBuilder
-     */
-    protected $priceBuilder;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var  PriceListRepository
-     */
-    protected $priceListRepository;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var Messenger
-     */
-    protected $messenger;
-
-    /**
-     * @param PriceListTriggerFactory $triggerFactory
-     * @param ProductPriceBuilder $priceBuilder
-     * @param LoggerInterface $logger
-     * @param ManagerRegistry $registry
-     * @param Messenger $messenger
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
-        PriceListTriggerFactory $triggerFactory,
+        ManagerRegistry $doctrine,
         ProductPriceBuilder $priceBuilder,
-        LoggerInterface $logger,
-        ManagerRegistry $registry,
-        Messenger $messenger,
-        TranslatorInterface $translator
+        NotificationAlertManager $notificationAlertManager,
+        PriceListTriggerHandler $triggerHandler,
+        MessageProducerInterface $producer
     ) {
-        $this->logger = $logger;
+        $this->doctrine = $doctrine;
         $this->priceBuilder = $priceBuilder;
-        $this->triggerFactory = $triggerFactory;
-        $this->registry = $registry;
-        $this->messenger = $messenger;
-        $this->translator = $translator;
+        $this->notificationAlertManager = $notificationAlertManager;
+        $this->triggerHandler = $triggerHandler;
+        $this->producer = $producer;
     }
 
     /**
@@ -89,7 +58,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_RULES];
+        return [ResolvePriceRulesTopic::getName()];
     }
 
     /**
@@ -97,95 +66,102 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        $body = $message->getBody();
+        $priceListsCount = count($body['product']);
+
         /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(PriceList::class);
-        $em->beginTransaction();
-        
-        $trigger = null;
-        try {
-            $messageData = JSON::decode($message->getBody());
-            $trigger = $this->triggerFactory->createFromArray($messageData);
+        $em = $this->doctrine->getManagerForClass(PriceList::class);
+        foreach ($body['product'] as $priceListId => $productIds) {
+            /** @var PriceList|null $priceList */
+            $priceList = $em->find(PriceList::class, $priceListId);
+            if (null === $priceList) {
+                $this->logger?->warning(sprintf(
+                    'PriceList entity with identifier %s not found.',
+                    $priceListId
+                ));
+                continue;
+            }
 
-            $repository = $em->getRepository(PriceList::class);
-            foreach ($trigger->getProducts() as $plId => $plProducts) {
-                /** @var PriceList|null $priceList */
-                $priceList = $repository->find($plId);
-                if (null === $priceList) {
-                    throw new EntityNotFoundException(sprintf('PriceList entity with identifier %s not found', $plId));
+            $em->beginTransaction();
+            try {
+                $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
+                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+                    $priceList->getId()
+                );
+
+                $this->processPriceList($em, $priceList, $productIds);
+
+                $em->commit();
+                $this->handleProductReindex($priceList, $productIds);
+            } catch (\Exception $e) {
+                $em->rollback();
+                $this->logger?->error(
+                    'Unexpected exception occurred during Price Rule build.',
+                    ['exception' => $e]
+                );
+
+                if ($e instanceof RetryableException) {
+                    // On RetryableException send back to queue the message related to a single price list
+                    // that triggered an exception.
+                    // If this was the only one PL in the message REQUEUE it to persist retries counter
+                    if ($priceListsCount === 1) {
+                        return self::REQUEUE;
+                    }
+
+                    $this->triggerHandler->handlePriceListTopic(
+                        ResolvePriceRulesTopic::getName(),
+                        $priceList,
+                        $productIds
+                    );
+                } else {
+                    $this->notificationAlertManager->addNotificationAlert(
+                        PriceListCalculationNotificationAlert::createForPriceRulesBuildError(
+                            $priceListId,
+                            $e->getMessage()
+                        )
+                    );
+                    if ($priceListsCount === 1) {
+                        return self::REJECT;
+                    }
                 }
-                $this->processPriceList($priceList, $plProducts);
             }
-
-            $this->priceBuilder->flush();
-
-            $em->commit();
-        } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
-
-            return self::REJECT;
-        } catch (\Exception $e) {
-            $em->rollback();
-            $this->logger->error(
-                'Unexpected exception occurred during Price Rule build',
-                ['exception' => $e]
-            );
-            if ($trigger && !empty($plId)) {
-                $this->onFailedPriceListId($plId);
-            }
-
-            return self::REJECT;
         }
 
         return self::ACK;
     }
 
     /**
+     * @param EntityManagerInterface $em
      * @param PriceList $priceList
-     * @param array $products
+     * @param int[] $productIds
      */
-    private function processPriceList(PriceList $priceList, array $products)
+    private function processPriceList(EntityManagerInterface $em, PriceList $priceList, array $productIds): void
     {
-        $this->messenger->remove(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-            PriceList::class,
-            $priceList->getId()
-        );
-
         $startTime = $priceList->getUpdatedAt();
-
-        $this->priceBuilder->buildByPriceListWithoutTriggerSend($priceList, $products);
-        $this->updatePriceListActuality($priceList, $startTime);
+        $this->priceBuilder->buildByPriceList($priceList, $productIds);
+        $this->updatePriceListActuality($em, $priceList, $startTime);
     }
 
-    /**
-     * @param int $priceListId
-     */
-    private function onFailedPriceListId($priceListId)
-    {
-        $this->messenger->send(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_PRICE_RULES_BUILD,
-            Message::STATUS_ERROR,
-            $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
-            PriceList::class,
-            $priceListId
-        );
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param \DateTime $startTime
-     */
-    protected function updatePriceListActuality(PriceList $priceList, \DateTime $startTime)
-    {
-        $manager = $this->registry->getManagerForClass(PriceList::class);
-        $manager->refresh($priceList);
+    private function updatePriceListActuality(
+        EntityManagerInterface $em,
+        PriceList $priceList,
+        \DateTime $startTime
+    ): void {
+        $em->refresh($priceList);
         if ($startTime == $priceList->getUpdatedAt()) {
             /** @var PriceListRepository $repo */
-            $repo = $manager->getRepository(PriceList::class);
+            $repo = $em->getRepository(PriceList::class);
             $repo->updatePriceListsActuality([$priceList], true);
+        }
+    }
+
+    private function handleProductReindex(PriceList $priceList, array $productIds): void
+    {
+        if ($this->isFeaturesEnabled()) {
+            $this->producer->send(
+                ResolveFlatPriceTopic::getName(),
+                ['priceList' => $priceList->getId(), 'products' => $productIds]
+            );
         }
     }
 }

@@ -9,15 +9,12 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroPaymentExtension extends Extension
 {
-    const ALIAS = 'oro_payment';
-
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
         $container->prependExtensionConfig($this->getAlias(), $config);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -25,13 +22,7 @@ class OroPaymentExtension extends Extension
         $loader->load('mass_action.yml');
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
+        $loader->load('controllers.yml');
+        $loader->load('controllers_api.yml');
     }
 }

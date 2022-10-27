@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Builder;
+namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory;
@@ -35,7 +35,7 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
 

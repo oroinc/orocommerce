@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var AddressView;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/views/base/view');
 
-    AddressView = BaseComponent.extend({
+    const AddressView = BaseComponent.extend({
         options: {
             addedAddressOptionClass: 'option_added_address',
             hideNewAddressForm: false,
@@ -21,14 +20,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function AddressView() {
-            AddressView.__super__.constructor.apply(this, arguments);
+        constructor: function AddressView(options) {
+            AddressView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options);
@@ -40,21 +39,19 @@ define(function(require) {
             this.$shipToBillingCheckbox = this.$el.find(this.options.selectors.shipToBillingCheckbox);
             this.shipToBillingContainer = this.$shipToBillingCheckbox.parent();
 
-            this.$addressSelector.on('change', _.bind(this._onAddressChanged, this));
+            this.$addressSelector.on('change', this._onAddressChanged.bind(this));
             this._onAddressChanged();
-            this.$regionSelector.on('change', _.bind(this._onRegionListChanged, this));
+            this.$regionSelector.on('change', this._onRegionListChanged.bind(this));
             this._onRegionListChanged();
 
             if (this.options.hideNewAddressForm) {
-                this.$shipToBillingCheckbox.on('change', _.bind(this._handleShipToBillingAddressCheckbox, this));
+                this.$shipToBillingCheckbox.on('change', this._handleShipToBillingAddressCheckbox.bind(this));
                 if (this.options.selectors.externalShipToBillingCheckbox) {
                     this.$externalShipToBillingCheckbox = $(this.options.selectors.externalShipToBillingCheckbox);
-                    var $externalShipToBillingCheckboxContainer = this.$externalShipToBillingCheckbox.parent();
+                    const $externalShipToBillingCheckboxContainer = this.$externalShipToBillingCheckbox.parent();
                     $externalShipToBillingCheckboxContainer.on('changeHiddenClass',
-                        _.bind(this._handleExternalShipToBillingAddressCheckboxContainer,
-                            this,
-                            $externalShipToBillingCheckboxContainer
-                        )
+                        this._handleExternalShipToBillingAddressCheckboxContainer
+                            .bind(this, $externalShipToBillingCheckboxContainer)
                     );
                 }
             }
@@ -69,16 +66,16 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
-            var disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
-            var isFormVisible = this._isFormVisible();
-            var showNewAddressForm = !disabled && isFormVisible;
+            const disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
+            const isFormVisible = this._isFormVisible();
+            const showNewAddressForm = !disabled && isFormVisible;
             this._handleNewAddressForm(showNewAddressForm);
 
             if (!showNewAddressForm) {
                 this.$addressSelector.focus();
             }
 
-            var isSelectorNotAvailable = isFormVisible && this._isOnlyOneOption();
+            const isSelectorNotAvailable = isFormVisible && this._isOnlyOneOption();
 
             this.$addressSelector.prop('disabled', disabled || isSelectorNotAvailable).inputWidget('refresh');
 
@@ -86,6 +83,7 @@ define(function(require) {
             if (isSelectorNotAvailable) {
                 this.$addressSelector.inputWidget('dispose');
                 this.$addressSelector.hide().attr('data-skip-input-widgets', true);
+                this.$addressSelector.siblings('label').parent().toggle(showNewAddressForm);
             }
 
             // if external checkbox exists - synchronize it
@@ -94,7 +92,7 @@ define(function(require) {
                 this.$externalShipToBillingCheckbox.prop('checked', disabled);
                 this.$externalShipToBillingCheckbox.on(
                     'change',
-                    _.bind(this._handleExternalShipToBillingAddressCheckbox, this)
+                    this._handleExternalShipToBillingAddressCheckbox.bind(this)
                 );
             }
         },
@@ -107,7 +105,7 @@ define(function(require) {
             if (show) {
                 this._showForm();
             } else {
-                this._hideForm(true);
+                this._hideForm();
             }
         },
 
@@ -140,12 +138,12 @@ define(function(require) {
                 return;
             }
             if (this.$addressSelector.prop('disabled') && this.$shipToBillingCheckbox.prop('checked')) {
-                var addressValue = $addressSelector.val();
-                var addressTitle = $addressSelector.find('option:selected').text();
+                const addressValue = $addressSelector.val();
+                const addressTitle = $addressSelector.find('option:selected').text();
                 this.$addressSelector.val(addressValue);
                 // if no value - add needed value
                 if (this.$addressSelector.val() !== addressValue) {
-                    var $addedAddress = this.$addressSelector.find('.' + this.options.addedAddressOptionClass);
+                    let $addedAddress = this.$addressSelector.find('.' + this.options.addedAddressOptionClass);
                     if (!$addedAddress.length) {
                         $addedAddress = $('<option/>').addClass(this.options.addedAddressOptionClass);
                         this.$addressSelector.append($addedAddress);
@@ -176,6 +174,7 @@ define(function(require) {
 
         _showForm: function() {
             if (this.$externalShipToBillingCheckbox === undefined) {
+                this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
                 this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
             }
             this.$fieldsContainer.removeClass('hidden');
@@ -183,7 +182,10 @@ define(function(require) {
 
         _hideForm: function(showCheckbox) {
             if (this.$externalShipToBillingCheckbox === undefined) {
-                if (showCheckbox || _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
+                if (showCheckbox ||
+                    this.$addressSelector.val() === '0' ||
+                    _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
+                    this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
                     this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
                 } else {
                     this.$shipToBillingCheckbox.prop('checked', false);

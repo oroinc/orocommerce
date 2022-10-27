@@ -6,7 +6,7 @@ use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrate
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Product price add or replace import strategy.
@@ -55,20 +55,22 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
     {
         $this->refreshPrice($entity);
 
+        // Set version to track prices changed within import
+        $version = $this->context->getOption('importVersion');
+        if ($version) {
+            $entity->setVersion($version);
+        }
+
+        $entity->setPriceRule(null);
+
         return parent::afterProcessEntity($entity);
     }
 
-    /**
-     * @param ProductPrice $entity
-     */
     protected function refreshPrice(ProductPrice $entity)
     {
         $entity->loadPrice();
     }
 
-    /**
-     * @param ProductPrice $entity
-     */
     protected function loadProduct(ProductPrice $entity)
     {
         if ($entity->getProduct()) {
@@ -130,9 +132,6 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
         );
     }
 
-    /**
-     * @param ProductPrice $entity
-     */
     protected function addEntityUniquenessViolation(ProductPrice $entity)
     {
         $uniqueConstraint = new UniqueProductPrices();

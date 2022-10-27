@@ -1,0 +1,75 @@
+include:
+    - '@OroCustomerBundle:CustomerUserFixture.yml'
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: 'Product1'
+    locvalue1_loc1:
+        string: 'Product1 (Localization 1)'
+        localization: '@localization1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'psku1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setNames: [['@locvalue1' , '@locvalue1_loc1']]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        poNumber: 'PO1'
+        qid: 'Quote1'
+        website: '@website1'
+        internal_status: '@quote_internal_status_sent_to_customer'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quote1Product:
+        product: '@product1'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    quote1ProductPrice:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quote1ProductOffer:
+        quote_product: '@quote1Product'
+        product_unit: '@item'
+        price: '@quote1ProductPrice'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quote1ProductRequest:
+        quote_product: '@quote1Product'
+        product_unit: '@item'
+        price: '@quote1ProductPrice'
+        quantity: 5
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
+    quote1WorkflowItem:
+        workflowName: 'b2b_quote_backoffice_approvals'
+        definition: '@workflow_b2b_quote_backoffice_approvals'
+        currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
+        # Cannot use '@quote1->id' because quotes are not yet persisted to DB at this point.
+        entityId: '1'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
+        serializedData: <('[]')>

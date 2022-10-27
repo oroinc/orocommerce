@@ -1,76 +1,104 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Command;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Cron command to clear all expired shopping lists of customer visitors
+ * Clears old data in shopping list database table.
  */
-class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements CronCommandInterface
+class ClearExpiredShoppingListsCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
-    const NAME = 'oro:cron:shopping-list:clear-expired';
+    private const CHUNK_SIZE = 10000;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var string */
+    protected static $defaultName = 'oro:cron:shopping-list:clear-expired';
+
+    private ManagerRegistry $doctrine;
+    private ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator;
+    private ConfigManager $configManager;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator,
+        ConfigManager $configManager
+    ) {
+        $this->doctrine = $doctrine;
+        $this->dbIdentifierNameGenerator = $dbIdentifierNameGenerator;
+        $this->configManager = $configManager;
+
+        parent::__construct();
+    }
+
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Clear expired guest shopping lists.');
+        $this->setDescription('Clears old data in shopping list database tables.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command clears old data in shopping list database tables for customer visitors with
+the last visit past the timeframe defined by "Customer visitor cookie lifetime (days)" system configuration setting.
+
+HELP
+            );
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get('doctrine.orm.entity_manager')->getConnection();
-        /** @var ExtendDbIdentifierNameGenerator $dbIdentifierNameGenerator */
-        $dbIdentifierNameGenerator = $this->getContainer()->get('oro_entity_extend.db_id_name_generator');
-        $customerVisitorToShoppingListRelationTableName = $dbIdentifierNameGenerator->generateManyToManyJoinTableName(
-            CustomerVisitor::class,
-            'shoppingLists',
-            ShoppingList::class
-        );
+        $connection = $this->doctrine->getManagerForClass(ShoppingList::class)->getConnection();
+        $customerVisitorToShoppingListRelationTableName = $this->dbIdentifierNameGenerator
+            ->generateManyToManyJoinTableName(CustomerVisitor::class, 'shoppingLists', ShoppingList::class);
 
-        $existsQB = $connection->createQueryBuilder();
-        $existsQB->select(1)
-            ->from('oro_customer_visitor', 'cv')
-            ->innerJoin('cv', $customerVisitorToShoppingListRelationTableName, 'rel', 'cv.id = rel.customervisitor_id')
-            ->where($existsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'))
-            ->andWhere($existsQB->expr()->eq('oro_shopping_list.id', 'rel.shoppinglist_id'));
+        $expiredLastVisitDate = $this->getExpiredLastVisitDate();
+        do {
+            $visitorsQB = $connection->createQueryBuilder();
+            $visitorsQB->select('rel.shoppinglist_id')
+                ->from('oro_customer_visitor', 'cv')
+                ->innerJoin(
+                    'cv',
+                    $customerVisitorToShoppingListRelationTableName,
+                    'rel',
+                    'cv.id = rel.customervisitor_id'
+                )
+                ->where($visitorsQB->expr()->lte('cv.last_visit', ':expiredLastVisitDate'))
+                ->setParameter('expiredLastVisitDate', $expiredLastVisitDate, Types::DATETIME_MUTABLE)
+                ->setMaxResults(self::CHUNK_SIZE);
+            $visitorIds = $visitorsQB->execute()->fetchAll(\PDO::FETCH_COLUMN);
 
-        $deleteQB = $connection->createQueryBuilder();
-        $deleteQB->delete('oro_shopping_list')
-            ->where('EXISTS(' . $existsQB->getSQL() . ')');
-        $deleteQB->setParameter('expiredLastVisitDate', $this->getExpiredLastVisitDate(), Type::DATETIME);
+            $deleteQB = $connection->createQueryBuilder();
+            $deleteQB->delete('oro_shopping_list')
+                ->where('id IN (:visitorIds)');
+            $deleteQB->setParameter('visitorIds', $visitorIds, Connection::PARAM_INT_ARRAY);
 
-        $deleteQB->execute();
+            $deletedCount = $deleteQB->execute();
+        } while ($deletedCount > 0);
 
         $output->writeln('<info>Clear expired guest shopping lists completed</info>');
+
+        return 0;
     }
 
-    /**
-     * @return \DateTime
-     */
-    protected function getExpiredLastVisitDate()
+    protected function getExpiredLastVisitDate(): \DateTime
     {
         $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $cookieLifetime = $this->getContainer()
-            ->get('oro_config.manager')
-            ->get('oro_customer.customer_visitor_cookie_lifetime_days');
+        $cookieLifetime = $this->configManager->get('oro_customer.customer_visitor_cookie_lifetime_days');
 
         $expiredLastVisitDate->modify(
             sprintf(
@@ -83,18 +111,10 @@ class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements 
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDefaultDefinition()
+    public function getDefaultDefinition(): string
     {
         return '0 0 * * *';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        return true;
     }
 }

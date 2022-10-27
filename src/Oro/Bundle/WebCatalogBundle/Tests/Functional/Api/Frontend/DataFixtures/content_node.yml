@@ -1,0 +1,564 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles
+    - Oro\Bundle\CatalogBundle\Tests\Functional\Api\DataFixtures\LoadRootCategory
+    - Oro\Bundle\SegmentBundle\Tests\Functional\DataFixtures\LoadSegmentTypes
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    catalog2:
+        name: 'Web Catalog 2'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserApi:
+    api_key_customer_user{1..2}:
+        apiKey: 'user<current()>'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    customer_user{1..2}:
+        confirmed: true
+        enabled: true
+        email: 'user<current()>\@example.com'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        firstName: 'First Name <current()>'
+        lastName: 'Last Name <current()>'
+        userRoles: ['@buyer']
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+        __calls:
+            - addApiKey: ['@api_key_customer_user<current()>']
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    customer_group{1..2}:
+        name: 'Customer Group <current()>'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer{1..2}:
+        name: 'Customer <current()>'
+        group: '@customer_group<current()>'
+        users: ['@customer_user<current()>']
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    scope_catalog{1..2}:
+        webCatalog: '@catalog<current()>'
+    scope_catalog1_es:
+        webCatalog: '@catalog1'
+        localization: '@es'
+    scope_catalog1_customer1:
+        webCatalog: '@catalog1'
+        customer: '@customer1'
+    scope_catalog1_customer_group1:
+        webCatalog: '@catalog1'
+        customerGroup: '@customer_group1'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    segment_product_collection1:
+        name: 'Product Collection #1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1,PSKU3,PSKU4,PSKU5,PSKU6,PSKU7,PSKU8,PSKU9,PSKU10,PSKU11,PSKU12","type":"6"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+    segment_product_collection2:
+        name: 'Product Collection #2'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1","type":"3"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    catalog1_rootNode_title:
+        string: 'Web Catalog 1 Root Node'
+    catalog1_rootNode_url:
+        text: /catalog1_rootNode
+    catalog1_node1_title:
+        string: 'Web Catalog 1 Node 1'
+    catalog1_node1_url:
+        text: /catalog1_node1
+    catalog1_node1_url_en_CA:
+        text: /catalog1_node1_en_CA
+        localization: '@en_CA'
+    catalog1_node1_meta_title:
+        string: 'Web Catalog 1 Node 1 Meta Title'
+    catalog1_node1_meta_description:
+        string: 'Web Catalog 1 Node 1 Meta Description'
+    catalog1_node1_meta_keywords:
+        string: 'Web Catalog 1 Node 1 Meta Keywords'
+    catalog1_node11_title:
+        string: 'Web Catalog 1 Node 1.1'
+    catalog1_node11_url:
+        text: /catalog1_node11
+    catalog1_node11_url_en_CA:
+        text: /catalog1_node11_en_CA
+        localization: '@en_CA'
+    catalog1_node11_url_es:
+        text: /catalog1_node11_es
+        localization: '@es'
+    catalog1_node11_meta_title:
+        string: 'Web Catalog 1 Node 1.1 Meta Title'
+    catalog1_node11_meta_description:
+        string: 'Web Catalog 1 Node 1.1 Meta Description'
+    catalog1_node11_meta_keywords:
+        string: 'Web Catalog 1 Node 1.1 Meta Keywords'
+    catalog1_node111_title:
+        string: 'Web Catalog 1 Node 1.1.1'
+    catalog1_node111_url:
+        text: /catalog1_node111
+    catalog1_node12_title:
+        string: 'Web Catalog 1 Node 1.2'
+    catalog1_node12_url:
+        text: /catalog1_node12
+    catalog1_node13_es_title:
+        string: 'Web Catalog 1 Node 1.3 es'
+    catalog1_node13_es_url:
+        text: /catalog1_node13_es
+    catalog1_node131_title:
+        string: 'Web Catalog 1 Node 1.3.1'
+    catalog1_node131_url:
+        text: /catalog1_node131
+    catalog1_node1311_customer1_title:
+        string: 'Web Catalog 1 Node 1.3.1.1 customer1'
+    catalog1_node1311_customer1_url:
+        text: /catalog1_node1311_customer1
+    catalog1_node13111_title:
+        string: 'Web Catalog 1 Node 1.3.1.1.1'
+    catalog1_node13111_url:
+        text: /catalog1_node13111
+    catalog1_node14_customer1_title:
+        string: 'Web Catalog 1 Node 1.4 customer1'
+    catalog1_node14_customer1_url:
+        text: /catalog1_node14_customer1
+    catalog1_node141_title:
+        string: 'Web Catalog 1 Node 1.4.1'
+    catalog1_node141_url:
+        text: /catalog1_node141
+    catalog1_node15_customer_group1_title:
+        string: 'Web Catalog 1 Node 1.5 customer_group1'
+    catalog1_node15_customer_group1_url:
+        text: /catalog1_node15_customer_group1
+    catalog1_node151_title:
+        string: 'Web Catalog 1 Node 1.5.1'
+    catalog1_node151_url:
+        text: /catalog1_node151
+    catalog1_node2_title:
+        string: 'Web Catalog 1 Node 2'
+    catalog1_node2_url:
+        text: /catalog1_node2
+    catalog2_rootNode_title:
+        string: 'Web Catalog 2 Root Node'
+    catalog2_rootNode_url:
+        text: /catalog2_rootNode
+    catalog2_node1_title:
+        string: 'Web Catalog 2 Node 1'
+    catalog2_node1_url:
+        text: /catalog2_node1
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    category1_title:
+        string: 'Category 1'
+    category11_title:
+        string: 'Category 1.1'
+    category111_title:
+        string: 'Category 1.1.1'
+    category2_title:
+        string: 'Category 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Product 1'
+    product2_name:
+        string: 'Product 2'
+    product_name_{3..12}:
+        string: 'Product <current()>'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    category1_slug_default:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1711"
+        url: '/category1_slug_default'
+    category1_slug_es:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1712"
+        url: '/category1_slug_es'
+        localization: '@es'
+    category11_slug_default:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1713"
+        url: '/category11_slug_default'
+    category111_slug_default:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1714"
+        url: '/category111_slug_default'
+    category2_slug_default:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1715"
+        url: '/category2_slug_default'
+    product1_slug_default:
+        routeName: "oro_product_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1721"
+        url: '/product1_slug_default'
+    product1_slug_en_CA:
+        routeName: "oro_product_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1722"
+        url: '/product1_slug_en_CA'
+        localization: '@en_CA'
+    product2_slug_default:
+        routeName: "oro_product_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1723"
+        url: '/product2_slug_default'
+    product2_slug_es:
+        routeName: "oro_product_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1724"
+        url: '/product2_slug_es'
+        localization: '@es'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category1:
+        __calls:
+            - addTitle: ['@category1_title']
+        organization: '@organization'
+        parentCategory: '@root_category'
+        slugs: ['@category1_slug_default', '@category1_slug_es']
+    category11:
+        __calls:
+            - addTitle: ['@category11_title']
+        organization: '@organization'
+        parentCategory: '@category1'
+        slugs: ['@category11_slug_default']
+    category111:
+        __calls:
+            - addTitle: ['@category111_title']
+        organization: '@organization'
+        parentCategory: '@category11'
+        slugs: ['@category111_slug_default']
+    category2:
+        __calls:
+            - addTitle: ['@category2_title']
+        organization: '@organization'
+        parentCategory: '@root_category'
+        slugs: ['@category2_slug_default']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        names: ['@product1_name']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: true
+        organization: '@organization'
+        owner: '@business_unit'
+        slugs: ['@product1_slug_default', '@product1_slug_en_CA']
+    product2:
+        sku: 'PSKU2'
+        names: ['@product2_name']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        slugs: ['@product2_slug_default', '@product2_slug_es']
+    product{3..12}:
+        sku: 'PSKU<current()>'
+        names: ['@product_name_<current()>']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: true
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    catalog1_rootNode_variant:
+        type: 'product_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        product_page_product: '@product1'
+    catalog1_node1_variant:
+        type: 'product_collection'
+        default: true
+        scopes: ['@scope_catalog1']
+        productCollectionSegment: '@segment_product_collection2'
+    catalog1_node11_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category1'
+    catalog1_node11_variant_customer1:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_customer1']
+        category_page_category: '@category11'
+    catalog1_node11_variant_es:
+        type: 'product_page'
+        default: false
+        scopes: ['@scope_catalog1_es']
+        product_page_product: '@product2'
+    catalog1_node111_variant:
+        type: 'system_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        systemPageRoute: 'oro_product_frontend_product_index'
+    catalog1_node12_variant:
+        type: 'product_collection'
+        default: true
+        scopes: ['@scope_catalog1']
+        productCollectionSegment: '@segment_product_collection1'
+    catalog1_node13_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category1'
+    catalog1_node13_variant_es:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_es']
+        category_page_category: '@category11'
+    catalog1_node131_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category11'
+    catalog1_node131_variant_es:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_es']
+        category_page_category: '@category111'
+    catalog1_node1311_variant_customer1:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category1'
+    catalog1_node13111_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category11'
+    catalog1_node13111_variant_customer1:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_customer1']
+        category_page_category: '@category111'
+    catalog1_node14_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category11'
+    catalog1_node14_variant_customer1:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_customer1']
+        category_page_category: '@category111'
+    catalog1_node141_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category2'
+    catalog1_node141_variant_customer1:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_customer1']
+        category_page_category: '@category1'
+    catalog1_node15_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category11'
+    catalog1_node15_variant_customer_group1:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_customer_group1']
+        category_page_category: '@category111'
+    catalog1_node151_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category1'
+    catalog1_node151_variant_customer_group1:
+        type: 'category_page'
+        default: false
+        scopes: ['@scope_catalog1_customer_group1']
+        category_page_category: '@category1'
+    catalog1_node2_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        category_page_category: '@category111'
+    catalog2_rootNode_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog2']
+        category_page_category: '@category2'
+    catalog2_node1_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog2']
+        category_page_category: '@category2'
+
+# - catalog1_rootNode
+#   - catalog1_node1
+#     - catalog1_node11
+#       - catalog1_node111
+#     - catalog1_node12
+#     - catalog1_node13_es
+#       - catalog1_node131
+#         - catalog1_node1311_customer1
+#           - catalog1_node13111
+#     - catalog1_node14_customer1
+#       - catalog1_node141
+#     - catalog1_node15_customer_group1
+#       - catalog1_node151
+#   - catalog1_node2
+# - catalog2_rootNode
+#   - catalog2_node1
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    catalog1_rootNode:
+        __calls:
+            - addTitle: ['@catalog1_rootNode_title']
+            - addContentVariant: ['@catalog1_rootNode_variant']
+        webCatalog: '@catalog1'
+        scopes: ['@scope_catalog1']
+        localizedUrls: ['@catalog1_rootNode_url']
+    catalog1_node1:
+        __calls:
+            - addTitle: ['@catalog1_node1_title']
+            - addMetaTitl: ['@catalog1_node1_meta_title']
+            - addMetaDescription: ['@catalog1_node1_meta_description']
+            - addMetaKeyword: ['@catalog1_node1_meta_keywords']
+            - addContentVariant: ['@catalog1_node1_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node1_url', '@catalog1_node1_url_en_CA']
+        parentNode: '@catalog1_rootNode'
+    catalog1_node11:
+        __calls:
+            - addTitle: ['@catalog1_node11_title']
+            - addMetaTitl: ['@catalog1_node11_meta_title']
+            - addMetaDescription: ['@catalog1_node11_meta_description']
+            - addMetaKeyword: ['@catalog1_node11_meta_keywords']
+            - addContentVariant: ['@catalog1_node11_variant']
+            - addContentVariant: ['@catalog1_node11_variant_customer1']
+            - addContentVariant: ['@catalog1_node11_variant_es']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node11_url', '@catalog1_node11_url_en_CA', '@catalog1_node11_url_es']
+        parentNode: '@catalog1_node1'
+    catalog1_node111:
+        __calls:
+            - addTitle: ['@catalog1_node111_title']
+            - addContentVariant: ['@catalog1_node111_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node111_url']
+        parentNode: '@catalog1_node11'
+    catalog1_node12:
+        __calls:
+            - addTitle: ['@catalog1_node12_title']
+            - addContentVariant: ['@catalog1_node12_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node12_url']
+        parentNode: '@catalog1_node1'
+    catalog1_node13_es:
+        __calls:
+            - addTitle: ['@catalog1_node13_es_title']
+            - addContentVariant: ['@catalog1_node13_variant']
+            - addContentVariant: ['@catalog1_node13_variant_es']
+        webCatalog: '@catalog1'
+        parentScopeUsed: false
+        scopes: ['@scope_catalog1_es']
+        localizedUrls: ['@catalog1_node13_es_url']
+        parentNode: '@catalog1_node1'
+    catalog1_node131:
+        __calls:
+            - addTitle: ['@catalog1_node131_title']
+            - addContentVariant: ['@catalog1_node131_variant']
+            - addContentVariant: ['@catalog1_node131_variant_es']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node131_url']
+        parentNode: '@catalog1_node13_es'
+    catalog1_node1311_customer1:
+        __calls:
+            - addTitle: ['@catalog1_node1311_customer1_title']
+            - addContentVariant: ['@catalog1_node1311_variant_customer1']
+        webCatalog: '@catalog1'
+        parentScopeUsed: false
+        scopes: ['@scope_catalog1_customer1']
+        localizedUrls: ['@catalog1_node1311_customer1_url']
+        parentNode: '@catalog1_node131'
+    catalog1_node13111:
+        __calls:
+            - addTitle: ['@catalog1_node13111_title']
+            - addContentVariant: ['@catalog1_node13111_variant']
+            - addContentVariant: ['@catalog1_node13111_variant_customer1']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node13111_url']
+        parentNode: '@catalog1_node1311_customer1'
+    catalog1_node14_customer1:
+        __calls:
+            - addTitle: ['@catalog1_node14_customer1_title']
+            - addContentVariant: ['@catalog1_node14_variant']
+            - addContentVariant: ['@catalog1_node14_variant_customer1']
+        webCatalog: '@catalog1'
+        parentScopeUsed: false
+        scopes: ['@scope_catalog1_customer1']
+        localizedUrls: ['@catalog1_node14_customer1_url']
+        parentNode: '@catalog1_node1'
+    catalog1_node141:
+        __calls:
+            - addTitle: ['@catalog1_node141_title']
+            - addContentVariant: ['@catalog1_node141_variant']
+            - addContentVariant: ['@catalog1_node141_variant_customer1']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node141_url']
+        parentNode: '@catalog1_node14_customer1'
+    catalog1_node15_customer_group1:
+        __calls:
+            - addTitle: ['@catalog1_node15_customer_group1_title']
+            - addContentVariant: ['@catalog1_node15_variant']
+            - addContentVariant: ['@catalog1_node15_variant_customer_group1']
+        webCatalog: '@catalog1'
+        parentScopeUsed: false
+        scopes: ['@scope_catalog1_customer_group1']
+        localizedUrls: ['@catalog1_node15_customer_group1_url']
+        parentNode: '@catalog1_node1'
+    catalog1_node151:
+        __calls:
+            - addTitle: ['@catalog1_node151_title']
+            - addContentVariant: ['@catalog1_node151_variant']
+            - addContentVariant: ['@catalog1_node151_variant_customer_group1']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node151_url']
+        parentNode: '@catalog1_node15_customer_group1'
+    catalog1_node2:
+        __calls:
+            - addTitle: ['@catalog1_node2_title']
+            - addContentVariant: ['@catalog1_node2_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node2_url']
+        parentNode: '@catalog1_rootNode'
+    catalog2_rootNode:
+        __calls:
+            - addTitle: ['@catalog2_rootNode_title']
+            - addContentVariant: ['@catalog2_rootNode_variant']
+        webCatalog: '@catalog2'
+        scopes: ['@scope_catalog2']
+        localizedUrls: ['@catalog2_rootNode_url']
+    catalog2_node1:
+        __calls:
+            - addTitle: ['@catalog2_node1_title']
+            - addContentVariant: ['@catalog2_node1_variant']
+        webCatalog: '@catalog2'
+        localizedUrls: ['@catalog2_node1_url']
+        parentNode: '@catalog2_rootNode'

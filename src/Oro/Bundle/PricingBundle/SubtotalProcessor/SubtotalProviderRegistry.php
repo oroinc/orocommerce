@@ -3,78 +3,104 @@
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-class SubtotalProviderRegistry
+/**
+ * The registry of subtotal providers.
+ */
+class SubtotalProviderRegistry implements ResetInterface
 {
-    /**
-     * @var SubtotalProviderInterface[]
-     */
-    protected $providers = [];
+    /** @var string[] */
+    private $providerNames;
+
+    /** @var ContainerInterface */
+    private $providerContainer;
+
+    /** @var SubtotalProviderInterface[]|null */
+    private $providers;
 
     /**
-     * Add provider to registry
-     *
-     * @param SubtotalProviderInterface $provider
+     * @param string[]           $providerNames
+     * @param ContainerInterface $providerContainer
      */
-    public function addProvider(SubtotalProviderInterface $provider)
+    public function __construct(array $providerNames, ContainerInterface $providerContainer)
     {
-        $this->providers[$provider->getName()] = $provider;
+        $this->providerNames = $providerNames;
+        $this->providerContainer = $providerContainer;
+    }
+
+    public function reset()
+    {
+        $this->providers = null;
     }
 
     /**
-     * Get supported provider list
+     * Gets providers that support the given entity.
      *
-     * @param $entity
+     * @param object $entity
      *
-     * @return SubtotalProviderInterface[]
+     * @return SubtotalProviderInterface[] [provider name => provider, ...]
      */
     public function getSupportedProviders($entity)
     {
-        $providers = [];
-        foreach ($this->providers as $provider) {
+        $supportedProviders = [];
+        $providers = $this->getProviders();
+        foreach ($providers as $name => $provider) {
             if ($provider->isSupported($entity)) {
-                $providers[] = $provider;
+                $supportedProviders[$name] = $provider;
             }
         }
-        return $providers;
+        return $supportedProviders;
     }
 
-
     /**
-     * Get all providers
+     * Gets all providers.
      *
-     * @return SubtotalProviderInterface[]
+     * @return SubtotalProviderInterface[] [provider name => provider, ...]
      */
     public function getProviders()
     {
+        if (null === $this->providers) {
+            $this->providers = [];
+            foreach ($this->providerNames as $name) {
+                $this->providers[$name] = $this->providerContainer->get($name);
+            }
+        }
+
         return $this->providers;
     }
 
     /**
-     * Get provider by name
+     * Gets a provider by its name.
      *
      * @param string $name
      *
-     * @return null|SubtotalProviderInterface
+     * @return SubtotalProviderInterface|null
      */
-    public function getProviderByName($name)
+    public function getProviderByName(string $name)
     {
-        if ($this->hasProvider($name)) {
-            return $this->providers[$name];
+        $provider = null;
+        if (null === $this->providers) {
+            if ($this->providerContainer->has($name)) {
+                $provider = $this->providerContainer->get($name);
+            }
+        } elseif (isset($this->providers[$name])) {
+            $provider = $this->providers[$name];
         }
 
-        return null;
+        return $provider;
     }
 
     /**
-     * Check available provider by name
+     * Checks if a provider with the given name exists.
      *
      * @param string $name
      *
      * @return bool
      */
-    public function hasProvider($name)
+    public function hasProvider(string $name)
     {
-        return array_key_exists($name, $this->providers);
+        return $this->providerContainer->has($name);
     }
 }

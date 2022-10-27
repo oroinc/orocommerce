@@ -1,6 +1,6 @@
 layout:
     actions:
         - '@setOption':
-            id: product_require_js_config
+            id: product_grid_js_modules_config
             optionName: 'attr.data-layout'
             optionValue: 'separate'

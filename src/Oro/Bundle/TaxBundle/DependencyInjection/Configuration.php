@@ -4,23 +4,22 @@ namespace Oro\Bundle\TaxBundle\DependencyInjection;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\TaxBundle\Provider\AddressResolverSettingsProvider;
-use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
+    public const ROOT_NODE = 'oro_tax';
+    public const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root(OroTaxExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
@@ -31,7 +30,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 'tax_provider' => [
                     'type' => 'text',
-                    'value' => BuiltInTaxProvider::NAME
+                    'value' => 'built_in'
                 ],
                 'start_calculation_with' => [
                     'type' => 'text',
@@ -79,6 +78,10 @@ class Configuration implements ConfigurationInterface
                 'address_resolver_granularity' => [
                     'type'  =>  'text',
                     'value' =>  AddressResolverSettingsProvider::ADDRESS_RESOLVER_GRANULARITY_ZIP
+                ],
+                'calculate_taxes_after_promotions' => [
+                    'type' => 'boolean',
+                    'value' => false
                 ],
             ]
         );

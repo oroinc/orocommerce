@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -30,9 +30,9 @@ class PriceListProductAssignmentBuilder
     protected $registry;
 
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var InsertQueryExecutorInterface
      */
-    protected $insertFromSelectQueryExecutor;
+    protected $insertQueryExecutor;
 
     /**
      * @var ProductAssignmentRuleCompiler
@@ -44,25 +44,23 @@ class PriceListProductAssignmentBuilder
      */
     protected $eventDispatcher;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
-     * @param ProductAssignmentRuleCompiler $ruleCompiler
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        InsertQueryExecutorInterface $insertQueryExecutor,
         ProductAssignmentRuleCompiler $ruleCompiler,
         EventDispatcherInterface $eventDispatcher,
         ShardManager $shardManager
     ) {
         $this->registry = $registry;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->insertQueryExecutor = $insertQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->eventDispatcher = $eventDispatcher;
         $this->shardManager = $shardManager;
+    }
+
+    public function setInsertQueryExecutor(InsertQueryExecutorInterface $insertQueryExecutor)
+    {
+        $this->insertQueryExecutor = $insertQueryExecutor;
     }
 
     /**
@@ -74,7 +72,7 @@ class PriceListProductAssignmentBuilder
         $this->buildByPriceListWithoutEventDispatch($priceList, $products);
 
         $event = new AssignmentBuilderBuildEvent($priceList, $products);
-        $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, AssignmentBuilderBuildEvent::NAME);
     }
 
     /**
@@ -97,7 +95,7 @@ class PriceListProductAssignmentBuilder
     {
         $this->clearGenerated($priceList, $products);
         if ($priceList->getProductAssignmentRule()) {
-            $this->insertFromSelectQueryExecutor->execute(
+            $this->insertQueryExecutor->execute(
                 PriceListToProduct::class,
                 $this->ruleCompiler->getOrderedFields(),
                 $this->ruleCompiler->compile($priceList, $products)

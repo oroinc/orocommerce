@@ -3,7 +3,6 @@
 @fixture-OroProductBundle:related_items_system_users.yml
 
 Feature: Related items
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Check if related items label changes if only one relation is active
     Given I login as administrator

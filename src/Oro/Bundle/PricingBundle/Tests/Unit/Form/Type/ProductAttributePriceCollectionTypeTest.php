@@ -7,39 +7,36 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $translator = $this->getMockForAbstractClass(TranslatorInterface::class);
-        $translator->expects(static::any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
             ->method('trans')
-            ->will(static::returnCallback(function ($string) {
+            ->willReturnCallback(function ($string) {
                 return $string . '_translated';
-            }));
+            });
 
-        $extensions = [
+        return [
             new PreloadedExtension(
                 [
                     ProductAttributePriceCollectionType::class => new ProductAttributePriceCollectionType($translator),
-                    ProductAttributePriceType::class => new ProductAttributePriceType(new RoundingServiceStub())
+                    ProductAttributePriceType::class => new ProductAttributePriceType()
                 ],
                 []
             )
         ];
-
-        return $extensions;
     }
 
     public function testSubmit()

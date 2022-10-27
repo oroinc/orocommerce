@@ -2,75 +2,63 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
+class ProductFormExtensionTest extends TestCase
 {
-    /**
-     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $categoryRepository;
+    private CategoryRepository|MockObject $categoryRepository;
+    private ManagerRegistry|MockObject $registry;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+    private ProductFormExtension $extension;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
-
-    /**
-     * @var ProductFormExtension
-     */
-    protected $extension;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->extension = new ProductFormExtension($this->registry);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->extension = new ProductFormExtension($this->registry, $this->authorizationChecker);
     }
 
-    /**
-     * @param bool $expects
-     */
-    protected function prepareRegistry($expects = false)
+    private function prepareRegistry(bool $expects = false): void
     {
-        $this->categoryRepository =
-            $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $entityManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $entityManager->expects($expects ? $this->once() : $this->never())
-            ->method('getRepository')
-            ->with('OroCatalogBundle:Category')
-            ->willReturn($this->categoryRepository);
-
         $this->registry->expects($expects ? $this->once() : $this->never())
-            ->method('getManagerForClass')
-            ->with('OroCatalogBundle:Category')
-            ->willReturn($entityManager);
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(ProductType::class, $this->extension->getExtendedType());
+        $this->assertEquals([ProductType::class], ProductFormExtension::getExtendedTypes());
     }
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -83,13 +71,28 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             );
         $builder->expects($this->exactly(2))
+            ->method('addEventListener')
+            ->withConsecutive(
+                [FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']],
+                [FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10]
+            );
+
+        $this->extension->buildForm($builder, []);
+    }
+
+    public function testBuildFormWhenCatalogViewDisabledByAcl()
+    {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->never())
+            ->method('add');
+        $builder->expects($this->never())
             ->method('addEventListener');
-        $builder->expects($this->at(1))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
-        $builder->expects($this->at(2))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
 
         $this->extension->buildForm($builder, []);
     }
@@ -174,7 +177,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->prepareRegistry();
 
         $product = $this->createProduct();
-        $event   = $this->createEvent($product);
+        $event = $this->createEvent($product);
 
         $category = $this->createCategory(1);
 
@@ -192,7 +195,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->prepareRegistry(true);
 
         $product = $this->createProduct(1);
-        $event   = $this->createEvent($product);
+        $event = $this->createEvent($product);
 
         $newCategory         = $this->createCategory(1);
         $categoryWithProduct = $this->createCategory(2);
@@ -201,7 +204,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertCategoryAdd($event, $newCategory);
         $this->categoryRepository->expects($this->once())
             ->method('findOneByProduct')
-            ->will($this->returnValue($categoryWithProduct));
+            ->willReturn($categoryWithProduct);
 
         $this->extension->onPostSubmit($event);
 
@@ -209,17 +212,11 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $categoryWithProduct->getProducts()->toArray());
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return FormEvent
-     */
-    protected function createEvent($data)
+    private function createEvent(?Product $data): FormEvent
     {
-        $categoryForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $categoryForm = $this->createMock(FormInterface::class);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
-        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock(FormInterface::class);
         $mainForm->expects($this->any())
             ->method('get')
             ->with('category')
@@ -228,49 +225,23 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         return new FormEvent($mainForm, $data);
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return Product
-     */
-    protected function createProduct($id = null)
+    private function createProduct(int $id = null): Product
     {
-        return $this->createEntity('Oro\Bundle\ProductBundle\Entity\Product', $id);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return Category
-     */
-    protected function createCategory($id = null)
+    private function createCategory(int $id = null): Category
     {
-        return $this->createEntity(\Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category::class, $id);
+        $category = new CategoryStub();
+        ReflectionUtil::setId($category, $id);
+
+        return $category;
     }
 
-    /**
-     * @param          $class string
-     * @param int|null $id
-     *
-     * @return object
-     */
-    protected function createEntity($class, $id = null)
-    {
-        $entity = new $class();
-        if ($id) {
-            $reflection = new \ReflectionProperty($class, 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($entity, $id);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param FormEvent $event
-     * @param Category  $category
-     */
-    protected function assertCategoryAdd(FormEvent $event, Category $category)
+    private function assertCategoryAdd(FormEvent $event, Category $category): void
     {
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mainForm */
         $mainForm = $event->getForm();
@@ -282,6 +253,6 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $categoryForm = $mainForm->get('category');
         $categoryForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue($category));
+            ->willReturn($category);
     }
 }

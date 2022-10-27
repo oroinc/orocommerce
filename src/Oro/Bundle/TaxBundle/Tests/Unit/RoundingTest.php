@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\TaxBundle\Tests\Unit\Rounding;
+namespace Oro\Bundle\TaxBundle\Tests\Unit;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;

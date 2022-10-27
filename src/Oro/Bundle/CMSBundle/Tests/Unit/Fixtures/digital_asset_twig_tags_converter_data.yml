@@ -1,0 +1,498 @@
+convertToUrls:
+  empty data:
+    contentWithTwigTags: ''
+    expected: ''
+
+  no twig tags:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+    expected: |
+      <h3>Sample content</h3>
+
+  unsupported twig tags, no html:
+    contentWithTwigTags: |
+      {{ sample_tag(1, "sample-string") }}
+    expected: |
+      {{ sample_tag(1, "sample-string") }}
+
+  unsupported twig tags:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ sample_tag(1, "sample-string") }}
+      <div class="sample-class">{{ sample_tag(1, "sample-string") }}</div>
+    expected: |
+      <h3>Sample content</h3>
+      {{ sample_tag(1, "sample-string") }}
+      <div class="sample-class">{{ sample_tag(1, "sample-string") }}</div>
+
+  wysiwyg image with existing uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','e9ff6eea-2010-4689-ab69-ee2567103cd1') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','e9ff6eea-2020-4689-ab69-ee2567103cd1') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg"/>
+
+  wysiwyg image with existing uuid and empty format:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','e9ff6eea-2010-4689-ab69-ee2567103cd1','wysiwyg_original','') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','e9ff6eea-2020-4689-ab69-ee2567103cd1','wysiwyg_original','') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg"/>
+
+  wysiwyg image with existing uuid and extra format:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','e9ff6eea-2010-4689-ab69-ee2567103cd1','wysiwyg_original','webp') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','e9ff6eea-2020-4689-ab69-ee2567103cd1','wysiwyg_original','webp') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg.webp
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg.webp"/>
+
+  wysiwyg file with existing uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('1001','e9ff6eea-2010-4689-ab69-ee2567103cd1') }}
+      <a title="existing file" src="{{ wysiwyg_file('1002','e9ff6eea-2020-4689-ab69-ee2567103cd1') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/2010/file2010.jpg
+      <a title="existing file" src="/attachment/download/2020/file2020.jpg"/>
+
+  wysiwyg image with new uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10010/file10010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10020/file10020.jpg"/>
+
+  wysiwyg image with new uuid and empty format:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','0e6bffee-15bb-44ec-9a4a-0113ca51452d', 'wysiwyg_original', '') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','0e6bffee-15bb-44ec-9a4a-0113ca51452d', 'wysiwyg_original', '') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10010/file10010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10020/file10020.jpg"/>
+
+  wysiwyg image with new uuid and extra format:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','0e6bffee-15bb-44ec-9a4a-0113ca51452d', 'wysiwyg_original', 'webp') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','0e6bffee-15bb-44ec-9a4a-0113ca51452d', 'wysiwyg_original', 'webp') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10010/file10010.jpg.webp
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10020/file10020.jpg.webp"/>
+
+  wysiwyg file with new uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('1001','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="existing file" src="{{ wysiwyg_file('1002','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/10010/file10010.jpg
+      <a title="existing file" src="/attachment/download/10020/file10020.jpg"/>
+
+  wysiwyg image with non-existing digital asset:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <img alt="non-existing image" src="{{ wysiwyg_image('2','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <img alt="non-existing image" src="{{ wysiwyg_image('2','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+  wysiwyg file with non-existing digital asset:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('1','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="non-existing file" src="{{ wysiwyg_file('2','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('1','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="non-existing file" src="{{ wysiwyg_file('2','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+convertToUrlsWhenNoFile:
+  wysiwyg image with uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('1001','e9ff6eea-2010-4689-ab69-ee2567103cd1') }}
+      <img alt="existing image" src="{{ wysiwyg_image('1002','e9ff6eea-2020-4689-ab69-ee2567103cd1') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10010/file10010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/10020/file10020.jpg"/>
+
+  wysiwyg file with uuid:
+    contentWithTwigTags: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('1001','e9ff6eea-2010-4689-ab69-ee2567103cd1') }}
+      <a title="existing file" src="{{ wysiwyg_file('1002','e9ff6eea-2020-4689-ab69-ee2567103cd1') }}"/>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/10010/file10010.jpg
+      <a title="existing file" src="/attachment/download/10020/file10020.jpg"/>
+
+convertToTwigTags:
+  empty data:
+    contentWithUrls: ''
+    expected: ''
+
+  no urls:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+    expected: |
+      <h3>Sample content</h3>
+
+  image, no file id:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/image.jpg
+      <img src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/image.jpg" alt="sample image"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/image.jpg
+      <img src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/image.jpg" alt="sample image"/>
+
+  file, no file id:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/file.pdf
+      <a href="/attachment/download/999/file.pdf">sample link</a>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/file.pdf
+      <a href="/attachment/download/999/file.pdf">sample link</a>
+
+  absolute image url:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      http://example.org/image.png
+      <img src="http://example.org/image.png" alt="sample image"/>
+    expected: |
+      <h3>Sample content</h3>
+      http://example.org/image.png
+      <img src="http://example.org/image.png" alt="sample image"/>
+
+  absolute image url, https:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      https://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg
+      <img src="https://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg" alt="sample image"/>
+    expected: |
+      <h3>Sample content</h3>
+      https://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg
+      <img src="https://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg" alt="sample image"/>
+
+  absolute image url, http:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      http://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg
+      <img src="http://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg" alt="sample image"/>
+    expected: |
+      <h3>Sample content</h3>
+      http://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg
+      <img src="http://example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg" alt="sample image"/>
+
+  absolute image url, no schema:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      //example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg
+      <img src="//example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg" alt="sample image"/>
+    expected: |
+      <h3>Sample content</h3>
+      //example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg
+      <img src="//example.org/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/999/image.jpg" alt="sample image"/>
+
+  absolute file url:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      http://example.org/file.pdf
+      <a href="http://example.org/file.pdf">sample link</a>
+    expected: |
+      <h3>Sample content</h3>
+      http://example.org/file.pdf
+      <a href="http://example.org/file.pdf">sample link</a>
+
+  absolute file url, https:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      https://example.org/attachment/download/999/file.pdf
+      <a href="https://example.org/attachment/download/999/file.pdf">sample link</a>
+    expected: |
+      <h3>Sample content</h3>
+      https://example.org/attachment/download/999/file.pdf
+      <a href="https://example.org/attachment/download/999/file.pdf">sample link</a>
+
+  absolute file url, http:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      http://example.org/attachment/download/999/file.pdf
+      <a href="http://example.org/attachment/download/999/file.pdf">sample link</a>
+    expected: |
+      <h3>Sample content</h3>
+      http://example.org/attachment/download/999/file.pdf
+      <a href="http://example.org/attachment/download/999/file.pdf">sample link</a>
+
+  absolute file url, no schema:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      //example.org/attachment/download/999/file.pdf
+      <a href="//example.org/attachment/download/999/file.pdf">sample link</a>
+    expected: |
+      <h3>Sample content</h3>
+      //example.org/attachment/download/999/file.pdf
+      <a href="//example.org/attachment/download/999/file.pdf">sample link</a>
+
+  wysiwyg image with non-existing file:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1/file1.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2/file2.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1/file1.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2/file2.jpg"/>
+
+  wysiwyg file with non-existing file:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/1/file1.jpg
+      <a title="existing file" src="/attachment/download/2/file2.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/1/file1.jpg
+      <a title="existing file" src="/attachment/download/2/file2.jpg"/>
+
+  wysiwyg image with a file not related to digital asset:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/501/file501.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/502/file502.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/501/file501.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/502/file502.jpg"/>
+
+  wysiwyg file with a file not related to digital asset:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/1/file501.jpg
+      <a title="existing file" src="/attachment/download/502/file502.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      /attachment/download/1/file501.jpg
+      <a title="existing file" src="/attachment/download/502/file502.jpg"/>
+
+  wysiwyg image with new uuid and empty format:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg
+      <img alt="new image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}"/>
+
+  wysiwyg image with new uuid, empty format and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010-ツツツ-cat1.jpg
+      <img alt="new image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020-ツツツ-cat1.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}"/>
+
+  wysiwyg image with new uuid and extra format:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg.webp
+      <img alt="new image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg.webp"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}"/>
+
+  wysiwyg image with new uuid, extra format and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010-ツツツ-cat1.jpg.webp
+      <img alt="new image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020-ツツツ-cat1.jpg.webp"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}"/>
+
+  wysiwyg file with new uuid:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/2010/file2010.jpg
+      <a title="new file" src="/attachment/download/2020/file2020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+  wysiwyg file with new uuid and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/2010/file2010-ツツツ-cat1.jpg
+      <a title="new file" src="/attachment/download/2020/file2020-ツツツ-cat1.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+  wysiwyg image with existing uuid:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1010/file1010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1020/file1020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('101','e9ff6eea-1010-4689-ab69-ee2567103cd1','wysiwyg_original','') }}
+      <img alt="existing image" src="{{ wysiwyg_image('102','e9ff6eea-1020-4689-ab69-ee2567103cd1','wysiwyg_original','') }}"/>
+
+  wysiwyg image with existing uuid that belongs to another entity:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/3010/file3010.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/3020/file3020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('301','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}
+      <img alt="existing image" src="{{ wysiwyg_image('302','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}"/>
+
+  wysiwyg image with existing uuid and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1010/file1010-ツツツ-cat1.jpg
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1020/file1020-ツツツ-cat1.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('101','e9ff6eea-1010-4689-ab69-ee2567103cd1','wysiwyg_original','') }}
+      <img alt="existing image" src="{{ wysiwyg_image('102','e9ff6eea-1020-4689-ab69-ee2567103cd1','wysiwyg_original','') }}"/>
+
+  wysiwyg image with existing uuid and extra format:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1010/file1010.jpg.webp
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1020/file1020.jpg.webp"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('101','e9ff6eea-1010-4689-ab69-ee2567103cd1','wysiwyg_original','webp') }}
+      <img alt="existing image" src="{{ wysiwyg_image('102','e9ff6eea-1020-4689-ab69-ee2567103cd1','wysiwyg_original','webp') }}"/>
+
+  wysiwyg image with existing uuid, extra format and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1010/file1010-ツツツ-cat1.jpg.webp
+      <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/1020/file1020-ツツツ-cat1.jpg.webp"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('101','e9ff6eea-1010-4689-ab69-ee2567103cd1','wysiwyg_original','webp') }}
+      <img alt="existing image" src="{{ wysiwyg_image('102','e9ff6eea-1020-4689-ab69-ee2567103cd1','wysiwyg_original','webp') }}"/>
+
+  wysiwyg file with existing uuid:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/1010/file1010.jpg
+      <a title="existing file" src="/attachment/download/1020/file1020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('101','e9ff6eea-1010-4689-ab69-ee2567103cd1') }}
+      <a title="existing file" src="{{ wysiwyg_file('102','e9ff6eea-1020-4689-ab69-ee2567103cd1') }}"/>
+
+  wysiwyg file with existing uuid that belongs to another entity:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/3010/file3010.jpg
+      <a title="existing file" src="/attachment/download/3020/file3020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('301','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="existing file" src="{{ wysiwyg_file('302','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+  wysiwyg file with existing uuid and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/1010/file1010-ツツツ-cat1.jpg
+      <a title="existing file" src="/attachment/download/1020/file1020-ツツツ-cat1.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('101','e9ff6eea-1010-4689-ab69-ee2567103cd1') }}
+      <a title="existing file" src="{{ wysiwyg_file('102','e9ff6eea-1020-4689-ab69-ee2567103cd1') }}"/>
+
+  wysiwyg image with prefix:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg
+      <img alt="new image" src="/admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}"/>
+
+  wysiwyg image with prefix and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010-ツツツ-cat1.jpg
+      <img alt="new image" src="/admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020-ツツツ-cat1.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}"/>
+
+  wysiwyg image with prefix and extra format:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010.jpg.webp
+      <img alt="new image" src="/admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020.jpg.webp"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}"/>
+
+  wysiwyg image with prefix, extra format and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010-ツツツ-cat1.jpg.webp
+      <img alt="new image" src="/admin/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020-ツツツ-cat1.jpg.webp"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','webp') }}"/>
+
+  wysiwyg file with prefix:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /admin/attachment/download/2010/file2010.jpg
+      <a title="new file" src="/admin/attachment/download/2020/file2020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+  wysiwyg file with prefix and human-readable filename:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /admin/attachment/download/2010/file2010-ツツツ-cat1.jpg
+      <a title="new file" src="/admin/attachment/download/2020/file2020-ツツツ-cat1.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>

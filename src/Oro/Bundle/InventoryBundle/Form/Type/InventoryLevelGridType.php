@@ -15,8 +15,10 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Form type for editing product inventory levels
+ */
 class InventoryLevelGridType extends AbstractType
 {
     const NAME = 'oro_inventory_level_grid';
@@ -31,10 +33,6 @@ class InventoryLevelGridType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /**
-     * @param FormFactoryInterface $formFactory
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(FormFactoryInterface $formFactory, DoctrineHelper $doctrineHelper)
     {
         $this->formFactory = $formFactory;
@@ -126,7 +124,6 @@ class InventoryLevelGridType extends AbstractType
             null,
             [
                 'constraints' => [
-                    new Range(['min' => 0]),
                     new Decimal(),
                     new Integer(),
                 ]

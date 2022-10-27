@@ -2,37 +2,49 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
+/**
+ * Provides ability to get list of the custom extended fields of the entity.
+ */
 class CustomFieldProvider
 {
-    /**
-     * @var ConfigProvider
-     */
-    protected $extendConfigProvider;
+    private ConfigProvider $extendConfigProvider;
+    private ConfigProvider $entityConfigProvider;
+    private CacheInterface $cache;
+    private int $cacheLifeTime = 0;
 
-    /**
-     * @var ConfigProvider
-     */
-    protected $entityConfigProvider;
-
-    /**
-     * @param ConfigProvider $extendConfigProvider
-     * @param ConfigProvider $entityConfigProvider
-     */
     public function __construct(ConfigProvider $extendConfigProvider, ConfigProvider $entityConfigProvider)
     {
         $this->extendConfigProvider = $extendConfigProvider;
         $this->entityConfigProvider = $entityConfigProvider;
+        $this->cache = new ArrayAdapter($this->cacheLifeTime, false);
     }
 
-    /**
-     * @param string $entityName
-     * @return array
-     */
-    public function getEntityCustomFields($entityName)
+    public function setCache(CacheInterface $cache, int $lifeTime = 0): void
+    {
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
+    }
+
+    public function getEntityCustomFields(string $entityName) : array
+    {
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey($entityName);
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($entityName) {
+            if ($this->cacheLifeTime > 0) {
+                $item->expiresAfter($this->cacheLifeTime);
+            }
+            return $this->getActualEntityCustomFields($entityName);
+        });
+    }
+
+    private function getActualEntityCustomFields(string $entityName): array
     {
         $customFields = [];
         $extendConfigs = $this->extendConfigProvider->getConfigs($entityName);

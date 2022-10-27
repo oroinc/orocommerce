@@ -14,7 +14,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
 {
-    const SKU1 = 'SKU1';
+    const SKU1 = 'SKU1Абв';
+    const SKU1_UPPER = 'SKU1АБВ';
     const SKU2 = 'SKU2';
     const SKU3 = 'SKU3';
 
@@ -28,7 +29,7 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);
     }
@@ -39,10 +40,10 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('', (string) $collection);
 
         $this->addTwoCompleteRows($collection);
-        $this->assertEquals(implode(PHP_EOL, ['SKU1, 1', 'SKU2, 2.5']), (string) $collection);
+        $this->assertEquals(implode(PHP_EOL, ['SKU1Абв, 1', 'SKU2, 2.5']), (string) $collection);
 
         $this->addIncompleteRow($collection);
-        $this->assertEquals(implode(PHP_EOL, ['SKU1, 1', 'SKU2, 2.5', 'SKU3, ']), (string) $collection);
+        $this->assertEquals(implode(PHP_EOL, ['SKU1Абв, 1', 'SKU2, 2.5', 'SKU3, ']), (string) $collection);
     }
 
     public function testGetValidRows()
@@ -73,7 +74,7 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(0, $collection->getProducts());
 
-        $validProduct = [self::SKU1 =>  (new Product())->setSku(self::SKU1)];
+        $validProduct = [self::SKU1_UPPER =>  (new Product())->setSku(self::SKU1)];
         $invalidProduct = [self::SKU3 =>  (new Product())->setSku(self::SKU3)];
 
         $collection->mapProducts(array_merge($validProduct, $invalidProduct));
@@ -113,18 +114,12 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedFormData, $collection->getFormData());
     }
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     private function addTwoCompleteRows(QuickAddRowCollection $collection)
     {
         $collection->add(new QuickAddRow(1, self::SKU1, self::QUANTITY1, self::UNIT1));
         $collection->add(new QuickAddRow(2, self::SKU2, self::QUANTITY2, self::UNIT1));
     }
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     private function addTwoValidRows(QuickAddRowCollection $collection)
     {
         $row1 = new QuickAddRow(1, self::SKU1, self::QUANTITY1, self::UNIT1);
@@ -137,17 +132,11 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         $collection->add($row2);
     }
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     private function addIncompleteRow(QuickAddRowCollection $collection)
     {
         $collection->add(new QuickAddRow(3, self::SKU3, null));
     }
 
-    /**
-     * @param QuickAddRow $row
-     */
     private function assertIsSku1Row(QuickAddRow $row)
     {
         $this->assertEquals(self::SKU1, $row->getSku());

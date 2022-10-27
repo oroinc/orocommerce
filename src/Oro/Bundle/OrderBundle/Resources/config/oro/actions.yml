@@ -8,31 +8,44 @@ operations:
             - order-payment-transactions-grid
         order: 20
         preactions:
+            - '@assign_constant_value':
+                attribute: $.paymentMethodAction
+                value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::AUTHORIZE
             - '@call_service_method':
                 service: oro_payment.payment_method.composite_provider
-                method: hasPaymentMethod
+                method: getPaymentMethod
                 method_parameters: [$.data.paymentMethod]
-                attribute: $.paymentMethodExist
+                attribute: $.paymentMethod
+            - '@call_method':
+                conditions:
+                    '@instanceof': [$.paymentMethod, Oro\Bundle\PaymentBundle\Method\Action\CaptureActionInterface]
+                attribute: $.paymentMethodAction
+                object: $.paymentMethod
+                method: getSourceAction
+                method_parameters: []
             - '@call_service_method':
-                service: oro_currency.formatter.number
+                service: oro_locale.formatter.number
                 method: formatCurrency
                 method_parameters: [$.data.amount, $.data.currency]
                 attribute: $.amountWithCurrency
             - '@find_entity':
-                class: '%oro_order.entity.order.class%'
+                class: 'Oro\Bundle\OrderBundle\Entity\Order'
                 where:
                     id: $.data.entityIdentifier
                 attribute: $.order
         preconditions:
             '@and':
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
-                - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
-                - '@equal': [$.data.action, 'authorize']
+                - '@equal': [$.data.entity_class, 'Oro\Bundle\OrderBundle\Entity\Order']
+                - '@equal': [$.data.action, $.paymentMethodAction]
                 - '@equal': [$.data.active, true]
                 - '@equal': [$.data.successful, true]
-                - '@equal': [$.paymentMethodExist, true]
+                - '@not_empty': $.paymentMethod
                 - '@not':
                     - '@payment_transaction_was_charged':
+                        transaction: $.data
+                - '@not':
+                    - '@payment_transaction_was_canceled':
                         transaction: $.data
         actions:
             - '@payment_transaction_capture':
@@ -91,11 +104,11 @@ operations:
         label: oro.order.widgets.shipping_tracking
         routes:
             - oro_order_view
-        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        acl_resource: oro_order_update
         button_options:
             icon: fa-list-alt
         frontend_options:
-            template: OroOrderBundle:Action:shippingTrackingsChange.html.twig
+            template: '@OroOrder/Action/shippingTrackingsChange.html.twig'
             title: oro.order.shipping_tracking.entity_label
             options:
                 width: 550
@@ -139,6 +152,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-close
         preconditions:
@@ -161,6 +175,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-window-close-o
         preconditions:
@@ -186,6 +201,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-archive
         preconditions:
@@ -208,6 +224,7 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
+        acl_resource: oro_order_update
         button_options:
             icon: fa-check
         preconditions:
@@ -227,7 +244,7 @@ operations:
     oro_order_discount_form:
         label: oro.order.widgets.order_discount_form
         frontend_options:
-            template: OroOrderBundle:Action:orderDiscount.html.twig
+            template: '@OroOrder/Action/orderDiscount.html.twig'
         attributes:
             orderDiscount:
                 label: ' '
@@ -281,7 +298,7 @@ operations:
         label: oro.order.widgets.add_order_discount
         routes:
             - oro_order_view
-        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        acl_resource: oro_order_update
         button_options:
             icon: fa-dollar
         frontend_options:
@@ -294,3 +311,99 @@ operations:
                 allowMinimize: false
                 dblclick: false
                 maximizedHeightDecreaseBy: minimize-bar
+
+    oro_order_payment_transaction_cancel:
+        label: oro.payment.cancel
+        button_options:
+            icon: fa-close
+        applications: [default]
+        datagrids:
+            - order-payment-transactions-grid
+        order: 30
+        preactions:
+            - '@assign_constant_value':
+                  attribute: $.paymentMethodAction
+                  value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::AUTHORIZE
+            - '@assign_constant_value':
+                  attribute: $.cancelAction
+                  value: Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::CANCEL
+            - '@call_service_method':
+                  service: oro_payment.payment_method.composite_provider
+                  method: getPaymentMethod
+                  method_parameters: [$.data.paymentMethod]
+                  attribute: $.paymentMethod
+            - '@call_method':
+                  conditions:
+                      '@not_empty': $.paymentMethod
+                  parameters:
+                      attribute: $.isActionSupported
+                      object: $.paymentMethod
+                      method: supports
+                      method_parameters:
+                          - $.cancelAction
+            - '@call_service_method':
+                  service: oro_locale.formatter.number
+                  method: formatCurrency
+                  method_parameters: [$.data.amount, $.data.currency]
+                  attribute: $.amountWithCurrency
+            - '@find_entity':
+                  class: 'Oro\Bundle\OrderBundle\Entity\Order'
+                  where:
+                      id: $.data.entityIdentifier
+                  attribute: $.order
+        preconditions:
+            '@and':
+                - '@acl_granted': ['CANCEL_PAYMENTS', $.order]
+                - '@equal': [$.data.entity_class, 'Oro\Bundle\OrderBundle\Entity\Order']
+                - '@equal': [$.data.action, $.paymentMethodAction]
+                - '@equal': [$.data.active, true]
+                - '@equal': [$.data.successful, true]
+                - '@equal': [$.isActionSupported, true]
+                - '@not_empty': $.paymentMethod
+                - '@not':
+                      - '@payment_transaction_was_charged':
+                            transaction: $.data
+                - '@not':
+                      - '@payment_transaction_was_canceled':
+                            transaction: $.data
+        actions:
+            - '@payment_transaction_cancel':
+                  paymentTransaction: $.data
+                  transactionOptions: []
+                  attribute: $.result
+            - '@flash_message':
+                  conditions:
+                      '@equal': ['$.result[successful]', true]
+                  message: oro.order.payment_transaction.cancel.result.success
+                  message_parameters:
+                      'amount': $.amountWithCurrency
+                  type: 'success'
+            - '@flash_message':
+                  conditions:
+                      '@equal': ['$.result[successful]', false]
+                  message: '$.result[message]'
+                  type: 'error'
+        frontend_options:
+            confirmation:
+                title: oro.order.payment_transaction.cancel.title
+                message: oro.order.payment_transaction.cancel.message
+                message_parameters:
+                    amount: $.amountWithCurrency
+                okText: oro.order.payment_transaction.cancel.button.okText
+                component: oroui/js/standart-confirmation
+
+action_groups:
+    api_order_purchase_by_payment_term:
+        parameters:
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            paymentMethod:
+                type: string
+        conditions:
+            '@start_with': [$.paymentMethod, '%oro_payment_term.type%_']
+        actions:
+            - '@payment_purchase':
+                  object: $.order
+                  amount: $.order.total
+                  currency: $.order.currency
+                  paymentMethod: $.paymentMethod

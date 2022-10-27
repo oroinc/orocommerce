@@ -9,6 +9,12 @@ Feature: System configuration shipping origin filter
     Given I login as administrator
     And I go to System/ Configuration
     And follow "Commerce/Shipping/Shipping Origin" on configuration sidebar
+    And I should not see "Shipping Choose State Select"
+    When I fill "Shipping Origin System Config Form" with:
+      | Use default | true |
+    And I should not see "Shipping Choose State Select"
+    And I click "Save settings"
+    And I should not see "Shipping Choose State Select"
     When I fill "Shipping Origin System Config Form" with:
       | Use default      | false         |
       | Country          | United States |

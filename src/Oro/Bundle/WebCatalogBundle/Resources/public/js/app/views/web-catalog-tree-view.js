@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var WebCatalogTreeView;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
-    var widgetManager = require('oroui/js/widget-manager');
-    var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
-    var BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const routing = require('routing');
+    const messenger = require('oroui/js/messenger');
+    const widgetManager = require('oroui/js/widget-manager');
+    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
+    const BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
 
-    WebCatalogTreeView = BaseTreeManageView.extend({
+    const WebCatalogTreeView = BaseTreeManageView.extend({
         /**
          * @property {Object}
          */
@@ -28,10 +27,30 @@ define(function(require) {
         confirmState: true,
 
         /**
-         * @inheritDoc
+         * @property {String}
          */
-        constructor: function WebCatalogTreeView() {
-            WebCatalogTreeView.__super__.constructor.apply(this, arguments);
+        contentNodeUpdateRoute: '',
+
+        /**
+         * @property {String}
+         */
+        contentNodeFormSelector: '',
+
+        /**
+         * @inheritdoc
+         */
+        constructor: function WebCatalogTreeView(options) {
+            WebCatalogTreeView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
+         */
+        initialize: function(options) {
+            WebCatalogTreeView.__super__.initialize.call(this, options);
+
+            this.contentNodeUpdateRoute = options.contentNodeUpdateRoute;
+            this.contentNodeFormSelector = options.contentNodeFormSelector;
         },
 
         onConfirmModalOk: function() {
@@ -50,7 +69,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         onMove: function(e, data) {
             if (this.moveTriggered) {
@@ -75,9 +94,9 @@ define(function(require) {
                 changedSlugs: this._getChangedUrlsList(),
                 confirmState: this.confirmState
             })
-                .on('ok', _.bind(this.onConfirmModalOk, this))
-                .on('cancel', _.bind(this.onConfirmModalCancel, this))
-                .on('confirm-option-changed', _.bind(this.onConfirmModalOptionChange, this))
+                .on('ok', this.onConfirmModalOk.bind(this))
+                .on('cancel', this.onConfirmModalCancel.bind(this))
+                .on('confirm-option-changed', this.onConfirmModalOptionChange.bind(this))
                 .open();
         },
 
@@ -86,17 +105,23 @@ define(function(require) {
          * @private
          */
         _getChangedUrlsList: function() {
-            var list = '';
-            var newParentId = this.moveEventData.data.node.parent;
-            var nodeId = this.moveEventData.data.node.id;
-            var urls = this._getChangedUrls(nodeId, newParentId);
-            for (var localization in urls) {
+            let list = '';
+            const newParentId = this.moveEventData.data.node.parent;
+            const nodeId = this.moveEventData.data.node.id;
+            const urls = this._getChangedUrls(nodeId, newParentId);
+            for (const localization in urls) {
                 if (urls.hasOwnProperty(localization)) {
+                    const oldSlug = _.macros('oroui::renderDirection')({
+                        content: urls[localization].before
+                    }).trim();
+                    const newSlug = _.macros('oroui::renderDirection')({
+                        content: urls[localization].after
+                    }).trim();
                     list += '\n' + __(
                         'oro.redirect.confirm_slug_change.changed_slug_item',
                         {
-                            old_slug: urls[localization].before,
-                            new_slug: urls[localization].after,
+                            old_slug: oldSlug,
+                            new_slug: newSlug,
                             purpose: localization
                         }
                     );
@@ -106,13 +131,13 @@ define(function(require) {
         },
 
         _getChangedUrls: function(nodeId, newParentId) {
-            var urls;
+            let urls;
             $.ajax({
                 async: false,
                 url: routing.generate('oro_content_node_get_possible_urls', {id: nodeId, newParentId: newParentId}),
-                success: _.bind(function(result) {
+                success: result => {
                     urls = result;
-                }, this)
+                }
             });
 
             if (typeof urls !== 'undefined') {
@@ -143,7 +168,7 @@ define(function(require) {
          * @private
          */
         _doMove: function(createRedirect) {
-            var data = this.moveEventData.data;
+            const data = this.moveEventData.data;
 
             $.ajax({
                 async: false,
@@ -155,24 +180,51 @@ define(function(require) {
                     position: data.position,
                     createRedirect: +createRedirect
                 },
-                success: _.bind(function(result) {
+                success: result => {
                     if (!result.status) {
                         this.rollback(data);
                         messenger.notificationFlashMessage(
                             'error',
                             __('oro.ui.jstree.move_node_error', {nodeText: data.node.text})
                         );
-                    } else if (this.reloadWidget) {
-                        widgetManager.getWidgetInstanceByAlias(this.reloadWidget, function(widget) {
-                            widget.render();
-                        });
+                    } else {
+                        this._updateSlugPrototypes(data.node.id, result.slugPrototypes);
+                        if (this.reloadWidget) {
+                            widgetManager.getWidgetInstanceByAlias(this.reloadWidget, function(widget) {
+                                widget.render();
+                            });
+                        }
                     }
-                }, this)
+                }
             });
         },
 
         /**
-         * @inheritDoc
+         * Update Content Node slug prototypes.
+         * If currently edited Content Node was moved and it`s slug prototypes were changed they should be updated.
+         *
+         * @param {Number} nodeId
+         * @param {Array} slugPrototypes
+         * @private
+         */
+        _updateSlugPrototypes: function(nodeId, slugPrototypes) {
+            const $form = $(this.contentNodeFormSelector);
+            const currentUrl = routing.generate(this.contentNodeUpdateRoute, {id: nodeId});
+
+            if ($form.attr('action') === currentUrl) {
+                _.each(slugPrototypes, function(slugString, localization) {
+                    const $slugStringEl = $form.find(
+                        '[name$="[slugPrototypesWithRedirect][slugPrototypes][values][' + localization + ']"]'
+                    );
+                    if (!$slugStringEl.is(':disabled')) {
+                        $slugStringEl.val(slugString);
+                    }
+                });
+            }
+        },
+
+        /**
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

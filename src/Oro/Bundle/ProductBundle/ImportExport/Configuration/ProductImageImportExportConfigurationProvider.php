@@ -2,25 +2,28 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Configuration;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationInterface;
 use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfigurationProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Import/export configuration provider for Product images.
+ */
 class ProductImageImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(TranslatorInterface $translator)
+    /** @var FileManager */
+    private $fileManager;
+
+    public function __construct(TranslatorInterface $translator, FileManager $fileManager)
     {
         $this->translator = $translator;
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -37,7 +40,10 @@ class ProductImageImportExportConfigurationProvider implements ImportExportConfi
             ImportExportConfiguration::FIELD_IMPORT_ENTITY_LABEL =>
                 $this->translator->trans('oro.product.productimage.entity_plural_label'),
             ImportExportConfiguration::FIELD_IMPORT_ADDITIONAL_NOTICES => [
-                $this->translator->trans('oro.product.productimage.import.notice')
+                $this->translator->trans(
+                    'oro.product.productimage.import.notice',
+                    ['%adapter_description%' => $this->fileManager->getAdapterDescription()]
+                )
             ]
         ]);
     }

@@ -2,73 +2,40 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
-use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
+/**
+ * Schedules extra update for the completed data of Checkout entity.
+ * Sets the owner and the organization for Checkout entity in case of Guest user.
+ */
 class CheckoutListener
 {
-    /** @var DefaultUserProvider */
-    private $defaultUserProvider;
+    private DefaultUserProvider $defaultUserProvider;
+    private TokenAccessorInterface $tokenAccessor;
 
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /**
-     * @param DefaultUserProvider $defaultUserProvider
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         DefaultUserProvider $defaultUserProvider,
-        TokenAccessorInterface $tokenAccessor,
-        WebsiteManager $websiteManager
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->defaultUserProvider = $defaultUserProvider;
         $this->tokenAccessor = $tokenAccessor;
-        $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * @param Checkout $checkout
-     * @param LifecycleEventArgs $event
-     */
-    public function postUpdate(Checkout $checkout, LifecycleEventArgs $event)
-    {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-
-        $unitOfWork->scheduleExtraUpdate(
-            $checkout,
-            [
-                'completedData' => [null, $checkout->getCompletedData()]
-            ]
-        );
-    }
-
-    /**
-     * @param Checkout $checkout
-     */
-    public function prePersist(Checkout $checkout)
+    public function prePersist(Checkout $checkout): void
     {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
             && null === $checkout->getOwner()
         ) {
-            $checkout->setOwner($this->defaultUserProvider->getDefaultUser(
-                OroCheckoutExtension::ALIAS,
-                Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
-            ));
+            $checkout->setOwner(
+                $this->defaultUserProvider->getDefaultUser('oro_checkout.default_guest_checkout_owner')
+            );
 
-            $website = $this->websiteManager->getCurrentWebsite();
-            if ($website && $website->getOrganization()) {
-                $checkout->setOrganization($website->getOrganization());
+            $organization = $this->tokenAccessor->getOrganization();
+            if (null !== $organization) {
+                $checkout->setOrganization($organization);
             }
         }
     }

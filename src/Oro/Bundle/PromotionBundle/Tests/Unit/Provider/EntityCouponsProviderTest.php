@@ -27,7 +27,7 @@ class EntityCouponsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 

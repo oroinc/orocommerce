@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Checks if product with given SKU exists.
+ */
 class ProductBySkuValidator extends ConstraintValidator
 {
     /**
@@ -16,16 +21,19 @@ class ProductBySkuValidator extends ConstraintValidator
     protected $registry;
 
     /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
      * @var PropertyAccessor
      */
     protected $propertyAccessor;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -39,9 +47,12 @@ class ProductBySkuValidator extends ConstraintValidator
         if ($value) {
             $products = $this->getProducts();
             if ($products !== null) {
-                $valid = isset($products[strtoupper($value)]);
+                $valid = isset($products[mb_strtoupper($value)]);
             } else {
-                $product = $this->registry->getRepository('OroProductBundle:Product')->findOneBySku($value);
+                $repository = $this->registry->getRepository(Product::class);
+
+                $qb = $repository->getBySkuQueryBuilder($value);
+                $product = $this->aclHelper->apply($qb)->getOneOrNullResult();
                 $valid = !empty($product);
             }
 

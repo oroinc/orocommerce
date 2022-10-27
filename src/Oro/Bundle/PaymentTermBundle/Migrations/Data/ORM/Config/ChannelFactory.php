@@ -7,8 +7,11 @@ use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides functionality to create a Channel
+ */
 class ChannelFactory
 {
     /**
@@ -21,10 +24,6 @@ class ChannelFactory
      */
     private $translator;
 
-    /**
-     * @param PaymentTermChannelType $paymentTermChannelType
-     * @param TranslatorInterface    $translator
-     */
     public function __construct(
         PaymentTermChannelType $paymentTermChannelType,
         TranslatorInterface $translator
@@ -64,6 +63,6 @@ class ChannelFactory
      */
     private function getChannelTypeTranslatedLabel(ChannelInterface $channel)
     {
-        return $this->translator->trans($channel->getLabel());
+        return $this->translator->trans((string) $channel->getLabel());
     }
 }

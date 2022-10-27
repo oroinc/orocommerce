@@ -3,12 +3,13 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
@@ -25,35 +26,34 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait, EntityTrait;
 
-    /**
-     * @var AbstractOrderLineItemType
-     */
+    /** @var AbstractOrderLineItemType */
     protected $formType;
 
     /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $sectionProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->sectionProvider = $this->createMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->createMock(SectionProvider::class);
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
         $unitSelectType = new EntityType(
             [
-                'kg' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
-                'item' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
+                'kg' => $this->getEntity(ProductUnit::class, ['code' => 'kg']),
+                'item' => $this->getEntity(ProductUnit::class, ['code' => 'item']),
             ],
             ProductUnitSelectionType::NAME
         );
 
-        $priceType = PriceTypeGenerator::createPriceType($this);
+        $priceType = new PriceType();
+        $priceType->setDataClass(Price::class);
 
         $orderPriceType = new PriceTypeSelectorType();
 
@@ -70,17 +70,16 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage SectionProvider not injected
-     */
     public function testSettingsProviderMissing()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('SectionProvider not injected');
+
         $formType = $this->getFormType();
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $formType->finishView($view, $form, []);
     }
 
@@ -98,18 +97,10 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    abstract public function getExpectedOptions();
+    abstract public function getExpectedOptions(): array;
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $options
-     * @param array $submittedData
-     * @param OrderLineItem $expectedData
-     * @param OrderLineItem|null $data
      */
     public function testSubmit(
         array $options,
@@ -124,14 +115,14 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
     public function assertDefaultBuildViewCalled()
     {
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $possibleOptions = [
             [
@@ -163,26 +154,20 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
-        $this->sectionProvider->expects($this->once())->method('getSections')->with(get_class($this->formType))
+        $this->sectionProvider->expects($this->once())
+            ->method('getSections')
+            ->with(get_class($this->formType))
             ->willReturn($this->getExpectedSections());
 
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $this->formType->finishView($view, $form, []);
 
         $this->assertEquals($this->getExpectedSections(), $view->vars['sections']);
     }
 
-    /**
-     * @return ArrayCollection
-     */
-    abstract protected function getExpectedSections();
+    abstract protected function getExpectedSections(): ArrayCollection;
 
-    /**
-     * @param FormView $view
-     * @param array $expectedVars
-     */
     public function assertBuildView(FormView $view, array $expectedVars)
     {
         foreach ($expectedVars as $key => $val) {
@@ -191,13 +176,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    abstract public function submitDataProvider();
+    abstract public function submitDataProvider(): array;
 
-    /**
-     * @return FormTypeInterface
-     */
-    abstract public function getFormType();
+    abstract public function getFormType(): FormTypeInterface;
 }

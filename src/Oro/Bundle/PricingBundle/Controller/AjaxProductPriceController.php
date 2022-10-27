@@ -2,29 +2,36 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use Oro\Bundle\PricingBundle\Handler\ProductPriceHandler;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Adds actions to update, delete and get prices by customer or matching prices via AJAX
+ */
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer")
-     * @Method({"GET"})
-     *
-     * {@inheritdoc}
+     * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
      */
     public function getProductPricesByCustomerAction(Request $request)
     {
@@ -39,7 +46,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *     name="oro_product_price_update_widget",
      *     requirements={"priceListId"="\d+"}
      * )
-     * @Template("OroPricingBundle:ProductPrice:widget/update.html.twig")
+     * @Template("@OroPricing/ProductPrice/widget/update.html.twig")
      * @Acl(
      *      id="oro_pricing_product_price_update",
      *      type="entity",
@@ -54,15 +61,15 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $priceList = $this->getDoctrine()->getRepository(PriceList::class)->find($request->get('priceList'));
         $prices = $this->getDoctrine()->getRepository(ProductPrice::class)
             ->findByPriceList(
-                $this->get('oro_pricing.shard_manager'),
+                $this->get(ShardManager::class),
                 $priceList,
                 ['id' => $request->get('id')]
             );
 
         $productPrice = $prices[0];
 
-        $handler = $this->get('oro_form.update_handler');
-        $priceHandler = $this->get('oro_pricing.handler.product_price_handler');
+        $handler = $this->get(UpdateHandlerFacade::class);
+        $priceHandler = $this->get(ProductPriceHandler::class);
         return $handler->update(
             $productPrice,
             PriceListProductPriceType::class,
@@ -74,8 +81,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="oro_pricing_matching_price")
-     * @Method({"GET"})
+     * @Route("/get-matching-price", name="oro_pricing_matching_price", methods={"GET"})
      * @AclAncestor("oro_pricing_product_price_view")
      *
      * {@inheritdoc}
@@ -83,9 +89,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
+        $matchedPrices = $this->get(MatchingPriceProvider::class)->getMatchingPrices(
             $lineItems,
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
+            $this->get(ProductPriceScopeCriteriaRequestHandler::class)->getPriceScopeCriteria()
         );
 
         return new JsonResponse($matchedPrices);
@@ -94,8 +100,9 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * @Route(
      *     "/delete-product-price/{priceListId}/{productPriceId}",
-     *      name="oro_product_price_delete"
-     *     )
+     *      name="oro_product_price_delete",
+     *      methods={"DELETE"}
+     * )
      * @ParamConverter("priceList", class="OroPricingBundle:PriceList", options={"id" = "priceListId"})
      * @Acl(
      *      id="oro_pricing_product_price_delete",
@@ -103,30 +110,29 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *      class="OroPricingBundle:ProductPrice",
      *      permission="DELETE"
      * )
+     * @CsrfProtection()
      *
      * {@inheritdoc}
      */
-    public function deleteAction(PriceList $priceList, $productPriceId)
+    public function deleteAction(Request $request, PriceList $priceList, $productPriceId)
     {
         /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->get('doctrine')
-            ->getRepository(ProductPrice::class);
+        $priceRepository = $this->getDoctrine()->getRepository(ProductPrice::class);
         /** @var ProductPrice $productPrice */
         $productPrice = $priceRepository
             ->findByPriceList(
-                $this->get('oro_pricing.shard_manager'),
+                $this->get(ShardManager::class),
                 $priceList,
                 ['id' => $productPriceId]
             );
         $code = JsonResponse::HTTP_OK;
-        $errors = new ArrayCollection();
         $message = '';
 
         if (empty($productPrice)) {
             $code = JsonResponse::HTTP_NOT_FOUND;
         } else {
             try {
-                $priceManager = $this->get('oro_pricing.manager.price_manager');
+                $priceManager = $this->get(PriceManager::class);
                 $priceManager->remove($productPrice[0]);
                 $priceManager->flush();
             } catch (\Exception $e) {
@@ -138,27 +144,29 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $response = [
             'successful' => $code === JsonResponse::HTTP_OK,
             'message' => $message,
-            'messages' => $this->prepareMessages($errors),
-            'refreshGrid' => $this->get('oro_action.helper.context')->getActionData()->getRefreshGrid(),
-            'flashMessages' => $this->get('session')->getFlashBag()->all()
+            'refreshGrid' => $this->get(ContextHelper::class)->getActionData()->getRefreshGrid(),
+            'flashMessages' => $request->getSession()->getFlashBag()->all()
         ];
 
         return new JsonResponse($response, $code);
     }
 
     /**
-     * @param Collection $messages
-     * @return array
+     * {@inheritdoc}
      */
-    protected function prepareMessages(Collection $messages)
+    public static function getSubscribedServices()
     {
-        $translator = $this->get('translator');
-        $result = [];
-
-        foreach ($messages as $message) {
-            $result[] = $translator->trans($message['message'], $message['parameters']);
-        }
-
-        return $result;
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ShardManager::class,
+                UpdateHandlerFacade::class,
+                ProductPriceHandler::class,
+                MatchingPriceProvider::class,
+                ProductPriceScopeCriteriaRequestHandler::class,
+                PriceManager::class,
+                ContextHelper::class,
+            ]
+        );
     }
 }

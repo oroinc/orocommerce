@@ -1,0 +1,35 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &pn-views {
+        box-shadow: none;
+        padding: 0;
+        border-bottom: none;
+
+        .#{$pn-prefix}buttons {
+            .#{$pn-prefix}btn {
+                width: 100%;
+                margin-right: 0;
+                border-radius: 0;
+
+                background-color: $primary-900;
+                border-top: 2px solid $primary-750;
+                border-left: 2px solid $primary-750;
+                border-bottom: 2px solid $primary-750;
+                line-height: 20px;
+
+                box-shadow: none;
+
+                &:last-child {
+                    border-right: 2px solid $primary-750;
+                }
+
+                &.#{$pn-prefix}active {
+                    border-top-color: $secondary;
+                    border-bottom-color: $primary-inverse;
+                    background-color: $primary-inverse;
+                }
+            }
+        }
+    }
+}

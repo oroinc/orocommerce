@@ -18,7 +18,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
     const VIEW_DECREMENT_INVENTORY_XPATH =
         "//label[text() = 'Decrement Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadCategoryProductData::class]);
@@ -31,7 +31,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $inventoryDecrementValue = $crawler->filterXPath(self::VIEW_DECREMENT_INVENTORY_XPATH)->html();
-        $this->assertEquals('On Order Submission', $inventoryDecrementValue);
+        $this->assertEquals('On order submission in the default checkout flow', $inventoryDecrementValue);
     }
 
     public function testProductDecrementQuantityUpdate()
@@ -41,14 +41,13 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $crawler = $this->setProductDecrementQuantityField($product, $newValue, null);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $value = $crawler->filterXPath(self::VIEW_DECREMENT_INVENTORY_XPATH)->html();
-        $this->assertEquals('Defined by Workflow', $value);
+        $this->assertEquals('No (custom)', $value);
     }
 
     /**
      * @param Product $product
-     * @param mixed $ownValue
-     * @param bool $useFallbackValue
-     * @param mixed $fallbackValue
+     * @param mixed   $ownValue
+     * @param mixed   $fallbackValue
      * @return Crawler
      */
     protected function setProductDecrementQuantityField($product, $ownValue, $fallbackValue)
@@ -57,7 +56,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['input_action'] = 'save_and_close';
+        $form['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
 
         $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'decrementQuantity');
 
@@ -81,7 +80,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $inventoryDecrementValue = $form->get('oro_catalog_category[decrementQuantity][scalarValue]')->getValue();
         $this->assertEmpty($inventoryDecrementValue);
 
-        $form['input_action'] = 'save';
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $form['oro_catalog_category[decrementQuantity][useFallback]'] = false;
         $form['oro_catalog_category[decrementQuantity][scalarValue]'] = $newCategoryFallbackValue;
         $this->client->followRedirects(true);

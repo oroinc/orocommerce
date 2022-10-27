@@ -1,0 +1,41 @@
+data:
+    -
+        type: 'productprices'
+        id: '<(implode("-", [@product_price_with_rule_1->id, @price_list_1->id]))>'
+        attributes:
+            quantity: 5
+            value: '12.2000'
+            currency: 'USD'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+            product:
+                data:
+                    type: 'products'
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: 'productunits'
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: 'productprices'
+        id: '<(implode("-", [@product_price_with_rule_2->id, @price_list_1->id]))>'
+        attributes:
+            quantity: 10
+            value: '10.0000'
+            currency: 'EUR'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+            product:
+                data:
+                    type: 'products'
+                    id: '<toString(@product-2->id)>'
+            unit:
+                data:
+                    type: 'productunits'
+                    id: '<toString(@product_unit.bottle->code)>'

@@ -20,20 +20,20 @@ class CustomerProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /** @var Product */
     protected $product;
 
-    /** @var  @var Scope */
+    /** @var @var Scope */
     protected $scope;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->product = new Product();
         $this->scope = new Scope();
         $this->entity = new CustomerProductVisibilityResolved($this->scope, $this->product);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity, $this->product, $this->scope);
     }

@@ -1,5 +1,6 @@
 entity_config:
     attribute:
+        # You can find out more about attributes in the documentation: https://doc.oroinc.com/backend/configuration/annotation/config-field/#attribute
         field:
             items:
                 searchable:
@@ -14,11 +15,9 @@ entity_config:
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.sortable.tooltip
-                enabled:
-                    form:
-                        options:
-                            tooltip: oro.product.entity_config.field.items.attribute.enabled.tooltip
-                visible:
-                    form:
-                        options:
-                            tooltip: oro.product.entity_config.field.items.attribute.visible.tooltip
+    enum:
+        field:
+            items:
+                enum_options:
+                    constraints:
+                        - Oro\Bundle\ProductBundle\Validator\Constraints\AttributeValueUsageInVariant: ~

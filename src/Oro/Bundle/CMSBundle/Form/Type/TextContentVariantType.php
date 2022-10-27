@@ -3,13 +3,15 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * CMS block content variant form type
+ */
 class TextContentVariantType extends AbstractType
 {
     /**
@@ -20,7 +22,7 @@ class TextContentVariantType extends AbstractType
         $builder
             ->add(
                 'default',
-                CheckboxType::class,
+                RadioType::class,
                 [
                     'label' => 'oro.cms.page.default.label',
                     'required' => false
@@ -28,14 +30,11 @@ class TextContentVariantType extends AbstractType
             )
             ->add(
                 'content',
-                OroRichTextType::class,
+                WYSIWYGType::class,
                 [
                     'label' => 'oro.cms.page.content.label',
+                    'auto_render' => false,
                     'required' => false,
-                    'wysiwyg_options' => [
-                        'statusbar' => true,
-                        'resize' => true,
-                    ],
                 ]
             )
             ->add(
@@ -58,6 +57,7 @@ class TextContentVariantType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => TextContentVariant::class,
+                'error_mapping' => ['contentStyle' => 'content_style'],
             ]
         );
     }

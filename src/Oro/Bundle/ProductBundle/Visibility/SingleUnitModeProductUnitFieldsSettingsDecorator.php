@@ -26,11 +26,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
      */
     private $doctrineHelper;
 
-    /**
-     * @param ProductUnitFieldsSettingsInterface $settings
-     * @param SingleUnitModeServiceInterface $singleUnitModeService
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         ProductUnitFieldsSettingsInterface $settings,
         SingleUnitModeServiceInterface $singleUnitModeService,

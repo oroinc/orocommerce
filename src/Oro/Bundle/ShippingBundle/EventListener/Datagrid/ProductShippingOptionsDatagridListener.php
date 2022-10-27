@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\EventListener\Datagrid;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -10,6 +10,9 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 
+/**
+ * Adds column with Product Shipping Options information to the Product grid.
+ */
 class ProductShippingOptionsDatagridListener
 {
     const SHIPPING_OPTIONS_COLUMN = 'product_shipping_options';
@@ -20,9 +23,6 @@ class ProductShippingOptionsDatagridListener
     /** @var string */
     protected $productShippingOptionsClass;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -36,16 +36,13 @@ class ProductShippingOptionsDatagridListener
         $this->productShippingOptionsClass = $productShippingOptionsClass;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
         $column = [
             'label' => 'oro.shipping.datagrid.shipping_options.column.label',
             'type' => 'twig',
-            'template' => 'OroShippingBundle:Datagrid:Column/productShippingOptions.html.twig',
+            'template' => '@OroShipping/Datagrid/Column/productShippingOptions.html.twig',
             'frontend_type' => 'html',
             'renderable' => false,
         ];
@@ -53,9 +50,6 @@ class ProductShippingOptionsDatagridListener
         $this->addConfigElement($config, '[columns]', $column, static::SHIPPING_OPTIONS_COLUMN);
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */

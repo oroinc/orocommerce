@@ -3,11 +3,12 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 class ProductTaxCodeDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -25,7 +26,7 @@ class ProductTaxCodeDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $productTaxCode->getId(),
-            'oro_tax.entity.product_tax_code.class',
+            ProductTaxCode::class,
             'oro_tax_product_tax_code_index'
         );
     }

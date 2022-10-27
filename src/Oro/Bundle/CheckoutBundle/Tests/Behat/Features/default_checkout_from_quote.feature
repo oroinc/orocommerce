@@ -25,7 +25,7 @@ Feature: Default Checkout From Quote
   Scenario: Create order from Quote PO1 and verify quantity
     Given AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click view PO1 in grid
     When I click "Accept and Submit to Order"
@@ -42,7 +42,7 @@ Feature: Default Checkout From Quote
       | Billing Information | Quote #1     | 1     | $25.00   |
     And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
 
-    When I click "Edit Order"
+    When I click "Edit items"
     And I type "10" in "First Product Quantity on Quote"
     And I click "Submit"
     Then Checkout "Order Summary Products Grid" should contain products:

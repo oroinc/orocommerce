@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
@@ -26,17 +26,11 @@ class ProductDuplicateListener
     /** @var string */
     protected $visibilityCustomerGroupClassName;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param ProductDuplicateAfterEvent $event
-     */
     public function onDuplicateProduct(ProductDuplicateAfterEvent $event)
     {
         $product = $event->getProduct();

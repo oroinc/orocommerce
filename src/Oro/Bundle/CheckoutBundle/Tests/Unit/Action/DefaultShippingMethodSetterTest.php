@@ -23,7 +23,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
      */
     private $defaultShippingMethodSetter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutShippingMethodsProviderMock = $this
             ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)

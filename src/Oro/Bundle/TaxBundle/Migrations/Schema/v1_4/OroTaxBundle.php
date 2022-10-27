@@ -27,10 +27,6 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedM
         $this->rename($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     private function rename(Schema $schema, QueryBag $queries)
     {
         // account group

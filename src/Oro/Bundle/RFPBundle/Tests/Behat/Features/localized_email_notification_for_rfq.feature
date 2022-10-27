@@ -17,33 +17,32 @@ Feature: Localized email notification for RFQ
     When I proceed as the Admin
     And I login as administrator
     And I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Supported Languages | [English, German, French] |
-      | Use Default         | false                     |
-      | Default Language    | French                    |
+      | Enabled Localizations | [English (United States), German Localization, French Localization] |
+      | Default Localization  | French Localization                                 |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / User Management / Organizations
     And click Configuration "Oro" in grid
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use System" for "Default Localization" field
     And I fill form with:
-      | Use System       | false  |
-      | Default Language | German |
+      | Default Localization | German Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I click My Configuration in user menu
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false   |
-      | Default Language | English |
+      | Default Localization | English (United States) |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Enabled Localizations | [English, German Localization, French Localization] |
-      | Default Localization  | English                                             |
+      | Enabled Localizations | [English (United States), German Localization, French Localization] |
+      | Default Localization  | English (United States)                                             |
     And I submit form
     Then I should see "Configuration saved" flash message
 
@@ -56,12 +55,16 @@ Feature: Localized email notification for RFQ
       | Content | English RFQ Create Notification Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject | French RFQ Create Notification Subject |
-      | Content | French RFQ Create Notification Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | French RFQ Create Notification Subject |
+      | Content          | French RFQ Create Notification Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject | German RFQ Create Notification Subject |
-      | Content | German RFQ Create Notification Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | German RFQ Create Notification Subject |
+      | Content          | German RFQ Create Notification Body    |
     And I submit form
     Then I should see "Template saved" flash message
 
@@ -81,26 +84,26 @@ Feature: Localized email notification for RFQ
     When I click Logout in user menu
     And I login as "ethan" user
     And I click My Configuration in user menu
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false  |
-      | Default Language | German |
+      | Default Localization | German Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
 
     When I click Logout in user menu
     And I login as "charlie" user
     And I click My Configuration in user menu
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false  |
-      | Default Language | French |
+      | Default Localization | French Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
 
     When I proceed as the User
     And I login as AmandaRCole@example.org buyer
-    And I click "Account"
+    And I follow "Account"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:
@@ -139,12 +142,16 @@ Feature: Localized email notification for RFQ
       | Content | English RFQ Create Confirmation Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject | French RFQ Create Confirmation Subject |
-      | Content | French RFQ Create Confirmation Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | French RFQ Create Confirmation Subject |
+      | Content          | French RFQ Create Confirmation Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject | German RFQ Create Confirmation Subject |
-      | Content | German RFQ Create Confirmation Body    |
+      | Subject Fallback | false                                  |
+      | Content Fallback | false                                  |
+      | Subject          | German RFQ Create Confirmation Subject |
+      | Content          | German RFQ Create Confirmation Body    |
     And I submit form
     Then I should see "Template saved" flash message
 
@@ -155,8 +162,8 @@ Feature: Localized email notification for RFQ
     And I submit form
     Then I should see "Configuration saved" flash message
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     And I submit form
     Then I should see "Configuration saved" flash message
 
@@ -167,9 +174,9 @@ Feature: Localized email notification for RFQ
     And type "Product" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     When I open shopping list widget
-    And I click "Shopping List" on shopping list widget
+    And I click "View List"
     And click "Request Quote"
     And I fill form with:
       | First Name    | Tester                |

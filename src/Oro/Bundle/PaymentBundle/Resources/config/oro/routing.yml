@@ -10,12 +10,31 @@ oro_payment_methods_configs_rule:
     type:         annotation
     prefix:       /paymentrule
 
-oro_payment_methods_configs_rule_api:
-    resource: "@OroPaymentBundle/Controller/Api/Rest/PaymentMethodsConfigsRuleController.php"
-    type:     rest
-    prefix:   api/rest/{version}/
-    requirements:
-        version:  latest|v1
-        _format:  json
+
+#
+# OLD REST API ROUTES
+#
+
+oro_api_enable_paymentmethodsconfigsrules:
+    path: '/api/rest/{version}/paymentrules/{id}/enable.{_format}'
+    methods: [POST]
     defaults:
+        _controller: 'Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::enableAction'
         version: latest
+        _format: json
+    requirements:
+        version: latest|v1
+        id: \d+
+        _format: json
+
+oro_api_disable_paymentmethodsconfigsrules:
+    path: '/api/rest/{version}/paymentrules/{id}/disable.{_format}'
+    methods: [POST]
+    defaults:
+        _controller: 'Oro\Bundle\PaymentBundle\Controller\Api\Rest\PaymentMethodsConfigsRuleController::disableAction'
+        version: latest
+        _format: json
+    requirements:
+        version: latest|v1
+        id: \d+
+        _format: json

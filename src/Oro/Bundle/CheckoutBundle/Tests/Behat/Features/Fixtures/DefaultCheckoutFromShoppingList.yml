@@ -1,0 +1,11 @@
+include:
+    - '@OroCheckoutBundle:Payment.yml'
+    - '@OroCheckoutBundle:Shipping.yml'
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+    - '@OroCheckoutBundle:CheckoutProductFixture.yml'
+    - '@OroCheckoutBundle:CheckoutShoppingListFixture.yml'
+    - '@OroCheckoutBundle:CheckoutQuoteFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue:
+        string: <("Product1`\"'&йёщ®&reg;>")>

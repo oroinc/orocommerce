@@ -1,0 +1,71 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+  attributes:
+    id:
+      groups: ['tax']
+    billingAddress:
+      groups: ['tax']
+    shippingAddress:
+      groups: ['tax']
+    customer:
+      groups: ['tax']
+    currency:
+      groups: ['tax']
+    subtotal:
+      groups: ['tax']
+    lineItems:
+      groups: ['tax']
+
+Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal:
+  attributes:
+    currency:
+      groups: ['tax']
+    amount:
+      groups: ['tax']
+    data:
+      groups: ['tax']
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+  attributes:
+    id:
+      groups: ['tax']
+    postalCode:
+      groups: ['tax']
+    country:
+      groups: ['tax']
+    region:
+      groups: ['tax']
+
+Oro\Bundle\AddressBundle\Entity\Region:
+  attributes:
+    code:
+      groups: ['tax']
+
+Oro\Bundle\AddressBundle\Entity\Country:
+  attributes:
+    iso2Code:
+      groups: ['tax']
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+  attributes:
+    id:
+      groups: ['tax']
+    quantity:
+      groups: ['tax']
+    value:
+      groups: ['tax']
+    currency:
+      groups: ['tax']
+    product:
+      groups: ['tax']
+    productUnit:
+      groups: ['tax']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['tax']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+  attributes:
+    code:
+      groups: ['tax']

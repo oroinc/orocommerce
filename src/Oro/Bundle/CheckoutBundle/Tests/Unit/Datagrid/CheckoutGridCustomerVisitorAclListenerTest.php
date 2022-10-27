@@ -17,18 +17,17 @@ class CheckoutGridCustomerVisitorAclListenerTest extends TestCase
     /** @var TokenStorage */
     private $tokenStorage;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = new TokenStorage();
         $this->listener = new CheckoutGridCustomerVisitorAclListener($this->tokenStorage);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @expectedExceptionMessage Anonymous users are not allowed.
-     */
     public function testOnBuildBeforeWithAnonymousCustomerUserTokenShouldThrowException()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectExceptionMessage('Anonymous users are not allowed.');
+
         $this->tokenStorage->setToken(new AnonymousCustomerUserToken('test'));
         $this->listener->onBuildBefore($this->createMock(BuildBefore::class));
     }

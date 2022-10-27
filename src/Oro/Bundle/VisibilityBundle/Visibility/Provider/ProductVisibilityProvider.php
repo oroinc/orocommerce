@@ -4,6 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Provider;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -15,19 +17,36 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibil
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Visibility Provider for Product entity.
+ */
 class ProductVisibilityProvider
 {
     use ProductVisibilityTrait;
+
+    public const VISIBILITIES = [
+        null, // Simulates the lack of relation between the product and the visibility configuration.
+        BaseVisibilityResolved::VISIBILITY_HIDDEN,
+        BaseVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+        BaseVisibilityResolved::VISIBILITY_VISIBLE,
+        CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL
+    ];
+
+    // The query execution time depends not only on the complexity of the query and the size of data,
+    // but also on the time to planning the query itself by sql engine.
+    // Therefore, not always limiting the results in the query will speed up. In this case,
+    // the difference in thousands of results per iteration will take much less time than planning
+    // a query with different input parameters dozens of times in a row.
+    //
+    // Important: a large number of batches can lead to high memory usage, which can lead to errors
+    // (see BufferedIdentityQueryResultIterator).
+    private int $queryBufferSize = 5000;
 
     /**
      * @var DoctrineHelper
      */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager
@@ -36,12 +55,17 @@ class ProductVisibilityProvider
         $this->configManager = $configManager;
     }
 
+    public function setQueryBufferSize(int $queryBufferSize): void
+    {
+        $this->queryBufferSize = $queryBufferSize;
+    }
+
     /**
      * Returns fields to index with product.
      *
-     * @param Product[] $products
+     * @param Product[]|array $products
      * @param int $websiteId
-     * @return array
+     * @return \Generator
      */
     public function getCustomerVisibilitiesForProducts(array $products, $websiteId)
     {
@@ -53,46 +77,25 @@ class ProductVisibilityProvider
             $website
         );
 
-        $customersData = $this->getCustomersDataBasedOnCustomerGroupProductVisibility(
+        yield from $this->getCustomersDataBasedOnCustomerGroupProductVisibility(
             $website,
             $productsWithCategoryConfigVisibility,
             $this->getCategoryConfigValue()
         );
 
-        $customersData = array_merge(
-            $customersData,
-            $this->getCustomersDataBasedOnCustomerProductVisibility(
-                $website,
-                $productsWithCategoryConfigVisibility,
-                $this->getCategoryConfigValue()
-            )
+        yield from $this->getCustomersDataBasedOnCustomerProductVisibility(
+            $website,
+            $productsWithCategoryConfigVisibility,
+            $this->getCategoryConfigValue()
         );
 
-        $customersData = array_merge($customersData, $this->processInverseProducts($products, $website));
-
-        usort($customersData, [$this, 'compare']);
-
-        return $customersData;
+        yield from $this->processInverseProducts($products, $website);
     }
 
     /**
-     * @param array $a
-     * @param array $b
-     * @return int
-     */
-    private function compare(array $a, array $b)
-    {
-        if ($a['productId'] === $b['productId']) {
-            return $a['customerId'] - $b['customerId'];
-        }
-
-        return $a['productId'] - $b['productId'];
-    }
-
-    /**
-     * @param array $products
+     * @param array|Product[] $products
      * @param Website $website
-     * @return array
+     * @return \Generator
      */
     private function processInverseProducts(array $products, Website $website)
     {
@@ -102,55 +105,74 @@ class ProductVisibilityProvider
             $website
         );
 
+        $knownHashes = [];
         $customersData = $this->getCustomersDataBasedOnCustomerGroupProductVisibility(
             $website,
             $productsWithCategoryConfigVisibility,
             $this->getInverseCategoryConfigValue()
         );
+        foreach ($customersData as $dataRow) {
+            $knownHashes[$this->getDataRowHash($dataRow)] = true;
+        }
 
-        $customersData = array_merge(
-            $customersData,
-            $this->getCustomersDataBasedOnCustomerProductVisibility(
-                $website,
-                $productsWithCategoryConfigVisibility,
-                $this->getInverseCategoryConfigValue()
-            )
+        $customersData = $this->getCustomersDataBasedOnCustomerProductVisibility(
+            $website,
+            $productsWithCategoryConfigVisibility,
+            $this->getInverseCategoryConfigValue()
         );
+        foreach ($customersData as $dataRow) {
+            $knownHashes[$this->getDataRowHash($dataRow)] = true;
+        }
 
-        return array_udiff(
-            $this->getAllCustomersData($productsWithCategoryConfigVisibility),
-            $customersData,
-            [$this, 'compare']
-        );
+        foreach ($this->getAllCustomersData($productsWithCategoryConfigVisibility) as $dataRow) {
+            if (!array_key_exists($this->getDataRowHash($dataRow), $knownHashes)) {
+                yield $dataRow;
+            }
+        }
+    }
+
+    private function getDataRowHash(array $dataRow): string
+    {
+        return $dataRow['productId'] . ':' . $dataRow['customerId'];
     }
 
     /**
-     * @return array
+     * @return BufferedIdentityQueryResultIterator
      */
     private function getCustomerIds()
     {
         $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Customer::class)->createQueryBuilder();
         $queryBuilder
             ->select('customer.id as customerIid')
-            ->from(Customer::class, 'customer');
+            ->from(Customer::class, 'customer')
+            ->orderBy('customer.id');
 
-        return array_column($queryBuilder->getQuery()->getArrayResult(), 'customerIid');
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $query = $queryBuilder->getQuery();
+        $query
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+
+        $query->setHydrationMode($identifierHydrationMode);
+
+        $buffer = new BufferedIdentityQueryResultIterator($query);
+        $buffer->setBufferSize($this->queryBufferSize);
+
+        return $buffer;
     }
 
     /**
      * @param array $productIds
-     * @return array
+     * @return \Generator
      */
     private function getAllCustomersData(array $productIds)
     {
-        $data = [];
-        foreach ($productIds as $productId) {
-            foreach ($this->getCustomerIds() as $customerId) {
-                $data[] = ['productId' => $productId, 'customerId' => $customerId];
+        foreach ($this->getCustomerIds() as $customerId) {
+            foreach ($productIds as $productId) {
+                yield ['productId' => $productId, 'customerId' => $customerId];
             }
         }
-
-        return $data;
     }
 
     /**
@@ -162,38 +184,53 @@ class ProductVisibilityProvider
     {
         $qb = $this->createProductsQuery($products);
 
-        $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite(
+        $productConfigValue = $this->getProductConfigValue();
+        $categoryConfigValue = $this->getCategoryConfigValue();
+
+        $productVisibilityTerm = $this->buildProductVisibilityResolvedTermByWebsite(
             $qb,
             $this->getWebsiteById($websiteId)
         );
 
-        $anonymousGroupVisibilityTerm = implode('+', [
-            $productVisibilityTerm,
-            $this->getCustomerGroupProductVisibilityResolvedTermByWebsite(
-                $qb,
-                $this->getAnonymousCustomerGroup(),
-                $this->getWebsiteById($websiteId)
-            )
-        ]);
+        $anonymousGroupVisibilityTerm = $this->getCustomerGroupProductVisibilityFieldNameResolvedByWebsite(
+            $qb,
+            $this->getAnonymousCustomerGroup(),
+            $this->getWebsiteById($websiteId),
+        );
 
         $qb
-            ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN %d ELSE %d END as visibility_new',
-                $productVisibilityTerm,
-                BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                BaseVisibilityResolved::VISIBILITY_HIDDEN
-            ))
-            ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN %d ELSE %d END as visibility_anonymous',
-                $anonymousGroupVisibilityTerm,
-                BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                BaseVisibilityResolved::VISIBILITY_HIDDEN
-            ));
+            ->addSelect(sprintf('%s as visibility_new', $productVisibilityTerm))
+            ->addSelect(sprintf('%s as visibility_anonymous', $anonymousGroupVisibilityTerm));
 
         $visibilities = $qb->getQuery()->getArrayResult();
 
         foreach ($visibilities as &$visibility) {
-            $visibility['is_visible_by_default'] = $this->getCategoryConfigValue();
+            $visibility['visibility_new'] = $visibility['visibility_new'] === 0
+                ? $categoryConfigValue
+                : $visibility['visibility_new'];
+
+            $visibilityNew = $visibility['visibility_new'] = $visibility['visibility_new'] === null
+                ? $productConfigValue
+                : $visibility['visibility_new'];
+
+            $visibility['visibility_new'] = $visibility['visibility_new'] > 0
+                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+            $visibility['visibility_anonymous'] = $visibility['visibility_anonymous'] === 0
+                ? $categoryConfigValue
+                : $visibility['visibility_anonymous'];
+
+            $visibility['visibility_anonymous'] = $visibility['visibility_anonymous'] === null
+                ? 0
+                : $visibility['visibility_anonymous'];
+
+            $visibility['visibility_anonymous'] = ($visibilityNew + $visibility['visibility_anonymous'] * 10) > 0
+                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+
+            $visibility['is_visible_by_default'] = $categoryConfigValue;
         }
 
         return $visibilities;
@@ -227,7 +264,8 @@ class ProductVisibilityProvider
         $visibilityCondition = $this->getVisibilityConditionForVisibilityTerms($visibilities);
 
         $queryBuilder
-            ->andWhere($queryBuilder->expr()->neq($visibilityCondition, $this->getCategoryConfigValue()))
+            ->andWhere($queryBuilder->expr()->neq($visibilityCondition, ':productVisibilityCategoryConfigValue'))
+            ->setParameter('productVisibilityCategoryConfigValue', $this->getCategoryConfigValue())
             ->addOrderBy('product.id', Query::ORDER_ASC);
 
         return $queryBuilder;
@@ -270,15 +308,27 @@ class ProductVisibilityProvider
         );
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param Website $website
-     * @return string
-     */
-    private function getAllCustomerGroupsProductVisibilityResolvedTerm(
+    private function buildAllCustomerGroupsProductVisibilityResolvedTermRestrictions(
+        QueryBuilder $queryBuilder,
+        string $fieldName,
+        int $defaultVisibility
+    ): void {
+        $callback = function ($visibility) use ($defaultVisibility) {
+            $currentVisibility = $this->buildConfigFallback($visibility) > 0
+                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+            return $defaultVisibility === $currentVisibility;
+        };
+
+        $visibilities = array_filter(self::VISIBILITIES, $callback);
+        $this->buildVisibilityConditions($queryBuilder, $fieldName, $visibilities);
+    }
+
+    private function buildAllCustomerGroupsProductVisibilityResolvedTerm(
         QueryBuilder $queryBuilder,
         Website $website
-    ) {
+    ): string {
         $customerProductVisibilitySubquery = $this->doctrineHelper
             ->getEntityManagerForClass(CustomerProductVisibilityResolved::class)
             ->createQueryBuilder();
@@ -340,14 +390,11 @@ class ProductVisibilityProvider
 
         $queryBuilder->setParameter('_website', $website);
 
-        return sprintf(
-            'COALESCE(%s, 0) * 10',
-            $this->addCategoryConfigFallback('customer_group_product_visibility_resolved.visibility')
-        );
+        return 'customer_group_product_visibility_resolved.visibility';
     }
 
     /**
-     * @param Product[] $products
+     * @param Product[]|array $products
      * @return QueryBuilder
      */
     private function createProductsQuery(array $products)
@@ -364,22 +411,36 @@ class ProductVisibilityProvider
         return $qb;
     }
 
-    /**
-     * @param int $fallbackProductVisibility
-     * @return string
-     */
-    private function getCustomerProductVisibilityResolvedTerm($fallbackProductVisibility)
-    {
-        $customerFallback = $this->addCategoryConfigFallback('customer_product_visibility_resolved.visibility');
+    private function buildCustomersDataBasedOnCustomerProductVisibilityRestrictions(
+        QueryBuilder $queryBuilder,
+        string $fieldName,
+        int $productVisibility,
+        int $defaultVisibility
+    ): void {
+        $visibilities = array_filter(
+            self::VISIBILITIES,
+            function ($visibility) use ($productVisibility, $defaultVisibility) {
+                $currentVisibility = $visibility === CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL
+                    ? $productVisibility
+                    : $this->buildConfigFallback($visibility);
 
-        return $this->getCustomerProductVisibilityResolvedVisibilityTerm($fallbackProductVisibility, $customerFallback);
+                $currentVisibility = $currentVisibility > 0
+                    ? BaseVisibilityResolved::VISIBILITY_VISIBLE
+                    : BaseVisibilityResolved::VISIBILITY_HIDDEN;
+
+                return $defaultVisibility === $currentVisibility;
+            }
+        );
+
+        $this->buildVisibilityConditions($queryBuilder, $fieldName, $visibilities);
     }
 
     /**
      * @param Website $website
      * @param array $products
      * @param int $productVisibility
-     * @return array
+     *
+     * @return BufferedIdentityQueryResultIterator
      */
     private function getCustomersDataBasedOnCustomerProductVisibility(
         Website $website,
@@ -410,23 +471,29 @@ class ProductVisibilityProvider
 
         $queryBuilder->setParameter('customersWebsite', $website);
 
-        $customerVisibilityTerm = $this->getCustomerProductVisibilityResolvedTerm($productVisibility);
-        $customerVisibilityCondition = $this->getVisibilityConditionForVisibilityTerms([$customerVisibilityTerm]);
+        $this->buildCustomersDataBasedOnCustomerProductVisibilityRestrictions(
+            $queryBuilder,
+            'customer_product_visibility_resolved.visibility',
+            $productVisibility,
+            $this->inverseVisibility($productVisibility),
+        );
 
         $queryBuilder
             ->select('product.id as productId, IDENTITY(scope.customer) as customerId')
-            ->andWhere(
-                $queryBuilder->expr()->eq($customerVisibilityCondition, $this->inverseVisibility($productVisibility))
-            );
+            ->resetDQLPart('orderBy');
 
-        return $queryBuilder->getQuery()->getArrayResult();
+        $buffer = new BufferedIdentityQueryResultIterator($queryBuilder);
+        $buffer->setBufferSize($this->queryBufferSize);
+
+        return $buffer;
     }
 
     /**
      * @param Website $website
      * @param array $products
      * @param int $productVisibility
-     * @return array
+     *
+     * @return BufferedIdentityQueryResultIterator
      */
     private function getCustomersDataBasedOnCustomerGroupProductVisibility(
         Website $website,
@@ -434,52 +501,49 @@ class ProductVisibilityProvider
         $productVisibility
     ) {
         $queryBuilder = $this->createProductsQuery($products);
-
-        $customerGroupVisibilityTerm = $this->getAllCustomerGroupsProductVisibilityResolvedTerm(
+        $fieldName = $this->buildAllCustomerGroupsProductVisibilityResolvedTerm($queryBuilder, $website);
+        $this->buildAllCustomerGroupsProductVisibilityResolvedTermRestrictions(
             $queryBuilder,
-            $website
+            $fieldName,
+            $this->inverseVisibility($productVisibility)
         );
-        $customerGroupVisibilityCondition = $this->getVisibilityConditionForVisibilityTerms([
-            $customerGroupVisibilityTerm
-        ]);
 
         $queryBuilder
             ->select('product.id as productId, customer.id as customerId')
-            ->andWhere(
-                $queryBuilder->expr()->eq(
-                    $customerGroupVisibilityCondition,
-                    $this->inverseVisibility($productVisibility)
-                )
-            )
-            ->addOrderBy('customer.id', 'ASC');
+            ->resetDQLPart('orderBy');
 
-        return $queryBuilder->getQuery()->getArrayResult();
+        $buffer = new BufferedIdentityQueryResultIterator($queryBuilder);
+        $buffer->setBufferSize($this->queryBufferSize);
+
+        return $buffer;
     }
 
     /**
      * Returns products from $products for given $website which visibility equals to $defaultVisibility.
      *
-     * @param $defaultVisibility
-     * @param $products
+     * @param int $defaultVisibility
+     * @param array|Product[] $products
      * @param Website $website
      * @return array
      */
     private function getProductsByDefaultVisibility($defaultVisibility, $products, Website $website)
     {
         $queryBuilder = $this->createProductsQuery($products);
-
-        $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite($queryBuilder, $website);
-        $productVisibilityCondition = $this->getVisibilityConditionForVisibilityTerms([$productVisibilityTerm]);
+        $fieldName = $this->buildProductVisibilityResolvedTermByWebsite($queryBuilder, $website);
+        $this->buildProductVisibilityResolvedTermByWebsiteConditions($queryBuilder, $fieldName, $defaultVisibility);
 
         $queryBuilder
             ->select('product.id as productId')
-            ->andWhere($queryBuilder->expr()->eq($productVisibilityCondition, ':defaultVisibility'))
-            ->setParameter('defaultVisibility', $defaultVisibility)
             ->addOrderBy('product.id');
 
-        $productsResult = $queryBuilder->getQuery()->getArrayResult();
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $query = $queryBuilder->getQuery();
+        $query
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
 
-        return array_column($productsResult, 'productId');
+        return $query->getResult($identifierHydrationMode);
     }
 
     /**

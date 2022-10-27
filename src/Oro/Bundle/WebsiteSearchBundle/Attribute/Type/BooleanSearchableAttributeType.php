@@ -5,20 +5,15 @@ namespace Oro\Bundle\WebsiteSearchBundle\Attribute\Type;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Attribute type provides metadata for boolean attribute for search index.
+ */
 class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
-    {
-        throw new \RuntimeException('Not supported');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSorterStorageFieldType()
+    protected function getFilterStorageFieldTypeMain(FieldConfigModel $attribute): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -26,15 +21,23 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
-        throw new \RuntimeException('Not supported');
+        return Query::TYPE_INTEGER;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function getFilterType(FieldConfigModel $attribute): string
+    {
+        return self::FILTER_TYPE_BOOLEAN;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
@@ -42,16 +45,24 @@ class BooleanSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
-        throw new \RuntimeException('Not supported');
+        return $attribute->getFieldName();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        throw new \RuntimeException('Not supported');
     }
 }

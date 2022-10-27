@@ -9,25 +9,23 @@ use Oro\Bundle\TaxBundle\Resolver\CustomerAddressResolver;
 
 class CustomerAddressResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CustomerAddressResolver */
-    protected $resolver;
-
     /** @var CustomerAddressItemResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $itemResolver;
+    private $itemResolver;
 
-    /** {@inheritdoc} */
-    protected function setUp()
+    /** @var CustomerAddressResolver */
+    private $resolver;
+
+    protected function setUp(): void
     {
-        $this->itemResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemResolver = $this->createMock(CustomerAddressItemResolver::class);
 
         $this->resolver = new CustomerAddressResolver($this->itemResolver);
     }
 
     public function testEmptyCollection()
     {
-        $this->itemResolver->expects($this->never())->method($this->anything());
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
 
         $this->resolver->resolve(new Taxable());
     }
@@ -38,15 +36,15 @@ class CustomerAddressResolverTest extends \PHPUnit\Framework\TestCase
         $taxableItem = new Taxable();
         $taxable->addItem($taxableItem);
 
-        $this->itemResolver->expects($this->once())->method('resolve')->with(
-            $this->callback(
-                function ($dispatchedTaxable) use ($taxableItem) {
+        $this->itemResolver->expects($this->once())
+            ->method('resolve')
+            ->with(
+                $this->callback(function ($dispatchedTaxable) use ($taxableItem) {
                     $this->assertSame($taxableItem, $dispatchedTaxable);
 
                     return true;
-                }
-            )
-        );
+                })
+            );
 
         $this->resolver->resolve($taxable);
     }
@@ -59,7 +57,8 @@ class CustomerAddressResolverTest extends \PHPUnit\Framework\TestCase
         $taxable->addItem(new Taxable());
         $taxable->setResult($result);
 
-        $this->itemResolver->expects($this->never())->method($this->anything());
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
 
         $this->resolver->resolve($taxable);
     }

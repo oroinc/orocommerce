@@ -2,24 +2,35 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
+use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ProductController extends Controller
+/**
+ * The controller for the product view and search functionality.
+ */
+class ProductController extends AbstractController
 {
-    const GRID_NAME = 'frontend-product-search-grid';
-
     /**
      * View list of products
      *
      * @Route("/", name="oro_product_frontend_product_index")
-     * @Layout(vars={"entity_class", "grid_config", "theme_name"})
+     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
      * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
@@ -27,13 +38,57 @@ class ProductController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
-            'theme_name' => $this->container->get('oro_product.datagrid_theme_helper')
+            'entity_class' => Product::class,
+            'theme_name' => $this->get(DataGridThemeHelper::class)
                 ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
             ],
+            'filters_position' => $this->getFiltersPosition(),
         ];
+    }
+
+    /**
+     * Search products
+     *
+     * @Route("/search", name="oro_product_frontend_product_search")
+     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
+     * @AclAncestor("oro_product_frontend_view")
+     *
+     * @return array
+     */
+    public function searchAction()
+    {
+        return [
+            'entity_class' => Product::class,
+            'theme_name' => $this->get(DataGridThemeHelper::class)
+                ->getTheme('frontend-product-search-grid'),
+            'grid_config' => [
+                'frontend-product-search-grid'
+            ],
+            'filters_position' => $this->getFiltersPosition(),
+        ];
+    }
+
+    private function getFiltersPosition(): string
+    {
+        return $this->container->get(ConfigManager::class)->get(Configuration::getConfigKeyByName('filters_position'));
+    }
+
+    /**
+     * Get data for website search autocomplete
+     *
+     * @Route("/search/autocomplete", name="oro_product_frontend_product_search_autocomplete")
+     * @AclAncestor("oro_product_frontend_view")
+     */
+    public function autocompleteAction(Request $request): JsonResponse
+    {
+        $searchString = trim($request->get('search'));
+
+        $autocompleteData = $this->get(ProductAutocompleteProvider::class)
+            ->getAutocompleteData($request, $searchString);
+
+        return new JsonResponse($autocompleteData);
     }
 
     /**
@@ -59,46 +114,84 @@ class ProductController extends Controller
         $data = [
             'product' => $product,
             'parentProduct' => null,
+            'chosenProductVariant' => null
         ];
 
-        $ignoreProductVariants = $request->get('ignoreProductVariant', false);
-        $isSimpleFormAvailable = $this
-            ->get('oro_product.layout.data_provider.product_view_form_availability_provider')
-            ->isSimpleFormAvailable($product);
-
-        if (!$ignoreProductVariants && $product->isConfigurable() && $isSimpleFormAvailable) {
-            $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
+        if (!$request->get('ignoreProductVariant', false)
+            && $product->isConfigurable()
+            && $this->isSimpleFormAvailable($product)
+        ) {
+            $productAvailabilityProvider = $this->get(ProductVariantAvailabilityProvider::class);
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
+            $data['chosenProductVariant'] = $this->getChosenProductVariantFromRequest($request, $product);
             if ($simpleProduct) {
                 $data['productVariant'] = $simpleProduct;
                 $data['parentProduct'] = $product;
             }
         }
 
+        /** @var Product|null $parentProduct */
         $parentProduct = null;
         $parentProductId = $request->get('parentProductId');
         if ($parentProductId) {
-            /** @var Product $parentProduct */
-            $parentProduct = $this->getDoctrine()
-                ->getManagerForClass('OroProductBundle:Product')
-                ->getRepository('OroProductBundle:Product')
-                ->find($parentProductId);
+            $parentProduct = $this->getDoctrine()->getRepository(Product::class)->find($parentProductId);
         }
 
-        $templateProduct = $parentProduct ? $parentProduct : $product;
-        $pageTemplate = $this->get('oro_product.provider.page_template_provider')
-            ->getPageTemplate($templateProduct, 'oro_product_frontend_product_view');
+        $pageTemplate = $this->get(PageTemplateProvider::class)
+            ->getPageTemplate($parentProduct ?? $product, 'oro_product_frontend_product_view');
 
-        $this->get('oro_entity_config.attribute_render_registry')->setAttributeRendered(
+        $this->get(AttributeRenderRegistry::class)->setAttributeRendered(
             $product->getAttributeFamily(),
             PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES
         );
 
-        return  [
+        return [
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
-            'page_template' => $pageTemplate ? $pageTemplate->getKey() : null
+            'page_template' => $pageTemplate?->getKey()
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            DataGridThemeHelper::class,
+            ProductVariantAvailabilityProvider::class,
+            PageTemplateProvider::class,
+            AttributeRenderRegistry::class,
+            ProductAutocompleteProvider::class,
+            ProductViewFormAvailabilityProvider::class,
+            ConfigManager::class,
+        ]);
+    }
+
+    private function getChosenProductVariantFromRequest(Request $request, Product $product): ?Product
+    {
+        $variantProduct = null;
+        $variantProductId = $request->get('variantProductId');
+        if ($variantProductId) {
+            /** @var EntityManagerInterface $em */
+            $em = $this->get('doctrine')->getManagerForClass(Product::class);
+            $variantProductId = (int)$variantProductId;
+            $simpleProductIds = $this->get(ProductVariantAvailabilityProvider::class)
+                ->getSimpleProductIdsByConfigurable([$product->getId()]);
+            foreach ($simpleProductIds as $simpleProductId) {
+                if ($simpleProductId === $variantProductId) {
+                    $variantProduct = $em->getReference(Product::class, $simpleProductId);
+                    break;
+                }
+            }
+        }
+
+        return $variantProduct;
+    }
+
+    private function isSimpleFormAvailable(Product $product): bool
+    {
+        return $this->get(ProductViewFormAvailabilityProvider::class)->isSimpleFormAvailable($product);
     }
 }

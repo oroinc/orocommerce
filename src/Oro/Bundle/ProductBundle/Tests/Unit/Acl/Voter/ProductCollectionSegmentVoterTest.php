@@ -6,103 +6,84 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Acl\Voter\ProductCollectionSegmentVoter;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductCollectionSegmentVoter
-     */
-    private $voter;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContentVariantSegmentProvider
-     */
+    /** @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contentVariantSegmentProvider;
 
-    protected function setUp()
+    /** @var ProductCollectionSegmentVoter */
+    private $voter;
+
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);
-        $this->voter = new ProductCollectionSegmentVoter($this->doctrineHelper, $this->contentVariantSegmentProvider);
+
+        $container = TestContainerBuilder::create()
+            ->add('oro_product.provider.content_variant_segment_provider', $this->contentVariantSegmentProvider)
+            ->getContainer($this);
+
+        $this->voter = new ProductCollectionSegmentVoter($this->doctrineHelper, $container);
         $this->voter->setClassName(Segment::class);
     }
 
     /**
      * @dataProvider unsupportedAttributesDataProvider
-     * @param array $attributes
      */
-    public function testAbstainOnUnsupportedAttribute($attributes)
+    public function testAbstainOnUnsupportedAttribute(array $attributes)
     {
         $segment = new Segment();
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($segment, false)
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
-            ProductCollectionSegmentVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($token, $segment, $attributes)
         );
     }
 
     /**
      * @dataProvider supportedAttributesDataProvider
-     * @param array $attributes
      */
-    public function testAbstainOnUnsupportedClass($attributes)
+    public function testAbstainOnUnsupportedClass(array $attributes)
     {
-        $object = new \StdClass;
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(\StdClass::class));
+        $object = new \stdClass;
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
-            ProductCollectionSegmentVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($token, $object, $attributes)
         );
     }
 
     /**
      * @dataProvider supportedAttributesDataProvider
-     * @param array $attributes
      */
-    public function testDeniedIfSegmentHasContentVariant($attributes)
+    public function testDeniedIfSegmentHasContentVariant(array $attributes)
     {
         $segment = new Segment();
         $segmentId = 1;
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($segment, false)
-            ->will($this->returnValue($segmentId));
+            ->willReturn($segmentId);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -114,32 +95,25 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
             ->with($segment)
             ->willReturn(true);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
-            ProductCollectionSegmentVoter::ACCESS_DENIED,
+            VoterInterface::ACCESS_DENIED,
             $this->voter->vote($token, $segment, $attributes)
         );
     }
 
     /**
      * @dataProvider supportedAttributesDataProvider
-     * @param array $attributes
      */
-    public function testAbstainedIfSegmentHasNotContentVariant($attributes)
+    public function testAbstainedIfSegmentHasNotContentVariant(array $attributes)
     {
         $segment = new Segment();
         $segmentId = 1;
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
-
-        $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($segment, false)
-            ->will($this->returnValue($segmentId));
+            ->willReturn($segmentId);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -151,10 +125,9 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
             ->with($segment)
             ->willReturn(false);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
-            ProductCollectionSegmentVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($token, $segment, $attributes)
         );
     }
@@ -167,14 +140,9 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
         $segmentId = 1;
 
         $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($segment)
-            ->will($this->returnValue(Segment::class));
-
-        $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->with($segment, false)
-            ->will($this->returnValue($segmentId));
+            ->willReturn($segmentId);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -186,16 +154,12 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
             ->with($segment)
             ->willReturn(true);
 
-        /** @var TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->voter->vote($token, $segment, $attributes);
         $this->voter->vote($token, $segment, $attributes);
     }
 
-    /**
-     * @return array
-     */
-    public function supportedAttributesDataProvider()
+    public function supportedAttributesDataProvider(): array
     {
         return [
             [['EDIT']],
@@ -203,10 +167,7 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function unsupportedAttributesDataProvider()
+    public function unsupportedAttributesDataProvider(): array
     {
         return [
             [['VIEW']],

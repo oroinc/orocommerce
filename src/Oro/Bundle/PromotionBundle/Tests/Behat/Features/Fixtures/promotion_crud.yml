@@ -4,6 +4,8 @@ include:
 Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     all_customers:
         name: 'All Customers'
+        organization: '@organization'
+        owner: '@admin'
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
     customer1:
@@ -12,13 +14,13 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         owner: '@admin'
         group: '@all_customers'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     localProduct1Name:
         string: 'Product 1'
-
     localProduct2Name:
         string: 'Product 2'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
@@ -33,18 +35,19 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
-        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         code: 'product_attribute_family_code'
-        addLabel: ['@localProductAttributeFamily']
-        organization: '@organization'
-        owner: '@admin'
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
+        owner: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         type: 'simple'
         sku: 'PSKU1'
         primaryUnitPrecision: '@productUnitPrecision1'
-        addName: ['@localProduct1Name']
+        __calls:
+            - addName: ['@localProduct1Name']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -53,7 +56,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU2'
         primaryUnitPrecision: '@productUnitPrecision2'
-        addName: ['@localProduct2Name']
+        __calls:
+            - addName: ['@localProduct2Name']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -78,7 +82,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@shippingMethodTypeConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:

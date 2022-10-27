@@ -2,18 +2,29 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
+/**
+ * Provides Inventory Level sample export template data.
+ */
 class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
+    private LocalizationManager $localizationManager;
+
+    public function __construct(LocalizationManager $localizationManager)
+    {
+        $this->localizationManager = $localizationManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -45,21 +56,19 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
     public function fillEntityData($key, $entity)
     {
         $product = new Product();
-        $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock');
 
-        $localization = new Localization();
-        $localization->setName('English');
+        $localization = $this->localizationManager->getDefaultLocalization();
 
-        $name = new LocalizedFallbackValue();
+        $name = new ProductName();
         $name->setString('Product Name');
 
-        $localizedName = new LocalizedFallbackValue();
+        $localizedName = new ProductName();
         $localizedName->setLocalization($localization)
             ->setString('US Product Name')
             ->setFallback('system');
 
         $product->setSku('product-1')
-            ->setInventoryStatus($inventoryStatus)
+            ->setInventoryStatus($this->createInventoryStatus(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'))
             ->addName($name)
             ->addName($localizedName);
 
@@ -72,5 +81,12 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $unitPrecision->setUnit($unit);
         $unitPrecision->setProduct($product);
         $entity->setProductUnitPrecision($unitPrecision);
+    }
+
+    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    {
+        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+
+        return new $enumValueClassName($id, $name);
     }
 }

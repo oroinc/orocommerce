@@ -1,0 +1,88 @@
+layout:
+    imports:
+        -
+            id: customer_user_shopping_list
+            root: page_content
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+            id: datagrid
+            optionName: grid_name
+            optionValue: frontend-customer-user-shopping-list-edit-grid
+
+        - '@appendOption':
+              id: datagrid
+              optionName: grid_render_parameters.cssClass
+              optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-edit'
+
+        - '@setOption':
+            id: page_content
+            optionName: attr.class
+            optionValue: 'page-content--has-sidebar-right'
+
+        - '@setOption':
+            id: container
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@setOption':
+            id: page_sidebar
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@move':
+            id: page_content
+            parentId: page_main_content
+            siblingId: page_sidebar
+            prepend: true
+
+        - '@move':
+            id: checkout_container
+            parentId: page_sidebar
+
+        - '@add':
+            id: no_shopping_lists
+            parentId: page_content
+            blockType: block
+            options:
+                visible: '=data["entity"]==null'
+
+        - '@move':
+              id: shopping_list_notes
+              parentId: container
+              siblingId: header
+              prepend: false
+
+        - '@addTree':
+            items:
+                shopping_list_notes:
+                    blockType: container
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                shopping_list_notes_add:
+                    blockType: container
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                shopping_list_notes_edit_form:
+                    blockType: shopping_list_notes_block
+                    options:
+                        shoppingList: '=data["entity"]'
+                shopping_list_notes_text:
+                    blockType: container
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                shopping_list_notes_edit:
+                    blockType: container
+            tree:
+                checkout_container:
+                    shopping_list_notes:
+                        shopping_list_notes_add: ~
+                        shopping_list_notes_edit_form: ~
+                        shopping_list_notes_text:
+                            shopping_list_notes_edit: ~

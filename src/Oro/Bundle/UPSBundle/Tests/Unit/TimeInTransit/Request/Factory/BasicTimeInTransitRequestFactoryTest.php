@@ -50,7 +50,7 @@ class BasicTimeInTransitRequestFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->address = new AddressStub();
         $this->weight = 1;

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -29,7 +29,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'priceList' => LoadPriceLists::PRICE_LIST_1,
             'productUnit' => LoadProductUnits::MILLILITER,
             'ruleCondition' => 'product.category.id == 1 and product.status == "enabled"',
-            'rule' => 'pricelist[0].prices.value + 10',
+            'rule' => 'pricelist[1].prices.value + 10',
             'priority' => 1,
         ],
         [
@@ -39,7 +39,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'priceList' => 'price_list_1',
             'productUnit' => 'product_unit.milliliter',
             'ruleCondition' => 'product.category.id == 1',
-            'rule' => 'pricelist[0].prices.value + 10',
+            'rule' => 'pricelist[1].prices.value + 10',
             'priority' => 2,
         ],
         [
@@ -49,7 +49,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'priceList' => 'price_list_1',
             'productUnit' => 'product_unit.milliliter',
             'ruleCondition' => 'product.category.id == 1',
-            'rule' => 'pricelist[0].prices.value + 10',
+            'rule' => 'pricelist[1].prices.value + 10',
             'priority' => 3,
         ],
         [
@@ -59,7 +59,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'priceList' => 'price_list_2',
             'productUnit' => 'product_unit.milliliter',
             'ruleCondition' => 'product.category.id == 1',
-            'rule' => 'pricelist[0].prices.value + 10',
+            'rule' => 'pricelist[1].prices.value + 10',
             'priority' => 4,
         ],
         [
@@ -69,7 +69,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'priceList' => 'price_list_4',
             'productUnit' => 'product_unit.milliliter',
             'ruleCondition' => 'product.category.id == 1',
-            'rule' => 'pricelist[0].prices.value + 10',
+            'rule' => 'pricelist[1].prices.value + 10',
             'priority' => 5,
         ]
     ];

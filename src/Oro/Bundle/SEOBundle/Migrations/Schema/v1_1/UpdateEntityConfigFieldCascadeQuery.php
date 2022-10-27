@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_1;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
 
@@ -28,12 +28,6 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
      */
     protected $fields;
 
-    /**
-     * @param $entityFrom
-     * @param $entityTo
-     * @param $relationType
-     * @param array $fields
-     */
     public function __construct($entityFrom, $entityTo, $relationType, array $fields)
     {
         $this->entityFrom = $entityFrom;
@@ -59,7 +53,6 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function updateEntityConfig(LoggerInterface $logger)
@@ -70,7 +63,7 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql, $parameters);
 
         $id = $row['id'];
-        $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Type::TARRAY) : [];
+        $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Types::ARRAY) : [];
 
         foreach ($this->fields as $field) {
             $fullRelationName = implode(
@@ -83,7 +76,7 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
             }
         }
 
-        $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+        $data = $this->connection->convertToDatabaseValue($data, Types::ARRAY);
 
         $sql = 'UPDATE oro_entity_config SET data = ? WHERE id = ?';
         $parameters = [$data, $id];

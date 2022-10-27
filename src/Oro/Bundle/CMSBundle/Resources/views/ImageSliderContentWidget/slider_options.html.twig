@@ -1,0 +1,29 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if slidesToShow is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_show.label'|trans, slidesToShow) }}
+{% endif %}
+
+{% if slidesToScroll is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_scroll.label'|trans, slidesToScroll) }}
+{% endif %}
+
+{% if autoplay is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.autoplay.label'|trans, autoplay ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}
+
+{% if autoplaySpeed is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.autoplay_speed.label'|trans, autoplaySpeed) }}
+{% endif %}
+
+{% if arrows is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.arrows.label'|trans, arrows ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}
+
+{% if dots is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.dots.label'|trans, dots ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}
+
+{% if infinite is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.infinite.label'|trans, infinite ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}

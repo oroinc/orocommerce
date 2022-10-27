@@ -1,0 +1,26 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    variables:
+        Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier:
+            addWhereInExpr:
+                rootAlias: true
+                field: true
+        Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionList:
+            applyQueryRestrictions:
+                restrictions: true
+        Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery:
+            buildSearchQuery:
+                selectFieldNames: true
+                searchCriteria: true
+        Oro\Bundle\ProductBundle\Api\Processor\BuildParentProductsSubresourceQuery:
+            process:
+                idFieldName: true
+        Oro\Bundle\ProductBundle\Api\Processor\BuildVariantProductsSubresourceQuery:
+            process:
+                idFieldName: true
+        Oro\Bundle\ProductBundle\Api\Processor\ExpandProductSearchEntities:
+            loadAssociationData:
+                idPropertyName: true
+        Oro\Bundle\ProductBundle\Api\Processor\ExpandProductCollectionContentVariant:
+            addContentVariantFieldsToProductSearchQueryAndConfig:
+                searchFieldName: true

@@ -5,18 +5,21 @@ namespace Oro\Bundle\WebCatalogBundle\Twig;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class WebCatalogExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to render web catalog content tree:
+ *   - oro_web_catalog_tree
+ *   - oro_web_catalog_content_variant_title
+ */
+class WebCatalogExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_web_catalog_extension';
-
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -27,7 +30,7 @@ class WebCatalogExtension extends \Twig_Extension
      */
     protected function getTreeHandler()
     {
-        return $this->container->get('oro_web_catalog.content_node_tree_handler');
+        return $this->container->get(ContentNodeTreeHandler::class);
     }
 
     /**
@@ -35,15 +38,7 @@ class WebCatalogExtension extends \Twig_Extension
      */
     protected function getContentVariantTypeRegistry()
     {
-        return $this->container->get('oro_web_catalog.content_variant_type.registry');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
+        return $this->container->get(ContentVariantTypeRegistry::class);
     }
 
     /**
@@ -52,8 +47,8 @@ class WebCatalogExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('oro_web_catalog_tree', [$this, 'getNodesTree']),
-            new \Twig_SimpleFunction('oro_web_catalog_content_variant_title', [$this, 'getContentVariantTitle']),
+            new TwigFunction('oro_web_catalog_tree', [$this, 'getNodesTree']),
+            new TwigFunction('oro_web_catalog_content_variant_title', [$this, 'getContentVariantTitle']),
         ];
     }
 
@@ -78,5 +73,13 @@ class WebCatalogExtension extends \Twig_Extension
         $type = $this->getContentVariantTypeRegistry()->getContentVariantType($typeName);
 
         return $type->getTitle();
+    }
+
+    public static function getSubscribedServices()
+    {
+        return [
+            ContentNodeTreeHandler::class,
+            ContentVariantTypeRegistry::class
+        ];
     }
 }

@@ -3,105 +3,79 @@
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Reindexes related products when line item is created, updated or deleted.
+ */
 class ReindexProductLineItemListener
 {
     use FeatureCheckerHolderTrait;
 
     /** @see \Oro\Bundle\OrderBundle\Entity\OrderLineItem::$product */
-    const ORDER_LINE_ITEM_PRODUCT_FIELD = 'product';
+    private const PRODUCT_FIELD = 'product';
+    /** @see \Oro\Bundle\OrderBundle\Entity\OrderLineItem::$parentProduct */
+    private const PARENT_PRODUCT_FIELD = 'parentProduct';
 
-    /**
-     * @var ProductReindexManager
-     */
-    protected $productReindexManager;
+    private EventDispatcherInterface $eventDispatcher;
+    private OrderStatusesProviderInterface $statusesProvider;
+    private ReindexationWebsiteProviderInterface $websiteProvider;
 
-    /**
-     * @var OrderStatusesProviderInterface
-     */
-    protected $statusesProvider;
-
-    /**
-     * @param ProductReindexManager        $productReindexManager
-     * @param OrderStatusesProviderInterface $statusesProvider
-     */
     public function __construct(
-        ProductReindexManager $productReindexManager,
-        OrderStatusesProviderInterface $statusesProvider
+        EventDispatcherInterface $eventDispatcher,
+        OrderStatusesProviderInterface $statusesProvider,
+        ReindexationWebsiteProviderInterface $websiteProvider
     ) {
-        $this->productReindexManager = $productReindexManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->statusesProvider = $statusesProvider;
+        $this->websiteProvider = $websiteProvider;
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     */
-    public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem)
+    public function reindexProductOnLineItemCreateOrDelete(OrderLineItem $lineItem): void
     {
         if (!$this->isReindexAllowed($lineItem)) {
             return;
         }
 
         $product = $lineItem->getProduct();
-        if (!($product instanceof Product)) {
+        if (null === $product) {
             return;
         }
 
-        $websiteId = $lineItem->getOrder()->getWebsite()->getId();
-        $this->productReindexManager->reindexProduct($product, $websiteId);
+        $productIds = [$product->getId()];
+        $parentProduct = $lineItem->getParentProduct();
+        if (null !== $parentProduct) {
+            $productIds[] = $parentProduct->getId();
+        }
+        $this->reindexProducts($productIds, $lineItem->getOrder()->getWebsite());
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @param PreUpdateEventArgs $event
-     */
-    public function reindexProductOnLineItemUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
+    public function reindexProductOnLineItemUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event): void
     {
         if (!$this->isReindexAllowed($lineItem)) {
             return;
         }
 
-        if ($event->hasChangedField(static::ORDER_LINE_ITEM_PRODUCT_FIELD)) {
-            $websiteId = $lineItem->getOrder()->getWebsite()->getId();
-
-            $oldProduct = $event->getOldValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
-            if ($oldProduct instanceof Product) {
-                $this->productReindexManager->reindexProduct(
-                    $oldProduct,
-                    $websiteId
-                );
-            }
-
-            $newProduct = $event->getNewValue(static::ORDER_LINE_ITEM_PRODUCT_FIELD);
-            if ($newProduct instanceof Product) {
-                $this->productReindexManager->reindexProduct(
-                    $newProduct,
-                    $websiteId
-                );
-            }
+        $productIds = [];
+        $this->collectProductsToReindex($event, self::PRODUCT_FIELD, $productIds);
+        $this->collectProductsToReindex($event, self::PARENT_PRODUCT_FIELD, $productIds);
+        if ($productIds) {
+            $productIds = array_unique($productIds);
+            $this->reindexProducts($productIds, $lineItem->getOrder()->getWebsite());
         }
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     *
-     * @return bool
-     */
-    protected function isReindexAllowed(OrderLineItem $lineItem)
+    private function isReindexAllowed(OrderLineItem $lineItem): bool
     {
         $website = $lineItem->getOrder()->getWebsite();
-
-        /**
-         * Ignore reindex update in case when order doesn't attached to any website
-         */
-        if (!($website instanceof Website)) {
+        if (null === $website) {
             return false;
         }
 
@@ -109,12 +83,35 @@ class ReindexProductLineItemListener
             return false;
         }
 
-        $availableStatuses = $this->statusesProvider->getAvailableStatuses();
         $orderStatus = $lineItem->getOrder()->getInternalStatus();
-        if (!$orderStatus instanceof AbstractEnumValue || !in_array($orderStatus->getId(), $availableStatuses)) {
-            return false;
+
+        return
+            null !== $orderStatus
+            && \in_array($orderStatus->getId(), $this->statusesProvider->getAvailableStatuses(), true);
+    }
+
+    private function collectProductsToReindex(PreUpdateEventArgs $event, string $field, array &$productIds): void
+    {
+        if (!$event->hasChangedField($field)) {
+            return;
         }
 
-        return true;
+        $oldProduct = $event->getOldValue($field);
+        if ($oldProduct instanceof Product) {
+            $productIds[] = $oldProduct->getId();
+        }
+        $newProduct = $event->getNewValue($field);
+        if ($newProduct instanceof Product) {
+            $productIds[] = $newProduct->getId();
+        }
+    }
+
+    private function reindexProducts(array $productIds, Website $website): void
+    {
+        $websiteIds = $this->websiteProvider->getReindexationWebsiteIds($website);
+        $this->eventDispatcher->dispatch(
+            new ReindexationRequestEvent([Product::class], $websiteIds, $productIds, true, ['order']),
+            ReindexationRequestEvent::EVENT_NAME
+        );
     }
 }

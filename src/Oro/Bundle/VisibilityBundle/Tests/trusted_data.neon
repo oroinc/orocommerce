@@ -1,0 +1,85 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    variables:
+        Oro\Bundle\VisibilityBundle\EventListener\RestrictProductsIndexEventListener:
+            getVisibilityQueryBuilder:
+                visibilityAlias: true
+        Oro\Bundle\VisibilityBundle\EventListener\ProductDuplicateListener:
+            duplicateVisibility:
+                className: true
+        Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder:
+            getChildCategoriesIdsWithFallbackToParent:
+                node: true
+                idx: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository:
+            insertByProduct:
+                productVisibility: true
+            getInsertByProductVisibilityQueryBuilder:
+                productVisibility: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository:
+            insertByProduct:
+                productVisibility: true
+            getSubQueryOfExistsVisibilities:
+                parentAlias: true
+            getInsertByProductVisibilityQueryBuilder:
+                productVisibility: true
+        Oro\Bundle\VisibilityBundle\Driver\OrmCustomerPartialUpdateDriver:
+            addCustomerVisibility:
+                customerVisibilityFieldName: true
+            getIndexIntegerQueryBuilder:
+                alias: true
+        Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier:
+            restrictForAnonymous:
+                anonymousGroupVisibilityTerm: true
+        Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier:
+            modify:
+                visibilityExpression: true
+            restrictForAnonymous:
+                anonymousGroupVisibilityTerm: true
+        Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider:
+            getNewUserAndAnonymousVisibilitiesForProducts:
+                productVisibilityTerm: true
+                anonymousGroupVisibilityTerm: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository:
+            getCategoryIdsByVisibility:
+                terms: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository:
+            getCategoryIdsByVisibility:
+                terms: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository:
+            getCategoryIdsByVisibility:
+                terms: true
+        Oro\Bundle\VisibilityBundle\Api\Processor\AbstractSetVisibilityScope:
+            isVisibilityExists:
+                name: true
+    properties:
+        Oro\Bundle\VisibilityBundle\EventListener\ProductDuplicateListener:
+            duplicateVisibility:
+                fieldName: true
+    safe_methods:
+        Oro\Bundle\VisibilityBundle\EventListener\RestrictProductsIndexEventListener:
+            getRootAlias: true
+            getCustomerProductVisibilitySubQuery: true
+            getCustomerGroupProductVisibilitySubQuery: true
+            getProductVisibilityResolvedTermByWebsite: true
+            getCustomerProductVisibilityResolvedVisibilityTerm: true
+            getCustomerGroupProductVisibilityResolvedQueryPart: true
+        Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier:
+            getRootAlias: true
+        Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier:
+            getRootAlias: true
+        Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider:
+            getRootAlias: true
+            getVisibilityConditionForVisibilityTerms: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository:
+            getRootAlias: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository:
+            getRootAlias: true
+        Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository:
+            getRootAlias: true
+        Oro\Bundle\VisibilityBundle\Driver\OrmCustomerPartialUpdateDriver:
+            getCustomerVisibilityFieldName: true
+        Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier:
+            createProductVisibilityExpression: true
+        Oro\Bundle\VisibilityBundle\Api\Processor\AbstractLoadVisibility:
+            getVisibilityAssociationName: true

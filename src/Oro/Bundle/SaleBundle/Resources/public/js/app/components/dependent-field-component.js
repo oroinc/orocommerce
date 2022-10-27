@@ -1,10 +1,8 @@
 define(function(require) {
     'use strict';
 
-    var DependentFieldComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
      * Allows to show/hide dependent element depending on the condition which is based on the value of dependee form field.
@@ -34,7 +32,7 @@ define(function(require) {
      *  than showing option, so if both "data-show-if" and "data-hide-if" are true, than the dependent element will be
      *  hidden.
      */
-    DependentFieldComponent = BaseComponent.extend({
+    const DependentFieldComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -60,10 +58,10 @@ define(function(require) {
         $dependee: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function DependentFieldComponent() {
-            DependentFieldComponent.__super__.constructor.apply(this, arguments);
+        constructor: function DependentFieldComponent(options) {
+            DependentFieldComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -76,19 +74,22 @@ define(function(require) {
             this.$form = this.$el.closest('form');
             this.$dependee = this.$form.find('[data-dependee-id="' + this.$el.data('dependOn') + '"]');
 
+            this.updateDependentFields = this.updateDependentFields.bind(this);
             this.updateDependentFields();
-            this.$dependee.on('change', $.proxy(this.updateDependentFields, this));
+            this.$dependee.on('change', this.updateDependentFields);
+
+            this.$el.inputWidget('create');
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
                 return;
             }
 
-            this.$el.off('change', $.proxy(this.updateDependentFields, this));
+            this.$el.off('change', this.updateDependentFields);
 
             DependentFieldComponent.__super__.dispose.call(this);
         },
@@ -97,7 +98,7 @@ define(function(require) {
          * @returns {Array}
          */
         getDependeeValue: function() {
-            var value = [];
+            let value = [];
 
             if (this.$dependee.is(':checkbox')) {
                 value = this.$dependee.prop('checked') ? 'checked' : 'unchecked';
@@ -132,7 +133,7 @@ define(function(require) {
          * @returns {boolean}
          */
         evaluateCondition: function() {
-            var condition = this.evaluateDisjunction(this.getShowIf());
+            let condition = this.evaluateDisjunction(this.getShowIf());
 
             // Evaluate hide condition only if it is specified.
             if (this.getHideIf()) {
@@ -148,10 +149,10 @@ define(function(require) {
          * @returns {boolean}
          */
         evaluateConjunction: function(condition) {
-            var conditionsCol = typeof condition === 'string' ? condition.split(/\s?\&\s?/) : [];
-            var value = this.getDependeeValue();
+            const conditionsCol = typeof condition === 'string' ? condition.split(/\s?\&\s?/) : [];
+            const value = this.getDependeeValue();
 
-            for (var a in conditionsCol) {
+            for (const a in conditionsCol) {
                 if (!conditionsCol.hasOwnProperty(a)) {
                     continue;
                 }
@@ -170,11 +171,11 @@ define(function(require) {
          * @returns {boolean}
          */
         evaluateDisjunction: function(condition) {
-            var conditionsCol = typeof condition === 'string' ? condition.split(/\s?\|\s?/) : [];
-            var value = this.getDependeeValue();
-            var result;
+            const conditionsCol = typeof condition === 'string' ? condition.split(/\s?\|\s?/) : [];
+            const value = this.getDependeeValue();
+            let result;
 
-            for (var a in conditionsCol) {
+            for (const a in conditionsCol) {
                 if (!conditionsCol.hasOwnProperty(a)) {
                     continue;
                 }

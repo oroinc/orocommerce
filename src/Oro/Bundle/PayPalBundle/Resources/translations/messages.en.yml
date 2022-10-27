@@ -58,8 +58,12 @@ oro:
         result:
             token_expired: Authorization token expired, please try one more time
             incorrect_shipping_address_error: Incorrect shipping address
+            funding_decline_error: This transaction could not be completed. Please go back to PayPal and select a different funding option.
 
         credit_card:
+            expiration_date:
+                year: Year
+                month: Month
             card_number.label: Credit Card Number
             expiration_date.label: Expiration Date
             cvv2.label: CVV

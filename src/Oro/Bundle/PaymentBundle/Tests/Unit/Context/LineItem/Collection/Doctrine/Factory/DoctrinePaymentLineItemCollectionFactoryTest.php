@@ -23,12 +23,11 @@ class DoctrinePaymentLineItemCollectionFactoryTest extends \PHPUnit\Framework\Te
         static::assertEquals($paymentLineItems, $collection->toArray());
     }
 
-    /**
-     * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage Expected: Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface
-     */
     public function testFactoryWithException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected: Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface');
+
         $lineItems = [
             new LineItem(),
             new LineItem(),

@@ -3,31 +3,23 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CustomerGroupControllerTest extends WebTestCase
 {
-    const ACCOUNT_GROUP_NAME = 'Customer_Group';
+    private const ACCOUNT_GROUP_NAME = 'Customer_Group';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
-            ]
-        );
+        $this->loadFixtures([LoadGroups::class, LoadCustomerTaxCodes::class]);
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_customer_group_create'));
         $result = $this->client->getResponse();
@@ -42,6 +34,8 @@ class CustomerGroupControllerTest extends WebTestCase
                 'oro_customer_group_type[taxCode]' => $customerTaxCode->getId(),
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -50,14 +44,13 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer group has been saved', $html);
-        $this->assertContains(self::ACCOUNT_GROUP_NAME, $html);
-        $this->assertContains($customerTaxCode->getCode(), $html);
+        self::assertStringContainsString('Customer group has been saved', $html);
+        self::assertStringContainsString(self::ACCOUNT_GROUP_NAME, $html);
+        self::assertStringContainsString($customerTaxCode->getCode(), $html);
 
         /** @var CustomerGroup $taxCustomerGroup */
         $taxCustomerGroup = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
-            ->getRepository('OroCustomerBundle:CustomerGroup')
+            ->getRepository(CustomerGroup::class)
             ->findOneBy(['name' => self::ACCOUNT_GROUP_NAME]);
         $this->assertNotEmpty($taxCustomerGroup);
 
@@ -65,10 +58,9 @@ class CustomerGroupControllerTest extends WebTestCase
     }
 
     /**
-     * @param $id int
      * @depends testCreate
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -83,7 +75,7 @@ class CustomerGroupControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
-        $this->assertContains($customerTaxCode->getCode(), $html);
+        self::assertStringContainsString($customerTaxCode->getCode(), $html);
     }
 
     /**
@@ -103,7 +95,7 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains(self::ACCOUNT_GROUP_NAME, $grid);
+        self::assertStringContainsString(self::ACCOUNT_GROUP_NAME, $grid);
     }
 
     /**

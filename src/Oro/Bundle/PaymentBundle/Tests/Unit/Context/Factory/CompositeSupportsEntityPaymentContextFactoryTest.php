@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Test\Unit\Context\Factory;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Factory;
 
 use Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Context\Factory\SupportsEntityPaymentContextFactoryInterface;
@@ -25,7 +25,7 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framewor
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->results = [
             'resultOne' => new \stdClass(),

@@ -38,14 +38,13 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loadFixtures($this->fixturesToLoad);
         $this->handler = static::getContainer()->get($this->getHandlerServiceName());
 
         static::getContainer()->get('security.token_storage')->setToken($this->getToken());
         $this->updateRolePermission($this->getRole(), Order::class, AccessLevel::GLOBAL_LEVEL, 'EDIT');
-        static::getContainer()->get('request_stack')->push(new Request());
     }
 
     public function testHandleWhenNoEntityClass()

@@ -9,34 +9,25 @@ use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
-use Symfony\Component\Finder\Finder;
 
+/**
+ * Sitemap URL Items Provider for sitemap index entities.
+ */
 class SitemapFilesProvider implements UrlItemsProviderInterface
 {
-    /**
-     * @var SitemapFilesystemAdapter
-     */
+    /** @var SitemapFilesystemAdapter */
     private $filesystemAdapter;
 
-    /**
-     * @var CanonicalUrlGenerator
-     */
+    /** @var CanonicalUrlGenerator */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $webPath;
 
-    /**
-     * @param SitemapFilesystemAdapter $filesystemAdapter
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param string $webPath
-     */
     public function __construct(
         SitemapFilesystemAdapter $filesystemAdapter,
         CanonicalUrlGenerator $canonicalUrlGenerator,
-        $webPath
+        string $webPath
     ) {
         $this->filesystemAdapter = $filesystemAdapter;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
@@ -48,22 +39,32 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
      */
     public function getUrlItems(WebsiteInterface $website, $version)
     {
-        $files = $this->filesystemAdapter->getSitemapFiles($website, $version);
-        if ($files instanceof Finder) {
-            $files->notName(SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX));
-        }
+        $files = $this->filesystemAdapter->getSitemapFiles(
+            $website,
+            null,
+            SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX)
+        );
 
         foreach ($files as $file) {
             $url = sprintf(
-                '%s/%d/%s/%s',
+                '%s/%d/%s',
                 $this->webPath,
                 $website->getId(),
-                SitemapFilesystemAdapter::ACTUAL_VERSION,
-                $file->getFilename()
+                pathinfo($file->getName(), PATHINFO_BASENAME)
             );
 
-            $mTime = \DateTime::createFromFormat('U', $file->getMTime(), new \DateTimeZone('UTC'));
-            yield new UrlItem($this->canonicalUrlGenerator->getAbsoluteUrl($url, $website), $mTime);
+            $mTime = \DateTime::createFromFormat('U', $file->getMtime(), new \DateTimeZone('UTC'));
+
+            yield new UrlItem($this->getSitemapFileUrl($website, $url), $mTime);
         }
+    }
+
+    protected function getSitemapFileUrl(WebsiteInterface $website, string $url): string
+    {
+        $domainUrl = rtrim($this->canonicalUrlGenerator->getCanonicalDomainUrl($website), '/');
+        // Sitemaps are placed in root folder of domain, additional path should be removed
+        $baseDomainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
+
+        return $this->canonicalUrlGenerator->createUrl($baseDomainUrl, $url);
     }
 }

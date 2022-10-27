@@ -3,27 +3,30 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\PhpUtils\ArrayUtil;
 
 class SystemConfigurationTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ConfigManager */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = self::getConfigManager('global');
     }
 
     public function testConfig()
     {
         $this->assertTrue($this->configManager->get('oro_tax.tax_enable'));
-        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('oro_tax.tax_provider'));
+        $this->assertEquals('built_in', $this->configManager->get('oro_tax.tax_provider'));
 
         $crawler = $this->client->request(
             'GET',
@@ -35,7 +38,7 @@ class SystemConfigurationTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $token = $this->getContainer()->get('security.csrf.token_manager')->getToken('tax_calculation')->getValue();
+        $token = $this->getCsrfToken('tax_calculation')->getValue();
         $form = $crawler->selectButton('Save settings')->form();
         $formData = ArrayUtil::arrayMergeRecursiveDistinct(
             $form->getPhpValues(),
@@ -47,7 +50,7 @@ class SystemConfigurationTest extends WebTestCase
                     ],
                     'oro_tax___tax_provider' => [
                         'use_parent_scope_value' => false,
-                        'value' => BuiltInTaxProvider::NAME,
+                        'value' => 'built_in',
                     ],
                     'oro_tax___origin_address' => [
                         'use_parent_scope_value' => false,
@@ -66,7 +69,7 @@ class SystemConfigurationTest extends WebTestCase
 
         $this->configManager->reload();
         $this->assertFalse((bool)$this->configManager->get('oro_tax.tax_enable'));
-        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('oro_tax.tax_provider'));
+        $this->assertEquals('built_in', $this->configManager->get('oro_tax.tax_provider'));
         $this->assertEquals(
             [
                 'country' => 'US',
@@ -85,6 +88,6 @@ class SystemConfigurationTest extends WebTestCase
         $provider = reset($providers);
 
         $this->assertNotNull($provider);
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider', $provider);
+        $this->assertInstanceOf(BuiltInTaxProvider::class, $provider);
     }
 }

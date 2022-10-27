@@ -14,17 +14,13 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class PriceListFormExtensionTest extends FormIntegrationTestCase
 {
-    /**
-     * @var PriceListFormExtension
-     */
+    /** @var PriceListFormExtension */
     protected $priceListFormExtension;
 
-    /**
-     * @var ConfigManager $configManager
-     */
+    /** @var ConfigManager */
     protected $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
@@ -46,9 +42,9 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(PriceListFormExtension::MERGE_ALLOWED_FIELD));
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(PriceListSelectWithPriorityType::class, $this->priceListFormExtension->getExtendedType());
+        $this->assertEquals([PriceListSelectWithPriorityType::class], PriceListFormExtension::getExtendedTypes());
     }
 
     /**
@@ -63,7 +59,7 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     PriceListSelectWithPriorityTypeStub::class => [$this->priceListFormExtension],
-                    [FormType::class => [new SortableExtension()]]
+                    [FormType::class => new SortableExtension()],
 
                 ]
             )

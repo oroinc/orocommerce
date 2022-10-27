@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -19,7 +18,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibi
  *  - scope
  *  - category
  */
-class CustomerCategoryRepository extends EntityRepository
+class CustomerCategoryRepository extends ServiceEntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;
@@ -206,9 +205,6 @@ class CustomerCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(
@@ -240,9 +236,6 @@ class CustomerCategoryRepository extends EntityRepository
         );
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function insertCategoryValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(

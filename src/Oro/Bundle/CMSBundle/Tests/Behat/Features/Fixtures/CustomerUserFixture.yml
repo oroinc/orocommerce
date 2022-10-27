@@ -1,6 +1,8 @@
 Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     all_customers:
         name: 'All Customers'
+        organization: '@organization'
+        owner: '@admin'
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
     company_a:
@@ -26,7 +28,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@company_a'
         organization: '@organization'
-        role: ['@buyer']
+        userRoles: ['@buyer']
         owner: '@admin'
         website: '@website1'
     nancy:
@@ -40,6 +42,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@company_b'
         organization: '@organization'
-        role: ['@front_admin']
+        userRoles: ['@front_admin']
         owner: '@admin'
         website: '@website1'

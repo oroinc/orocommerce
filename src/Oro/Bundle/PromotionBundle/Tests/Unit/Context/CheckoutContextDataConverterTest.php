@@ -29,7 +29,7 @@ class CheckoutContextDataConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutToOrderConverter  = $this->createMock(CheckoutToOrderConverter::class);
         $this->orderContextDataConverter = $this->createMock(ContextDataConverterInterface::class);

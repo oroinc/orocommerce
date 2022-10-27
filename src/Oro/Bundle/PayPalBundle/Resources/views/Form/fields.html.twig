@@ -7,10 +7,17 @@
     <div {{ block('widget_attributes') }} data-validation="{{ validation|json_encode }}">
         <div class="{{ class_prefix }}-form__select-container">
             <div class="{{ class_prefix }}-form__select {{ class_prefix }}-form__select--exp-month">
-                {{ form_widget(form.month, {'attr': {'data-expiration-date-month': true}}) }}
+                {{ form_widget(form.month, {'attr': {
+                    'data-expiration-date-month': true,
+                    'autocomplete': 'cc-exp-month'
+                }}) }}
             </div>
             <div class="{{ class_prefix }}-form__select {{ class_prefix }}-form__select--exp-year">
-                {{ form_widget(form.year, {'attr': {'data-expiration-date-year': true}}) }}
+                {{ form_widget(form.year, {'attr': {
+                    'data-expiration-date-year': true,
+                    'autocomplete': 'cc-exp-year'
+                }
+                }) }}
             </div>
         </div>
     </div>
@@ -21,7 +28,7 @@
 {% endblock %}
 
 {% block oro_paypal_settings_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <fieldset class="form-horizontal">
         <h5 class="user-fieldset">
             <span>{{ 'oro.paypal.settings.form.groups.display_options.title'|trans }}</span>
@@ -63,7 +70,7 @@
         {{ form_row(form.creditCardPaymentAction) }}
         {{ form_row(form.debugMode) }}
         {{ form_row(form.requireCVVEntry) }}
-        <div class="control-group control-group-choice">
+        <div class="control-group control-group-checkbox">
             <div class="control-label wrap">
                 {{ UI.tooltip('oro.paypal.settings.zero_amount_authorization.tooltip', {}, 'right') }}
                 {{ form_label(form.zeroAmountAuthorization) }}

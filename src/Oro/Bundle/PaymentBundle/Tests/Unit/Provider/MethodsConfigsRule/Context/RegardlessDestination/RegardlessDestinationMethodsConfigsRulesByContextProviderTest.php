@@ -30,7 +30,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(PaymentMethodsConfigsRuleRepository::class);
 

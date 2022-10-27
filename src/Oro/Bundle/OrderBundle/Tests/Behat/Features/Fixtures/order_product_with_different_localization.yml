@@ -1,0 +1,74 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroLocaleBundle:ZuluLocalization.yml'
+
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1NameDefault:
+        string: Product1
+    product1NameZulu:
+        string: Product1 Zulu
+        localization: '@localization_zulu'
+    product2NameDefault:
+        string: Product2
+    product2NameZulu:
+        string: Product2 Zulu
+        localization: '@localization_zulu'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..2}:
+        unit: '@item'
+        precision: '<current()>'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setNames: [['@product1NameDefault' , '@product1NameZulu']]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA2'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setNames: [['@product2NameDefault' , '@product2NameZulu']]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customer_user: '@amanda'
+        identifier: 'ORD#1'
+        website: '@website1'
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    orderLineItem1:
+        product: '@product1'
+        order: '@order'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    orderLineItem2:
+        product: '@product2'
+        order: '@order'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item

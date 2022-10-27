@@ -34,7 +34,7 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
      */
     private $contextBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentLineItemConverterMock = $this->createMock(OrderPaymentLineItemConverterInterface::class);
 
@@ -91,6 +91,11 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->once())
             ->method('setShippingMethod')
             ->with(self::TEST_SHIPPING_METHOD);
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setTotal')
+            ->with($order->getTotal());
 
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())

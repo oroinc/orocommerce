@@ -6,6 +6,9 @@ use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates selected product page template.
+ */
 class ProductPageTemplateValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_page_template_validator';
@@ -13,18 +16,12 @@ class ProductPageTemplateValidator extends ConstraintValidator
     /** @var PageTemplatesManager */
     private $pageTemplatesManager;
 
-    /**
-     * @param PageTemplatesManager $pageTemplatesManager
-     */
     public function __construct(PageTemplatesManager $pageTemplatesManager)
     {
         $this->pageTemplatesManager = $pageTemplatesManager;
     }
 
     /**
-     * @param $value
-     * @param Constraint
-     *
      * {@inheritdoc}
      */
     public function validate($entityFieldFallbackValue, Constraint $constraint)
@@ -76,12 +73,12 @@ class ProductPageTemplateValidator extends ConstraintValidator
 
         /* values are saved in "choices" array as values in the form. ex:
          choices = [
-          "Short label" => "short",
-          "Two-columns label" => "two-columns",
-          "List label" => "list",
+          "short" => "Short label",
+          "two-columns" => "Two-columns label",
+          "list" => "List label",
         ]
         */
-        $validValues = array_values($validValues['choices']);
+        $validValues = array_keys($validValues['choices']);
 
         return array_merge($validValues, [null]);
     }

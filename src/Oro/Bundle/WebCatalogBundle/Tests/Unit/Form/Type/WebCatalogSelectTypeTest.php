@@ -18,7 +18,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new WebCatalogSelectType();
     }
@@ -30,7 +30,6 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')

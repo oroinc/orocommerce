@@ -1,0 +1,27 @@
+data:
+    -
+        type: orderdiscounts
+        id: '<toString(@order_discount.percent->id)>'
+        attributes:
+            description: 'Discount 1'
+            percent: 0.201
+            amount: '40.2000'
+            orderDiscountType: oro_order_discount_item_type_percent
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@order1->id)>'
+    -
+        type: orderdiscounts
+        id: '<toString(@order_discount.amount->id)>'
+        attributes:
+            description: 'Discount 2'
+            percent: 0.201
+            amount: '40.2000'
+            orderDiscountType: oro_order_discount_item_type_amount
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@order1->id)>'

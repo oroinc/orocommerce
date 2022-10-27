@@ -10,21 +10,19 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 class WebsiteSearchRepositoryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WebsiteSearchRepository */
-    protected $repository;
+    private $repository;
 
     /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $queryFactory;
+    private $queryFactory;
 
     /** @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $mappingProvider;
+    private $mappingProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryFactory = $this->createMock(QueryFactoryInterface::class);
-        $this->mappingProvider = $this->getMockBuilder(AbstractSearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getEntityAlias'])
-            ->getMockForAbstractClass();
+        $this->mappingProvider = $this->createMock(AbstractSearchMappingProvider::class);
+
         $this->repository = new WebsiteSearchRepository($this->queryFactory, $this->mappingProvider);
     }
 

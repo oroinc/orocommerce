@@ -5,11 +5,15 @@ namespace Oro\Bundle\ProductBundle\Action;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Helper\ProductHolderTrait;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
+/**
+ * Remove restricted products from product holder
+ */
 class RemoveRestrictedProducts extends AbstractAction
 {
     use ProductHolderTrait;
@@ -26,18 +30,18 @@ class RemoveRestrictedProducts extends AbstractAction
     /** @var ProductRepository */
     private $productRepository;
 
-    /**
-     * @param ProductRepository $productRepository
-     * @param ProductManager    $productManager
-     * @param ContextAccessor   $contextAccessor
-     */
+    /** @var AclHelper */
+    private $aclHelper;
+
     public function __construct(
         ProductRepository $productRepository,
         ProductManager $productManager,
+        AclHelper $aclHelper,
         ContextAccessor $contextAccessor
     ) {
         $this->productManager = $productManager;
         $this->productRepository = $productRepository;
+        $this->aclHelper = $aclHelper;
         parent::__construct($contextAccessor);
     }
 
@@ -104,16 +108,12 @@ class RemoveRestrictedProducts extends AbstractAction
         return $this;
     }
 
-    /**
-     * @param array $products
-     * @return array
-     */
     private function getAllowedProductsIds(array $products): array
     {
         $queryBuilder = $this->productRepository->getProductsQueryBuilder($products);
         $queryBuilder->select('p.id');
         $this->productManager->restrictQueryBuilder($queryBuilder, []);
-        $allowedProductIds = $queryBuilder->getQuery()->getArrayResult();
+        $allowedProductIds = $this->aclHelper->apply($queryBuilder)->getArrayResult();
         $allowedProductIds = array_column($allowedProductIds, 'id');
 
         return $allowedProductIds;

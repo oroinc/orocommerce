@@ -1,0 +1,11 @@
+data:
+    type: ordershippingtrackings
+    id: '<toString(@order_shipping_tracking.1->id)>'
+    attributes:
+        method: 'method 1'
+        number: 'number 1'
+    relationships:
+        order:
+            data:
+                type: orders
+                id: '<toString(@simple_order->id)>'

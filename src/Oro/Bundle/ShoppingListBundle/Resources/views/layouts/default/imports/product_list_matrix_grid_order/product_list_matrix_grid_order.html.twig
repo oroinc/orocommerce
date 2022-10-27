@@ -1,0 +1,25 @@
+{% block  __product_list_matrix_grid_order__form_start_widget %}
+    {% if rows[1] == 1 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': class_prefix ~ '__form--inline '
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block  __product_list_matrix_grid_order__totals_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'product-totals--nested '
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __product_list_matrix_grid_order__totals_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__wrapper--darken '
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

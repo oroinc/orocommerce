@@ -1,0 +1,56 @@
+-
+    title: 'name or organization constraint'
+    detail: 'First Name and Last Name or Organization should not be blank.'
+    source: { pointer: /included/1/attributes/firstName }
+-
+    title: 'name or organization constraint'
+    detail: 'Last Name and First Name or Organization should not be blank.'
+    source: { pointer: /included/1/attributes/lastName }
+-
+    title: 'name or organization constraint'
+    detail: 'Organization or First Name and Last Name should not be blank.'
+    source: { pointer: /included/1/attributes/organization }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/1/attributes/street }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/1/attributes/city }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/1/attributes/postalCode }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/1/relationships/country/data }
+-
+    title: 'name or organization constraint'
+    detail: 'First Name and Last Name or Organization should not be blank.'
+    source: { pointer: /included/2/attributes/firstName }
+-
+    title: 'name or organization constraint'
+    detail: 'Last Name and First Name or Organization should not be blank.'
+    source: { pointer: /included/2/attributes/lastName }
+-
+    title: 'name or organization constraint'
+    detail: 'Organization or First Name and Last Name should not be blank.'
+    source: { pointer: /included/2/attributes/organization }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/2/attributes/street }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/2/attributes/city }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/2/attributes/postalCode }
+-
+    title: 'not blank constraint'
+    detail: 'This value should not be blank.'
+    source: { pointer: /included/2/relationships/country/data }

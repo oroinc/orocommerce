@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Model;
 
 use Brick\Math\BigDecimal;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
@@ -12,15 +12,16 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
     const TAX_AMOUNT = 2;
     const ADJUSTMENT = 3.4;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $resultElement = $this->createResultElementModel();
-        $this->assertEquals(static::INCLUDING_TAX, $resultElement->getIncludingTax());
-        $this->assertEquals(static::EXCLUDING_TAX, $resultElement->getExcludingTax());
-        $this->assertEquals(static::TAX_AMOUNT, $resultElement->getTaxAmount());
-        $this->assertEquals(static::ADJUSTMENT, $resultElement->getAdjustment());
+        self::assertEquals(static::INCLUDING_TAX, $resultElement->getIncludingTax());
+        self::assertEquals(static::EXCLUDING_TAX, $resultElement->getExcludingTax());
+        self::assertEquals(static::TAX_AMOUNT, $resultElement->getTaxAmount());
+        self::assertEquals(static::ADJUSTMENT, $resultElement->getAdjustment());
+        self::assertFalse($resultElement->isDiscountsIncluded());
 
-        $this->assertCount(4, $resultElement);
+        self::assertCount(4, $resultElement);
         $expected = [
             'includingTax' => self::INCLUDING_TAX,
             'excludingTax' => self::EXCLUDING_TAX,
@@ -29,15 +30,31 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
         ];
 
         foreach ($resultElement as $key => $value) {
-            $this->assertArrayHasKey($key, $expected);
-            $this->assertEquals($expected[$key], $value);
+            self::assertArrayHasKey($key, $expected);
+            self::assertEquals($expected[$key], $value);
         }
     }
 
     /**
-     * @return ResultElement
+     * @dataProvider getDiscountsIncludedDataProvider
      */
-    protected function createResultElementModel()
+    public function testDiscountsIncluded(bool $isDiscountsIncluded): void
+    {
+        $resultElement = $this->createResultElementModel();
+        $resultElement->setDiscountsIncluded($isDiscountsIncluded);
+
+        self::assertEquals($isDiscountsIncluded, $resultElement->isDiscountsIncluded());
+    }
+
+    public function getDiscountsIncludedDataProvider(): array
+    {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
+    protected function createResultElementModel(): ResultElement
     {
         return ResultElement::create(
             static::INCLUDING_TAX,
@@ -47,9 +64,9 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testConstruct()
+    public function testConstruct(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->createResultElementModel(),
             new ResultElement(
                 [
@@ -62,11 +79,11 @@ class ResultElementTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testSetTransformsToNull()
+    public function testSetTransformsToNull(): void
     {
         $resultElement = $this->createResultElementModel();
         $resultElement->offsetSet('index', BigDecimal::of('2'));
-        $this->assertInternalType('string', $resultElement->getOffset('index'));
-        $this->assertEquals('2', $resultElement->getOffset('index'));
+        self::assertIsString($resultElement->getOffset('index'));
+        self::assertEquals('2', $resultElement->getOffset('index'));
     }
 }

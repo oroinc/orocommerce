@@ -5,7 +5,6 @@ namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Psr\Log\LoggerAwareTrait;
 
 class PayflowExpressCheckoutListener
@@ -17,17 +16,11 @@ class PayflowExpressCheckoutListener
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onError(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();
@@ -45,9 +38,6 @@ class PayflowExpressCheckoutListener
             ->setActive(false);
     }
 
-    /**
-     * @param AbstractCallbackEvent $event
-     */
     public function onReturn(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

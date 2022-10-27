@@ -25,7 +25,7 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
     /** @var ProductRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->queryFactory = $this->createMock(QueryFactoryInterface::class);
         $this->mappingProvider = $this->createMock(AbstractSearchMappingProvider::class);
@@ -35,9 +35,6 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCategoryCountsDataProvider
-     *
-     * @param Category $category
-     * @param array $expected
      */
     public function testGetCategoryCountsByCategory(Category $category, array $expected)
     {
@@ -62,6 +59,8 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
         ];
 
         $query = new Query();
+        $query->getCriteria()->setMaxResults(1);
+
         $query->addAggregate('categoryCounts', 'text.category_path', Query::AGGREGATE_FUNCTION_COUNT);
         $this->createIndexer($query);
 
@@ -80,6 +79,7 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
                     '2' => 20,
                     '6' => 30,
                     '10' => 12,
+                    '21' => 6
                 ]
             ],
             'with sub category' => [
@@ -129,6 +129,8 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
                             '1_6_7_8_9' => 20,
                             '1_10_11' => 7,
                             '1_10_12' => 5,
+                            '1_21' => 4,
+                            '1_21_31' => 2
                         ]
                     ]
                 )

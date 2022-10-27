@@ -1,17 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var BackendActionsPanel;
-    var _ = require('underscore');
-    var ActionsPanel = require('orodatagrid/js/datagrid/actions-panel');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
+    const ActionsPanel = require('orodatagrid/js/datagrid/actions-panel');
+    const DropdownSearch = require('orofrontend/default/js/app/views/dropdown-search').default;
 
-    BackendActionsPanel = ActionsPanel.extend({
+    const BUTTONS_ORDER = require('oroproduct/js/app/buttons-order').default;
+
+    const BackendActionsPanel = ActionsPanel.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function BackendActionsPanel() {
-            BackendActionsPanel.__super__.constructor.apply(this, arguments);
+        constructor: function BackendActionsPanel(options) {
+            BackendActionsPanel.__super__.constructor.call(this, options);
         },
+
+        minimumResultsForSearch: 5,
 
         /**
          * Renders panel
@@ -19,41 +24,119 @@ define(function(require) {
          * @return {*}
          */
         render: function() {
-            var currentLauncherIsPresent = !!_.filter(this.launchers, function(launcher) {
-                return launcher.action.is_current === true;
+            const addActionsCount = this.launchers.filter(launcher => {
+                return launcher.action.type === 'addproducts';
             }).length;
 
-            _.each(this.launchers, function(launcher, index) {
-                var $el = null;
+            this.launchers.forEach(launcher => {
+                const props = launcher.getTemplateData();
+                const attributes = props.attributes || {};
 
-                if (currentLauncherIsPresent) {
-                    $el = this.findContainer(launcher, launcher.action.is_current);
-                } else {
-                    $el = this.findContainer(launcher, !index);
+                if (addActionsCount > 1 && launcher.action.is_current) {
+                    attributes['data-label'] = __('oro.product.frontend.actions_panel.action_postfix');
                 }
 
-                $el.append(launcher.render().$el);
-            }, this);
+                launcher.setOptions({attributes});
+            });
+            BackendActionsPanel.__super__.render.call(this);
+
+            this.postRender();
+
             return this;
         },
 
-        /**
-         * @param {Object} launcher
-         * @param {Boolean} pasteToExtraPanel
-         */
-        findContainer: function(launcher, pasteToExtraPanel) {
-            var $el = this.$el;
+        renderMainLauncher() {
+            const launcher = this.launchers.filter(launcher => launcher.action.is_current)[0] || this.launchers[0];
 
-            if (this.massActionsInSticky) {
-                if (pasteToExtraPanel) {
-                    $el = this.$el.find('[data-action-extra-panel]');
-                    launcher.className = 'datagrid-massaction__action-trigger';
-                } else {
-                    $el = this.$el.find('[data-action-main-panel]');
+            this.$el.empty();
+            this.$el.append(launcher.render().$el);
+            launcher.trigger('appended');
+
+            return this;
+        },
+
+        postRender() {
+            this.renderGroups();
+            this.renderSearch();
+            this.composeGroups();
+        },
+
+        renderGroups() {
+            const $actions = this.$el.children();
+            let $groupsList = $();
+
+            $actions.each(function() {
+                const groupName = $(this).data('order') || 'add';
+                const $group = $groupsList.filter(function() {
+                    return $(this).is(`[data-group-order="${groupName}"]`);
+                });
+
+                if ($group.length === 0) {
+                    $groupsList = $groupsList.add(
+                        $(`<ul class="items-group" data-group-order="${groupName}" role="menu""></ul>`)
+                    );
                 }
+            });
+            $groupsList.each(function() {
+                const groupName = $(this).data('group-order');
+                const $elementsInGroup = $actions.filter(function() {
+                    return ($(this).data('order') || 'add') === groupName;
+                });
+
+                $elementsInGroup.wrapAll($(this)).wrap('<li role="menuitem"></li>');
+            });
+
+            return this;
+        },
+
+        renderSearch() {
+            if (this.$el.find('.items-group > li[role="menuitem"]').length <= this.minimumResultsForSearch) {
+                return;
             }
 
-            return $el;
+            // Dynamically add a container for a search
+            if (this.$('[data-role="search"]').length === 0) {
+                this.$el.children(':first').before(
+                    $('<div class="dropdown-item" data-role="search" data-group-order="search"></div>')
+                );
+            }
+
+            const dropdownSearch = new DropdownSearch({
+                minimumResultsForSearch: this.minimumResultsForSearch,
+                el: this.el
+            });
+
+            this.subview('dropdown-search', dropdownSearch);
+
+            return this;
+        },
+
+        composeGroups() {
+            const $groups = this.$('[data-group-order]');
+
+            $groups.detach().sort((a, b) => {
+                const oderA = BUTTONS_ORDER[$(a).data('group-order')];
+                const orderB = BUTTONS_ORDER[$(b).data('group-order')];
+
+                if (oderA < orderB) {
+                    return -1;
+                } else if (oderA > orderB) {
+                    return 1;
+                }
+
+                return 0;
+            });
+
+            this.$el.append($groups);
+            $groups.filter(function() {
+                return $(this).data('group-order') !== 'search';
+            }).wrapAll('<div class="item-container"></div>');
+
+            return this;
+        },
+
+        getMainLauncher() {
+            return this.launchers.filter(launcher => launcher.action.is_current)[0] || this.launchers[0];
         }
     });
 

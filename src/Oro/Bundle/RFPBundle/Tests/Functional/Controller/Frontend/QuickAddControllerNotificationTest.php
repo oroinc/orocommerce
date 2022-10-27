@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -13,15 +14,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddControllerNotificationTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
-    /** @var ConfigManager $configManager */
+    /** @var ConfigManager */
     protected $configManager;
 
-    /** @var ConfigManager $globalConfigManager */
+    /** @var ConfigManager */
     protected $globalConfigManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -30,7 +33,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures([LoadFrontendProductData::class]);
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
     }
@@ -75,7 +78,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             $this->getContainer()->get('translator')->trans($expectedMessage),
             $this->client->getResponse()->getContent()
         );

@@ -1,4 +1,4 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/layout.html.twig'
+            themes: '@OroCheckout/layouts/default/layout.html.twig'

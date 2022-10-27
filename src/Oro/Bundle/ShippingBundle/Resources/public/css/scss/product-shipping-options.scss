@@ -1,0 +1,72 @@
+/* @theme: admin.oro; */
+
+/* stylelint-disable no-descending-specificity */
+
+.product-shipping-options-collection {
+    min-width: 850px;
+
+    .shipping-dimensions td.separator {
+        padding-top: 5px;
+    }
+
+    input[type='text'].value,
+    input[type='text'].length,
+    input[type='text'].width,
+    input[type='text'].height {
+        width: 80px;
+        margin-bottom: 0;
+    }
+
+    @include selector-width(100px);
+
+    .grid {
+        margin-bottom: $content-padding-small;
+        display: block;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        + .add-list-item {
+            margin-top: 0;
+        }
+
+        td {
+            vertical-align: top;
+        }
+    }
+
+    table {
+        width: auto;
+
+        table {
+            td {
+                border: 0;
+                padding: 0 5px;
+                vertical-align: middle;
+
+                &:first-child {
+                    height: auto;
+                }
+
+                /* stylelint-disable selector-max-compound-selectors, max-nesting-depth */
+                table {
+                    tr {
+                        td {
+                            &:first-child {
+                                padding-left: 5px;
+                            }
+
+                            &:last-child {
+                                padding-right: 5px;
+                            }
+                        }
+                    }
+                }
+                /* stylelint-enable selector-max-compound-selectors, max-nesting-depth */
+            }
+        }
+
+        .validation-failed {
+            padding-left: $content-padding-medium;
+        }
+    }
+}

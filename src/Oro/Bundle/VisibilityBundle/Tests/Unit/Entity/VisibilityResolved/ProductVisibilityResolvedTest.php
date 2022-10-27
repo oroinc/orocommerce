@@ -26,7 +26,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->product = new Product();
         $this->scope = new Scope();
@@ -36,7 +36,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity, $this->product, $this->scope);
     }

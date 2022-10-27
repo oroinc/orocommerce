@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Writer;
 
-use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
-use Akeneo\Bundle\BatchBundle\Entity\JobInstance;
-use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
+use Oro\Bundle\BatchBundle\Entity\JobExecution;
+use Oro\Bundle\BatchBundle\Entity\JobInstance;
+use Oro\Bundle\BatchBundle\Entity\StepExecution;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
-use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -21,16 +21,15 @@ class ProductPriceWriterTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(
-            [
-                LoadProductUnits::class,
-                LoadPriceListToProductWithoutPrices::class,
-            ]
-        );
         $this->client->useHashNavigation(true);
+
+        $this->loadFixtures([
+            LoadProductUnits::class,
+            LoadPriceListToProductWithoutPrices::class,
+        ]);
     }
 
     public function testHashArrayClearsOnWrite()
@@ -62,19 +61,13 @@ class ProductPriceWriterTest extends WebTestCase
 
         $price = $this->createPrice();
 
-        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
-        $this->getMessageCollector()->clear();
-
         $writer->write([$price]);
-        $this->assertEmptyMessages('oro_pricing.price_lists.cpl.resolve_prices');
-        $this->assertEmptyMessages('oro_pricing.price_rule.build');
+        $this->assertEmptyMessages(ResolveCombinedPriceByPriceListTopic::getName());
+        $this->assertEmptyMessages(ResolvePriceRulesTopic::getName());
         $value = $context->getValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH);
         $this->assertEmpty($value);
     }
 
-    /**
-     * @return ProductPrice
-     */
     private function createPrice(): ProductPrice
     {
         $priceList = $this->getReference('price_list_2');

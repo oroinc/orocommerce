@@ -1,0 +1,6 @@
+include:
+    - '@OroCheckoutBundle:Payment.yml'
+    - '@OroCheckoutBundle:ShippingRuleDistinctWeight.yml'
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+    - '@OroCheckoutBundle:CheckoutProductMultipleUnitsFixture.yml'
+    - '@OroCheckoutBundle:CheckoutMultipleUnitsProductShoppingListFixture.yml'

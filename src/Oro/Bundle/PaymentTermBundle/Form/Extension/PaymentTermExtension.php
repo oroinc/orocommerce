@@ -5,25 +5,25 @@ namespace Oro\Bundle\PaymentTermBundle\Form\Extension;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Form extension to update payment term field by chosen customer owner.
+ */
 class PaymentTermExtension extends AbstractTypeExtension
 {
-    /** @var PaymentTermProvider */
+    /** @var PaymentTermProviderInterface */
     protected $paymentTermProvider;
 
     /** @var bool[] */
     protected $replacedFields = [];
 
-    /**
-     * @param PaymentTermProvider $paymentTermProvider
-     */
-    public function __construct(PaymentTermProvider $paymentTermProvider)
+    public function __construct(PaymentTermProviderInterface $paymentTermProvider)
     {
         $this->paymentTermProvider = $paymentTermProvider;
     }
@@ -71,11 +71,10 @@ class PaymentTermExtension extends AbstractTypeExtension
 
     /**
      * {@inheritdoc}
-     * @throws \InvalidArgumentException If extendedType not set
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PaymentTermSelectType::class;
+        return [PaymentTermSelectType::class];
     }
 
     /**

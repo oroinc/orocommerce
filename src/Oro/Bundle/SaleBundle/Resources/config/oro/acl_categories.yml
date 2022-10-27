@@ -1,0 +1,5 @@
+acl_categories:
+    quotes:
+        label: oro.sale.privilege.category.quotes.label
+        tab: true
+        priority: 2

@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -73,10 +73,6 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         ];
     }
 
-    /**
-     * @param Category $category
-     * @param array $categoryData
-     */
     protected function createCategoryVisibilities(Category $category, array $categoryData)
     {
         $this->createCategoryVisibility($category, $categoryData['all']);
@@ -86,10 +82,6 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         $this->createCustomerCategoryVisibilities($category, $categoryData['customers']);
     }
 
-    /**
-     * @param Category $category
-     * @param array $data
-     */
     protected function createCategoryVisibility(Category $category, array $data)
     {
         if (!$data['visibility']) {
@@ -108,10 +100,6 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         $this->em->flush($categoryVisibility);
     }
 
-    /**
-     * @param Category $category
-     * @param array $customerGroupVisibilityData
-     */
     protected function createCustomerGroupCategoryVisibilities(Category $category, array $customerGroupVisibilityData)
     {
         foreach ($customerGroupVisibilityData as $customerGroupReference => $data) {
@@ -134,10 +122,6 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         }
     }
 
-    /**
-     * @param Category $category
-     * @param array $customerVisibilityData
-     */
     protected function createCustomerCategoryVisibilities(Category $category, array $customerVisibilityData)
     {
         foreach ($customerVisibilityData as $customerReference => $data) {

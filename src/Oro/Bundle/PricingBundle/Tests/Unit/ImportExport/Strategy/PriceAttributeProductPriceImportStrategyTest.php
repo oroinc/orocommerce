@@ -4,67 +4,62 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Strategy;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
+use Oro\Bundle\EntityBundle\Provider\EntityClassNameProviderInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
+use Oro\Bundle\OrganizationBundle\Ownership\EntityOwnershipAssociationsSetter;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportStrategy;
-use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributeProductPriceImportStrategyTest extends TestCase
 {
-    const PRICE = 10.26;
-    const CURRENCY = 'USD';
+    private const PRICE = 10.26;
+    private const CURRENCY = 'USD';
 
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fieldHelper;
+    private PriceAttributeProductPriceImportStrategy $strategy;
 
-    /**
-     * @var PriceAttributeProductPriceImportStrategy
-     */
-    private $strategy;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->fieldHelper
+        $fieldHelper = $this->createMock(FieldHelper::class);
+        $fieldHelper
             ->expects(static::any())
             ->method('getIdentityValues')
             ->willReturn(['value']);
-        $this->fieldHelper
+        $fieldHelper
             ->expects(static::any())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([]);
 
         $strategyHelper = $this->createMock(ImportStrategyHelper::class);
         $strategyHelper
             ->expects(static::any())
-            ->method('isGranted')
+            ->method('checkPermissionGrantedForEntity')
             ->willReturn(true);
 
         $this->strategy = new PriceAttributeProductPriceImportStrategy(
             $this->createMock(EventDispatcherInterface::class),
             $strategyHelper,
-            $this->fieldHelper,
+            $fieldHelper,
             $this->createMock(DatabaseHelper::class),
-            $this->createMock(ChainEntityClassNameProvider::class),
+            $this->createMock(EntityClassNameProviderInterface::class),
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
             $this->createMock(DoctrineHelper::class),
-            $this->createMock(OwnerChecker::class)
+            $this->createMock(RelatedEntityStateHelper::class)
         );
         $this->strategy->setImportExportContext($this->createMock(ContextInterface::class));
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);
+        $this->strategy->setOwnershipSetter($this->createMock(EntityOwnershipAssociationsSetter::class));
     }
 
-    public function testStrategySetsPriceAndQuantity()
+    public function testStrategySetsPriceAndQuantity(): void
     {
         $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
 
@@ -78,7 +73,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertSame(1, $entity->getQuantity());
     }
 
-    public function testStrategySetsPriceToNullIfValueIsNull()
+    public function testStrategySetsPriceToNullIfValueIsNull(): void
     {
         $entity = $this->createAttributePrice(null, self::CURRENCY);
 
@@ -88,7 +83,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertNull($entity->getPrice());
     }
 
-    public function testStrategySetsPriceToNullIfCurrencyIsNull()
+    public function testStrategySetsPriceToNullIfCurrencyIsNull(): void
     {
         $entity = $this->createAttributePrice(self::PRICE, null);
 
@@ -98,7 +93,7 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         static::assertNull($entity->getPrice());
     }
 
-    public function testStrategyReSetsPriceToNull()
+    public function testStrategyReSetsPriceToNull(): void
     {
         $entity = $this->createAttributePrice(self::PRICE, self::CURRENCY);
 
@@ -129,15 +124,8 @@ class PriceAttributeProductPriceImportStrategyTest extends TestCase
         $value,
         $currency
     ): PriceAttributeProductPrice {
-        $reflectionClass = new \ReflectionObject($entity);
-
-        $valueProperty = $reflectionClass->getProperty('value');
-        $valueProperty->setAccessible(true);
-        $valueProperty->setValue($entity, $value);
-
-        $currencyProperty = $reflectionClass->getProperty('currency');
-        $currencyProperty->setAccessible(true);
-        $currencyProperty->setValue($entity, $currency);
+        ReflectionUtil::setPropertyValue($entity, 'value', $value);
+        ReflectionUtil::setPropertyValue($entity, 'currency', $currency);
 
         return $entity;
     }

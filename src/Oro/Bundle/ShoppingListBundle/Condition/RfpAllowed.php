@@ -31,9 +31,6 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
      */
     protected $requestDataStorageExtension;
 
-    /**
-     * @param RequestDataStorageExtension $requestDataStorageExtension
-     */
     public function __construct(RequestDataStorageExtension $requestDataStorageExtension)
     {
         $this->requestDataStorageExtension = $requestDataStorageExtension;
@@ -54,13 +51,13 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
         }
 
         if (!empty($lineItems)) {
-            $products = [];
+            $productsIds = [];
+            /** @var LineItem $lineItem */
             foreach ($lineItems as $lineItem) {
-                /** @var LineItem $lineItem */
-                $products[]['productSku'] = $lineItem->getProduct()->getSku();
+                $productsIds[] = $lineItem->getProduct()->getId();
             }
 
-            return $this->requestDataStorageExtension->isAllowedRFP($products);
+            return $this->requestDataStorageExtension->isAllowedRFPByProductsIds($productsIds);
         }
 
         return false;

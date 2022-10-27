@@ -2,46 +2,35 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Menu\Frontend;
 
+use Knp\Menu\ItemInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
 
 class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuickAddMenuBuilder
-     */
-    protected $builder;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry */
+    private $componentRegistry;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry
-     */
-    protected $componentRegistry;
+    /** @var QuickAddMenuBuilder */
+    private $builder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->componentRegistry = $this
-            ->createMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
+        $this->componentRegistry = $this->createMock(ComponentProcessorRegistry::class);
 
         $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
     }
 
-    protected function tearDown()
-    {
-        unset($this->builder, $this->componentRegistry);
-    }
-
     /**
-     * @param bool $hasAllowedProcessor
-     *
      * @dataProvider getBuildDataProvider
      */
-    public function testBuild($hasAllowedProcessor)
+    public function testBuild(bool $hasAllowedProcessor)
     {
         $this->componentRegistry->expects($this->once())
-            ->method('hasAllowedProcessor')->willReturn($hasAllowedProcessor);
+            ->method('hasAllowedProcessor')
+            ->willReturn($hasAllowedProcessor);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Knp\Menu\ItemInterface $menu */
-        $menu = $this->createMock('Knp\Menu\ItemInterface');
+        $menu = $this->createMock(ItemInterface::class);
 
         if ($hasAllowedProcessor) {
             $menu->expects($this->once())
@@ -61,10 +50,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
         $this->builder->build($menu);
     }
 
-    /**
-     * @return array
-     */
-    public function getBuildDataProvider()
+    public function getBuildDataProvider(): array
     {
         return [
             'build' => [true],

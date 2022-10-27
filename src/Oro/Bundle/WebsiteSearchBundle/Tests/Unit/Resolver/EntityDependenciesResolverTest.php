@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Resolver;
 
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $mappingProvider;
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -18,9 +18,9 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
     /** @var EntityDependenciesResolver */
     private $entityDependenciesResolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->mappingProvider = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+        $this->mappingProvider = $this->getMockBuilder(SearchMappingProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -34,12 +34,12 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->mappingProvider, $this->eventDispatcher, $this->entityDependenciesResolver);
     }
 
-    public function testGetClassesForReindexWhenAllClassesReturned()
+    public function testGetClassesForReindexWhenAllClassesReturned(): void
     {
         $expectedClasses = ['Product', 'Category', 'User'];
 
@@ -55,29 +55,33 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedClasses, $this->entityDependenciesResolver->getClassesForReindex());
     }
 
-    public function testGetClassesForReindexWithDependentClasses()
+    public function testGetClassesForReindexWithDependentClasses(): void
     {
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(CollectDependentClassesEvent::NAME, $this->isInstanceOf(CollectDependentClassesEvent::class))
-            ->willReturnCallback(function ($eventName, CollectDependentClassesEvent $event) {
+            ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
+            ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
                 $event->addClassDependencies('Product', ['Category', 'User']);
+
+                return $event;
             });
 
         $this->assertEquals(['User', 'Product'], $this->entityDependenciesResolver->getClassesForReindex('User'));
     }
 
-    public function testGetClassesForReindexWithCircularDependency()
+    public function testGetClassesForReindexWithCircularDependency(): void
     {
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(CollectDependentClassesEvent::NAME, $this->isInstanceOf(CollectDependentClassesEvent::class))
-            ->willReturnCallback(function ($eventName, CollectDependentClassesEvent $event) {
+            ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
+            ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
                 $event->addClassDependencies('User', ['Category']);
                 $event->addClassDependencies('Category', ['Product']);
                 $event->addClassDependencies('Product', ['User']);
+
+                return $event;
             });
 
         $this->assertEquals(

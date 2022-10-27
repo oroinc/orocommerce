@@ -19,7 +19,7 @@ class BasicShippingLineItemBuilderFactoryTest extends \PHPUnit\Framework\TestCas
      */
     private $productHolderMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productUnitMock = $this->getMockBuilder(ProductUnit::class)
             ->disableOriginalConstructor()

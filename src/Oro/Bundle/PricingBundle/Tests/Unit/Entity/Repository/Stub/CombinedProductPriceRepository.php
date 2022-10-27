@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub;
 
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository as BaseRepository;
 
@@ -12,14 +11,6 @@ class CombinedProductPriceRepository extends BaseRepository
 
     public function __construct()
     {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPricesForProductsByPriceList(CombinedPriceList $priceList, array $productIds, $currency = null)
-    {
-        return $this->pricesForProductsByPriceListResult;
     }
 
     /**

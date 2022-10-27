@@ -95,7 +95,7 @@ services:
     oro_inventory.form.type.extension.checkout_ship_until_form_extension:
         class: Oro\Bundle\InventoryBundle\Form\Extension\CheckoutShipUntilFormExtension
         arguments:
-             - '@oro_inventory.provider.product_upcoming_provider'
+             - '@oro_inventory.provider.upcoming_product_provider'
              - '@oro_checkout.data_provider.manager.checkout_line_items'
              - '@oro_locale.formatter.date_time'
         tags:

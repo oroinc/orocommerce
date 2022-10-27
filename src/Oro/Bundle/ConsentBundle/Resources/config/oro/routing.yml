@@ -1,0 +1,4 @@
+oro_consent:
+    resource:     "@OroConsentBundle/Controller/ConsentController.php"
+    type:         annotation
+    prefix:       /consent

@@ -30,7 +30,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactoryTest extends TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->packagesBuilder = $this->createMock(ShippingPackagesByLineItemBuilderInterface::class);
         $this->fedexPackageFactory = $this->createMock(FedexPackageByShippingPackageOptionsFactoryInterface::class);

@@ -7,10 +7,13 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductSelectGridTest extends WebTestCase
 {
+    use MysqlVersionCheckTrait;
+
     const DATAGRID_NAME = 'products-select-grid-frontend';
 
     /**
@@ -21,7 +24,7 @@ class ProductSelectGridTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -30,12 +33,11 @@ class ProductSelectGridTest extends WebTestCase
         $this->loadFixtures([
             LoadFrontendProductData::class
         ]);
+        $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
     }
 
     /**
      * @dataProvider sorterProvider
-     * @param array $sortBy
-     * @param array $expectedResult
      */
     public function testGridCanBeSorted(array $sortBy, array $expectedResult)
     {
@@ -55,9 +57,15 @@ class ProductSelectGridTest extends WebTestCase
      * @dataProvider filterProvider
      * @param array $filters
      * @param array $expectedResult
+     * @param bool $isContains
      */
-    public function testGridCanBeFiltered(array $filters, array $expectedResult)
+    public function testGridCanBeFiltered(array $filters, array $expectedResult, $isContains = false)
     {
+        if ($isContains && $this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            $this->markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
         $filters = array_merge($filters, [self::DATAGRID_NAME.'[_sort_by][sku]' => 'ASC']);
         $response = $this->client->requestFrontendGrid(['gridName' => self::DATAGRID_NAME], $filters, true);
 
@@ -71,34 +79,60 @@ class ProductSelectGridTest extends WebTestCase
         $this->assertSame($expectedResult, $productNames);
     }
 
-    /**
-     * @return array
-     */
     public function sorterProvider(): array
     {
         return [
             [
                 [self::DATAGRID_NAME.'[_sort_by][productName]' => 'DESC'],
-                array_reverse(LoadProductData::PRODUCTS_1_2_3_6_7_8_9)
+                array_reverse([
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ])
             ],
             [
                 [self::DATAGRID_NAME.'[_sort_by][productName]' => 'ASC'],
-                LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ]
             ],
             [
                 [self::DATAGRID_NAME.'[_sort_by][sku]' => 'DESC'],
-                array_reverse(LoadProductData::PRODUCTS_1_2_3_6_7_8_9)
+                array_reverse([
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ])
             ],
             [
                 [self::DATAGRID_NAME.'[_sort_by][sku]' => 'ASC'],
-                LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9
+                ]
             ]
         ];
     }
 
-    /**
-     * @return array
-     */
     public function filterProvider(): array
     {
         return [
@@ -107,26 +141,36 @@ class ProductSelectGridTest extends WebTestCase
                     self::DATAGRID_NAME.'[_filter][productName][value]' => 'product',
                     self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
                 ],
-                LoadProductData::PRODUCTS_1_2_3_6_7_8_9
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                ],
+                true
             ],
-//            @todo uncomment after fix BAP-16099
+            // Uncomment after fix BAP-16099.
 //            [
 //                [
 //                    self::DATAGRID_NAME.'[_filter][productName][value]' => 'product-1.names',
 //                    self::DATAGRID_NAME.'[_filter][productName][type]' => TextFilterType::TYPE_CONTAINS,
 //                ],
-//                [LoadProductData::PRODUCT_1]
+//                [LoadProductData::PRODUCT_1],
+//                false
 //            ],
             [
                 [self::DATAGRID_NAME.'[_filter][inventoryStatus][value][]' => 'out_of_stock'],
-                [LoadProductData::PRODUCT_3]
+                [LoadProductData::PRODUCT_3],
+                false
             ],
             [
                 [
                     self::DATAGRID_NAME.'[_filter][sku][value]' => 'product-2',
                     self::DATAGRID_NAME.'[_filter][sku][type]' => TextFilterType::TYPE_EQUAL,
                 ],
-                [LoadProductData::PRODUCT_2]
+                [LoadProductData::PRODUCT_2],
+                false
             ]
         ];
     }

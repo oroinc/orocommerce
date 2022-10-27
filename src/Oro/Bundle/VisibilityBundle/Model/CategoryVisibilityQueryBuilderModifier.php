@@ -12,32 +12,20 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryVisibilityResolvedTermTrait;
-use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 
+/**
+ * Adds visibility resolved terms restrictions for anonymous users to category query builder.
+ */
 class CategoryVisibilityQueryBuilderModifier
 {
     use CategoryVisibilityResolvedTermTrait;
 
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    private const OPTION_CATEGORY_VISIBILITY = 'oro_visibility.category_visibility';
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private DoctrineHelper $doctrineHelper;
+    private ConfigManager $configManager;
+    private ScopeManager $scopeManager;
 
-    /**
-     * @var ScopeManager
-     */
-    private $scopeManager;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,
@@ -48,10 +36,7 @@ class CategoryVisibilityQueryBuilderModifier
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
-    public function restrictForAnonymous(QueryBuilder $queryBuilder)
+    public function restrictForAnonymous(QueryBuilder $queryBuilder): void
     {
         $categoryVisibilityConfigValue = $this->getCategoryVisibilityConfigValue();
         $categoryVisibilityTerm = $this->getCategoryVisibilityResolvedTerm(
@@ -70,34 +55,23 @@ class CategoryVisibilityQueryBuilderModifier
         $queryBuilder->andWhere($queryBuilder->expr()->gt($anonymousGroupVisibilityTerm, 0));
     }
 
-    /**
-     * @return int
-     */
-    private function getCategoryVisibilityConfigValue()
+    private function getCategoryVisibilityConfigValue(): int
     {
-        $categoryVisibility = $this->configManager->get(CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY);
-        return ($categoryVisibility === CategoryVisibility::HIDDEN)
+        return ($this->configManager->get(self::OPTION_CATEGORY_VISIBILITY) === CategoryVisibility::HIDDEN)
             ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
-    /**
-     * @return Scope
-     */
-    private function getAnonymousCustomerGroupScope()
+    private function getAnonymousCustomerGroupScope(): Scope
     {
-        $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_customer_group');
-
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->doctrineHelper
             ->getEntityRepository(CustomerGroup::class)
-            ->find($anonymousGroupId);
+            ->find($this->configManager->get('oro_customer.anonymous_customer_group'));
 
-        $scope = $this->scopeManager->findOrCreate(
+        return $this->scopeManager->findOrCreate(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $customerGroup]
         );
-
-        return $scope;
     }
 }

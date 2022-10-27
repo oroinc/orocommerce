@@ -14,9 +14,6 @@ class OrderMapperDecorator implements MapperInterface
      */
     private $orderMapper;
 
-    /**
-     * @param MapperInterface $orderMapper
-     */
     public function __construct(MapperInterface $orderMapper)
     {
         $this->orderMapper = $orderMapper;
@@ -40,10 +37,6 @@ class OrderMapperDecorator implements MapperInterface
         return $order;
     }
 
-    /**
-     * @param AppliedCoupon $appliedCoupon
-     * @return AppliedCoupon
-     */
     private function getAppliedCouponCopy(AppliedCoupon $appliedCoupon): AppliedCoupon
     {
         return (new AppliedCoupon())

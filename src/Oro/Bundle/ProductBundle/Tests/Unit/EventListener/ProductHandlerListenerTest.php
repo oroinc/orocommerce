@@ -29,14 +29,14 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $logger;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->listener = new ProductHandlerListener($this->propertyAccessor, $this->logger);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
     }

@@ -1,17 +1,30 @@
 /* @theme: default; */
 
 .quick-order {
-  padding: $quick-order-padding;
-  border-radius: $quick-order-border-radius;
+    padding: $quick-order-padding;
+    border-radius: $quick-order-border-radius;
+    background: $quick-order-background;
+    display: $quick-order-display;
+    grid-template-areas: $quick-order-grid-template-areas;
+    grid-template-columns: $quick-order-grid-template-columns;
+    grid-template-rows: $quick-order-grid-template-rows;
+    gap: $quick-order-gap;
 
-  background: $quick-order-background;
-
-  @include clearfix();
-
-  .mobile-version & {
-    @include breakpoint('mobile-big') {
-      padding: $quick-order-mobile-padding;
-      width: 100%;
+    &__progress {
+        position: relative;
     }
-  }
+}
+
+@include breakpoint('tablet-small') {
+    .quick-order {
+        grid-template-areas: $quick-order-tablet-small-grid-template-areas;
+        grid-template-columns: $quick-order-tablet-small-grid-template-columns;
+        grid-template-rows: $quick-order-tablet-small-grid-template-rows;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .quick-order {
+        padding: $quick-order-mobile-landscape-padding;
+    }
 }

@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
-class OrderController extends Controller
+/**
+ * Controller actions to create Order entity using RFQ entity as source.
+ */
+class OrderController extends AbstractController
 {
     /**
      * @Route("/create/{id}", name="oro_rfp_request_create_order", requirements={"id"="\d+"})
@@ -38,8 +41,8 @@ class OrderController extends Controller
             $offers[] = $itemOffers;
         }
 
-        $this->get('oro_product.storage.product_data_storage')->set($data);
-        $this->get('oro_rfp.storage.offers_data_storage')->set($offers);
+        $this->get(ProductDataStorage::class)->set($data);
+        $this->get(OffersDataStorage::class)->set($offers);
 
         return $this->redirectToRoute('oro_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
@@ -60,8 +63,11 @@ class OrderController extends Controller
             $data['customer'] = $request->getCustomer()->getId();
         }
 
+        $data['shipUntil'] = $request->getShipUntil();
+        $data['poNumber'] = $request->getPoNumber();
+        $data['customerNotes'] = $request->getNote();
         $data['sourceEntityId'] = $request->getId();
-        $data['sourceEntityClass'] = ClassUtils::getClass($request);
+        $data['sourceEntityClass'] = get_class($request);
         $data['sourceEntityIdentifier'] = $request->getIdentifier();
 
         return $data;
@@ -85,5 +91,19 @@ class OrderController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ProductDataStorage::class,
+                OffersDataStorage::class,
+            ]
+        );
     }
 }

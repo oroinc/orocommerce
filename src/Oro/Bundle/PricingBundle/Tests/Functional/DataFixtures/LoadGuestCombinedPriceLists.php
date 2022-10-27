@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerVisitors;
@@ -17,7 +17,7 @@ class LoadGuestCombinedPriceLists extends AbstractCombinedPriceListsFixture
         [
             'name' => '4t_5t',
             'enabled' => true,
-            'calculated' => true,
+            'calculated' => false,
             'priceListsToCustomers' => [],
             'priceListsToCustomerGroups' => [
                 [

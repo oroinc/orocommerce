@@ -2,30 +2,22 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 
+/**
+ * Tax provider allows to use built-in TAX logic.
+ */
 class BuiltInTaxProvider implements TaxProviderInterface
 {
-    const NAME = 'built_in';
     const LABEL = 'oro.tax.providers.built_in.label';
 
     /** @var TaxManager $taxManager */
     private $taxManager;
 
-    /**
-     * @param TaxManager $taxManager
-     */
     public function __construct(TaxManager $taxManager)
     {
         $this->taxManager = $taxManager;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**
@@ -45,7 +37,13 @@ class BuiltInTaxProvider implements TaxProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Creates new or returns existing TaxValue instance based on object
+     *
+     * This method is specific for BuiltInProvider because it stores tax value data in DB
+     *
+     * @param object $object
+     *
+     * @return TaxValue
      */
     public function createTaxValue($object)
     {
@@ -76,7 +74,7 @@ class BuiltInTaxProvider implements TaxProviderInterface
         // Always calculate taxes for entity which doesn't have it
         $taxValue = $this->taxManager->getTaxValue($object);
         if (!$taxValue->getId()) {
-            $result = $this->taxManager->saveTax($object, false);
+            $result = $this->taxManager->saveTax($object);
             return $result ?: null;
         }
 

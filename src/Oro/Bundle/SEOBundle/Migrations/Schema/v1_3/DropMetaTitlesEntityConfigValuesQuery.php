@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -145,7 +145,7 @@ SQL;
         $entityRow = $this->connection->fetchAssoc($sql, [$className]);
         $data = $entityRow['data'];
 
-        $data = $data ? $this->connection->convertToPHPValue($data, Type::TARRAY) : [];
+        $data = $data ? $this->connection->convertToPHPValue($data, Types::ARRAY) : [];
 
         if (isset($data['extend']['relation'][$relationKey])) {
             unset($data['extend']['relation'][$relationKey]);
@@ -159,7 +159,7 @@ SQL;
             unset($data['extend']['schema']['addremove'][$fieldName]);
         }
 
-        $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+        $data = $this->connection->convertToDatabaseValue($data, Types::ARRAY);
 
         $query = 'UPDATE oro_entity_config SET data = :data WHERE class_name = :class';
         $params = [

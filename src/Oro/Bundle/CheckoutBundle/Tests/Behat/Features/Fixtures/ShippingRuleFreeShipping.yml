@@ -3,7 +3,7 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         name: 'Free Shipping'
         enabled: true
         sortOrder: 0
-        expression: 'subtotal.value >= 12'
+        expression: 'subtotal.value \>= 12'
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
     shippingMethodTypeFreeShippingConfig:
@@ -16,7 +16,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfigFreeShipping:
-        method: '<("flat_rate_".@flatRate2Integration->id)>'
+        method: '<("flat_rate_".@flatRate2Integration->getId())>'
         typeConfigs: ['@shippingMethodTypeFreeShippingConfig']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:

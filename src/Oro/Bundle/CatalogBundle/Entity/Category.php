@@ -9,16 +9,20 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
+ * Represents product category
  * @ORM\Table(
  *      name="oro_catalog_category",
  *      indexes={
@@ -74,23 +78,36 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          },
+ *          "slug"={
+ *              "source"="titles"
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface
+class Category extends ExtendCategory implements
+    SluggableInterface,
+    DatesAwareInterface,
+    OrganizationAwareInterface,
+    DenormalizedPropertyAwareInterface
 {
     use DatesAwareTrait;
     use TreeTrait;
     use SluggableTrait;
+    use OrganizationAwareTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
-
+    const CATEGORY_PATH_DELIMITER = ' / ';
     const FIELD_PARENT_CATEGORY = 'parentCategory';
-    const FIELD_PRODUCTS = 'products';
 
     /**
      * @var integer
@@ -98,30 +115,33 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|CategoryTitle[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_catalog_category_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CategoryTitle", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20,
+     *              "full"=true,
+     *              "fallback_field"="string"
      *          }
      *      }
      * )
@@ -138,6 +158,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=30
      *          }
      *      }
      * )
@@ -153,6 +176,9 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -160,26 +186,15 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $childCategories;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|CategoryShortDescription[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_catalog_cat_short_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CategoryShortDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
+     *          "importexport"={
+     *              "order"=50,
+     *              "full"=true,
+     *              "fallback_field"="text"
      *          }
      *      }
      * )
@@ -187,26 +202,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     protected $shortDescriptions;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|CategoryLongDescription[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_catalog_cat_long_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CategoryLongDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
+     *          "importexport"={
+     *              "order"=60,
+     *              "full"=true,
+     *              "fallback_field"="wysiwyg"
+     *          },
+     *          "attachment"={
+     *              "acl_protected"=false
      *          }
      *      }
      * )
@@ -232,6 +239,13 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * @var string
      *
      * @ORM\Column(name="materialized_path", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $materializedPath;
 
@@ -252,6 +266,148 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      * )
      */
     protected $denormalizedDefaultTitle;
+
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @Symfony\Component\Validator\Constraints\All(
+     *     constraints = {
+     *         @Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype(allowSlashes=true)
+     *     }
+     * )
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     *
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40,
+     *              "full"=true,
+     *              "fallback_field"="string"
+     *          }
+     *      }
+     * )
+     */
+    protected $slugPrototypes;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLeft
+     * @ORM\Column(name="tree_left", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $left;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLevel
+     * @ORM\Column(name="tree_level", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $level;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRight
+     * @ORM\Column(name="tree_right", type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $right;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRoot
+     * @ORM\Column(name="tree_root", type="integer", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $root;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=80
+     *          }
+     *      }
+     * )
+     */
+    protected $organization;
+
+    /**
+     * Property used by {@see \Gedmo\Tree\Entity\Repository\NestedTreeRepository::__call}
+     * @var self|null
+     */
+    public $sibling;
 
     /**
      * Constructor
@@ -280,7 +436,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultTitle($value)
+    {
+        $this->setDefaultFallbackValue($this->titles, $value, CategoryTitle::class);
+        $this->getDefaultTitle()->setCategory($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CategoryTitle[]
      */
     public function getTitles()
     {
@@ -288,13 +455,14 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $title
+     * @param CategoryTitle $title
      *
      * @return $this
      */
-    public function addTitle(LocalizedFallbackValue $title)
+    public function addTitle(CategoryTitle $title)
     {
         if (!$this->titles->contains($title)) {
+            $title->setCategory($this);
             $this->titles->add($title);
         }
 
@@ -302,11 +470,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $title
+     * @param CategoryTitle $title
      *
      * @return $this
      */
-    public function removeTitle(LocalizedFallbackValue $title)
+    public function removeTitle(CategoryTitle $title)
     {
         if ($this->titles->contains($title)) {
             $this->titles->removeElement($title);
@@ -379,10 +547,7 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
      */
     public function prePersist()
     {
-        if (!$this->getDefaultTitle()) {
-            throw new \RuntimeException('Category has to have a default title');
-        }
-        $this->denormalizedDefaultTitle = $this->getDefaultTitle()->getString();
+        $this->updateDenormalizedProperties();
     }
 
     /**
@@ -392,6 +557,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
+        $this->updateDenormalizedProperties();
+    }
+
+    public function updateDenormalizedProperties(): void
+    {
         if (!$this->getDefaultTitle()) {
             throw new \RuntimeException('Category has to have a default title');
         }
@@ -407,7 +577,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultShortDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->shortDescriptions, $value, CategoryShortDescription::class);
+        $this->getDefaultShortDescription()->setCategory($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CategoryShortDescription[]
      */
     public function getShortDescriptions()
     {
@@ -415,13 +596,14 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param CategoryShortDescription $shortDescription
      *
      * @return $this
      */
-    public function addShortDescription(LocalizedFallbackValue $shortDescription)
+    public function addShortDescription(CategoryShortDescription $shortDescription)
     {
         if (!$this->shortDescriptions->contains($shortDescription)) {
+            $shortDescription->setCategory($this);
             $this->shortDescriptions->add($shortDescription);
         }
 
@@ -429,11 +611,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param CategoryShortDescription $shortDescription
      *
      * @return $this
      */
-    public function removeShortDescription(LocalizedFallbackValue $shortDescription)
+    public function removeShortDescription(CategoryShortDescription $shortDescription)
     {
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);
@@ -443,7 +625,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultLongDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->longDescriptions, $value, CategoryLongDescription::class);
+        $this->getDefaultShortDescription()->setCategory($this);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CategoryLongDescription[]
      */
     public function getLongDescriptions()
     {
@@ -451,13 +644,14 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $longDescription
+     * @param CategoryLongDescription $longDescription
      *
      * @return $this
      */
-    public function addLongDescription(LocalizedFallbackValue $longDescription)
+    public function addLongDescription(CategoryLongDescription $longDescription)
     {
         if (!$this->longDescriptions->contains($longDescription)) {
+            $longDescription->setCategory($this);
             $this->longDescriptions->add($longDescription);
         }
 
@@ -465,11 +659,11 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     * @param LocalizedFallbackValue $longDescription
+     * @param CategoryLongDescription $longDescription
      *
      * @return $this
      */
-    public function removeLongDescription(LocalizedFallbackValue $longDescription)
+    public function removeLongDescription(CategoryLongDescription $longDescription)
     {
         if ($this->longDescriptions->contains($longDescription)) {
             $this->longDescriptions->removeElement($longDescription);
@@ -501,7 +695,6 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
-     *
      * @return string
      */
     public function getMaterializedPath()
@@ -529,5 +722,12 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     public function getDenormalizedDefaultTitle()
     {
         return $this->denormalizedDefaultTitle;
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
     }
 }

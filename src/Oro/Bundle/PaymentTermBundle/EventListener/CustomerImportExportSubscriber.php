@@ -16,9 +16,6 @@ class CustomerImportExportSubscriber implements EventSubscriberInterface
      */
     private $associationProvider;
 
-    /**
-     * @param PaymentTermAssociationProvider $associationProvider
-     */
     public function __construct(PaymentTermAssociationProvider $associationProvider)
     {
         $this->associationProvider = $associationProvider;

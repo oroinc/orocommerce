@@ -3,7 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\Registry;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
@@ -19,7 +20,6 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
@@ -31,19 +31,18 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToI
  */
 class OrmIndexerTest extends AbstractSearchWebTestCase
 {
-    /**
-     * @var OrmIndexer
-     */
+    /** @var OrmIndexer */
     protected $indexer;
 
-    /**
-     * @var Registry
-     */
-    protected $doctrine;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
     public static function checkSearchEngine(WebTestCase $webTestCase)
     {
-        if ($webTestCase->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
+        $engine = $webTestCase->getContainer()
+            ->get('oro_website_search.engine.parameters')
+            ->getEngineName();
+        if ($engine !== 'orm') {
             $webTestCase->markTestSkipped('Should be tested only with ORM engine');
         }
     }
@@ -58,7 +57,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->checkEngine();
     }
 
-    protected function checkEngine()
+    private function checkEngine()
     {
         self::checkSearchEngine($this);
     }
@@ -71,11 +70,11 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         return $this->getRepository(Item::class)->findBy(['alias' => $options['alias']]);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+        $this->mappingProviderMock = $this->getMockBuilder(SearchMappingProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -84,13 +83,14 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
         $websiteProvider->expects($this->any())
             ->method('getWebsiteIds')
-            ->will($this->returnCallback(function () use ($repo) {
+            ->willReturnCallback(function () use ($repo) {
                 return $repo->getWebsiteIdentifiers();
-            }));
+            });
 
         $inputValidator = new IndexerInputValidator(
             $websiteProvider,
-            $this->mappingProviderMock
+            $this->mappingProviderMock,
+            self::getContainer()->get('doctrine')
         );
 
         $this->indexer = new OrmIndexer(
@@ -99,14 +99,16 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.engine.text_filtered_index_data'),
             $this->getContainer()->get('oro_website_search.placeholder_decorator'),
-            $inputValidator
+            $inputValidator,
+            $this->getContainer()->get('event_dispatcher'),
+            $this->getContainer()->get('oro_website_search.regex_placeholder_decorator')
         );
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
         $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);
     }
@@ -119,11 +121,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEntityCount($expectedCount, Item::class);
     }
 
-    /**
-     * @param int $expectedCount
-     * @param string $class
-     */
-    private function assertEntityCount($expectedCount, $class)
+    private function assertEntityCount(int $expectedCount, string $class)
     {
         $repository = $this->getRepository($class);
         $actualCount = $this->makeCountQuery($repository);
@@ -131,11 +129,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEquals($expectedCount, $actualCount);
     }
 
-    /**
-     * @param EntityRepository $repository
-     * @return mixed
-     */
-    private function makeCountQuery(EntityRepository $repository)
+    private function makeCountQuery(EntityRepository $repository): mixed
     {
         return $repository->createQueryBuilder('t')
             ->select('COUNT(t)')
@@ -143,11 +137,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->getSingleScalarResult();
     }
 
-    /**
-     * @param string $entity
-     * @return EntityRepository
-     */
-    protected function getRepository($entity)
+    private function getRepository(string $entity): EntityRepository
     {
         return $this->doctrine->getRepository($entity, 'search');
     }
@@ -334,7 +324,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadItemData::class]);
 
         $this->mappingProviderMock
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('getEntityClasses')
             ->willReturn([TestProduct::class, TestEmployee::class]);
 

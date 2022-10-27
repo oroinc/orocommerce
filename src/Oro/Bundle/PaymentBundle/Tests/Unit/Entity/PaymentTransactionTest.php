@@ -7,6 +7,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
@@ -54,37 +55,25 @@ class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
     public function testResponseReturnArrayButStoreNull()
     {
         $paymentTransaction = $this->createPaymentTransaction();
-        $reflectionProperty = new \ReflectionProperty(get_class($paymentTransaction), 'response');
-        $reflectionProperty->setAccessible(true);
 
-        $this->assertEquals(null, $reflectionProperty->getValue($paymentTransaction));
+        $this->assertNull(ReflectionUtil::getPropertyValue($paymentTransaction, 'response'));
         $this->assertEquals([], $paymentTransaction->getResponse());
-
-        $reflectionProperty->setAccessible(false);
     }
 
     public function testRequestReturnArrayButStoreNull()
     {
         $paymentTransaction = $this->createPaymentTransaction();
-        $reflectionProperty = new \ReflectionProperty(get_class($paymentTransaction), 'request');
-        $reflectionProperty->setAccessible(true);
 
-        $this->assertEquals(null, $reflectionProperty->getValue($paymentTransaction));
+        $this->assertNull(ReflectionUtil::getPropertyValue($paymentTransaction, 'request'));
         $this->assertEquals([], $paymentTransaction->getRequest());
-
-        $reflectionProperty->setAccessible(false);
     }
 
     public function testTransactionOptionsArrayButStoreNull()
     {
         $paymentTransaction = $this->createPaymentTransaction();
-        $reflectionProperty = new \ReflectionProperty(get_class($paymentTransaction), 'transactionOptions');
-        $reflectionProperty->setAccessible(true);
 
-        $this->assertEquals(null, $reflectionProperty->getValue($paymentTransaction));
+        $this->assertNull(ReflectionUtil::getPropertyValue($paymentTransaction, 'transactionOptions'));
         $this->assertEquals([], $paymentTransaction->getTransactionOptions());
-
-        $reflectionProperty->setAccessible(false);
     }
 
     /**

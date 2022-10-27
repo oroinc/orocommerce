@@ -26,9 +26,6 @@ class ProductPriceCollection extends CollectionField
         }
     }
 
-    /**
-     * @param array $values
-     */
     public function assertRows(array $values)
     {
         $rows = $this->findAll('css', '.product-price-collection .oro-multiselect-holder');
@@ -82,17 +79,13 @@ class ProductPriceCollection extends CollectionField
         );
 
         return [
-            'Price List' => $element->getChosenValue(),
+            'Price List' => $element->getValue(),
             'Quantity value' => $row->find('xpath', '//input[contains(@id,"quantity")]')->getValue(),
             'Quantity Unit' => $row->find('xpath', '//select[contains(@id,"unit")]')->getValue(),
             'Value' => $row->find('xpath', '//input[contains(@id,"price_value")]')->getValue()
         ];
     }
 
-    /**
-     * @param NodeElement $row
-     * @param array $value
-     */
     private function changeRowValue(NodeElement $row, array $value)
     {
         $element = $this->elementFactory->wrapElement(
@@ -105,5 +98,9 @@ class ProductPriceCollection extends CollectionField
         $row->find('xpath', '//input[contains(@id,"quantity")]')->setValue($value['Quantity value']);
         $row->find('xpath', '//select[contains(@id,"unit")]')->setValue($value['Quantity Unit']);
         $row->find('xpath', '//input[contains(@id,"price_value")]')->setValue($value['Value']);
+
+        if (isset($value['Currency'])) {
+            $row->find('xpath', '//select[contains(@id,"price_currency")]')->setValue($value['Currency']);
+        }
     }
 }

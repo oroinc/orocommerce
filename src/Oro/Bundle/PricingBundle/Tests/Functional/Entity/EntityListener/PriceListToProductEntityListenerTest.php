@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -18,20 +19,33 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PriceListToProductEntityListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
+
         $this->loadFixtures([
             LoadProductPrices::class,
             LoadPriceRuleLexemes::class
         ]);
+        $this->enableMessageBuffering();
+    }
 
-        $this->cleanScheduledMessages();
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass(PriceListToProduct::class);
+    }
+
+    protected function disableListener()
+    {
+        $this->getContainer()->get('oro_pricing.entity_listener.price_list_to_product')->setEnabled(false);
     }
 
     public function testPostPersist()
@@ -45,13 +59,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
         // Assert Rules scheduled for rebuild
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
@@ -61,9 +73,9 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
                         $product->getId()
                     ]
@@ -82,17 +94,17 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         $dispatcher = $this->getContainer()->get('event_dispatcher');
         $dispatcher->dispatch(
-            PriceListToProductSaveAfterEvent::NAME,
-            new PriceListToProductSaveAfterEvent($priceListToProduct)
+            new PriceListToProductSaveAfterEvent($priceListToProduct),
+            PriceListToProductSaveAfterEvent::NAME
         );
 
-        $this->sendScheduledMessages();
+        $this->flushMessagesBuffer();
 
         // Assert Rules scheduled for rebuild
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
@@ -102,9 +114,9 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
                         $product->getId()
                     ]
@@ -126,9 +138,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 
     public function testPreUpdate()
@@ -143,7 +153,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->cleanScheduledMessages();
+        $this->clearMessageCollector();
 
         // Edit PriceListToProduct
         $changedProduct = $this->getReference(LoadProductData::PRODUCT_6);
@@ -152,15 +162,13 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
                 // Recalculation for old product
                 // Recalculation for new product
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                             $product->getId(),
                             $changedProduct->getId()
@@ -172,10 +180,10 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation for old product
         self::assertMessagesSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
                 [
-                    PriceListTriggerFactory::PRODUCT => [
+                    'product' => [
                         $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
                             $product->getId(),
                             $changedProduct->getId()
@@ -198,7 +206,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->cleanScheduledMessages();
+        $this->clearMessageCollector();
 
         $this->disableListener();
 
@@ -209,9 +217,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 
     public function testPostRemove()
@@ -226,18 +232,16 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->cleanScheduledMessages();
+        $this->clearMessageCollector();
 
         // Remove created PriceListToProduct
         $em->remove($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
@@ -258,7 +262,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->cleanScheduledMessages();
+        $this->clearMessageCollector();
 
         $this->disableListener();
 
@@ -266,9 +270,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->remove($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 
     public function testOnAssignmentRuleBuilderBuild()
@@ -282,13 +284,11 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
         // Assert Rules scheduled for rebuild
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
@@ -298,9 +298,9 @@ class PriceListToProductEntityListenerTest extends WebTestCase
 
         // Assert Dependent price lists scheduled for recalculation
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            ResolvePriceListAssignedProductsTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [
+                'product' => [
                     $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
                         $product->getId()
                     ]
@@ -318,28 +318,10 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $priceListToProduct->setProduct($product);
         $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
 
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListToProduct::class);
-
+        $em = $this->getEntityManager();
         $em->persist($priceListToProduct);
         $em->flush();
 
-        $this->sendScheduledMessages();
-
-        $this->assertMessagesEmpty(Topics::RESOLVE_PRICE_RULES);
-    }
-
-    protected function disableListener()
-    {
-        $this->getContainer()->get('oro_pricing.entity_listener.price_list_to_product')->setEnabled(false);
-    }
-
-    /**
-     * @return ObjectManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListToProduct::class);
+        $this->assertMessagesEmpty(ResolvePriceRulesTopic::getName());
     }
 }

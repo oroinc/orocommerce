@@ -1,23 +1,32 @@
 oro:
     pricing:
-        product_price_save:
-            flash:
-                success: Product Price has been added
         filter:
             product_price:
                 per: '/'
                 units_select.label: Units
+                min: 'min'
+                max: 'max'
+                units_list:
+                    aria_label: '{{ label }} filter product units'
         click_to_select: Click to select price per unit
         qty: 'qty'
         unit_price: Unit Price
         product_prices:
             price_is_overridden: Price is overridden
             reset_price: Reset price
+            applicable_from: 'Price is applicable starting from {{ amount }}'
+            your_price: 'Your Price:'
+            listed_price: 'Listed Price:'
+            price_not_found: 'Price for requested quantity is not available'
+            price_not_found.short_label: N/A
+            empty_prices: 'Price not available'
         price:
             label: Price
             formatted.unit: '{{ formattedUnit }} ({{ formattedPrice }} Each)'
             not_available: 'N/A'
         pricelist.delete.message_default: 'Are you sure you would like to delete the "{{ priceListName }}" price list that is used in system configuration as default?'
         pricelist.delete.message: 'Are you sure you would like to delete the "{{ priceListName }}" price list?'
+        view_all_prices: 'View All Prices'
+        view_all_prices_extended: 'View All Prices for {{ product_attrs }}'
     totals:
         no_data: No data

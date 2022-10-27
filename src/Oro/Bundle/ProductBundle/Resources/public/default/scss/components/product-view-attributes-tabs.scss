@@ -44,31 +44,32 @@
     #{$product-view-attributes-tabs-link} {
         text-transform: uppercase;
     }
-};
+}
 
 @include breakpoint('mobile-landscape') {
     .product-attributes-tabs {
         flex-direction: $product-view-attributes-tabs-flex-direction-mobile-l;
 
-        margin: $product-view-attributes-tabs-offset-mobile-l;
-
         border-radius: $product-view-attributes-tabs-border-radius-mobile-l;
 
         &__item {
-            border-left: 0;
             border-top: 1px solid $product-view-attributes-tabs-border-color;
 
             &:last-child {
                 border-bottom: 1px solid $product-view-attributes-tabs-border-color;
+            }
+
+            &:not(:first-child) {
+                border-left: 0;
             }
         }
 
         &__link {
             text-align: $product-view-attributes-tabs-link-text-align-mobile-l;
 
-            @include fa-icon($fa-var-angle-right, after);
+            @include fa-icon(var(--fa-var-angle-right), after, false, true);
 
-            &:after {
+            &::after {
                 position: $product-view-attributes-tabs-link-after-position-mobile-l;
                 right: $product-view-attributes-tabs-link-after-right-mobile-l;
 

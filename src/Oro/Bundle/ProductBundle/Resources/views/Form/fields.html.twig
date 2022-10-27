@@ -11,41 +11,50 @@
         {% endfor %}
     {% endif %}
 
-    <div data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
+    <div class="controls-inner product-primary-unit-controls"
+         data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
          data-page-component-options="{{ { 'precisions': precisions, 'initialAdditionalUnits': initialAdditionalUnits }|json_encode  }}">
 
-        <div class="float-holder">
-            <table>
-                <tr>
-                    <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
-                    <td><div class="control-label"><label>{{ 'oro.product.productunitprecision.precision.label'|trans }}<em>&nbsp;</em></label></div></td>
-                    <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision', 'style': 'width: 40px'} }) }}</td>
-                    <td>{{ form_widget(form.conversionRate) }}</td>
-                    <td>{{ form_widget(form.sell) }}</td>
-                </tr>
-                <tr>
-                    <td>{{ form_errors(form.unit) }}</td>
-                    <td></td>
-                    <td>{{ form_errors(form.precision) }}</td>
-                </tr>
-            </table>
+        <div class="entity-fallback-container">
+            <div class="entity-fallback-container__value">
+                {{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}
+            </div>
+            <div class="entity-fallback-container__line">
+                <div class="entity-fallback-container__use">{{-
+                    'oro.product.productunitprecision.precision.label'|trans
+                -}}</div>
+                <div class="entity-fallback-container__fallback">
+                    {{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}
+                </div>
+            </div>
         </div>
+
+        {{ form_widget(form.conversionRate) }}
+
+        {{ form_widget(form.sell) }}
+
+        {{ form_errors(form.unit) }}
+        {{ form_errors(form.precision) }}
     </div>
 {% endblock %}
 
 {% block oro_product_unit_precision_widget %}
     {% set name = form.vars.full_name %}
-
+        {% apply spaceless %}
             <tr data-content="{{ name }}" data-validation-optional-group class="oro-multiselect-holder grid-row">
-                <td>{{ form_widget(form.unit, { 'attr': {'style': 'width: 100px'}}) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled, { 'attr': {'style': 'width: 100px'}}) }}{% endif %}</td>
-                <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
-                <td>{{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}</td>
+                <td>{{ form_widget(form.unit) }}{% if form.unit_disabled is defined %}{{ form_widget(form.unit_disabled) }}{% endif %}</td>
+                <td class="unit-precision">{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
+                <td class="unit-conversion">
+                    <div class="fields-row">
+                        {{ form_widget(form.conversionRate, { 'attr': {'class': 'conversionRate'} }) }}
+                    </div>
+                </td>
                 <td>{{ form_widget(form.sell, { 'attr': {'class': 'sell'} }) }}</td>
                 {% if form.parent.vars.allow_delete %}
-                    <td><button class="removeLineItem btn btn-icon icons-holder" type="button" data-related="{{ name }}"><i class="fa-close"></i></button></td>
+                    <td class="action-cell"><button class="removeLineItem btn btn-icon btn-square-lighter" type="button" data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button></td>
                 {% endif %}
             </tr>
-
+        {% endapply %}
 {% endblock %}
 
 {% macro oro_collection_item_prototype(widget) %}
@@ -69,6 +78,8 @@
 {% endmacro %}
 
 {% block oro_entity_extend_enum_value_widget %}
+    {% import '@OroUI/macros.html.twig' as ui %}
+
     <div class="float-holder {% if form.label.vars.errors|length > 0 %} validation-error{% endif %}">
         <div class="input-append input-append-sortable collection-element-primary">
             {{ form_widget(form.label, {disabled: disabled}) }}
@@ -86,41 +97,46 @@
         {{ form_errors(form.label) }}
     </div>
     {% if tooltip is defined  and tooltip %}
-        {% import 'OroUIBundle::macros.html.twig' as ui %}
-        {{ ui.tooltip(
-            tooltip,
-            tooltip_parameters|default({}),
-            tooltip_placement|default(null),
-            tooltip_details_enabled|default(false),
-            tooltip_details_link|default(null),
-            tooltip_details_anchor|default(null)
-        ) }}
+        {% import '@OroUI/macros.html.twig' as ui %}
+        <div class="tooltip-icon-container">
+            {{ ui.tooltip(
+                tooltip,
+                tooltip_parameters|default({}),
+                tooltip_placement|default(null),
+                tooltip_details_enabled|default(false),
+                tooltip_details_link|default(null),
+                tooltip_details_anchor|default(null)
+            ) }}
+        </div>
     {% endif %}
     {{ form_rest(form) }}
 {% endblock %}
 
 {% block oro_product_precision_collection_widget %}
-    {% spaceless %}
+    {% import _self as fields %}
+    {% apply spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.oro_collection_item_prototype(form) %}
+            {% set prototype_html = fields.oro_collection_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
-            <div>
-                <table class="grid table table-condensed table-bordered table-hover">
+            <div class="grid-scrollable-container">
+                <table class="table">
                     <thead>
-                        <th>{{ 'oro.product.productunitprecision.unit.label'|trans }}</th>
-                        <th>{{ 'oro.product.productunitprecision.precision.label'|trans }}</th>
-                        <th>{{ 'oro.product.productunitprecision.conversion_rate.label'|trans }}</th>
-                        <th>{{ 'oro.product.productunitprecision.sell.label'|trans }}</th>
-                        <th></th>
+                        <tr>
+                            <th>{{ 'oro.product.productunitprecision.unit.label'|trans }}</th>
+                            <th>{{ 'oro.product.productunitprecision.precision.label'|trans }}</th>
+                            <th>{{ 'oro.product.productunitprecision.conversion_rate.label'|trans }}</th>
+                            <th>{{ 'oro.product.productunitprecision.sell.label'|trans }}</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.oro_collection_item_prototype(child) }}
+                            {{ fields.oro_collection_item_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {% for i in 0..(form.vars.row_count_initial - 1) %}
@@ -131,10 +147,10 @@
                 </table>
             </div>
             {% if allow_add and oro_is_adding_additional_units_to_product_available() %}
-                <a class="btn add-list-item" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" href="#">{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_product_unit_precision_collection_widget %}
@@ -145,13 +161,13 @@
     {% endfor %}
 
     <div data-page-component-module="oroproduct/js/app/components/product-unit-selection-limitations-component"
-         data-page-component-options="{{ {'precisions': precisions}|json_encode }}" class="unit-precisions-collection">
+         data-page-component-options="{{ {'precisions': precisions}|json_encode }}" class="controls-inner unit-precisions-collection">
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection ' }) %}
         {{ block('oro_product_precision_collection_widget') }}
     </div>
 {% endblock %}
 
-{% macro oro_product_image_collection_item_prototype(widget) %}
+{% macro oro_product_image_collection_item_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -164,14 +180,14 @@
         {% set allow_delete = widget.parent.vars.allow_delete %}
     {% endif %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
+    <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}>
 
         {{ form_widget(form) }}
 
         {% if allow_delete %}
             <td>
-                <button type="button" class="removeRow btn btn-icon icons-holder pull-right">
-                    <span class="fa-close"></span>
+                <button type="button" class="removeRow btn btn-icon btn-square-lighter" aria-label="{{ 'Remove row'|trans }}">
+                    <span class="fa-trash-o" aria-hidden="true"></span>
                 </button>
             </td>
         {% endif %}
@@ -180,9 +196,11 @@
 {% endmacro %}
 
 {% block oro_product_image_collection_widget %}
-    {% spaceless %}
+    {% import _self as fields %}
+    {% apply spaceless %}
+        {% set widgetContainerAttributes = block('widget_container_attributes') %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.oro_product_image_collection_item_prototype(form) %}
+            {% set prototype_html = fields.oro_product_image_collection_item_prototype(form, widgetContainerAttributes) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'image-collection oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
@@ -190,7 +208,7 @@
 
         <div class="row-oro" data-page-component-module="oroproduct/js/app/components/product-image-type-radio-control-component">
             <div {{ block('widget_container_attributes') }}>
-                <table class="grid table-hover table table-bordered table-condensed">
+                <table class="grid grid-main-container table-hover table table-bordered table-condensed">
                     <thead>
                         <tr>
                             <th class="file"><span>{{ 'oro.product.productimage.file.label'|trans }}</span></th>
@@ -210,7 +228,7 @@
                     >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.oro_product_image_collection_item_prototype(child) }}
+                            {{ fields.oro_product_image_collection_item_prototype(child, widgetContainerAttributes) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {% for i in 0..(form.vars.row_count_initial - 1) %}
@@ -219,19 +237,19 @@
                     {% endif %}
                     </tbody>
                 </table>
-                {% if allow_add %}
-                    <a class="btn add-list-item" data-container=".image-collection tbody" href="javascript: void(0);">
-                        <i class="fa-plus"></i>{{ 'oro.product.productimage.add.label'|trans }}
-                    </a>
-                {% endif %}
             </div>
+            {% if allow_add %}
+                <a class="btn add-list-item" data-container=".image-collection tbody" href="#">
+                    {{ 'oro.product.productimage.add.label'|trans }}
+                </a>
+            {% endif %}
         </div>
 
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_product_image_widget %}
-    <td><div class="pull-left">{{ form_widget(form.image) }}{{ form_errors(form) }}</div></td>
+    <td><div>{{ form_widget(form.image) }}{{ form_errors(form) }}</div></td>
 
     {% for imageType in form.vars.imageTypes|keys %}
         <td>{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</td>
@@ -312,9 +330,12 @@
                  data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                  data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
             >
-                {% import 'OroProductBundle::product_collection_macros.html.twig' as ProductCollection %}
+                {% import '@OroProduct/product_collection_macros.html.twig' as ProductCollection %}
+                {% import '@OroUI/macros.html.twig' as UI %}
                 {% set uniqueId = 'dropdown-'|uniqid %}
-                <div class="oro-tabs">
+                <div class="oro-tabs"  {{ UI.renderPageComponentAttributes({
+                    module: 'oroui/js/app/components/tabs-component'
+                }) }}>
                     <div class="oro-tabs__head">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
@@ -328,7 +349,7 @@
                                    aria-selected="true"
                                 >
                                     {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
-                                    (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
+                                    (<span data-role="counter">{{ render(controller('Oro\\Bundle\\ProductBundle\\Controller\\AjaxGetProductsCountController::getAction', widgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -342,7 +363,7 @@
                                    aria-selected="false"
                                 >
                                     {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
-                                    (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
+                                    (<span data-role="counter">{{ render(controller('Oro\\Bundle\\ProductBundle\\Controller\\AjaxGetProductsCountController::getAction', excludedWidgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -356,7 +377,7 @@
                                    aria-selected="false"
                                 >
                                     {{ 'oro.product.content_variant.ui.included_products'|trans }}
-                                    (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
+                                    (<span data-role="counter">{{ render(controller('Oro\\Bundle\\ProductBundle\\Controller\\AjaxGetProductsCountController::getAction', includedWidgetRouteParameters)) }}</span>)
                                 </a>
                             </li>
                             <li class="nav-item pull-right">
@@ -377,45 +398,49 @@
                                  role="tabpanel"
                                  aria-labelledby="{{ 'filtered_products' ~ uniqueId ~ scope ~ '-tab' }}"
                             >
-                                <div class="collapse-view"
-                                     data-page-component-collapse="{{ {
-                                         openClass: 'expanded',
-                                         open: hasFilters
-                                     }|json_encode() }}"
-                                >
-                                    <div class="top-frame">
-                                        <div class="control-group">
-                                            <div class="pull-right">
-                                                <div data-collapse-trigger class="btn-group icons-holder">
-                                                    <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
-                                                </div>
-                                                {{ ProductCollection.popupButton(
-                                                    oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
-                                                    includedProductsElementId,
-                                                    'oro.product.content_variant.ui.hint.add_to_included'|trans
-                                                ) }}
+                                {% set collapseId = 'collapse-'|uniqid %}
+                                <div class="product-collection-segment-action-buttons clearfix-oro">
+                                    <div class="pull-right">
+                                        {% if not isMobileVersion() %}
+                                            <div class="btn-group icons-holder">
+                                                <button type="button"
+                                                        class="btn{% if hasFilters %} active{% endif %}"
+                                                        data-toggle="collapse"
+                                                        data-target="{{ '#' ~ collapseId }}"
+                                                        aria-expanded="false"
+                                                        aria-controls="{{ collapseId }}"
+                                                >
+                                                    <span class="fa-filter" aria-hidden="true"></span> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}
+                                                </button>
                                             </div>
-                                        </div>
+                                        {% endif %}
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                            includedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                        ) }}
                                     </div>
-                                    <div data-collapse-container class="filter control-group fields-row">
-                                        {{ block('oro_segment_filter_builder_row') }}
-                                        {# --Apply Query button start--#}
-                                        <div class="clearfix">
-                                            <div class="pull-right">
-                                                <a href="#" class="btn btn-primary filter-apply">
-                                                    {{ 'oro.product.content_variant.ui.apply_query'|trans }}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        {# --Apply Query button end-- #}
-                                    </div>
-                                    {{ oro_widget_render({
-                                        'widgetType': 'block',
-                                        'url': path('oro_datagrid_widget', widgetRouteParameters),
-                                        'title': '',
-                                        'alias': gridWidgetAlias
-                                    }) }}
                                 </div>
+                                <div id="{{ collapseId }}" class="filter fields-row collapse no-transition{% if hasFilters %} show{% endif %}" data-trigger-show-class="active">
+                                    {{ block('oro_segment_filter_builder_row') }}
+                                    {# --Apply Query button start--#}
+                                    {% if not isMobileVersion() %}
+                                    <div class="btn-container clearfix">
+                                        <div class="pull-right">
+                                            <a href="#" class="btn btn-primary filter-apply">
+                                                {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {# --Apply Query button end-- #}
+                                </div>
+                                {{ oro_widget_render({
+                                    'widgetType': 'block',
+                                    'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                    'title': '',
+                                    'alias': gridWidgetAlias
+                                }) }}
                             </div>
 
                             <div class="tab-pane"
@@ -423,17 +448,16 @@
                                  role="tabpanel"
                                  aria-labelledby="{{ 'excluded_products' ~ uniqueId ~ scope ~ '-tab' }}"
                             >
-                                <div class="top-frame">
-                                    <div class="control-group">
-                                        <div class="pull-right">
-                                            {{ ProductCollection.popupButton(
-                                                oro_datagrid_build_fullname('product-collection-add-products-to-excluded-grid', scope),
-                                                excludedProductsElementId,
-                                                'oro.product.content_variant.ui.hint.add_to_excluded'|trans
-                                            ) }}
-                                        </div>
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-excluded-grid', scope),
+                                            excludedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_excluded'|trans
+                                        ) }}
                                     </div>
                                 </div>
+
 
                                 {% set excludedGridWidgetAlias = 'product-collection-excluded-products-grid-' ~ scope %}
                                 {% set excludedGridSidebarComponentOptions = {
@@ -442,7 +466,7 @@
                                     'widgetRouteParameters': excludedWidgetRouteParameters
                                 } %}
 
-                                <div class="{{ excludedControlsBlockAlias }} control-group"
+                                <div class="{{ excludedControlsBlockAlias }}"
                                      data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                                      data-page-component-options="{{ excludedGridSidebarComponentOptions|json_encode }}"
                                 >
@@ -462,17 +486,16 @@
                                  role="tabpanel"
                                  aria-labelledby="{{ 'included_products' ~ uniqueId ~ scope ~ '-id' }}"
                             >
-                                <div class="top-frame">
-                                    <div class="control-group">
-                                        <div class="pull-right">
-                                            {{ ProductCollection.popupButton(
-                                                oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
-                                                includedProductsElementId,
-                                                'oro.product.content_variant.ui.hint.add_to_included'|trans
-                                            ) }}
-                                        </div>
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                            includedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                        ) }}
                                     </div>
                                 </div>
+
 
                                 {% set includedGridWidgetAlias = 'product-collection-included-products-grid-' ~ scope %}
                                 {% set includedGridSidebarComponentOptions = {
@@ -481,7 +504,7 @@
                                     'widgetRouteParameters': includedWidgetRouteParameters
                                 } %}
 
-                                <div class="{{ includedControlsBlockAlias }} control-group"
+                                <div class="{{ includedControlsBlockAlias }}"
                                      data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                                      data-page-component-options="{{ includedGridSidebarComponentOptions|json_encode }}"
                                 >
@@ -507,10 +530,15 @@
 
 {% block oro_product_collection_variant_widget %}
     {{ form_widget(form.productCollectionSegment) }}
+
+    <div class="section-content">
+        <span class="widget-title">{{ 'oro.webcatalog.contentvariant.options.label'|trans }}</span>
+        {{ form_row(form.overrideVariantConfiguration) }}
+    </div>
 {% endblock %}
 
 {% block oro_product_custom_variant_fields_collection_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     <div class="enum-value-collection" {{ UI.renderPageComponentAttributes({
         module: 'oroui/js/app/components/view-component',
         options: {
@@ -534,9 +562,13 @@
             <div class="add-on" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
                 {{ form_widget(form.is_selected) }}
             </div>
-            <div class="add-on" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
+            <div class="add-on float-width" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
                 {{ form_label(form.is_selected) }}
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block _oro_product_pageTemplate_scalarValue_widget %}
+    {{ block('choice_widget') }}
 {% endblock %}

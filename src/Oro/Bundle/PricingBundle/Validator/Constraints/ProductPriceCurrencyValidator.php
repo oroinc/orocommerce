@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates that the currency is allowed for the current price list.
+ */
 class ProductPriceCurrencyValidator extends ConstraintValidator
 {
     /**
@@ -31,12 +34,15 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
         if (!$price) {
             return;
         }
+        $currency = $price->getCurrency();
+        if (!$currency) {
+            return;
+        }
         if ($value->getPriceList() === null) {
             return;
         }
 
         $availableCurrencies = $value->getPriceList()->getCurrencies();
-        $currency = $price->getCurrency();
         if (!in_array($currency, $availableCurrencies, true)) {
             $this->context->buildViolation($constraint->message)
                 ->atPath('price.currency')

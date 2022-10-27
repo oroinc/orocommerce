@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Inflector\Inflector;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
@@ -49,26 +49,22 @@ class CheckoutGridListener
      * @var DoctrineHelper
      */
     private $doctrineHelper;
+    private Inflector $inflector;
 
-    /**
-     * @param UserCurrencyManager $currencyManager
-     * @param CheckoutRepository $checkoutRepository
-     * @param TotalProcessorProvider $totalProcessor
-     * @param EntityNameResolver $entityNameResolver
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         UserCurrencyManager $currencyManager,
         CheckoutRepository $checkoutRepository,
         TotalProcessorProvider $totalProcessor,
         EntityNameResolver $entityNameResolver,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        Inflector $inflector
     ) {
         $this->currencyManager = $currencyManager;
         $this->checkoutRepository = $checkoutRepository;
         $this->totalProcessor = $totalProcessor;
         $this->entityNameResolver = $entityNameResolver;
         $this->doctrineHelper = $doctrineHelper;
+        $this->inflector = $inflector;
     }
 
     /**
@@ -86,9 +82,6 @@ class CheckoutGridListener
               ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
     }
 
-    /**
-     * @param OrmResultAfter $event
-     */
     public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */
@@ -103,7 +96,7 @@ class CheckoutGridListener
     protected function buildColumns(array $records)
     {
         $ids = array_map(
-            function (ResultRecord $record) {
+            static function (ResultRecord $record) {
                 return $record->getValue('id');
             },
             $records
@@ -115,10 +108,6 @@ class CheckoutGridListener
         foreach ($records as $record) {
             $id = $record->getValue('id');
 
-            /** @var Checkout $ch */
-            $ch = $this->checkoutRepository->find($id);
-            $data = $ch->getCompletedData();
-
             if (isset($checkouts[$id])) {
                 $sourceEntity = $checkouts[$id]->getSource()->getEntity();
 
@@ -128,11 +117,7 @@ class CheckoutGridListener
             }
 
             if ($record->getValue('completed')) {
-                if (!$record->getValue('startedFrom')) {
-                    $this->addCompletedCheckoutData($record, $data, ['startedFrom']);
-                }
-
-                $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'currency']);
+                $this->fillCompletedCheckoutData($record);
                 continue;
             }
 
@@ -143,7 +128,26 @@ class CheckoutGridListener
             if (isset($checkouts[$id]) && !$record->getValue('isSubtotalValid')) {
                 $this->updateTotal($checkouts[$id], $record);
             }
+
+            $startedFrom = $record->getValue('startedFrom');
+            if (isset($startedFrom['label'])) {
+                $record->addData(['startedFromLabel' => $startedFrom['label']]);
+            }
         }
+    }
+
+    private function fillCompletedCheckoutData(ResultRecord $record): void
+    {
+        /** @var Checkout $checkout */
+        $checkout = $this->checkoutRepository->find($record->getValue('id'));
+        $data = $checkout->getCompletedData();
+
+        if (!$record->getValue('startedFrom')) {
+            $this->addCompletedCheckoutData($record, $data, ['startedFrom']);
+            $record->addData(['startedFromLabel' => $record->getValue('startedFrom')]);
+        }
+
+        $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'currency']);
     }
 
     /**
@@ -177,11 +181,6 @@ class CheckoutGridListener
         ];
     }
 
-    /**
-     * @param ResultRecord $record
-     * @param CompletedCheckoutData $data
-     * @param array $keys
-     */
     protected function addCompletedCheckoutData(ResultRecord $record, CompletedCheckoutData $data, array $keys)
     {
         foreach ($keys as $key) {
@@ -200,6 +199,6 @@ class CheckoutGridListener
      */
     protected function getShortClassName($object)
     {
-        return Inflector::tableize(ExtendHelper::getShortClassName(ClassUtils::getClass($object)));
+        return $this->inflector->tableize(ExtendHelper::getShortClassName(ClassUtils::getClass($object)));
     }
 }

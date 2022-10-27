@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 /**
- * Data provider for currency fields autocomplete, used in ExpressionEditors
+ * Provides information about currency fields.
  */
 class CurrencyFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
@@ -42,7 +42,7 @@ class CurrencyFieldsProvider extends AbstractAutocompleteFieldsProvider
                 }
 
                 $isRelation = $type === self::TYPE_RELATION;
-                if ($isRelation || (strpos($fieldName, 'currency') !== false && $type === self::TYPE_STRING)) {
+                if ($isRelation || (str_contains($fieldName, 'currency') && self::TYPE_STRING === $type)) {
                     $result[$className][$fieldName] = [
                         'label' => $fieldInfo['label'],
                         'type' => $type

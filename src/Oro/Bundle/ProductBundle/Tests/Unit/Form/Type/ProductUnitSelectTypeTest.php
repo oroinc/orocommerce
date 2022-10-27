@@ -30,7 +30,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
@@ -66,10 +66,6 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     * @param array $inputOptions
-     * @param array $expectedOptions
-     * @param $submittedData
-     * @param $expectedData
      */
     public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData, $expectedData)
     {
@@ -85,6 +81,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var ProductUnit $data */
         $data = $form->getData();
@@ -140,8 +137,6 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
                         'compact' => false,
                         'choices_updated' => false,
                         'required' => true,
-                        'empty_label' => 'oro.product.productunit.removed',
-                        'sell' => null,
                     ]
                 ]
             );

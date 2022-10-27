@@ -5,3 +5,7 @@ oro:
                 blank: 'Product cannot be empty.'
             request_product_items:
                 blank: 'Please add one or more requests.'
+        request:
+            ship_until:
+                type:
+                    message: 'This value is not a valid date.'

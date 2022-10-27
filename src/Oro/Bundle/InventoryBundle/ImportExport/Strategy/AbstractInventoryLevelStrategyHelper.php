@@ -3,8 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * A base helper for InventoryLevel import strategy.
+ */
 abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStrategyHelperInterface
 {
     /** @var  DatabaseHelper $databaseHelper */
@@ -19,10 +22,6 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
     /** @var array $errors */
     protected $errors = [];
 
-    /**
-     * @param DatabaseHelper $databaseHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(DatabaseHelper $databaseHelper, TranslatorInterface $translator)
     {
         $this->databaseHelper = $databaseHelper;
@@ -56,12 +55,8 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
 
     /**
      * Translates the received error and adds it to the list of errors
-     *
-     * @param string $error
-     * @param array $translationParams
-     * @param null|string $prefix
      */
-    protected function addError($error, array $translationParams = [], $prefix = null)
+    protected function addError(string $error, array $translationParams = [], string $prefix = null)
     {
         $errorMessage = $this->translator->trans($error, $translationParams);
 

@@ -9,8 +9,15 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Entity that represents tax code
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository")
- * @ORM\Table(name="oro_tax_customer_tax_code")
+ * @ORM\Table(name="oro_tax_customer_tax_code", uniqueConstraints={
+ *     @ORM\UniqueConstraint(
+ *          name="oro_customer_tax_code_organization_unique_index",
+ *          columns={"code", "organization_id"}
+ *     )
+ * })
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="oro_tax_customer_tax_code_index",

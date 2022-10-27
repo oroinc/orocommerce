@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var ConfigHideFieldsComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    ConfigHideFieldsComponent = BaseComponent.extend({
+    const ConfigHideFieldsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -27,14 +26,14 @@ define(function(require) {
         $el: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ConfigHideFieldsComponent() {
-            ConfigHideFieldsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ConfigHideFieldsComponent(options) {
+            ConfigHideFieldsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -43,29 +42,29 @@ define(function(require) {
             this.$form = this.$el.closest('form');
 
             this.updateDependentFields();
-            this.$el.on('change', $.proxy(this.updateDependentFields, this));
+            this.$el.on('change.' + this.cid, this.updateDependentFields.bind(this));
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
                 return;
             }
 
-            this.$el.off('change', $.proxy(this.updateDependentFields, this));
+            this.$el.off('.' + this.cid);
 
             ConfigHideFieldsComponent.__super__.dispose.call(this);
         },
 
         updateDependentFields: function() {
-            var id = this.$el.data('dependency-id');
-            var value = this.$el.val();
+            const id = this.$el.data('dependency-id');
+            const value = this.$el.val();
             _.each(
                 this.$form.find('[data-depends-on-field="' + id + '"]'),
                 function(item) {
-                    var $item = $(item);
+                    const $item = $(item);
                     if ($item.data('depends-on-field-value') === value) {
                         $item.closest(this.options.selectors.row_container).show();
                     } else {

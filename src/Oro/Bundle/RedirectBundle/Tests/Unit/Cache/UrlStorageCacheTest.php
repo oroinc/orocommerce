@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Cache;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\FileCache;
+use Oro\Bundle\CacheBundle\Provider\PhpFileCache;
 use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -15,12 +15,12 @@ use Symfony\Component\Filesystem\Filesystem;
 class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var FileCache|\PHPUnit\Framework\MockObject\MockObject
+     * @var PhpFileCache|\PHPUnit\Framework\MockObject\MockObject
      */
     private $persistentCache;
 
     /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $localCache;
 
@@ -34,72 +34,41 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
      */
     private $storageCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->persistentCache = $this->getMockBuilder(FileCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->localCache = $this->createMock(Cache::class);
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->persistentCache = $this->createMock(PhpFileCache::class);
+        $this->localCache = $this->createMock(CacheItemPoolInterface::class);
+        $this->filesystem = $this->createMock(Filesystem::class);
 
         $this->storageCache = new UrlStorageCache($this->persistentCache, $this->localCache, $this->filesystem, 1);
     }
 
-    public function testDeleteAllNonClearableLocal()
+    public function testDeleteAll()
     {
-        $this->localCache->expects($this->never())
-            ->method($this->anything());
+        $this->localCache->expects($this->once())
+            ->method('clear');
 
         $this->persistentCache->expects($this->once())
             ->method('getDirectory')
             ->willReturn('/a');
-        $this->persistentCache->expects($this->once())
-            ->method('getNamespace')
-            ->willReturn('b');
 
         $this->filesystem->expects($this->once())
             ->method('remove')
-            ->with('/a' . DIRECTORY_SEPARATOR . 'b');
+            ->with('/a');
 
         $this->storageCache->deleteAll();
     }
 
-    public function testDeleteAllNonClearableLocalWithNonFsPersistent()
+    public function testDeleteAllWithNonFsPersistent()
     {
-        $this->localCache->expects($this->never())
-            ->method($this->anything());
+        $this->localCache->expects($this->once())
+            ->method('clear');
 
-        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
-        $persistentCache = $this->createMock(ArrayCache::class);
-        $this->persistentCache->expects($this->once())
-            ->method('deleteAll');
-        $storageCache = new UrlStorageCache($persistentCache, $this->persistentCache, $this->filesystem);
-        $storageCache->deleteAll();
-    }
-
-    public function testDeleteAllLocal()
-    {
-        /** @var ArrayCache|\PHPUnit\Framework\MockObject\MockObject $localCache */
-        $localCache = $this->getMockBuilder(ArrayCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $localCache->expects($this->once())
-            ->method('deleteAll');
-
-        $this->persistentCache->expects($this->once())
-            ->method('getDirectory')
-            ->willReturn('/c');
-        $this->persistentCache->expects($this->once())
-            ->method('getNamespace')
-            ->willReturn('d');
-
-        $this->filesystem->expects($this->once())
-            ->method('remove')
-            ->with('/c' . DIRECTORY_SEPARATOR . 'd');
-
-        $storageCache = new UrlStorageCache($this->persistentCache, $localCache, $this->filesystem);
+        /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject $persistentCache */
+        $persistentCache = $this->createMock(CacheItemPoolInterface::class);
+        $persistentCache->expects($this->once())
+            ->method('clear');
+        $storageCache = new UrlStorageCache($persistentCache, $this->localCache, $this->filesystem);
         $storageCache->deleteAll();
     }
 
@@ -110,7 +79,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $key = 'test_2';
 
         $this->localCache->expects($this->once())
-            ->method('contains')
+            ->method('hasItem')
             ->with($key)
             ->willReturn(true);
         $this->persistentCache->expects($this->never())
@@ -126,12 +95,12 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $key = 'test_2';
 
         $this->localCache->expects($this->once())
-            ->method('contains')
+            ->method('hasItem')
             ->with($key)
             ->willReturn(false);
 
         $this->persistentCache->expects($this->once())
-            ->method('contains')
+            ->method('hasItem')
             ->with($key)
             ->willReturn(true);
 
@@ -144,13 +113,22 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $routeParameters = ['id' => 1];
         $key = 'test_2';
 
-        $storage = new UrlDataStorage();
-        $this->assertLocalCacheNotContainsValue($key, $storage);
+        $localItem = $this->assertLocalCacheNotContainsValue($key);
+        $localItem->expects($this->once())
+            ->method('set')
+            ->with($this->isInstanceOf(UrlDataStorage::class));
+        $localItem->expects($this->once())
+            ->method('get')
+            ->willReturn(new UrlDataStorage());
 
-        $this->persistentCache->expects($this->once())
-            ->method('fetch')
-            ->with($key)
+        $persistenceItem = $this->createMock(CacheItemInterface::class);
+        $persistenceItem->expects($this->once())
+            ->method('isHit')
             ->willReturn(false);
+        $this->persistentCache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($persistenceItem);
 
         $this->assertFalse($this->storageCache->getUrl($routeName, $routeParameters));
     }
@@ -164,9 +142,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
-        $storage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
 
         $storage->expects($this->once())
@@ -185,10 +161,23 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
-        $storage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storage = $this->createMock(UrlDataStorage::class);
+        /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $persistentStorage */
+        $persistentStorage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
+
+        $persistentItem = $this->createMock(CacheItemInterface::class);
+        $persistentItem->expects($this->any())
+            ->method('get')
+            ->willReturn($persistentStorage);
+        $persistentItem->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+
+        $this->persistentCache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($persistentItem);
 
         $storage->expects($this->once())
             ->method('removeUrl')
@@ -206,9 +195,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
-        $storage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
 
         $storage->expects($this->once())
@@ -228,9 +215,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
-        $storage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
 
         $storage->expects($this->once())
@@ -248,13 +233,9 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $url = '/test';
 
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
-        $storage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storage = $this->createMock(UrlDataStorage::class);
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $oldStorage */
-        $oldStorage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $oldStorage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
 
         $storage->expects($this->once())
@@ -263,21 +244,26 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 
         $this->storageCache->setUrl($routeName, $routeParameters, $url);
 
-        $this->persistentCache->expects($this->once())
-            ->method('contains')
-            ->with($key)
-            ->willReturn(true);
-        $this->persistentCache->expects($this->once())
-            ->method('fetch')
-            ->with($key)
+        $persistentItem = $this->createMock(CacheItemInterface::class);
+        $persistentItem->expects($this->any())
+            ->method('get')
             ->willReturn($oldStorage);
+        $persistentItem->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+
+        $this->persistentCache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($persistentItem);
+
         $oldStorage->expects($this->once())
             ->method('merge')
             ->with($storage);
 
         $this->persistentCache->expects($this->once())
             ->method('save')
-            ->with($key, $oldStorage);
+            ->with($persistentItem);
 
         $this->storageCache->flushAll();
     }
@@ -290,9 +276,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $url = '/test';
 
         /** @var UrlDataStorage|\PHPUnit\Framework\MockObject\MockObject $storage */
-        $storage = $this->getMockBuilder(UrlDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
 
         $storage->expects($this->once())
@@ -301,53 +285,69 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 
         $this->storageCache->setUrl($routeName, $routeParameters, $url);
 
-        $this->persistentCache->expects($this->once())
-            ->method('contains')
-            ->with($key)
+        $persistentItem = $this->createMock(CacheItemInterface::class);
+        $persistentItem->expects($this->never())
+            ->method('get');
+        $persistentItem->expects($this->once())
+            ->method('isHit')
             ->willReturn(false);
-        $this->persistentCache->expects($this->never())
-            ->method('fetch')
-            ->with($key);
+        $persistentItem->expects($this->once())
+            ->method('set')
+            ->with($storage);
+
+        $this->persistentCache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($persistentItem);
 
         $this->persistentCache->expects($this->once())
             ->method('save')
-            ->with($key, $storage);
+            ->with($persistentItem);
 
         $this->storageCache->flushAll();
     }
 
-    /**
-     * @param string $key
-     * @param UrlDataStorage $storage
-     */
-    private function configureLocalCacheWithValue($key, $storage)
+    private function configureLocalCacheWithValue(string $key, UrlDataStorage $storage)
     {
-        $this->localCache->expects($this->any())
-            ->method('contains')
-            ->with($key)
-            ->willReturn(true);
-        $this->localCache->expects($this->any())
-            ->method('fetch')
-            ->with($key)
+        $item = $this->createMock(CacheItemInterface::class);
+        $item->expects($this->any())
+            ->method('get')
             ->willReturn($storage);
+        $item->expects($this->atLeastOnce())
+            ->method('isHit')
+            ->willReturn(true);
+
+        $this->localCache->expects($this->atLeastOnce())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($item);
+
+        $this->localCache->expects($this->never())
+            ->method('save');
+
+        return $item;
     }
 
     /**
      * @param string $key
-     * @param UrlDataStorage $storage
+     * @return \PHPUnit\Framework\MockObject\MockObject|CacheItemInterface
      */
-    private function assertLocalCacheNotContainsValue($key, UrlDataStorage $storage)
+    private function assertLocalCacheNotContainsValue(string $key)
     {
-        $this->localCache->expects($this->any())
-            ->method('contains')
-            ->with($key)
+        $item = $this->createMock(CacheItemInterface::class);
+        $item->expects($this->once())
+            ->method('isHit')
             ->willReturn(false);
+
+        $this->localCache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($item);
+
         $this->localCache->expects($this->once())
             ->method('save')
-            ->with($key, $this->isInstanceOf(UrlDataStorage::class));
-        $this->localCache->expects($this->once())
-            ->method('fetch')
-            ->with($key)
-            ->willReturn($storage);
+            ->with($item);
+
+        return $item;
     }
 }

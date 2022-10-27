@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-9989
+@ticket-BB-7152
 @fixture-OroProductBundle:ProductAttributesFixture.yml
 Feature: Product attribute string
   In order to have custom attributes for Product entity
@@ -82,3 +83,39 @@ Feature: Product attribute string
     And I click "Search Button"
     Then I should not see "SKU123" product
     And I should not see "SKU456" product
+
+  Scenario: Remove new attribute from product family
+    Given I proceed as the Admin
+    And I go to Products/ Product Families
+    When I click "Edit" on row "default_family" in grid
+    And I clear "Attributes" field
+    And I save and close form
+    Then I should see "Successfully updated" flash message
+
+  Scenario: Check that attribute is not present
+    Given I go to Products/ Products
+    When I click "View" on row "SKU123" in grid
+    Then I should not see "StringField"
+    And I should not see "TestDaTa"
+
+  Scenario: Update product family with new attribute again to check if attribute data is deleted
+    Given I go to Products/ Product Families
+    When I click "Edit" on row "default_family" in grid
+    And I fill "Product Family Form" with:
+      | Attributes | [StringField] |
+    And I save and close form
+    Then I should see "Successfully updated" flash message
+
+  Scenario: Check that attribute is present but its data is gone
+    Given I go to Products/ Products
+    When I click "View" on row "SKU123" in grid
+    Then I should see product with:
+      | StringField | N/A |
+
+  Scenario: Delete product attribute
+    Given I go to Products/ Product Attributes
+    When I click Remove "StringField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should not see "Update schema"

@@ -1,0 +1,5 @@
+Oro\Bundle\WebsiteBundle\Entity\Website:
+    website2:
+        name: Europe
+        organization: '@organization'
+        owner: '@business_unit'

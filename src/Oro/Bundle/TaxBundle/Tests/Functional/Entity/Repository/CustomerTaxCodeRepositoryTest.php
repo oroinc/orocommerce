@@ -6,10 +6,8 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
-use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes as TaxFixture;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodesWithAdditionalOrganization as TaxFixture;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -17,25 +15,17 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class CustomerTaxCodeRepositoryTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes']);
-    }
-
-    public function testFindByCodes()
-    {
-        /** @var CustomerTaxCode $taxCode1 */
-        $taxCode = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
-
-        $this->assertEquals([$taxCode], $this->getRepository()->findByCodes([TaxFixture::TAX_1]));
+        $this->loadFixtures([TaxFixture::class]);
     }
 
     public function testFindManyByEntitiesWhenEmptyGroupsGiven()
     {
-        $this->assertEmpty($this->getRepository()->findManyByEntities(TaxCodeInterface::TYPE_ACCOUNT_GROUP, []));
+        $this->assertEmpty($this->getRepository()->findManyByEntities([]));
     }
 
     public function testFindManyByEntitiesWhenGroupsGiven()
@@ -52,7 +42,7 @@ class CustomerTaxCodeRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $expectedTaxCodes,
-            $this->getRepository()->findManyByEntities(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $groups)
+            $this->getRepository()->findManyByEntities($groups)
         );
     }
 
@@ -74,13 +64,13 @@ class CustomerTaxCodeRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $expectedTaxCodes,
-            $this->getRepository()->findManyByEntities(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $groups)
+            $this->getRepository()->findManyByEntities($groups)
         );
     }
 
     public function testFindManyByEntitiesWhenEmptyCustomersGiven()
     {
-        $this->assertEmpty($this->getRepository()->findManyByEntities(TaxCodeInterface::TYPE_ACCOUNT, []));
+        $this->assertEmpty($this->getRepository()->findManyByEntities([]));
     }
 
     public function testFindManyByEntitiesWhenCustomersGiven()
@@ -97,7 +87,7 @@ class CustomerTaxCodeRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $expectedTaxCodes,
-            $this->getRepository()->findManyByEntities(TaxCodeInterface::TYPE_ACCOUNT, $customers)
+            $this->getRepository()->findManyByEntities($customers)
         );
     }
 
@@ -119,7 +109,7 @@ class CustomerTaxCodeRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $expectedTaxCodes,
-            $this->getRepository()->findManyByEntities(TaxCodeInterface::TYPE_ACCOUNT, $customers)
+            $this->getRepository()->findManyByEntities($customers)
         );
     }
 

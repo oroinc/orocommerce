@@ -7,6 +7,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Will return Product Prices for each of available currencies in each unit supported by product
+ */
 class AdditionalProductPricesIterator implements \Iterator
 {
     /**
@@ -34,10 +37,6 @@ class AdditionalProductPricesIterator implements \Iterator
      */
     protected $offset = -1;
 
-    /**
-     * @param \Iterator $productIterator
-     * @param PriceList $priceList
-     */
     public function __construct(\Iterator $productIterator, PriceList $priceList)
     {
         $this->priceList = $priceList;
@@ -47,7 +46,7 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->current;
     }
@@ -55,7 +54,7 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next():void
     {
         $this->current = $this->read();
         if ($this->valid()) {
@@ -66,7 +65,7 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->offset;
     }
@@ -74,7 +73,7 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->current !== null;
     }
@@ -82,7 +81,7 @@ class AdditionalProductPricesIterator implements \Iterator
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->offset = -1;
         $this->current = null;
@@ -137,7 +136,7 @@ class AdditionalProductPricesIterator implements \Iterator
         $data = [];
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
             foreach ($this->priceList->getCurrencies() as $currency) {
-                $data[] = $productPrice = (new ProductPrice())
+                $data[] = (new ProductPrice())
                     ->setPriceList($this->priceList)
                     ->setProduct($product)
                     ->setUnit($unitPrecision->getUnit())

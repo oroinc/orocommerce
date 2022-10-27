@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: value
+            optionValue: '=data["web_catalog_title"].getNodeTitle(defaultValue)'

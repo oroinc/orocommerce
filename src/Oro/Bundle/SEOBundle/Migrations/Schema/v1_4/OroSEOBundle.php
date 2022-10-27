@@ -18,8 +18,6 @@ class OroSEOBundle implements Migration
 
     /**
      * Create oro_web_catalog_product_limit table
-     *
-     * @param Schema $schema
      */
     private function createOroWebCatalogProductLimitTable(Schema $schema)
     {

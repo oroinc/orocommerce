@@ -2,55 +2,40 @@
 
 namespace Oro\Bundle\SEOBundle\Async;
 
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Generates a sitemap of a specific type for a website and write it to a temporary storage.
+ */
 class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
-    /**
-     * @var JobRunner
-     */
-    private $jobRunner;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var SitemapDumperInterface
-     */
-    private $sitemapDumper;
-
-    /**
-     * @var SitemapMessageFactory
-     */
-    private $messageFactory;
-
-    /**
-     * @param JobRunner $jobRunner
-     * @param LoggerInterface $logger
-     * @param SitemapDumperInterface $sitemapDumper
-     * @param SitemapMessageFactory $messageFactory
-     */
     public function __construct(
-        JobRunner $jobRunner,
-        LoggerInterface $logger,
-        SitemapDumperInterface $sitemapDumper,
-        SitemapMessageFactory $messageFactory
+        private JobRunner $jobRunner,
+        private ManagerRegistry $doctrine,
+        private SitemapDumperInterface $sitemapDumper,
+        private LoggerInterface $logger,
+        private WebsiteManager $websiteManager,
+        private ?ConfigManager $configManager
     ) {
-        $this->jobRunner = $jobRunner;
-        $this->logger = $logger;
-        $this->sitemapDumper = $sitemapDumper;
-        $this->messageFactory = $messageFactory;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedTopics()
+    {
+        return [GenerateSitemapByWebsiteAndTypeTopic::getName()];
     }
 
     /**
@@ -58,41 +43,32 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $data = JSON::decode($message->getBody());
+        $messageBody = $message->getBody();
 
         try {
-            $jobId = $this->messageFactory->getJobIdFromMessage($data);
-            $result = $this->jobRunner->runDelayed($jobId, function () use ($data, $message) {
-                try {
+            $result = $this->jobRunner->runDelayed(
+                $messageBody[GenerateSitemapByWebsiteAndTypeTopic::JOB_ID],
+                function () use ($messageBody) {
+                    $website = $this->getWebsite($messageBody[GenerateSitemapByWebsiteAndTypeTopic::WEBSITE_ID]);
+                    if (null === $website) {
+                        throw new \RuntimeException('The website does not exist.');
+                    }
+
+                    $this->websiteManager->setCurrentWebsite($website);
+                    $this->configManager?->setScopeId($website->getId());
+
                     $this->sitemapDumper->dump(
-                        $this->messageFactory->getWebsiteFromMessage($data),
-                        $this->messageFactory->getVersionFromMessage($data),
-                        $this->messageFactory->getTypeFromMessage($data)
-                    );
-                } catch (InvalidArgumentException $e) {
-                    $this->logger->error(
-                        'Queue Message is invalid',
-                        ['exception' => $e]
+                        $website,
+                        $messageBody[GenerateSitemapByWebsiteAndTypeTopic::VERSION],
+                        $messageBody[GenerateSitemapByWebsiteAndTypeTopic::TYPE]
                     );
 
-                    return false;
-                } catch (\Exception $exception) {
-                    $this->logger->error(
-                        'Unexpected exception occurred during queue message processing',
-                        [
-                            'exception' => $exception,
-                            'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
-                        ]
-                    );
-
-                    return false;
+                    return true;
                 }
-
-                return true;
-            });
-        } catch (InvalidArgumentException $e) {
+            );
+        } catch (\Exception $e) {
             $this->logger->error(
-                'Queue Message does not contain correct jobId',
+                'Unexpected exception occurred during generating a sitemap of a specific type for a website.',
                 ['exception' => $e]
             );
 
@@ -102,11 +78,8 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
         return $result ? self::ACK : self::REJECT;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    private function getWebsite(int $websiteId): ?Website
     {
-        return [Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE];
+        return $this->doctrine->getManagerForClass(Website::class)?->find(Website::class, $websiteId);
     }
 }

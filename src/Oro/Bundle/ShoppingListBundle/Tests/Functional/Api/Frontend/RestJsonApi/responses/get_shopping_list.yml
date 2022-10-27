@@ -1,0 +1,29 @@
+data:
+    type: shoppinglists
+    id: '<toString(@shopping_list1->id)>'
+    attributes:
+        name: 'Shopping List 1'
+        notes: 'Shopping List 1 Notes'
+        createdAt: '@shopping_list1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@shopping_list1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        default: false
+        currency: USD
+        total: '29.55'
+        subTotal: '29.55'
+    relationships:
+        items:
+            data:
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@line_item1->id)>'
+                -
+                    type: shoppinglistitems
+                    id: '<toString(@line_item2->id)>'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'

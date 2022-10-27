@@ -11,20 +11,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
 {
     /** @var TaxBaseExclusionCollectionType */
-    protected $formType;
+    private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new TaxBaseExclusionCollectionType();
 
         parent::setUp();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testGetName()

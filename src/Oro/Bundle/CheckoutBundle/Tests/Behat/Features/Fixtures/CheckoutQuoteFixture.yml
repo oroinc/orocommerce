@@ -8,7 +8,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO1'
         qid: '1'
         website: '@website1'
-        shippingMethod: '<(@flatRateIntegration->type."_".@flatRateIntegration->id)>'
+        shippingMethod: '<(@flatRateIntegration->getType()."_".@flatRateIntegration->getId())>'
         shippingMethodType: 'primary'
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
@@ -16,7 +16,7 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
         product: '@product'
         quote: '@quote1'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     quoteProductPrice1:
         value: 5
         currency: USD

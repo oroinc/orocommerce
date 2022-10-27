@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Normalizer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Normalizer\ScopeNormalizer;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -23,7 +23,7 @@ class ScopeNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $normalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

@@ -20,14 +20,16 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Gallery View"
+    When I click "Catalog Switcher Toggle"
+    And I click "Gallery View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "No Image View"
+    When I click "Catalog Switcher Toggle"
+    And I click "No Image View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Mass actions are enabled for Guest when Guest Shopping List feature is enabled
     Given I proceed as the Admin
-    When uncheck "Use default" for "Enable guest shopping list" field
+    When uncheck "Use default" for "Enable Guest Shopping List" field
     And I fill form with:
       | Enable Guest Shopping List | true |
     When I click "Save settings"
@@ -40,9 +42,11 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Gallery View"
+    When I click "Catalog Switcher Toggle"
+    And I click "Gallery View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "List View"
+    When I click "Catalog Switcher Toggle"
+    And I click "List View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Guest should be able to add products with help of mass actions
@@ -53,10 +57,11 @@ Feature: Mass Product Actions for Guest user
     And I fill line item with "rtsh_m" in frontend product grid:
       | Quantity | 3    |
       | Unit     | item |
-    And I click "Add to current Shopping List" link from mass action dropdown in "Product Frontend Grid"
-    And I hover on "Shopping List Widget"
+    And I scroll to top
+    And I click "Add to current Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
+    And I open shopping list widget
     And I should see "1 Item | $21.00" in the "Shopping List Widget" element
-    And I click "View Shopping List Details"
-    Then I should see following line items in "Shopping List Line Items Table":
-      | SKU    | Quantity | Unit |
-      | rtsh_m | 3        | item |
+    And I click "View List"
+    Then I should see following grid:
+      | SKU    | Qty Update All |
+      | rtsh_m | 3 item         |

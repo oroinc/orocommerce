@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroPromotionBundle:layouts:default/imports/oro_promotion_coupon_form/oro_promotion_coupon_form.html.twig'
+            themes: '@OroPromotion/layouts/default/imports/oro_promotion_coupon_form/oro_promotion_coupon_form.html.twig'
         - '@addTree':
             items:
                 __container:
@@ -12,13 +12,15 @@ layout:
                     blockType: container
                 __widget_container:
                     blockType: promotion_coupons_expandable
-                __widget_header:
-                    blockType: block
                 __form_container:
+                    blockType: container
+                __coupon_input_container:
                     blockType: container
                 __coupon_input:
                     blockType: block
                 __apply_button:
+                    blockType: block
+                __errors_container:
                     blockType: block
                 __applied_coupons_list_container:
                     blockType: container
@@ -42,10 +44,6 @@ layout:
                         __widget_container:
                             __expand_link: ~
                             __expandable_container:
-                                __widget_header: ~
-                                __form_container:
-                                    __coupon_input: ~
-                                    __apply_button: ~
                                 __applied_coupons_list_container:
                                     __applied_coupons_list_header: ~
                                     __applied_coupons_list_rows_container:
@@ -54,3 +52,8 @@ layout:
                                                 __applied_coupons_list_row_coupon_code: ~
                                                 __applied_coupons_list_row_promotion_name: ~
                                             __applied_coupons_list_row_delete_button: ~
+                                __form_container:
+                                    __coupon_input_container:
+                                        __coupon_input: ~
+                                        __errors_container: ~
+                                    __apply_button: ~

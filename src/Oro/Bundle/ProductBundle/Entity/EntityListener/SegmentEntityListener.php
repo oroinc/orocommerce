@@ -4,45 +4,35 @@ namespace Oro\Bundle\ProductBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
+use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * Clears a cache for product layout data provider
+ * when a Segment entity is created, removed or changed.
+ */
 class SegmentEntityListener
 {
-    /** @var DataProviderCacheCleaner */
-    private $productCacheCleaner;
+    private CacheInterface $productCache;
 
-    /**
-     * @param DataProviderCacheCleaner $cacheCleaner
-     */
-    public function __construct(DataProviderCacheCleaner $cacheCleaner)
+    public function __construct(CacheInterface $productCache)
     {
-        $this->productCacheCleaner = $cacheCleaner;
+        $this->productCache = $productCache;
     }
 
-    /**
-     * @param Segment $segment
-     */
-    public function preRemove(Segment $segment)
+    public function preRemove(Segment $segment) : void
     {
-        $this->productCacheCleaner->clearCache();
+        $this->productCache->clear();
     }
 
-    /**
-     * @param Segment $segment
-     */
-    public function postPersist(Segment $segment)
+    public function postPersist(Segment $segment) : void
     {
-        $this->productCacheCleaner->clearCache();
+        $this->productCache->clear();
     }
 
-    /**
-     * @param Segment $segment
-     * @param PreUpdateEventArgs $eventArgs
-     */
-    public function preUpdate(Segment $segment, PreUpdateEventArgs $eventArgs)
+    public function preUpdate(Segment $segment, PreUpdateEventArgs $eventArgs) : void
     {
         if ($eventArgs->getEntityChangeSet()) {
-            $this->productCacheCleaner->clearCache();
+            $this->productCache->clear();
         }
     }
 }

@@ -31,7 +31,9 @@ services:
 
     oro_ups.cache.time_in_transit:
         public: false
-        parent: oro.cache.abstract
+        parent: oro.data.cache.without_memory_cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_ups_time_in_transit' }
 
     oro_ups.time_in_transit.cache_provider.factory:
         class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactory'
@@ -43,5 +45,5 @@ services:
         class: 'Oro\Bundle\UPSBundle\TimeInTransit\CacheableTimeInTransitProvider'
         decorates: oro_ups.provider.time_in_transit
         arguments:
-            - '@oro_ups.provider.cacheable_time_in_transit.inner'
+            - '@.inner'
             - '@oro_ups.time_in_transit.cache_provider.factory'

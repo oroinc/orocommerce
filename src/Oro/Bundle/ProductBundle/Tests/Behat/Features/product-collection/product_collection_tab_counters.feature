@@ -14,7 +14,7 @@ Feature: Product collection tab counters
     And I click "Content Variants"
     Then I should see 1 elements "Product Collection Variant Label"
     Then I should see an "Product Collection Preview Grid" element
-    And I should see "No records found"
+    And I should see "There are no products"
     And I should see 0 for "All Added" counter
     And I should see 0 for "Excluded" counter
     And I should see 0 for "Manually Added" counter
@@ -44,7 +44,7 @@ Feature: Product collection tab counters
     And I check PSKU3 record in "Add Products Popup" grid
     And I check PSKU4 record in "Add Products Popup" grid
     And I check PSKU7 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU7 | Product 7 |
@@ -62,7 +62,7 @@ Feature: Product collection tab counters
     Then I should see "Add Products"
     And I check PSKU3 record in "Add Products Popup" grid
     And I check PSKU4 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
       | PSKU4 | Product 4 |
@@ -80,6 +80,7 @@ Feature: Product collection tab counters
       | PSKU10 | Product 10 |
       | PSKU7  | Product 7  |
       | PSKU1  | Product 1  |
+    And I scroll to "ActiveGrid"
     When I filter SKU as contains "1" in "ActiveGrid" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
@@ -100,7 +101,7 @@ Feature: Product collection tab counters
     When I click "Add Button"
     Then I should see "Add Products"
     And I check PSKU11 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
       | PSKU11 | Product 11 |

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
@@ -10,14 +9,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OrderControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
-            $this->markTestSkipped('OrderBundle disabled');
-        }
 
         $this->loadFixtures(
             [
@@ -48,7 +43,7 @@ class OrderControllerTest extends WebTestCase
 
         $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
         foreach ($request->getRequestProducts() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
 
             foreach ($lineItem->getRequestProductItems() as $requestProductItem) {
                 $nodes = $crawler->filter(
@@ -74,8 +69,23 @@ class OrderControllerTest extends WebTestCase
         );
 
         $this->assertEquals(
-            ClassUtils::getClass($request),
+            get_class($request),
             $crawler->filter('[data-ftid=oro_order_type_sourceEntityClass]')->attr('value')
+        );
+
+        $this->assertEquals(
+            $request->getPoNumber(),
+            $crawler->filter('[data-ftid=oro_order_type_poNumber]')->attr('value')
+        );
+
+        $this->assertEquals(
+            $request->getNote(),
+            $crawler->filter('[data-ftid=oro_order_type_customerNotes]')->text()
+        );
+
+        $this->assertEquals(
+            $request->getShipUntil()->format('Y-m-d'),
+            $crawler->filter('[data-ftid=oro_order_type_shipUntil]')->attr('value')
         );
     }
 }

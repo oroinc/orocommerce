@@ -4,12 +4,13 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -91,30 +92,24 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
         ]
     ];
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
-        /* @var $userManager BaseUserManager */
+        /* @var BaseUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
-        /* @var $CustomerUserRoleRepository CustomerUserRoleRepository */
-        $CustomerUserRoleRepository =  $this->container
-            ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
-            ->getRepository('OroCustomerBundle:CustomerUserRole');
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        /* @var CustomerUserRoleRepository $customerUserRoleRepository */
+        $customerUserRoleRepository =  $this->container->get('doctrine')->getRepository(CustomerUserRole::class);
 
         foreach ($this->users as $user) {
             if ($userManager->findUserByUsernameOrEmail($user['email'])) {
                 continue;
             }
 
-            /* @var $entity CustomerUser  */
+            /* @var CustomerUser $entity */
             $entity = $userManager->createUser();
 
             /** @var CustomerUserRole $role */
-            $role = $CustomerUserRoleRepository->findOneBy(['role' => $user['role']]);
+            $role = $customerUserRoleRepository->findOneBy(['role' => $user['role']]);
 
             /** @var Customer $customer */
             $customer = $this->getReference($user['customer']);
@@ -130,7 +125,7 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
                 ->setSalt('')
                 ->setPlainPassword($user['password'])
                 ->setOrganization($organization)
-                ->addRole($role)
+                ->addUserRole($role)
             ;
 
             $this->setReference($entity->getEmail(), $entity);

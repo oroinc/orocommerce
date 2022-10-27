@@ -1,0 +1,27 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_consent_items.html.twig'
+        - '@addTree':
+            items:
+                __consent_wrapper:
+                    blockType: consent_acceptance_choice
+                __consent_items:
+                    blockType: container
+                __consent_item:
+                    blockType: container
+                __checkbox:
+                    blockType: block
+                __text:
+                    blockType: container
+                __link:
+                    blockType: block
+
+            tree:
+                __root:
+                    __consent_wrapper:
+                        __consent_items:
+                            __consent_item:
+                                __checkbox: ~
+                                __text:
+                                    __link: ~

@@ -1,8 +1,18 @@
+{% block _body_widget %}
+    {% if selected_localization is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' locale--' ~ selected_localization.formattingCode|lower
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
         <div class="oro-toolbar oro-localization-switcher">
             {% set togglerId = 'dropdown-'|uniqid %}
-            <div class="oro-toolbar__content" data-toggle="dropdown" data-popper="false" role="button" id="{{ togglerId }}"
+            <div class="oro-toolbar__content localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}" data-toggle="dropdown" data-popper="false" role="button" data-localization="{{ selected_localization.formattingCode|lower }}" id="{{ togglerId }}"
                  aria-haspopup="true" aria-expanded="false"
                  aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}">
                 {{ selected_localization.titles|localized_value }}
@@ -10,26 +20,51 @@
                     <span class="fa-angle-down"></span>
                 </span>
             </div>
-
+            {% set currentRoute = app.request.get('_route') %}
+            {% set routeParameters = app.request.get('_route_params') %}
+            {% if routeParameters['_used_slug'] is defined %}
+                {% set urlParts = [routeParameters['_used_slug'].url] %}
+                {% if routeParameters['_context_url_attributes'] is defined %}
+                    {% for key, context in routeParameters['_context_url_attributes'] %}
+                        {% if context['_used_slug'] is defined %}
+                            {% set urlParts = urlParts|merge([context['_used_slug'].url]) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% set routeParameters = routeParameters|merge({'_used_slug_url': urlParts}) %}
+            {% endif %}
+            {% set queryParameters = app.request.query.all %}
             <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
                 <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
                      data-page-component-options="{{ {
-                        'selectedLocalization': selected_localization.titles|localized_value,
-                        'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
+                         'selectedLocalization': selected_localization.id,
+                         'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization',
+                         'currentRoute': currentRoute,
+                         'currentRouteParameters': routeParameters|json_encode,
+                         'currentQueryParameters': queryParameters|json_encode
                      }|json_encode }}"
-                     data-localization-menu-container
+                     data-dom-relocation-options="{{ {
+                         responsive: [
+                             {
+                                 viewport: {
+                                     maxScreenType: 'tablet',
+                                 },
+                                 moveTo: '[data-switcher-localizations-target]'
+                             }
+                         ]
+                     }|json_encode }}"
                 >
                     <ul class="oro-toolbar__list">
                         {% for localization in localizations %}
-                            <li class="oro-toolbar__list-item">
+                            <li class="oro-toolbar__list-item localization-switcher__item localization-switcher__item--{{ localization.formattingCode|lower }}">
                                 {% set title = localization.titles|localized_value %}
                                 {% if selected_localization.id == localization.id %}
-                                    <span class="oro-toolbar__link oro-toolbar__link--active">
-                                    {{ title }}
-                                </span>
+                                    <span class="oro-toolbar__link oro-toolbar__link--active" dir="auto">
+                                        {{- title -}}
+                                    </span>
                                 {% else %}
-                                    <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
-                                        {{ title }}
+                                    <a class="oro-toolbar__link" href="#" data-localization="{{ localization.id }}" dir="auto">
+                                        {{- title -}}
                                     </a>
                                 {% endif %}
                             </li>
@@ -45,13 +80,15 @@
     {% if localizations|length > 1 %}
         <div class="header-row__container hidden-on-desktop">
             <button class="header-row__trigger hidden-on-desktop"
+                type="button"
+                aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}"
                 data-page-component-module="oroui/js/app/components/viewport-component"
                 data-page-component-options="{{ {
                     viewport: {
                         maxScreenType: 'tablet',
                     },
                     component: 'oroui/js/app/components/view-component',
-                    view: 'orofrontend/blank/js/app/views/fullscreen-popup-view',
+                    view: 'orofrontend/default/js/app/views/fullscreen-popup-view',
                     popupIcon: 'fa-globe fa--gray fa--x-large',
                     popupLabel: 'oro.frontendlocalization.select.label'|trans,
                     contentElement: '[data-localization-menu-container]',
@@ -60,7 +97,7 @@
                     }
                 }|json_encode() }}"
             >
-                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large">
+                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large" aria-hidden="true">
                     <span class="fa-globe fa--dark-gray fa--no-offset"></span>
                 </span>
             </button>

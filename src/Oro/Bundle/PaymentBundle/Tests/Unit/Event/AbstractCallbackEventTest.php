@@ -18,7 +18,7 @@ abstract class AbstractCallbackEventTest extends \PHPUnit\Framework\TestCase
 
     public function testGetData()
     {
-        $this->assertInternalType('array', $this->getEvent()->getData());
+        $this->assertIsArray($this->getEvent()->getData());
     }
 
     public function testOverrideResponse()

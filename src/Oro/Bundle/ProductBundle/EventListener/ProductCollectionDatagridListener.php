@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
@@ -51,13 +51,6 @@ class ProductCollectionDatagridListener
      */
     private $definitionConverter;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param SegmentManager $segmentManager
-     * @param ManagerRegistry $registry
-     * @param NameStrategyInterface $nameStrategy
-     * @param ProductCollectionDefinitionConverter $definitionConverter
-     */
     public function __construct(
         RequestStack $requestStack,
         SegmentManager $segmentManager,
@@ -72,9 +65,6 @@ class ProductCollectionDatagridListener
         $this->definitionConverter = $definitionConverter;
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $dataGrid = $event->getDatagrid();
@@ -135,10 +125,6 @@ class ProductCollectionDatagridListener
         );
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array
-     */
     private function getSegmentData(DatagridInterface $dataGrid): array
     {
         $parameters = $this->getSegmentDataFromGridParameters($dataGrid);
@@ -169,10 +155,6 @@ class ProductCollectionDatagridListener
         return null;
     }
 
-    /**
-     * @param DatagridInterface $dataGrid
-     * @return array
-     */
     private function getSegmentDataFromRequest(DatagridInterface $dataGrid): array
     {
         $request = $this->requestStack->getCurrentRequest();

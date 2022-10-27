@@ -1,0 +1,62 @@
+data:
+    type: products
+    id: '<toString(@product-1->id)>'
+    attributes:
+        sku: new-sku
+        status: disabled
+        variantFields: {  }
+        productType: simple
+        featured: true
+        newArrival: true
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '1'
+        organization:
+            data:
+                type: organizations
+                id: '1'
+        names:
+            data:
+                -
+                    type: productnames
+                    id: '<toString(@product-1.names.default->id)>'
+                -
+                    type: productnames
+                    id: '<toString(@product-1.names.en_CA->id)>'
+                -
+                    type: productnames
+                    id: '<toString(@product-1.names.es->id)>'
+        descriptions:
+            data:
+                -
+                    type: productdescriptions
+                    id: '<toString(@product-1.descriptions.default->id)>'
+        shortDescriptions:
+            data:
+                -
+                    type: productshortdescriptions
+                    id: '<toString(@product-1.shortDescriptions.default->id)>'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.liter->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.box->id)>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: out_of_stock

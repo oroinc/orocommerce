@@ -1,16 +1,16 @@
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     billingAddress1:
         customerUserAddress: '@amandaAddress3'
-        region: 'US-IN'
-        country: 'US'
+        region: '@indiana'
+        country: '@united_states'
         label: 'Address 3'
         street: '34500 Capitol Avenue'
         city: 'Romney'
         postalCode: '47981'
         organization: '@organization'
     shippingAddress1:
-        region: 'US-NY'
-        country: 'US'
+        region: '@new_york'
+        country: '@united_states'
         label: 'Address 2'
         street: '23401 Caldwell Road'
         city: 'Rochester'
@@ -18,23 +18,23 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         organization: '@organization'
     billingAddress2:
         customerUserAddress: '@amandaAddress3'
-        region: 'US-IN'
-        country: 'US'
+        region: '@indiana'
+        country: '@united_states'
         label: 'Address 3'
         street: '34500 Capitol Avenue'
         city: 'Romney'
         postalCode: '47981'
         organization: '@organization'
     shippingAddress2:
-        region: 'US-NY'
-        country: 'US'
+        region: '@new_york'
+        country: '@united_states'
         label: 'Address 2'
         street: '23401 Caldwell Road'
         city: 'Rochester'
         postalCode: '14609'
         organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\MultiCurrency (local):
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency:
     subtotal1:
         value: 3585.00
         baseCurrencyValue: 3585.00
@@ -64,7 +64,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         shippingMethod: 'flat_rate_3'
         shippingMethodType: 'primary'
         estimatedShippingCostAmount: 51.00
-        sourceEntityClass: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        sourceEntityClass: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
         sourceEntityId: '2'
         sourceEntityIdentifier: 'Shopping list'
         totalDiscountsAmount: 500.00
@@ -83,7 +83,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         website: '@website1'
         shippingMethod: 'flat_rate_3'
         shippingMethodType: 'primary'
-        sourceEntityClass: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        sourceEntityClass: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
         sourceEntityId: '3'
         sourceEntityIdentifier: 'Shopping list'
         organization: '@organization'
@@ -92,7 +92,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         customerUser: '@amanda'
         payment_term_7c4f1e8e: '@paymentTerm2'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:
         value: 201.00
         currency: USD
@@ -180,7 +180,7 @@ Oro\Bundle\PromotionBundle\Entity\AppliedPromotion:
                 sortOrder: 1
                 isStopProcessing: false
             productsSegment:
-                definition: '{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+                definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
             scopes: [{ id: 1 }]
     order_shippingAppliedPromotion:
         type: 'shipping'
@@ -202,7 +202,7 @@ Oro\Bundle\PromotionBundle\Entity\AppliedPromotion:
                 sortOrder: 1
                 isStopProcessing: false
             productsSegment:
-                definition: '{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+                definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
             scopes: [{ id: 1 }]
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:

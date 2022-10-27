@@ -17,9 +17,6 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param PaymentMethodProviderInterface $paymentMethodProvider
-     */
     public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->paymentMethodProvider = $paymentMethodProvider;
@@ -36,9 +33,6 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSet(FormEvent $event)
     {
         /** @var Collection|PaymentMethodConfig[] $data */
@@ -58,9 +52,6 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
         $event->setData($data);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         /** @var array $data */

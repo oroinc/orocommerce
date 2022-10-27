@@ -1,0 +1,23 @@
+navigation:
+    menu_config:
+        items:
+            consents:
+                label:           'oro.consent.menu.management.label'
+                route:           'oro_consent_index'
+                position:        900
+                extras:
+                    routes:      ['/^oro_consent/']
+                    description: 'oro.consent.menu.consents_list.description'
+
+        tree:
+            application_menu:
+                children:
+                    system_tab:
+                        children:
+                            consents: ~
+
+    titles:
+        oro_consent_index: ~
+        oro_consent_view:   '%name%'
+        oro_consent_update: '%name% - Edit'
+        oro_consent_create: 'Create Consent'

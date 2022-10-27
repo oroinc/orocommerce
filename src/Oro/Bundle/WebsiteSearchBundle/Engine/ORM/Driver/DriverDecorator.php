@@ -9,6 +9,8 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 /**
+ * Encapsulates currently used database driver. Depending on the current connection to the database
+ * the corresponding driver will be used. Each driver should implement DriverInterface interface.
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class DriverDecorator implements DriverInterface
@@ -22,12 +24,6 @@ class DriverDecorator implements DriverInterface
     /** @var DriverInterface */
     private $driver;
 
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -54,11 +50,14 @@ class DriverDecorator implements DriverInterface
 
             $this->driver = $this->availableDrivers[$databasePlatform];
             $this->driver->initialize($em);
-            // entityManager's use preferred over doctrineHelper in drivers
-            $this->entityManager = $this->doctrineHelper->getEntityManager(Item::class);
         }
 
         return $this->driver;
+    }
+
+    public function createQueryBuilder($alias)
+    {
+        return $this->getDriver()->createQueryBuilder($alias);
     }
 
     /** {@inheritdoc} */
@@ -107,12 +106,6 @@ class DriverDecorator implements DriverInterface
     public function createItem()
     {
         return $this->getDriver()->createItem();
-    }
-
-    /** {@inheritdoc} */
-    public function saveItems(array $items)
-    {
-        return $this->getDriver()->saveItems($items);
     }
 
     /** {@inheritdoc} */

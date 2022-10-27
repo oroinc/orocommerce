@@ -2,28 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCustomerGroupFallbackRepositoryTest extends AbstractFallbackRepositoryTest
 {
     /**
      * @dataProvider getCustomerIdentityByWebsiteDataProvider
-     * @param string $websiteReference
-     * @param $expectedCustomers
      */
-    public function testGetCustomerIdentityByWebsite($websiteReference, $expectedCustomers)
+    public function testGetCustomerIdentityByWebsite(string $websiteReference, array $expectedCustomers)
     {
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
-        $iterator = $this->doctrine->getRepository('OroPricingBundle:PriceListCustomerGroupFallback')
+        $iterator = $this->doctrine->getRepository(PriceListCustomerGroupFallback::class)
             ->getCustomerIdentityByWebsite($website->getId());
         $this->checkExpectedCustomers($expectedCustomers, $iterator);
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerIdentityByWebsiteDataProvider()
+    public function getCustomerIdentityByWebsiteDataProvider(): array
     {
         return [
             'case1' => [

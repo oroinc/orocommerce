@@ -11,30 +11,19 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRep
 class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
     /**
-     * @var CategoryRepository
-     */
-    protected $repository;
-
-    /**
      * @dataProvider isCategoryVisibleDataProvider
-     * @param string $categoryName
-     * @param int $configValue
-     * @param bool $expectedVisibility
      */
-    public function testIsCategoryVisible($categoryName, $configValue, $expectedVisibility)
+    public function testIsCategoryVisible(string $categoryName, int $configValue, bool $expectedVisibility)
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
         $actualVisibility = $this->getRepository()->isCategoryVisible($category, $configValue);
 
-        $this->assertEquals($expectedVisibility, $actualVisibility);
+        $this->assertSame($expectedVisibility, $actualVisibility);
     }
 
-    /**
-     * @return array
-     */
-    public function isCategoryVisibleDataProvider()
+    public function isCategoryVisibleDataProvider(): array
     {
         return [
             [
@@ -57,13 +46,10 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     /**
      * @dataProvider getCategoryIdsByVisibilityDataProvider
-     * @param int $visibility
-     * @param int $configValue
-     * @param array $expected
      */
-    public function testGetCategoryIdsByVisibility($visibility, $configValue, array $expected)
+    public function testGetCategoryIdsByVisibility(int $visibility, int $configValue, array $expected)
     {
-        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $configValue);
+        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
@@ -80,10 +66,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $this->assertEquals($expectedCategoryIds, $categoryIds);
     }
 
-    /**
-     * @return array
-     */
-    public function getCategoryIdsByVisibilityDataProvider()
+    public function getCategoryIdsByVisibilityDataProvider(): array
     {
         return [
             [
@@ -111,16 +94,15 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
     public function testClearTable()
     {
         $this->assertGreaterThan(0, $this->getEntitiesCount());
-        $this->repository->clearTable();
+        $this->getRepository()->clearTable();
         $this->assertEquals(0, $this->getEntitiesCount());
     }
 
     public function testInsertStaticValues()
     {
         /** @var CategoryVisibility[] $visibilities */
-        $visibilities = $this->getManagerRegistry()
-            ->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility')
+        $visibilities = $this->getDoctrine()
+            ->getRepository(CategoryVisibility::class)
             ->createQueryBuilder('entity')
             ->andWhere('entity.visibility IN (:scalarVisibilities)')
             ->setParameter('scalarVisibilities', [CategoryVisibility::VISIBLE, CategoryVisibility::HIDDEN])
@@ -134,9 +116,9 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $indexedVisibilities[$visibility->getId()] = $visibility;
         }
 
-        $this->repository->clearTable();
-        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
-        $this->repository->insertStaticValues($this->getInsertExecutor(), $scope);
+        $this->getRepository()->clearTable();
+        $scope = $this->getScopeManager()->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
+        $this->getRepository()->insertStaticValues($this->getInsertExecutor(), $scope);
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -166,15 +148,14 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $parentCategoryFallbackCategoryIds[] = $category->getId();
         }
 
-
         /** @var Category $staticCategory */
         $staticCategory = $this->getReference('category_1_2_3');
         $staticCategoryId = $staticCategory->getId();
 
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
-        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
-        $this->repository->clearTable();
-        $this->repository->insertParentCategoryValues(
+        $scope = $this->getScopeManager()->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
+        $this->getRepository()->clearTable();
+        $this->getRepository()->insertParentCategoryValues(
             $this->getInsertExecutor(),
             array_merge($parentCategoryFallbackCategoryIds, [$staticCategoryId]),
             $visibility,
@@ -186,69 +167,24 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $this->assertSameSize($parentCategoryFallbackCategoryIds, $resolvedVisibilities);
 
         foreach ($resolvedVisibilities as $resolvedVisibility) {
-            $this->assertContains($resolvedVisibility['category'], $parentCategoryFallbackCategoryIds);
+            static::assertContainsEquals(
+                $resolvedVisibility['category'],
+                $parentCategoryFallbackCategoryIds,
+                \var_export($parentCategoryFallbackCategoryIds, true)
+            );
             $this->assertEquals(CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY, $resolvedVisibility['source']);
             $this->assertEquals($visibility, $resolvedVisibility['visibility']);
         }
     }
 
-    /**
-     * @param array $a
-     * @param array $b
-     * @return int
-     */
-    protected function sortByCategoryId(array $a, array $b)
-    {
-        return $a['category_id'] > $b['category_id'] ? 1 : -1;
-    }
-
-    /**
-     * @param array $categories
-     * @return array
-     */
-    protected function replaceReferencesWithIds(array $categories)
-    {
-        $rootCategory = $this->getMasterCatalog();
-
-        foreach ($categories as $key => $row) {
-            $category = $row['category_id'];
-            /** @var Category $category */
-            if ($category === self::ROOT_CATEGORY) {
-                $category = $rootCategory;
-            } else {
-                $category = $this->getReference($category);
-            }
-            $categories[$key]['category_id'] = $category->getId();
-
-            $parentCategory = $row['parent_category_id'];
-            if ($parentCategory) {
-                /** @var Category $parentCategory */
-                if ($parentCategory === self::ROOT_CATEGORY) {
-                    $parentCategory = $rootCategory;
-                } else {
-                    $parentCategory = $this->getReference($parentCategory);
-                }
-                $categories[$key]['parent_category_id'] = $parentCategory->getId();
-            }
-        }
-
-        return $categories;
-    }
-
-    /**
-     * @return CategoryRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): CategoryRepository
     {
         return $this->getContainer()->get('oro_visibility.category_repository');
     }
 
-    /**
-     * @return array
-     */
-    protected function getResolvedVisibilities()
+    private function getResolvedVisibilities(): array
     {
-        return $this->repository->createQueryBuilder('entity')
+        return $this->getRepository()->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.sourceCategoryVisibility) as sourceCategoryVisibility',
                 'IDENTITY(entity.category) as category',

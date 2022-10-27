@@ -8,4 +8,4 @@ oro_entity:
                 query:
                     join:
                         left:
-                            - { join: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: inventoryLevel, conditionType: 'WITH', condition: 'inventoryLevel.product = entity' }
+                            - { join: Oro\Bundle\InventoryBundle\Entity\InventoryLevel, alias: inventoryLevel, conditionType: WITH, condition: 'inventoryLevel.product = entity' }

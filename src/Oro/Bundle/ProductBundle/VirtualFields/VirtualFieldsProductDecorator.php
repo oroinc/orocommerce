@@ -2,98 +2,68 @@
 
 namespace Oro\Bundle\ProductBundle\VirtualFields;
 
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
+use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * Extends product with virtual fields
+ */
 class VirtualFieldsProductDecorator
 {
-    const PRODUCT_ID_LABEL = 'product_id';
-    const RELATED_ID_LABEL = 'related_id';
+    private const PRODUCT_ID_LABEL = 'product_id';
+    private const RELATED_ID_LABEL = 'related_id';
 
-    /**
-     * @var EntityFieldProvider
-     */
-    protected $provider;
+    private VirtualFieldsSelectQueryConverter $converter;
+    private ManagerRegistry $doctrine;
+    private array $products;
+    private Product $product;
+    private FieldHelper $fieldHelper;
+    private static array $values = [];
+    private static ?PropertyAccessor $propertyAccessor = null;
+    private CacheInterface $cacheProvider;
 
-    /**
-     * @var VirtualFieldsSelectQueryConverter
-     */
-    protected $converter;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
-
-    /**
-     * @var Collection|Product[]
-     */
-    protected $products;
-
-    /**
-     * @var Collection
-     */
-    protected $product;
-
-    /**
-     * @var FieldHelper
-     */
-    protected $fieldHelper;
-
-    /**
-     * @var array
-     */
-    protected static $values = [];
-
-    /**
-     * @var PropertyAccessor
-     */
-    protected static $propertyAccessor;
-
-    /**
-     * @param EntityFieldProvider $provider
-     * @param VirtualFieldsSelectQueryConverter $converter
-     * @param ManagerRegistry $doctrine
-     * @param FieldHelper $fieldHelper
-     * @param array $products
-     * @param Product $product
-     */
     public function __construct(
-        EntityFieldProvider $provider,
         VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
         FieldHelper $fieldHelper,
+        CacheInterface $cacheProvider,
         array $products,
         Product $product
     ) {
-        $this->provider = $provider;
         $this->doctrine = $doctrine;
         $this->converter = $converter;
         $this->fieldHelper = $fieldHelper;
+        $this->cacheProvider = $cacheProvider;
         $this->products = $products;
         $this->product = $product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __get($name)
+    public function __get($name) : mixed
     {
-        if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
-            return $this->getPropertyAccessor()->getValue($this->product, $name);
-        }
-        $field = $this->getRelationField($name);
-        if (!$field) {
-            throw new \InvalidArgumentException(sprintf('Relation "%s" doesn\'t exists for Product entity', $name));
-        }
-
-        return $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
+        $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
+            sprintf('%s_%s', $this->product->getId(), $name)
+        );
+        return $this->cacheProvider->get($cacheKey, function () use ($name) {
+            if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
+                return $this->getPropertyAccessor()->getValue($this->product, $name);
+            } else {
+                $field = $this->getRelationField($name);
+                if (!$field) {
+                    throw new \InvalidArgumentException(
+                        sprintf('Relation "%s" doesn\'t exists for Product entity', $name)
+                    );
+                }
+                return $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
+            }
+        });
     }
 
     /**
@@ -102,7 +72,10 @@ class VirtualFieldsProductDecorator
      */
     protected function getRelationField($name)
     {
-        $fields = $this->provider->getFields(Product::class, true, true, true);
+        $fields = $this->fieldHelper->getEntityFields(
+            Product::class,
+            EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
+        );
         foreach ($fields as $field) {
             if ($field['name'] === $name) {
                 return $field;
@@ -125,7 +98,7 @@ class VirtualFieldsProductDecorator
 
         $relatedEntities = $this->getRelatedEntities(
             $field['related_entity_name'],
-            call_user_func_array('array_merge', $relatedEntityIdsByProduct)
+            array_merge(...array_values($relatedEntityIdsByProduct))
         );
 
         if ($this->fieldHelper->isSingleRelation($field)) {
@@ -151,32 +124,31 @@ class VirtualFieldsProductDecorator
      */
     protected function getRelatedEntityIdsByProduct(array $field)
     {
-        $relatedEntityIdentifier = $this->getEntityIdentifier($field['related_entity_name']);
-
-        $queryDesigner = new VirtualFieldsProductQueryDesigner();
-        $queryDesigner->setEntity(Product::class);
-        $queryDesigner->setDefinition(json_encode([
-            'columns' => [
-                [
-                    'name' => 'id',
-                    'label' => static::PRODUCT_ID_LABEL,
-                ],
-                [
-                    'name' => sprintf(
-                        '%s+%s::%s',
-                        $field['name'],
-                        $field['related_entity_name'],
-                        $relatedEntityIdentifier
-                    ),
-                    'table_identifier' => sprintf(
-                        '%s::%s',
-                        Product::class,
-                        $field['name']
-                    ),
-                    'label' => static::RELATED_ID_LABEL,
+        $queryDesigner = new QueryDesigner(
+            Product::class,
+            QueryDefinitionUtil::encodeDefinition([
+                'columns' => [
+                    [
+                        'name' => 'id',
+                        'label' => static::PRODUCT_ID_LABEL
+                    ],
+                    [
+                        'name' => sprintf(
+                            '%s+%s::%s',
+                            $field['name'],
+                            $field['related_entity_name'],
+                            $this->getEntityIdentifier($field['related_entity_name'])
+                        ),
+                        'table_identifier' => sprintf(
+                            '%s::%s',
+                            Product::class,
+                            $field['name']
+                        ),
+                        'label' => static::RELATED_ID_LABEL
+                    ]
                 ]
-            ]
-        ]));
+            ])
+        );
 
         $qb = $this->converter->convert($queryDesigner);
         $rootAliases = $qb->getRootAliases();

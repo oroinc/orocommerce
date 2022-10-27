@@ -6,12 +6,15 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
+/**
+ * Attribute type provides metadata for manyToOne attribute for search index.
+ */
 class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
 {
     /**
      * {@inheritdoc}
      */
-    public function getFilterStorageFieldType()
+    protected function getFilterStorageFieldTypeMain(FieldConfigModel $attribute): string
     {
         return Query::TYPE_INTEGER;
     }
@@ -19,7 +22,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSorterStorageFieldType()
+    public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         return Query::TYPE_TEXT;
     }
@@ -27,7 +30,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterType()
+    public function getFilterType(FieldConfigModel $attribute): string
     {
         return self::FILTER_TYPE_ENTITY;
     }
@@ -35,7 +38,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function isLocalizable(FieldConfigModel $attribute)
+    public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return true;
     }
@@ -43,7 +46,7 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFilterableFieldName(FieldConfigModel $attribute)
+    protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }
@@ -51,8 +54,16 @@ class ManyToOneSearchableAttributeType extends AbstractSearchableAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getSortableFieldName(FieldConfigModel $attribute)
+    public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName() . '_' . LocalizationIdPlaceholder::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchableFieldName(FieldConfigModel $attribute): string
+    {
+        return $this->getSortableFieldName($attribute);
     }
 }

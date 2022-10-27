@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
@@ -13,7 +14,11 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadGuestShoppin
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ShoppingListTotalRepositoryTest extends WebTestCase
 {
     /** @var EntityManager */
@@ -22,7 +27,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
     /** @var ShoppingListTotalRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
@@ -36,7 +41,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingListTotal::class);
         $this->repository = $this->manager->getRepository(ShoppingListTotal::class);
     }
-    
+
     public function testInvalidateByCombinedPriceList()
     {
         /** @var ShoppingList $shoppingList */
@@ -65,6 +70,35 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->assertFalse($shoppingListTotal->isValid());
     }
 
+    public function testInvalidateByCustomerGroups()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_7);
+        $shoppingListTotal = $this->setTotalValid($shoppingList);
+        $this->preparePriceListRelationForCustomerGroupChecks($shoppingListTotal);
+
+        $this->repository->invalidateByCustomerGroupsForFlatPricing(
+            [$shoppingListTotal->getShoppingList()->getCustomer()->getGroup()->getId()],
+            $shoppingListTotal->getShoppingList()->getWebsite()->getId()
+        );
+
+        $this->manager->refresh($shoppingListTotal);
+        $this->assertFalse($shoppingListTotal->isValid());
+    }
+
+    public function testInvalidateByWebsites()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_7);
+        $shoppingListTotal = $this->setTotalValid($shoppingList);
+        $this->preparePriceListRelationForWebsiteChecks();
+
+        $this->repository->invalidateByWebsitesForFlatPricing(
+            [$shoppingListTotal->getShoppingList()->getWebsite()->getId()]
+        );
+
+        $this->manager->refresh($shoppingListTotal);
+        $this->assertFalse($shoppingListTotal->isValid());
+    }
+
     public function testInvalidateGuestShoppingLists()
     {
         $shoppingList = $this->getReference(LoadGuestShoppingLists::GUEST_SHOPPING_LIST_1);
@@ -74,6 +108,66 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
 
         $this->manager->refresh($shoppingListTotal);
         $this->assertFalse($shoppingListTotal->isValid());
+    }
+
+    public function testInvalidateByProducts()
+    {
+        /** @var Website $website */
+        $website = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Website::class)
+            ->getDefaultWebsite();
+
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product7 = $this->getReference(LoadProductData::PRODUCT_7);
+
+        /** @var ShoppingListTotal $totalSL4 */
+        $totalSL4 = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_4)
+        ]);
+        $this->assertTrue($totalSL4->isValid());
+        /** @var ShoppingListTotal $totalSL5 */
+        $totalSL5 = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+        ]);
+        $this->assertTrue($totalSL5->isValid());
+        /** @var ShoppingListTotal $totalSL7 */
+        $totalSL7 = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_7)
+        ]);
+        $this->assertTrue($totalSL7->isValid());
+
+        $this->repository->invalidateByProducts(
+            $website,
+            [$product1->getId(), $product7->getId()]
+        );
+
+        $this->manager->refresh($totalSL4);
+        $this->assertTrue($totalSL4->isValid());
+        $this->manager->refresh($totalSL5);
+        $this->assertFalse($totalSL5->isValid());
+        $this->manager->refresh($totalSL7);
+        $this->assertFalse($totalSL7->isValid());
+    }
+
+    public function testInvalidateByWebsite()
+    {
+        /** @var Website $website */
+        $website = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(Website::class)
+            ->getDefaultWebsite();
+
+        /** @var ShoppingListTotal $total */
+        $total = $this->repository->findOneBy([
+            'shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_4)
+        ]);
+        $this->assertTrue($total->isValid());
+
+        $this->repository->invalidateByWebsite($website);
+
+        $this->manager->refresh($total);
+        $this->assertFalse($total->isValid());
     }
 
     /**
@@ -100,9 +194,15 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
      */
     private function createTotal(ShoppingList $shoppingList)
     {
-        $subtotal = (new Subtotal())->setCurrency('USD')->setAmount(1);
+        $currency = 'USD';
+        $subtotal = (new Subtotal())->setCurrency($currency)->setAmount(1);
+        /** @var ShoppingListTotalRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(ShoppingListTotal::class);
+        $total = $repo->findOneBy(['shoppingList' => $shoppingList, 'currency' => $currency]);
 
-        $total = new ShoppingListTotal($shoppingList, 'USD');
+        if (!$total) {
+            $total = new ShoppingListTotal($shoppingList, $currency);
+        }
         $total->setValid(true);
         $total->setSubtotal($subtotal);
 
@@ -110,5 +210,30 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->manager->flush();
 
         return $total;
+    }
+
+    private function preparePriceListRelationForCustomerGroupChecks(ShoppingListTotal $shoppingListTotal)
+    {
+        $shoppingList = $shoppingListTotal->getShoppingList();
+        $customerGroupId = $shoppingList->getCustomer()->getGroup()->getId();
+        $websiteId = $shoppingList->getWebsite()->getId();
+        $priceListId = $this->getReference('price_list_1')->getId();
+
+        $connection = $this->manager->getConnection();
+        $connection->executeQuery('DELETE FROM oro_price_list_to_customer');
+        $connection->executeQuery(sprintf(
+            'INSERT INTO oro_price_list_to_cus_group(price_list_id, website_id, customer_group_id, sort_order) 
+            VALUES(%d, %d, %d, 0)',
+            $priceListId,
+            $websiteId,
+            $customerGroupId
+        ));
+    }
+
+    private function preparePriceListRelationForWebsiteChecks()
+    {
+        $connection = $this->manager->getConnection();
+        $connection->executeQuery('DELETE FROM oro_price_list_to_customer');
+        $connection->executeQuery('DELETE FROM oro_price_list_to_cus_group');
     }
 }

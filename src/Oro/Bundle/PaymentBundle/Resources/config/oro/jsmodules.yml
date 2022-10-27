@@ -1,0 +1,5 @@
+aliases:
+    oro/datagrid/action/payment-delete-action$: oropayment/js/datagrid/action/payment-delete-action
+dynamic-imports:
+    oropayment:
+        - oropayment/js/app/views/payment-rule-method-view

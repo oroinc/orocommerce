@@ -5,11 +5,14 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType as EntityProductImageType;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates ProductImageType.
+ */
 class ProductImageTypeValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_type_validator';
@@ -29,10 +32,6 @@ class ProductImageTypeValidator extends ConstraintValidator
      */
     protected $context;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ImageTypeProvider $imageTypeProvider,
         TranslatorInterface $translator
@@ -57,11 +56,6 @@ class ProductImageTypeValidator extends ConstraintValidator
         $this->validateDuplicateType($value, $constraint, $validTypes);
     }
 
-    /**
-     * @param EntityProductImageType $value
-     * @param Constraint $constraint
-     * @param $validTypes
-     */
     private function validateType(EntityProductImageType $value, Constraint $constraint, $validTypes)
     {
         $validTypeNames = array_keys($validTypes);
@@ -78,11 +72,6 @@ class ProductImageTypeValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param EntityProductImageType $value
-     * @param $constraint
-     * @param $validTypes
-     */
     private function validateDuplicateType(EntityProductImageType $value, $constraint, $validTypes)
     {
         if (null === $value->getProductImage() ||
@@ -96,9 +85,7 @@ class ProductImageTypeValidator extends ConstraintValidator
                 ->buildViolation(
                     $constraint->already_exists_message,
                     [
-                        '%type%' => $this->translator->trans(
-                            $validTypes[$value->getType()]->getLabel()
-                        )
+                        '%type%' => $this->translator->trans((string) $validTypes[$value->getType()]->getLabel())
                     ]
                 )
                 ->addViolation();

@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -77,7 +77,7 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
                 $title->setString($nodeReference);
                 $node->addTitle($title);
                 $node->addSlugPrototype((new LocalizedFallbackValue())->setString($nodeReference));
-                $node->addLocalizedUrl((new LocalizedFallbackValue())->setString('/' . $nodeReference));
+                $node->addLocalizedUrl((new LocalizedFallbackValue())->setText('/' . $nodeReference));
                 if (!empty($nodeData['parent'])) {
                     /** @var ContentNode $parentNode */
                     $parentNode = $this->getReference($nodeData['parent']);

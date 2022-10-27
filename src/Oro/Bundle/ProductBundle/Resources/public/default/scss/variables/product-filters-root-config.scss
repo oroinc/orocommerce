@@ -1,0 +1,15 @@
+/* @theme: default; */
+
+$product-filters-sidebar-display: flex !default;
+$product-filters-sidebar-flex-wrap: wrap !default;
+$product-filters-sidebar-flex-direction: row !default;
+$product-filters-sidebar-align-content: flex-start !default;
+$product-filters-sidebar-flex-grow: 1 !default;
+
+$product-filters-sidebar-inner-offset: 22px !default;
+$product-filters-sidebar-border: 1px solid transparent !default;
+$product-filters-sidebar-border-image: linear-gradient(
+    to bottom, transparent 10px, get-color('additional', 'light') 10px
+) 1 !default;
+$product-filters-sidebar-offset-top: 2px !default;
+$product-filters-sidebar-not-first-child-offset-top: $offset-y !default;

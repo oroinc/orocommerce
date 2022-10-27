@@ -27,7 +27,7 @@ class CreateOrderCheckUpcomingListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $violations;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->violations = $this->createMock(ConstraintViolationListInterface::class);
         $this->validator = $this->createMock(ValidatorInterface::class);

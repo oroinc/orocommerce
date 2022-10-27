@@ -8,12 +8,6 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
 interface FedexResponseCacheKeyFactoryInterface
 {
-    /**
-     * @param FedexRequestInterface    $request
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return FedexResponseCacheKeyInterface
-     */
     public function create(
         FedexRequestInterface $request,
         FedexIntegrationSettings $settings

@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for RequestProductItem
+ */
 class RequestProductItemType extends AbstractType
 {
     const NAME = 'oro_rfp_request_product_item';
@@ -61,6 +64,7 @@ class RequestProductItemType extends AbstractType
                     'required' => false,
                     'label' => 'oro.rfp.requestproductitem.quantity.label',
                     'default_data' => 1,
+                    'useInputTypeNumberValueFormat' => true
                 ]
             );
 

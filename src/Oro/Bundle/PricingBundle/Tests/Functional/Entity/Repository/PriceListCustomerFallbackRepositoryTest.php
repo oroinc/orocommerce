@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepositoryTest
 {
     /**
      * @dataProvider getCustomerIdentityByGroupDataProvider
-     * @param string[] $customerGroupsReferences
-     * @param string $websiteReference
-     * @param string[] $expectedCustomers
      */
     public function testGetCustomerIdentityByGroup(
         array $customerGroupsReferences,
-        $websiteReference,
-        $expectedCustomers
+        string $websiteReference,
+        array $expectedCustomers
     ) {
         $customerGroups = [];
         foreach ($customerGroupsReferences as $customerGroupsReference) {
@@ -23,15 +21,12 @@ class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepository
         }
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
-        $iterator = $this->doctrine->getRepository('OroPricingBundle:PriceListCustomerFallback')
+        $iterator = $this->doctrine->getRepository(PriceListCustomerFallback::class)
             ->getCustomerIdentityByGroup($customerGroups, $website->getId());
         $this->checkExpectedCustomers($expectedCustomers, $iterator);
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerIdentityByGroupDataProvider()
+    public function getCustomerIdentityByGroupDataProvider(): array
     {
         return [
             'case1' => [

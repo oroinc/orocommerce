@@ -5,60 +5,38 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\DependencyInjection\CompilerPass;
 use Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\OrderBundlePass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class OrderBundlePassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CompilerPassInterface
-     */
-    protected $compilerPass;
+    /** @var CompilerPassInterface */
+    private $compiler;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
-     */
-    protected $containerBuilder;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->compilerPass = new OrderBundlePass();
-    }
-
-    public function testProcessWithoutOrderBundle()
-    {
-        $this->containerBuilder->expects($this->once())->method('hasParameter')->willReturn(false);
-        $this->containerBuilder->expects($this->never())->method('hasDefinition');
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler = new OrderBundlePass();
     }
 
     public function testProcessWithOrderBundleWithoutDefinition()
     {
-        $this->containerBuilder->expects($this->once())->method('hasParameter')->willReturn(true);
-        $this->containerBuilder->expects($this->once())->method('hasDefinition')->willReturn(false);
-        $this->containerBuilder->expects($this->never())->method('getDefinition');
+        $container = new ContainerBuilder();
 
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
     }
 
     public function testProcessWithOrderBundle()
     {
-        $this->containerBuilder->expects($this->once())->method('hasParameter')->willReturn(true);
-        $this->containerBuilder->expects($this->once())->method('hasDefinition')->willReturn(true);
+        $container = new ContainerBuilder();
+        $container->register('oro_order.form.section.provider');
+        $storageDef = $container->register('oro_rfp.form.type.extension.order_line_item_data_storage');
 
-        $definition = new Definition();
-        $this->containerBuilder->expects($this->once())->method('getDefinition')->willReturn($definition);
-
-        $this->compilerPass->process($this->containerBuilder);
+        $this->compiler->process($container);
 
         $this->assertEquals(
-            [['setSectionProvider', [new Reference('oro_order.form.section.provider')]]],
-            $definition->getMethodCalls()
+            [
+                ['setSectionProvider', [new Reference('oro_order.form.section.provider')]]
+            ],
+            $storageDef->getMethodCalls()
         );
     }
 }

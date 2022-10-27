@@ -17,10 +17,6 @@ class CallbackHandler
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         PaymentTransactionProvider $paymentTransactionProvider
@@ -40,7 +36,7 @@ class CallbackHandler
             return $event->getResponse();
         }
 
-        $this->eventDispatcher->dispatch($event->getEventName(), $event);
+        $this->eventDispatcher->dispatch($event, $event->getEventName());
         if ($event->isPropagationStopped()) {
             return $event->getResponse();
         }

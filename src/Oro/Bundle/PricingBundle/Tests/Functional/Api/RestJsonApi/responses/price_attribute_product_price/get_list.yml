@@ -1,0 +1,96 @@
+data:
+    -
+        id: '<toString(@price_attribute_product_price.1->id)>'
+        type: 'priceattributeproductprices'
+        attributes:
+            value: '11.0000'
+            currency: 'USD'
+        relationships:
+            priceList:
+                data:
+                    id: '<toString(@price_attribute_price_list_1->id)>'
+                    type: 'priceattributepricelists'
+            product:
+                data:
+                    id: '<toString(@product-1->id)>'
+                    type: 'products'
+            unit:
+                data:
+                    id: '<toString(@product_unit.liter->code)>'
+                    type: 'productunits'
+    -
+        id: '<toString(@price_attribute_product_price.2->id)>'
+        type: 'priceattributeproductprices'
+        attributes:
+            value: '10.0000'
+            currency: 'EUR'
+        relationships:
+            priceList:
+                data:
+                    id: '<toString(@price_attribute_price_list_1->id)>'
+                    type: 'priceattributepricelists'
+            product:
+                data:
+                    id: '<toString(@product-1->id)>'
+                    type: 'products'
+            unit:
+                data:
+                    id: '<toString(@product_unit.liter->code)>'
+                    type: 'productunits'
+    -
+        id: '<toString(@price_attribute_product_price.3->id)>'
+        type: 'priceattributeproductprices'
+        attributes:
+            value: '12.2000'
+            currency: 'USD'
+        relationships:
+            priceList:
+                data:
+                    id: '<toString(@price_attribute_price_list_1->id)>'
+                    type: 'priceattributepricelists'
+            product:
+                data:
+                    id: '<toString(@product-1->id)>'
+                    type: 'products'
+            unit:
+                data:
+                    id: '<toString(@product_unit.bottle->code)>'
+                    type: 'productunits'
+    -
+        id: '<toString(@price_attribute_product_price.4->id)>'
+        type: 'priceattributeproductprices'
+        attributes:
+            value: '20.0000'
+            currency: 'EUR'
+        relationships:
+            priceList:
+                data:
+                    id: '<toString(@price_attribute_price_list_1->id)>'
+                    type: 'priceattributepricelists'
+            product:
+                data:
+                    id: '<toString(@product-1->id)>'
+                    type: 'products'
+            unit:
+                data:
+                    id: '<toString(@product_unit.bottle->code)>'
+                    type: 'productunits'
+    -
+        id: '<toString(@price_attribute_product_price.9->id)>'
+        type: 'priceattributeproductprices'
+        attributes:
+            value: '12.2000'
+            currency: 'USD'
+        relationships:
+            priceList:
+                data:
+                    id: '<toString(@price_attribute_price_list_2->id)>'
+                    type: 'priceattributepricelists'
+            product:
+                data:
+                    id: '<toString(@product-1->id)>'
+                    type: 'products'
+            unit:
+                data:
+                    id: '<toString(@product_unit.liter->code)>'
+                    type: 'productunits'

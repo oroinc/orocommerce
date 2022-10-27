@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
@@ -26,11 +26,9 @@ class CheckoutSubtotalUpdater
     /** @var UserCurrencyManager */
     protected $currencyManager;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param CheckoutSubtotalProvider $subtotalProvider
-     * @param UserCurrencyManager $currencyManager
-     */
+    /** @var int */
+    private $batchSize = self::BATCH_COUNT;
+
     public function __construct(
         ManagerRegistry $managerRegistry,
         CheckoutSubtotalProvider $subtotalProvider,
@@ -39,6 +37,11 @@ class CheckoutSubtotalUpdater
         $this->registry = $managerRegistry;
         $this->subtotalProvider = $subtotalProvider;
         $this->currencyManager = $currencyManager;
+    }
+
+    public function setBatchSize(int $batchSize)
+    {
+        $this->batchSize = $batchSize;
     }
 
     public function recalculateInvalidSubtotals()
@@ -53,14 +56,16 @@ class CheckoutSubtotalUpdater
         foreach ($checkouts as $checkout) {
             $cnt++;
             $this->processCheckoutSubtotals($checkout, $enabledCurrencies);
-            if ($cnt % self::BATCH_COUNT === 0) {
+            if ($cnt % $this->batchSize === 0) {
                 $entityManager->flush();
+                $entityManager->clear();
                 $cnt = 0;
             }
         }
 
         if ($cnt) {
             $entityManager->flush();
+            $entityManager->clear();
         }
     }
 
@@ -80,9 +85,6 @@ class CheckoutSubtotalUpdater
     /**
      * Prepare subtotals collection for all enabled system currencies. Old subtotals of checkout will be updated.
      * If for some currencies there are no ssubtotals they will be created.
-     *
-     * @param Checkout $checkout
-     * @param array $enabledCurrencies
      */
     protected function processCheckoutSubtotals(Checkout $checkout, array $enabledCurrencies)
     {

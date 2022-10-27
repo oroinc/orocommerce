@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -27,11 +26,6 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
      */
     private $matchingProductsProvider;
 
-    /**
-     * @param PromotionProvider $promotionProvider
-     * @param DiscountFactory $discountFactory
-     * @param MatchingProductsProvider $matchingProductsProvider
-     */
     public function __construct(
         PromotionProvider $promotionProvider,
         DiscountFactory $discountFactory,

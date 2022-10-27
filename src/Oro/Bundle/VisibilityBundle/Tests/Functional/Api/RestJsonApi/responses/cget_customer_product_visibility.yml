@@ -1,0 +1,43 @@
+data:
+    -
+        type: customerproductvisibilities
+        id: '<(implode("-", [@product-1->id, @customer.orphan->id]))>'
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer.orphan->id)>'
+    -
+        type: customerproductvisibilities
+        id: '<(implode("-", [@product-2->id, @customer.level_1_1->id]))>'
+        attributes:
+            visibility: hidden
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer.level_1_1->id)>'
+    -
+        type: customerproductvisibilities
+        id: '<(implode("-", [@product-3->id, @customer.level_1.1->id]))>'
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer.level_1.1->id)>'

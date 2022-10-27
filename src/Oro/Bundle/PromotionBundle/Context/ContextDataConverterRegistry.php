@@ -4,19 +4,20 @@ namespace Oro\Bundle\PromotionBundle\Context;
 
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 
+/**
+ * The registry of context data converters.
+ */
 class ContextDataConverterRegistry implements ContextDataConverterInterface
 {
-    /**
-     * @var array|ContextDataConverterInterface[]
-     */
-    private $converters = [];
+    /** @var array|ContextDataConverterInterface[] */
+    private $converters;
 
     /**
-     * @param ContextDataConverterInterface $converter
+     * @param iterable|ContextDataConverterInterface[] $converters
      */
-    public function registerConverter(ContextDataConverterInterface $converter)
+    public function __construct(iterable $converters)
     {
-        $this->converters[] = $converter;
+        $this->converters = $converters;
     }
 
     /**
@@ -42,7 +43,8 @@ class ContextDataConverterRegistry implements ContextDataConverterInterface
 
     /**
      * @param object $sourceEntity
-     * @return null|ContextDataConverterInterface
+     *
+     * @return ContextDataConverterInterface|null
      */
     private function getConverterForEntity($sourceEntity)
     {

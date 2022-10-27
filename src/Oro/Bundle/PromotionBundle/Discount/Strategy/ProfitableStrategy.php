@@ -5,6 +5,9 @@ namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
+/**
+ * Responsible for applying discounts
+ */
 class ProfitableStrategy extends AbstractStrategy
 {
     /**
@@ -28,10 +31,6 @@ class ProfitableStrategy extends AbstractStrategy
         return $discountContext;
     }
 
-    /**
-     * @param DiscountInterface $discount
-     * @param DiscountContextInterface $discountContext
-     */
     private function calculateDiscount(DiscountInterface $discount, DiscountContextInterface $discountContext)
     {
         $discount->apply($discountContext);
@@ -41,10 +40,6 @@ class ProfitableStrategy extends AbstractStrategy
         $this->processShippingDiscounts($discountContext);
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @param DiscountContextInterface $appliedDiscountContext
-     */
     private function applyMaxProductDiscount(
         DiscountContextInterface $discountContext,
         DiscountContextInterface $appliedDiscountContext
@@ -64,10 +59,6 @@ class ProfitableStrategy extends AbstractStrategy
         }
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @param DiscountContextInterface $appliedDiscountContext
-     */
     private function applyMaxShippingDiscount(
         DiscountContextInterface $discountContext,
         DiscountContextInterface $appliedDiscountContext
@@ -118,12 +109,13 @@ class ProfitableStrategy extends AbstractStrategy
         return $appliedDiscountContext;
     }
 
-    /**
-     * @param DiscountContextInterface $discountContext
-     * @return DiscountContextInterface
-     */
     private function cloneContext(DiscountContextInterface $discountContext): DiscountContextInterface
     {
+        if (\method_exists($discountContext, '__clone')) {
+            /** @var \Oro\Bundle\PromotionBundle\Discount\DiscountContext $discountContext */
+            return clone $discountContext;
+        }
+
         return unserialize(serialize($discountContext));
     }
 }

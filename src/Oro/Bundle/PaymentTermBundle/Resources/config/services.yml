@@ -1,19 +1,18 @@
 parameters:
-    oro_payment_term.entity.payment_term.class: Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm
     oro_payment_term.type: 'payment_term'
 
 services:
     oro_payment_term.form.autocomplete.payment_term.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_payment_term.entity.payment_term.class%'
-            - ["label"]
+            - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm'
+            - ['label']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermType, acl_resource: oro_payment_term_view }
 
     oro_payment_term.payment_term.delete_message_generator:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator'
+        public: true
         arguments:
             - "@router"
             - "@twig"
@@ -29,7 +28,7 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }
 
@@ -45,12 +44,16 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\EventListener\CustomerDatagridListener'
         arguments:
             - '@oro_payment_term.provider.payment_term_association'
+            - '@oro_datagrid.provider.selected_fields'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore, priority: 128 }
 
+    Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider:
+        alias: oro_payment_term.provider.payment_term
+
     oro_payment_term.provider.payment_term:
         class: 'Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider'
-        public: false
+        public: true
         arguments:
             - '@security.token_storage'
             - '@event_dispatcher'
@@ -112,12 +115,16 @@ services:
             - '@oro_payment_term.config.provider_basic'
 
     oro_payment_term.repository.payment_term_settings:
-        class: 'Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository'
+        alias: Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository
+
+    Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_payment_term.event_listener.import_export_customer_subscriber:
         class: Oro\Bundle\PaymentTermBundle\EventListener\CustomerImportExportSubscriber
@@ -130,6 +137,6 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\PaymentTermExtension'
         public: false
         arguments:
-            - "@oro_payment_term.provider.payment_term"
+            - "@oro_platform.twig.service_locator"
         tags:
             - { name: twig.extension }

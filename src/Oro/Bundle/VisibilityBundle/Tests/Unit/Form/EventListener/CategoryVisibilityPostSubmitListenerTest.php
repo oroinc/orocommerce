@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\CategoryVisibilityPostSubmitListener;
@@ -27,7 +27,7 @@ class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCa
      */
     protected $dataHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
 

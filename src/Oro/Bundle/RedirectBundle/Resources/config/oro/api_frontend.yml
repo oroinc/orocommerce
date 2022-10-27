@@ -1,0 +1,36 @@
+api:
+    entity_aliases:
+        Oro\Bundle\RedirectBundle\Api\Model\Route:
+            alias: route
+            plural_alias: routes
+
+    entities:
+        Oro\Bundle\RedirectBundle\Api\Model\Route:
+            documentation_resource: '@OroRedirectBundle/Resources/doc/api_frontend/route.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                url:
+                    data_type: string
+                isSlug:
+                    data_type: boolean
+                redirectUrl:
+                    data_type: string
+                redirectStatusCode:
+                    data_type: integer
+                resourceType:
+                    data_type: string
+                    property_path: _
+                    depends_on: [routeName, routeParameters]
+                apiUrl:
+                    data_type: string
+                    property_path: _
+                    depends_on: [routeName, routeParameters]
+            actions:
+                get_list: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false

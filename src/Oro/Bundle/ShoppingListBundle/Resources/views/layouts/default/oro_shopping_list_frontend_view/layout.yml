@@ -1,0 +1,72 @@
+layout:
+    imports:
+        -
+            id: customer_user_shopping_list
+            root: page_content
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+            id: datagrid
+            optionName: grid_name
+            optionValue: frontend-customer-user-shopping-list-grid
+
+        - '@appendOption':
+            id: datagrid
+            optionName: grid_render_parameters.cssClass
+            optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-view'
+
+        - '@setOption':
+            id: page_content
+            optionName: attr.class
+            optionValue: 'page-content--has-sidebar-right'
+
+        - '@setOption':
+            id: container
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@setOption':
+            id: page_sidebar
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@move':
+            id: page_content
+            parentId: page_main_content
+            siblingId: page_sidebar
+            prepend: true
+
+        - '@move':
+            id: checkout_container
+            parentId: page_sidebar
+
+        - '@add':
+            id: no_shopping_lists
+            parentId: page_content
+            blockType: block
+            options:
+                visible: '=data["entity"]==null'
+
+        - '@move':
+              id: shopping_list_notes
+              parentId: container
+              siblingId: header
+              prepend: false
+
+        - '@addTree':
+            items:
+                shopping_list_notes:
+                    blockType: container
+                    options:
+                        visible: '=data["entity"].getNotes()'
+                shopping_list_notes_text:
+                    blockType: text
+                    options:
+                        text: '=data["entity"].getNotes()'
+            tree:
+                container:
+                    shopping_list_notes:
+                        shopping_list_notes_text: ~

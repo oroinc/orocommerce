@@ -1,4 +1,5 @@
 @ticket-BB-11551
+@ticket-BB-16275
 @fixture-OroCatalogBundle:all_products_page.yml
 
 Feature: All products page feature
@@ -27,8 +28,9 @@ Feature: All products page feature
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
-      | Title  | All Products         |
-      | URI    | /catalog/allproducts |
+      | Title       | All Products         |
+      | Target Type | URI                  |
+      | URI         | /catalog/allproducts |
     And save form
     Then I should see "Menu item saved successfully" flash message
 
@@ -68,22 +70,24 @@ Feature: All products page feature
 
   Scenario: User adds product to shopping list
     Given I proceed as the User
-    Given I click "All Products"
-    Given I filter Name as contains "Product3"
+    And I click "All Products"
+    # Filtering by full product name "Product3`\"'&йёщ®&reg;>" does not work on elasticsearch, see BB-19131
+    When I filter Name as contains "Product3`\"'&йёщ®"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     When I click "Shopping List"
-    And I should see "Product3"
+    And I should see "Product3`\"'&йёщ®&reg;>"
     Then I click "All Products"
-    Given I filter Name as contains "Product3"
-    And I should see "In Shopping List"
+    # Filtering by full product name "Product3`\"'&йёщ®&reg;>" does not work on elasticsearch, see BB-19131
+    When I filter Name as contains "Product3`\"'&йёщ®"
+    Then I should see "In Shopping List"
 
   Scenario: User filters products and hide categories except one
     Given I proceed as the User
     Given I click "All Products"
     And I filter Name as contains "Product1"
     And I should not see "Product2"
-    And I should not see "Product3"
+    And I should not see "Product3`\"'&йёщ®&reg;>"
     And I should see "NewCategory"
     And I should not see "NewCategory2"
     And I should not see "NewCategory3"

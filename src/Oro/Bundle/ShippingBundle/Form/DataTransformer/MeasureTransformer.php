@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\DataTransformer;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -11,9 +11,6 @@ class MeasureTransformer implements DataTransformerInterface
     /** @var ObjectRepository */
     protected $repository;
 
-    /**
-     * @param ObjectRepository $repository
-     */
     public function __construct(ObjectRepository $repository)
     {
         $this->repository = $repository;

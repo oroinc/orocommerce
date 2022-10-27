@@ -23,10 +23,6 @@ class RestrictDisabledProductsEventListener
      */
     private $queryBuilderModifier;
 
-    /**
-     * @param ProductVisibilitySearchQueryModifier  $searchQueryModifier
-     * @param ProductVisibilityQueryBuilderModifier $queryBuilderModifier
-     */
     public function __construct(
         ProductVisibilitySearchQueryModifier $searchQueryModifier,
         ProductVisibilityQueryBuilderModifier $queryBuilderModifier
@@ -35,17 +31,11 @@ class RestrictDisabledProductsEventListener
         $this->queryBuilderModifier = $queryBuilderModifier;
     }
 
-    /**
-     * @param ProductSearchQueryRestrictionEvent $event
-     */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
         $this->searchQueryModifier->modifyByStatus($event->getQuery(), [Product::STATUS_ENABLED]);
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         $this->queryBuilderModifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);

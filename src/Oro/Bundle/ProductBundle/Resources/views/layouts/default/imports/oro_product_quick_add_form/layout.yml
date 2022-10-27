@@ -16,6 +16,9 @@ layout:
                     blockType: form_end
                     options:
                         form: '=data["oro_product_form"].getQuickAddFormView()'
+                        render_rest: true
+                __form_grid:
+                    blockType: container
                 __form_buttons_wrapper:
                     blockType: container
                 __form_clear_button:
@@ -30,8 +33,9 @@ layout:
                 __root:
                     __form:
                         __form_start: ~
-                        __form_fields: ~
-                        __form_buttons_wrapper:
-                            __form_clear_button: ~
-                            __form_buttons: ~
+                        __form_grid:
+                            __form_fields: ~
+                            __form_buttons_wrapper:
+                                __form_clear_button: ~
+                                __form_buttons: ~
                         __form_end: ~

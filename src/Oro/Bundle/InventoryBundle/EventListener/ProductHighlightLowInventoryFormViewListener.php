@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds low inventory information to the product view and edit pages.
+ */
 class ProductHighlightLowInventoryFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $this->getEntityFromRequest(Product::class);
@@ -20,20 +20,17 @@ class ProductHighlightLowInventoryFormViewListener extends AbstractFallbackField
 
         $this->addBlockToEntityView(
             $event,
-            'OroInventoryBundle:Product:highlightLowInventory.html.twig',
+            '@OroInventory/Product/highlightLowInventory.html.twig',
             $product,
             'oro.product.sections.inventory'
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Product:highlightLowInventoryFormWidget.html.twig',
+            '@OroInventory/Product/highlightLowInventoryFormWidget.html.twig',
             'oro.product.sections.inventory'
         );
     }

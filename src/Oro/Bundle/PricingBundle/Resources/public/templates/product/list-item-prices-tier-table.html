@@ -1,0 +1,29 @@
+<% if (_.keys(prices).length) { %>
+<table class="table">
+    <thead>
+    <tr>
+        <th class="text-uppercase"><%- _.__('oro.pricing.qty') %></th>
+        <th><%- _.__('oro.pricing.unit_price') %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% _.each(prices, function(unitPrices, unit) { %>
+    <tr>
+        <td colspan="2" class="text-center">
+            <strong><%- _.__('oro.product.product_unit.' + unit + '.label.full') %></strong>
+        </td>
+    </tr>
+    <% _.each(unitPrices, function(price) { %>
+    <tr>
+        <td><%- price.quantity %></td>
+        <td>
+            <%- formatter.formatCurrency(price.price, price.currency) %>
+        </td>
+    </tr>
+    <% }) %>
+    <% }) %>
+    </tbody>
+</table>
+<% } else { %>
+    <%- _.__('oro.pricing.product_prices.price_not_found') %>
+<% } %>

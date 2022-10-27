@@ -14,6 +14,7 @@ use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver;
 use Oro\Component\Routing\RouteData;
 
 /**
@@ -44,21 +45,22 @@ class SlugGenerator
     protected $slugUrlDiffer;
 
     /**
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
-     * @param RedirectGenerator $redirectGenerator
-     * @param LocalizationHelper $localizationHelper
-     * @param SlugUrlDiffer $slugUrlDiffer
+     * @var UniqueContentNodeSlugPrototypesResolver
      */
+    private $uniqueSlugPrototypesResolver;
+
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
         RedirectGenerator $redirectGenerator,
         LocalizationHelper $localizationHelper,
-        SlugUrlDiffer $slugUrlDiffer
+        SlugUrlDiffer $slugUrlDiffer,
+        UniqueContentNodeSlugPrototypesResolver $uniqueSlugPrototypesResolver
     ) {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
         $this->redirectGenerator = $redirectGenerator;
         $this->localizationHelper = $localizationHelper;
         $this->slugUrlDiffer = $slugUrlDiffer;
+        $this->uniqueSlugPrototypesResolver = $uniqueSlugPrototypesResolver;
     }
 
     /**
@@ -67,6 +69,8 @@ class SlugGenerator
      */
     public function generate(ContentNode $contentNode, $generateRedirects = false)
     {
+        $this->uniqueSlugPrototypesResolver
+            ->resolveSlugPrototypeUniqueness($contentNode->getParentNode(), $contentNode);
         if ($contentNode->getParentNode()) {
             $slugUrls = $this->prepareSlugUrls($contentNode);
         } else {
@@ -91,12 +95,19 @@ class SlugGenerator
      */
     protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls, $generateRedirects = false)
     {
+        $organization = $contentNode->getWebCatalog()->getOrganization();
         foreach ($contentNode->getContentVariants() as $contentVariant) {
             $contentVariantType = $this->contentVariantTypeRegistry->getContentVariantType($contentVariant->getType());
             $routeData = $contentVariantType->getRouteData($contentVariant);
             $scopes = $contentVariant->getScopes();
 
             $toRemove = [];
+            // Remove slugs if content node scopes list is empty (no restrictions)
+            if ($scopes->isEmpty()) {
+                $contentVariant->resetSlugs();
+                continue;
+            }
+
             foreach ($contentVariant->getSlugs() as $slug) {
                 $localeId = (int)$this->getLocaleId($slug->getLocalization());
                 if ($slugUrls->containsKey($localeId)) {
@@ -125,6 +136,7 @@ class SlugGenerator
                 if (!$this->getExistingSlug($slugUrl, $contentVariant)) {
                     $slug = new Slug();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
+                    $slug->setOrganization($organization);
                     $contentVariant->addSlug($slug);
                 }
             }
@@ -219,6 +231,8 @@ class SlugGenerator
         $urlsBeforeMove = $this->prepareSlugUrls($sourceContentNode);
 
         $sourceContentNode->setParentNode($targetContentNode);
+        $this->uniqueSlugPrototypesResolver
+            ->resolveSlugPrototypeUniqueness($targetContentNode, $sourceContentNode);
         $urlsAfterMove = $this->prepareSlugUrls($sourceContentNode);
 
         return $this->slugUrlDiffer->getSlugUrlsChanges($urlsBeforeMove, $urlsAfterMove);
@@ -284,12 +298,6 @@ class SlugGenerator
         return 0;
     }
 
-    /**
-     * @param Slug $slug
-     * @param SlugUrl $slugUrl
-     * @param RouteData $routeData
-     * @param Collection $scopes
-     */
     protected function fillSlug(Slug $slug, SlugUrl $slugUrl, RouteData $routeData, Collection $scopes)
     {
         $slug->setLocalization($slugUrl->getLocalization());
@@ -320,10 +328,6 @@ class SlugGenerator
         return null;
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param Collection $slugUrls
-     */
     protected function updateLocalizedUrls(ContentNode $contentNode, Collection $slugUrls)
     {
         $toRemove = [];

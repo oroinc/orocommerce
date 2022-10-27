@@ -4,9 +4,9 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
@@ -126,7 +126,7 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     public static function getCountryByCode(ObjectManager $manager, $code)
     {
         /** @var EntityManagerInterface $manager */
-        return $manager->getReference('OroAddressBundle:Country', $code);
+        return $manager->getReference(Country::class, $code);
     }
 
     /**
@@ -137,6 +137,6 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     public static function getRegionByCode(ObjectManager $manager, $code)
     {
         /** @var EntityManagerInterface $manager */
-        return $manager->getReference('OroAddressBundle:Region', $code);
+        return $manager->getReference(Region::class, $code);
     }
 }

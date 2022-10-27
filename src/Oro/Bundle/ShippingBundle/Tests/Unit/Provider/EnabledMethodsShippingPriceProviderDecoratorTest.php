@@ -15,25 +15,20 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit\Framewor
 {
     use EntityTrait;
 
-    /**
-     * @var ShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingPriceProvider;
+    /** @var ShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingPriceProvider;
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingMethodProvider;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
 
-    /**
-     * @var EnabledMethodsShippingPriceProviderDecorator
-     */
-    protected $decorator;
+    /** @var EnabledMethodsShippingPriceProviderDecorator */
+    private $decorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingPriceProvider = $this->createMock(ShippingPriceProviderInterface::class);
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+
         $this->decorator = new EnabledMethodsShippingPriceProviderDecorator(
             $this->shippingPriceProvider,
             $this->shippingMethodProvider
@@ -41,12 +36,9 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit\Framewor
     }
 
     /**
-     * @param array $methods
-     * @param array $methodViews
-     * @param array $expectedMethodViews
      * @dataProvider getApplicableMethodsViewsProvider
      */
-    public function testGetApplicableMethodsViews($methods, $methodViews, $expectedMethodViews)
+    public function testGetApplicableMethodsViews(array $methods, array $methodViews, array $expectedMethodViews)
     {
         $context = $this->createMock(ShippingContext::class);
 
@@ -67,17 +59,14 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit\Framewor
 
         $this->shippingMethodProvider->expects($this->any())
             ->method('getShippingMethod')
-            ->will($this->returnCallback(function ($methodId) use ($methods) {
-                return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;
-            }));
+            ->willReturnCallback(function ($methodId) use ($methods) {
+                return $methods[$methodId] ?? null;
+            });
 
         $this->assertEquals($expectedCollection, $this->decorator->getApplicableMethodsViews($context));
     }
 
-    /**
-     * @return array
-     */
-    public function getApplicableMethodsViewsProvider()
+    public function getApplicableMethodsViewsProvider(): array
     {
         return [
             'all_methods_enabled' => [

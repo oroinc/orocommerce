@@ -1,0 +1,53 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+    another_organization:
+        name: 'Another Organization'
+        enabled: true
+        users: ['@user']
+
+Oro\Bundle\RFPBundle\Entity\Request:
+    request1:
+        firstName: 'John'
+        lastName: 'Smith'
+        email: 'john.smith@example.com'
+        company: 'Test Inc.'
+        organization: '@organization'
+        owner: '@user'
+    request2:
+        firstName: 'Nancy'
+        lastName: 'Sallee'
+        email: 'test@example.com'
+        company: 'Test Inc.'
+        organization: '@organization'
+        owner: '@user'
+    request3:
+        firstName: 'Marlene'
+        lastName: 'Bradley'
+        email: 'test@example.com'
+        company: 'Test Inc.'
+        organization: '@organization'
+        owner: '@user'
+    request4:
+        firstName: 'Jane'
+        lastName: 'Smith'
+        email: 'jane.smith@example.com'
+        company: 'Test Inc.'
+        organization: '@organization'
+        owner: '@user'
+    request5:
+        firstName: 'Charlie'
+        lastName: 'Smith'
+        email: 'charlie.smith@example.com'
+        company: 'Test Inc.'
+        organization: '@another_organization'
+        owner: '@user'
+    request6:
+        firstName: 'John'
+        lastName: 'Smith'
+        email: 'john.smith@example.com'
+        company: 'Test Inc.'
+        organization: '@another_organization'
+        owner: '@user'

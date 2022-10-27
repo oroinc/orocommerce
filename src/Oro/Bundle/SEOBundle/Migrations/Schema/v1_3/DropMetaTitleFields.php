@@ -29,7 +29,7 @@ class DropMetaTitleFields implements
     {
         $this->nameGenerator = $nameGenerator;
     }
-    
+
     /**
      * {@inheritdoc}
      */

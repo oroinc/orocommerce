@@ -1,2 +1,1 @@
-<% var maxFractionDigits = localeSettings.getNumberFormats('currency')['max_fraction_digits'] %>
-<span itemprop="priceCurrency" content="<%= price.currency %>"><%= localeSettings.getCurrencySymbol(price.currency) %></span><span itemprop="price" content="<%= numeral(price.price).format('0.00') %>"><%= numberFormatter.formatMonetary(price.price) %></span>
+<span class="hidden" itemprop="priceCurrency" aria-hidden="true"><%- price.currency %></span><span itemprop="price" class="hidden" aria-hidden="true"><%- numeral(price.price).format('0.00') %></span><%- price.formatted_price.trim() %>

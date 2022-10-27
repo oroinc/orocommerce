@@ -17,55 +17,46 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 
+    /** @var UnitResolver|\PHPUnit\Framework\MockObject\MockObject */
+    protected $unitResolver;
+
+    /** @var RowTotalResolver|\PHPUnit\Framework\MockObject\MockObject */
+    protected $rowTotalResolver;
+
+    /** @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $matcher;
+
     /** @var AbstractItemResolver */
     protected $resolver;
 
-    /**
-     * @var UnitResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $unitResolver;
-
-    /**
-     * @var RowTotalResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $rowTotalResolver;
-
-    /**
-     * @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $matcher;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->unitResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\UnitResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->rowTotalResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\RowTotalResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->matcher = $this->createMock('Oro\Bundle\TaxBundle\Matcher\MatcherInterface');
+        $this->unitResolver = $this->createMock(UnitResolver::class);
+        $this->rowTotalResolver = $this->createMock(RowTotalResolver::class);
+        $this->matcher = $this->createMock(MatcherInterface::class);
 
         $this->resolver = $this->createResolver();
     }
 
-    /** @return AbstractItemResolver */
-    abstract protected function createResolver();
+    abstract protected function createResolver(): AbstractItemResolver;
+
+    abstract protected function getTaxable(): Taxable;
+
+    abstract protected function assertEmptyResult(Taxable $taxable): void;
+
+    abstract public function rulesDataProvider(): array;
 
     protected function assertNothing()
     {
-        $this->matcher->expects($this->never())->method($this->anything());
-        $this->unitResolver->expects($this->never())->method($this->anything());
-        $this->rowTotalResolver->expects($this->never())->method($this->anything());
+        $this->matcher->expects($this->never())
+            ->method($this->anything());
+        $this->unitResolver->expects($this->never())
+            ->method($this->anything());
+        $this->rowTotalResolver->expects($this->never())
+            ->method($this->anything());
     }
 
-    /**
-     * @param string $taxCode
-     * @param string $taxRate
-     * @return TaxRule
-     */
-    protected function getTaxRule($taxCode, $taxRate)
+    protected function getTaxRule(string $taxCode, string $taxRate): TaxRule
     {
         $taxRule = new TaxRule();
         $tax = new Tax();
@@ -76,16 +67,6 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
 
         return $taxRule;
     }
-
-    /**
-     * @return Taxable
-     */
-    abstract protected function getTaxable();
-
-    /**
-     * @param Taxable $taxable
-     */
-    abstract protected function assertEmptyResult(Taxable $taxable);
 
     public function testDestinationMissing()
     {
@@ -121,7 +102,9 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
         $taxableAmount = $taxableUnitPrice->multipliedBy($taxable->getQuantity());
 
-        $this->matcher->expects($this->once())->method('match')->willReturn([]);
+        $this->matcher->expects($this->once())
+            ->method('match')
+            ->willReturn([]);
 
         $this->unitResolver->expects($this->once())
             ->method('resolveUnitPrice')
@@ -138,10 +121,8 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider rulesDataProvider
-     * @param string $taxableAmount
-     * @param array $taxRules
      */
-    public function testRules($taxableAmount, array $taxRules)
+    public function testRules(string $taxableAmount, array $taxRules)
     {
         $taxable = $this->getTaxable();
         $taxable->setPrice($taxableAmount);
@@ -153,7 +134,9 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
 
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
 
-        $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
+        $this->matcher->expects($this->once())
+            ->method('match')
+            ->willReturn($taxRules);
 
         $this->unitResolver->expects($this->once())
             ->method('resolveUnitPrice')
@@ -165,9 +148,4 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit\Framework\TestCase
 
         $this->resolver->resolve($taxable);
     }
-
-    /**
-     * @return array
-     */
-    abstract public function rulesDataProvider();
 }

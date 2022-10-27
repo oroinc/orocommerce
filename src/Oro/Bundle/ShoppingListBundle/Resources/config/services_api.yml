@@ -1,0 +1,229 @@
+services:
+    oro_shopping_list.api.default_shopping_list_entity_id_resolver:
+        class: Oro\Bundle\ShoppingListBundle\Api\DefaultShoppingListEntityIdResolver
+        arguments:
+            - '@security.token_storage'
+            - '@oro_shopping_list.current_shopping_list_storage'
+            - '@oro_api.doctrine_helper'
+            - '@oro_security.acl_helper'
+        tags:
+            - { name: oro.api.entity_id_resolver, id: default, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, requestType: frontend }
+
+    oro_shopping_list.api.guest_shopping_list_query_modifier:
+        class: Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@security.token_storage'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_shopping_list.api.default_shopping_list_factory:
+        class: Oro\Bundle\ShoppingListBundle\Api\DefaultShoppingListFactory
+        arguments:
+            - '@security.token_storage'
+            - '@oro_shopping_list.manager.shopping_list'
+            - '@oro_shopping_list.manager.guest_shopping_list'
+
+    oro_shopping_list.api.resource_type_resolver.shopping_list:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceTypeResolver
+        arguments:
+            - 'shopping_list'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, routeName: oro_shopping_list_frontend_view }
+
+    oro_shopping_list.api.resource_api_url_resolver.default_shopping_list:
+        class: Oro\Bundle\FrontendBundle\Api\ResourceRestApiGetActionUrlResolver
+        arguments:
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+        calls:
+            - [setDefaultEntityId, ['default']]
+        tags:
+            - { name: oro_frontend.api.resource_api_url_resolver, routeName: oro_shopping_list_frontend_view, requestType: rest }
+
+    oro_shopping_list.api.guest_shopping_list_association_access_exclusion_provider_for_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListAssociationAccessExclusionProvider
+        arguments:
+            - '@security.token_storage'
+            - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+            - ['lineItem']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_shopping_list.api.guest_shopping_list_association_access_exclusion_provider_for_shopping_list_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListAssociationAccessExclusionProvider
+        arguments:
+            - '@security.token_storage'
+            - 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+            - ['shoppingList']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_shopping_list.api.subresources.ensure_default_shopping_list_exists:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\EnsureDefaultShoppingListExistsForParent
+        arguments:
+            - '@oro_shopping_list.api.default_shopping_list_factory'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, not_resolved_identifiers: exists, association: items, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
+    oro_shopping_list.api.ensure_default_shopping_list_exists_for_request_data:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\EnsureDefaultShoppingListExistsForRequestData
+        arguments:
+            - '@oro_shopping_list.api.default_shopping_list_factory'
+            - '@oro_api.request_data_accessor'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, requestType: frontend, not_resolved_identifiers: exists, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+
+    oro_shopping_list.api.json_api.add_shopping_list_items.validate_request_data:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\JsonApi\ValidateAddShoppingListItemsRequestData
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: normalize_input, requestType: frontend&json_api, association: items, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: 91 }
+
+    oro_shopping_list.api.add_shopping_list_items.prepare_form_data:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\PrepareAddShoppingListItemsFormData
+        arguments:
+            - '@oro_api.entity_instantiator'
+            - '@validator'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, association: items, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -99 }
+
+    oro_shopping_list.api.add_shopping_list_items.build_form_builder:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\BuildAddShoppingListItemsFormBuilder
+        arguments:
+            - '@oro_api.form_helper'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: transform_data, requestType: frontend, association: items, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: 100 }
+
+    oro_shopping_list.api.set_website_to_shopping_list:
+        class: Oro\Bundle\WebsiteBundle\Api\Processor\SetWebsite
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: 20 }
+
+    oro_shopping_list.api.add_line_item_to_shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddLineItemToShoppingList
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 40 }
+
+    oro_shopping_list.api.complete_new_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\CompleteNewLineItem
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 30 }
+
+    oro_shopping_list.api.compute_shopping_list_default:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListDefault
+        arguments:
+            - '@oro_shopping_list.api.default_shopping_list_entity_id_resolver'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
+    oro_shopping_list.api.handle_shopping_list_default:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\HandleShoppingListDefault
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
+    oro_shopping_list.api.save_shopping_list_default:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\SaveShoppingListDefault
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_shopping_list.current_shopping_list_storage'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, requestType: frontend, priority: -200 }
+            - { name: oro.api.processor, action: update, group: save_data, requestType: frontend, priority: -200 }
+
+    oro_shopping_list.api.compute_shopping_list_total:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListTotal
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+
+    oro_shopping_list.api.compute_line_item_price:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeLineItemPrice
+        arguments:
+            - '@oro_pricing.provider.matching_price'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, requestType: frontend }
+
+    oro_shopping_list.api.validate_shopping_list_limit:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateShoppingListLimit
+        arguments:
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@oro_shopping_list.manager.guest_shopping_list'
+            - '@security.token_storage'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, parentAction: create, priority: 40 }
+
+    oro_shopping_list.api.add_new_shopping_list_to_visitor:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\AddNewShoppingListToVisitor
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, parentAction: create, priority: 30 }
+
+    oro_shopping_list.api.recalculate_shopping_list_totals:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\RecalculateShoppingListTotals
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_total'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -100 }
+
+    oro_shopping_list.api.validate_guest_shopping_list_feature:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateGuestShoppingListFeature
+        arguments:
+            - '@security.token_storage'
+            - '@oro_shopping_list.manager.guest_shopping_list'
+        tags:
+            - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: get_list, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: get_list, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: delete, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: delete, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: delete_list, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: delete_list, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: update, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: update, group: resource_check, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: get_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: get_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: delete_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: delete_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: add_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: add_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: update_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: update_subresource, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: get_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: get_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: delete_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: delete_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: add_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: add_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+            - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
+            - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, parentClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
+
+    oro_shopping_list.api.configure_guest_shopping_list_access.shopping_list:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ConfigureGuestShoppingListAccess
+        arguments:
+            - '@security.token_storage'
+            - 'lineItem'
+        tags:
+            - { name: oro.api.processor, action: get_config, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, priority: -250 }
+
+    oro_shopping_list.api.configure_guest_shopping_list_access.line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ConfigureGuestShoppingListAccess
+        arguments:
+            - '@security.token_storage'
+            - 'shoppingList'
+        tags:
+            - { name: oro.api.processor, action: get_config, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -250 }

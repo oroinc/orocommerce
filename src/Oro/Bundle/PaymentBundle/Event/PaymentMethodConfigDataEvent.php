@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PaymentMethodConfigDataEvent extends Event
 {

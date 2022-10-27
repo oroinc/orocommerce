@@ -24,8 +24,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Update oro_shopping_list table
-     *
-     * @param Schema $schema
      */
     protected function updateOroShoppingListTable(Schema $schema)
     {
@@ -35,8 +33,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Update oro_shopping_list_line_item table
-     *
-     * @param Schema $schema
      */
     protected function updateOroShoppingListLineItemTable(Schema $schema)
     {
@@ -46,8 +42,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Add oro_shopping_list foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShoppingListForeignKeys(Schema $schema)
     {
@@ -62,8 +56,6 @@ class OroShoppingListBundle implements Migration
 
     /**
      * Add oro_shopping_list_line_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroShoppingListLineItemForeignKeys(Schema $schema)
     {

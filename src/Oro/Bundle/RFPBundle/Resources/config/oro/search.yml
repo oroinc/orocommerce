@@ -1,12 +1,11 @@
 search:
     Oro\Bundle\RFPBundle\Entity\Request:
         alias:                          oro_rfp_request
-        title_fields:                   [firstName, lastName, email]
         route:
             name:                       oro_rfp_request_view
             parameters:
                 id:                     id
-        search_template:                OroRFPBundle:Request:searchResult.html.twig
+        search_template:                '@OroRFP/Request/searchResult.html.twig'
         fields:
             -
                 name:                   firstName
@@ -36,6 +35,10 @@ search:
                 name:                   note
                 target_type:            text
                 target_fields:          [note]
+            -
+                name:                   poNumber
+                target_type:            text
+                target_fields:          [poNumber]
             -
                 name:                   customer_status
                 relation_type:          many-to-one

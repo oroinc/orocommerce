@@ -1,0 +1,13 @@
+services:
+    _instanceof:
+        Oro\Component\MessageQueue\Topic\TopicInterface:
+            tags:
+                - { name: oro_message_queue.topic }
+
+    Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic: ~
+    Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic: ~
+    Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeTreeCacheTopic:
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic: ~

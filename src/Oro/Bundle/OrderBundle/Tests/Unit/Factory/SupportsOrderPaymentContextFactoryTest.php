@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -27,7 +27,7 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->orderPaymentContextFactory = $this->createMock(OrderPaymentContextFactory::class);

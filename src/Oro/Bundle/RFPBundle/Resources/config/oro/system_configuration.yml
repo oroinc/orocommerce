@@ -6,6 +6,9 @@ system_configuration:
             title: oro.rfp.system_configuration.groups.rfq.title
             icon: fa-file
             page_reload: true
+        rfp_general:
+            priority: 150
+            title: oro.rfp.system_configuration.groups.general.title
         rfp_notifications:
             priority: 100
             title: oro.rfp.system_configuration.groups.notifications.title
@@ -19,11 +22,17 @@ system_configuration:
             type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.rfp.system_configuration.fields.backend_product_visibility.title
+                required: true
+                constraints:
+                    - NotBlank: ~
         oro_rfp.frontend_product_visibility:
             data_type: array
             type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
             options:
                 label: oro.rfp.system_configuration.fields.frontend_product_visibility.title
+                required: true
+                constraints:
+                    - NotBlank: ~
         oro_rfp.notify_assigned_sales_reps_of_the_customer:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
@@ -33,6 +42,7 @@ system_configuration:
                 choices:
                     oro.rfp.system_configuration.fields.notification.sales_reps.always_notify_sale_reps_of_customer: always
                     oro.rfp.system_configuration.fields.notification.sales_reps.if_no_sales_reps_assigned: noSaleReps
+                required: true
                 constraints:
                     - NotBlank: ~
         oro_rfp.notify_owner_of_customer_user_record:
@@ -44,6 +54,7 @@ system_configuration:
                 choices:
                     oro.rfp.system_configuration.fields.notification.customer_user_record.always_notify_owner: always
                     oro.rfp.system_configuration.fields.notification.customer_user_record.if_no_sales_reps_assigned: noSaleReps
+                required: true
                 constraints:
                     - NotBlank: ~
         oro_rfp.notify_owner_of_customer:
@@ -55,6 +66,7 @@ system_configuration:
                 choices:
                     oro.rfp.system_configuration.fields.notification.customer.always_notify_owner: always
                     oro.rfp.system_configuration.fields.notification.customer.if_no_sales_reps_assigned: noSaleReps
+                required: true
                 constraints:
                     - NotBlank: ~
         oro_rfp.feature_enabled:
@@ -85,6 +97,8 @@ system_configuration:
                 label: oro.rfp.system_configuration.fields.default_guest_rfp_owner.title
                 tooltip: oro.rfp.system_configuration.fields.default_guest_rfp_owner.tooltip
                 required: true
+                constraints:
+                    - NotBlank: ~
     tree:
         system_configuration:
             commerce:
@@ -94,6 +108,10 @@ system_configuration:
                         children:
                             rfq:
                                 children:
+                                    rfp_general:
+                                        children:
+                                            - oro_rfp.feature_enabled
+                                            - oro_rfp.frontend_feature_enabled
                                     rfp_notifications:
                                         children:
                                             - oro_rfp.notify_assigned_sales_reps_of_the_customer

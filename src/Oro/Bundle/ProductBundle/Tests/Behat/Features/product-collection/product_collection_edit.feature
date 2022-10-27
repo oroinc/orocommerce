@@ -16,6 +16,7 @@ Feature: Product collection edit
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
+    And I click on "First Content Variant Expand Button"
     And I type "PSKU" in "value"
     And I click on "Preview Results"
     Then I should see following grid:
@@ -28,6 +29,7 @@ Feature: Product collection edit
     When I save form
     Then I should see "Content Node has been saved" flash message
     When I reload the page
+    And I click on "First Content Variant Expand Button"
     Then I should see 1 element "Product Collection Variant Label"
     And I should see following grid:
       | SKU   | NAME      |
@@ -36,6 +38,7 @@ Feature: Product collection edit
 
   Scenario: Modification of Product Collection segment's name, reflected in Manage Segments section
     Given I proceed as the Admin
+    And I click "Cancel"
     When I go to Reports & Segments/ Manage Segments
     Then I should see "Some Custom Segment Name" in grid with following data:
       | Entity | Product |

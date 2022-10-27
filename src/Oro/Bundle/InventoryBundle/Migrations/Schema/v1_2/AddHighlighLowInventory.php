@@ -39,9 +39,6 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
         $this->addLowInventoryThresholdFieldToCategory($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addHighlightLowInventoryFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('highlightlowinventory_id')) {
@@ -63,9 +60,6 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addLowInventoryThresholdFieldToProduct(Schema $schema)
     {
         if ($schema->getTable('oro_product')->hasColumn('lowInventoryThreshold_id')) {
@@ -89,9 +83,6 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function addLowInventoryThresholdFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('lowInventoryThreshold_id')) {
@@ -115,9 +106,6 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addHighlightLowInventoryFieldToCategory(Schema $schema)
     {
         if ($schema->getTable('oro_catalog_category')->hasColumn('highlightlowinventory_id')) {

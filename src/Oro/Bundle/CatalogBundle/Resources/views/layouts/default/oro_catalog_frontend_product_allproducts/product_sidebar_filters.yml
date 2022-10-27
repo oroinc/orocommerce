@@ -1,0 +1,29 @@
+layout:
+    imports:
+        -
+            id: oro_product_grid_sidebar_filters
+            namespace: product
+
+    actions:
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.extra_jsmodules
+            optionValue: ['oroproduct/js/app/datagrid/grid-sidebar-filters-builder']
+
+        - '@setOption':
+              id: product_datagrid
+              optionName: grid_render_parameters.themeOptions.sidebarExpanded
+              optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
+
+        - '@move':
+              id: product_datagrid_toolbar_actions
+              parentId: product_datagrid_toolbar_leftside_container
+              siblingId: product_datagrid_toolbar_sorting
+              prepend: true
+
+        - '@move':
+              id: product_mass_actions_container
+              siblingId: product_datagrid_toolbar_actions
+              prepend: false
+
+    conditions: 'context["filters_position"] == "sidebar"'

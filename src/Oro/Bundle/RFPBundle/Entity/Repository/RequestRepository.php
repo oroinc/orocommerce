@@ -3,10 +3,17 @@
 namespace Oro\Bundle\RFPBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
-class RequestRepository extends EntityRepository
+/**
+ * Doctrine repository for Request entity
+ */
+class RequestRepository extends EntityRepository implements ResettableCustomerUserRepositoryInterface
 {
+    use ResetCustomerUserTrait;
+
     /**
      * @param array             $removingCurrencies
      * @param Organization|null $organization

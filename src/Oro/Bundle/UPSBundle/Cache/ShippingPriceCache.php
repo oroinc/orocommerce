@@ -2,139 +2,64 @@
 
 namespace Oro\Bundle\UPSBundle\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UPSBundle\Cache\Lifetime\LifetimeProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
+use Psr\Cache\CacheItemPoolInterface;
 
+/**
+ * Implementation for shipping price cache provider
+ */
 class ShippingPriceCache
 {
-    /**
-     * 24 hours, 60 * 60 * 24
-     */
-    const LIFETIME = 86400;
+    private const LIFETIME = 86400;
 
-    const NAME_SPACE = 'oro_ups_shipping_price';
+    private CacheItemPoolInterface $cache;
+    private LifetimeProviderInterface $lifetimeProvider;
 
-    /**
-     * @var CacheProvider
-     */
-    protected $cache;
-
-    /**
-     * @var LifetimeProviderInterface
-     */
-    protected $lifetimeProvider;
-
-    /**
-     * @param CacheProvider             $cache
-     * @param LifetimeProviderInterface $lifetimeProvider
-     */
-    public function __construct(CacheProvider $cache, LifetimeProviderInterface $lifetimeProvider)
+    public function __construct(CacheItemPoolInterface $cache, LifetimeProviderInterface $lifetimeProvider)
     {
         $this->cache = $cache;
         $this->lifetimeProvider = $lifetimeProvider;
     }
 
-    /**
-     * @param ShippingPriceCacheKey $key
-     *
-     * @return bool
-     */
-    public function containsPrice(ShippingPriceCacheKey $key)
+    public function containsPrice(ShippingPriceCacheKey $key) : bool
     {
-        $this->setNamespace($key->getTransport()->getId());
-
-        return $this->containsPriceByStringKey($this->generateStringKey($key));
+        return $this->cache->hasItem($this->generateStringKey($key));
     }
 
-    /**
-     * @param string $stringKey
-     *
-     * @return bool
-     */
-    protected function containsPriceByStringKey($stringKey)
+    public function fetchPrice(ShippingPriceCacheKey $key) : bool|Price
     {
-        return $this->cache->contains($stringKey);
+        $cacheItem = $this->cache->getItem($this->generateStringKey($key));
+        return $cacheItem->isHit() ? $cacheItem->get() : false;
     }
 
-    /**
-     * @param ShippingPriceCacheKey $key
-     *
-     * @return bool|Price
-     */
-    public function fetchPrice(ShippingPriceCacheKey $key)
+    public function savePrice(ShippingPriceCacheKey $key, Price $price) : bool
     {
-        $this->setNamespace($key->getTransport()->getId());
-
-        $stringKey = $this->generateStringKey($key);
-        if (!$this->containsPriceByStringKey($stringKey)) {
-            return false;
-        }
-
-        return $this->cache->fetch($stringKey);
-    }
-
-    /**
-     * @param ShippingPriceCacheKey $key
-     * @param Price                 $price
-     *
-     * @return $this
-     */
-    public function savePrice(ShippingPriceCacheKey $key, Price $price)
-    {
-        $this->setNamespace($key->getTransport()->getId());
-
+        $cacheItem = $this->cache->getItem($this->generateStringKey($key));
         $lifetime = $this->lifetimeProvider->getLifetime($key->getTransport(), static::LIFETIME);
-
-        $this->cache->save($this->generateStringKey($key), $price, $lifetime);
-
-        return $this;
+        $cacheItem->expiresAfter($lifetime)->set($price);
+        return $this->cache->save($cacheItem);
     }
 
-    /**
-     * @param integer $transportId
-     */
-    public function deleteAll($transportId)
+    public function deleteAll() : void
     {
-        $this->setNamespace($transportId);
-        $this->cache->deleteAll();
+        $this->cache->clear();
     }
 
-    /**
-     * @param UPSTransport $transport
-     * @param PriceRequest $priceRequest
-     * @param string       $methodId
-     * @param string       $typeId
-     *
-     * @return ShippingPriceCacheKey
-     */
     public function createKey(
         UPSTransport $transport,
         PriceRequest $priceRequest,
-        $methodId,
-        $typeId
-    ) {
+        string|null $methodId,
+        string|null $typeId
+    ) : ShippingPriceCacheKey {
         return (new ShippingPriceCacheKey())->setTransport($transport)->setPriceRequest($priceRequest)
             ->setMethodId($methodId)->setTypeId($typeId);
     }
 
-    /**
-     * @param ShippingPriceCacheKey $key
-     *
-     * @return string
-     */
-    protected function generateStringKey(ShippingPriceCacheKey $key)
+    protected function generateStringKey(ShippingPriceCacheKey $key) : string
     {
         return $this->lifetimeProvider->generateLifetimeAwareKey($key->getTransport(), $key->generateKey());
-    }
-
-    /**
-     * @param integer $id
-     */
-    protected function setNamespace($id)
-    {
-        $this->cache->setNamespace(self::NAME_SPACE.'_'.$id);
     }
 }

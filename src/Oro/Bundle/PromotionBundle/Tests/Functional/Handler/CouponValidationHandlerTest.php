@@ -4,25 +4,27 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Exception\LogicException;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
 class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
 {
     /**
-     * {@inheritdoc}
+     * {@inheritdoc}Oro\Bundle\CommerceCrmEnterpriseTestBundle\Tests\Functional\BackendQueriesTest
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-
         parent::setUp();
+        static::getContainer()->get('request_stack')
+            ->push(Request::create($this->getUrl('oro_promotion_validate_coupon_applicability')));
+
         $this->loadFixtures([]);
     }
 
@@ -31,15 +33,19 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
      */
     protected function getToken()
     {
-        $organization = static::getContainer()->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
+        $managerRegistry = self::getContainer()->get('doctrine');
+
+        /** @var User $user */
+        $user = $managerRegistry
+            ->getRepository(User::class)
+            ->findOneBy(['email' => self::AUTH_USER]);
 
         return new UsernamePasswordOrganizationToken(
-            'admin',
-            'admin',
+            $user,
+            false,
             'main',
-            $organization
+            $user->getOrganization(),
+            $user->getRoles()
         );
     }
 

@@ -3,6 +3,7 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         name: 'Company A'
         organization: '@organization'
         owner: '@admin'
+        vatId: 'VATID'
         payment_term_7c4f1e8e: '@paymentTerm'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
@@ -17,7 +18,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         confirmed: '1'
         customer: '@customer'
         organization: '@organization'
-        role: ['@buyer']
+        userRoles: ['@buyer']
         owner: '@admin'
         website: '@website1'
 
@@ -31,7 +32,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         postalCode: '10115'
         frontendOwner: '@customer'
         owner: '@admin'
-        setDefaults: ['@shippingType', '@billingType']
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
         primary: true
         organization: '@organization'
@@ -39,11 +41,11 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddressShippingDefault:
         address: '@customerAddress'
-        type: 'shipping'
+        type: '@shippingType'
         default: true
     customerAddressBillingDefault:
         address: '@customerAddress'
-        type: 'billing'
+        type: '@billingType'
         default: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
@@ -56,7 +58,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         postalCode: '10115'
         frontendOwner: '@amanda'
         owner: '@admin'
-        setDefaults: ['@shippingType', '@billingType']
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
         primary: true
         organization: '@organization'

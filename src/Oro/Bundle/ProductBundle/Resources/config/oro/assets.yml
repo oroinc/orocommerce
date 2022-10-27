@@ -1,4 +1,4 @@
-assets:
-    css:
-        'oroproduct':
-            - 'bundles/oroproduct/css/scss/main.scss'
+css:
+    inputs:
+        # Styles
+        - 'bundles/oroproduct/css/scss/main.scss'

@@ -4,11 +4,11 @@ namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -18,17 +18,29 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\FixtureLoaderDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class FeatureContext extends OroFeatureContext implements
     OroPageObjectAware,
-    KernelAwareContext,
     FixtureLoaderAwareInterface
 {
-    use PageObjectDictionary, KernelDictionary, FixtureLoaderDictionary;
+    use PageObjectDictionary, FixtureLoaderDictionary;
 
     /**
      * @var OroMainContext
      */
     private $oroMainContext;
+
+    /**
+     * @var EmailContext
+     */
+    private $emailContext;
+
+    /**
+     * @var \Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+     */
+    private $workflowContext;
 
     /**
      * @BeforeScenario
@@ -37,6 +49,9 @@ class FeatureContext extends OroFeatureContext implements
     {
         $environment = $scope->getEnvironment();
         $this->oroMainContext = $environment->getContext(OroMainContext::class);
+        $this->emailContext = $environment->getContext(EmailContext::class);
+        $this->workflowContext = $environment
+            ->getContext(\Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext::class);
     }
 
     /**
@@ -65,6 +80,7 @@ class FeatureContext extends OroFeatureContext implements
         $unitPrice->focus();
         $unitPrice->setValue('5.0');
         $unitPrice->blur();
+        $this->waitForAjax();
 
         $this->getPage()->pressButton('Save and Close');
 
@@ -91,11 +107,9 @@ class FeatureContext extends OroFeatureContext implements
      */
     public function openQuote($qid)
     {
-        $quote = $this->getQuote($qid);
-
-        $url = $this->getContainer()
+        $url = $this->getAppContainer()
             ->get('router')
-            ->generate('oro_sale_quote_view', ['id' => $quote->getId()]);
+            ->generate('oro_sale_quote_view', ['id' => $qid]);
 
         $this->visitPath($url);
         $this->waitForAjax();
@@ -115,28 +129,93 @@ class FeatureContext extends OroFeatureContext implements
         foreach ($elements as $element) {
             $html = $element->getHtml();
             foreach ($table->getColumn(0) as $item) {
-                self::assertContains($item, $html);
+                static::assertStringContainsString($item, $html);
             }
         }
     }
 
     /**
-     * Load "QuotesSentToCustomer" alice fixture from SaleBundle suite
+     * Example: I should see truncated to 10 symbols link for quote qid "Quote1"
      *
-     * Disable default workflow for Quote entity before loading fixtures to prevent overriding internal status
-     *
-     * @Given /^sent to customer quotes fixture loaded$/
+     * @Then /^(?:|I )should see truncated to (?P<truncateTo>(?:\d+)) symbols link for quote qid (?P<qid>[\w\s]+)$/
+     * @param string $qid
+     * @param integer $truncateTo
      */
-    public function bestSellingFixtureLoaded()
+    public function iShouldSeeTruncatedGuestLink(string $qid, int $truncateTo): void
     {
-        $workflowManager = $this->getContainer()->get('oro_workflow.registry.workflow_manager')->getManager();
+        $this->assertSession()->pageTextContains($this->getTruncatedGuestLink($qid, $truncateTo));
+    }
 
-        foreach ($workflowManager->getApplicableWorkflows(Quote::class) as $workflow) {
-            $workflowManager->resetWorkflowData($workflow->getName());
-            $workflowManager->deactivateWorkflow($workflow->getName());
-        }
+    /**
+     * Example: I visit guest quote link for quote 123
+     *
+     * @When /^I visit guest quote link for quote (?P<qid>[\w\s]+)$/
+     */
+    public function iVisitGuestQuoteLinkForQuote(string $qid): void
+    {
+        $this->visitPath($this->getGuestLink($qid));
+    }
 
-        $this->fixtureLoader->loadFixtureFile('OroSaleBundle:QuotesSentToCustomer.yml');
+    /**
+     * Example: Then Guest Quote "123" email has been sent to "somebody@examle.com"
+     *
+     * @Then /^Guest Quote "(?P<qid>[\w\s]+)" email has been sent to "(?P<email>\S+)"/
+     */
+    public function guestQuoteEmailHasBeenSend(string $qid, string $email): void
+    {
+        $guestLink = $this->getGuestLink($qid);
+
+        $guestQuoteTableNode = new TableNode([
+            ['To', $email],
+            ['Body', $guestLink]
+        ]);
+
+        $this->emailContext->emailShouldContainsTheFollowing($guestQuoteTableNode);
+    }
+
+    /**
+     * Example: Then I click truncated to 10 symbols Guest Quote 123 link
+     *
+     * @Then /^(?:|I )click truncated to (?P<truncateTo>(?:\d+)) symbols Guest Quote (?P<qid>[\w\s]+) link/
+     * @param string $qid
+     * @param integer $truncateTo
+     */
+    public function clickToGuestQuoteLink(string $qid, int $truncateTo): void
+    {
+        $guestLink = $this->getTruncatedGuestLink($qid, $truncateTo);
+        self::assertTrue($this->getSession()->getPage()->hasLink($guestLink), sprintf(
+            'Link "%s" not found.',
+            $guestLink
+        ));
+
+        $this->oroMainContext->clickLink($guestLink);
+    }
+
+    /**
+     * @When automatic expiration of old quotes has been performed
+     */
+    public function processAutomaticOldQuotesExpirationProcess()
+    {
+        $this->workflowContext->processScheduledCronTriggers();
+    }
+
+    /**
+     * Example: When Quote "9" is marked as accepted by customer
+     *
+     * @When /^Quote "(?P<quoteId>(?:\d+))" is marked as accepted by customer/
+     */
+    public function markQuoteAsAcceptedByCustomer(int $quoteId)
+    {
+        $managerRegistry = $this->getAppContainer()->get('doctrine');
+        $manager = $managerRegistry->getManagerForClass(Quote::class);
+
+        $className = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
+        $enumValue = $manager->getReference($className, 'accepted');
+
+        $quote = $manager->getRepository(Quote::class)->find($quoteId);
+        $quote->setCustomerStatus($enumValue);
+
+        $manager->flush();
     }
 
     /**
@@ -156,9 +235,34 @@ class FeatureContext extends OroFeatureContext implements
      */
     protected function getRepository($className)
     {
-        return $this->getContainer()
+        return $this->getAppContainer()
             ->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository($className);
+    }
+
+    /**
+     * @param string $qid
+     * @param integer $truncateTo
+     * @return string
+     */
+    private function getTruncatedGuestLink(string $qid, int $truncateTo): string
+    {
+        $guestLink = $this->getGuestLink($qid);
+
+        return substr($guestLink, 0, $truncateTo);
+    }
+
+    private function getGuestLink(string $qid): string
+    {
+        $quote = $this->getQuote($qid);
+
+        return $this->getAppContainer()
+            ->get('oro_website.resolver.website_url_resolver')
+            ->getWebsitePath(
+                'oro_sale_quote_frontend_view_guest',
+                ['guest_access_id' => $quote->getGuestAccessId()],
+                $quote->getWebsite()
+            );
     }
 }

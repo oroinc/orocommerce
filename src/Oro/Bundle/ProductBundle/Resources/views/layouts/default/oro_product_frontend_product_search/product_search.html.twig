@@ -1,0 +1,7 @@
+{% block _search_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>{{ 'oro.product.search.search_title.title'|trans({'%count%': text|length, '%text%': text})|e }}</h1>
+{% endblock %}

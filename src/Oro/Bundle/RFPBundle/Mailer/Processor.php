@@ -37,31 +37,16 @@ class Processor implements LoggerAwareInterface
         $this->logger = new NullLogger();
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @param Request $request
-     * @param User    $user
-     *
-     * @return int
-     */
     public function sendRFPNotification(Request $request, User $user): int
     {
         return $this->send($request, $user, self::CREATE_REQUEST_TEMPLATE_NAME);
     }
 
-    /**
-     * @param Request $request
-     * @param UserInterface $user
-     *
-     * @return int
-     */
     public function sendConfirmation(Request $request, UserInterface $user): int
     {
         return $this->send($request, $user, self::CONFIRM_REQUEST_TEMPLATE_NAME);
@@ -76,17 +61,16 @@ class Processor implements LoggerAwareInterface
      */
     private function send(Request $request, UserInterface $user, $template): int
     {
-        try {
-            return $this->userTemplateEmailSender->sendUserTemplateEmail($user, $template, ['entity' => $request]);
-        } catch (\Swift_SwiftException $exception) {
+        $sent = $this->userTemplateEmailSender->sendUserTemplateEmail($user, $template, ['entity' => $request]);
+
+        if (!$sent) {
             $this->logger->error('Unable to send email', [
                 'template' => $template,
                 'username' => $user->getUsername(),
                 'request' => (string) $request,
-                'exception' => $exception,
             ]);
         }
 
-        return 0;
+        return $sent;
     }
 }

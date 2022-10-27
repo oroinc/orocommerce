@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 
 class WeightUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configureProvider();
         $this->configureFormatter();

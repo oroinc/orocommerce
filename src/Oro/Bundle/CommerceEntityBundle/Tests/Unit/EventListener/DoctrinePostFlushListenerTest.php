@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CommerceEntityBundle\Tests\Unit\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CommerceEntityBundle\EventListener\DoctrinePostFlushListener;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage;
 use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity1;
@@ -15,27 +15,24 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
 {
     public function testPostFlush()
     {
-        $registry = $this->getRegistryMock();
+        $doctrine = $this->createMock(ManagerRegistry::class);
 
         $testEntity1 = new Entity1();
         $testEntity2 = new Entity1();
         $testEntity3 = new Entity2();
 
-        $storage = $this->getStorage();
+        $storage = new ExtraActionEntityStorage();
         $storage->scheduleForExtraInsert($testEntity1);
         $storage->scheduleForExtraInsert($testEntity2);
         $storage->scheduleForExtraInsert($testEntity3);
 
-        $em1 = $this->getEntityManagerMock();
-        $em2 = $this->getEntityManagerMock();
+        $em1 = $this->createMock(EntityManager::class);
+        $em2 = $this->createMock(EntityManager::class);
 
         //method 'persist' should be called once for every entity
-        $em1->expects($this->at(0))
+        $em1->expects($this->exactly(2))
             ->method('persist')
-            ->with($testEntity1);
-        $em1->expects($this->at(1))
-            ->method('persist')
-            ->with($testEntity2);
+            ->withConsecutive([$testEntity1], [$testEntity2]);
         $em2->expects($this->once())
             ->method('persist')
             ->with($testEntity3);
@@ -46,23 +43,15 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
         $em2->expects($this->once())
             ->method('flush');
 
-        $registry->expects($this->at(0))
+        $doctrine->expects($this->exactly(3))
             ->method('getManagerForClass')
-            ->with(ClassUtils::getClass($testEntity1))
-            ->willReturn($em1);
+            ->willReturnMap([
+                [ClassUtils::getClass($testEntity1), $em1],
+                [ClassUtils::getClass($testEntity2), $em1],
+                [ClassUtils::getClass($testEntity3), $em2]
+            ]);
 
-        $registry->expects($this->at(1))
-            ->method('getManagerForClass')
-            ->with(ClassUtils::getClass($testEntity2))
-            ->willReturn($em1);
-
-        $registry->expects($this->at(2))
-            ->method('getManagerForClass')
-            ->with(ClassUtils::getClass($testEntity3))
-            ->willReturn($em2);
-
-
-        $doctrineHelper = $this->getDoctrineHelper($registry);
+        $doctrineHelper = $this->getDoctrineHelper($doctrine);
         $listener = new DoctrinePostFlushListener($doctrineHelper, $storage);
         $listener->postFlush();
         $this->assertEmpty($storage->getScheduledForInsert());
@@ -71,7 +60,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
     public function testPostFlushDisabled()
     {
         $testEntity = new Entity1();
-        $storage = $this->getStorage();
+        $storage = new ExtraActionEntityStorage();
         $storage->scheduleForExtraInsert($testEntity);
 
         $listener = new DoctrinePostFlushListener($this->getDoctrineHelper(), $storage);
@@ -80,41 +69,8 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($storage->getScheduledForInsert());
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|EntityManager
-     */
-    protected function getEntityManagerMock()
+    private function getDoctrineHelper(ManagerRegistry $doctrine = null): DoctrineHelper
     {
-        return $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @param \PHPUnit\Framework\MockObject\MockObject|Registry $registry
-     * @return DoctrineHelper
-     */
-    protected function getDoctrineHelper(Registry $registry = null)
-    {
-        $registry = $registry ?: $this->getRegistryMock();
-        return new DoctrineHelper($registry);
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|Registry
-     */
-    protected function getRegistryMock()
-    {
-        return $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return ExtraActionEntityStorage
-     */
-    protected function getStorage()
-    {
-        return new ExtraActionEntityStorage();
+        return new DoctrineHelper($doctrine ?: $this->createMock(ManagerRegistry::class));
     }
 }

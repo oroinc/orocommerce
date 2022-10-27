@@ -9,6 +9,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'oro_inventory';
     const MANAGE_INVENTORY = 'manage_inventory';
     const HIGHLIGHT_LOW_INVENTORY = 'highlight_low_inventory';
     const INVENTORY_THRESHOLD = 'inventory_threshold';
@@ -17,6 +18,7 @@ class Configuration implements ConfigurationInterface
     const DECREMENT_INVENTORY = 'decrement_inventory';
     const MINIMUM_QUANTITY_TO_ORDER = 'minimum_quantity_to_order';
     const MAXIMUM_QUANTITY_TO_ORDER = 'maximum_quantity_to_order';
+    const HIDE_LABELS_PAST_AVAILABILITY_DATE = 'hide_labels_past_availability_date';
     const DEFAULT_MAXIMUM_QUANTITY_TO_ORDER = 100000;
 
     /**
@@ -40,8 +42,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(OroInventoryExtension::ALIAS);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
+        $rootNode = $treeBuilder->getRootNode();
         SettingsBuilder::append(
             $rootNode,
             [
@@ -56,6 +58,7 @@ class Configuration implements ConfigurationInterface
                     'type' => 'decimal',
                     'value' => self::DEFAULT_MAXIMUM_QUANTITY_TO_ORDER,
                 ],
+                self::HIDE_LABELS_PAST_AVAILABILITY_DATE => ['type' => 'boolean', 'value' => true]
             ]
         );
 
@@ -70,6 +73,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($name)
     {
-        return OroInventoryExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $name;
+        return self::ROOT_NODE . ConfigManager::SECTION_MODEL_SEPARATOR . $name;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\Form\Type;
 
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
@@ -17,42 +18,37 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Adds child form for each variant field
+ */
 class FrontendVariantFiledType extends AbstractType
 {
     const NAME = 'oro_product_product_variant_frontend_variant_field';
 
-    /** @var ProductVariantAvailabilityProvider */
-    protected $productVariantAvailabilityProvider;
+    protected ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
 
-    /** @var ProductVariantTypeHandlerRegistry */
-    protected $productVariantTypeHandlerRegistry;
+    protected ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry;
 
-    /** @var VariantFieldProvider */
-    protected $variantFieldProvider;
+    protected VariantFieldProvider $variantFieldProvider;
 
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    protected LocalizationProviderInterface $localizationProvider;
 
-    /** @var string */
-    protected $productClass;
+    protected PropertyAccessor $propertyAccessor;
 
-    /**
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
-     * @param ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry
-     * @param VariantFieldProvider $variantFieldProvider
-     * @param PropertyAccessor $propertyAccessor
-     * @param string $productClass
-     */
+    protected string $productClass;
+
     public function __construct(
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry,
         VariantFieldProvider $variantFieldProvider,
+        LocalizationProviderInterface $localizationProvider,
         PropertyAccessor $propertyAccessor,
         $productClass
     ) {
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productVariantTypeHandlerRegistry = $productVariantTypeHandlerRegistry;
         $this->variantFieldProvider = $variantFieldProvider;
+        $this->localizationProvider = $localizationProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->productClass = (string)$productClass;
     }
@@ -71,17 +67,11 @@ class FrontendVariantFiledType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $this->addVariantFields($event);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     private function addVariantFields(FormEvent $event)
     {
         /** @var Product|null $data */
@@ -191,19 +181,24 @@ class FrontendVariantFiledType extends AbstractType
     private function getSimpleProductVariants(Product $product)
     {
         $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
-
         $variantFields = $product->getVariantFields();
+        $localization = $this->localizationProvider->getCurrentLocalization();
 
         $simpleProductVariants = [];
 
-        foreach ($variantFields as $key => $fieldName) {
-            foreach ($simpleProducts as $simpleProduct) {
-                $value = $this->productVariantAvailabilityProvider->getVariantFieldScalarValue(
-                    $simpleProduct,
-                    $fieldName
-                );
-                $simpleProductVariants[$simpleProduct->getId()][$fieldName] = $value;
+        foreach ($simpleProducts as $simpleProduct) {
+            $data = [
+                'sku' => $simpleProduct->getSku(),
+                'name' => (string) $simpleProduct->getName($localization),
+                'attributes' => [],
+            ];
+
+            foreach ($variantFields as $fieldName) {
+                $data['attributes'][$fieldName] = $this->productVariantAvailabilityProvider
+                    ->getVariantFieldScalarValue($simpleProduct, $fieldName);
             }
+
+            $simpleProductVariants[$simpleProduct->getId()] = $data;
         }
 
         return $simpleProductVariants;

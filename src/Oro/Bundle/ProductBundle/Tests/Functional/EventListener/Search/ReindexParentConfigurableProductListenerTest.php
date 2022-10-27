@@ -6,15 +6,16 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Component\MessageQueue\Client\Message;
+use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Component\MessageQueue\Client\MessagePriority;
 
 class ReindexParentConfigurableProductListenerTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
+    use DefaultWebsiteIdTestTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -24,7 +25,7 @@ class ReindexParentConfigurableProductListenerTest extends WebTestCase
 
     public function testParentConfigurableProductReindexation()
     {
-        self::assertEmptyMessages(AsyncIndexer::TOPIC_REINDEX);
+        self::assertEmptyMessages(WebsiteSearchReindexTopic::getName());
 
         /** @var Product $productVariant */
         $productVariant = $this->getReference(LoadConfigurableProductWithVariants::FIRST_VARIANT_SKU);
@@ -37,17 +38,18 @@ class ReindexParentConfigurableProductListenerTest extends WebTestCase
             ->getEntityManagerForClass(Product::class)
             ->flush();
 
-        self::assertMessagesCount(AsyncIndexer::TOPIC_REINDEX, 1);
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
         self::assertMessageSent(
-            AsyncIndexer::TOPIC_REINDEX,
-            new Message(
-                [
-                    'class' => [Product::class],
-                    'context' => ['entityIds' => [$productVariant->getId(), $configurableProduct->getId()]],
-                    'granulize' => true
+            WebsiteSearchReindexTopic::getName(),
+            [
+                'class' => [Product::class],
+                'granulize' => true,
+                'context' => [
+                    'websiteIds' => [self::getDefaultWebsiteId()],
+                    'entityIds' => [$productVariant->getId(), $configurableProduct->getId()],
                 ],
-                MessagePriority::LOW
-            )
+            ]
         );
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 }

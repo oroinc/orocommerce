@@ -1,19 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var DiscountItemView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
 
     /**
      * @export oroorder/js/app/views/discount-item-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.DiscountItemView
      */
-    DiscountItemView = BaseView.extend({
+    const DiscountItemView = BaseView.extend({
+        discountItemHint: require('tpl-loader!./../templates/discount-item-hint.html'),
+
         /**
          * @property {Object}
          */
@@ -50,14 +51,14 @@ define(function(require) {
         $amountInputElement: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function DiscountItemView() {
-            DiscountItemView.__super__.constructor.apply(this, arguments);
+        constructor: function DiscountItemView(options) {
+            DiscountItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -69,15 +70,15 @@ define(function(require) {
 
             this._initValueValidation();
 
-            this.$el.on('change', this.options.valueInput, _.bind(this.onValueInputChange, this));
-            this.$el.on('change', this.options.typeInput, _.bind(this.onValueInputChange, this));
+            this.$el.on('change', this.options.valueInput, this.onValueInputChange.bind(this));
+            this.$el.on('change', this.options.typeInput, this.onValueInputChange.bind(this));
         },
 
         /**
          * @param {jQuery.Event} e
          */
         onValueInputChange: function(e) {
-            var value = this.$valueInputElement.val();
+            const value = this.$valueInputElement.val();
 
             if (this.$typeInputElement.val() === this.options.percentTypeValue) {
                 this.$percentInputElement.val(value);
@@ -88,11 +89,11 @@ define(function(require) {
             this._initValueValidation();
             this._updateValidatorRules();
 
-            var validator = this.$valueInputElement.closest('form').validate();
+            const validator = this.$valueInputElement.closest('form').validate();
             validator.element(this.$valueInputElement);
 
             if (!validator.numberOfInvalids()) {
-                this._updateAmounts(parseFloat(value));
+                this._updateAmounts(NumberFormatter.unformatStrict(value));
             }
         },
 
@@ -105,18 +106,22 @@ define(function(require) {
             } else {
                 this.$valueInputElement.data('validation', this.$amountInputElement.data('validation'));
             }
+            this.$valueInputElement.data(
+                'validation',
+                _.extend({NotBlank: {}}, this.$valueInputElement.data('validation'))
+            );
         },
 
         /**
          * @private
          */
         _updateValidatorRules: function() {
-            var rules = this.$valueInputElement.rules();
+            const rules = this.$valueInputElement.rules();
 
-            var rangeRules = _.result(rules, 'Range', []);
-            var total = this._getTotal();
-            for (var index = 0; index < rangeRules.length; ++index) {
-                var rangeRule = rangeRules[index];
+            const rangeRules = _.result(rules, 'Range', []);
+            const total = this._getTotal();
+            for (let index = 0; index < rangeRules.length; ++index) {
+                const rangeRule = rangeRules[index];
                 rangeRule.max = total;
             }
         },
@@ -126,13 +131,13 @@ define(function(require) {
          * @returns {Float}
          */
         _getTotal: function() {
-            var totalsData = {};
+            const totalsData = {};
             mediator.trigger('order:totals:get:current', totalsData);
 
-            var totals = totalsData.result;
-            var total = 0;
+            const totals = totalsData.result;
+            let total = 0;
 
-            var self = this;
+            const self = this;
             _.each(totals.subtotals, function(subtotal) {
                 if (subtotal.type === self.options.totalType) {
                     total = parseFloat(subtotal.amount);
@@ -151,9 +156,9 @@ define(function(require) {
                 return;
             }
 
-            var amount = 0;
-            var percent = 0;
-            var total = this._getTotal();
+            let amount = 0;
+            let percent = 0;
+            const total = this._getTotal();
 
             if (this.$typeInputElement.val() === this.options.percentTypeValue) {
                 amount = (total * value / 100).toFixed(2);
@@ -162,15 +167,19 @@ define(function(require) {
                 amount = value;
                 percent = total > 0 ? (value / total * 100).toFixed(2) : 0;
             }
-            var formattedDiscountAmount = NumberFormatter.formatCurrency(amount, this.options.currency);
-            this.$el.find(this.options.valueCalculatedSelector).html(formattedDiscountAmount + ' (' + percent + '%)');
+            this.$el.find(this.options.valueCalculatedSelector).html(this.discountItemHint({
+                NumberFormatter: NumberFormatter,
+                amount: amount,
+                currency: this.options.currency,
+                percent: percent
+            }));
 
-            this.$amountInputElement.val(amount);
-            this.$percentInputElement.val(percent);
+            this.$amountInputElement.val(NumberFormatter.formatDecimal(amount, {grouping_used: false}));
+            this.$percentInputElement.val(NumberFormatter.formatDecimal(percent, {grouping_used: false}));
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

@@ -1,0 +1,10 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    variables:
+        Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor:
+            getEntityIds:
+                identifierFieldName: true
+        Oro\Bundle\RedirectBundle\Api\Processor\ComputeUrlFields:
+            getQueryForLoadUrls:
+                ownerEntityClass: true
+                ownerEntityIdFieldName: true

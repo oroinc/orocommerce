@@ -1,0 +1,140 @@
+data:
+    -
+        type: mastercatalogcategories
+        id: '<toString(@root_category->id)>'
+        attributes:
+            createdAt: '@root_category->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@root_category->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'All Products'
+            shortDescription: null
+            description: null
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            url: null
+            urls: []
+            images: []
+        relationships:
+            categoryPath:
+                data: []
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1->id)>'
+        attributes:
+            createdAt: '@category1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 1'
+            shortDescription: 'Category 1 Short Description'
+            description: 'Category 1 Description. Twig Expr: "test".'
+            metaTitle: 'Category 1 Meta Title'
+            metaDescription: 'Category 1 Meta Description'
+            metaKeywords: 'Category 1 Meta Keywords'
+            url: '/category1_slug_default'
+            urls:
+                - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
+            images:
+                - { mimeType: '@file_category1_small_image->mimeType', type: 'small' }
+                - { mimeType: '@file_category1_large_image->mimeType', type: 'large' }
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1_1->id)>'
+        attributes:
+            createdAt: '@category1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 1_1'
+            shortDescription: 'Category 1_1 Short Description'
+            description: 'Category 1_1 Description'
+            metaTitle: 'Category 1_1 Meta Title'
+            metaDescription: 'Category 1_1 Meta Description'
+            metaKeywords: 'Category 1_1 Meta Keywords'
+            url: '/category1_1_slug_default'
+            urls:
+                - { url: '/category1_1_slug_default', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/category1_1_slug_default', localizationId: '<toString(@es->id)>' }
+            images: []
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@category1->id)>'
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1_1_1->id)>'
+        attributes:
+            createdAt: '@category1_1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category1_1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 1_1_1'
+            shortDescription: null
+            description: null
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            url: null
+            urls: []
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@category1->id)>'
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@category1_1->id)>'
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category2->id)>'
+        attributes:
+            createdAt: '@category2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 2'
+            shortDescription: null
+            description: null
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            url: null
+            urls: []
+            images:
+                - { mimeType: '@file_category2_small_image->mimeType', type: 'small' }
+                - { mimeType: '@file_category2_large_image->mimeType', type: 'large' }
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category3_1_1->id)>'
+        attributes:
+            createdAt: '@category3_1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category3_1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 3_1_1'
+            shortDescription: null
+            description: null
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            url: null
+            urls: []
+            images: []
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'

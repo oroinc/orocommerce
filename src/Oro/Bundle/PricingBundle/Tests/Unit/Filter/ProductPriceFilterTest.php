@@ -6,6 +6,7 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
@@ -13,74 +14,32 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface
-     */
-    protected $formFactory;
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    protected $form;
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $formatter;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FilterUtility
-     */
-    protected $filterUtility;
+    /** @var PriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestHandler;
 
-    /**
-     * @var ProductPriceFilter
-     */
-    protected $productPriceFilter;
+    /** @var ProductPriceFilter */
+    private $filter;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface
-     */
-    protected $formatter;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|PriceListRequestHandler
-     */
-    protected $requestHandler;
-
-    public function setUp()
+    protected function setUp(): void
     {
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $this->requestHandler = $this->createMock(PriceListRequestHandler::class);
         $this->form = $this->createMock(FormInterface::class);
-        $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->formFactory->expects($this->any())
+
+        $formFactory = $this->createMock(FormFactoryInterface::class);
+        $formFactory->expects($this->any())
             ->method('create')
-            ->will($this->returnValue($this->form));
+            ->willReturn($this->form);
 
-        $this->filterUtility = $this->getMockBuilder(FilterUtility::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filterUtility->expects($this->any())
-            ->method('getExcludeParams')
-            ->willReturn([]);
-
-        $this->formatter = $this->getMockBuilder(UnitLabelFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->requestHandler = $this->getMockBuilder(PriceListRequestHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productPriceFilter = new ProductPriceFilter(
-            $this->formFactory,
-            $this->filterUtility,
-            $this->formatter,
-            $this->requestHandler
-        );
-    }
-
-    public function tearDown()
-    {
-        unset(
-            $this->formFactory,
-            $this->form,
-            $this->filterUtility,
-            $this->productPriceFilter,
+        $this->filter = new ProductPriceFilter(
+            $formFactory,
+            new FilterUtility(),
             $this->formatter,
             $this->requestHandler
         );
@@ -88,18 +47,13 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider parseDataDataProvider
-     * @param array $data
-     * @param array $expected
      */
-    public function testParseData($data, $expected)
+    public function testParseData(array $data, array|bool $expected)
     {
-        $this->assertEquals($expected, $this->productPriceFilter->parseData($data));
+        $this->assertEquals($expected, ReflectionUtil::callMethod($this->filter, 'parseData', [$data]));
     }
 
-    /**
-     * @return array
-     */
-    public function parseDataDataProvider()
+    public function parseDataDataProvider(): array
     {
         return [
             'correct' => [
@@ -124,16 +78,16 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->with('test value', true)
             ->willReturn('formatted test label');
 
-        $formView = $this->createFormView();
-        $formView->vars['formatter_options'] = [];
+        $formView = new FormView();
+        $formView->vars['formatter_options'] = ['decimals' => 2];
         $formView->vars['array_separator'] = ',';
         $formView->vars['array_operators'] = [9, 10];
         $formView->vars['data_type'] = 'data_integer';
 
-        $typeFormView = $this->createFormView($formView);
+        $typeFormView = new FormView($formView);
         $typeFormView->vars['choices'] = [];
 
-        $unitFormView = $this->createFormView($formView);
+        $unitFormView = new FormView($formView);
         $unitFormView->vars['choices'] = [new ChoiceView('test data', 'test value', 'test label')];
 
         $formView->children = ['type' => $typeFormView, 'unit' => $unitFormView];
@@ -142,10 +96,10 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ->method('createView')
             ->willReturn($formView);
 
-        $metadata = $this->productPriceFilter->getMetadata();
+        $metadata = $this->filter->getMetadata();
 
         $this->assertArrayHasKey('unitChoices', $metadata);
-        $this->assertInternalType('array', $metadata['unitChoices']);
+        $this->assertIsArray($metadata['unitChoices']);
         $this->assertEquals(
             [
                 [
@@ -157,14 +111,5 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
             ],
             $metadata['unitChoices']
         );
-    }
-
-    /**
-     * @param null|FormView $parent
-     * @return FormView
-     */
-    protected function createFormView(FormView $parent = null)
-    {
-        return new FormView($parent);
     }
 }

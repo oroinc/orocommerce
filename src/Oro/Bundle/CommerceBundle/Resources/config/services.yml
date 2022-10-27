@@ -1,0 +1,8 @@
+services:
+    Oro\Bundle\CommerceBundle\CacheWarmer\ExtendEntityCacheWarmer:
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '@oro_distribution.handler.application_status'
+        tags:
+            - { name: oro_entity_extend.warmer }

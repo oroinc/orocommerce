@@ -2,155 +2,121 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class PriceListAssignedProductsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+/**
+ * Updates combined price lists in case of price list product assigned rule is changed.
+ */
+class PriceListAssignedProductsProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
-    /**
-     * @var PriceListTriggerFactory
-     */
-    protected $triggerFactory;
+    use LoggerAwareTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private PriceListProductAssignmentBuilder $assignmentBuilder;
+    private ManagerRegistry $doctrine;
+    private NotificationAlertManager $notificationAlertManager;
+    private PriceListTriggerHandler $triggerHandler;
 
-    /**
-     * @var PriceListProductAssignmentBuilder
-     */
-    protected $assignmentBuilder;
-
-    /**
-     * @var Messenger
-     */
-    protected $messenger;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param PriceListTriggerFactory $triggerFactory
-     * @param PriceListProductAssignmentBuilder $assignmentBuilder
-     * @param LoggerInterface $logger
-     * @param Messenger $messenger
-     * @param TranslatorInterface $translator
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
-        PriceListTriggerFactory $triggerFactory,
+        ManagerRegistry $doctrine,
         PriceListProductAssignmentBuilder $assignmentBuilder,
-        LoggerInterface $logger,
-        Messenger $messenger,
-        TranslatorInterface $translator,
-        ManagerRegistry $registry
+        NotificationAlertManager $notificationAlertManager,
+        PriceListTriggerHandler $triggerHandler
     ) {
-        $this->logger = $logger;
+        $this->doctrine = $doctrine;
         $this->assignmentBuilder = $assignmentBuilder;
-        $this->triggerFactory = $triggerFactory;
-        $this->messenger = $messenger;
-        $this->translator = $translator;
-        $this->registry = $registry;
+        $this->notificationAlertManager = $notificationAlertManager;
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS];
+        return [ResolvePriceListAssignedProductsTopic::getName()];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        $body = $message->getBody();
+        $priceListsCount = count($body['product']);
+
         /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(PriceList::class);
-        $em->beginTransaction();
-        
-        $trigger = null;
-        try {
-            $messageData = JSON::decode($message->getBody());
-            $trigger = $this->triggerFactory->createFromArray($messageData);
-
-            $repository = $em->getRepository(PriceList::class);
-            foreach ($trigger->getProducts() as $plId => $plProducts) {
-                $this->processPriceList($repository->find($plId), $plProducts);
+        $em = $this->doctrine->getManagerForClass(PriceList::class);
+        foreach ($body['product'] as $priceListId => $productIds) {
+            /** @var PriceList|null $priceList */
+            $priceList = $em->find(PriceList::class, $priceListId);
+            if (null === $priceList) {
+                $this->logger?->warning(sprintf(
+                    'PriceList entity with identifier %s not found.',
+                    $priceListId
+                ));
+                continue;
             }
 
-            $em->commit();
-        } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
+            $em->beginTransaction();
+            try {
+                $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
+                    $priceList->getId()
+                );
 
-            return self::REJECT;
-        } catch (\Exception $e) {
-            $em->rollback();
-            $this->logger->error(
-                'Unexpected exception occurred during Price List Assigned Products build',
-                ['exception' => $e]
-            );
-            if ($trigger && !empty($plId)) {
-                $this->onFailedPriceListId($plId);
+                $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
+
+                $em->commit();
+            } catch (\Exception $e) {
+                $em->rollback();
+                $this->logger?->error(
+                    'Unexpected exception occurred during Price List Assigned Products build.',
+                    ['exception' => $e]
+                );
+
+                if ($e instanceof RetryableException) {
+                    // On RetryableException send back to queue the message related to a single price list
+                    // that triggered an exception.
+                    // If this was the only one PL in the message REQUEUE it to persist retries counter
+                    if ($priceListsCount === 1) {
+                        return self::REQUEUE;
+                    }
+
+                    $this->triggerHandler->handlePriceListTopic(
+                        ResolvePriceListAssignedProductsTopic::getName(),
+                        $priceList,
+                        $productIds
+                    );
+                } else {
+                    $this->notificationAlertManager->addNotificationAlert(
+                        PriceListCalculationNotificationAlert::createForAssignedProductsBuildError(
+                            $priceListId,
+                            $e->getMessage()
+                        )
+                    );
+                    if ($priceListsCount === 1) {
+                        return self::REJECT;
+                    }
+                }
             }
-
-            return self::REJECT;
         }
 
         return self::ACK;
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param array $products
-     */
-    private function processPriceList(PriceList $priceList, array $products)
-    {
-        $this->messenger->remove(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-            PriceList::class,
-            $priceList->getId()
-        );
-
-        $this->assignmentBuilder->buildByPriceList($priceList, $products);
-    }
-
-    /**
-     * @param int $priceListId
-     */
-    private function onFailedPriceListId($priceListId)
-    {
-        $this->messenger->send(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-            Message::STATUS_ERROR,
-            $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build'),
-            PriceList::class,
-            $priceListId
-        );
     }
 }

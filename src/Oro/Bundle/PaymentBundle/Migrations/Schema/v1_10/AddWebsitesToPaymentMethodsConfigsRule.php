@@ -19,8 +19,6 @@ class AddWebsitesToPaymentMethodsConfigsRule implements Migration
 
     /**
      * Create oro_payment_mtds_rule_website table
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentMtdsRuleWebsiteTable(Schema $schema)
     {
@@ -33,8 +31,6 @@ class AddWebsitesToPaymentMethodsConfigsRule implements Migration
 
     /**
      * Add oro_payment_mtds_rule_website foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentMtdsRuleWebsiteForeignKeys(Schema $schema)
     {

@@ -48,7 +48,7 @@ Feature: Promotions Grid With Promotions ACL Enabled
       | Discount Value | 10               |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And save and close form
     And I should see "Promotion has been saved" flash message
     When click "Duplicate"

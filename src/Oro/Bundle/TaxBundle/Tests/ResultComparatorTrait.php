@@ -54,6 +54,6 @@ trait ResultComparatorTrait
             return;
         }
 
-        $this->assertEquals($expected, $expected);
+        $this->assertEquals($expected, $actual);
     }
 }

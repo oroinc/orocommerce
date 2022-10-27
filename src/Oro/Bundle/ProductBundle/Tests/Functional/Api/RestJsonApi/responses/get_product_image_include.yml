@@ -1,0 +1,36 @@
+data:
+    type: productimages
+    id: '<toString(@product-1->images->first->id)>'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        types:
+            data:
+                -
+                    type: productimagetypes
+                    id: '<toString(@product-1->images->first->types->first->id)>'
+        image:
+            data:
+                type: files
+                id: '{fileId}'
+included:
+    -
+        type: files
+        id: '{fileId}'
+        attributes:
+            mimeType: 'image/jpeg'
+            filePath:
+                -
+                    url: '/media/cache/attachment/filter/product_extra_large/611b34cf36199f7491b40a557dad14a9/{fileId}/product-1-product-1-original.jpg'
+                    dimension: 'product_extra_large'
+                    url_webp: '/media/cache/attachment/filter/product_extra_large/de49a9f899e6dc68356803fcbffb2688/{fileId}/product-1-product-1-original.jpg.webp'
+                -
+                    url: '/media/cache/attachment/filter/product_small/5ffc023aed34cd80eccf6957058b520e/{fileId}/product-1-product-1-original.jpg'
+                    dimension: 'product_small'
+                    url_webp: '/media/cache/attachment/filter/product_small/0430df4fe419ef8f86126998d83a639e/{fileId}/product-1-product-1-original.jpg.webp'
+                -
+                    url: '/media/cache/attachment/filter/product_large/484cb95e4abcb58ccab27f13d1a6188b/{fileId}/product-1-product-1-original.jpg'
+                    dimension: 'product_large'
+                    url_webp: '/media/cache/attachment/filter/product_large/ca048c1dad6aff04975c90c926869a37/{fileId}/product-1-product-1-original.jpg.webp'

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
 
@@ -21,9 +21,6 @@ class UnitsMapper
      */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

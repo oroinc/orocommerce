@@ -23,7 +23,7 @@ class OriginalTransactionTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "ORIGID" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['ORIGID' => 'A10A9A919311'], ['ORIGID' => 'A10A9A919311']],

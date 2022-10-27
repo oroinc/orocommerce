@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RedirectControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);
@@ -25,7 +25,7 @@ class RedirectControllerTest extends WebTestCase
      */
     public function testSlugifyAction($string, $slug)
     {
-        $this->client->request(
+        $this->client->jsonRequest(
             'GET',
             $this->getUrl('oro_api_slugify_slug', ['string' => $string])
         );

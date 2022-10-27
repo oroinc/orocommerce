@@ -1,10 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var VariantsCollectionView;
-    var FieldsGroupsCollectionView = require('oroform/js/app/views/fields-groups-collection-view');
+    const FieldsGroupsCollectionView = require('oroform/js/app/views/fields-groups-collection-view');
 
-    VariantsCollectionView = FieldsGroupsCollectionView.extend({
+    const VariantsCollectionView = FieldsGroupsCollectionView.extend({
         PRIMARY_FILED_SELECTOR: '[name$="[default]"]',
 
         events: {
@@ -13,10 +12,10 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function VariantsCollectionView() {
-            VariantsCollectionView.__super__.constructor.apply(this, arguments);
+        constructor: function VariantsCollectionView(options) {
+            VariantsCollectionView.__super__.constructor.call(this, options);
         }
     });
 

@@ -46,8 +46,6 @@ class OroOrderBundle implements
 
     /**
      * Create orob2b_order table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderTable(Schema $schema)
     {
@@ -86,8 +84,6 @@ class OroOrderBundle implements
 
     /**
      * Create orob2b_order_address table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderAddressTable(Schema $schema)
     {
@@ -116,8 +112,6 @@ class OroOrderBundle implements
 
     /**
      * Create orob2b_order_line_item table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BOrderLineItemTable(Schema $schema)
     {
@@ -148,8 +142,6 @@ class OroOrderBundle implements
 
     /**
      * Add orob2b_order foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroOrderForeignKeys(Schema $schema)
     {
@@ -206,8 +198,6 @@ class OroOrderBundle implements
 
     /**
      * Add orob2b_order_address foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroOrderAddressForeignKeys(Schema $schema)
     {
@@ -240,8 +230,6 @@ class OroOrderBundle implements
 
     /**
      * Add orob2b_order_line_item foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BOrderLineItemForeignKeys(Schema $schema)
     {

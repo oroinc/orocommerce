@@ -2,126 +2,138 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
+use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\ProductBundle\Twig\ProductExtension;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use Symfony\Component\Form\FormView;
 
 class ProductExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    use TwigExtensionTestCaseTrait, EntityTrait;
+    use TwigExtensionTestCaseTrait;
 
     /** @var AutocompleteFieldsProvider */
-    protected $autocompleteFieldsProvider;
+    private $autocompleteFieldsProvider;
+
+    /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $relatedProductFinderStrategy;
+
+    /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $upsellProductFinderStrategy;
+
+    /** @var RelatedItemConfigHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $relatedItemConfigHelper;
 
     /** @var ProductExtension */
-    protected $extension;
+    private $extension;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
-
-    /** @var FinderDatabaseStrategy|\PHPUnit\Framework\MockObject\MockObject */
-    protected $finderDatabaseStrategy;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->autocompleteFieldsProvider = $this->getMockBuilder(AutocompleteFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->finderDatabaseStrategy = $this->getMockBuilder(FinderStrategyInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProvider::class);
+        $this->relatedProductFinderStrategy = $this->createMock(FinderStrategyInterface::class);
+        $this->upsellProductFinderStrategy = $this->createMock(FinderStrategyInterface::class);
+        $this->relatedItemConfigHelper = $this->createMock(RelatedItemConfigHelper::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_product.autocomplete_fields_provider', $this->autocompleteFieldsProvider)
-            ->add('oro_entity.doctrine_helper', $this->doctrineHelper)
-            ->add('oro_product.related_item.related_product.finder_strategy', $this->finderDatabaseStrategy)
+            ->add('oro_product.related_item.related_product.finder_strategy', $this->relatedProductFinderStrategy)
+            ->add('oro_product.related_item.upsell_product.finder_strategy', $this->upsellProductFinderStrategy)
+            ->add('oro_product.related_item.helper.config_helper', $this->relatedItemConfigHelper)
             ->getContainer($this);
 
         $this->extension = new ProductExtension($container);
     }
 
-    public function testGetName()
+    public function testGetAutocompleteData(): void
     {
-        $this->assertEquals(ProductExtension::NAME, $this->extension->getName());
+        $numericalOnly = true;
+        $withRelations = false;
+        $data = ['key' => 'value'];
+
+        $this->autocompleteFieldsProvider->expects($this->once())
+            ->method('getAutocompleteData')
+            ->with($numericalOnly, $withRelations)
+            ->willReturn($data);
+
+        $this->assertEquals(
+            $data,
+            $this->callTwigFunction(
+                $this->extension,
+                'oro_product_expression_autocomplete_data',
+                [$numericalOnly, $withRelations]
+            )
+        );
     }
 
-    public function testIsConfigurableSimple()
+    public function testGetAutocompleteDataWithDefaultArguments(): void
+    {
+        $data = ['key' => 'value'];
+
+        $this->autocompleteFieldsProvider->expects($this->once())
+            ->method('getAutocompleteData')
+            ->with($this->isFalse(), $this->isTrue())
+            ->willReturn($data);
+
+        $this->assertEquals(
+            $data,
+            $this->callTwigFunction($this->extension, 'oro_product_expression_autocomplete_data', [])
+        );
+    }
+
+    public function testIsConfigurableSimple(): void
     {
         $this->assertFalse(
-            self::callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_SIMPLE])
+            $this->callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_SIMPLE])
         );
     }
 
-    public function testIsConfigurable()
+    public function testIsConfigurable(): void
     {
         $this->assertTrue(
-            self::callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_CONFIGURABLE])
+            $this->callTwigFunction($this->extension, 'is_configurable_product_type', [Product::TYPE_CONFIGURABLE])
         );
     }
 
-    /**
-     * @param array $ids
-     * @dataProvider dataProviderRelatedProductIds
-     */
-    public function testGetRelatedProductsIds(array $ids)
+    public function testGetUpsellProductsIds(): void
     {
-        $this->finderDatabaseStrategy->expects($this->once())
+        $ids = [2, 3, 4];
+
+        $this->upsellProductFinderStrategy->expects($this->once())
             ->method('findIds')
             ->willReturn($ids);
 
-        $this->assertSame($ids, $this->extension->getRelatedProductsIds(new Product()));
+        $this->assertSame(
+            $ids,
+            $this->callTwigFunction($this->extension, 'get_upsell_products_ids', [new Product()])
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderRelatedProductIds()
+    public function testGetRelatedProductsIds(): void
     {
-        return [
-            [[2, 3, 4]],
-            [[]]
-        ];
+        $ids = [2, 3, 4];
+
+        $this->relatedProductFinderStrategy->expects($this->once())
+            ->method('findIds')
+            ->willReturn($ids);
+
+        $this->assertSame(
+            $ids,
+            $this->callTwigFunction($this->extension, 'get_related_products_ids', [new Product()])
+        );
     }
 
-    /**
-     * @dataProvider dataSetUniqueLineItemFormId
-     * @param FormView $formView
-     * @param Product $product
-     * @param string $expectedId
-     */
-    public function testSetUniqueLineItemFormId($formView, $product, $expectedId)
+    public function testGetRelatedItemsTranslationKeyReturnsTranslationKey()
     {
-        self::callTwigFunction($this->extension, 'set_unique_line_item_form_id', [$formView, $product]);
-        $this->assertEquals($expectedId, $formView->vars['id']);
-        $this->assertEquals($expectedId, $formView->vars['attr']['id']);
-    }
+        $translationKey = 'translation_key';
 
-    /**
-     * @return array
-     */
-    public function dataSetUniqueLineItemFormId()
-    {
-        $formView = new FormView();
-        $formView->vars['id'] = 'product_form';
-        return [
-            [$formView, $this->getEntity(Product::class, ['id' => 1]), 'product_form-product-id-1'],
-            [$formView, $this->getEntity(Product::class, ['id' => null]), 'product_form'],
-            [$formView, $this->getEntity(Product::class), 'product_form'],
-            [$formView, ['id' => 1], 'product_form-product-id-1'],
-            [$formView, ['id' => null], 'product_form'],
-            [$formView, [], 'product_form'],
-            [$formView, null, 'product_form'],
-        ];
+        $this->relatedItemConfigHelper->expects($this->once())
+            ->method('getRelatedItemsTranslationKey')
+            ->willReturn($translationKey);
+
+        $this->assertEquals(
+            $translationKey,
+            $this->callTwigFunction($this->extension, 'get_related_items_translation_key', [])
+        );
     }
 }

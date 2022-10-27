@@ -1,0 +1,14 @@
+app-modules:
+    - orosale/js/app/modules/validator-constraints-module
+dynamic-imports:
+    commons:
+        - orosale/js/validator/quote-product-offer-quantity
+    orosale:
+        - orosale/js/app/components/dependent-field-component
+        - orosale/js/app/components/related-data-component
+        - orosale/js/app/views/address-view
+        - orosale/js/app/views/line-item-offer-view
+        - orosale/js/app/views/line-item-view
+        - orosale/js/app/views/line-items-view
+        - orosale/js/app/views/product-add-to-rfq-view
+        - orosale/js/app/views/quote-possible-shipping-methods-view

@@ -1,6 +1,10 @@
+/* @theme: default; */
+
 .request-form-editline__product .input-append {
     @extend .flexible-container;
+
     .select2-choice {
+        // stylelint-disable-next-line declaration-no-important
         max-width: none !important;
     }
 
@@ -9,7 +13,7 @@
 
         margin-left: 5px;
     }
-    
+
     .select2-container {
         @extend .flexible-container__base;
 

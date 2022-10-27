@@ -1,0 +1,11 @@
+/* @theme: admin.oro; */
+
+.consent-sortable-list {
+    td {
+        vertical-align: top;
+
+        &:last-child {
+            padding: $content-padding-small;
+        }
+    }
+}

@@ -28,7 +28,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproductitems",
+    "type": "rfqproductitems",
     "attributes": {
       "quantity": 99,
       "value": "1.0000",
@@ -37,7 +37,7 @@ Example:
     "relationships": {
       "requestProduct": {
         "data": {
-          "type": "requestproducts",
+          "type": "rfqproducts",
           "id": "1"
         }
       },
@@ -67,7 +67,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproductitems",
+    "type": "rfqproductitems",
     "id": "1",
     "attributes": {
       "quantity": 99,
@@ -77,7 +77,7 @@ Example:
     "relationships": {
       "requestProduct": {
         "data": {
-          "type": "requestproducts",
+          "type": "rfqproducts",
           "id": "1"
         }
       },
@@ -113,15 +113,13 @@ Delete a collection of request product item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### currency
 
@@ -129,31 +127,29 @@ Delete a collection of request product item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
+**This field must not be empty, if it is passed.**
 
-*This field is **required** and must remain defined.*
-
-### requestproducts
+### requestProduct
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
-### productunits
+### productUnit
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ## SUBRESOURCES
 
@@ -196,7 +192,7 @@ Retrieve the ID of request product record a specific request product item record
 
 #### update_relationship
 
-Replace request product record a specific request product item record is assigned to.
+Replace the request product record a specific request product item record is assigned to.
 
 {@request:json_api}
 Example:
@@ -204,7 +200,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requestproducts",
+    "type": "rfqproducts",
     "id": "1"
   }
 }

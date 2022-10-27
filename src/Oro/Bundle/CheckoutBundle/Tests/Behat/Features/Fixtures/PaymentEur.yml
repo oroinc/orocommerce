@@ -1,0 +1,20 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRuleEur:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfigEur:
+        type: '<("payment_term_".@paymentTermIntegration->getId())>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRuleEur:
+        rule: '@paymentRuleEur'
+        methodConfigs: ['@paymentMethodConfigEur']
+        currency: 'EUR'
+        organization: '@organization'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm:
+        label: net 10

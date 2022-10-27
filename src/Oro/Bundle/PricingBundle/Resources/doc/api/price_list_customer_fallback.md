@@ -18,9 +18,7 @@ Retrieve a collection of price list customer fallback records.
 
 Create a new price list customer fallback.
 
-`fallback` value should be one of: `0` or `1`.
-
-Fallback `0` maps to Customer Group fallback. Fallback `1`  maps to Current Customer Only fallback.
+The created record is returned in the response.
 
 {@inheritdoc}
 
@@ -37,7 +35,7 @@ Example:
         "relationships": {
             "customer": {
                 "data": {
-                    "type":"customers",
+                    "type": "customers",
                     "id": "1"
                 }
             }
@@ -51,9 +49,7 @@ Example:
 
 Edit a specific price list customer fallback record.
 
-`fallback` value should be one of: `0` or `1`.
-
-Fallback `0` maps to Customer Group fallback. Fallback `1`  maps to Current Customer Only fallback.
+The updated record is returned in the response.
 
 {@inheritdoc}
 
@@ -87,23 +83,25 @@ Delete a collection of price list customer fallback records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field**
-
 ### fallback
 
-Possible values: 1, 0. 0 - fallback to a customer group configuration. 1 - fallback to the current customer only.
+Possible values: `1`, `0`.
+
+`0` - fallback to a customer group configuration.
+
+`1` - fallback to the current customer only.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
 
 ### customer
 
@@ -113,7 +111,21 @@ The customer this fallback is tied to.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### website
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

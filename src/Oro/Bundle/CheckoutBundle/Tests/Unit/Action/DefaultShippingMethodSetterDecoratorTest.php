@@ -12,21 +12,16 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
 {
     use EntityTrait;
 
-    /**
-     * @var DefaultShippingMethodSetter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DefaultShippingMethodSetter|\PHPUnit\Framework\MockObject\MockObject */
     private $service;
 
-    /**
-     * @var DefaultShippingMethodSetterDecorator
-     */
+    /** @var DefaultShippingMethodSetterDecorator */
     private $serviceDecorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->service = $this->getMockBuilder(DefaultShippingMethodSetter::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['setDefaultShippingMethod'])->getMock();
+        $this->service = $this->createMock(DefaultShippingMethodSetter::class);
+
         $this->serviceDecorator = new DefaultShippingMethodSetterDecorator($this->service);
     }
 
@@ -37,7 +32,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
 
         $this->serviceDecorator->setDefaultShippingMethod($checkout);
 
-        static::assertNull($checkout->getShippingMethod());
+        self::assertNull($checkout->getShippingMethod());
     }
 
     public function testSetDefaultShippingMethod()
@@ -46,16 +41,23 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
         $shippingMethodType = 'primarty';
 
         $quoteDemand = $this->createMock(QuoteDemand::class);
+        $quoteDemand->expects(self::exactly(2))
+            ->method('getShippingMethod')
+            ->willReturn($shippingMethod);
+        $quoteDemand->expects(self::exactly(2))
+            ->method('getShippingMethodType')
+            ->willReturn($shippingMethodType);
 
-        $quoteDemand->expects(static::exactly(2))->method('getShippingMethod')->willReturn($shippingMethod);
-        $quoteDemand->expects(static::exactly(2))->method('getShippingMethodType')->willReturn($shippingMethodType);
-
-        /** @var Checkout|\PHPUnit\Framework\MockObject\MockObject $checkout */
         $checkout = $this->createMock(Checkout::class);
-
-        $checkout->expects(static::once())->method('getSourceEntity')->willReturn($quoteDemand);
-        $checkout->expects(static::once())->method('setShippingMethod')->with($shippingMethod);
-        $checkout->expects(static::once())->method('setShippingMethodType')->with($shippingMethodType);
+        $checkout->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn($quoteDemand);
+        $checkout->expects(self::once())
+            ->method('setShippingMethod')
+            ->with($shippingMethod);
+        $checkout->expects(self::once())
+            ->method('setShippingMethodType')
+            ->with($shippingMethodType);
 
         $this->serviceDecorator->setDefaultShippingMethod($checkout);
     }
@@ -63,20 +65,16 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
     public function testSetDefaultShippingMethodWithoutSourceShippingMethod()
     {
         $quoteDemand = $this->createMock(QuoteDemand::class);
-
         $quoteDemand->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn(null);
         $quoteDemand->expects($this->never())
             ->method('getShippingMethodType');
 
-        /* @var $checkout Checkout|\PHPUnit\Framework\MockObject\MockObject */
         $checkout = $this->createMock(Checkout::class);
-
         $checkout->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn($quoteDemand);
-
         $checkout->expects($this->never())
             ->method('setShippingMethod');
         $checkout->expects($this->never())
@@ -90,7 +88,6 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
         $shippingMethod = 'flat_rate_1';
 
         $quoteDemand = $this->createMock(QuoteDemand::class);
-
         $quoteDemand->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($shippingMethod);
@@ -98,13 +95,10 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
             ->method('getShippingMethodType')
             ->willReturn(null);
 
-        /* @var $checkout Checkout|\PHPUnit\Framework\MockObject\MockObject */
         $checkout = $this->createMock(Checkout::class);
-
         $checkout->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn($quoteDemand);
-
         $checkout->expects($this->never())
             ->method('setShippingMethod');
         $checkout->expects($this->never())

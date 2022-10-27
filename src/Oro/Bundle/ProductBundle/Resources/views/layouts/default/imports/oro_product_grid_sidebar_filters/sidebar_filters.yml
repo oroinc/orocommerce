@@ -1,0 +1,33 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'sidebar_filters.html.twig'
+
+        - '@addTree':
+            items:
+                __sidebar_filters_root:
+                    blockType: container
+                __sidebar_filters_container:
+                    blockType: container
+            tree:
+                page_sidebar:
+                    __sidebar_filters_root:
+                        __sidebar_filters_container: ~
+
+        - '@setOption':
+              id: body
+              optionName: attr
+              optionValue:
+                  class: 'filters-in-sidebar'
+
+        - '@setOption':
+            id: page_sidebar
+            optionName: vars.sidebarExpanded
+            optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
+
+        - '@setOption':
+              id: page_content
+              optionName: vars.sidebarExpanded
+              optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
+
+    conditions: 'context["filters_position"] == "sidebar"'

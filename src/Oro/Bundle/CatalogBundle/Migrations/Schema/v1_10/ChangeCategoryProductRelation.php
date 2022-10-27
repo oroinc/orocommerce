@@ -4,9 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
-use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -41,25 +42,16 @@ class ChangeCategoryProductRelation implements
      */
     private $platform;
 
-    /**
-     * @param ExtendExtension $extendExtension
-     */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
     }
 
-    /**
-     * @param Connection $connection
-     */
     public function setConnection(Connection $connection)
     {
         $this->connection = $connection;
     }
 
-    /**
-     * @param AbstractPlatform $platform
-     */
     public function setDatabasePlatform(AbstractPlatform $platform)
     {
         $this->platform = $platform;
@@ -72,11 +64,11 @@ class ChangeCategoryProductRelation implements
     {
         $this->addCategoryProductRelation($schema);
 
-        if ($this->connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_POSTGRESQL) {
+        if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
             $updateQuery = new UpdateCategoryIdsInProductsPqSql();
             $updateQuery->setExtendExtension($this->extendExtension);
             $queries->addQuery($updateQuery);
-        } elseif ($this->connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
+        } elseif ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
             $updateQuery = new UpdateCategoryIdsInProductsMySql();
             $updateQuery->setExtendExtension($this->extendExtension);
             $queries->addQuery($updateQuery);
@@ -85,9 +77,6 @@ class ChangeCategoryProductRelation implements
         $this->removeOldCategoryProductRelation($queries);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addCategoryProductRelation(Schema $schema)
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
@@ -132,14 +121,11 @@ class ChangeCategoryProductRelation implements
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function removeOldCategoryProductRelation(QueryBag $queries)
     {
         $queries->addQuery('DROP TABLE IF EXISTS oro_category_to_product');
     }
-    
+
     /**
      * {@inheritdoc}
      */

@@ -1,4 +1,5 @@
 @ticket-BB-13658
+@ticket-BB-16335
 @fixture-OroProductBundle:product_frontend_single_unit_mode.yml
 
 Feature: Product frontend single unit mode
@@ -104,3 +105,11 @@ Feature: Product frontend single unit mode
     Then I should see "Your Price: $20.00 / each" for "PSKU2" product
     And I should see "Your Price: $30.00 / set" for "PSKU3" product
     And I should see "Your Price: $40.00 / item" for "PSKU4" product
+
+  Scenario: As guest user verify that prices are correctly displayed in "List page" layout view
+    When I click "Sign Out"
+    When I type "PSKU2" in "search"
+    And click "Search Button"
+    And I click "View Details" for "PSKU2" product
+    Then I should see "Listed Price: $20.00 / each"
+    And I should not see "Price for requested quantity is not available"

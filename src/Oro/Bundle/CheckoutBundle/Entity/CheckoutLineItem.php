@@ -3,23 +3,29 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Brick\Math\BigDecimal;
-use Brick\Math\Exception\ArithmeticException;
+use Brick\Math\Exception\MathException;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
+ * Represents checkout item.
+ *
  * @ORM\Table(name="oro_checkout_line_item")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Config(
+ *      mode="hidden"
+ * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInterface, ProductLineItemInterface
+class CheckoutLineItem implements PriceAwareInterface, PriceTypeAwareInterface, ProductLineItemInterface
 {
     /**
      * @var int
@@ -332,7 +338,9 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
     }
 
     /**
-     * {@inheritDoc}
+     * @param Price $price
+     *
+     * @return $this
      */
     public function setPrice(Price $price = null)
     {
@@ -420,7 +428,7 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
         if ($this->value !== null) {
             try {
                 return BigDecimal::of($this->value)->toFloat();
-            } catch (ArithmeticException $e) {
+            } catch (MathException $e) {
             }
         }
 

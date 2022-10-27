@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Translator;
 
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShippingMethodLabelTranslator
 {
@@ -13,10 +13,6 @@ class ShippingMethodLabelTranslator
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param ShippingMethodLabelFormatter $formatter
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ShippingMethodLabelFormatter $formatter,
         TranslatorInterface $translator

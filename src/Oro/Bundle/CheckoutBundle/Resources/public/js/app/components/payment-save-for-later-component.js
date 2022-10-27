@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var PaymentSaveForLaterComponent;
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
 
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    PaymentSaveForLaterComponent = BaseComponent.extend(/** @lends PaymentSaveForLaterComponent.prototype */ {
+    const PaymentSaveForLaterComponent = BaseComponent.extend(/** @lends PaymentSaveForLaterComponent.prototype */ {
         /**
          * @property {jQuery}
          */
@@ -26,14 +25,14 @@ define(function(require) {
         defaultState: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function PaymentSaveForLaterComponent() {
-            PaymentSaveForLaterComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentSaveForLaterComponent(options) {
+            PaymentSaveForLaterComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.$el = $(options._sourceElement);
@@ -82,7 +81,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

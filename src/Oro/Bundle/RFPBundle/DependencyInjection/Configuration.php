@@ -9,6 +9,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'oro_rfp';
     const DEFAULT_GUEST_RFP_OWNER = 'default_guest_rfp_owner';
 
     /**
@@ -16,9 +17,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
-        $rootNode = $treeBuilder->root('oro_rfp');
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,

@@ -48,6 +48,7 @@ Feature: Product collection product change reflected
     Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at backend
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click on "First Content Variant Expand Button"
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU1 | Product 1 |
@@ -61,6 +62,7 @@ Feature: Product collection product change reflected
 
   Scenario: Change "Product 2" SKU in order to include it to the product collection filter again
     Given I operate as the Admin
+    And I click "Cancel"
     And go to Products/ Products
     And I click view Product 2 in grid
     And I click "Edit"
@@ -72,6 +74,7 @@ Feature: Product collection product change reflected
   Scenario: "Product 2" that confirm to filter again, included into product collection grid at backend
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click on "First Content Variant Expand Button"
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |

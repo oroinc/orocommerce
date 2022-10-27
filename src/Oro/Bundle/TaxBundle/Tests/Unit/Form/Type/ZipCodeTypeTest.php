@@ -2,76 +2,58 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
+use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ZipCode';
+    /** @var ZipCodeType */
+    private $formType;
 
-    /**
-     * @var ZipCodeType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ZipCodeType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(ZipCode::class);
         parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->formType->getName());
+        $this->assertIsString($this->formType->getName());
         $this->assertEquals('oro_tax_zip_code_type', $this->formType->getName());
     }
 
     /**
      * @dataProvider submitDataProvider
-     * @param string $submittedData
-     * @param string $expectedData
-     * @param bool $valid
      */
     public function testSubmit(
-        $submittedData,
-        $expectedData,
-        $valid
+        array $submittedData,
+        ZipCode $expectedData,
+        bool $valid
     ) {
         $form = $this->factory->create(ZipCodeType::class);
 
         $transformers = $form->getConfig()->getModelTransformers();
         $this->assertCount(1, $transformers);
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer', $transformers[0]);
-
+        $this->assertInstanceOf(ZipCodeTransformer::class, $transformers[0]);
 
         $form->submit($submittedData);
         $this->assertEquals($valid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'different range' => [
@@ -118,61 +100,57 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $zipCodeFieldsConstraint = new ZipCodeFields();
-        $zipCodeFieldsValidator = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator')
-            ->setMethods(['initialize', 'isInteger'])
+        $zipCodeFieldsValidator = $this->getMockBuilder(ZipCodeFieldsValidator::class)
+            ->onlyMethods(['initialize', 'isInteger'])
             ->getMock();
-
-        $zipCodeFieldsValidator->expects($this->any())->method('isInteger')->willReturnCallback(
-            function ($value) {
-                $value = str_replace('0', '', $value);
-
-                return filter_var($value, FILTER_VALIDATE_INT);
-            }
-        );
-        $zipCodeFieldsValidator->expects($this->any())->method('initialize')->willReturnCallback(
-            function (ExecutionContext $legacyContext) use ($zipCodeFieldsValidator) {
+        $zipCodeFieldsValidator->expects($this->any())
+            ->method('isInteger')
+            ->willReturnCallback(function ($value) {
+                return filter_var(str_replace('0', '', $value), FILTER_VALIDATE_INT);
+            });
+        $zipCodeFieldsValidator->expects($this->any())
+            ->method('initialize')
+            ->willReturnCallback(function (ExecutionContext $legacyContext) use ($zipCodeFieldsValidator) {
                 $context = $this->createMock(ExecutionContextInterface::class);
-                $builder = $this
-                    ->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+                $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
 
-                $context->expects($this->any())->method('buildViolation')->with($this->isType('string'))
-                    ->willReturnCallback(
-                        function ($message) use ($builder, $legacyContext) {
-                            $constraint = new ZipCodeFields();
-                            if ($message === $constraint->onlyNumericRangesSupported) {
-                                $legacyContext->addViolation($constraint->onlyNumericRangesSupported);
-                            }
-
-                            return $builder;
+                $context->expects($this->any())
+                    ->method('buildViolation')
+                    ->with($this->isType('string'))
+                    ->willReturnCallback(function ($message) use ($builder, $legacyContext) {
+                        $constraint = new ZipCodeFields();
+                        if ($message === $constraint->onlyNumericRangesSupported) {
+                            $legacyContext->addViolation($constraint->onlyNumericRangesSupported);
                         }
-                    );
 
-                $builder->expects($this->any())->method('atPath')->with($this->isType('string'))->willReturn($builder);
-                $builder->expects($this->any())->method('addViolation');
+                        return $builder;
+                    });
 
-                $prop = new \ReflectionProperty(get_class($zipCodeFieldsValidator), 'context');
-                $prop->setAccessible(true);
-                $prop->setValue($zipCodeFieldsValidator, $context);
+                $builder->expects($this->any())
+                    ->method('atPath')
+                    ->with($this->isType('string'))
+                    ->willReturn($builder);
+                $builder->expects($this->any())
+                    ->method('addViolation');
+
+                ReflectionUtil::setPropertyValue($zipCodeFieldsValidator, 'context', $context);
 
                 return true;
-            }
-        );
+            });
 
         return [
-            $zipCodeFieldsConstraint->validatedBy() => $zipCodeFieldsValidator,
+            'oro_tax_zip_code_fields' => $zipCodeFieldsValidator,
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(

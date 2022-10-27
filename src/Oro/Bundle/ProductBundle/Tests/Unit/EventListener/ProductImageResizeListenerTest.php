@@ -2,66 +2,51 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\MessageQueueBundle\Test\Unit\MessageQueueExtension;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ProductImageResizeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_IMAGE_ID = 1;
-    const FORCE_OPTION = false;
+    use MessageQueueExtension;
 
-    /**
-     * @var ProductImageResizeListener
-     */
-    protected $listener;
+    /** @var ProductImageResizeListener */
+    private $listener;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $producer;
-
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->producer = $this->createMock(MessageProducerInterface::class);
-        $this->listener = new ProductImageResizeListener($this->producer);
+        $this->listener = new ProductImageResizeListener(self::getMessageProducer());
+    }
+
+    public function testShouldImplementOptionalListenerInterface()
+    {
+        self::assertInstanceOf(OptionalListenerInterface::class, $this->listener);
     }
 
     public function testResizeProductImage()
     {
-        $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
+        $productImageId = 123;
+        $force = false;
 
-        $event = $this->prepareEvent();
+        $this->listener->resizeProductImage(new ProductImageResizeEvent($productImageId, $force));
 
-        $this->producer->expects($this->once())
-            ->method('send')
-            ->with(
-                ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
-                [
-                    'productImageId' => self::PRODUCT_IMAGE_ID,
-                    'force' => self::FORCE_OPTION
-                ]
-            );
-
-        // listener should be enabled by default
-        $this->listener->resizeProductImage($event);
-
-        $this->listener->setEnabled(false);
-
-        // producer should not be called because listener marked as disabled
-        $this->listener->resizeProductImage($event);
+        self::assertMessageSent(
+            Topics::PRODUCT_IMAGE_RESIZE,
+            [
+                'productImageId' => $productImageId,
+                'force'          => $force,
+                'dimensions'     => null
+            ]
+        );
     }
 
-    /**
-     * @return ProductImageResizeEvent
-     */
-    protected function prepareEvent()
+    public function testResizeProductImageForDisabledListener()
     {
-        $productImage = $this->prophesize(ProductImage::class);
-        $productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
+        $this->listener->setEnabled(false);
+        $this->listener->resizeProductImage(new ProductImageResizeEvent(123, false));
 
-        return new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, self::FORCE_OPTION);
+        self::assertMessagesEmpty(Topics::PRODUCT_IMAGE_RESIZE);
     }
 }

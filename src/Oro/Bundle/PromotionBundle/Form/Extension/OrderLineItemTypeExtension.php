@@ -19,6 +19,8 @@ use Symfony\Component\Form\FormView;
  */
 class OrderLineItemTypeExtension extends AbstractTypeExtension
 {
+    private const EXTENDED_TYPE = OrderLineItemType::class;
+
     const BASE_ORDER = 60;
 
     /**
@@ -46,13 +48,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
      */
     protected $lineItemSubtotalProvider;
 
-    /**
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     * @param TaxProviderRegistry $taxProviderRegistry
-     * @param AppliedDiscountsProvider $appliedDiscountsProvider
-     * @param SectionProvider $sectionProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     */
     public function __construct(
         TaxationSettingsProvider $taxationSettingsProvider,
         TaxProviderRegistry $taxProviderRegistry,
@@ -85,7 +80,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
             ];
         }
 
-        $this->sectionProvider->addSections($this->getExtendedType(), $sections);
+        $this->sectionProvider->addSections(self::EXTENDED_TYPE, $sections);
     }
 
     /**
@@ -125,9 +120,9 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return OrderLineItemType::class;
+        return [self::EXTENDED_TYPE];
     }
 
     /**

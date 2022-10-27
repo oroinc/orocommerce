@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'layout.html.twig'
+
+        - '@add':
+            id: content_widget_image_slider
+            parentId: content_widget_container
+            blockType: block
+            options:
+                vars:
+                    contentWidgetName: '=data["contentWidgetName"]'
+                    pageComponentName: '=data["pageComponentName"]'
+                    pageComponentOptions: '=data["pageComponentOptions"]'
+                    imageSlides: '=data["imageSlides"]'

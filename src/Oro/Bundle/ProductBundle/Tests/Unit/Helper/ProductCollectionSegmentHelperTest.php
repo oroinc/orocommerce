@@ -38,7 +38,7 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
      */
     private $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->getMockBuilder(ContentVariantSegmentProvider::class)
             ->disableOriginalConstructor()
@@ -73,8 +73,6 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider webCatalogsAssignmentDataProvider
-     * @param array $webCatalogAssignment
-     * @param array $expectedWebsiteIds
      */
     public function testGetWebsiteIdsBySegment(array $webCatalogAssignment, array $expectedWebsiteIds)
     {

@@ -38,7 +38,7 @@ class FedexRateServiceSoapClientTest extends TestCase
      */
     private $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->soapClient = $this->createMock(SoapClientInterface::class);
         $this->responseFactory = $this->createMock(FedexRateServiceResponseFactoryInterface::class);

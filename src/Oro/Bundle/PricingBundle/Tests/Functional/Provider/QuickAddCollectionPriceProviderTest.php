@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddressACLData;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
@@ -16,12 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddCollectionPriceProviderTest extends WebTestCase
 {
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
+    private ProductRepository $productRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadCombinedProductPrices::class]);
@@ -31,51 +28,59 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
         $this->updateUserSecurityToken(self::AUTH_USER);
 
         $request->query->set(
-            PriceListRequestHandler::ACCOUNT_ID_KEY,
+            ProductPriceScopeCriteriaRequestHandler::CUSTOMER_ID_KEY,
             $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1)->getId()
         );
 
-        $this->getClient()->getContainer()->get('request_stack')->push($request);
+        $this->getClientInstance()->getContainer()->get('request_stack')->push($request);
 
         /** @var ProductRepository $productRepository */
-        $this->productRepository = $this->getClient()->getContainer()->get('oro_product.repository.product');
+        $this->productRepository = $this->getContainer()->get('oro_product.repository.product');
     }
 
-    public function testIfCorrectPricesAreBeingAddedToRowItems()
+    public function testIfCorrectPricesAreBeingAddedToRowItems(): void
     {
         $collection = $this->getValidCollection();
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $expectedResults = [
-          new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
-          new QuickAddField('price', ['value' => 20, 'currency' => 'USD']),
-          null
+            'price' => [
+                new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
+                new QuickAddField('price', ['value' => 20, 'currency' => 'USD']),
+                null
+            ],
+            'unitPrice' => [
+                new QuickAddField('unitPrice', ['value' => 13.1, 'currency' => 'USD']),
+                new QuickAddField('unitPrice', ['value' => 20, 'currency' => 'USD']),
+                null
+            ],
         ];
         foreach ($collection as $i => $quickAddRow) {
-            $this->assertEquals($expectedResults[$i], $quickAddRow->getAdditionalField('price'));
+            self::assertEquals($expectedResults['price'][$i], $quickAddRow->getAdditionalField('price'));
+            self::assertEquals($expectedResults['unitPrice'][$i], $quickAddRow->getAdditionalField('unitPrice'));
         }
     }
 
-    public function testIfCollectionSubtotalIsBeingCalculated()
+    public function testIfCollectionSubtotalIsBeingCalculated(): void
     {
         $collection = $this->getValidCollection();
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
-        $this->assertEquals('33.1', $collection->getAdditionalField('price')->getValue()['value']);
-        $this->assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
+        self::assertEquals('33.1', $collection->getAdditionalField('price')->getValue()['value']);
+        self::assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
     }
 
-    public function testIfPriceIsCalculatedForFloatQuantityValues()
+    public function testIfPriceIsCalculatedForFloatQuantityValues(): void
     {
         $collection = $this->getValidCollection();
 
@@ -87,40 +92,48 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
-        $this->assertEquals('36.47', $collection->getAdditionalField('price')->getValue()['value']);
-        $this->assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
+        self::assertEquals('185.6', $collection->getAdditionalField('price')->getValue()['value']);
+        self::assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
     }
 
-    public function testIfOnlyValidRowsAreBeingCalculated()
+    public function testIfOnlyValidRowsAreBeingCalculated(): void
     {
         $collection = $this->getValidCollection();
         $collection->get(1)->setValid(0);
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
         $expectedResults = [
-            new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
-            null,
-            null
+            'price' => [
+                new QuickAddField('price', ['value' => 13.1, 'currency' => 'USD']),
+                null,
+                null
+            ],
+            'unitPrice' => [
+                new QuickAddField('unitPrice', ['value' => 13.1, 'currency' => 'USD']),
+                null,
+                null
+            ],
         ];
         foreach ($collection as $i => $quickAddRow) {
-            $this->assertEquals($expectedResults[$i], $quickAddRow->getAdditionalField('price'));
+            self::assertEquals($expectedResults['price'][$i], $quickAddRow->getAdditionalField('price'));
+            self::assertEquals($expectedResults['unitPrice'][$i], $quickAddRow->getAdditionalField('unitPrice'));
         }
 
-        $this->assertEquals('13.1', $collection->getAdditionalField('price')->getValue()['value']);
-        $this->assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
+        self::assertEquals('13.1', $collection->getAdditionalField('price')->getValue()['value']);
+        self::assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
     }
 
-    public function testIfSubtotalIsNullIfCollectionHasNoValidRows()
+    public function testIfSubtotalIsNullIfCollectionHasNoValidRows(): void
     {
         $collection = new QuickAddRowCollection();
         $lineNumber = 0;
@@ -140,33 +153,30 @@ class QuickAddCollectionPriceProviderTest extends WebTestCase
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
-        $this->assertNull($collection->getAdditionalField('price')->getValue()['value']);
-        $this->assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
+        self::assertNull($collection->getAdditionalField('price')->getValue()['value']);
+        self::assertEquals('USD', $collection->getAdditionalField('price')->getValue()['currency']);
     }
 
-    public function testIfPriceIsNullIfCollectionHasNoRows()
+    public function testIfPriceIsNullIfCollectionHasNoRows(): void
     {
         $collection = new QuickAddRowCollection();
 
         $event = new QuickAddRowsCollectionReadyEvent($collection);
 
-        $this->getClient()->getContainer()->get('event_dispatcher')->dispatch(
-            QuickAddRowsCollectionReadyEvent::NAME,
-            $event
+        $this->getClientInstance()->getContainer()->get('event_dispatcher')->dispatch(
+            $event,
+            QuickAddRowsCollectionReadyEvent::NAME
         );
 
-        $this->assertEquals(null, $collection->getAdditionalField('price'));
+        self::assertNull($collection->getAdditionalField('price'));
     }
 
-    /**
-     * @return QuickAddRowCollection
-     */
-    private function getValidCollection()
+    private function getValidCollection(): QuickAddRowCollection
     {
         $collection = new QuickAddRowCollection();
         $lineNumber = 0;

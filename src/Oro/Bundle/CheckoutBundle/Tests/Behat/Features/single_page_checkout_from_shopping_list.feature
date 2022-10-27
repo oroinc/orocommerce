@@ -13,14 +13,8 @@ Feature: Single Page Checkout From Shopping List
 
   Scenario: Feature Background
     Given I enable the existing localizations
-
-  Scenario: Enable Single Page Checkout Workflow
-    Given There is USD currency in the system configuration
-    And I login as administrator
-    And go to System/Workflows
-    When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    Then I should see "Workflow activated" flash message
+    And There is USD currency in the system configuration
+    And I activate "Single Page Checkout" workflow
 
   Scenario: Create order from Shopping List 1 and verify quantity
     Given AmandaRCole@example.org customer user has Buyer role
@@ -40,7 +34,7 @@ Feature: Single Page Checkout From Shopping List
       | Checkout | List 1       | 1     | $10.00   |
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
 
-    When I click "Edit Order"
+    When I click "Edit items"
     And I wait line items are initialized
     And I type "10" in "Shopping List Line Item 1 Quantity"
     And I should see "Record has been successfully updated" flash message

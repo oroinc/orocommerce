@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +27,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     /** @var array */
     protected $dataParameters = [];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -31,12 +35,10 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
     /**
      * @dataProvider restrictionSelectDataProvider
-     * @param array $restrictionParams
-     * @param array $expectedProducts
      */
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
-        call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
+        call_user_func_array([$this, 'setUpBeforeRestriction'], array_values($restrictionParams));
 
         $this->client->request(
             'GET',
@@ -58,12 +60,10 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
     /**
      * @dataProvider restrictionGridDataProvider
-     * @param array $restrictionParams
-     * @param array $expectedProducts
      */
     public function testDatagridRestriction(array $restrictionParams, array $expectedProducts)
     {
-        call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
+        call_user_func_array([$this, 'setUpBeforeRestriction'], array_values($restrictionParams));
 
         $this->client->request(
             'GET',
@@ -93,24 +93,18 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      */
     abstract public function restrictionGridDataProvider();
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Search handler is not fully configured
-     */
     public function testAllDependenciesInjectedException()
     {
-        $requestStack = new RequestStack();
-
-        /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject $productManager */
-        $productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Search handler is not fully configured');
 
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
-            'Oro\Bundle\ProductBundle\Entity\Product',
-            ['sku'],
-            $requestStack,
-            $productManager
+            Product::class,
+            new RequestStack(),
+            $this->createMock(ProductManager::class),
+            $this->createMock(ProductSearchRepository::class),
+            $this->createMock(LocalizationHelper::class),
+            $this->createMock(FrontendHelper::class)
         );
         $searchHandler->search('test', 1, 10);
     }

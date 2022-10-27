@@ -1,0 +1,3 @@
+include:
+    - '@OroCheckoutBundle:Checkout.yml'
+    - '@OroCheckoutBundle:SecondOrganizationCheckoutProductFixture.yml'

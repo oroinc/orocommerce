@@ -8,9 +8,10 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\SearchBundle\Utils\IndexationEntitiesContainer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -18,10 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class IndexationRequestListener implements OptionalListenerInterface
 {
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    use OptionalListenerTrait;
 
     /**
      * @var DoctrineHelper
@@ -29,7 +27,7 @@ class IndexationRequestListener implements OptionalListenerInterface
     protected $doctrineHelper;
 
     /**
-     * @var WebsiteSearchMappingProvider
+     * @var SearchMappingProvider
      */
     protected $mappingProvider;
 
@@ -43,15 +41,9 @@ class IndexationRequestListener implements OptionalListenerInterface
      */
     protected $changedEntities;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
-     * @param EventDispatcherInterface $dispatcher
-     * @param IndexationEntitiesContainer $changedEntities
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
+        SearchMappingProvider $mappingProvider,
         EventDispatcherInterface $dispatcher,
         IndexationEntitiesContainer $changedEntities
     ) {
@@ -61,9 +53,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         $this->changedEntities = $changedEntities;
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         if (!$this->enabled) {
@@ -102,9 +91,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         }
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function beforeEntityFlush(AfterFormProcessEvent $event)
     {
         if (!$this->enabled) {
@@ -121,17 +107,6 @@ class IndexationRequestListener implements OptionalListenerInterface
         $this->scheduleForSendingWithEvent($updatedEntity);
     }
 
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled = true)
-    {
-        $this->enabled = $enabled;
-    }
-
-    /**
-     * @param OnClearEventArgs $event
-     */
     public function onClear(OnClearEventArgs $event)
     {
         if (!$event->getEntityClass()) {
@@ -205,7 +180,7 @@ class IndexationRequestListener implements OptionalListenerInterface
                 $ids
             );
 
-            $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationRequestEvent);
+            $this->dispatcher->dispatch($reindexationRequestEvent, ReindexationRequestEvent::EVENT_NAME);
         }
 
         $this->changedEntities->clear();

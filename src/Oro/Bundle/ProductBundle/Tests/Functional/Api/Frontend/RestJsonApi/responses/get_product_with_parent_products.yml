@@ -1,0 +1,173 @@
+data:
+    type: products
+    id: '<toString(@configurable_product1_variant1->id)>'
+    attributes:
+        sku: CVPSKU1
+        createdAt: '@configurable_product1_variant1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@configurable_product1_variant1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        productType: simple
+        featured: false
+        newArrival: false
+        name: 'Variant 1 for Configurable Product 1'
+        shortDescription: 'Variant 1 for Configurable Product 1 Short Description'
+        description: 'Variant 1 for Configurable Product 1 Description'
+        metaTitle: null
+        metaDescription: null
+        metaKeywords: null
+        productAttributes:
+            testAttrString: 'Variant 1 for CPSKU1'
+            testAttrBoolean: false
+            testAttrFloat: null
+            testAttrMoney: null
+            testAttrDateTime: null
+            testAttrManyToOne: null
+            testToOneId: null
+            testAttrEnum:
+                id: '@productAttrEnum_option1->id'
+                targetValue: '@productAttrEnum_option1->name'
+            testAttrMultiEnum: []
+            testAttrManyToMany: []
+            testToManyId: []
+        unitPrecisions:
+            - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
+        url: null
+        urls: []
+        prices:
+            - { price: '1.9900', currencyId: USD, quantity: '1', unit: '@item->code' }
+            - { price: '1.0100', currencyId: USD, quantity: '10', unit: '@item->code' }
+        lowInventory: true
+        upcoming: true
+        availabilityDate: '2119-10-20T10:20:30Z'
+        variantAttributeNames: []
+    relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
+        productFamily:
+            data:
+                type: productfamilies
+                id: '<toString(@default_product_family->id)>'
+        variantProducts:
+            data: []
+        parentProducts:
+            data:
+                - { type: products, id: '<toString(@configurable_product1->id)>' }
+                - { type: products, id: '<toString(@configurable_product3->id)>' }
+        images:
+            data: []
+included:
+    -
+        type: products
+        id: '<toString(@configurable_product1->id)>'
+        attributes:
+            sku: CPSKU1
+            createdAt: '@configurable_product1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@configurable_product1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: configurable
+            featured: false
+            newArrival: false
+            name: 'Configurable Product 1'
+            shortDescription: 'Configurable Product 1 Short Description'
+            description: 'Configurable Product 1 Description'
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            productAttributes:
+                testAttrString: null
+                testAttrBoolean: false
+                testAttrFloat: null
+                testAttrMoney: null
+                testAttrDateTime: null
+                testAttrManyToOne:
+                    id: '<toString(@customer5->id)>'
+                    targetValue: 'Company 5'
+                testToOneId: null
+                testAttrMultiEnum: []
+                testAttrManyToMany: []
+                testToManyId: []
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
+            url: null
+            urls: []
+            prices: []
+            lowInventory: false
+            upcoming: false
+            availabilityDate: null
+            variantAttributeNames:
+                - testAttrEnum
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            variantProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }
+                    - { type: products, id: '<toString(@configurable_product1_variant2->id)>' }
+            parentProducts:
+                data: []
+            images:
+                data: []
+    -
+        type: products
+        id: '<toString(@configurable_product3->id)>'
+        attributes:
+            sku: CPSKU3
+            createdAt: '@configurable_product3->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@configurable_product3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: configurable
+            featured: false
+            newArrival: false
+            name: 'Configurable Product 3'
+            shortDescription: 'Configurable Product 3 Short Description'
+            description: 'Configurable Product 3 Description'
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+            productAttributes:
+                testAttrString: null
+                testAttrBoolean: false
+                testAttrFloat: 1.5
+                testAttrMoney: null
+                testAttrDateTime: null
+                testAttrManyToOne:
+                    id: '<toString(@customer4->id)>'
+                    targetValue: 'Company 4'
+                testToOneId: null
+                testAttrMultiEnum: []
+                testAttrManyToMany: []
+                testToManyId: []
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
+            url: null
+            urls: []
+            prices: []
+            lowInventory: false
+            upcoming: false
+            availabilityDate: null
+            variantAttributeNames:
+                - testAttrEnum
+                - testAttrBoolean
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            variantProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product3_variant1->id)>' }
+                    - { type: products, id: '<toString(@configurable_product3_variant2->id)>' }
+                    - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }
+            parentProducts:
+                data: []
+            images:
+                data: []

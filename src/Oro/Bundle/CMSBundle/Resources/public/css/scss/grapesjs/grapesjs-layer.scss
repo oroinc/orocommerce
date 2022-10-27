@@ -1,0 +1,61 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &layer {
+        background: none;
+        &.#{$app-prefix}hovered {
+            .#{$app-prefix}layer-title {
+                background-color: $primary-860;
+                border-bottom: none;
+            }
+        }
+
+        &.#{$app-prefix}selected {
+            .#{$app-prefix}layer-title {
+                background-color: $primary-800;
+            }
+        }
+
+        .#{$app-prefix}layer-title {
+            background-color: $primary-860;
+            border-bottom: none;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        &-vis {
+            svg {
+                width: 13px;
+            }
+        }
+
+        &-title-inn {
+            display: block;
+        }
+
+        &-caret {
+            left: -8px;
+
+            &.#{$app-prefix}layer-open {
+                top: 4px;
+            }
+
+            svg {
+                width: 15px;
+            }
+        }
+
+        &-move {
+            padding: 9px 10px 7px 5px;
+        }
+
+        &-name {
+            padding: 5px 7px;
+            overflow: visible;
+        }
+
+        &-count {
+            top: 7px;
+        }
+    }
+}

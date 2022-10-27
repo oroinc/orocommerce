@@ -17,10 +17,6 @@ class FedexResponseCacheKey implements FedexResponseCacheKeyInterface
      */
     private $settings;
 
-    /**
-     * @param FedexRequestInterface    $request
-     * @param FedexIntegrationSettings $settings
-     */
     public function __construct(FedexRequestInterface $request, FedexIntegrationSettings $settings)
     {
         $this->request = $request;

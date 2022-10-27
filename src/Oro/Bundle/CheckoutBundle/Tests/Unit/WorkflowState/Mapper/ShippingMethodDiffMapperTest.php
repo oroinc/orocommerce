@@ -13,7 +13,7 @@ class ShippingMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     private $checkoutShippingMethodsProviderMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkoutShippingMethodsProviderMock = $this
             ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
@@ -22,7 +22,7 @@ class ShippingMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

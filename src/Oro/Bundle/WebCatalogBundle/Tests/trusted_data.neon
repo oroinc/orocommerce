@@ -1,0 +1,7 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    variables:
+        Oro\Bundle\WebCatalogBundle\Api\Processor\ComputeContentNodeUrlFields:
+            getQueryForLoadUrls:
+                ownerEntityClass: true
+                ownerEntityIdFieldName: true

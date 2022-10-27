@@ -1,7 +1,9 @@
 @regression
+@ticket-BB-15402
+@waf-skip
+@fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Shipping rules method configurations
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create one more Flat Rate integration
     Given I login as administrator
@@ -18,17 +20,17 @@ Feature: Shipping rules method configurations
     Given I go to System/ Shipping Rules
     And click "Create Shipping Rule"
     And fill "Shipping Rule" with:
-      | Enable     | true       |
-      | Name       | Flat Rate  |
-      | Sort Order | 1          |
-      | Currency   | $          |
+      | Enable     | true      |
+      | Name       | Flat Rate |
+      | Sort Order | 1         |
+      | Currency   | $         |
     And click "Add All"
     And fill "Flat Rate Shipping Rule Form" with:
-      | Type          | Per Item  |
-      | Price         | 1.5       |
-      | Type1         | Per Order |
-      | Price1        | 2         |
-      | HandlingFee1  | 3         |
+      | Type for Flat Rate          | Per Item  |
+      | Price for Flat Rate         | 1.5       |
+      | Type for Flat Rate 2        | Per Order |
+      | Price for Flat Rate 2       | 2         |
+      | HandlingFee for Flat Rate 2 | 3         |
     When save and close form
     Then should see "Shipping rule has been saved" flash message
 
@@ -43,17 +45,39 @@ Feature: Shipping rules method configurations
     Given I go to System/ Shipping Rules
     And click edit "Flat Rate" in grid
     Then I should see "Flat Rate Disabled"
-    Then I should see "Price: $2.0000, Handling Fee: $3.0000, Type: Per Order"
+    Then I should see "Price: $2.00, Handling Fee: $3.00, Type: Per Order"
     And fill "Flat Rate Shipping Rule Form" with:
-      | HandlingFee |  |
+      | HandlingFee for Flat Rate 2 |  |
     And I click on empty space
     And fill "Shipping Rule" with:
       | Currency | € |
-    Then I should see "Price: €2.0000, Type: Per Order"
+    Then I should see "Price: €2.00, Type: Per Order"
     And I click "Flat Rate Shipping Method Icon"
     Then I should not see "Flat Rate Shipping Method Body"
     When I save and close form
     Then I should see "Shipping rule has been saved" flash message
+
+  Scenario: Change default language to Zulu and translate Disabled flag of shipping method config
+    When I go to System / Configuration
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And I fill form with:
+      | Enabled Localizations | [English, Zulu_Loc] |
+      | Default Localization  | Zulu_Loc            |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+
+    When I go to System / Configuration
+    And go to System/Localization/Translations
+    And filter Translated Value as is empty
+    And filter Key as is equal to "oro.shipping.shippingmethodconfig.disabled"
+    And I edit "oro.shipping.shippingmethodconfig.disabled" Translated Value as "Disabled - Zulu"
+    Then I should see following records in grid:
+      | Disabled - Zulu |
+
+  Scenario: Check translations for grid view list
+    Given I go to System/ Shipping Rules
+    When click edit "Flat Rate" in grid
+    Then I should see "Flat Rate Disabled - Zulu"
 
   Scenario: Enable first Flat Rate integration
     Given I go to System/ Integrations/ Manage Integrations
@@ -70,10 +94,10 @@ Feature: Shipping rules method configurations
       | Currency   | $                         |
     And I click "Add All"
     And I fill "Flat Rate Shipping Rule Form" with:
-      | Type   | Per Item  |
-      | Price  | 1.5       |
-      | Type1  | Per Order |
-      | Price1 | 2         |
+      | Type for Flat Rate 2  | Per Item  |
+      | Price for Flat Rate 2 | 1.5       |
+      | Type for Flat Rate    | Per Order |
+      | Price for Flat Rate   | 2         |
     When I save and close form
     Then I should see "Shipping rule has been saved" flash message
     Then I should see Shipping Rule with:

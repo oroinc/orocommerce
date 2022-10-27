@@ -13,7 +13,7 @@ class ProductImportProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processor = new ProductImportProcessor();
     }

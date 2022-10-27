@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var PaymentMethodSelectorComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var routing = require('routing');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const routing = require('routing');
 
-    PaymentMethodSelectorComponent = BaseComponent.extend({
+    const PaymentMethodSelectorComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -38,20 +37,23 @@ define(function(require) {
         disposable: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function PaymentMethodSelectorComponent() {
-            PaymentMethodSelectorComponent.__super__.constructor.apply(this, arguments);
+        constructor: function PaymentMethodSelectorComponent(options) {
+            PaymentMethodSelectorComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
-            this.$el.on('change', this.options.selectors.radio, $.proxy(this.updateForms, this));
+
+            this.updateForms = this.updateForms.bind(this);
+
+            this.$el.on('change', this.options.selectors.radio, this.updateForms);
 
             mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
             mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
@@ -60,7 +62,7 @@ define(function(require) {
 
             this.$el.on(
                 this.options.redirectEvent,
-                _.debounce(_.bind(this.redirectToHomepage, this), this.options.delay)
+                _.debounce(this.redirectToHomepage.bind(this), this.options.delay)
             );
 
             this.$el.find(this.options.selectors.radio).filter(':selected').trigger('change');
@@ -74,7 +76,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed || !this.disposable) {
@@ -92,7 +94,7 @@ define(function(require) {
         },
 
         updateForms: function(e) {
-            var $element = $(e.target);
+            const $element = $(e.target);
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
             this.refreshPaymentMethod();
@@ -117,13 +119,13 @@ define(function(require) {
         },
 
         refreshPaymentMethod: function() {
-            var actualMethod = this.getPaymentMethod();
+            const actualMethod = this.getPaymentMethod();
 
             mediator.trigger('checkout:payment:method:changed', {paymentMethod: actualMethod});
         },
 
         getPaymentMethod: function() {
-            var $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
+            const $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
             return $checkedRadio.val();
         }
     });

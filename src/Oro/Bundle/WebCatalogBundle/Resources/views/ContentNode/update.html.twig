@@ -1,4 +1,4 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% extends '@OroUI/actions/update.html.twig' %}
 
 {% set web_catalog = entity.webCatalog %}
 
@@ -13,6 +13,8 @@
 {% oro_title_set({params : {'%webCatalogName%': web_catalog.name} }) %}
 
 {% block ownerLink %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% if isDesktopVersion() and web_catalog is not null %}
         {% set ownerLink = UI.entityOwnerLink(web_catalog) %}
         <li>{{ ownerLink }}{% placeholder additional_owner_info with {entity: web_catalog} %}</li>
@@ -38,6 +40,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {% if entity.parentNode is empty %}
@@ -57,10 +61,15 @@
     {% endif %}
 
     {{ UI.cancelButton(cancelPath) }}
-    {{ UI.saveAndStayButton() }}
+    {{ UI.saveAndStayButton({
+        'route': 'oro_content_node_update',
+        'params': {'id': '$id'}
+    }) }}
 {% endblock navButtons %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% set id = 'web-catalog-tree-edit' %}
 
     {% set formRows = [
@@ -83,6 +92,7 @@
                  }
              }|json_encode }}"
              data-layout="separate"
+             class="content-node-use-parent"
         >
             {{ form_row(form.parentScopeUsed) }}
             <div class="scope-elements">
@@ -108,14 +118,24 @@
             'title': 'oro.webcatalog.sections.use_for'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [scopes]
+                'data': [
+                    scopes,
+                    form_errors(form.scopes)
+                ]
             }]
         },
         {
             'title': 'oro.webcatalog.contentvariant.entity_plural_label'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [form_widget(form.contentVariants)]
+                'data': [
+                    form_widget(
+                        form.contentVariants,
+                        {
+                            'expandedContentVariantForms': expandedContentVariantForms is defined ? expandedContentVariantForms : []
+                        }
+                    )
+                ]
             }]
         }
     ] %}
@@ -141,15 +161,18 @@
         'onRootSelectRoute': 'oro_content_node_update',
         'onSelectRoute' : 'oro_content_node_update',
         'onMoveRoute' : 'oro_content_node_move',
+        'contentNodeUpdateRoute': 'oro_content_node_update',
         'nodeId': nodeId,
+        'contentNodeFormSelector': '#' ~ form.vars.id,
         'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
     } %}
 
     <div class="sidebar-container">
-        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
-            scrollbar: '[data-role="jstree-container"]'
+        {% embed "@OroUI/content_sidebar.html.twig" with {options: {
+            fixSidebarHeight: false
         }} %}
             {% block sidebar %}
+                {% import '@OroUI/macros.html.twig' as UI %}
                 {{ UI.renderJsTree(
                     {
                         'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,

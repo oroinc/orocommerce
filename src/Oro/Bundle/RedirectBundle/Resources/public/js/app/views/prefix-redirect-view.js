@@ -1,17 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var PrefixRedirect;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export orowebcatalog/js/app/views/scope-toggle-view
      * @extends oroui.app.views.base.View
      * @class orowebcatalog.app.views.PrefixRedirect
      */
-    PrefixRedirect = BaseView.extend({
+    const PrefixRedirect = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -46,10 +44,10 @@ define(function(require) {
         $strategySelector: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function PrefixRedirect() {
-            PrefixRedirect.__super__.constructor.apply(this, arguments);
+        constructor: function PrefixRedirect(options) {
+            PrefixRedirect.__super__.constructor.call(this, options);
         },
 
         /**
@@ -66,10 +64,10 @@ define(function(require) {
             this.defaultPrefixValue = this.$prefixField.val();
             this.$createRedirectField = $(this.el).find(this.options.selectors.redirectSelector);
 
-            this.$prefixField.on('keyup', _.bind(this.onPrefixChange, this));
+            this.$prefixField.on('keyup', this.onPrefixChange.bind(this));
 
             if (this.$strategySelector.length) {
-                this.$strategySelector.on('change', _.bind(this.onStrategyChange, this));
+                this.$strategySelector.on('change', this.onStrategyChange.bind(this));
             }
         },
 

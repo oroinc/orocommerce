@@ -1,0 +1,35 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    properties:
+        metaTitles:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaDescriptions:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaKeywords:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    properties:
+        metaTitles:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaDescriptions:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaKeywords:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    properties:
+        metaTitles:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaDescriptions:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaKeywords:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    properties:
+        metaTitles:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaDescriptions:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+        metaKeywords:
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~

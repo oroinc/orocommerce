@@ -1,2 +1,2 @@
-{% import 'OroPaymentBundle:PaymentMethodsConfigsRule:macros.html.twig' as PayRuleMacro %}
+{% import '@OroPayment/PaymentMethodsConfigsRule/macros.html.twig' as PayRuleMacro %}
 {{ PayRuleMacro.renderPaymentMethodsConfigs(record.getValue('methodConfigs').toArray(), record.getValue('currency'))}}

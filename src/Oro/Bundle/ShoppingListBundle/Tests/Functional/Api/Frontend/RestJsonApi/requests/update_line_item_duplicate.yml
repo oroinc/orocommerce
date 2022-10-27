@@ -1,0 +1,20 @@
+data:
+    type: shoppinglistitems
+    id: '<toString(@line_item2->id)>'
+    attributes:
+        quantity: 1
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'
+        parentProduct:
+            data: null
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'

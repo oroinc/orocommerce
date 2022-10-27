@@ -24,7 +24,7 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
      */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
@@ -58,9 +58,13 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
      *
      * @param ContentVariantStub $contentVariant
      * @param bool $expectedIncludeSubcategories
+     * @param bool $expectedOverrideVariantConfiguration
      */
-    public function testGetRouteData(ContentVariantStub $contentVariant, $expectedIncludeSubcategories)
-    {
+    public function testGetRouteData(
+        ContentVariantStub $contentVariant,
+        $expectedIncludeSubcategories,
+        $expectedOverrideVariantConfiguration
+    ) {
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 42]);
         $contentVariant->setCategoryPageCategory($category);
@@ -68,9 +72,27 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             new RouteData(
                 'oro_product_frontend_product_index',
-                ['categoryId' => 42, 'includeSubcategories' => $expectedIncludeSubcategories]
+                [
+                    'categoryContentVariantId' => 1,
+                    'categoryId' => 42,
+                    'includeSubcategories' => $expectedIncludeSubcategories,
+                    'overrideVariantConfiguration' => $expectedOverrideVariantConfiguration
+                ]
             ),
             $this->type->getRouteData($contentVariant)
+        );
+    }
+
+    public function testGetAttachedEntity()
+    {
+        /** @var Category $category */
+        $category = $this->getEntity(Category::class, ['id' => 42]);
+        $contentVariant = new ContentVariantStub();
+        $contentVariant->setCategoryPageCategory($category);
+
+        $this->assertEquals(
+            $category,
+            $this->type->getAttachedEntity($contentVariant)
         );
     }
 
@@ -81,13 +103,39 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'include subcategories' => [
-                'contentVariant' => (new ContentVariantStub())->setExcludeSubcategories(false),
-                'expectedIncludeSubcategories' => true
+                'contentVariant' => (new ContentVariantStub())
+                    ->setExcludeSubcategories(false)
+                    ->setOverrideVariantConfiguration(false),
+                'expectedIncludeSubcategories' => true,
+                'overrideVariantConfiguration' => false
             ],
             'exclude subcategories' => [
-                'contentVariant' => (new ContentVariantStub())->setExcludeSubcategories(true),
-                'expectedIncludeSubcategories' => false
+                'contentVariant' => (new ContentVariantStub())
+                    ->setExcludeSubcategories(true)
+                    ->setOverrideVariantConfiguration(false),
+                'expectedIncludeSubcategories' => false,
+                'overrideVariantConfiguration' => false
+            ],
+            'override variant configuration' => [
+                'contentVariant' => (new ContentVariantStub())
+                    ->setExcludeSubcategories(true)
+                    ->setOverrideVariantConfiguration(true),
+                'expectedIncludeSubcategories' => false,
+                'overrideVariantConfiguration' => true
             ]
         ];
+    }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(Category::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'IDENTITY(e.category_page_category)',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
+        );
     }
 }

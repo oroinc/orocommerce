@@ -2,255 +2,238 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor;
-use Oro\Bundle\SEOBundle\Async\Topics;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
-use Oro\Component\MessageQueue\Test\JobRunner as TestJobRunner;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
-use Oro\Component\Website\WebsiteInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    const JOB_ID = 123;
-    const WEBSITE_ID = 7;
-    const TYPE = 'someType';
-    const VERSION = 123;
+    use EntityTrait;
 
-    /**
-     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $session;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $jobRunner;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject $sitemapDumper;
 
-    /**
-     * @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $sitemapDumper;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /**
-     * @var SitemapMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
 
-    /**
-     * @var GenerateSitemapByWebsiteAndTypeProcessor
-     */
-    private $processor;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    protected function setUp()
+    private GenerateSitemapByWebsiteAndTypeProcessor $processor;
+
+    protected function setUp(): void
     {
-        $this->session = $this->createMock(SessionInterface::class);
-
-        $this->jobRunner = $this->getMockBuilder(JobRunner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->sitemapDumper = $this->createMock(SitemapDumperInterface::class);
-        $this->messageFactory = $this->getMockBuilder(SitemapMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->processor = new GenerateSitemapByWebsiteAndTypeProcessor(
             $this->jobRunner,
-            $this->logger,
+            $this->doctrine,
             $this->sitemapDumper,
-            $this->messageFactory
+            $this->logger,
+            $this->websiteManager,
+            $this->configManager
         );
     }
 
-    public function testGetSubscribedTopics()
+    private function getSession(): SessionInterface
     {
-        $this->assertEquals(
-            [Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE],
+        return $this->createMock(SessionInterface::class);
+    }
+
+    private function getMessage(array $body): MessageInterface
+    {
+        $message = new Message();
+        $message->setBody($body);
+
+        return $message;
+    }
+
+    public function testGetSubscribedTopics(): void
+    {
+        self::assertEquals(
+            [GenerateSitemapByWebsiteAndTypeTopic::getName()],
             GenerateSitemapByWebsiteAndTypeProcessor::getSubscribedTopics()
         );
     }
 
-    public function testProcessWhenInvalidJobIdGiven()
+    public function testProcessWhenWebsiteNotFound(): void
     {
-        $messageBody = [
-            SitemapMessageFactory::WEBSITE_ID => self::WEBSITE_ID,
-            SitemapMessageFactory::TYPE => self::TYPE
-        ];
+        $jobId = 100;
+        $websiteId = 123;
+        $message = $this->getMessage([
+            'jobId' => $jobId,
+            'version' => 1,
+            'websiteId' => $websiteId,
+            'type' => 'test_type',
+        ]);
 
-        $exception = new InvalidArgumentException();
-        $this->messageFactory->expects($this->once())
-            ->method('getJobIdFromMessage')
-            ->willThrowException($exception);
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->with($jobId)
+            ->willReturnCallback(function (int $jobId, \Closure $callback) {
+                return $callback($this->jobRunner, new Job());
+            });
 
-        $this->logger->expects($this->once())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, $websiteId)
+            ->willReturn(null);
+
+        $this->websiteManager
+            ->expects(self::never())
+            ->method('setCurrentWebsite');
+        $this->configManager
+            ->expects(self::never())
+            ->method('setScopeId');
+
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
-                'Queue Message does not contain correct jobId',
-                [
-                    'exception' => $exception,
-                ]
+                'Unexpected exception occurred during generating a sitemap of a specific type for a website.',
+                ['exception' => new \RuntimeException('The website does not exist.')]
             );
 
-        $this->createProcessorWithTestJobRunner();
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(JSON::encode($messageBody));
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
-    }
-
-    public function testProcessWhenThrowsInvalidArgumentException()
-    {
-        $messageBody = [
-            SitemapMessageFactory::JOB_ID => self::JOB_ID,
-            SitemapMessageFactory::WEBSITE_ID => self::WEBSITE_ID,
-            SitemapMessageFactory::TYPE => self::TYPE
-        ];
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-        $message
-            ->expects($this->any())
-            ->method('getBody')
-            ->willReturn(JSON::encode($messageBody));
-
-        $exception = new InvalidArgumentException();
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($messageBody)
-            ->willThrowException($exception);
-
-        $this->logger
-            ->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-        $this->createProcessorWithTestJobRunner();
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
-    }
-
-    public function testProcessWhenThrowsException()
-    {
-        $messageBody = [
-            SitemapMessageFactory::JOB_ID => self::JOB_ID,
-            SitemapMessageFactory::WEBSITE_ID => self::WEBSITE_ID,
-            SitemapMessageFactory::TYPE => self::TYPE
-        ];
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-        $message
-            ->expects($this->any())
-            ->method('getBody')
-            ->willReturn(JSON::encode($messageBody));
-
-        $exception = new \Exception();
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->assertMessageFactoryCalled($messageBody, $website);
-
-        $this->sitemapDumper->expects($this->once())
-            ->method('dump')
-            ->with($website, self::VERSION, self::TYPE)
-            ->willThrowException($exception);
-
-        $this->logger
-            ->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'exception' => $exception,
-                    'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
-                ]
-            );
-
-        $this->createProcessorWithTestJobRunner();
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
-    }
-
-    public function testProcess()
-    {
-        $messageBody = [
-            SitemapMessageFactory::JOB_ID => self::JOB_ID,
-            SitemapMessageFactory::WEBSITE_ID => self::WEBSITE_ID,
-            SitemapMessageFactory::TYPE => self::TYPE
-        ];
-
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-        $message
-            ->expects($this->any())
-            ->method('getBody')
-            ->willReturn(JSON::encode($messageBody));
-
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->assertMessageFactoryCalled($messageBody, $website);
-
-        $this->sitemapDumper->expects($this->once())
-            ->method('dump')
-            ->with($website, self::VERSION, self::TYPE);
-
-        $this->createProcessorWithTestJobRunner();
-
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $this->session));
-    }
-
-    private function createProcessorWithTestJobRunner()
-    {
-        $this->jobRunner = new TestJobRunner();
-
-        $this->processor = new GenerateSitemapByWebsiteAndTypeProcessor(
-            $this->jobRunner,
-            $this->logger,
-            $this->sitemapDumper,
-            $this->messageFactory
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
         );
     }
 
-    /**
-     * @param array $messageBody
-     * @param WebsiteInterface $website
-     */
-    private function assertMessageFactoryCalled(array $messageBody, WebsiteInterface $website = null)
+    public function testProcessWhenDumpFailed(): void
     {
-        $this->messageFactory->expects($this->once())
-            ->method('getJobIdFromMessage')
-            ->with($messageBody)
-            ->willReturn(self::JOB_ID);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($messageBody)
+        $jobId = 100;
+        $version = 1;
+        $websiteId = 123;
+        $type = 'test_type';
+        $message = $this->getMessage([
+            'jobId' => $jobId,
+            'version' => $version,
+            'websiteId' => $websiteId,
+            'type' => $type,
+        ]);
+
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->with($jobId)
+            ->willReturnCallback(function (int $jobId, \Closure $callback) {
+                return $callback($this->jobRunner, new Job());
+            });
+
+        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, $websiteId)
             ->willReturn($website);
-        $this->messageFactory->expects($this->once())
-            ->method('getTypeFromMessage')
-            ->with($messageBody)
-            ->willReturn(self::TYPE);
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($messageBody)
-            ->willReturn(self::VERSION);
+
+        $this->websiteManager
+            ->expects(self::once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects(self::once())
+            ->method('setScopeId')
+            ->with($websiteId);
+
+        $exception = new \Exception('some error');
+        $this->sitemapDumper->expects(self::once())
+            ->method('dump')
+            ->with(self::identicalTo($website), $version, $type)
+            ->willThrowException($exception);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during generating a sitemap of a specific type for a website.',
+                ['exception' => $exception]
+            );
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcess(): void
+    {
+        $jobId = 100;
+        $version = 1;
+        $websiteId = 123;
+        $type = 'test_type';
+        $message = $this->getMessage([
+            'jobId' => $jobId,
+            'version' => $version,
+            'websiteId' => $websiteId,
+            'type' => $type,
+        ]);
+
+        $this->jobRunner->expects(self::once())
+            ->method('runDelayed')
+            ->with($jobId)
+            ->willReturnCallback(function (int $jobId, \Closure $callback) {
+                return $callback($this->jobRunner, new Job());
+            });
+
+        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, $websiteId)
+            ->willReturn($website);
+
+        $this->websiteManager
+            ->expects(self::once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects(self::once())
+            ->method('setScopeId')
+            ->with($websiteId);
+
+        $this->sitemapDumper->expects(self::once())
+            ->method('dump')
+            ->with(self::identicalTo($website), $version, $type);
+
+        $this->logger->expects(self::never())
+            ->method(self::anything());
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
+        );
     }
 }

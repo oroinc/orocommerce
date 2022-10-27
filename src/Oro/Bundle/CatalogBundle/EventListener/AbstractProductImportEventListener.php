@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+/**
+ * Gets categories depending on different criterias
+ */
 abstract class AbstractProductImportEventListener
 {
     const CATEGORY_KEY = 'category.default.title';
@@ -26,13 +30,13 @@ abstract class AbstractProductImportEventListener
     /** @var array */
     protected $categoriesByProduct = [];
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param string $categoryClass
-     */
-    public function __construct(ManagerRegistry $registry, $categoryClass)
+    /** @var AclHelper */
+    private $aclHelper;
+
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper, string $categoryClass)
     {
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
         $this->categoryClass = $categoryClass;
     }
 
@@ -57,6 +61,7 @@ abstract class AbstractProductImportEventListener
     /**
      * @param string $categoryDefaultTitle
      * @return null|Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     protected function getCategoryByDefaultTitle($categoryDefaultTitle)
     {
@@ -64,7 +69,8 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByTitle[$categoryDefaultTitle];
         }
 
-        $category = $this->getCategoryRepository()->findOneByDefaultTitle($categoryDefaultTitle);
+        $categoryRepository = $this->getCategoryRepository();
+        $category = $this->getCategory($categoryRepository->findOneByDefaultTitleQueryBuilder($categoryDefaultTitle));
         if (!$category) {
             $this->categoriesByTitle[$categoryDefaultTitle] = null;
 
@@ -89,7 +95,8 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByProduct[$sku];
         }
 
-        $category = $this->getCategoryRepository()->findOneByProductSku($sku, $includeTitles);
+        $categoryRepository = $this->getCategoryRepository();
+        $category = $this->getCategory($categoryRepository->findOneByProductSkuQueryBuilder($sku, $includeTitles));
         if (!$category) {
             $this->categoriesByProduct[$sku] = null;
 
@@ -99,5 +106,15 @@ abstract class AbstractProductImportEventListener
         $this->categoriesByProduct[$sku] = $category;
 
         return $category;
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function getCategory($queryBuilder): ?Category
+    {
+        $query = $this->aclHelper->apply($queryBuilder);
+
+        return $query->getOneOrNullResult();
     }
 }

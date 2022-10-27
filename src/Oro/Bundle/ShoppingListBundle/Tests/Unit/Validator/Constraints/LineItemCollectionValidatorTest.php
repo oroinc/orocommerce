@@ -2,72 +2,59 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LineItemCollectionValidatorTest extends \PHPUnit\Framework\TestCase
+class LineItemCollectionValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /**
-     * @var LineItemCollectionValidator
-     */
-    protected $lineItemCollectionValidator;
-
-    /** @var
-     * Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint
-     */
-    protected $constraint;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->lineItemCollectionValidator = new LineItemCollectionValidator($this->eventDispatcher);
-        $this->constraint = $this->getMockBuilder(LineItemCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
     }
 
-    public function testValidateIgnoredIfNoListeners()
+    protected function createValidator(): LineItemCollectionValidator
+    {
+        return new LineItemCollectionValidator($this->eventDispatcher);
+    }
+
+    public function testValidateIgnoredIfNoListeners(): void
     {
         $this->eventDispatcher->expects($this->once())
             ->method('hasListeners')
             ->willReturn(false);
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
-        $this->lineItemCollectionValidator->validate([], $this->constraint);
+
+        $constraint = $this->createMock(LineItemCollection::class);
+        $this->validator->validate([], $constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateBuildViolation()
+    public function testValidateBuildViolation(): void
     {
         $this->eventDispatcher->expects($this->once())
             ->method('hasListeners')
             ->willReturn(true);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->willReturnCallback(
-                function ($eventName, $event) {
-                    $event->addError('testSku', 'testMessage');
-                }
-            );
-        $executionContext = $this->createMock(ExecutionContextInterface::class);
-        $this->lineItemCollectionValidator->initialize($executionContext);
-        $violationBuilder = $this->getMockBuilder(ConstraintViolationBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $executionContext->expects($this->once())
-            ->method('buildViolation')
-            ->willReturn($violationBuilder);
-        $violationBuilder->expects($this->once())
-            ->method('atPath')
-            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
-        $this->lineItemCollectionValidator->validate([], $this->constraint);
+            ->willReturnCallback(function (LineItemValidateEvent $event) {
+                $event->addErrorByUnit('testSku', 'item', 'testMessage');
+
+                return $event;
+            });
+
+        $constraint = $this->createMock(LineItemCollection::class);
+        $this->validator->validate([], $constraint);
+
+        $this->buildViolation('testMessage')
+            ->atPath('property.path.product.testSku.item')
+            ->assertRaised();
     }
 }

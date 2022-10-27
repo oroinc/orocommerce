@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginConfigSearchProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +23,7 @@ class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -44,9 +44,6 @@ class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->provider->supports($name));
     }
 
-    /**
-     * @return array
-     */
     public function supportsDataProvider(): array
     {
         return [
@@ -62,7 +59,7 @@ class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function ($str) {
                 return $str . ' TRANS';
             });
-        
+
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_shipping.shipping_origin')
@@ -75,7 +72,7 @@ class ShippingOriginConfigSearchProviderTest extends \PHPUnit\Framework\TestCase
                 'street' => 'Street Name',
                 'street2' => 'Street2 Name',
             ]);
-        
+
         $this->assertEquals(
             [
                 'oro.shipping.shipping_origin.country.label TRANS',

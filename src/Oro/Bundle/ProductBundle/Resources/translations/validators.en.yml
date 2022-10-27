@@ -11,10 +11,17 @@ oro:
             unique_variants_combination.message: "Can't save product variants. Configurable attribute combinations should be unique."
             variant_field_required.message: "Can't save product variants. Configurable attribute should be selected"
             has_no_filled_field.message: "Can't save product variants. Product \"%product_sku%\" has no filled field(s) \"%fields%\" "
+            belongs_another_family.message: "Can't save product variants. Configurable product and product variant(s) \"%products_sku%\" should belongs to the same product family."
 
         attribute_family:
             used_in_product_variant_field.message: "Attributes %names% used as configurable attributes in products: %products%"
             empty_configurable_attributes.message: "Configurable product requires at least one filterable attribute of the Select or Boolean type to enable product variants. The provided product family does not fit for configurable products."
+            ignored_attributes.message: >
+                {1} Row contains a non-empty value in "%attributes%" column. This product does not have "%attributes%" attribute and this value was ignored.|
+                ]1,Inf[ Row contains a non-empty values in "%attributes%" columns. This product does not have "%attributes%" attributes and this values were ignored.
+
+        attribute_value:
+            used_in_product_variant_field.message: "The \"%optionLabels%\" options cannot be deleted because they are used in the following configurable products: %productSkus%"
 
         product_variant_field:
             unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
@@ -27,20 +34,26 @@ oro:
         at_least_one_item: Please add at least one item
 
         sku.blank: SKU should not be blank.
+        sku.not_match_regex: 'This value should contain only latin letters, numbers and symbols "-" or "_".'
 
-        names.blank: Product Name should not be blank.
+        names:
+            blank: Product Name should not be blank.
+            default:
+                blank: Product default name is blank
 
         productlineitem:
             quantity:
                 greaterThanZero: Quantity should be greater than 0
+                invalid_precision: The precision for the unit "{{ unit }}" is not valid.
 
         productunit:
-            invalid: 'Please enter valid unit of measurement'
+            invalid: The product unit does not exist for the product.
             precision.blank: Precision should not be blank.
             unit.blank: Unit should not be blank.
 
         unit_precisions_items:
             blank: 'Please add one or more product units.'
+            primary_precision_not_in_collection: 'A primary product unit precision should be in the collection of product unit precisions.'
 
         frontend:
             quick_add:
@@ -64,7 +77,7 @@ oro:
             type_restriction: 'You cannot choose multiple types with the same value "%type%"'
 
         product_collection:
-            unique_segment_name.message: 'This name already in use'
+            unique_segment_name.message: 'There is another segment with a similar name.'
             blank_filters_or_included: "Should be specified filters or added some products manually."
             blank_condition_item: "Conditions in filters should not be blank."
             blank_condition_group: "Conditions groups in filters should not be blank."
@@ -72,6 +85,15 @@ oro:
         related_items:
             related_product:
                 relation_already_exists: "Relation between products already exists."
+
+        import:
+            sku:
+                column_missing: 'SKU column is missing'
+            related_sku:
+                column_missing: 'Related SKUs column is missing'
+                empty_sku: 'Related SKUs collection contains empty SKU. Item data: %data%'
+                self_relation: 'It is not possible to create relations from product to itself.'
+                max_relations: 'It is not possible to add more items, because of the limit of relations.'
 
 "Related Items functionality is disabled.": "Related Items functionality is disabled."
 "It is not possible to create relations from product to itself.": "It is not possible to create relations from product to itself."

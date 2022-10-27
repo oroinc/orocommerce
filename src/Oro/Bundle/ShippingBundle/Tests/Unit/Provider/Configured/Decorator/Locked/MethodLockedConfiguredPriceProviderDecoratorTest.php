@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Configured\Decorator\MethodLocked;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Configured\Decorator\Locked;
 
 // @codingStandardsIgnoreStart
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -24,7 +24,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewor
      */
     private $testedProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->parentProviderMock = $this
             ->createMock(ShippingConfiguredPriceProviderInterface::class);

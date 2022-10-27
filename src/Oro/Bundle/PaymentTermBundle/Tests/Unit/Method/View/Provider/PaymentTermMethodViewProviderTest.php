@@ -1,8 +1,7 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View;
+namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider\AbstractMethodViewProviderTest;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
@@ -11,7 +10,7 @@ use Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvi
 
 class PaymentTermMethodViewProviderTest extends AbstractMethodViewProviderTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->createMock(PaymentTermPaymentMethodViewFactoryInterface::class);
         $this->configProvider = $this->createMock(PaymentTermConfigProviderInterface::class);

@@ -1,0 +1,15 @@
+data:
+    type: landingpages
+    id: '<toString(@page1->id)>'
+    attributes:
+        content: '<style type="text/css">.test {color: red}</style>Page 1 content. Twig Expr: "test".'
+        createdAt: '@page1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@page1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        title: 'Page 1 Spanish Title'
+        url: '/page1_slug_es'
+        urls:
+            - { url: '/page1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
+            - { url: '/page1_slug_default', localizationId: '<toString(@current_localization->id)>' }
+        metaTitle: 'Page 1 Spanish Meta Title'
+        metaDescription: 'Page 1 Spanish Meta Description'
+        metaKeywords: 'Page 1 Spanish Meta Keywords'

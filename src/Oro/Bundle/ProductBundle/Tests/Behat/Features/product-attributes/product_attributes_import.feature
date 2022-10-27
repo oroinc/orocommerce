@@ -1,8 +1,8 @@
 @regression
 @ticket-BB-13273
 @ticket-BB-14555
-# Unskip after BB-14918
-@skip
+@ticket-BB-16427
+
 Feature: Product attributes import
   In order to effectively manage attributes for Product entity
   As an Administrator
@@ -28,8 +28,8 @@ Feature: Product attributes import
     And I see attribute.filterable column
     And I see attribute.filter_by column
     And I see attribute.sortable column
-    And I see attribute.enabled column
-    And I see attribute.visible column
+    And I see frontend.is_editable column
+    And I see frontend.is_displayable column
     And I see email.available_in_template column
     And I see datagrid.is_visible column
     And I see datagrid.show_filter column
@@ -37,7 +37,6 @@ Feature: Product attributes import
     And I see view.is_displayable column
     And I see view.priority column
     And I see search.searchable column
-    And I see search.title_field column
     And I see dataaudit.auditable column
     And I see extend.precision column
     And I see extend.scale column
@@ -54,7 +53,7 @@ Feature: Product attributes import
   Scenario: Import BigInt Product Attribute as "Serialized field"
     Given I fill template with data:
       | fieldName        | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
-      | bigIntSerialized | bigint | FieldText Label | no                   | 0                   |
+      | bigIntSerialized | bigint | FieldText Label | yes                  | 0                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     When I reload the page
@@ -73,8 +72,8 @@ Feature: Product attributes import
 
   Scenario: Import BigInt Product Attribute as "Table column"
     Given I fill template with data:
-      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
-      | bigIntTable | bigint | FieldText Label | yes                  | 0                   |
+      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible | dataaudit.auditable |
+      | bigIntTable | bigint | FieldText Label | yes                  | 0                   | 1                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     And I reload the page
@@ -90,8 +89,8 @@ Feature: Product attributes import
 
   Scenario: Import BigInt Product Attribute as "Table column" when field which requires schema update is changed
     Given I fill template with data:
-      | fieldName   | type   | entity.label    | datagrid.show_filter | datagrid.is_visible |
-      | bigIntTable | bigint | new Label       | yes                  | 1                   |
+      | fieldName   | type   | entity.label | datagrid.show_filter | datagrid.is_visible | dataaudit.auditable |
+      | bigIntTable | bigint | new Label    | yes                  | 1                   | 1                   |
     When I import file
     And Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 1, replaced: 0" text
     And I reload the page
@@ -164,22 +163,33 @@ Feature: Product attributes import
     And I import file
     Then Email should contains the following "Errors: 11 processed: 0, read: 11, added: 0, updated: 0, replaced: 0" text
     When I reload the page
-    Then there are 13 records in grid
+    Then there are 22 records in grid
+    And I sort grid by "TYPE"
+    And I sort grid by "NAME"
     And I should see following grid:
-      | NAME                         | DATA TYPE       | LABEL             | TYPE   | SCHEMA STATUS | STORAGE TYPE | ORGANIZATION | VISIBLE | AUDITABLE | PRODUCT FAMILIES |
-      | brand                        | System relation | Brand             | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
-      | descriptions                 | System relation | Description       | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
-      | featured                     | Boolean         | Is Featured       | System | Active	    | Table column | All          | No      | No        | Default          |
-      | images                       | System relation | Images            | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
-      | inventory_status             | Select          | Inventory Status  | System | Active	    | Table column | All          | No      | Yes       | Default          |
-      | metaDescriptions             | Many to many    | Meta description  | System | Active	    | Table column | All          | No      | No        | Default          |
-      | metaKeywords                 | Many to many    | Meta keywords     | System | Active	    | Table column | All          | No      | No        | Default          |
-      | metaTitles                   | Many to many    | Meta title        | System | Active	    | Table column | All          | No      | No        | Default          |
-      | names                        | System relation | Name              | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
-      | newArrival                   | Boolean         | New Arrival       | System | Active	    | Table column | All          | No      | No        | Default          |
-      | productPriceAttributesPrices | System relation | Product prices    | System | Active	    | Table column | All          | Yes     | No        | Default          |
-      | shortDescriptions            | System relation | Short Description | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
-      | sku                          | String          | SKU               | System | Active	    | Table column | All          | Yes     | Yes       | Default          |
+      | NAME                         | DATA TYPE       | LABEL             | TYPE   | SCHEMA STATUS | STORAGE TYPE     | AUDITABLE | PRODUCT FAMILIES |
+      | bigIntSerialized             | BigInt          | FieldText Label   | Custom | Active        | Serialized field | No        |                  |
+      | bigIntTable                  | BigInt          | new Label         | Custom | Active        | Table column     | Yes       |                  |
+      | brand                        | System relation | Brand             | System | Active        | Table column     | Yes       | Default          |
+      | correct_field_name           | BigInt          | label value 1     | Custom | Active        | Serialized field | No        |                  |
+      | descriptions                 | System relation | Description       | System | Active        | Table column     | No        | Default          |
+      | featured                     | Boolean         | Is Featured       | System | Active        | Table column     | No        | Default          |
+      | images                       | System relation | Images            | System | Active        | Table column     | Yes       | Default          |
+      | inventory_status             | Select          | Inventory Status  | System | Active        | Table column     | Yes       | Default          |
+      | koko                         | String          | label value 5     | Custom | Active        | Serialized field | No        |                  |
+      | LOREM                        | String          | label value 6     | Custom | Active        | Serialized field | No        |                  |
+      | metaDescriptions             | Many to many    | Meta description  | System | Active        | Table column     | No        | Default          |
+      | metaKeywords                 | Many to many    | Meta keywords     | System | Active        | Table column     | No        | Default          |
+      | metaTitles                   | Many to many    | Meta title        | System | Active        | Table column     | No        | Default          |
+      | Myand4                       | String          | label value 4     | Custom | Active        | Serialized field | No        |                  |
+      | names                        | System relation | Name              | System | Active        | Table column     | Yes       | Default          |
+      | newArrival                   | Boolean         | New Arrival       | System | Active        | Table column     | No        | Default          |
+      | productPriceAttributesPrices | System relation | Product prices    | System | Active        | Table column     | No        | Default          |
+      | shortDescriptions            | System relation | Short Description | System | Active        | Table column     | No        | Default          |
+      | sku                          | String          | SKU               | System | Active        | Table column     | Yes       | Default          |
+      | SunSet                       | String          | label value 7     | Custom | Active        | Serialized field | No        |                  |
+      | Text_underscore_text         | String          | label value 3     | Custom | Active        | Serialized field | No        |                  |
+      | Tv                           | String          | label value 2     | Custom | Active        | Serialized field | No        |                  |
     And I should not see "Update schema"
 
   Scenario: It should be impossible to updated columns with similar names
@@ -209,28 +219,40 @@ Feature: Product attributes import
     And I should not see "correctFieldName"
     And I should not see "Update schema"
 
-  Scenario: It should be possible to update columns with the same name from Entity Management
+  Scenario: It should not be possible to update attributes with the same name(there may be more than one) from any organizations
     Given I go to System/Entities/Entity Management
     And I filter Name as is equal to "Product"
     And I click View Product in grid
     And I fill template with data:
       | fieldName          | type   | entity.label                   | datagrid.show_filter | datagrid.is_visible |
       | correct_field_name | bigint | FieldText Label second updated | no                   | 0                   |
-      | correctFieldName   | bigint | FieldText Label                | no                   | 0                   |
+      | correctFieldName   | bigint | FieldText Label invalid        | no                   | 0                   |
     When I import file
-    Then Email should contains the following "Errors: 1 processed: 1, read: 2, added: 0, updated: 1, replaced: 0" text
+    Then Email should contains the following "Errors: 2 processed: 0, read: 2, added: 0, updated: 0, replaced: 0" text
     When I reload the page
-    Then I should see correct_field_name in grid
-    And I should see "FieldText Label second updated" in grid
+    Then I should see "FieldText Label updated" in grid
     And I should not see "correctFieldName"
     And I should not see "Update schema"
 
   Scenario: It should be impossible to import columns with invalid field name
     Given I go to Products/ Product Attributes
     And I fill template with data:
-      | fieldName                 | type   | entity.label       | datagrid.show_filter | datagrid.is_visible |
-      | <script>alert(1)</script> | string | string field Label | no                   | 0                   |
+      | fieldName          | type   | entity.label       | datagrid.show_filter | datagrid.is_visible |
+      | !_>invalid-name<_? | string | string field Label | no                   | 0                   |
     When I try import file
-    Then I should not see "Import File Field Validation" element with text "The mime type of the file is invalid" inside "Import File Form" element
+    Then Email should contains the following "Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
+    When I follow "Error log" link from the email
+    Then I should see "Error in row #1. fieldName: This value should start with a symbol and contain only alphabetic symbols, underscore and numbers."
+    When I login as administrator
+    And I go to Products/ Product Attributes
+    Then I should not see "Update schema"
+
+  Scenario: Check product attribute validation during import
+    Given I go to Products / Product Attributes
+    And I fill template with data:
+      | fieldName | type   | entity.label | datagrid.show_filter | datagrid.is_visible |
+      | type      | string | type.label   | yes                  | 0                   |
+    When I try import file
+    Then Email should contains the following "Errors: 1 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
     When I reload the page
     Then I should not see "Update schema"

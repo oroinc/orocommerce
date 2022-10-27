@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -61,7 +61,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         $this->executeQuery(
             'UPDATE oro_promotion_applied_discount SET updated_at = :updatedAt',
             ['updatedAt' => $now],
-            ['updatedAt' => Type::DATETIME]
+            ['updatedAt' => Types::DATETIME_MUTABLE]
         );
         $this->executeQuery(
             'UPDATE oro_promotion_applied SET updated_at = :updatedAt, created_at = :createdAt',
@@ -70,8 +70,8 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
                 'createdAt' => $now
             ],
             [
-                'updatedAt' => Type::DATETIME,
-                'createdAt' => Type::DATETIME
+                'updatedAt' => Types::DATETIME_MUTABLE,
+                'createdAt' => Types::DATETIME_MUTABLE
             ]
         );
     }
@@ -148,13 +148,10 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         }
     }
 
-    /**
-     * @param array $orderRow
-     */
     private function migrateDiscountsForOrder(array $orderRow)
     {
         $params = ['orderId' => $orderRow['id']];
-        $types = ['orderId' => Type::INTEGER];
+        $types = ['orderId' => Types::INTEGER];
 
         $this->logQuery($this->logger, $this->getDiscountsSelectStatement(), $params, $types);
         $discountStmt = $this->connection->executeQuery($this->getDiscountsSelectStatement(), $params, $types);
@@ -200,16 +197,13 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
 
                 $updateQuery = 'UPDATE oro_promotion_applied SET promotion_data = :promotionData WHERE id = :id';
                 $params = ['id' => $row['id'], 'promotionData' => $row['promotion_data']];
-                $types = ['id' => TYPE::INTEGER, 'promotionData' => Type::JSON_ARRAY];
+                $types = ['id' => Types::INTEGER, 'promotionData' => Types::JSON_ARRAY];
 
                 $this->executeQuery($updateQuery, $params, $types);
             }
         }
     }
 
-    /**
-     * @return int
-     */
     private function getOrdersSteps(): int
     {
         $qb = $this->getOrdersWithPromotionsQb()
@@ -230,9 +224,6 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
             ->where('EXISTS (SELECT 1 FROM oro_promotion_applied ap WHERE ap.order_id = o.id)');
     }
 
-    /**
-     * @return string
-     */
     private function getDiscountsSelectStatement(): string
     {
         $concatExpression = $this->getFieldConcatExpression('ad.line_item_id', 'line_items');
@@ -267,7 +258,7 @@ GROUP BY li.order_id
 SQL;
 
         $params = ['orderId' => $orderId];
-        $types = ['orderId' => Type::INTEGER];
+        $types = ['orderId' => Types::INTEGER];
 
         $this->logQuery($this->logger, $selectQuery, $params, $types);
         $productIds = $this->connection->fetchColumn($selectQuery, $params, 0, $types);
@@ -342,10 +333,6 @@ SQL;
         return $definition;
     }
 
-    /**
-     * @param array $orderRow
-     * @return string
-     */
     private function getCustomerRestrictionExpression(array $orderRow): string
     {
         $expression = 'customer.id = ' . $orderRow['customer_id'];
@@ -476,9 +463,6 @@ SQL;
         return sprintf('CAST(%s AS TEXT)%s', $fieldName, $select ? '::json' : '');
     }
 
-    /**
-     * @return int
-     */
     private function getLineItemDuplicatedQueriesQty(): int
     {
         $maxDuplicatedDeletedLineItemsPromotions = <<<SQL

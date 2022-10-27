@@ -1,12 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var AuthorizedCreditCardComponent;
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var CreditCardComponent = require('oropaypal/js/app/components/credit-card-component');
+    const mediator = require('oroui/js/mediator');
+    const CreditCardComponent = require('oropaypal/js/app/components/credit-card-component');
 
-    AuthorizedCreditCardComponent = CreditCardComponent.extend({
+    const AuthorizedCreditCardComponent = CreditCardComponent.extend({
         /**
          * @property {Object}
          */
@@ -33,14 +31,14 @@ define(function(require) {
         $differentCard: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function AuthorizedCreditCardComponent() {
-            AuthorizedCreditCardComponent.__super__.constructor.apply(this, arguments);
+        constructor: function AuthorizedCreditCardComponent(options) {
+            AuthorizedCreditCardComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options.saveForLaterUse = false;
@@ -49,9 +47,12 @@ define(function(require) {
             this.$authorizedCard = this.$el.find(this.authorizedOptions.authorizedCard);
             this.$differentCard = this.$el.find(this.authorizedOptions.differentCard);
 
+            this.showAuthorizedCard = this.showAuthorizedCard.bind(this);
+            this.showDifferentCard = this.showDifferentCard.bind(this);
+
             this.$el
-                .on('click', this.authorizedOptions.authorizedCardHandle, $.proxy(this.showAuthorizedCard, this))
-                .on('click', this.authorizedOptions.differentCardHandle, $.proxy(this.showDifferentCard, this));
+                .on('click', this.authorizedOptions.authorizedCardHandle, this.showAuthorizedCard)
+                .on('click', this.authorizedOptions.differentCardHandle, this.showDifferentCard);
         },
 
         /**
@@ -104,7 +105,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         beforeTransit: function(eventData) {
             if (!this.getGlobalPaymentValidate()) {
@@ -115,7 +116,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         handleSubmit: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod &&
@@ -126,7 +127,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed || !this.disposable) {
@@ -134,8 +135,8 @@ define(function(require) {
             }
 
             this.$el
-                .off('click', this.authorizedOptions.authorizedCardHandle, $.proxy(this.showAuthorizedCard, this))
-                .off('click', this.authorizedOptions.differentCardHandle, $.proxy(this.showDifferentCard, this));
+                .off('click', this.authorizedOptions.authorizedCardHandle, this.showAuthorizedCard)
+                .off('click', this.authorizedOptions.differentCardHandle, this.showDifferentCard);
 
             AuthorizedCreditCardComponent.__super__.dispose.call(this);
         }

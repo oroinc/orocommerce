@@ -12,9 +12,6 @@ class PaymentResultMessageProvider implements PaymentResultMessageProviderInterf
      */
     protected $paymentMethodProvider;
 
-    /**
-     * @param PaymentMethodProvider $paymentMethodProvider
-     */
     public function __construct(PaymentMethodProvider $paymentMethodProvider)
     {
         $this->paymentMethodProvider = $paymentMethodProvider;

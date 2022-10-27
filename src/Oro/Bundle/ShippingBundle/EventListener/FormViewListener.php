@@ -7,10 +7,17 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds shipping information to the product view and edit pages.
+ */
 class FormViewListener
 {
+    public const SHIPPING_BLOCK_NAME     = 'shipping';
+    public const SHIPPING_BLOCK_LABEL    = 'oro.shipping.product.section.shipping_options';
+    public const SHIPPING_BLOCK_PRIORITY = 1800;
+
     /** @var TranslatorInterface */
     protected $translator;
 
@@ -20,11 +27,6 @@ class FormViewListener
     /** @var RequestStack */
     protected $requestStack;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -35,9 +37,6 @@ class FormViewListener
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -65,38 +64,29 @@ class FormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Product:shipping_options_view.html.twig',
+            '@OroShipping/Product/shipping_options_view.html.twig',
             [
                 'entity' => $product,
                 'shippingOptions' => $shippingOptions
             ]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 600);
+        $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Product:shipping_options_update.html.twig',
+            '@OroShipping/Product/shipping_options_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options');
+        $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     * @param string $html
-     * @param string $label
-     * @param int $priority
-     */
-    protected function addBlock(ScrollData $scrollData, $html, $label, $priority = 100)
+    protected function addBlock(ScrollData $scrollData, string $html, string $label, int $priority): void
     {
         $blockLabel = $this->translator->trans($label);
-        $blockId    = $scrollData->addBlock($blockLabel, $priority);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
+        $scrollData->addNamedBlock(self::SHIPPING_BLOCK_NAME, $blockLabel, $priority);
+        $subBlockId = $scrollData->addSubBlock(self::SHIPPING_BLOCK_NAME);
+        $scrollData->addSubBlockData(self::SHIPPING_BLOCK_NAME, $subBlockId, $html);
     }
 }

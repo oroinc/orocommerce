@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
@@ -31,9 +32,19 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /**
+     * @var string
+     */
+    protected const WORKFLOW_NAME = 'b2b_flow_checkout';
+
+    /**
      * @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $validatorService;
+
+    /**
+     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $doctrineHelper;
 
     /**
      * @var QuantityToOrderConditionListener
@@ -45,10 +56,16 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $event;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validatorService = $this->createMock(QuantityToOrderValidatorService::class);
-        $this->quantityToOrderConditionListener = new QuantityToOrderConditionListener($this->validatorService);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->quantityToOrderConditionListener = new QuantityToOrderConditionListener(
+            $this->validatorService,
+            $this->doctrineHelper
+        );
+
         $this->event = new CheckoutValidateEvent();
     }
 
@@ -65,7 +82,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setWorkflowName('noname');
         $this->assertCheckoutValidateIgnored();
 
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
         $this->assertCheckoutValidateIgnored();
 
         $workflowItem->setEntity(new Checkout());
@@ -75,7 +92,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCheckoutValidateIgnored2()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
 
         $source = new CheckoutSourceStub();
         $source->setQuoteDemand(new QuoteDemand());
@@ -91,7 +108,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCheckoutValidateNotIgnoredWoSource()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
 
         $checkout = new Checkout();
         $checkout->setSource(new CheckoutSource());
@@ -99,17 +116,20 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setEntity($checkout);
 
         $this->event->setContext($workflowItem);
-        $this->validatorService->expects($this->once())
+        $this->validatorService->expects($this->exactly(2))
             ->method('isLineItemListValid')
             ->willReturn(false);
         $this->quantityToOrderConditionListener->onCheckoutValidate($this->event);
         $this->assertTrue($this->event->isCheckoutRestartRequired());
+
+        // check local cache without source entity
+        $this->quantityToOrderConditionListener->onCheckoutValidate($this->event);
     }
 
     public function testOnCheckoutValidateSetsRestartRequired()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
 
         $source = new CheckoutSourceStub();
         $source->setShoppingList(new ShoppingList());
@@ -124,6 +144,9 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
         $this->quantityToOrderConditionListener->onCheckoutValidate($this->event);
         $this->assertTrue($this->event->isCheckoutRestartRequired());
+
+        // check local cache
+        $this->quantityToOrderConditionListener->onCheckoutValidate($this->event);
     }
 
     protected function assertCheckoutValidateIgnored()
@@ -154,15 +177,20 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnStartCheckoutConditionWhenSourceEntityIsNotOfQuoteDemandType()
     {
-        $checkout = $this->createMock(Checkout::class);
-        $checkout->expects($this->once())
-            ->method('getSourceEntity')
-            ->willReturn(new \stdClass());
+        $source = new CheckoutSourceStub();
+        $source->setShoppingList(new ShoppingList());
+
+        $checkout = new Checkout();
+        $checkout->setSource($source);
 
         $event = new ExtendableConditionEvent(new ActionData(['checkout' => $checkout]));
 
         $this->validatorService->expects($this->once())
-            ->method('isLineItemListValid');
+            ->method('isLineItemListValid')
+            ->willReturn(true);
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
+
+        // check local cache
         $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
     }
 
@@ -183,8 +211,10 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(false);
 
         $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
-
         $this->assertNotEmpty($event->getErrors());
+
+        // check local cache
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
     }
 
     public function testOnStartCheckoutConditionCheckAddsNoErrorToEvent()
@@ -204,14 +234,16 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
-
         $this->assertEmpty($event->getErrors());
+
+        // check local cache
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
     }
 
     public function testOnCheckoutConditionCheckAddsError()
     {
         $workflowItem = new WorkflowItem();
-        $workflowItem->setWorkflowName('b2b_flow_checkout');
+        $workflowItem->setWorkflowName(static::WORKFLOW_NAME);
         $checkout = new Checkout();
         $source = new CheckoutSourceStub();
         $checkout->setSource($source);
@@ -219,9 +251,8 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
 
         $workflowItem->setEntity($checkout);
 
-        /** @var ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
         $event = $this->createMock(ExtendableConditionEvent::class);
-        $event->expects($this->once())
+        $event->expects($this->any())
             ->method('getContext')
             ->willReturn($workflowItem);
 
@@ -229,10 +260,13 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
             ->method('isLineItemListValid')
             ->willReturn(false);
 
-        $event->expects($this->once())
+        $event->expects($this->exactly(2))
             ->method('addError')
             ->with(QuantityToOrderConditionListener::QUANTITY_CHECK_ERROR);
 
+        $this->quantityToOrderConditionListener->onCheckoutConditionCheck($event);
+
+        // check local cache
         $this->quantityToOrderConditionListener->onCheckoutConditionCheck($event);
     }
 
@@ -253,7 +287,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('message', $errors[0]);
         $this->assertArrayHasKey('parameters', $errors[0]);
         $this->assertArrayHasKey('allowedRFP', $errors[0]['parameters']);
-        $this->assertEquals($errors[0]['message'], 'errorString');
+        $this->assertEquals('errorString', $errors[0]['message']);
         $this->assertTrue($errors[0]['parameters']['allowedRFP']);
     }
 
@@ -261,12 +295,12 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->createMock(ExtendableConditionEvent::class);
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getWorkflowName')->willReturn('b2b_flow_checkout');
+        $workflowItem->method('getWorkflowName')->willReturn(static::WORKFLOW_NAME);
         $workflowResult = $this->createMock(WorkflowResult::class);
         $workflowResult->method('has')->willReturn(true);
         $workflowItem->method('getResult')->willReturn($workflowResult);
 
-        $lineItems = [$this->createMock(LineItem::class, $this->createMock(LineItem::class))];
+        $lineItems = [$this->createMock(LineItem::class), $this->createMock(LineItem::class)];
         $shoppingList = $this->createMock(ShoppingList::class);
         $shoppingList->method('getLineItems')->willReturn($lineItems);
         $workflowResult->method('get')->willReturn($shoppingList);

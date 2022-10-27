@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener\Visibility\Restrictions;
 
+use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Expr\Expression;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -25,11 +28,6 @@ class RestrictProductVariationsEventListener
     /** @var QueryBuilderModifierInterface */
     private $dbQueryBuilderModifier;
 
-    /**
-     ** @param ConfigManager $configManager
-     * @param FrontendHelper                $frontendHelper
-     * @param QueryBuilderModifierInterface $dbQueryBuilderModifier
-     */
     public function __construct(
         ConfigManager $configManager,
         FrontendHelper $frontendHelper,
@@ -40,26 +38,41 @@ class RestrictProductVariationsEventListener
         $this->dbQueryBuilderModifier = $dbQueryBuilderModifier;
     }
 
-    /**
-     * @param ProductSearchQueryRestrictionEvent $event
-     */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        if ($this->isRestrictionApplicable()) {
+        if ($this->isRestrictionApplicableForSearchEvent($event) &&
+            !$this->isVariantCriteriaExist($event->getQuery()->getCriteria()->getWhereExpression())
+        ) {
             $event->getQuery()->getCriteria()->andWhere(
                 Criteria::expr()->eq('integer.is_variant', 0)
             );
         }
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
-        if ($this->isRestrictionApplicable()) {
+        if ($this->isRestrictionApplicableForDbEvent($event)) {
             $this->dbQueryBuilderModifier->modify($event->getQueryBuilder());
         }
+    }
+
+    protected function isRestrictionApplicableForSearchEvent(ProductSearchQueryRestrictionEvent $event): bool
+    {
+        if ($this->isRestrictionApplicable()) {
+            return true;
+        }
+
+        $aliases = $event->getQuery()->getSelectAliases();
+        if (!\in_array('autocomplete_record_id', $aliases, true) && $this->isCatalogRestrictionApplicable()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function isRestrictionApplicableForDbEvent(ProductDBQueryRestrictionEvent $event): bool
+    {
+        return $this->isRestrictionApplicable();
     }
 
     /**
@@ -73,6 +86,14 @@ class RestrictProductVariationsEventListener
             $this->frontendHelper->isFrontendRequest();
     }
 
+    protected function isCatalogRestrictionApplicable(): bool
+    {
+        $displaySimpleVariations = $this->getDisplayVariationsConfigurationValue();
+
+        return $displaySimpleVariations === Configuration::DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG &&
+            $this->frontendHelper->isFrontendRequest();
+    }
+
     /**
      * @return string
      */
@@ -80,5 +101,27 @@ class RestrictProductVariationsEventListener
     {
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::DISPLAY_SIMPLE_VARIATIONS));
+    }
+
+    /**
+     * @param Expression|null $expression
+     * @return bool
+     */
+    private function isVariantCriteriaExist(?Expression $expression)
+    {
+        if ($expression instanceof Comparison && $expression->getField() === 'integer.is_variant') {
+            return true;
+        }
+
+        if ($expression instanceof CompositeExpression) {
+            foreach ($expression->getExpressionList() as $childExpression) {
+                $result = $this->isVariantCriteriaExist($childExpression);
+                if ($result) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

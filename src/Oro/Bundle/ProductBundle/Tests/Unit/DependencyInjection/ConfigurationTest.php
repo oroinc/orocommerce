@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
@@ -16,14 +17,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
     public function testGetConfigTreeBuilder()
     {
         $configuration = new Configuration();
-        $this->assertInstanceOf(TreeBuilder::class, $configuration->getConfigTreeBuilder());
+        self::assertInstanceOf(TreeBuilder::class, $configuration->getConfigTreeBuilder());
     }
 
     public function testGetConfigKeyByName()
     {
         $key = 'options';
         $configKey = Configuration::getConfigKeyByName($key);
-        static::assertEquals('oro_product.'.$key, $configKey);
+        self::assertEquals('oro_product.'.$key, $configKey);
     }
 
     /**
@@ -148,6 +149,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => '0 * * * *',
                     'scope' => 'app'
                 ],
+                'product_collections_indexation_partial' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
                 'product_promotion_show_on_product_view' => [
                     'value' => false,
                     'scope' => 'app'
@@ -188,10 +193,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => 'inline',
                     'scope' => 'app',
                 ],
-                'matrix_form_on_shopping_list' => [
-                    'value' => 'inline',
-                    'scope'=> 'app'
-                ],
                 'matrix_form_on_product_listing' => [
                     'value' => 'inline',
                     'scope' => 'app',
@@ -207,10 +208,58 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING => [
                     'value' => true,
                     'scope' => 'app'
-                ]
+                ],
+                Configuration::DISABLE_FILTERS_ON_PRODUCT_LISTING => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                'product_image_placeholder' => [
+                    'value' => null,
+                    'scope' => 'app',
+                ],
+                'filters_display_settings_state' => [
+                    'value' => 'collapsed',
+                    'scope' => 'app'
+                ],
+                'original_file_names_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'search_autocomplete_max_products' => [
+                    'value' => 4,
+                    'scope' => 'app'
+                ],
+                'filters_position' => [
+                    'value' => 'top',
+                    'scope' => 'app'
+                ],
+                'allow_partial_product_search' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'product_data_export_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'product_prices_export_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'product_price_tiers_export_enabled' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'microdata_without_prices_disabled' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                Configuration::SCHEMA_ORG_DESCRIPTION_FIELD => [
+                    'value' => Configuration::SCHEMA_ORG_DEFAULT_DESCRIPTION,
+                    'scope' => 'app'
+                ],
             ]
         ];
 
-        $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
+        self::assertEquals($expected, $processor->processConfiguration($configuration, []));
     }
 }

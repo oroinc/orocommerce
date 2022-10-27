@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -141,7 +140,6 @@ class TaxRule implements DatesAwareInterface
     protected $createdAt;
 
     /**
-     *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
@@ -269,7 +267,6 @@ class TaxRule implements DatesAwareInterface
     {
         return $this->taxJurisdiction;
     }
-
 
     /**
      * @return \DateTime

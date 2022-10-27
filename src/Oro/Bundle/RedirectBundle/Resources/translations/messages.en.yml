@@ -2,6 +2,7 @@ oro:
     redirect:
         entity_label: Redirect
         entity_plural_label: Redirects
+        entity_grid_all_view_label: All %entity_plural_label%
         from.label: From URL
         from_prototype.label: From Slug Prototype
         from_hash.label: From URL Hash
@@ -22,7 +23,9 @@ oro:
         slug:
             entity_label:           'Slug'
             entity_plural_label:    'Slugs'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label:               'ID'
+            organization.label: Organization
             url.label:              'Url'
             route_name.label:       'Route name'
             route_parameters.label: 'Route parameters'
@@ -32,12 +35,17 @@ oro:
             localization.label: Localization
             slug_prototype.label: Slug Prototype
             parameters_hash.label: Parameters Hash
+            scopes_hash.label: Scopes Hash
 
         system_configuration:
             groups:
                 direct_urls.label: 'Direct URLs'
+                canonical_urls.label: 'Canonical URLs'
             fields:
                 enable_direct_url.label: 'Enable Direct URLs'
+                use_localized_canonical:
+                    label: 'Use localized canonical URLs'
+                    tooltip: 'Enable the option for the system to generate canonical URLs using a localized version of URL slugs, if available.'
                 canonical_url_type:
                     label: 'Canonical URL Type'
                     choice:

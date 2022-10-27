@@ -12,6 +12,9 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Resolver to apply taxes to shipping cost
+ */
 class ShippingResolver implements ResolverInterface
 {
     use CalculateAdjustmentTrait;
@@ -36,12 +39,6 @@ class ShippingResolver implements ResolverInterface
      */
     protected $taxationSettingsProvider;
 
-    /**
-     * @param TaxCalculatorInterface $incTaxCalculator
-     * @param TaxCalculatorInterface $excTaxCalculator
-     * @param MatcherInterface $matcher
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(
         TaxCalculatorInterface $incTaxCalculator,
         TaxCalculatorInterface $excTaxCalculator,
@@ -67,7 +64,7 @@ class ShippingResolver implements ResolverInterface
             return;
         }
 
-        if (!$taxable->getShippingCost()->isPositive()) {
+        if (null === $taxable->getShippingCost() || !$taxable->getShippingCost()->isPositiveOrZero()) {
             return;
         }
 

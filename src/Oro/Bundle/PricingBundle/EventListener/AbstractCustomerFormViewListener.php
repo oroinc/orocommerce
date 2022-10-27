@@ -3,14 +3,22 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AbstractCustomerFormViewListener
+/**
+ * Adds scroll blocks with price list data on edit page
+ * Adds method to add price list data on view
+ */
+abstract class AbstractCustomerFormViewListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var TranslatorInterface
      */
@@ -34,14 +42,8 @@ abstract class AbstractCustomerFormViewListener
     /**
      * @var string
      */
-    protected $updateTemplate = 'OroPricingBundle:Customer:price_list_update.html.twig';
+    protected $updateTemplate = '@OroPricing/Customer/price_list_update.html.twig';
 
-    /**
-     * @param RequestStack $requestStack
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteProviderInterface $websiteProvider
-     */
     public function __construct(
         RequestStack $requestStack,
         TranslatorInterface $translator,
@@ -54,11 +56,12 @@ abstract class AbstractCustomerFormViewListener
         $this->websiteProvider = $websiteProvider;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             $this->updateTemplate,
             ['form' => $event->getFormView()]
@@ -89,7 +92,7 @@ abstract class AbstractCustomerFormViewListener
         $fallback
     ) {
         $template = $event->getEnvironment()->render(
-            'OroPricingBundle:Customer:price_list_view.html.twig',
+            '@OroPricing/Customer/price_list_view.html.twig',
             [
                 'priceLists' => $priceLists,
                 'fallback' => $fallback

@@ -1,55 +1,71 @@
 define(function(require) {
     'use strict';
 
-    var FrontendCustomFiltersTogglePlugin;
-    var _ = require('underscore');
-    var FullScreenFiltersAction = require('orofrontend/js/app/datafilter/actions/fullscreen-filters-action');
-    var FrontendFiltersTogglePlugin = require('orofrontend/js/app/datafilter/plugins/frontend-filters-plugin');
-    var viewportManager = require('oroui/js/viewport-manager');
+    const __ = require('orotranslation/js/translator');
+    const FrontendFiltersTogglePlugin = require('orofrontend/js/app/datafilter/plugins/frontend-filters-plugin');
+    const CustomFiltersAction = require('orocustomtheme/FilterBundle/js/datagrid/actions/custom-filters-action').default;
+    const CollapsesFilters = require('orocustomtheme/FilterBundle/js/datagrid/collapsed-filters').default;
 
-    FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
+    const FrontendCustomFiltersTogglePlugin = FrontendFiltersTogglePlugin.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function FrontendCustomFiltersTogglePlugin() {
-            FrontendCustomFiltersTogglePlugin.__super__.constructor.apply(this, arguments);
+        constructor: function FrontendCustomFiltersTogglePlugin(main, options) {
+            FrontendCustomFiltersTogglePlugin.__super__.constructor.call(this, main, options);
         },
 
-        /**
-         * @inheritDoc
-         */
-        initialize: function(main, options) {
-            if (this.changeBehavior()) {
-                this.filtersActions = {
-                    'mobile-landscape': FullScreenFiltersAction
-                };
-            }
+        initialize(options) {
+            this.collapseFilters = new CollapsesFilters({datagrid: this.main});
 
-            FrontendFiltersTogglePlugin.__super__.initialize.apply(this, arguments);
+            this.listenToOnce(this.main, 'filterManager:connected', () => {
+                this.collapseFilters.onceFilterManagerConnected();
+            });
+            FrontendCustomFiltersTogglePlugin.__super__.initialize.call(this, options);
         },
 
-        /**
-         * @inheritDoc
-         */
-        enable: function() {
+        addAction(toolbarOptions) {
             if (this.changeBehavior()) {
-                switch (viewportManager.getViewport().type) {
-                    case 'desktop':
-                    case 'tablet':
-                    case 'tablet-small':
-                        this.disable();
-                        break;
-                    default:
-                        FrontendFiltersTogglePlugin.__super__.enable.call(this);
-                        break;
-                }
+                this.addCustomAction(toolbarOptions);
             } else {
-                FrontendFiltersTogglePlugin.__super__.enable.call(this);
+                FrontendCustomFiltersTogglePlugin.__super__.addAction.call(this, toolbarOptions);
             }
+        },
+
+        addCustomAction(toolbarOptions) {
+            const options = {
+                datagrid: this.main,
+                launcherOptions: {
+                    className: 'toggle-filters-action btn btn--default btn--size-s',
+                    launcherMode: 'icon-only',
+                    icon: 'filter',
+                    label: __('oro.filter.datagrid-toolbar.filters'),
+                    ariaLabel: __('oro.filter.datagrid-toolbar.aria_label')
+                },
+                order: 650,
+                fullscreenFilters: this.fullscreenFilters,
+                collapseFilters: this.collapseFilters
+            };
+
+            toolbarOptions.addToolbarAction(new CustomFiltersAction(options));
         },
 
         changeBehavior: function() {
-            return !_.isUndefined(this.main.$el.parent().attr('data-server-render'));
+            return this.main.$el.parent().attr('data-server-render') !== void 0;
+        },
+
+        dispose() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.disable();
+
+            if (this.collapseFilters && !this.collapseFilters.disposed) {
+                this.collapseFilters.dispose();
+                delete this.collapseFilters;
+            }
+
+            FrontendCustomFiltersTogglePlugin.__super__.dispose.call(this);
         }
     });
     return FrontendCustomFiltersTogglePlugin;

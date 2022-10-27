@@ -3,42 +3,42 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Oro\Bundle\ImportExportBundle\Async\Export\ExportMessageProcessor;
+use Oro\Bundle\ImportExportBundle\Async\Topic\ExportTopic;
+use Oro\Bundle\ImportExportBundle\Async\Topic\PreExportTopic;
+use Oro\Bundle\ImportExportBundle\Configuration\ImportExportConfiguration;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\ImportExportBundle\Tests\Functional\AbstractImportExportTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\NotificationBundle\Async\Topics;
+use Oro\Bundle\NotificationBundle\Async\Topic\SendEmailNotificationTemplateTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ImportExportTest extends WebTestCase
+class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * @var string
-     */
-    protected $file;
+    /** @var string */
+    private $file;
 
-    /**
-     * @var PriceList
-     */
-    protected $priceList;
+    /** @var PriceList */
+    private $priceList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListToProductWithoutPrices'
-            ]
-        );
+        parent::setUp();
+        $this->loadFixtures([
+            LoadProductPrices::class,
+            LoadPriceListToProductWithoutPrices::class
+        ]);
 
         $this->priceList = $this->getReference('price_list_1');
     }
@@ -46,8 +46,8 @@ class ImportExportTest extends WebTestCase
     public function testShouldExportData()
     {
         $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
@@ -69,14 +69,39 @@ class ImportExportTest extends WebTestCase
         $this->assertCount(9, $content);
     }
 
+    public function testCountEntitiesThatWillBeExportedInOnePriceList(): void
+    {
+        $priceListId = $this->getReference('price_list_1')->getId();
+        $this->assertPreExportActionExecuted($this->getExportImportConfiguration());
+        $preExportMessageData = $this->getOneSentMessageWithTopic(PreExportTopic::getName());
+
+        $messageBodyResolver = self::getContainer()->get('oro_message_queue.client.message_body_resolver');
+        $this->assertMessageProcessorExecuted(
+            'oro_importexport.async.pre_export',
+            $messageBodyResolver->resolveBody(PreExportTopic::getName(), $preExportMessageData)
+        );
+        $this->assertMessageSent(ExportTopic::getName());
+
+        $exportMessageData = $this->getOneSentMessageWithTopic(ExportTopic::getName());
+        $this->assertMessageProcessorExecuted(
+            'oro_importexport.async.export',
+            $messageBodyResolver->resolveBody(ExportTopic::getName(), $exportMessageData)
+        );
+
+        // We have only 8 prices that are related to the price_list_1
+        $this->assertCount(8, $exportMessageData['options']['ids']);
+        $this->assertEquals($priceListId, $exportMessageData['options']['price_list_id']);
+        $this->clearMessageCollector();
+    }
+
     public function testShouldExportCorrectDataWithRelations()
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
         );
         $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
@@ -106,12 +131,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
-     * @param int $expectedAdd
-     * @param int $expectedUpdate
      * @dataProvider strategyDataProvider
      */
-    public function testImportProcess($strategy, $expectedAdd, $expectedUpdate)
+    public function testImportProcess(string $strategy, int $expectedAdd, int $expectedUpdate)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -127,10 +149,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testDuplicateRowsImport($strategy)
+    public function testDuplicateRowsImport(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -144,10 +165,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testInvalidCurrencyPriceListImport($strategy)
+    public function testInvalidCurrencyPriceListImport(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -160,10 +180,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testInvalidProductUnit($strategy)
+    public function testInvalidProductUnit(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -176,10 +195,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testUnavailableProductUnit($strategy)
+    public function testUnavailableProductUnit(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -192,10 +210,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testUnavailableProduct($strategy)
+    public function testUnavailableProduct(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -208,10 +225,9 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testNegativePriceValue($strategy)
+    public function testNegativePriceValue(string $strategy)
     {
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
@@ -223,10 +239,7 @@ class ImportExportTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function strategyDataProvider()
+    public function strategyDataProvider(): array
     {
         return [
             'add or replace' => ['oro_pricing_product_price.add_or_replace', 0, 8],
@@ -234,32 +247,24 @@ class ImportExportTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $strategy
-     * @param string $path
-     * @param string $errorMessage
-     */
-    protected function assertErrors($strategy, $path, $errorMessage)
+    private function assertErrors(string $strategy, string $path, string $errorMessage): void
     {
         $locator = $this->getContainer()->get('file_locator');
         $this->file = $locator->locate($path);
         $this->validateImportFile($strategy);
         $crawler = $this->client->getCrawler();
         $this->assertEquals(1, $crawler->filter('.import-errors')->count());
-        $this->assertContains($errorMessage, $crawler->filter('.import-errors')->html());
+        static::assertStringContainsString($errorMessage, $crawler->filter('.import-errors')->html());
     }
 
-    /**
-     * @param string $strategy
-     */
-    protected function validateImportFile($strategy)
+    private function validateImportFile(string $strategy): void
     {
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity' => 'Oro\Bundle\PricingBundle\Entity\ProductPrice',
+                    'entity' => ProductPrice::class,
                     '_widgetContainer' => 'dialog',
                     'options[price_list_id]' => $this->priceList->getId(),
                     'importJob' => 'price_list_product_prices_entity_import_from_csv',
@@ -270,11 +275,10 @@ class ImportExportTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($strategy, $result->getContent());
+        static::assertStringContainsString($strategy, $result->getContent());
 
         $this->assertFileExists($this->file);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
 
         $optionsPriceList = '&options[price_list_id]='. $this->priceList->getId() .
@@ -298,12 +302,7 @@ class ImportExportTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
-    /**
-     * @param string $strategy
-     * @param int $expectedAdd
-     * @param int $expectedUpdate
-     */
-    protected function doImport($strategy, $expectedAdd, $expectedUpdate)
+    private function doImport(string $strategy, int $expectedAdd, int $expectedUpdate): void
     {
         // test import
         $this->client->followRedirects(false);
@@ -337,10 +336,7 @@ class ImportExportTest extends WebTestCase
         );
     }
 
-    /**
-     * @return string
-     */
-    protected function getExportFile()
+    private function getExportFile(): string
     {
         $result = $this
             ->getContainer()
@@ -354,7 +350,7 @@ class ImportExportTest extends WebTestCase
                 ['price_list_id' => $this->priceList->getId()]
             );
 
-        $result = json_decode($result->getContent(), true);
+        $result = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         return $this
             ->getContainer()
@@ -362,27 +358,25 @@ class ImportExportTest extends WebTestCase
             ->writeToTmpLocalStorage($result['file']);
     }
 
-    /**
-     * @return string
-     */
-    protected function processExportMessage()
+    private function processExportMessage(): string
     {
-        $sentMessages = $this->getSentMessages();
-        $exportMessageData = reset($sentMessages);
+        $sentMessage = $this->getSentMessage(PreExportTopic::getName());
 
-        $message = new NullMessage();
+        $messageBodyResolver = self::getContainer()->get('oro_message_queue.client.message_body_resolver');
+
+        $message = new Message();
         $message->setMessageId('abc');
-        $message->setBody(json_encode($exportMessageData['message']));
+        $message->setBody($messageBodyResolver->resolveBody(PreExportTopic::getName(), $sentMessage));
 
         /** @var ExportMessageProcessor $processor */
         $processor = $this->getContainer()->get('oro_importexport.async.pre_export');
-        $processorResult = $processor->process($message, $this->createSessionInterfaceMock());
+        $processorResult = $processor->process($message, $this->createMock(SessionInterface::class));
 
-        $this->assertEquals(ExportMessageProcessor::ACK, $processorResult);
+        $this->assertEquals(MessageProcessorInterface::ACK, $processorResult);
 
         $sentMessages = $this->getSentMessages();
         foreach ($sentMessages as $messageData) {
-            if (Topics::SEND_NOTIFICATION_EMAIL === $messageData['topic']) {
+            if (SendEmailNotificationTemplateTopic::getName() === $messageData['topic']) {
                 break;
             }
         }
@@ -409,11 +403,14 @@ class ImportExportTest extends WebTestCase
         return $result->getContent();
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|SessionInterface
-     */
-    private function createSessionInterfaceMock()
+    private function getExportImportConfiguration(): ImportExportConfiguration
     {
-        return $this->createMock(SessionInterface::class);
+        $priceListId = $this->getReference('price_list_1')->getId();
+
+        return new ImportExportConfiguration([
+            ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_pricing_product_price',
+            ImportExportConfiguration::FIELD_EXPORT_JOB_NAME => 'price_list_product_prices_export_to_csv',
+            ImportExportConfiguration::FIELD_ROUTE_OPTIONS => ['price_list_id' => $priceListId],
+        ]);
     }
 }

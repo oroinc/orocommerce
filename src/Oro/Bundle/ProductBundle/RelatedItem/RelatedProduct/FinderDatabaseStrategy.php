@@ -2,62 +2,43 @@
 
 namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
 /**
- * Provides methods to get ids of instances of related products.
+ * A service to get IDs of related products.
  */
 class FinderDatabaseStrategy implements FinderStrategyInterface
 {
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    private ManagerRegistry $doctrine;
+    private RelatedItemConfigProviderInterface $configProvider;
 
-    /**
-     * @var AbstractRelatedItemConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @param DoctrineHelper                    $doctrineHelper
-     * @param AbstractRelatedItemConfigProvider $configProvider
-     */
-    public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
+    public function __construct(ManagerRegistry $doctrine, RelatedItemConfigProviderInterface $configProvider)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->configProvider = $configProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * If parameters `bidirectional` and `limit` are not passed - default values from configuration will be used
      */
-    public function findIds(Product $product, $bidirectional = false, $limit = null)
+    public function findIds(Product $product, bool $bidirectional = false, int $limit = null): array
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
         }
 
         return $this->getRelatedProductsRepository()
-            ->findRelatedIds(
-                $product->getId(),
-                $bidirectional,
-                $limit
-            );
+            ->findRelatedIds($product->getId(), $bidirectional, $limit);
     }
 
-    /**
-     * @return RelatedProductRepository|EntityRepository
-     */
-    private function getRelatedProductsRepository()
+    private function getRelatedProductsRepository(): RelatedProductRepository
     {
-        return $this->doctrineHelper->getEntityRepository(RelatedProduct::class);
+        return $this->doctrine->getRepository(RelatedProduct::class);
     }
 }

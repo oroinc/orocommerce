@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 
-class ShippingMethodTypeConfigRepository extends EntityRepository
+/**
+ * Doctrine repository for ShippingMethodTypeConfig entity
+ */
+class ShippingMethodTypeConfigRepository extends ServiceEntityRepository
 {
     /**
      * @param string $method
@@ -30,9 +33,6 @@ class ShippingMethodTypeConfigRepository extends EntityRepository
         return array_column($qb->getQuery()->execute(), 'id');
     }
 
-    /**
-     * @param array $ids
-     */
     public function deleteByIds(array $ids)
     {
         $qb = $this->createQueryBuilder('methodTypeConfig');

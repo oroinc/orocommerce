@@ -1,0 +1,71 @@
+dependencies:
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    combinedPriceList:
+        name: 'Combined Price List'
+        enabled: true
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    product1_price1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 1
+        unit: '@item'
+        value: 12.99
+        currency: 'USD'
+    product1_price2:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 10
+        unit: '@item'
+        value: 11.00
+        currency: 'USD'
+    product1_price3:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 10
+        unit: '@item'
+        value: 15.00
+        currency: 'EUR'
+    product3_price1:
+        pricelist: '@combinedPriceList'
+        product: '@product3'
+        productSku: 'PSKU3'
+        quantity: 1
+        unit: '@item'
+        value: 10.00
+        currency: 'USD'
+    configurable_product1_variant1_price1:
+        pricelist: '@combinedPriceList'
+        product: '@configurable_product1_variant1'
+        productSku: 'CVPSKU1'
+        quantity: 1
+        unit: '@item'
+        value: 1.99
+        currency: 'USD'
+    configurable_product1_variant1_price2:
+        pricelist: '@combinedPriceList'
+        product: '@configurable_product1_variant1'
+        productSku: 'CVPSKU1'
+        quantity: 10
+        unit: '@item'
+        value: 1.01
+        currency: 'USD'
+    configurable_product1_variant2_price1:
+        pricelist: '@combinedPriceList'
+        product: '@configurable_product1_variant2'
+        productSku: 'CVPSKU2'
+        quantity: 1
+        unit: '@item'
+        value: 5.00
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@customer'
+        website: '@website'

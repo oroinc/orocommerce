@@ -2,81 +2,55 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor;
-use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
+use Oro\Component\MessageQueue\Client\Config as MessageQueueConfig;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Test\JobRunner as TestJobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
+use Oro\Component\Testing\ReflectionUtil;
 
 class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrine;
+    use LoggerAwareTraitTestTrait;
 
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $jobRunner;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $producer;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
-    /**
-     * @var SluggableEntitiesProcessor
-     */
-    private $processor;
+    private SluggableEntitiesProcessor $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->jobRunner = $this->getMockBuilder(JobRunner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jobRunner = $this->createMock(JobRunner::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
 
         $this->processor = new SluggableEntitiesProcessor(
             $this->doctrine,
             $this->jobRunner,
             $this->producer,
-            $this->logger,
-            $this->messageFactory
+            $this->messageFactory,
+            'test_topic'
         );
-    }
-
-    public function testGetSubscribedTopics()
-    {
-        $this->assertEquals(
-            [Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE],
-            SluggableEntitiesProcessor::getSubscribedTopics()
-        );
+        $this->setUpLoggerMock($this->processor);
     }
 
     /**
@@ -84,194 +58,134 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
      * @param int|float $batchSize
      * @param int $expected
      */
-    public function testBatchSize($batchSize, $expected)
+    public function testBatchSize($batchSize, $expected): void
     {
         $this->processor->setBatchSize($batchSize);
-        $this->assertAttributeSame($expected, 'batchSize', $this->processor);
+        self::assertSame($expected, ReflectionUtil::getPropertyValue($this->processor, 'batchSize'));
     }
 
-    /**
-     * @return array
-     */
-    public function batchSizeDataProvider()
+    public function batchSizeDataProvider(): array
     {
         return [
             'correct value' => [1, 1],
-            'negative value' => [-1, SluggableEntitiesProcessor::BATCH_SIZE],
-            'zero value' => [0, SluggableEntitiesProcessor::BATCH_SIZE],
-            'float incorrect value' => [-10.5, SluggableEntitiesProcessor::BATCH_SIZE],
+            'negative value' => [-1, 1000],
+            'zero value' => [0, 1000],
+            'float incorrect value' => [-10.5, 1000],
             'float correct value' => [10.8, 10],
         ];
     }
 
-    public function testProcessRejectMessageWithNotManagableClass()
+    public function testProcess(): void
     {
         $class = \stdClass::class;
         $createRedirect = true;
 
         $message = $this->assertMessageDataCalls($class, $createRedirect);
-        $message->expects($this->once())
+        $message->expects(self::once())
             ->method('getMessageId')
             ->willReturn('mid-42');
+        $message->expects(self::once())
+            ->method('getProperty')
+            ->with(MessageQueueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn('test_topic_mass');
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-
-        $this->doctrine->expects($this->once())
-            ->method('getManagerForClass')
-            ->with($class)
-            ->willReturn(null);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(sprintf('Entity manager is not defined for class: "%s"', $class));
-
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $job = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->jobRunner->expects($this->once())
-            ->method('runUnique')
-            ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($class, $job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
-
-                    return $closure($this->jobRunner, $job);
-                }
-            );
-
-        $this->assertEquals(SluggableEntitiesProcessor::REJECT, $this->processor->process($message, $session));
-    }
-
-    public function testProcess()
-    {
-        $class = \stdClass::class;
-        $createRedirect = true;
-
-        $message = $this->assertMessageDataCalls($class, $createRedirect);
-        $message->expects($this->once())
-            ->method('getMessageId')
-            ->willReturn('mid-42');
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled();
         $idsQb = $this->assertIdsQueryCalled();
 
         $repository = $this->configureRepositoryCalls($class);
-        $repository->expects($this->exactly(2))
+        $repository->expects(self::exactly(2))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls(
-                $countQb,
-                $idsQb
-            );
+            ->willReturnOnConsecutiveCalls($countQb, $idsQb);
 
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::once())
             ->method('createMassMessage')
             ->with($class, [42])
             ->willReturn(['className' => $class, 'id' => [42]]);
-        $this->producer->expects($this->once())
+        $this->producer->expects(self::once())
             ->method('send')
             ->with(
-                Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
+                'test_topic',
                 ['className' => $class, 'id' => [42], 'jobId' => 123]
             );
 
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $job = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var Job|\PHPUnit\Framework\MockObject\MockObject $job */
-        $childJob = $this->getMockBuilder(Job::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $childJob->expects($this->once())
+        $job = $this->createMock(Job::class);
+        $childJob = $this->createMock(Job::class);
+        $childJob->expects(self::once())
             ->method('getId')
             ->willReturn(123);
-        $this->jobRunner->expects($this->once())
+        $this->jobRunner->expects(self::once())
             ->method('runUnique')
-            ->willReturnCallback(
-                function ($ownerId, $name, $closure) use ($class, $job) {
-                    $this->assertEquals('mid-42', $ownerId);
-                    $this->assertEquals(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE . ':' . $class, $name);
+            ->willReturnCallback(function ($ownerId, $name, $closure) use ($class, $job) {
+                $this->assertEquals('mid-42', $ownerId);
+                $this->assertEquals('test_topic_mass:' . $class, $name);
 
-                    return $closure($this->jobRunner, $job);
-                }
-            );
-        $this->jobRunner->expects($this->once())
+                return $closure($this->jobRunner, $job);
+            });
+        $this->jobRunner->expects(self::once())
             ->method('createDelayed')
-            ->willReturnCallback(
-                function ($name, $closure) use ($class, $childJob) {
-                    $this->assertEquals(
-                        sprintf('%s:%s:%s', Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES, $class, 0),
-                        $name
-                    );
+            ->willReturnCallback(function ($name, $closure) use ($class, $childJob) {
+                $this->assertEquals(
+                    sprintf('test_topic_mass:%s:%s', $class, 0),
+                    $name
+                );
 
-                    return $closure($this->jobRunner, $childJob);
-                }
-            );
+                return $closure($this->jobRunner, $childJob);
+            });
 
-        $this->assertEquals(SluggableEntitiesProcessor::ACK, $this->processor->process($message, $session));
+        self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    public function testProcessWithChangedBatchSize()
+    public function testProcessWithChangedBatchSize(): void
     {
         $class = \stdClass::class;
         $createRedirect = true;
         $message = $this->assertMessageDataCalls($class, $createRedirect);
+        $message->expects(self::once())
+            ->method('getProperty')
+            ->with(MessageQueueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn('test_topic_mass');
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
         $countQb = $this->assertCountQueryCalled(5);
 
-        $idsQuery = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
-        $idsQuery->expects($this->exactly(2))
+        $idsQuery = $this->createMock(AbstractQuery::class);
+        $idsQuery->expects(self::exactly(2))
             ->method('getArrayResult')
             ->willReturnOnConsecutiveCalls(
                 [['id' => 1], ['id' => 2], ['id' => 3]],
                 [['id' => 4], ['id' => 5]]
             );
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $idsQb */
-        $idsQb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $idsQb->expects($this->any())
+        $idsQb = $this->createMock(QueryBuilder::class);
+        $idsQb->expects(self::any())
             ->method('select')
             ->with('ids.id')
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('orderBy')
             ->with('ids.id', 'ASC')
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('setFirstResult')
             ->withConsecutive([0], [3])
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('setMaxResults')
             ->with(3)
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('getQuery')
             ->willReturn($idsQuery);
 
         $repository = $this->configureRepositoryCalls($class);
-        $repository->expects($this->exactly(3))
+        $repository->expects(self::exactly(3))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls(
-                $countQb,
-                $idsQb,
-                $idsQb
-            );
+            ->willReturnOnConsecutiveCalls($countQb, $idsQb, $idsQb);
 
-        $this->messageFactory->expects($this->exactly(2))
+        $this->messageFactory->expects(self::exactly(2))
             ->method('createMassMessage')
             ->withConsecutive(
                 [$class, [1, 2, 3]],
@@ -281,16 +195,16 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
                 ['className' => $class, 'id' => [1, 2, 3]],
                 ['className' => $class, 'id' => [4, 5]]
             );
-        $this->producer->expects($this->exactly(2))
+        $this->producer->expects(self::exactly(2))
             ->method('send')
             ->withConsecutive(
                 [
-                    Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
-                    ['className' => $class, 'id' => [1, 2, 3], 'jobId' => null]
+                    'test_topic',
+                    ['className' => $class, 'id' => [1, 2, 3], 'jobId' => null],
                 ],
                 [
-                    Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
-                    ['className' => $class, 'id' => [4, 5], 'jobId' => null]
+                    'test_topic',
+                    ['className' => $class, 'id' => [4, 5], 'jobId' => null],
                 ]
             );
 
@@ -298,35 +212,25 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
             $this->doctrine,
             new TestJobRunner(),
             $this->producer,
-            $this->logger,
-            $this->messageFactory
+            $this->messageFactory,
+            'test_topic'
         );
 
         $this->processor->setBatchSize(3);
-        $this->assertEquals(SluggableEntitiesProcessor::ACK, $this->processor->process($message, $session));
+        self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    /**
-     * @param int $count
-     * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function assertCountQueryCalled($count = 1)
+    private function assertCountQueryCalled(int $count = 1): QueryBuilder
     {
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $countQb */
-        $countQb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $countQb->expects($this->any())
+        $countQb = $this->createMock(QueryBuilder::class);
+        $countQb->expects(self::any())
             ->method('select')
             ->willReturnSelf();
-        $countQuery = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getSingleScalarResult'])
-            ->getMockForAbstractClass();
-        $countQuery->expects($this->once())
+        $countQuery = $this->createMock(AbstractQuery::class);
+        $countQuery->expects(self::once())
             ->method('getSingleScalarResult')
             ->willReturn($count);
-        $countQb->expects($this->once())
+        $countQb->expects(self::once())
             ->method('getQuery')
             ->willReturn($countQuery);
 
@@ -336,37 +240,31 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function assertIdsQueryCalled()
+    private function assertIdsQueryCalled()
     {
-        $idsQuery = $this->getMockBuilder(AbstractQuery::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
-        $idsQuery->expects($this->once())
+        $idsQuery = $this->createMock(AbstractQuery::class);
+        $idsQuery->expects(self::once())
             ->method('getArrayResult')
             ->willReturn([['id' => 42]]);
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $idsQb */
-        $idsQb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $idsQb->expects($this->any())
+        $idsQb = $this->createMock(QueryBuilder::class);
+        $idsQb->expects(self::any())
             ->method('select')
             ->with('ids.id')
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('setFirstResult')
             ->with(0)
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('setMaxResults')
-            ->with(SluggableEntitiesProcessor::BATCH_SIZE)
+            ->with(1000)
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('orderBy')
             ->with('ids.id', 'ASC')
             ->willReturnSelf();
-        $idsQb->expects($this->any())
+        $idsQb->expects(self::any())
             ->method('getQuery')
             ->willReturn($idsQuery);
 
@@ -374,31 +272,26 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $class
-     * @param bool $createRedirect
      * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function assertMessageDataCalls($class, $createRedirect)
+    private function assertMessageDataCalls(string $class, bool $createRedirect)
     {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message * */
         $message = $this->createMock(MessageInterface::class);
-        $messageData = [
+        $messageBody = [
             DirectUrlMessageFactory::class => $class,
-            DirectUrlMessageFactory::CREATE_REDIRECT => $createRedirect
+            DirectUrlMessageFactory::CREATE_REDIRECT => $createRedirect,
         ];
 
-        $messageBody = json_encode($messageData);
-
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::any())
             ->method('getEntityClassFromMessage')
-            ->with($messageData)
+            ->with($messageBody)
             ->willReturn($class);
-        $this->messageFactory->expects($this->once())
+        $this->messageFactory->expects(self::any())
             ->method('getCreateRedirectFromMessage')
-            ->with($messageData)
+            ->with($messageBody)
             ->willReturn($createRedirect);
 
-        $message->expects($this->any())
+        $message->expects(self::any())
             ->method('getBody')
             ->willReturn($messageBody);
 
@@ -406,36 +299,29 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $class
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function configureRepositoryCalls($class)
+    private function configureRepositoryCalls(string $class)
     {
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
 
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $classMetadata */
-        $classMetadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $classMetadata->expects($this->once())
+        $classMetadata = $this->createMock(ClassMetadata::class);
+        $classMetadata->expects(self::once())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getClassMetadata')
             ->with($class)
             ->willReturn($classMetadata);
 
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with($class)
             ->willReturn($repository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with($class)
             ->willReturn($em);

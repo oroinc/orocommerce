@@ -1,0 +1,27 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    variables:
+        Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType:
+            buildForm:
+                criteria: true
+        Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager:
+            isUserAssignable:
+                criteria: true
+        Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
+            getShoppingListJoin:
+                joinDqlPart: true
+        Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository:
+            invalidateByBasePriceList:
+                priceClass: true
+                subQuery: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
+            getCustomerUserJoin:
+                joinDqlPart: true
+    safe_methods:
+        Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
+            getCustomerVisitorSubquery: true
+            ensureShoppingListJoined: true
+        Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
+            getClassName: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
+            ensureCustomerUserJoined: true

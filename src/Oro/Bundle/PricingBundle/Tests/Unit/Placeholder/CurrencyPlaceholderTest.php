@@ -17,12 +17,11 @@ class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $currencyManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-
 
         $this->placeholder = new CurrencyPlaceholder($this->currencyManager);
     }
@@ -46,12 +45,11 @@ class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame("test_USD", $this->placeholder->replaceDefault("test_CURRENCY"));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Can't get current currency
-     */
     public function testReplaceDefaultCplNotFound()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Can't get current currency");
+
         $this->currencyManager->expects($this->once())
             ->method("getUserCurrency")
             ->willReturn(null);

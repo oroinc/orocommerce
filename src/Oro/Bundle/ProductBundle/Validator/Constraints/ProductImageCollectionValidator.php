@@ -6,11 +6,14 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage as EntityProductImage;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validate current product images collection
+ */
 class ProductImageCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_collection_validator';
@@ -35,11 +38,6 @@ class ProductImageCollectionValidator extends ConstraintValidator
      */
     protected $productImageHelper;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     * @param TranslatorInterface $translator
-     * @param ProductImageHelper $productImageHelper
-     */
     public function __construct(
         ImageTypeProvider $imageTypeProvider,
         TranslatorInterface $translator,
@@ -58,8 +56,8 @@ class ProductImageCollectionValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
         $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);
+        $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
 
         foreach ($maxNumberByType as $name => $maxTypeValues) {
             if (array_key_exists($name, $imagesByTypeCounter) &&
@@ -68,7 +66,9 @@ class ProductImageCollectionValidator extends ConstraintValidator
             ) {
                 $this->context
                     ->buildViolation($constraint->message, [
-                        '%type%' => $this->translator->trans($maxTypeValues['label']),
+                        '%type%' => isset($maxTypeValues['label'])
+                            ? $this->translator->trans((string) $maxTypeValues['label'])
+                            : '',
                         '%maxNumber%' => $maxTypeValues['max']
                     ])
                     ->addViolation();

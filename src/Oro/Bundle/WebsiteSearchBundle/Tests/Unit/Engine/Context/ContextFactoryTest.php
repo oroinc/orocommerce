@@ -10,8 +10,6 @@ class ContextFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderCreateForReindexation
-     * @param ReindexationRequestEvent $event
-     * @param array                    $contextExpected
      */
     public function testCreateForReindexation(ReindexationRequestEvent $event, array $contextExpected)
     {
@@ -44,6 +42,14 @@ class ContextFactoryTest extends \PHPUnit\Framework\TestCase
                 [
                     AbstractIndexer::CONTEXT_WEBSITE_IDS   => [1, 2],
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3, 4],
+                ],
+            ],
+            'for websites and ids and field groups' => [
+                new ReindexationRequestEvent([], [1, 2], [3, 4], true, ['main']),
+                [
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS   => [1, 2],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3, 4],
+                    AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']
                 ],
             ],
             'empty'               => [

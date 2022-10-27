@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpressCheckout\Option;
+namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option\Action;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option\Token;
@@ -25,7 +25,7 @@ class TokenTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "TOKEN" with value 12345 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'not passed token with GET_EC_DETAILS (required)' => [

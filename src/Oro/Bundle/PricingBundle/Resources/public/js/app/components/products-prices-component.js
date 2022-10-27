@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ProductsPricesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    ProductsPricesComponent = BaseComponent.extend({
+    const ProductsPricesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -24,14 +23,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductsPricesComponent() {
-            ProductsPricesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductsPricesComponent(options) {
+            ProductsPricesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -43,17 +42,21 @@ define(function(require) {
         },
 
         initPricesListeners: function() {
-            mediator.on('pricing:load:prices', this.reloadPrices, this);
-            mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
-            mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
+            this.listenTo(mediator, {
+                'pricing:load:prices': this.reloadPrices,
+                'pricing:get:products-tier-prices': this.getProductsTierPrices,
+                'pricing:load:products-tier-prices': this.loadProductsTierPrices
+            });
         },
 
         initFieldsListeners: function() {
-            mediator.on('update:currency', this.setCurrency, this);
-            mediator.on('update:customer', this.setCustomer, this);
+            this.listenTo(mediator, {
+                'update:currency': this.setCurrency,
+                'customer-customer-user:change': this.setCustomer
+            });
         },
 
-        /**
+        /*
          * @param {Function} callback
          */
         getProductsTierPrices: function(callback) {
@@ -71,12 +74,12 @@ define(function(require) {
          * @param {Function} callback
          */
         loadProductsTierPrices: function(products, callback) {
-            var context = {
+            const context = {
                 requestAttributes: {}
             };
             mediator.trigger('pricing:refresh:products-tier-prices:before', context);
-            this.joinSubrequests(this.loadProductsTierPrices, products, callback, _.bind(function(products, callback) {
-                var params = {
+            this.joinSubrequests(this.loadProductsTierPrices, products, callback, (products, callback) => {
+                let params = {
                     product_ids: products
                 };
                 params[this.options.requestKeys.CURRENCY] = this.getCurrency();
@@ -84,7 +87,7 @@ define(function(require) {
                 params = _.extend({}, params, context.requestAttributes || {});
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
-            }, this));
+            });
         },
 
         joinSubrequests: function(storage, data, callback, request) {
@@ -100,8 +103,8 @@ define(function(require) {
             }
 
             storage.timeoutId = setTimeout(function() {
-                var data = storage.data;
-                var callbacks = storage.callbacks;
+                const data = storage.data;
+                const callbacks = storage.callbacks;
 
                 storage.timeoutId = null;
                 storage.data = [];
@@ -128,7 +131,7 @@ define(function(require) {
          * @returns {Array} line items
          */
         getLineItems: function() {
-            var items = [];
+            const items = [];
             mediator.trigger('pricing:collect:line-items', items);
             return items;
         },
@@ -146,22 +149,13 @@ define(function(require) {
             return this.options.customer;
         },
 
-        setCustomer: function(val) {
-            this.options.customer = val;
-            this.reloadPrices();
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
+        setCustomer: function({customerId}) {
+            if (customerId === this.options.customer) {
                 return;
             }
 
-            mediator.off(null, null, this);
-
-            ProductsPricesComponent.__super__.dispose.call(this);
+            this.options.customer = customerId;
+            this.reloadPrices();
         }
     });
 

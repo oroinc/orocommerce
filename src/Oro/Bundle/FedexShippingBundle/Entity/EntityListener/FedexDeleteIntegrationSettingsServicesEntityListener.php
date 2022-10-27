@@ -29,11 +29,6 @@ class FedexDeleteIntegrationSettingsServicesEntityListener
      */
     private $typeRemovalEventDispatcher;
 
-    /**
-     * @param IntegrationIdentifierGeneratorInterface     $integrationIdentifierGenerator
-     * @param FedexMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator
-     * @param MethodTypeRemovalEventDispatcherInterface   $typeRemovalEventDispatcher
-     */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
         FedexMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
@@ -44,10 +39,6 @@ class FedexDeleteIntegrationSettingsServicesEntityListener
         $this->typeRemovalEventDispatcher = $typeRemovalEventDispatcher;
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     * @param LifecycleEventArgs       $args
-     */
     public function postUpdate(FedexIntegrationSettings $settings, LifecycleEventArgs $args)
     {
         /** @var PersistentCollection $services */

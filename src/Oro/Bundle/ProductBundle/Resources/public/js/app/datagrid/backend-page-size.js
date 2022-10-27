@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var BackendPageSize;
-    var _ = require('underscore');
-    var PageSize = require('orodatagrid/js/datagrid/page-size');
+    const _ = require('underscore');
+    const PageSize = require('orodatagrid/js/datagrid/page-size');
 
-    BackendPageSize = PageSize.extend({
+    const BackendPageSize = PageSize.extend({
         /** @property */
         themeOptions: {
             optionPrefix: 'backendpagesize',
@@ -13,45 +12,39 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function BackendPageSize() {
-            BackendPageSize.__super__.constructor.apply(this, arguments);
+        constructor: function BackendPageSize(options) {
+            BackendPageSize.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             BackendPageSize.__super__.initialize.call(this, options);
         },
 
         onChangePageSize: function(e) {
-            var obj = {};
+            const obj = {};
             this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
-                BackendPageSize.__super__.onChangePageSize.apply(this, arguments);
+                BackendPageSize.__super__.onChangePageSize.call(this, e);
             } else {
                 this.render();
             }
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
-            var $select = this.$el.find('[data-grid-pagesize-selector]');
-            var currentSizeLabel = _.filter(
-                this.items,
-                _.bind(
-                    function(item) {
-                        return item.size === undefined
-                            ? this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
-                    },
-                    this
-                )
-            );
+            const $select = this.$el.find('[data-grid-pagesize-selector]');
+            const currentSizeLabel = _.filter(this.items, item => {
+                return item.size === undefined
+                    ? this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
+            });
 
             $select
                 .find('option')

@@ -2,51 +2,37 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Manage redirects for given slugs.
  */
 class RedirectGenerator
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param string $from
-     * @param Slug $slug
-     */
-    public function updateRedirects($from, Slug $slug)
+    public function updateRedirects(string $from, Slug $slug): void
     {
         if ($from === $slug->getUrl()) {
             return;
         }
 
         /** @var RedirectRepository $repository */
-        $repository = $this->getRedirectManager()->getRepository(Redirect::class);
+        $repository = $this->doctrine->getRepository(Redirect::class);
         $repository->updateRedirectsBySlug($slug);
         $repository->deleteCyclicRedirects($slug);
     }
 
-    /**
-     * @param Slug $from
-     * @param Slug $to
-     */
-    public function generateForSlug(Slug $from, Slug $to)
+    public function generateForSlug(Slug $from, Slug $to): void
     {
         if ($from->getUrl() === $to->getUrl()) {
             return;
@@ -60,14 +46,8 @@ class RedirectGenerator
         $redirect->setSlug($to);
         $redirect->setType(Redirect::MOVED_PERMANENTLY);
 
-        $this->getRedirectManager()->persist($redirect);
-    }
-
-    /**
-     * @return ObjectManager
-     */
-    private function getRedirectManager()
-    {
-        return $this->registry->getManagerForClass(Redirect::class);
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(Redirect::class);
+        $em->persist($redirect);
     }
 }

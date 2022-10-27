@@ -1,0 +1,25 @@
+/* @theme: admin.oro; */
+
+$icon-keys: (
+    'flex-al-str': $gjs-icon-flex-al-str,
+    'flex-al-center': $gjs-icon-flex-al-center,
+    'flex-al-end': $gjs-icon-flex-al-end,
+    'flex-al-start': $gjs-icon-flex-al-start,
+    'flex-dir-col-rev': $gjs-icon-flex-dir-col-rev,
+    'flex-dir-col': $gjs-icon-flex-dir-col,
+    'flex-dir-row-rev': $gjs-icon-flex-dir-row-rev,
+    'flex-dir-row': $gjs-icon-flex-dir-row,
+    'flex-just-end': $gjs-icon-flex-just-end,
+    'flex-just-sp-ar': $gjs-icon-flex-just-sp-ar,
+    'flex-just-sp-bet': $gjs-icon-flex-just-sp-bet,
+    'flex-just-sp-cent': $gjs-icon-flex-just-sp-cent,
+    'flex-just-start': $gjs-icon-flex-just-start
+);
+
+@each $icon, $code in $icon-keys {
+    .gjs-icon-#{$icon} {
+        &::before {
+            content: $code;
+        }
+    }
+}

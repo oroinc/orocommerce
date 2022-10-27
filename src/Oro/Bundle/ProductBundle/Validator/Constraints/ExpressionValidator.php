@@ -7,10 +7,13 @@ use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Node;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * This validator is used to check whether a string represents a valid expression.
+ */
 class ExpressionValidator extends ConstraintValidator
 {
     /**
@@ -33,12 +36,6 @@ class ExpressionValidator extends ConstraintValidator
      */
     protected $translator;
 
-    /**
-     * @param ExpressionParser $parser
-     * @param ExpressionPreprocessorInterface $preprocessor
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
@@ -69,7 +66,7 @@ class ExpressionValidator extends ConstraintValidator
             $this->validateSupportedFields($rootNode, $constraint);
             $this->validateDivisionByZero($rootNode, $constraint);
         } catch (SyntaxError $ex) {
-            // OroRuleBundle:ExpressionLanguageSyntaxValidator should handle this case
+            // {@see Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax} should handle this case.
             return;
         }
     }
@@ -113,10 +110,6 @@ class ExpressionValidator extends ConstraintValidator
         return $supportedFields;
     }
 
-    /**
-     * @param Node\NodeInterface $rootNode
-     * @param Expression $constraint
-     */
     protected function validateSupportedFields(Node\NodeInterface $rootNode, Expression $constraint)
     {
         $unsupportedFields = [];
@@ -126,14 +119,14 @@ class ExpressionValidator extends ConstraintValidator
                 $supportedFields = $this->getSupportedFields($constraint, $class);
                 $unsupportedFields = array_merge($unsupportedFields, array_diff($fields, $supportedFields));
             } catch (\InvalidArgumentException $ex) {
-                if (strpos($class, '::') !== false) {
+                if (str_contains($class, '::')) {
                     $relationInfo = explode('::', $class);
                     $unsupportedFields[] = $relationInfo[1];
                 }
             }
         }
         if (count($unsupportedFields) > 0) {
-            list($message, $parameters) = $this->getErrorData($constraint);
+            [$message, $parameters] = $this->getErrorData($constraint);
 
             foreach ($unsupportedFields as $invalidField) {
                 $this->context->addViolation($message, array_merge($parameters, [
@@ -143,10 +136,6 @@ class ExpressionValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param Node\NodeInterface $rootNode
-     * @param Expression $constraint
-     */
     protected function validateDivisionByZero(Node\NodeInterface $rootNode, Expression $constraint)
     {
         foreach ($rootNode->getNodes() as $node) {

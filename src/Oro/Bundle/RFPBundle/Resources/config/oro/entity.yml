@@ -1,0 +1,11 @@
+oro_entity:
+    virtual_relations:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            requestForQuote:
+                relation_type: oneToOne
+                related_entity_name: Oro\Bundle\RFPBundle\Entity\Request
+                label: oro.rfp.request.entity_label
+                query:
+                    join:
+                        left:
+                            - { join: Oro\Bundle\RFPBundle\Entity\Request, alias: requestForQuote, conditionType: WITH, condition: "entity.sourceEntityClass = 'Oro\\Bundle\\RFPBundle\\Entity\\Request' AND entity.sourceEntityId = requestForQuote.id" }

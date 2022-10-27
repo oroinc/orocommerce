@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 use Oro\Bundle\PaymentBundle\Condition\HasApplicablePaymentMethods;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 
 class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,13 +14,13 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
     /** @var HasApplicablePaymentMethods */
     protected $condition;
 
-    /** @var PaymentMethodProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ApplicablePaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodProvider = $this
-            ->getMockBuilder(PaymentMethodProvider::class)
+            ->getMockBuilder(ApplicablePaymentMethodsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -32,12 +32,11 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('has_applicable_payment_methods', $this->condition->getName());
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "context" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "context" option');
+
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([])
@@ -91,11 +90,11 @@ class HasApplicablePaymentMethodsTest extends \PHPUnit\Framework\TestCase
 
         $key = '@'.HasApplicablePaymentMethods::NAME;
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($stdClass, $resultSection['parameters']);
     }

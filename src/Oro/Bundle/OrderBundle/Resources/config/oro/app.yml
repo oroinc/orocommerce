@@ -1,0 +1,3 @@
+oro_api:
+    error_title_overrides:
+        'not blank discount value constraint': 'not blank constraint'

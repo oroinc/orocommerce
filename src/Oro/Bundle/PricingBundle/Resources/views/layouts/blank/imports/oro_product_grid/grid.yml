@@ -1,5 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes:
-                - 'OroPricingBundle:layouts:blank/imports/oro_product_grid/grid_row.html.twig'

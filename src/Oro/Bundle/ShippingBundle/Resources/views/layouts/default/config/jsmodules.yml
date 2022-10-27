@@ -1,0 +1,3 @@
+dynamic-imports:
+    orocheckout:
+        - oroshipping/js/app/views/shipping-methods-view

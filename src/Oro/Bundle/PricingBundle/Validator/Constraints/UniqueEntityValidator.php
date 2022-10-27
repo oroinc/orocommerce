@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\Validator\Constraint;
@@ -27,9 +27,6 @@ class UniqueEntityValidator extends ConstraintValidator
 
     /**
      * UniqueEntityValidator constructor.
-     *
-     * @param ManagerRegistry $registry
-     * @param ShardManager    $shardManager
      */
     public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
     {
@@ -78,12 +75,6 @@ class UniqueEntityValidator extends ConstraintValidator
         $context->buildViolation($constraint->message)->addViolation();
     }
 
-    /**
-     * @param EntityManager $em
-     * @param ProductPrice  $entity
-     * @param array         $criteria
-     * @param array         $fields
-     */
     private function getCriteria(EntityManager $em, ProductPrice $entity, array &$criteria, array $fields)
     {
         /* @var ClassMetadata $class */

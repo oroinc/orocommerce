@@ -1,7 +1,7 @@
 datagrids:
     category-products-grid:
         acl_resource: oro_product_update
-        extended_entity_name: '%oro_product.entity.product.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         source:
             type:         orm
             query:
@@ -26,12 +26,14 @@ datagrids:
                             END
                         ) as inCategory
                 from:
-                    - { table: '%oro_product.entity.product.class%', alias: product }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
             bind_parameters:
                 - category_id
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             inCategory:
                 label:         oro.catalog.product.in_category.label
@@ -45,7 +47,7 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
             status:
                 label:         oro.product.status.label
                 frontend_type: select
@@ -78,7 +80,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                inCategory: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                inCategory: DESC
         filters:
             columns:
                 inCategory:
@@ -107,7 +109,7 @@ datagrids:
                     type:      datetime
                     data_name: product.updatedAt
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
             entity_pagination: true
             rowSelection:
                 dataField: id
@@ -135,7 +137,7 @@ datagrids:
                         data_name: text.category_title_LOCALIZATION_ID
                         type: string
                 default:
-                    categoryTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                    categoryTitle: ASC
             options:
                 toolbarOptions:
                     pagination:

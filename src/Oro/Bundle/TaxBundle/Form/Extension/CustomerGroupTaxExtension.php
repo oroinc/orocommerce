@@ -9,20 +9,23 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Handles tax code for Customer Group.
+ */
 class CustomerGroupTaxExtension extends AbstractTaxExtension
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CustomerGroupType::class;
+        return [CustomerGroupType::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function addTaxCodeField(FormBuilderInterface $builder)
+    protected function addTaxCodeField(FormBuilderInterface $builder): void
     {
         $builder
             ->add(
@@ -33,29 +36,27 @@ class CustomerGroupTaxExtension extends AbstractTaxExtension
                     'mapped' => false,
                     'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
+                    'dynamic_fields_ignore_exception' => true,
                 ]
             );
     }
 
     /**
-     * @param CustomerGroup $customerGroup
-     * @param CustomerTaxCode|AbstractTaxCode $taxCode
-     * @param CustomerTaxCode|AbstractTaxCode $taxCodeNew
+     * {@inheritDoc}
      */
-    protected function handleTaxCode(
-        $customerGroup,
-        AbstractTaxCode $taxCode = null,
-        AbstractTaxCode $taxCodeNew = null
-    ) {
-        $customerGroup->setTaxCode($taxCodeNew);
+    protected function handleTaxCode(object $entity, ?AbstractTaxCode $taxCode, ?AbstractTaxCode $taxCodeNew): void
+    {
+        /** @var CustomerGroup $entity */
+        /** @var CustomerTaxCode|null $taxCodeNew */
+        $entity->setTaxCode($taxCodeNew);
     }
 
     /**
-     * @param CustomerGroup $object
-     * @return CustomerTaxCode|null
+     * {@inheritDoc}
      */
-    protected function getTaxCode($object)
+    protected function getTaxCode(object $entity): ?AbstractTaxCode
     {
-        return $object->getTaxCode();
+        /** @var CustomerGroup $entity */
+        return $entity->getTaxCode();
     }
 }

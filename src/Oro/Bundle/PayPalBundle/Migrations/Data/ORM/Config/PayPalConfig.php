@@ -4,42 +4,24 @@ namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 
+/**
+ * The config to move PayPal settings.
+ */
 class PayPalConfig
 {
     const PAY_WITH_PAYPAL = 'Pay with PayPal';
     const PAYPAL = 'PayPal';
     const CREDIT_CARD_LABEL = 'Credit Card';
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private ConfigManager $configManager;
+    private PayPalConfigKeysProvider $keysProvider;
+    private PaymentActionsDataProviderInterface $paymentActionsDataProvider;
+    private CreditCardTypesDataProviderInterface $creditCardTypesDataProvider;
 
-    /**
-     * @var PayPalConfigKeysProvider
-     */
-    private $keysProvider;
-
-    /**
-     * @var PaymentActionsDataProviderInterface
-     */
-    private $paymentActionsDataProvider;
-
-    /**
-     * @var CreditCardTypesDataProviderInterface
-     */
-    private $creditCardTypesDataProvider;
-
-    /**
-     * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
-     * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
-     * @param ConfigManager                        $configManager
-     * @param PayPalConfigKeysProvider             $keysProvider
-     */
     public function __construct(
         PaymentActionsDataProviderInterface $paymentActionsDataProvider,
         CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,
@@ -274,17 +256,7 @@ class PayPalConfig
      */
     private function getConfigValue($key)
     {
-        return $this->configManager->get($this->getFullConfigKey($key));
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
-    private function getFullConfigKey($key)
-    {
-        return OroPayPalExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
+        return $this->configManager->get(Configuration::getConfigKey($key));
     }
 
     /**

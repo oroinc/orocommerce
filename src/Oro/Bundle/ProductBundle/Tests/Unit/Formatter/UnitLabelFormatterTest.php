@@ -9,12 +9,10 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 
 class UnitLabelFormatterTest extends UnitLabelFormatterTestCase
 {
-    const TRANSLATION_PREFIX = 'oro.product_unit';
-
     /**
      * {@inheritdoc}
      */
-    protected function createObject($code): MeasureUnitInterface
+    protected function createObject(string $code): MeasureUnitInterface
     {
         $unit = new ProductUnit();
         $unit->setCode($code);
@@ -38,6 +36,6 @@ class UnitLabelFormatterTest extends UnitLabelFormatterTestCase
      */
     protected function getTranslationPrefix(): string
     {
-        return static::TRANSLATION_PREFIX;
+        return 'oro.product_unit';
     }
 }

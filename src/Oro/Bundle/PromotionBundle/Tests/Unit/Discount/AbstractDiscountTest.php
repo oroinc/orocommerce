@@ -15,7 +15,7 @@ class AbstractDiscountTest extends \PHPUnit\Framework\TestCase
      */
     private $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = $this->getMockForAbstractClass(AbstractDiscount::class);
     }
@@ -71,7 +71,6 @@ class AbstractDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidOptionsDataProvider
-     * @param array $options
      */
     public function testInvalidOptions(array $options)
     {
@@ -79,9 +78,6 @@ class AbstractDiscountTest extends \PHPUnit\Framework\TestCase
         $this->discount->configure($options);
     }
 
-    /**
-     * @return array
-     */
     public function invalidOptionsDataProvider(): array
     {
         return [

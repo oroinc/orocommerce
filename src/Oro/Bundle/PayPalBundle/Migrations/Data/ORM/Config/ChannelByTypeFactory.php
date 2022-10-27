@@ -8,8 +8,11 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayChannelType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProChannelType;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides functionality to create a Channel
+ */
 class ChannelByTypeFactory
 {
     /**
@@ -27,11 +30,6 @@ class ChannelByTypeFactory
      */
     private $translator;
 
-    /**
-     * @param PayPalPaymentsProChannelType    $paymentsProChannelType
-     * @param PayPalPayflowGatewayChannelType $payflowGatewayChannelType
-     * @param TranslatorInterface             $translator
-     */
     public function __construct(
         PayPalPaymentsProChannelType $paymentsProChannelType,
         PayPalPayflowGatewayChannelType $payflowGatewayChannelType,
@@ -116,6 +114,6 @@ class ChannelByTypeFactory
      */
     private function getChannelTypeTranslatedLabel(ChannelInterface $channel)
     {
-        return $this->translator->trans($channel->getLabel());
+        return $this->translator->trans((string) $channel->getLabel());
     }
 }

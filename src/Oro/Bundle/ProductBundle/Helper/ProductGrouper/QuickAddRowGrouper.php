@@ -5,6 +5,9 @@ namespace Oro\Bundle\ProductBundle\Helper\ProductGrouper;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
+/**
+ * Creates QuickAddRowCollection of products grouped by SKU and Unit.
+ */
 class QuickAddRowGrouper implements ProductsGrouperInterface
 {
     /**
@@ -35,7 +38,7 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
      */
     private function createIndex(QuickAddRow $productRow)
     {
-        return sprintf('%s_%s', strtoupper($productRow->getSku()), $productRow->getUnit());
+        return sprintf('%s_%s', mb_strtoupper($productRow->getSku()), $productRow->getUnit());
     }
 
     /**
@@ -62,11 +65,6 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
         return $mergedProductRow;
     }
 
-    /**
-     * @param QuickAddRow $productRowTo
-     * @param QuickAddRow $productRowFrom
-     * @param QuickAddRow $mergedProductRow
-     */
     private function mergeErrors(
         QuickAddRow $productRowTo,
         QuickAddRow $productRowFrom,
@@ -81,11 +79,6 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
         }
     }
 
-    /**
-     * @param QuickAddRow $productRowTo
-     * @param QuickAddRow $productRowFrom
-     * @param QuickAddRow $mergedProductRow
-     */
     private function mergeAdditionalFields(
         QuickAddRow $productRowTo,
         QuickAddRow $productRowFrom,

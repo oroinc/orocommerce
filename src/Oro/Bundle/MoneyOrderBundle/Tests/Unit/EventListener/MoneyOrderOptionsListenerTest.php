@@ -7,12 +7,12 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 use Oro\Bundle\PaymentBundle\Event\CollectFormattedPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
 
@@ -21,7 +21,7 @@ class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->listener = new MoneyOrderOptionsListener($this->translator);
@@ -29,7 +29,7 @@ class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnCollectPaymentOptionsWhenNoMoneyOrderView()
     {
-        /** @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethodView */
+        /** @var PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodView */
         $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
         $event = new CollectFormattedPaymentOptionsEvent($paymentMethodView);
         $paymentMethodView->expects($this->never())

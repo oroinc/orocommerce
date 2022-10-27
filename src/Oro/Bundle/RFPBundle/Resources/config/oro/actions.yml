@@ -31,7 +31,7 @@ operations:
         order: 10
         button_options:
             icon: fa-tag
-            template: OroActionBundle:Operation:ajax-button.html.twig
+            template: '@OroAction/Operation/ajax-button.html.twig'
             data:
                 component_name: oro_rfp_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component
@@ -81,7 +81,7 @@ operations:
 #            icon: fa-pencil-square-o
 #        acl_resource: oro_rfp_request_update
 #        frontend_options:
-#            template: OroRFPBundle:Action:rfpEditForm.html.twig
+#            template: '@OroRFP/Action/rfpEditForm.html.twig'
 #            show_dialog: false
 #        actions:
 #            - '@flash_message':
@@ -185,8 +185,8 @@ action_groups:
                     - [[keep], [propertyName, [customer_status]]]
                     - [[keep], [propertyName, [assignedUsers]]]
                     - [[keep], [propertyName, [assignedCustomerUsers]]]
-                    - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
-                    - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
+                    - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProduct', product]]]
+                    - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductItem', productUnit]]]
                     - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
             - '@assign_value': [$.requestCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.requestCopy.updatedAt, $.currentDatetime]

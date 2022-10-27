@@ -1,5 +1,6 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {"%title%": 'oro.cms.page.entity_label'|trans } }) %}
 
@@ -15,11 +16,16 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% set imageLogoData %}
         {% if entity.logoImage %}
             {% set logoImageContent %}
                 <div class="control-label html-content">
-                    <img src="{{ filtered_image_url(entity.logoImage, "login_page") }}">
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        file: entity.logoImage,
+                        filter: 'login_page'
+                    } %}
                 </div>
             {% endset %}
             {{ UI.renderAttribute('oro.cms.loginpage.logo_image.label'|trans, logoImageContent) }}
@@ -32,7 +38,10 @@
         {% if entity.backgroundImage %}
             {% set backgroupImageContent %}
                 <div class="control-label html-content">
-                    <img src="{{ filtered_image_url(entity.backgroundImage, "login_page") }}">
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        file: entity.backgroundImage,
+                        filter: 'login_page'
+                    } %}
                 </div>
             {% endset %}
             {{ UI.renderAttribute('oro.cms.loginpage.background_image.label'|trans, backgroupImageContent) }}
@@ -41,18 +50,34 @@
         {% endif %}
     {% endset %}
 
+    {%- set loginPageInformation -%}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty(
+                    'oro.cms.loginpage.top_content.label'|trans,
+                    entity.topContent|length <= 100 ? entity.topContent : entity.topContent|slice(0, 100)|trim(side='right') ~ '...'
+                ) }}
+                {{ UI.renderProperty(
+                    'oro.cms.loginpage.bottom_content.label'|trans,
+                    entity.bottomContent|length <= 100 ? entity.bottomContent : entity.bottomContent|slice(0, 100)|trim(side='right') ~ '...'
+                ) }}
+                {{ entity.css or loginPageCssField ? UI.renderProperty(
+                    'oro.cms.loginpage.css.label'|trans,
+                    entity.css|length <= 100 ? entity.css : entity.css|slice(0, 100)|trim(side='right') ~ '...'
+                ) : '' }}
+                {{ imageLogoData }}
+                {{ backgroundImageData }}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [{
         'title': 'oro.cms.sections.general'|trans,
         'class': 'active',
-        'subblocks': [
-            {'data' : [
-                UI.renderProperty('oro.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)),
-                UI.renderProperty('oro.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)),
-                UI.renderProperty('oro.cms.loginpage.css.label'|trans, entity.css|truncate(100)),
-                imageLogoData,
-                backgroundImageData,
-            ]},
-        ]
+        'subblocks': [{'data' : [loginPageInformation]}]
     }] %}
 
     {% set id = 'login-page-view' %}

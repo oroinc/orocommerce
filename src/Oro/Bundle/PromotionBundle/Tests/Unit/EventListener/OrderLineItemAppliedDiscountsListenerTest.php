@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
@@ -17,36 +18,31 @@ use Symfony\Component\Form\FormInterface;
 
 class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    private const DISCOUNT1 = 111.11111111111;
+    private const DISCOUNT2 = 222.22222222222;
+    private const ROW_TOTAL1 = '999.9999999999999999';
+    private const ROW_TOTAL2 = '888.8888888888888888';
+
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxProvider;
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxationSettingsProvider;
 
-    /**
-     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $lineItemSubtotalProvider;
 
-    /**
-     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $appliedDiscountsProvider;
 
-    /**
-     * @var OrderLineItemAppliedDiscountsListener
-     */
+    /** @var OrderLineItemAppliedDiscountsListener */
     protected $discountsListener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);
         $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
-        $taxProviderRegistry->expects($this->any())
+        $taxProviderRegistry->expects(self::any())
             ->method('getEnabledProvider')
             ->willReturn($this->taxProvider);
 
@@ -62,77 +58,180 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
         );
     }
 
-    public function testOnOrderEventWithTaxation()
+    /**
+     * @dataProvider getOnOrderEventWithTaxationDataProvider
+     */
+    public function testOnOrderEventWithTaxation(bool $isDiscountsIncluded, array $expectedDiscounts): void
     {
         $order = $this->prepareOrder();
-        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $taxesRow = new ResultElement();
-        $taxesRow->offsetSet(ResultElement::INCLUDING_TAX, 100);
-        $taxesRow->offsetSet(ResultElement::EXCLUDING_TAX, 50);
+        $taxesRow->offsetSet(ResultElement::EXCLUDING_TAX, self::ROW_TOTAL1);
+        $taxesRow->offsetSet(ResultElement::INCLUDING_TAX, self::ROW_TOTAL2);
+        $taxesRow->setDiscountsIncluded($isDiscountsIncluded);
+
         $result = new Result();
         $result->offsetSet(Result::ROW, $taxesRow);
-        $this->taxProvider->expects($this->atLeastOnce())->method('getTax')->willReturn($result);
+        $this->taxProvider->expects(self::atLeastOnce())
+            ->method('getTax')
+            ->willReturn($result);
 
         $event = new OrderEvent($this->createMock(FormInterface::class), $order);
         $this->discountsListener->onOrderEvent($event);
 
-        $this->assertEquals([
-            [
-                'appliedDiscountsAmount' => 11,
-                'rowTotalAfterDiscountExcludingTax' => 50 - 11,
-                'rowTotalAfterDiscountIncludingTax' => 100 - 11,
-                'currency' => 'USD',
-            ],
-            [
-                'appliedDiscountsAmount' => 22,
-                'rowTotalAfterDiscountExcludingTax' => 50 - 22,
-                'rowTotalAfterDiscountIncludingTax' => 100 - 22,
-                'currency' => 'USD',
-            ],
-            [
-                'appliedDiscountsAmount' => 0,
-                'rowTotalAfterDiscountExcludingTax' => 50,
-                'rowTotalAfterDiscountIncludingTax' => 100,
-                'currency' => 'USD',
-            ],
-        ], $event->getData()->offsetGet('appliedDiscounts'));
+        self::assertSame($expectedDiscounts, $event->getData()->offsetGet('appliedDiscounts'));
     }
 
-    public function testOnOrderEventWithoutTaxation()
+    public function getOnOrderEventWithTaxationDataProvider(): array
+    {
+        $discounts = [
+            [
+                'appliedDiscountsAmount' => self::DISCOUNT1,
+                'rowTotalAfterDiscountExcludingTax' => (string)BigDecimal::of(self::ROW_TOTAL1)->minus(self::DISCOUNT1),
+                'rowTotalAfterDiscountIncludingTax' => (string)BigDecimal::of(self::ROW_TOTAL2)->minus(self::DISCOUNT1),
+                'currency' => 'USD',
+            ],
+            [
+                'appliedDiscountsAmount' => self::DISCOUNT2,
+                'rowTotalAfterDiscountExcludingTax' => (string)BigDecimal::of(self::ROW_TOTAL1)->minus(self::DISCOUNT2),
+                'rowTotalAfterDiscountIncludingTax' => (string)BigDecimal::of(self::ROW_TOTAL2)->minus(self::DISCOUNT2),
+                'currency' => 'USD',
+            ],
+            [
+                'appliedDiscountsAmount' => 0.0,
+                'rowTotalAfterDiscountExcludingTax' => self::ROW_TOTAL1,
+                'rowTotalAfterDiscountIncludingTax' => self::ROW_TOTAL2,
+                'currency' => 'USD',
+            ],
+        ];
+
+        $discountsAlreadyIncluded = [
+            [
+                'appliedDiscountsAmount' => self::DISCOUNT1,
+                'rowTotalAfterDiscountExcludingTax' => self::ROW_TOTAL1,
+                'rowTotalAfterDiscountIncludingTax' => self::ROW_TOTAL2,
+                'currency' => 'USD',
+            ],
+            [
+                'appliedDiscountsAmount' => self::DISCOUNT2,
+                'rowTotalAfterDiscountExcludingTax' => self::ROW_TOTAL1,
+                'rowTotalAfterDiscountIncludingTax' => self::ROW_TOTAL2,
+                'currency' => 'USD',
+            ],
+            [
+                'appliedDiscountsAmount' => 0.0,
+                'rowTotalAfterDiscountExcludingTax' => self::ROW_TOTAL1,
+                'rowTotalAfterDiscountIncludingTax' => self::ROW_TOTAL2,
+                'currency' => 'USD',
+            ],
+        ];
+
+        return [
+            'discounts not included' => [
+                'isDiscountsIncluded' => false,
+                'expectedDiscounts' => $discounts,
+            ],
+            'discounts included' => [
+                'isDiscountsIncluded' => true,
+                'expectedDiscounts' => $discountsAlreadyIncluded,
+            ],
+        ];
+    }
+
+    public function testOnOrderEventWithoutTaxation(): void
     {
         $order = $this->prepareOrder();
 
-        $this->taxationSettingsProvider->expects($this->once())->method('isEnabled')->willReturn(false);
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(false);
 
-        $this->lineItemSubtotalProvider->expects($this->atLeastOnce())->method('getRowTotal')->willReturn(42);
+        $this->lineItemSubtotalProvider->expects(self::atLeastOnce())
+            ->method('getRowTotal')
+            ->willReturn(420);
 
         $event = new OrderEvent($this->createMock(FormInterface::class), $order);
         $this->discountsListener->onOrderEvent($event);
 
-        $this->assertEquals([
+        self::assertEquals([
             [
-                'appliedDiscountsAmount' => 11,
-                'rowTotalAfterDiscount' => 42 - 11,
+                'appliedDiscountsAmount' => self::DISCOUNT1,
+                'rowTotalAfterDiscount' => 420 - self::DISCOUNT1,
                 'currency' => 'USD',
             ],
             [
-                'appliedDiscountsAmount' => 22,
-                'rowTotalAfterDiscount' => 42 - 22,
+                'appliedDiscountsAmount' => self::DISCOUNT2,
+                'rowTotalAfterDiscount' => 420 - self::DISCOUNT2,
                 'currency' => 'USD',
             ],
             [
                 'appliedDiscountsAmount' => 0,
-                'rowTotalAfterDiscount' => 42,
+                'rowTotalAfterDiscount' => 420,
                 'currency' => 'USD',
             ],
         ], $event->getData()->offsetGet('appliedDiscounts'));
     }
 
     /**
-     * @return Order
+     * @dataProvider getOnOrderEventEmptyTaxesRowDataProvider
      */
-    protected function prepareOrder()
+    public function testOnOrderEventEmptyTaxesRow(bool $isDiscountsIncluded): void
+    {
+        $order = new Order();
+        $lineItem1 = (new OrderLineItem())->setCurrency('USD');
+        $order->addLineItem($lineItem1);
+
+        $this->appliedDiscountsProvider->expects(self::atLeastOnce())
+            ->method('getDiscountsAmountByLineItem')
+            ->willReturnMap([
+                [$lineItem1, 0],
+            ]);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $taxesRow = new ResultElement();
+        $taxesRow->setDiscountsIncluded($isDiscountsIncluded);
+
+        $result = new Result();
+        $result->offsetSet(Result::ROW, $taxesRow);
+        $this->taxProvider->expects(self::atLeastOnce())
+            ->method('getTax')
+            ->willReturn($result);
+
+        $event = new OrderEvent($this->createMock(FormInterface::class), $order);
+        $this->discountsListener->onOrderEvent($event);
+
+        self::assertSame(
+            [
+                [
+                    'appliedDiscountsAmount' => 0.0,
+                    'rowTotalAfterDiscountExcludingTax' => '0.0',
+                    'rowTotalAfterDiscountIncludingTax' => '0.0',
+                    'currency' => 'USD'
+                ]
+            ],
+            $event->getData()->offsetGet('appliedDiscounts')
+        );
+    }
+
+    public function getOnOrderEventEmptyTaxesRowDataProvider(): array
+    {
+        return [
+            'discounts not included' => [
+                'isDiscountsIncluded' => false,
+            ],
+            'discounts included' => [
+                'isDiscountsIncluded' => true,
+            ],
+        ];
+    }
+
+    protected function prepareOrder(): Order
     {
         $order = new Order();
         $lineItem1 = (new OrderLineItem())->setCurrency('USD');
@@ -142,13 +241,15 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit\Framework\TestC
         $order->addLineItem($lineItem2);
         $order->addLineItem($lineItem3);
 
-        $this->appliedDiscountsProvider->expects($this->atLeastOnce())
+        $this->appliedDiscountsProvider->expects(self::atLeastOnce())
             ->method('getDiscountsAmountByLineItem')
-            ->will($this->returnValueMap([
-                [$lineItem1, 11],
-                [$lineItem2, 22],
-                [$lineItem3, 0],
-            ]));
+            ->willReturnMap(
+                [
+                    [$lineItem1, self::DISCOUNT1],
+                    [$lineItem2, self::DISCOUNT2],
+                    [$lineItem3, 0],
+                ]
+            );
 
         return $order;
     }

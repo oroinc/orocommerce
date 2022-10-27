@@ -36,11 +36,6 @@ class ProductSelectionGridExtension extends AbstractExtension
      */
     protected $productListModifier;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param TokenStorageInterface $tokenStorage
-     * @param FrontendProductListModifier $productListModifier
-     */
     public function __construct(
         RequestStack $requestStack,
         TokenStorageInterface $tokenStorage,

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadContentNodeData;
@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollection
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
 class ContentVariantSegmentProviderTest extends WebTestCase
 {
@@ -23,7 +24,12 @@ class ContentVariantSegmentProviderTest extends WebTestCase
      */
     private $provider;
 
-    protected function setUp()
+    /**
+     * @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $usageProvider;
+
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadProductCollectionContentVariants::class]);
@@ -33,9 +39,12 @@ class ContentVariantSegmentProviderTest extends WebTestCase
         $this->provider = new ContentVariantSegmentProvider(
             static::getContainer()->get('oro_entity.doctrine_helper')
         );
+
+        $this->usageProvider = $this->createMock(WebCatalogUsageProviderInterface::class);
+        $this->provider->setWebCatalogUsageProvider($this->usageProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $metadata = $this->getContentVariantMetadata();
         $metadata->name = $this->prevVariantClass;
@@ -64,6 +73,40 @@ class ContentVariantSegmentProviderTest extends WebTestCase
         ];
 
         $this->assertEquals($segments, iterator_to_array($this->provider->getContentVariantSegments()));
+    }
+
+    public function testGetContentVariantSegmentsForGivenWebsiteSegmentsNoClass()
+    {
+        $metadata = $this->getContentVariantMetadata();
+        $metadata->name = null;
+        $provider = new ContentVariantSegmentProvider(
+            static::getContainer()->get('oro_entity.doctrine_helper')
+        );
+
+        $node = $this->getReference(LoadContentNodeData::FIRST_CONTENT_NODE);
+        $this->usageProvider->expects($this->any())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([1 => $node->getWebCatalog()->getId()]);
+
+        $this->assertEmpty(iterator_to_array($provider->getContentVariantSegments()));
+    }
+
+    public function testGetContentVariantSegmentsForGivenWebsite()
+    {
+        $metadata = $this->getContentVariantMetadata();
+        $metadata->name = TestContentVariant::class;
+
+        $segments = [
+            $this->getReference('segment_dynamic')
+        ];
+
+        $node = $this->getReference(LoadContentNodeData::FIRST_CONTENT_NODE);
+        $this->usageProvider->expects($this->any())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([1 => $node->getWebCatalog()->getId()]);
+
+        $this->assertEquals($segments, iterator_to_array($this->provider->getContentVariantSegmentsByWebsiteId(1)));
+        $this->assertEmpty(iterator_to_array($this->provider->getContentVariantSegmentsByWebsiteId(2)));
     }
 
     public function testGetContentVariantsNoClass()
@@ -149,9 +192,6 @@ class ContentVariantSegmentProviderTest extends WebTestCase
         $this->assertNull($this->provider->getContentNode($this->getReference('segment_dynamic_with_filter')));
     }
 
-    /**
-     * @return ClassMetadata
-     */
     protected function getContentVariantMetadata(): ClassMetadata
     {
         $em = $this->getContainer()->get('doctrine')->getManagerForClass(Segment::class);

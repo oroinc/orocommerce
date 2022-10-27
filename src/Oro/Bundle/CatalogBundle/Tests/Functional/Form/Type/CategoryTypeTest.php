@@ -6,11 +6,14 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -19,24 +22,17 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class CategoryTypeTest extends WebTestCase
 {
-    const LARGE_IMAGE_NAME = 'large_image.png';
-    const SMALL_IMAGE_NAME = 'small_image.png';
+    private const LARGE_IMAGE_NAME = 'large_image.png';
+    private const SMALL_IMAGE_NAME = 'small_image.png';
 
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
+    private FormFactoryInterface $formFactory;
+    private CsrfTokenManagerInterface $tokenManager;
 
-    /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $tokenManager;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures([LoadCategoryProductData::class]);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
@@ -45,9 +41,9 @@ class CategoryTypeTest extends WebTestCase
     public function testSubmit()
     {
         $doctrine = $this->getContainer()->get('doctrine');
-        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
-        $productRepository = $doctrine->getRepository('OroProductBundle:Product');
-        $productUnitRepository = $doctrine->getRepository('OroProductBundle:ProductUnit');
+        $localizationRepository = $doctrine->getRepository(Localization::class);
+        $productRepository = $doctrine->getRepository(Product::class);
+        $productUnitRepository = $doctrine->getRepository(ProductUnit::class);
 
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
@@ -60,7 +56,7 @@ class CategoryTypeTest extends WebTestCase
         $defaultShortDescription = 'Default Short Description';
         $defaultLongDescription = 'Default Long Description';
 
-        /* @var $fileLocator FileLocator */
+        /* @var FileLocator $fileLocator */
         $fileLocator = $this->getContainer()->get('file_locator');
 
         $smallImageName = self::SMALL_IMAGE_NAME;
@@ -72,8 +68,8 @@ class CategoryTypeTest extends WebTestCase
             '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
         );
 
-        $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);
-        $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, null, true);
+        $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, true);
+        $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, true);
 
         $productUnit = $productUnitRepository->findOneBy(['code' => 'kg']);
         $unitPrecision = new CategoryUnitPrecision();
@@ -83,7 +79,7 @@ class CategoryTypeTest extends WebTestCase
         $submitData = [
             'titles' => [ 'values' => ['default' => $defaultTitle]],
             'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
-            'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
+            'longDescriptions' => ['values' => [ 'default' => ['wysiwyg' => $defaultLongDescription]]],
             'smallImage' => ['file' => $smallImage],
             'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
@@ -113,11 +109,12 @@ class CategoryTypeTest extends WebTestCase
         $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         // assert category entity
         /** @var Category $category */
         $category = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $category);
+        $this->assertInstanceOf(Category::class, $category);
         $this->assertEquals($defaultTitle, (string)$category->getDefaultTitle());
         $this->assertEquals($defaultShortDescription, (string)$category->getDefaultShortDescription());
         $this->assertEquals($defaultLongDescription, (string)$category->getDefaultLongDescription());
@@ -126,15 +123,25 @@ class CategoryTypeTest extends WebTestCase
         foreach ($localizations as $localization) {
             $this->assertLocalization($localization, $category);
         }
+
         // assert related products
-        $this->assertEquals($appendedProducts, $form->get('appendProducts')->getData());
-        $this->assertEquals($removedProducts, $form->get('removeProducts')->getData());
+        $appendProductsData = $form->get('appendProducts')->getData();
+        $this->assertCount(count($appendedProducts), $appendProductsData);
+        foreach ($appendedProducts as $appendedProduct) {
+            $this->assertContains($appendedProduct, $appendProductsData);
+        }
+
+        $removeProductsData = $form->get('removeProducts')->getData();
+        $this->assertCount(count($removedProducts), $removeProductsData);
+        foreach ($removedProducts as $removedProduct) {
+            $this->assertContains($removedProduct, $removeProductsData);
+        }
     }
 
     public function testInventoryThresholdMandatoryField()
     {
         $doctrine = $this->getContainer()->get('doctrine');
-        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
+        $localizationRepository = $doctrine->getRepository(Localization::class);
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
 
@@ -145,7 +152,7 @@ class CategoryTypeTest extends WebTestCase
         $submitData = [
             'titles' => [ 'values' => ['default' => $defaultTitle]],
             'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
-            'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
+            'longDescriptions' => ['values' => [ 'default' => ['wysiwyg' => $defaultLongDescription]]],
             'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];
@@ -170,6 +177,7 @@ class CategoryTypeTest extends WebTestCase
         $form = $this->formFactory->create(CategoryType::class, new Category());
         $form->submit($submitData);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertStringStartsWith('inventoryThreshold', (string)$form->getErrors(true, false));
 
         $this->assertEquals(
@@ -183,29 +191,24 @@ class CategoryTypeTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Product[] $products
-     * @return array
-     */
-    protected function getProductIds(array $products)
+    private function getProductIds(array $products): array
     {
         $ids = [];
+        /** @var Product $product */
         foreach ($products as $product) {
             $ids[] = $product->getId();
         }
         return $ids;
     }
 
-    /**
-     * @param Collection|LocalizedFallbackValue[] $values
-     * @param Localization $localization
-     * @return LocalizedFallbackValue|null
-     */
-    protected function getValueByLocalization($values, Localization $localization)
-    {
+    private function getValueByLocalization(
+        Collection $values,
+        Localization $localization
+    ): ?AbstractLocalizedFallbackValue {
         $localizationId = $localization->getId();
+        /** @var LocalizedFallbackValue $value */
         foreach ($values as $value) {
-            if ($value->getLocalization()->getId() == $localizationId) {
+            if ($value->getLocalization()->getId() === $localizationId) {
                 return $value;
             }
         }
@@ -213,11 +216,7 @@ class CategoryTypeTest extends WebTestCase
         return null;
     }
 
-    /**
-     * @param Localization $localization
-     * @param Category $category
-     */
-    protected function assertLocalization($localization, $category)
+    private function assertLocalization(Localization $localization, Category $category): void
     {
         $localizedTitle = $this->getValueByLocalization($category->getTitles(), $localization);
         $this->assertNotEmpty($localizedTitle);

@@ -28,7 +28,7 @@ Feature: Open Orders Grid
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
 
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click view PO1 in grid
     And I click "Accept and Submit to Order"
@@ -45,12 +45,12 @@ Feature: Open Orders Grid
 
   Scenario: Checking Open Orders Total Values and Sorting By "Shipping"
     Given I open Order History page on the store frontend
-    When I show column "Subtotal" in "OpenOrdersGrid" frontend grid
-    And I show column "Shipping" in "OpenOrdersGrid" frontend grid
-    And I show column "Total" in "OpenOrdersGrid" frontend grid
+    When I show the following columns in "OpenOrdersGrid" frontend grid:
+      | Subtotal |
+      | Shipping |
+      | Total    |
     And I reload the page
     And I sort "OpenOrdersGrid" by Subtotal
-
     Then I should see following "OpenOrdersGrid" grid:
       | Subtotal | Shipping | Total  |
       | $10.00   | $3.00   | $13.00 |

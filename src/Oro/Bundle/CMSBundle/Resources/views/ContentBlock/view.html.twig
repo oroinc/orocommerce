@@ -1,5 +1,7 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroScope/macros.html.twig' as scope %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {'%title%': entity.alias} }) %}
 
@@ -14,29 +16,6 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% set restrictionsData %}
-    <table class="grid table table-bordered table-condensed quote-line-items">
-        <thead>
-        <tr>
-            <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
-            <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
-            <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
-            <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for scope in entity.scopes %}
-                <tr>
-                    <td>{{ scope.localization|default('N/A'|trans) }}</td>
-                    <td>{{ scope.website|default('N/A'|trans) }}</td>
-                    <td>{{ scope.customerGroup|default('N/A'|trans) }}</td>
-                    <td>{{ scope.customer|default('N/A'|trans) }}</td>
-                </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-{% endset %}
-
 {% set contentVariantsData %}
     {% if entity.contentVariants|length %}
         {% for variant in entity.contentVariants %}
@@ -44,27 +23,15 @@
             'oro.cms.contentblock.content_variants.default.yes.label'|trans
             :
             'oro.cms.contentblock.content_variants.default.no.label'|trans) }}
-            {{ UI.renderProperty('oro.cms.page.content.label'|trans, variant.content) }}
-            <table class="grid table table-bordered table-condensed quote-line-items">
-                <thead>
-                <tr>
-                    <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
-                    <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
-                    <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
-                    <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for variantScope in variant.scopes %}
-                    <tr>
-                        <td>{{ variantScope.localization|default('N/A'|trans) }}</td>
-                        <td>{{ variantScope.website|default('N/A'|trans) }}</td>
-                        <td>{{ variantScope.customerGroup|default('N/A'|trans) }}</td>
-                        <td>{{ variantScope.customer|default('N/A'|trans) }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+
+            {{ UI.renderHtmlProperty(
+                'oro.cms.page.content.label'|trans,
+                UI.renderCollapsibleWysiwygContentPreview(variant.content, variant, 'content', 'oro.cms.page.information_message'))
+            }}
+
+            {% if not variant.default %}
+                {{ scope.renderRestrictionsView(scopeEntities, variant.scopes) }}
+            {% endif %}
         {% endfor %}
     {% else %}
         {{ 'oro.cms.contentblock.content_variants.no_content_variants.label'|trans }}
@@ -72,24 +39,34 @@
 {% endset %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set contentBlockInformation %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('oro.cms.contentblock.alias.label'|trans, entity.alias) }}
+                {{ UI.renderProperty('oro.cms.contentblock.enabled.label'|trans, entity.enabled
+                    ? 'oro.cms.contentblock.enabled.yes.label'|trans
+                    : 'oro.cms.contentblock.enabled.no.label'|trans) }}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.cms.contentblock.sections.general.label'|trans,
             'class': 'active',
             'subblocks': [{
-                'data' : [
-                    UI.renderProperty('oro.cms.contentblock.alias.label'|trans, entity.alias),
-                    UI.renderProperty('oro.cms.contentblock.enabled.label'|trans, entity.enabled ?
-                    'oro.cms.contentblock.enabled.yes.label'|trans
-                    :
-                    'oro.cms.contentblock.enabled.no.label'|trans)
-                ]
+                'data' : [contentBlockInformation]
             }]
         },
         {
             'title': 'oro.cms.contentblock.sections.use_for.label'|trans,
             'subblocks': [{
-                'data' : [restrictionsData]
+                'data' : [scope.renderRestrictionsView(scopeEntities, entity.scopes)]
             }]
         },
         {

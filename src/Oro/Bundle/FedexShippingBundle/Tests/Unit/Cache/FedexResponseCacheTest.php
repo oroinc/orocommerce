@@ -2,42 +2,50 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCache;
 use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCacheKey;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class FedexResponseCacheTest extends TestCase
 {
     /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
+
+    /**
+     * @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $cacheItem;
 
     /**
      * @var FedexResponseCache
      */
     private $fedexCache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->cache = $this->createMock(CacheProvider::class);
-
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->fedexCache = new FedexResponseCache($this->cache);
     }
 
     public function testHas()
     {
-        $this->assertNamespaceIsSet();
         $key = $this->createCacheKey();
 
-        $this->cache
-            ->expects(static::once())
-            ->method('contains')
-            ->with($key->getCacheKey())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with($this->normalizeCacheKey($key))
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(true);
 
         static::assertTrue($this->fedexCache->has($key));
@@ -45,13 +53,14 @@ class FedexResponseCacheTest extends TestCase
 
     public function testGetNoResponse()
     {
-        $this->assertNamespaceIsSet();
         $key = $this->createCacheKey();
 
-        $this->cache
-            ->expects(static::once())
-            ->method('fetch')
-            ->with($key->getCacheKey())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with($this->normalizeCacheKey($key))
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
 
         static::assertNull($this->fedexCache->get($key));
@@ -59,14 +68,18 @@ class FedexResponseCacheTest extends TestCase
 
     public function testGet()
     {
-        $this->assertNamespaceIsSet();
         $key = $this->createCacheKey();
         $response = $this->createMock(FedexRateServiceResponseInterface::class);
 
-        $this->cache
-            ->expects(static::once())
-            ->method('fetch')
-            ->with($key->getCacheKey())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with($this->normalizeCacheKey($key))
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($response);
 
         static::assertSame($response, $this->fedexCache->get($key));
@@ -74,97 +87,87 @@ class FedexResponseCacheTest extends TestCase
 
     public function testSetInvalidateAtIsSetInSettings()
     {
-        $this->assertNamespaceIsSet();
-        $key = $this->createCacheKey(new \DateTime('now +1 day'));
+        $datetime = new \DateTime('now +1 day');
+        $key = $this->createCacheKey($datetime);
         $response = $this->createMock(FedexRateServiceResponseInterface::class);
-
-        $this->cache
-            ->expects(static::once())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with($this->normalizeCacheKey($key))
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with($datetime->getTimestamp()-\date_timestamp_get(\date_create()))
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($response);
+        $this->cache->expects(self::once())
             ->method('save')
+            ->with($this->cacheItem)
             ->willReturn(true);
 
-        static::assertTrue($this->fedexCache->set($key, $response));
+        self::assertTrue($this->fedexCache->set($key, $response));
     }
 
     public function testSetInvalidateAtNotSetInSettings()
     {
-        $this->assertNamespaceIsSet();
         $key = $this->createCacheKey();
         $response = $this->createMock(FedexRateServiceResponseInterface::class);
 
-        $this->cache
-            ->expects(static::once())
+        $this->cache->expects(self::once())
+            ->method('getItem')
+            ->with($this->normalizeCacheKey($key))
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with(86400)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($response);
+        $this->cache->expects(self::once())
             ->method('save')
-            ->with($key->getCacheKey(), $response, 86400)
+            ->with($this->cacheItem)
             ->willReturn(true);
 
-        static::assertTrue($this->fedexCache->set($key, $response));
-    }
-
-    public function testDeleteNoKeyExist()
-    {
-        $this->assertNamespaceIsSet();
-        $key = $this->createCacheKey();
-
-        $this->cache
-            ->expects(static::once())
-            ->method('contains')
-            ->with($key->getCacheKey())
-            ->willReturn(false);
-
-        static::assertFalse($this->fedexCache->delete($key));
+        self::assertTrue($this->fedexCache->set($key, $response));
     }
 
     public function testDelete()
     {
-        $this->assertNamespaceIsSet();
         $key = $this->createCacheKey();
 
         $this->cache
             ->expects(static::once())
-            ->method('contains')
-            ->with($key->getCacheKey())
+            ->method('deleteItem')
+            ->with($this->normalizeCacheKey($key))
             ->willReturn(true);
 
-        $this->cache
-            ->expects(static::once())
-            ->method('delete')
-            ->with($key->getCacheKey())
-            ->willReturn(true);
-
-        static::assertTrue($this->fedexCache->delete($key));
+        self::assertTrue($this->fedexCache->delete($key));
     }
 
     public function testDeleteAll()
     {
-        $this->assertNamespaceIsSet();
-
         $this->cache
             ->expects(static::once())
-            ->method('deleteAll')
+            ->method('clear')
             ->willReturn(true);
 
-        static::assertTrue($this->fedexCache->deleteAll($this->createMock(FedexIntegrationSettings::class)));
+        self::assertTrue($this->fedexCache->deleteAll());
     }
 
-    private function assertNamespaceIsSet()
-    {
-        $this->cache
-            ->expects(static::any())
-            ->method('setNamespace')
-            ->with('oro_fedex_shipping_price');
-    }
-
-    /**
-     * @param \DateTime|null $invalidateAt
-     *
-     * @return FedexResponseCacheKey
-     */
     private function createCacheKey(\DateTime $invalidateAt = null): FedexResponseCacheKey
     {
         return new FedexResponseCacheKey(
             new FedexRequest(),
             (new FedexIntegrationSettings())->setInvalidateCacheAt($invalidateAt)
+        );
+    }
+
+    private function normalizeCacheKey(FedexResponseCacheKey $key) : string
+    {
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            $key->getCacheKey() . '_' .  $key->getSettings()->getId()
         );
     }
 }

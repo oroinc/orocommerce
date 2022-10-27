@@ -2,112 +2,204 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener;
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\ProductStub;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Twig\Environment;
 
-class ProductFormViewListenerTest extends AbstractFormViewListenerTest
+class ProductFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductFormViewListener
-     */
-    protected $listener;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @return ProductFormViewListener
-     */
-    public function getListener()
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
+
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    private $env;
+
+    /** @var ProductFormViewListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        return new ProductFormViewListener(
-            $this->doctrineHelper,
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->env = $this->createMock(Environment::class);
+
+        $this->listener = new ProductFormViewListener(
             $this->requestStack,
-            'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
-            'Oro\Bundle\ProductBundle\Entity\Product'
+            $this->doctrineHelper,
+            $this->featureChecker
         );
     }
 
-    public function testOnEdit()
+    public function testOnViewNoRequest(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn(null);
 
-        $htmlTemplate = 'tax_code_update_template';
-        $env->expects($this->once())
-            ->method('render')
-            ->with('OroTaxBundle:Product:tax_code_update.html.twig', ['form' => new FormView()])
-            ->willReturn($htmlTemplate);
+        $this->featureChecker->expects(self::never())
+            ->method('isResourceEnabled');
 
-        $data = [
-            ScrollData::DATA_BLOCKS => [
-                'firstBlock' => [
-                    ScrollData::TITLE => 'first block',
-                    ScrollData::SUB_BLOCKS => [
-                        0 => [
-                            ScrollData::DATA => [
-                                'first subblock data',
-                            ]
-                        ],
-                    ]
-                ],
-                0 => [
-                    ScrollData::TITLE => 'first block',
-                    ScrollData::SUB_BLOCKS => []
-                ]
-            ]
-        ];
+        $this->doctrineHelper->expects(self::never())
+            ->method('getEntityReference');
 
-        $scrollData = new ScrollData($data);
-        $event = new BeforeListRenderEvent($env, $scrollData, new \stdClass(), new FormView());
-
-        $this->getListener()->onEdit($event);
-        $expectedData = $data;
-        $expectedData[ScrollData::DATA_BLOCKS]['firstBlock'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA][] =
-            $htmlTemplate;
-
-        $this->assertEquals($expectedData, $scrollData->getData());
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
+        $this->listener->onView($event);
     }
 
-    public function testOnProductView()
+    public function testOnViewTaxCodeDisabled(): void
     {
-        $this->request
-            ->expects($this->any())
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->createMock(Request::class));
+
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with(ProductTaxCode::class, 'entities')
+            ->willReturn(false);
+
+        $this->doctrineHelper->expects(self::never())
+            ->method('getEntityReference');
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
+        $this->listener->onView($event);
+    }
+
+    public function testOnView(): void
+    {
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())
             ->method('get')
             ->with('id')
             ->willReturn(1);
+        $request->expects(self::once())
+            ->method('get')
+            ->willReturn(1);
+        $this->requestStack->expects(self::once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
 
-        $taxCode = new ProductTaxCode();
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with(ProductTaxCode::class, 'entities')
+            ->willReturn(true);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getTaxCode'])
-            ->getMock();
-        $product->method('getTaxCode')->willReturn($taxCode);
+        $taxCode = $this->createMock(ProductTaxCode::class);
+        $product = $this->createMock(ProductStub::class);
+        $product->expects(self::once())
+            ->method('getTaxCode')
+            ->willReturn($taxCode);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityReference')
+            ->with(Product::class, 1)
             ->willReturn($product);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $env->expects($this->once())
+        $this->env->expects(self::once())
             ->method('render')
-            ->with('OroTaxBundle:Product:tax_code_view.html.twig', ['entity' => $taxCode])
-            ->willReturn('');
+            ->with('@OroTax/Product/tax_code_view.html.twig', ['entity' => $taxCode])
+            ->willReturn('rendered');
 
-        $event = $this->getBeforeListRenderEvent();
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                'general' => [
+                    ScrollData::TITLE      => 'first block',
+                    ScrollData::SUB_BLOCKS => [
+                        [ScrollData::DATA => ['first subblock data']],
+                        [ScrollData::DATA => ['second subblock data']]
+                    ]
+                ]
+            ]
+        ]);
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());
+        $this->listener->onView($event);
 
-        $this->getListener()->onView($event);
+        self::assertEquals(
+            [
+                ScrollData::DATA_BLOCKS => [
+                    'general' => [
+                        ScrollData::TITLE      => 'first block',
+                        ScrollData::SUB_BLOCKS => [
+                            [ScrollData::DATA => ['first subblock data']],
+                            [ScrollData::DATA => ['second subblock data', 'rendered']]
+                        ]
+                    ]
+                ]
+            ],
+            $event->getScrollData()->getData()
+        );
+    }
+
+    public function testOnEditTaxCodeDisabled(): void
+    {
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with(ProductTaxCode::class, 'entities')
+            ->willReturn(false);
+
+        $this->doctrineHelper->expects(self::never())
+            ->method('getEntityReference');
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new \stdClass());
+        $this->listener->onEdit($event);
+    }
+
+    public function testOnEdit(): void
+    {
+        $formView = $this->createMock(FormView::class);
+
+        $this->featureChecker->expects(self::once())
+            ->method('isResourceEnabled')
+            ->with(ProductTaxCode::class, 'entities')
+            ->willReturn(true);
+
+        $this->env->expects(self::once())
+            ->method('render')
+            ->with('@OroTax/Product/tax_code_update.html.twig', ['form' => $formView])
+            ->willReturn('rendered');
+
+        $scrollData = new ScrollData([
+            ScrollData::DATA_BLOCKS => [
+                'general' => [
+                    ScrollData::TITLE      => 'first block',
+                    ScrollData::SUB_BLOCKS => [
+                        [ScrollData::DATA => ['first subblock data']],
+                        [ScrollData::DATA => ['second subblock data']]
+                    ]
+                ]
+            ]
+        ]);
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), $formView);
+        $this->listener->onEdit($event);
+
+        self::assertEquals(
+            [
+                ScrollData::DATA_BLOCKS => [
+                    'general' => [
+                        ScrollData::TITLE      => 'first block',
+                        ScrollData::SUB_BLOCKS => [
+                            [ScrollData::DATA => ['first subblock data']],
+                            [ScrollData::DATA => ['second subblock data', 'rendered']]
+                        ]
+                    ]
+                ]
+            ],
+            $event->getScrollData()->getData()
+        );
     }
 }

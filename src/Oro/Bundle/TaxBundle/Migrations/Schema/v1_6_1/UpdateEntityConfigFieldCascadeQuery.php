@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Migrations\Schema\v1_6_1;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -68,13 +68,13 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
     {
         $sql = 'SELECT id, data FROM oro_entity_config WHERE class_name = :className LIMIT 1';
         $parameters = ['className' => $this->entityFrom];
-        $types = ['className' => Type::STRING];
+        $types = ['className' => Types::STRING];
 
         $this->logQuery($logger, $sql, $parameters);
 
         $row = $this->connection->fetchAssoc($sql, $parameters, $types);
         $id = $row['id'];
-        $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Type::TARRAY) : [];
+        $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Types::ARRAY) : [];
 
         foreach ($this->fields as $field) {
             $fullRelationName = implode(
@@ -87,7 +87,7 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
             }
         }
 
-        $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+        $data = $this->connection->convertToDatabaseValue($data, Types::ARRAY);
 
         $sql = 'UPDATE oro_entity_config SET data = ? WHERE id = ?';
         $parameters = [$data, $id];

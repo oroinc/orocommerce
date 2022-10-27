@@ -7,9 +7,9 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -19,7 +19,7 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 class HasPriceInShoppingLineItemsListener
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     private $productPriceProvider;
 
@@ -29,28 +29,20 @@ class HasPriceInShoppingLineItemsListener
     private $userCurrencyManager;
 
     /**
-     * @var PriceListRequestHandler
+     * @var ProductPriceScopeCriteriaRequestHandler
      */
-    private $priceListRequestHandler;
+    private $scopeCriteriaRequestHandler;
 
-    /**
-     * @param ProductPriceProvider $productPriceProvider
-     * @param UserCurrencyManager $userCurrencyManager
-     * @param PriceListRequestHandler $priceListRequestHandler
-     */
     public function __construct(
-        ProductPriceProvider $productPriceProvider,
+        ProductPriceProviderInterface $productPriceProvider,
         UserCurrencyManager $userCurrencyManager,
-        PriceListRequestHandler $priceListRequestHandler
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
         $this->userCurrencyManager = $userCurrencyManager;
-        $this->priceListRequestHandler = $priceListRequestHandler;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
     }
 
-    /**
-     * @param ExtendableConditionEvent $conditionEvent
-     */
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
     {
         /** @var ActionData $context */
@@ -121,10 +113,8 @@ class HasPriceInShoppingLineItemsListener
             );
         }
 
-        $prices = $this->productPriceProvider->getMatchedPrices(
-            $productsPricesCriteria,
-            $this->priceListRequestHandler->getPriceListByCustomer()
-        );
+        $prices = $this->productPriceProvider
+            ->getMatchedPrices($productsPricesCriteria, $this->scopeCriteriaRequestHandler->getPriceScopeCriteria());
 
         return !empty(array_filter($prices));
     }

@@ -1,0 +1,39 @@
+api:
+    entities:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroInventoryBundle/Resources/doc/api_frontend/product.md'
+            fields:
+                lowInventory:
+                    data_type: boolean
+                    property_path: _
+                    depends_on:
+                        - primaryUnitPrecision.unit
+                        - highlightLowInventory.fallback
+                        - highlightLowInventory.scalarValue
+                        - lowInventoryThreshold.fallback
+                        - lowInventoryThreshold.scalarValue
+                upcoming:
+                    data_type: boolean
+                    property_path: _
+                    depends_on:
+                        - isUpcoming.fallback
+                        - isUpcoming.scalarValue
+                        - availability_date
+                availabilityDate:
+                    data_type: datetime
+                    property_path: _
+                    depends_on:
+                        - isUpcoming.fallback
+                        - isUpcoming.scalarValue
+                        - availability_date
+                # as storefront API uses "exclusion_policy: custom_fields" we should declare
+                # "highlightLowInventory", "lowInventoryThreshold", "isUpcoming" and "availability_date" custom fields
+                # manually as excluded API fields to be able to use them in "depends_on" option
+                highlightLowInventory:
+                    exclude: true
+                lowInventoryThreshold:
+                    exclude: true
+                isUpcoming:
+                    exclude: true
+                availability_date:
+                    exclude: true

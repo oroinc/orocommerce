@@ -14,7 +14,7 @@ class SearchHandlerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures([LoadProductTaxCodes::class]);
@@ -27,7 +27,7 @@ class SearchHandlerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->searchHandler);
     }

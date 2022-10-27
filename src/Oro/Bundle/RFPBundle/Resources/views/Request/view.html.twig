@@ -1,6 +1,6 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%title%": entity.__toString()}}) %}
 
@@ -17,6 +17,8 @@
 {% block navButtonContainer %}
     {% placeholder view_navButtons_before with {entity: entity} %}
     {% block navButtons %}
+        {% import '@OroUI/macros.html.twig' as UI %}
+
         {{ parent() }}
 
         {% if is_granted('oro_order_create') %}
@@ -59,7 +61,7 @@
     {% if entity.requestProducts|length %}
         {% set lineItems %}
             <div class="rfp-line-items-info grid-container">
-                <table class="grid table table-bordered table-condensed rfp-line-items">
+                <table class="grid grid-main-container table table-bordered table-condensed rfp-line-items">
                     <thead>
                         <tr>
                             <th class="rfp-line_item-sku"><span>{{ 'oro.product.sku.label'|trans }}</span></th>
@@ -77,7 +79,7 @@
                             {% set price = subItem.price %}
                             <tr>
                                 {% if loop.first %}
-                                    <td rowspan="{{ numSubItems }}" class="rfp-line_item-sku">{{ lineItem.productSku }}</td>
+                                    <td rowspan="{{ numSubItems }}" class="rfp-line_item-sku" dir="ltr">{{ lineItem.productSku }}</td>
                                     <td rowspan="{{ numSubItems }}" class="rfp-line_item-product">
                                         {{ lineItem.product }}
                                     </td>
@@ -87,7 +89,7 @@
                                         {% if oro_is_unit_code_visible(subItem.productUnit.code) %}
                                             {{ quantity ? quantity|oro_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}
                                         {% else %}
-                                            {{ quantity ? quantity : 'N/A'|trans }}
+                                            {{ quantity ? quantity|oro_format_decimal : 'N/A'|trans }}
                                         {% endif %}
                                     {% else %}
                                         {{ quantity ? quantity ~ ' ' ~ 'oro.rfp.message.requestproductitem.unit.removed'|trans({'{title}': subItem.productUnitCode}) : 'N/A'|trans }}

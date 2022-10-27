@@ -1,5 +1,5 @@
 define([
-    'tpl!oropricing/templates/product/pricing-filter.html',
+    'tpl-loader!oropricing/templates/product/pricing-filter.html',
     'jquery',
     'underscore',
     'orotranslation/js/translator',
@@ -8,8 +8,6 @@ define([
 ], function(unitTemplate, $, _, __, tools, NumberRangeFilter) {
     'use strict';
 
-    var ProductPriceFilter;
-
     /**
      * Product price filter
      *
@@ -17,7 +15,7 @@ define([
      * @class   oro.filter.ProductPriceFilter
      * @extends oro.filter.NumberRangeFilter
      */
-    ProductPriceFilter = NumberRangeFilter.extend({
+    const ProductPriceFilter = NumberRangeFilter.extend({
         /**
          * @property
          */
@@ -37,17 +35,17 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductPriceFilter() {
-            ProductPriceFilter.__super__.constructor.apply(this, arguments);
+        constructor: function ProductPriceFilter(options) {
+            ProductPriceFilter.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        initialize: function() {
-            ProductPriceFilter.__super__.initialize.apply(this, arguments);
+        initialize: function(options) {
+            ProductPriceFilter.__super__.initialize.call(this, options);
 
             if (typeof this.unitTemplate === 'string') {
                 this.unitTemplate = _.template($(this.unitTemplate).html());
@@ -62,54 +60,54 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _renderCriteria: function() {
             this._checkAppendFilter();
-            return ProductPriceFilter.__super__._renderCriteria.apply(this, arguments);
+            return ProductPriceFilter.__super__._renderCriteria.call(this);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
                 return;
             }
             delete this.unitChoices;
-            return ProductPriceFilter.__super__.dispose.apply(this, arguments);
+            return ProductPriceFilter.__super__.dispose.call(this);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _writeDOMValue: function(value) {
             this._setInputValue(this.criteriaValueSelectors.unit, value.unit);
-            return ProductPriceFilter.__super__._writeDOMValue.apply(this, arguments);
+            return ProductPriceFilter.__super__._writeDOMValue.call(this, value);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _readDOMValue: function() {
-            var dataValue = ProductPriceFilter.__super__._readDOMValue.apply(this, arguments);
+            const dataValue = ProductPriceFilter.__super__._readDOMValue.call(this);
             dataValue.unit = this._getInputValue(this.criteriaValueSelectors.unit);
             return dataValue;
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        _getCriteriaHint: function() {
-            var value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
+        _getCriteriaHint: function(...args) {
+            const value = (args.length > 0) ? this._getDisplayValue(args[0]) : this._getDisplayValue();
 
             if (this.isEmptyValue()) {
                 return this.placeholder;
             }
 
-            var hintValue = ProductPriceFilter.__super__._getCriteriaHint.apply(this, arguments);
+            let hintValue = ProductPriceFilter.__super__._getCriteriaHint.apply(this, args);
 
-            var unitOption = '';
+            let unitOption = '';
             if (!_.isUndefined(value.unit) && value.unit) {
                 unitOption = _.findWhere(this.unitChoices, {value: value.unit}).shortLabel;
             }
@@ -120,28 +118,24 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _updateValueField: function() {
-            ProductPriceFilter.__super__._updateValueField.apply(this, arguments);
+            ProductPriceFilter.__super__._updateValueField.call(this);
 
-            var valueFrame = this.$('.value-field-frame');
+            const valueFrame = this.$('.value-field-frame');
             if (!valueFrame.length) {
                 return;
             }
 
             valueFrame.css('margin-right', 0);
-
-            var type = this.$(this.criteriaValueSelectors.type).val();
-
-            this.$('.product-price-unit-filter-separator').toggle(!this.isEmptyType(type));
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickChoiceValue: function(e) {
-            var target = $(e.currentTarget);
+            const target = $(e.currentTarget);
 
             if (target.closest('.product-price-unit-filter').get(0)) {
                 target.parent().parent().find('li').each(function() {
@@ -149,11 +143,11 @@ define([
                 });
                 target.parent().addClass('active');
 
-                var parentDiv = target.parent().parent().parent();
-                var type = target.attr('data-value');
-                var choiceName = target.html();
+                const parentDiv = target.parent().parent().parent();
+                const type = target.attr('data-value');
+                let choiceName = target.html();
 
-                var criteriaValues = this.$(this.criteriaValueSelectors.unit).val(type);
+                const criteriaValues = this.$(this.criteriaValueSelectors.unit).val(type);
                 this.fixSelects();
                 criteriaValues.trigger('change');
                 choiceName += this.caret;
@@ -163,16 +157,16 @@ define([
 
                 e.preventDefault();
             } else {
-                return ProductPriceFilter.__super__._onClickChoiceValue.apply(this, arguments);
+                return ProductPriceFilter.__super__._onClickChoiceValue.call(this, e);
             }
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _beforeApply: function() {
             this._updateNegativeValue(this._readDOMValue());
-            ProductPriceFilter.__super__._beforeApply.apply(this, arguments);
+            ProductPriceFilter.__super__._beforeApply.call(this);
         },
 
         /**
@@ -189,8 +183,8 @@ define([
          * @private
          */
         _updateNegativeValue: function(value) {
-            var currentValue = this._formatRawValue(value);
-            var oldValue = tools.deepClone(currentValue);
+            const currentValue = this._formatRawValue(value);
+            const oldValue = tools.deepClone(currentValue);
 
             currentValue.value = Math.abs(currentValue.value);
             currentValue.value_end = Math.abs(currentValue.value_end);
@@ -202,13 +196,12 @@ define([
         },
 
         /**
-         * @private
+         * Return units template data
+         * @returns {{choices: [], selectedChoice, selectedChoiceLabel: string}}
          */
-        _appendUnitFilter: function($filter) {
-            var value = _.extend({}, this.emptyValue, this.value);
-            var selectedChoiceLabel = '';
-            var $filterValue;
-            var $unitFilter;
+        getUnitTemplateData() {
+            const value = _.extend({}, this.emptyValue, this.value);
+            let selectedChoiceLabel = '';
 
             if (!_.isEmpty(this.unitChoices)) {
                 selectedChoiceLabel = _.find(this.unitChoices, function(choice) {
@@ -216,14 +209,25 @@ define([
                 }).label;
             }
 
-            $unitFilter = $(this.unitTemplate({
+            return {
                 choices: this.unitChoices,
                 selectedChoice: value.unit,
                 selectedChoiceLabel: selectedChoiceLabel
-            }));
+            };
+        },
+
+        /**
+         * @private
+         */
+        _appendUnitFilter: function($filter) {
+            if ($filter === '') {
+                return this;
+            }
+
+            const $unitFilter = $(this.unitTemplate(this.getUnitTemplateData()));
 
             $filter.addClass('product-price-filter-criteria');
-            $filterValue = $filter.find('.filter-value');
+            const $filterValue = $filter.find('.filter-value');
             $filterValue.append($unitFilter);
 
             this._appendUnitFilter._appendFilter.call(this, $filter);

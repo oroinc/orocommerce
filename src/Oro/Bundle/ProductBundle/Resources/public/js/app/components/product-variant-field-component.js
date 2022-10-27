@@ -1,18 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var ProductVariantFieldComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var ViewComponent = require('oroui/js/app/components/view-component');
-    var error = require('oroui/js/error');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const ViewComponent = require('oroui/js/app/components/view-component');
+    const error = require('oroui/js/error');
+    const tools = require('oroui/js/tools');
+    const {validator} = require('jquery.validate');
 
-    ProductVariantFieldComponent = ViewComponent.extend({
+    const ProductVariantFieldComponent = ViewComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            simpleProductVariants: []
+            simpleProductVariants: {}
         },
 
         /**
@@ -24,43 +25,53 @@ define(function(require) {
          * All options without default disabled
          * @property {Array}
          */
-        filteredOptions: [],
+        filteredOptions: null,
 
         /**
          * Filtered options after resolving
+         * @property {Array}
          */
         _filtered: null,
 
         /**
          * Hierarchy stack of product variants
+         * @property {Array}
          */
-        _hierarchy: [],
+        _hierarchy: null,
 
         /**
          * Current state
+         * @property {Object}
          */
         state: null,
 
+        /** @property {Object} */
+        simpleProductVariants: {},
+
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductVariantFieldComponent() {
-            ProductVariantFieldComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductVariantFieldComponent(options) {
+            ProductVariantFieldComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
-            ProductVariantFieldComponent.__super__.initialize.apply(this, arguments);
+            this.filteredOptions = [];
+            this._hierarchy = [];
+            this.state = {};
+
+            this.options = _.defaults(options || {}, tools.deepClone(this.options));
+            ProductVariantFieldComponent.__super__.initialize.call(this, options);
 
             // _sourceElement is a form element which contains selects
             this.$el = this.options._sourceElement;
 
             this._prepareProductVariants();
 
-            this.deferredInit.done(_.bind(this._initVariantInstances, this));
+            this.deferredInit.done(this._initVariantInstances.bind(this));
         },
 
         /**
@@ -73,10 +84,6 @@ define(function(require) {
         setState: function(name, value) {
             if (_.isUndefined(value)) {
                 return error.showErrorInConsole('The value should be defined');
-            }
-
-            if (!this.state) {
-                this.state = {};
             }
 
             this.state[name] = value;
@@ -98,13 +105,13 @@ define(function(require) {
          * Trigger select2 to update view
          */
         updateFields: function() {
-            this.$el.find('select').each(_.bind(function(index, select) {
+            this.$el.find('select').each((index, select) => {
                 if (this._filtered.indexOf($(select).val()) === -1) {
                     $(select).val('');
                     this.setState(this._extractName($(select).data('name')), null);
                 }
                 $(select).trigger('change.select2');
-            }, this));
+            });
         },
 
         dispose: function() {
@@ -119,7 +126,7 @@ define(function(require) {
             delete this.state;
             delete this.filteredOptions;
 
-            ProductVariantFieldComponent.__super__.dispose.apply(this);
+            ProductVariantFieldComponent.__super__.dispose.call(this);
         },
 
         /**
@@ -128,26 +135,30 @@ define(function(require) {
          * @private
          */
         _initVariantInstances: function() {
-            var onChangeHandler = _.bind(this._onVariantFieldChange, this, this.options.simpleProductVariants);
+            const onChangeHandler = this._onVariantFieldChange.bind(this, this.simpleProductVariants);
+
+            // Reset the form of attributes to prevent set null value in fields,
+            // when user do back navigation in chrome
+            this.view.el.reset();
 
             if (this.$el.find('select').length) {
-                this.$el.find('select').each(_.bind(function(index, select) {
-                    var $select = $(select);
-                    var normalizeName = this._extractName($select.data('name'));
+                this.$el.find('select').each((index, select) => {
+                    const $select = $(select);
+                    const normalizeName = this._extractName($select.data('name'));
 
                     this.filteredOptions = this.filteredOptions.concat(
-                        $select.find('option').get().filter(_.bind(function(option) {
+                        $select.find('option').get().filter(option => {
                             option.value = option.value !== '' ? normalizeName + '_' + option.value : '';
                             return !option.disabled && option.value !== '';
-                        }, this))
+                        })
                     );
 
                     this._appendToHierarchy(normalizeName);
                     this.setState(normalizeName, $select.val());
-                }, this));
+                });
             }
 
-            this._resolveVariantFieldsChain(this.options.simpleProductVariants);
+            this._resolveVariantFieldsChain(this.simpleProductVariants);
             this.$el.on('change', 'select', onChangeHandler);
         },
 
@@ -157,11 +168,11 @@ define(function(require) {
          * @private
          */
         _prepareProductVariants: function() {
-            this.options.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
-                return _.reduce(variant, function(memo, attr, key) {
+            this.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
+                return _.reduce(variant.attributes, function(memo, attr, key) {
                     memo[this._extractName(key)] = (
                         this._extractName(key) + '_' + this._normalizeBool(attr)
-                    ).toLowerCase();
+                    );
                     return memo;
                 }, {}, this);
             }, this);
@@ -196,7 +207,7 @@ define(function(require) {
          * @private
          */
         _onVariantFieldChange: function(simpleProductVariants, event) {
-            var $target = $(event.target);
+            const $target = $(event.target);
 
             this.setState(this._extractName($target.data('name')), $target.val());
             this._resolveVariantFieldsChain(simpleProductVariants);
@@ -211,9 +222,9 @@ define(function(require) {
         _resolveVariantFieldsChain: function(simpleProductVariants) {
             this._filtered = this._resolveHierarchy(simpleProductVariants);
 
-            this.filteredOptions.forEach(_.bind(function(field) {
+            this.filteredOptions.forEach(field => {
                 field.disabled = _.indexOf(this._filtered, field.value) === -1;
-            }, this));
+            });
 
             this._updateProduct();
             this.updateFields();
@@ -226,23 +237,23 @@ define(function(require) {
          * @private
          */
         _resolveHierarchy: function(simpleProductVariants) {
-            var result = [];
+            let result = [];
 
-            this._hierarchy.forEach(_.bind(function(field, index) {
-                var parentField = this._hierarchy[index - 1];
+            this._hierarchy.forEach((field, index) => {
+                const parentField = this._hierarchy[index - 1];
 
                 simpleProductVariants = _.isUndefined(parentField)
                     ? simpleProductVariants
                     : _.where(simpleProductVariants, this._prepareFoundKeyValue(parentField));
 
                 result = result.concat(_.uniq(_.pluck(simpleProductVariants, field)));
-            }, this));
+            });
 
             return result;
         },
 
         _prepareFoundKeyValue: function(value) {
-            var result = {};
+            const result = {};
             result[value] = this.getState(value);
 
             return result;
@@ -254,17 +265,29 @@ define(function(require) {
          * @private
          */
         _updateProduct: function() {
-            var variants = this.options.simpleProductVariants;
-            this.foundProductId = null;
+            const variants = this.simpleProductVariants;
+            const isValidVariant = !Object.values(this.getState()).some(value => !value);
 
-            for (var variant in variants) {
+            if (this.view.$el.data('validator')) {
+                validator.preloadMethods().then(() => this.view.$el.valid());
+            }
+
+            if (!isValidVariant) {
+                this.view.updateProductModel({id: 0}, true);
+                return;
+            }
+
+            for (const variant in variants) {
                 if (variants.hasOwnProperty(variant) && _.isEqual(this.getState(), variants[variant])) {
-                    this.foundProductId = variant;
+                    const {attributes, ...data} = this.options.simpleProductVariants[variant];
+
+                    this.view.updateProductModel({
+                        id: variant,
+                        ...data
+                    });
                     break;
                 }
             }
-
-            this.view.updateProductInfo(this.foundProductId);
         },
 
         /**

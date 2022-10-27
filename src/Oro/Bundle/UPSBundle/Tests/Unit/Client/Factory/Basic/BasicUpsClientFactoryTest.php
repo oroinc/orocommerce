@@ -24,7 +24,7 @@ class BasicUpsClientFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $testedUpsClientFactory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->restClientFactoryMock = $this->createMock(RestClientFactoryInterface::class);
         $this->upsClientUrlProviderMock = $this->createMock(UpsClientUrlProviderInterface::class);

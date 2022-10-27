@@ -4,10 +4,11 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -16,11 +17,15 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture implements DependentFixtureInterface
+class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
-    use FlatRateIntegrationTrait;
+    use FlatRateIntegrationTrait, ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -44,9 +49,6 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
     protected function getShippingRuleData(): array
     {
         return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules_with_configs.yml'));
@@ -85,7 +87,8 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
 
         $configRule
             ->setRule($rule)
-            ->setCurrency($data['currency']);
+            ->setCurrency($data['currency'])
+            ->setOrganization($this->getOrganization());
 
         $this->setDestinations($configRule, $manager, $data);
         $this->setMethodConfigs($configRule, $manager, $data);
@@ -125,8 +128,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
 
         foreach ($data['destinations'] as $destination) {
             /** @var Country $country */
-            $country = $manager
-                ->getRepository('OroAddressBundle:Country')
+            $country = $manager->getRepository(Country::class)
                 ->findOneBy(['iso2Code' => $destination['country']]);
 
             $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
@@ -136,8 +138,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
 
             if (array_key_exists('region', $destination)) {
                 /** @var Region $region */
-                $region = $manager
-                    ->getRepository('OroAddressBundle:Region')
+                $region = $manager->getRepository(Region::class)
                     ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
                 $shippingRuleDestination->setRegion($region);
             }
@@ -203,5 +204,15 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
             ->setMethod($this->getFlatRateIdentifier());
 
         return $methodConfig;
+    }
+
+    /**
+     * @return Organization
+     */
+    private function getOrganization()
+    {
+        return $this->container->get('doctrine')
+            ->getRepository(Organization::class)
+            ->getFirst();
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 class CronSegmentsProviderTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +19,7 @@ class CronSegmentsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);
         $this->provider = new CronSegmentsProvider($this->contentVariantSegmentProvider);
@@ -80,7 +81,7 @@ class CronSegmentsProviderTest extends \PHPUnit\Framework\TestCase
     private function createSegment(array $definition)
     {
         $segment = new Segment();
-        $segment->setDefinition(json_encode($definition));
+        $segment->setDefinition(QueryDefinitionUtil::encodeDefinition($definition));
 
         return $segment;
     }

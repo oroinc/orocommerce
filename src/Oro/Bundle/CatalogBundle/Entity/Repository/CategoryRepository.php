@@ -2,35 +2,26 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity\Repository;
 
-use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
+/**
+ * Provides methods to retrieve information about Category entity form the DB
+ *
+ * @method QueryBuilder childrenQueryBuilder()
+ */
 class CategoryRepository extends NestedTreeRepository
 {
-    /**
-     * @var Category
-     */
-    private $masterCatalog;
-
-    /**
-     * @return Category
-     */
-    public function getMasterCatalogRoot()
+    public function getMasterCatalogRootQueryBuilder(): QueryBuilder
     {
-        if (!$this->masterCatalog) {
-            $this->masterCatalog = $this->createQueryBuilder('category')
-                ->andWhere('category.parentCategory IS NULL')
-                ->orderBy('category.id', 'ASC')
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getSingleResult();
-        }
-        return $this->masterCatalog;
+        return $this->createQueryBuilder('category')
+            ->andWhere('category.parentCategory IS NULL')
+            ->orderBy('category.id', 'ASC');
     }
 
     /**
@@ -75,30 +66,6 @@ class CategoryRepository extends NestedTreeRepository
     }
 
     /**
-     * @param object|null $node
-     * @param bool $direct
-     * @param string|null $sortByField
-     * @param string $direction
-     * @param bool $includeNode
-     * @return Category[]
-     * @deprecated Use \Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren
-     */
-    public function getChildrenWithTitles(
-        $node = null,
-        $direct = false,
-        $sortByField = null,
-        $direction = 'ASC',
-        $includeNode = false
-    ) {
-        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
-            ->addSelect('title, children')
-            ->leftJoin('node.titles', 'title')
-            ->leftJoin('node.childCategories', 'children')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * @param Category $category
      * @return array
      */
@@ -112,21 +79,55 @@ class CategoryRepository extends NestedTreeRepository
         return array_map('current', $result);
     }
 
-    /**
-     * @param string $title
-     * @return Category|null
-     */
-    public function findOneByDefaultTitle($title)
+    public function findOneByDefaultTitleQueryBuilder(string $title): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('category');
-
-        return $qb
+        return $this->createQueryBuilder('category')
             ->select('partial category.{id}')
             ->andWhere('category.denormalizedDefaultTitle = :title')
             ->setParameter('title', $title)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
+    }
+
+    public function findOneOrNullByDefaultTitleAndParent(
+        string $title,
+        Organization $organization,
+        ?Category $parentCategory = null
+    ): ?Category {
+        $qb = $this->createQueryBuilder('category');
+
+        try {
+            $qb
+                ->select('partial category.{id}')
+                ->andWhere('category.denormalizedDefaultTitle = :title')
+                ->andWhere('category.organization = :organization')
+                ->setParameter('title', $title)
+                ->setParameter('organization', $organization);
+
+            if ($parentCategory !== null) {
+                $qb
+                    ->andWhere('category.parentCategory = :category')
+                    ->setParameter('category', $parentCategory);
+            }
+
+            $category = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $exception) {
+            $category = null;
+        }
+
+        return $category;
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return string[]
+     */
+    public function getCategoryPath(Category $category): array
+    {
+        $qb = $this->getPathQueryBuilder($category);
+        $qb->select('node.denormalizedDefaultTitle as title');
+
+        return array_column($qb->getQuery()->getScalarResult(), 'title');
     }
 
     /**
@@ -158,10 +159,9 @@ class CategoryRepository extends NestedTreeRepository
     /**
      * @param string $productSku
      * @param bool $includeTitles
-     * @return null|Category
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return QueryBuilder
      */
-    public function findOneByProductSku($productSku, $includeTitles = false)
+    public function findOneByProductSkuQueryBuilder($productSku, $includeTitles = false)
     {
         $qb = $this->createQueryBuilder('category');
 
@@ -170,32 +170,26 @@ class CategoryRepository extends NestedTreeRepository
             $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.localization'));
         }
 
-        return $qb
+        $qb
             ->select('partial category.{id}')
             ->innerJoin('category.products', 'p', Join::WITH, $qb->expr()->eq('p.sku', ':sku'))
             ->setParameter('sku', $productSku)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
+
+        return $qb;
     }
 
     /**
-     * @param array $categories
-     *
-     * @return QueryBuilder
-     *
-     * @deprecated Not using
+     * @param string $productSku
+     * @param bool $includeTitles
+     * @return null|Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getCategoriesProductsCountQueryBuilder($categories)
+    public function findOneByProductSku($productSku, $includeTitles = false)
     {
-        $qb = $this->_em->createQueryBuilder();
-        $qb->select('IDENTITY(product.category), COUNT(product.id) as products_count')
-            ->from('OroProductBundle:Product', 'product')
-            ->where($qb->expr()->in('product.category', ':categories'))
-            ->setParameter('categories', $categories)
-            ->groupBy('product.category');
+        $qb = $this->findOneByProductSkuQueryBuilder($productSku, $includeTitles);
 
-        return $qb;
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -230,10 +224,9 @@ class CategoryRepository extends NestedTreeRepository
     /**
      * Creates product to category map, [product_id => Category, ...]
      * @param Product[] $products
-     * @param Localization[] $localizations
      * @return Category[]
      */
-    public function getCategoryMapByProducts(array $products, array $localizations = [])
+    public function getCategoryMapByProducts(array $products)
     {
         $builder = $this->_em->createQueryBuilder();
         $builder
@@ -258,9 +251,6 @@ class CategoryRepository extends NestedTreeRepository
         return $productCategoryMap;
     }
 
-    /**
-     * @param Category $category
-     */
     public function updateMaterializedPath(Category $category)
     {
         $this->_em->createQueryBuilder()
@@ -271,5 +261,35 @@ class CategoryRepository extends NestedTreeRepository
             ->setParameter('newPath', $category->getMaterializedPath())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * Gets max value of Gedmo tree "left" field.
+     */
+    public function getMaxLeft(): int
+    {
+        $qb = $this->createQueryBuilder('category');
+
+        return $qb
+            ->select($qb->expr()->max('category.left'))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * EAGAR fetch mode will prevent associated entities like parent category
+     * be fetched as Proxy implementation.
+     */
+    public function getCategoryEagerMode(Category $category): Category
+    {
+        $queryBuilder = $this->createQueryBuilder('category');
+        $queryBuilder->select('category, parentCategory')
+            ->leftJoin('category.parentCategory', 'parentCategory')
+            ->where($queryBuilder->expr()->eq('category.id', ':category'))
+            ->setParameter('category', $category);
+
+        return $queryBuilder->getQuery()
+            ->setFetchMode(Category::class, "parentCategory", "EAGER")
+            ->getSingleResult();
     }
 }

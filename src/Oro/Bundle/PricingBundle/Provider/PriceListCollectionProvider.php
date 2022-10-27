@@ -1,14 +1,17 @@
 <?php
+
 namespace Oro\Bundle\PricingBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
@@ -17,28 +20,15 @@ use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Provides prices lists assigned to one of defined levels: config, website, customer group, customer
+ */
 class PriceListCollectionProvider
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    protected ManagerRegistry $registry;
+    protected ConfigManager $configManager;
+    protected PriceListConfigConverter $configConverter;
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @var PriceListConfigConverter
-     */
-    protected $configConverter;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param PriceListConfigConverter $configConverter
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -64,6 +54,7 @@ class PriceListCollectionProvider
                 $activeRelations[] = $priceList;
             }
         }
+
         return $this->getPriceListSequenceMembers($activeRelations);
     }
 
@@ -74,16 +65,17 @@ class PriceListCollectionProvider
     public function getPriceListsByWebsite(Website $website)
     {
         /** @var PriceListToWebsiteRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToWebsite');
+        $repo = $this->registry->getRepository(PriceListToWebsite::class);
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($website)
         );
         $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListWebsiteFallback')
+            ->getRepository(PriceListWebsiteFallback::class)
             ->findOneBy(['website' => $website]);
         if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListWebsiteFallback::CONFIG) {
             return array_merge($priceListCollection, $this->getPriceListsByConfig());
         }
+
         return $priceListCollection;
     }
 
@@ -95,16 +87,17 @@ class PriceListCollectionProvider
     public function getPriceListsByCustomerGroup(CustomerGroup $customerGroup, Website $website)
     {
         /** @var PriceListToCustomerGroupRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToCustomerGroup');
+        $repo = $this->registry->getRepository(PriceListToCustomerGroup::class);
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($customerGroup, $website)
         );
         $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback')
+            ->getRepository(PriceListCustomerGroupFallback::class)
             ->findOneBy(['customerGroup' => $customerGroup, 'website' => $website]);
         if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListCustomerGroupFallback::WEBSITE) {
             return array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
         }
+
         return $priceListCollection;
     }
 
@@ -116,13 +109,13 @@ class PriceListCollectionProvider
     public function getPriceListsByCustomer(Customer $customer, Website $website)
     {
         /** @var PriceListToCustomerRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToCustomer');
+        $repo = $this->registry->getRepository(PriceListToCustomer::class);
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($customer, $website)
         );
 
         $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListCustomerFallback')
+            ->getRepository(PriceListCustomerFallback::class)
             ->findOneBy(['customer' => $customer, 'website' => $website]);
 
         if ($this->isFallbackToCurrentCustomerOnly($fallbackEntity)) {
@@ -140,47 +133,6 @@ class PriceListCollectionProvider
     }
 
     /**
-     * @param string $className
-     * @return ObjectRepository
-     */
-    public function getRepository($className)
-    {
-        return $this->registry
-            ->getManagerForClass($className)
-            ->getRepository($className);
-    }
-
-    /**
-     * @param array|PriceListSequenceMember[] $collection
-     * @return bool
-     */
-    public function containMergeDisallowed(array $collection)
-    {
-        foreach ($collection as $item) {
-            if (!$item->isMergeAllowed()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param array|PriceListSequenceMember[] $collection
-     * @return bool
-     */
-    public function containScheduled(array $collection)
-    {
-        foreach ($collection as $item) {
-            if ($item->getPriceList()->isContainSchedule()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @param BasePriceListRelation[]|PriceListConfig[] $priceListsRelations
      * @return PriceListSequenceMember[]
      */
@@ -193,6 +145,7 @@ class PriceListCollectionProvider
                 $priceListsRelation->isMergeAllowed()
             );
         }
+
         return $priceListCollection;
     }
 
@@ -200,7 +153,7 @@ class PriceListCollectionProvider
      * @param PriceListCustomerFallback|null $fallbackEntity
      * @return bool
      */
-    protected function isFallbackToCurrentCustomerOnly(PriceListCustomerFallback $fallbackEntity = null)
+    protected function isFallbackToCurrentCustomerOnly(PriceListCustomerFallback $fallbackEntity = null): bool
     {
         return $fallbackEntity && $fallbackEntity->getFallback() === PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY;
     }
@@ -209,7 +162,7 @@ class PriceListCollectionProvider
      * @param PriceListCustomerFallback|null $fallbackEntity
      * @return bool
      */
-    protected function isFallbackToCustomerGroup(PriceListCustomerFallback $fallbackEntity = null)
+    protected function isFallbackToCustomerGroup(PriceListCustomerFallback $fallbackEntity = null): bool
     {
         return !$fallbackEntity || $fallbackEntity->getFallback() === PriceListCustomerFallback::ACCOUNT_GROUP;
     }

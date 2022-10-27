@@ -22,9 +22,6 @@ class OroPricingBundleStage2 implements
         $this->restoreIndexes($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function restoreIndexes(Schema $schema)
     {
         $table = $schema->getTable('oro_price_list_to_cus_group');

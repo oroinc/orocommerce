@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
@@ -18,7 +18,7 @@ class CheckoutLineItemsFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(CheckoutLineItemConverterRegistry::class);
         $this->factory = new CheckoutLineItemsFactory($this->registry);

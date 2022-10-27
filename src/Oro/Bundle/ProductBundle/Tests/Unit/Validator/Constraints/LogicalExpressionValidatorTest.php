@@ -8,44 +8,30 @@ use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LogicalExpressionValidatorTest extends \PHPUnit\Framework\TestCase
+class LogicalExpressionValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $expressionParser;
+    /** @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject */
+    private $expressionParser;
 
-    /**
-     * @var ExpressionPreprocessorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $preprocessor;
+    /** @var ExpressionPreprocessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $preprocessor;
 
-    /**
-     * @var LogicalExpressionValidator
-     */
-    protected $validator;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->expressionParser = $this->createMock(ExpressionParser::class);
         $this->preprocessor = $this->createMock(ExpressionPreprocessorInterface::class);
-        $this->validator = new LogicalExpressionValidator($this->expressionParser, $this->preprocessor);
+        parent::setUp();
+    }
+
+    protected function createValidator()
+    {
+        return new LogicalExpressionValidator($this->expressionParser, $this->preprocessor);
     }
 
     public function testValidateValidLogicalExpression()
     {
-        $constraint = new LogicalExpression();
-        $constraint->logicalExpressionsAllowed = true;
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContextInterface::class);
-        $context->expects($this->never())
-            ->method($this->anything());
-        $this->validator->initialize($context);
-
         $value = 'test > 1';
         $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
@@ -63,19 +49,15 @@ class LogicalExpressionValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($processedValue)
             ->willReturn($node);
 
+        $constraint = new LogicalExpression();
+        $constraint->logicalExpressionsAllowed = true;
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateValidNotLogicalExpression()
     {
-        $constraint = new LogicalExpression();
-        $constraint->logicalExpressionsAllowed = false;
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContextInterface::class);
-        $context->expects($this->never())
-            ->method($this->anything());
-        $this->validator->initialize($context);
-
         $value = 'test === 1';
         $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
@@ -93,19 +75,15 @@ class LogicalExpressionValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($processedValue)
             ->willReturn($node);
 
+        $constraint = new LogicalExpression();
+        $constraint->logicalExpressionsAllowed = false;
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateInvalidLogicalExpression()
     {
-        $constraint = new LogicalExpression();
-        $constraint->logicalExpressionsAllowed = true;
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContextInterface::class);
-        $context->expects($this->once())
-            ->method('addViolation');
-        $this->validator->initialize($context);
-
         $value = 'test === 10';
         $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
@@ -123,19 +101,16 @@ class LogicalExpressionValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($processedValue)
             ->willReturn($node);
 
+        $constraint = new LogicalExpression();
+        $constraint->logicalExpressionsAllowed = true;
         $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 
     public function testValidateInvalidNotLogicalExpression()
     {
-        $constraint = new LogicalExpression();
-        $constraint->logicalExpressionsAllowed = false;
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContextInterface::class);
-        $context->expects($this->once())
-            ->method('addViolation');
-        $this->validator->initialize($context);
-
         $value = 'test > 10';
         $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
@@ -153,26 +128,26 @@ class LogicalExpressionValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($processedValue)
             ->willReturn($node);
 
+        $constraint = new LogicalExpression();
+        $constraint->logicalExpressionsAllowed = false;
         $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->messageDisallowedLogicalExpression)
+            ->assertRaised();
     }
 
     public function testValidateLogicalExpressionWithSyntaxError()
     {
-        $constraint = new LogicalExpression();
-        $constraint->logicalExpressionsAllowed = true;
-
-        /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
-        $context = $this->createMock(ExecutionContextInterface::class);
-        $context->expects($this->never())
-            ->method($this->anything());
-        $this->validator->initialize($context);
-
         $value = 'pricelist[1].';
 
         $this->expressionParser->expects($this->once())
             ->method('parse')
             ->willThrowException(new SyntaxError('Expected name around position 14.'));
 
+        $constraint = new LogicalExpression();
+        $constraint->logicalExpressionsAllowed = true;
         $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
     }
 }

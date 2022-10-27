@@ -26,10 +26,6 @@ class ContactInfoUserOptionsType extends AbstractType
      */
     protected $configManager;
 
-    /**
-     * @param OptionProviderWithDefaultValueInterface $optionsProvider
-     * @param ConfigManager                           $configManager
-     */
     public function __construct(OptionProviderWithDefaultValueInterface $optionsProvider, ConfigManager $configManager)
     {
         $this->optionsProvider = $optionsProvider;

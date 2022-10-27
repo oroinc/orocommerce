@@ -4,11 +4,10 @@ namespace Oro\Bundle\ProductBundle\Expression;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Expression\FieldsProviderInterface;
 
 /**
- * Fields provider is used in AutocompleteFieldsProvider
+ * Provides information about entity fields.
  */
 class FieldsProvider implements FieldsProviderInterface
 {
@@ -31,9 +30,9 @@ class FieldsProvider implements FieldsProviderInterface
     ];
 
     /**
-     * @var ServiceLink
+     * @var EntityFieldProvider
      */
-    protected $entityFieldProviderLink;
+    protected $entityFieldProvider;
 
     /**
      * @var DoctrineHelper
@@ -55,13 +54,9 @@ class FieldsProvider implements FieldsProviderInterface
      */
     protected $fieldsBlackList = [];
 
-    /**
-     * @param ServiceLink $entityFieldProviderLink
-     * @param DoctrineHelper $doctrineHelper
-     */
-    public function __construct(ServiceLink $entityFieldProviderLink, DoctrineHelper $doctrineHelper)
+    public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
     {
-        $this->entityFieldProviderLink = $entityFieldProviderLink;
+        $this->entityFieldProvider = $entityFieldProvider;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -117,15 +112,15 @@ class FieldsProvider implements FieldsProviderInterface
      */
     public function getRealClassName($className, $fieldName = null)
     {
-        if (!$fieldName && strpos($className, '::') !== false) {
-            list($className, $fieldName) = explode('::', $className);
+        if (!$fieldName && str_contains($className, '::')) {
+            [$className, $fieldName] = explode('::', $className);
         }
 
         if ($fieldName) {
             $numericOnly = false;
             $withRelations = true;
             $fields = $this->getDetailedFieldsInformation($className, $numericOnly, $withRelations);
-            if (array_key_exists($fieldName, $fields)) {
+            if (\array_key_exists($fieldName, $fields)) {
                 $className = $fields[$fieldName]['related_entity_name'];
             } else {
                 throw new \InvalidArgumentException(
@@ -147,15 +142,11 @@ class FieldsProvider implements FieldsProviderInterface
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->getFieldsProvider()->getFields(
-                $className,
-                $withRelations,
-                $withRelations,
-                false,
-                false,
-                true,
-                false
-            );
+            $options = EntityFieldProvider::OPTION_APPLY_EXCLUSIONS | EntityFieldProvider::OPTION_TRANSLATE;
+            $options |= $withRelations
+                ? EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
+                : 0;
+            $fields = $this->entityFieldProvider->getEntityFields($className, $options);
             $this->entityFields[$cacheKey] = [];
             foreach ($fields as $field) {
                 $fieldName = $field['name'];
@@ -214,14 +205,6 @@ class FieldsProvider implements FieldsProviderInterface
         }
 
         return null;
-    }
-
-    /**
-     * @return EntityFieldProvider
-     */
-    protected function getFieldsProvider()
-    {
-        return $this->entityFieldProviderLink->getService();
     }
 
     /**

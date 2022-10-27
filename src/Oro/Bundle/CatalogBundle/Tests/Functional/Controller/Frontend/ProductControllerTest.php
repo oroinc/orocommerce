@@ -11,11 +11,11 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @method \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client getClient
+ * @method \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client getClient()
  */
 class ProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -98,9 +98,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider navigationBarTestDataProvider
-     *
-     * @param $category
-     * @param array $expectedParts
      */
     public function testNavigationBar($category, array $expectedParts)
     {
@@ -128,7 +125,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $url);
 
-        $navigationBarNode = $crawler->filter('div.breadcrumbs')->first()->getNode(0);
+        $navigationBarNode = $crawler->filter('.breadcrumbs')->first()->getNode(0);
 
         $this->assertObjectHasAttribute('textContent', $navigationBarNode);
         $text = $navigationBarNode->textContent;

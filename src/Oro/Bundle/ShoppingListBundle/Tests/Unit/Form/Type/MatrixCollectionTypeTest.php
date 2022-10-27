@@ -15,16 +15,13 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
      * @dataProvider submitProvider
-     *
-     * @param MatrixCollection $defaultData
-     * @param array $submittedData
-     * @param MatrixCollection $expectedData
      */
     public function testSubmit(MatrixCollection $defaultData, array $submittedData, MatrixCollection $expectedData)
     {
         $form = $this->factory->create(MatrixCollectionType::class, $defaultData);
         $form->submit($submittedData);
-        $this->assertEquals(true, $form->isValid());
+        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

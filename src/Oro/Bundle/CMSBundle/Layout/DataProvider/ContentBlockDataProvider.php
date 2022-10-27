@@ -2,13 +2,18 @@
 
 namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Layout data provider for Content Blocks.
+ * Add possibility to get appropriate `Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView`
+ * according Content Block alias.
+ */
 class ContentBlockDataProvider
 {
     /** @var ContentBlockResolver */
@@ -53,24 +58,26 @@ class ContentBlockDataProvider
         $this->scopeType = $scopeType;
     }
 
-    /**
-     * @param string $alias
-     *
-     * @return ContentBlockView|null
-     */
-    public function getContentBlockView($alias)
+    public function getContentBlockView(string $alias): ?ContentBlockView
     {
         $criteria = $this->scopeManager->getCriteria($this->scopeType);
-        $context = $criteria->toArray();
-        $repo = $this->registry->getManagerForClass($this->entityClass)->getRepository($this->entityClass);
-        /** @var ContentBlock $contentBlock */
-        $contentBlock = $repo->findOneBy(['alias' => $alias]);
+        $contentBlock = $this->getContentBlock($alias);
+
         if (null === $contentBlock) {
             $this->logger->notice('Content block with alias "{alias}" doesn\'t exists', ['alias' => $alias]);
 
             return null;
         }
 
-        return $this->contentBlockResolver->getContentBlockView($contentBlock, $context);
+        return $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria);
+    }
+
+    private function getContentBlock(string $alias): ?ContentBlock
+    {
+        $repo = $this->registry->getManagerForClass($this->entityClass)->getRepository($this->entityClass);
+        /** @var ContentBlock $contentBlock */
+        $contentBlock = $repo->findOneBy(['alias' => $alias]);
+
+        return $contentBlock;
     }
 }

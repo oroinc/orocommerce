@@ -20,7 +20,7 @@ Feature: Product collection validation
     And I click "Add Button"
     And I should see "Add Products"
     And I check PSKU2 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     And I save form
     Then I should see "Content Node has been saved" flash message
 
@@ -43,22 +43,25 @@ Feature: Product collection validation
     And I click on "SKU"
     And type "PSKU" in "value"
     And I click on "Preview Results"
+    And I fill "Content Node Form" with:
+      | First System Page Customer Group | Non-Authenticated Visitors |
     And I save form
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Adding Product Collection with duplicated name, results in validation error
     When I click "Content Variants"
+    And I click on "Default Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Default Product Collection Segment Name | Some Product Collection Name |
-    And I click on "Preview Results"
     And I save form
     Then I should see "Content Node has been saved" flash message
-    Then I click "Content Variants"
+    When I click "Content Variants"
+    And I click on "Non Default Content Variant Expand Button"
     And I fill "Content Node Form" with:
-      | Product Collection Segment Name | Some Product Collection Name |
+      | Product Collection Segment Name | somE ProDucT collection namE |
     And I save form
     And I click "Content Variants"
-    Then I should see "This name already in use"
+    Then I should see "There is another segment with a similar name."
 
   Scenario: Change new Product Collection name to unique, allow saving
     When I fill "Content Node Form" with:
@@ -68,9 +71,11 @@ Feature: Product collection validation
 
   Scenario: Changing names to same for saved Product Collections, results in validation error
     When I click "Content Variants"
+    And I click on "Non Default Content Variant Expand Button"
+    And I click on "Default Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Default Product Collection Segment Name | Same Name |
-      | Product Collection Segment Name         | Same Name |
+      | Product Collection Segment Name         | saME naME |
     And I save form
     And I click "Content Variants"
-    Then I should see "This name already in use"
+    Then I should see "There is another segment with a similar name."

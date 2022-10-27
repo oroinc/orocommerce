@@ -1,0 +1,12 @@
+include:
+    - '@OroProductBundle:related_products.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product5:
+        status: 'disabled'
+
+    product4:
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+
+    product3:
+        type: 'configurable'

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -140,10 +140,6 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         return $this->productUnits[$code];
     }
 
-    /**
-     * @param ProductShippingOptions $productShippingOptions
-     * @param ObjectManager $manager
-     */
     protected function setProductWeight(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
     {
         $model = new Weight();
@@ -152,10 +148,6 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
         $productShippingOptions->setWeight($model);
     }
 
-    /**
-     * @param ProductShippingOptions $productShippingOptions
-     * @param ObjectManager $manager
-     */
     protected function setProductDimensions(ProductShippingOptions $productShippingOptions, ObjectManager $manager)
     {
         $model = Dimensions::create(
@@ -202,7 +194,7 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
                 $this->lengthUnits[] = $unit;
             }
         }
-        
+
         return $this->lengthUnits[mt_rand(0, count($this->lengthUnits) - 1)];
     }
 

@@ -1,0 +1,102 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['payment_context']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  attributes:
+    id:
+      groups: ['payment_context']
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  attributes:
+    id:
+      groups: ['payment_context']
+
+Oro\Bundle\ShippingBundle\Model\ShippingOrigin:
+  attributes:
+    id:
+      groups: ['payment_context']
+    street:
+      groups: ['payment_context']
+    street2:
+      groups: ['payment_context']
+    city:
+      groups: ['payment_context']
+    postalCode:
+      groups: ['payment_context']
+    country:
+      groups: ['payment_context']
+    region:
+      groups: ['payment_context']
+    organization:
+      groups: ['payment_context']
+    regionText:
+      groups: ['payment_context']
+    namePrefix:
+      groups: ['payment_context']
+    firstName:
+      groups: ['payment_context']
+    middleName:
+      groups: ['payment_context']
+    lastName:
+      groups: ['payment_context']
+    nameSuffix:
+      groups: ['payment_context']
+    phone:
+      groups: ['payment_context']
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+  attributes:
+    id:
+      groups: ['payment_context']
+    street:
+      groups: ['payment_context']
+    street2:
+      groups: ['payment_context']
+    city:
+      groups: ['payment_context']
+    postalCode:
+      groups: ['payment_context']
+    country:
+      groups: ['payment_context']
+    region:
+      groups: ['payment_context']
+    organization:
+      groups: ['payment_context']
+    regionText:
+      groups: ['payment_context']
+    namePrefix:
+      groups: ['payment_context']
+    firstName:
+      groups: ['payment_context']
+    middleName:
+      groups: ['payment_context']
+    lastName:
+      groups: ['payment_context']
+    nameSuffix:
+      groups: ['payment_context']
+    phone:
+      groups: ['payment_context']
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+  attributes:
+    value:
+      groups: ['payment_context']
+    currency:
+      groups: ['payment_context']
+
+Oro\Bundle\WebsiteBundle\Entity\Website:
+  attributes:
+    id:
+      groups: ['payment_context']
+
+Oro\Bundle\CheckoutBundle\Entity\Checkout:
+  attributes:
+    id:
+      groups: ['payment_context']
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+  attributes:
+    id:
+      groups: ['payment_context']

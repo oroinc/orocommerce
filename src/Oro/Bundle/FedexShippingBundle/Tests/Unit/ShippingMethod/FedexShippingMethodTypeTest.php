@@ -41,7 +41,7 @@ class FedexShippingMethodTypeTest extends TestCase
      */
     private $rateServiceClient;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->rateServiceRequestSettingsFactory = $this->createMock(
             FedexRateServiceRequestSettingsFactoryInterface::class
@@ -172,12 +172,6 @@ class FedexShippingMethodTypeTest extends TestCase
         );
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     * @param FedexShippingService     $service
-     *
-     * @return FedexShippingMethodType
-     */
     private function createShippingMethodType(
         FedexIntegrationSettings $settings,
         FedexShippingService $service
@@ -192,12 +186,6 @@ class FedexShippingMethodTypeTest extends TestCase
         );
     }
 
-    /**
-     * @param string              $code
-     * @param ShippingServiceRule $rule
-     *
-     * @return FedexShippingService
-     */
     private function createShippingService(string $code, ShippingServiceRule $rule): FedexShippingService
     {
         $service = new FedexShippingService();

@@ -22,7 +22,7 @@ class ProductControllerTest extends FrontendWebTestCase
     const FRONTEND_GRID_NAME = 'order-products-previously-purchased-grid';
 
     /** {@inheritdoc} */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -37,7 +37,7 @@ class ProductControllerTest extends FrontendWebTestCase
             ]
         );
 
-        $this->enablePreviouslyPurchasedFeature($this->getReference('defaultWebsite'));
+        $this->enablePreviouslyPurchasedFeature();
 
         $this->reindexProductData();
     }
@@ -72,9 +72,6 @@ class ProductControllerTest extends FrontendWebTestCase
     }
 
     /**
-     * @param array $gridParam
-     * @param array $expected
-     *
      * @dataProvider gridParamDataProvider
      */
     public function testSortPreviouslyPurchasedGrid(array $gridParam, array $expected)

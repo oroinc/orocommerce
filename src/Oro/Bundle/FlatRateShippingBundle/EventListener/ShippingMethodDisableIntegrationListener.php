@@ -19,10 +19,6 @@ class ShippingMethodDisableIntegrationListener
      */
     private $shippingMethodDisableHandler;
 
-    /**
-     * @param IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator
-     * @param ShippingMethodDisableHandlerInterface   $shippingMethodDisableHandler
-     */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
         ShippingMethodDisableHandlerInterface $shippingMethodDisableHandler
@@ -31,9 +27,6 @@ class ShippingMethodDisableIntegrationListener
         $this->shippingMethodDisableHandler = $shippingMethodDisableHandler;
     }
 
-    /**
-     * @param ChannelDisableEvent $event
-     */
     public function onIntegrationDisable(ChannelDisableEvent $event)
     {
         /** @var Channel $channel */

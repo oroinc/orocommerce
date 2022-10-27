@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Event;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ResolvePaymentTermEvent extends Event
 {
@@ -12,9 +12,6 @@ class ResolvePaymentTermEvent extends Event
     /** @var PaymentTerm|null */
     protected $paymentTerm;
 
-    /**
-     * @param PaymentTerm|null $paymentTerm
-     */
     public function __construct(PaymentTerm $paymentTerm = null)
     {
         $this->paymentTerm = $paymentTerm;
@@ -28,9 +25,6 @@ class ResolvePaymentTermEvent extends Event
         return $this->paymentTerm;
     }
 
-    /**
-     * @param PaymentTerm|null $paymentTerm
-     */
     public function setPaymentTerm(PaymentTerm $paymentTerm = null)
     {
         $this->paymentTerm = $paymentTerm;

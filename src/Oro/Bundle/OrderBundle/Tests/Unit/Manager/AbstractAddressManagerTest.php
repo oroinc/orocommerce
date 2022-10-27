@@ -2,108 +2,105 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Component\Testing\ReflectionUtil;
 
 abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    protected $registry;
+
     /** @var OrderAddressManager */
     protected $manager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    protected $registry;
+    protected function getCustomerAddress(int $id): CustomerAddress
+    {
+        $address = new CustomerAddress();
+        ReflectionUtil::setId($address, $id);
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity with "Oro\Bundle\CustomerBundle\Entity\CustomerAddress" not registered
-     */
+        return $address;
+    }
+
+    protected function getCustomerUserAddress(int $id): CustomerUserAddress
+    {
+        $address = new CustomerUserAddress();
+        ReflectionUtil::setId($address, $id);
+
+        return $address;
+    }
+
     public function testGetIdentifierFailed()
     {
-        $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1));
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Entity with "Oro\Bundle\CustomerBundle\Entity\CustomerAddress" not registered');
+
+        $this->manager->getIdentifier($this->getCustomerAddress(1));
     }
 
     public function testGetIdentifier()
     {
-        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
+        $this->manager->addEntity('a', CustomerAddress::class);
 
         $this->assertEquals(
             'a_1',
-            $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1))
+            $this->manager->getIdentifier($this->getCustomerAddress(1))
         );
     }
 
     /**
-     * @expectedException
-     * @expectedExceptionMessage
-     *
      * @dataProvider identifierDataProvider
-     * @param string $identifier
-     * @param int $expectedId
-     * @param array $exception
      */
-    public function testGetEntityByIdentifierFailed($identifier, $expectedId, array $exception = [])
+    public function testGetEntityByIdentifierFailed(string $identifier, int $expectedId, array $exception = [])
     {
         if ($exception) {
-            list($exception, $message) = $exception;
+            [$exception, $message] = $exception;
             $this->expectException($exception);
             $this->expectExceptionMessage($message);
         }
 
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $em->expects($expectedId ? $this->atLeastOnce() : $this->never())->method('find')
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($expectedId ? $this->atLeastOnce() : $this->never())
+            ->method('find')
             ->with($this->isType('string'), $this->equalTo($expectedId));
 
-        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
+        $this->manager->addEntity('au', CustomerUserAddress::class);
         $this->manager->getEntityByIdentifier($identifier);
     }
 
-    /**
-     * @return array
-     */
-    public function identifierDataProvider()
+    public function identifierDataProvider(): array
     {
         return [
-            'no delimiter' => ['a1', 0, ['\InvalidArgumentException', 'Wrong identifier "a1"']],
-            'not int id' => ['a_bla', 0, ['\InvalidArgumentException', 'Wrong entity id "bla"']],
-            'wrong identifier' => ['au_1_bla', 0, ['\InvalidArgumentException', 'Wrong identifier "au_1_bla"']],
-            'wrong identifier int' => ['au_1_1', 0, ['\InvalidArgumentException', 'Wrong identifier "au_1_1"']],
-            'empty alias' => ['a_1', 0, ['\InvalidArgumentException', 'Unknown alias "a"']],
+            'no delimiter' => ['a1', 0, [\InvalidArgumentException::class, 'Wrong identifier "a1"']],
+            'not int id' => ['a_bla', 0, [\InvalidArgumentException::class, 'Wrong entity id "bla"']],
+            'wrong identifier' => ['au_1_bla', 0, [\InvalidArgumentException::class, 'Wrong identifier "au_1_bla"']],
+            'wrong identifier int' => ['au_1_1', 0, [\InvalidArgumentException::class, 'Wrong identifier "au_1_1"']],
+            'empty alias' => ['a_1', 0, [\InvalidArgumentException::class, 'Unknown alias "a"']],
         ];
     }
 
     public function testGetEntityByIdentifier()
     {
-        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1);
+        $entity = $this->getCustomerUserAddress(1);
 
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->exactly(2))->method('find')
             ->with($this->isType('string'), $this->isType('integer'))
             ->will($this->onConsecutiveCalls($entity, null));
 
-        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
+        $this->manager->addEntity('au', CustomerUserAddress::class);
         $this->assertEquals($entity, $this->manager->getEntityByIdentifier('au_1'));
         $this->assertNull($this->manager->getEntityByIdentifier('au_2'));
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return AbstractAddress
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

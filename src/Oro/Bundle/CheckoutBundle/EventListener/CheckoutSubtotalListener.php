@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
@@ -28,26 +28,17 @@ class CheckoutSubtotalListener
 {
     const ACCOUNT_BATCH_SIZE = 500;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected ManagerRegistry $registry;
 
-    /** @var MessageProducerInterface */
-    protected $messageProducer;
+    protected MessageProducerInterface $messageProducer;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(ManagerRegistry $registry, MessageProducerInterface $messageProducer)
     {
         $this->registry = $registry;
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param CombinedPriceListsUpdateEvent $event
-     */
-    public function onPriceListUpdate(CombinedPriceListsUpdateEvent $event)
+    public function onPriceListUpdate(CombinedPriceListsUpdateEvent $event): void
     {
         /** @var CheckoutSubtotalRepository $repository */
         $repository = $this->getRepository(CheckoutSubtotal::class);
@@ -56,10 +47,7 @@ class CheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param CustomerCPLUpdateEvent $event
-     */
-    public function onCustomerPriceListUpdate(CustomerCPLUpdateEvent $event)
+    public function onCustomerPriceListUpdate(CustomerCPLUpdateEvent $event): void
     {
         $customersData = $event->getCustomersData();
         /** @var CheckoutSubtotalRepository $repository */
@@ -71,50 +59,33 @@ class CheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param CustomerGroupCPLUpdateEvent $event
-     */
-    public function onCustomerGroupPriceListUpdate(CustomerGroupCPLUpdateEvent $event)
+    public function onCustomerGroupPriceListUpdate(CustomerGroupCPLUpdateEvent $event): void
     {
         $customersData = $event->getCustomerGroupsData();
         /** @var PriceListCustomerFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->getRepository(PriceListCustomerFallback::class);
         foreach ($customersData as $data) {
             $customers = $fallbackRepository->getCustomerIdentityByGroup($data['customerGroups'], $data['websiteId']);
-
-            if (is_array($customers)) {
-                $customers = new \ArrayIterator($customers);
-            }
             $this->invalidateSubtotalsByCustomers($customers, $data['websiteId']);
         }
 
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param WebsiteCPLUpdateEvent $event
-     */
-    public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event)
+    public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event): void
     {
         $websiteIds = $event->getWebsiteIds();
         /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
         $fallbackRepository = $this->getRepository(PriceListCustomerGroupFallback::class);
         foreach ($websiteIds as $websiteId) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteId);
-
-            if (is_array($customers)) {
-                $customers = new \ArrayIterator($customers);
-            }
             $this->invalidateSubtotalsByCustomers($customers, $websiteId);
         }
 
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param ConfigCPLUpdateEvent $event
-     */
-    public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event)
+    public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event): void
     {
         /** @var PriceListWebsiteFallbackRepository $fallbackWebsiteRepository */
         $fallbackWebsiteRepository = $this->getRepository(PriceListWebsiteFallback::class);
@@ -123,38 +94,26 @@ class CheckoutSubtotalListener
         $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
         foreach ($websitesData as $websiteData) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteData['id']);
-
-            if (is_array($customers)) {
-                $customers = new \ArrayIterator($customers);
-            }
             $this->invalidateSubtotalsByCustomers($customers, $websiteData['id']);
         }
 
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
-    protected function getRepository($className)
+    protected function getRepository(string $className): ObjectRepository
     {
         return $this->registry
             ->getManagerForClass($className)
             ->getRepository($className);
     }
 
-    protected function recalculateSubtotals()
+    protected function recalculateSubtotals(): void
     {
         $message = new Message();
-        $this->messageProducer->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, $message);
+        $this->messageProducer->send(RecalculateCheckoutSubtotalsTopic::getName(), $message);
     }
 
-    /**
-     * @param \Iterator $customers
-     * @param int $websiteId
-     */
-    protected function invalidateSubtotalsByCustomers(\Iterator $customers, $websiteId)
+    protected function invalidateSubtotalsByCustomers(\Iterator $customers, int $websiteId): void
     {
         /** @var CheckoutSubtotalRepository $subtotalRepository */
         $subtotalRepository = $this->getRepository(CheckoutSubtotal::class);

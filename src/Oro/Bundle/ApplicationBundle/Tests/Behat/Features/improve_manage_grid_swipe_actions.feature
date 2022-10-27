@@ -1,7 +1,10 @@
 @regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 Feature: Improve manage grid swipe actions
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+  As an User
+  I want to be sure that there is ability to move elements on mobile devices
+  So I login as User on different screen resolution and check this functionality
+
   Scenario: Checked drag and drop option in "Manage grid" popup on mobile view
     Given I login as AmandaRCole@example.org the "Buyer" at "640_session" session
     And I set window size to 640x1100
@@ -16,15 +19,15 @@ Feature: Improve manage grid swipe actions
     And click "Close Fullscreen Popup"
     # Last enabled column remains selected when deselecting all columns in grid
     Then I should see following grid with exact columns order:
-      | Confirmed |
-      | Yes       |
+      | Locked |
+      | No     |
     When click "Grid Settings"
     Then I should see an "Manage Grid Fullscreen Popup" element
     And click "Reset Grid"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
-      | First Name | Last Name | Email Address           | Enabled | Confirmed |
-      | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       |
+      | First Name | Last Name | Email Address           | Enabled | Confirmed | Locked |
+      | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       | No     |
     When click "Grid Settings"
     Then I should see an "Manage Grid Fullscreen Popup" element
     When I drag and drop "Email Address Handle" before "First Name Handle"
@@ -32,12 +35,12 @@ Feature: Improve manage grid swipe actions
     And click "Last Name In Grid Management"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
-      | Email Address           | First Name | Enabled | Confirmed |
-      | AmandaRCole@example.org | Amanda     | Yes     | Yes       |
+      | Email Address           | First Name | Enabled | Confirmed | Locked |
+      | AmandaRCole@example.org | Amanda     | Yes     | Yes       | No     |
     When click "Grid Settings"
     Then I should see an "Manage Grid Fullscreen Popup" element
     And click "Select All Button"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
-      | Email Address           | First Name | Last Name | Enabled | Confirmed |
-      | AmandaRCole@example.org | Amanda     | Cole      | Yes     | Yes       |
+      | Email Address           | First Name | Last Name | Enabled | Confirmed | Locked |
+      | AmandaRCole@example.org | Amanda     | Cole      | Yes     | Yes       | No     |

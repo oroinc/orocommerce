@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -22,9 +22,11 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
      */
     public function load(ObjectManager $manager)
     {
+        $shoppingLists = [];
         foreach (static::$lineItems as $name => $lineItem) {
             /** @var ShoppingList $shoppingList */
             $shoppingList = $this->getReference($lineItem['shoppingList']);
+            $shoppingLists[$shoppingList->getId()] = $shoppingList;
 
             /** @var ProductUnit $unit */
             $unit = $this->getReference($lineItem['unit']);
@@ -49,6 +51,11 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
             );
         }
 
+        $shoppingListTotalManager = $this->container->get('oro_shopping_list.manager.shopping_list_total');
+        foreach ($shoppingLists as $shoppingList) {
+            $shoppingListTotalManager->recalculateTotals($shoppingList, false);
+        }
+
         $manager->flush();
     }
 
@@ -57,7 +64,7 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
      * @param ShoppingList $shoppingList
      * @param ProductUnit $unit
      * @param Product $product
-     * @param float $quantity
+     * @param float|null $quantity
      * @param string $referenceName
      * @param Product $parentProduct
      */
@@ -78,8 +85,11 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
             ->setOwner($owner)
             ->setShoppingList($shoppingList)
             ->setUnit($unit)
-            ->setProduct($product)
-            ->setQuantity($quantity);
+            ->setProduct($product);
+
+        if ($quantity !== null) {
+            $item->setQuantity($quantity);
+        }
 
         if ($parentProduct) {
             $item->setParentProduct($parentProduct);

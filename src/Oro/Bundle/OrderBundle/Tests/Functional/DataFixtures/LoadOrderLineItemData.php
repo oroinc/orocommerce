@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -140,7 +140,7 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
                 ->setProductUnit($this->getReference($definition['productUnit']))
                 ->setPrice(Price::create($definition['price']['value'], $definition['price']['currency']));
 
-            /* @var $order Order */
+            /* @var Order $order */
             $order = $this->getReference($definition['order']);
             $order->addLineItem($lineItem);
 

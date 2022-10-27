@@ -4,13 +4,14 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryThresholdFormViewListener;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
     /** @var CategoryInventoryThresholdFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -21,7 +22,7 @@ class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFie
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 
@@ -41,7 +42,14 @@ class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFie
      */
     protected function getExpectedScrollData()
     {
-        return ['dataBlocks' => [1 => ['title' => 'oro.catalog.sections.default_options.trans']]];
+        return [
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.catalog.sections.default_options.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
+                ]
+            ]
+        ];
     }
 
     /**

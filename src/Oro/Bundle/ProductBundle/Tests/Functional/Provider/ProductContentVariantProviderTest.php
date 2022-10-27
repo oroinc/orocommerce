@@ -4,17 +4,16 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductContentVariants;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductContentVariantProviderTest extends WebTestCase
 {
-    /** @var ProductContentVariantProvider */
-    private $provider;
+    private ProductContentVariantProvider $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadProductContentVariants::class]);
@@ -48,6 +47,7 @@ class ProductContentVariantProviderTest extends WebTestCase
             null,
             [$testProduct1, $testProduct2]
         );
+        /** @var array $result */
         $result = $qb->getQuery()->getScalarResult();
 
         $this->assertEquals($testContentVariant1->getId(), $result[0]['variant_id']);

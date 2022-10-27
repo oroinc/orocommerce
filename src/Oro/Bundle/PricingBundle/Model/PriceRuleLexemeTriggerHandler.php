@@ -2,62 +2,54 @@
 
 namespace Oro\Bundle\PricingBundle\Model;
 
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Schedule recalculations related to product price rules with lexemes.
  */
 class PriceRuleLexemeTriggerHandler
 {
-    /**
-     * @var PriceListTriggerHandler
-     */
-    protected $priceListTriggerHandler;
+    /** @var PriceListTriggerHandler */
+    private $priceListTriggerHandler;
 
-    /**
-     * @var RegistryInterface
-     */
-    protected $registry;
+    /** @var ManagerRegistry */
+    private $doctrine;
 
-    /**
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param RegistryInterface $registry
-     */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
-        RegistryInterface $registry
+        ManagerRegistry $doctrine
     ) {
         $this->priceListTriggerHandler = $priceListTriggerHandler;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
     /**
-     * @param string $className
-     * @param array $updatedFields
+     * @param string   $className
+     * @param array    $updatedFields
      * @param null|int $relationId
-     * @return array|PriceRuleLexeme[]
+     *
+     * @return PriceRuleLexeme[]
      */
-    public function findEntityLexemes($className, array $updatedFields = [], $relationId = null)
+    public function findEntityLexemes(string $className, array $updatedFields = [], int $relationId = null): array
     {
         /** @var PriceRuleLexemeRepository $repository */
-        $repository = $this->registry
-            ->getManagerForClass(PriceRuleLexeme::class)
-            ->getRepository(PriceRuleLexeme::class);
+        $repository = $this->doctrine->getRepository(PriceRuleLexeme::class);
 
         return $repository->findEntityLexemes($className, $updatedFields, $relationId);
     }
 
     /**
      * @param PriceRuleLexeme[] $lexemes
-     * @param array|Product[] $products
+     * @param array|Product[]   $products
      */
-    public function addTriggersByLexemes(array $lexemes, array $products = [])
+    public function processLexemes(array $lexemes, array $products = []): void
     {
         if (!$lexemes) {
             return;
@@ -67,8 +59,8 @@ class PriceRuleLexemeTriggerHandler
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
             if (!$lexeme->getPriceRule()) {
-                $this->priceListTriggerHandler->addTriggerForPriceList(
-                    Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+                $this->priceListTriggerHandler->handlePriceListTopic(
+                    ResolvePriceListAssignedProductsTopic::getName(),
                     $priceList,
                     $products
                 );
@@ -79,8 +71,8 @@ class PriceRuleLexemeTriggerHandler
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
             if ($lexeme->getPriceRule() && !array_key_exists($priceList->getId(), $assignmentsRecalculatePriceLists)) {
-                $this->priceListTriggerHandler->addTriggerForPriceList(
-                    Topics::RESOLVE_PRICE_RULES,
+                $this->priceListTriggerHandler->handlePriceListTopic(
+                    ResolvePriceRulesTopic::getName(),
                     $priceList,
                     $products
                 );
@@ -91,9 +83,9 @@ class PriceRuleLexemeTriggerHandler
     }
 
     /**
-     * @param array|PriceRuleLexeme[] $lexemes
+     * @param PriceRuleLexeme[] $lexemes
      */
-    protected function markMentionedPriceListNotActual(array $lexemes)
+    private function markMentionedPriceListNotActual(array $lexemes): void
     {
         $priceLists = [];
         foreach ($lexemes as $lexeme) {
@@ -102,9 +94,7 @@ class PriceRuleLexemeTriggerHandler
         }
 
         /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $this->registry
-            ->getManagerForClass(PriceList::class)
-            ->getRepository(PriceList::class);
+        $priceListRepository = $this->doctrine->getRepository(PriceList::class);
         $priceListRepository->updatePriceListsActuality($priceLists, false);
     }
 }

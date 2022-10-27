@@ -3,14 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
@@ -60,6 +60,8 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
     public function load(ObjectManager $manager)
     {
         $configurableProduct = $this->createProduct($manager, self::CONFIGURABLE_SKU, Product::TYPE_CONFIGURABLE);
+        $configurableProduct->setVariantFields([OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME]);
+
         $this->setReference(self::CONFIGURABLE_SKU, $configurableProduct);
 
         foreach ($this->variants as $data) {
@@ -76,8 +78,8 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         $manager->flush();
 
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 
@@ -128,7 +130,7 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
             ->setPrimaryUnitPrecision($unitPrecision)
             ->setType($type);
 
-        $defaultName = new LocalizedFallbackValue();
+        $defaultName = new ProductName();
         $defaultName->setString($sku);
         $product->addName($defaultName);
 

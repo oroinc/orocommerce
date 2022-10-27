@@ -1,0 +1,29 @@
+services:
+    oro_redirect.api.route_repository:
+        class: Oro\Bundle\RedirectBundle\Api\Repository\RouteRepository
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+            - '@router'
+            - '@oro_redirect.routing.slug_redirect_matcher'
+
+    oro_redirect.api.load_route:
+        class: Oro\Bundle\RedirectBundle\Api\Processor\LoadRoute
+        arguments:
+            - '@oro_redirect.api.route_repository'
+        tags:
+            - { name: oro.api.processor, action: get, group: load_data, requestType: frontend, class: Oro\Bundle\RedirectBundle\Api\Model\Route }
+
+    oro_redirect.api.compute_route_resource_type_and_api_url:
+        class: Oro\Bundle\RedirectBundle\Api\Processor\ComputeRouteResourceTypeAndApiUrl
+        arguments:
+            - '@oro_frontend.api.resource_type_resolver'
+            - '@oro_frontend.api.resource_api_url_resolver'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\RedirectBundle\Api\Model\Route }
+
+    oro_redirect.api.set_slugs:
+        class: Oro\Bundle\RedirectBundle\Api\Processor\SetSlugs
+        arguments:
+            - '@oro_redirect.helper.slugify_entity_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend' }

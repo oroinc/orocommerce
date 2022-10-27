@@ -2,136 +2,122 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Doctrine\ORM\Query;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryProvider;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
+use Oro\Bundle\ProductBundle\Provider\ProductSegmentProvider;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
-class NewArrivalsProvider extends AbstractSegmentProductsProvider
+/**
+ * Provides new arrivals products.
+ */
+class NewArrivalsProvider
 {
+    private const PRODUCT_LIST_TYPE = 'new_arrivals';
+
+    private SegmentProductsQueryProvider $segmentProductsQueryProvider;
+    private ProductSegmentProvider $productSegmentProvider;
+    private ProductListBuilder $productListBuilder;
+    private AclHelper $aclHelper;
+    private ConfigManager $configManager;
+
+    /** @var array|null [product view, ...] */
+    private ?array $products = null;
+
+    public function __construct(
+        SegmentProductsQueryProvider $segmentProductsQueryProvider,
+        ProductSegmentProvider $productSegmentProvider,
+        ProductListBuilder $productListBuilder,
+        AclHelper $aclHelper,
+        ConfigManager $configManager
+    ) {
+        $this->segmentProductsQueryProvider = $segmentProductsQueryProvider;
+        $this->productSegmentProvider = $productSegmentProvider;
+        $this->productListBuilder = $productListBuilder;
+        $this->aclHelper = $aclHelper;
+        $this->configManager = $configManager;
+    }
+
     /**
-     * {@inheritDoc}
+     * @return ProductView[]
      */
-    public function getProducts()
+    public function getProducts(): array
     {
-        if (!$this->isMinAndMaxLimitsValid()) {
+        if (null === $this->products) {
+            $this->products = $this->loadProducts();
+        }
+
+        return $this->products;
+    }
+
+    private function loadProducts(): array
+    {
+        $maxItemsLimit = $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::NEW_ARRIVALS_MAX_ITEMS)
+        );
+        $minItemsLimit = $this->getMinItemsLimit($maxItemsLimit);
+        if (null === $minItemsLimit) {
+            // limits are not valid
             return [];
         }
 
-        return $this->applyMinItemsLimit(parent::getProducts());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getCacheParts(Segment $segment)
-    {
-        $user = $this->getTokenStorage()->getToken()->getUser();
-        $userId = 0;
-        if ($user instanceof AbstractUser) {
-            $userId = $user->getId();
-        }
-
-        return ['new_arrivals_products', $userId, $segment->getId()];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSegmentId()
-    {
-        return $this->getValueFromConfig(Configuration::NEW_ARRIVALS_PRODUCT_SEGMENT_ID);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getQueryBuilder(Segment $segment)
-    {
-        $qb = $this->getSegmentManager()->getEntityQueryBuilder($segment);
-
-        if ($qb) {
-            $qb = $this->getProductManager()->restrictQueryBuilder($qb, []);
-        }
-
-        return $qb;
-    }
-
-    /**
-     * @return int|null
-     */
-    private function getMaxItemsLimit()
-    {
-        return $this->getValueFromConfig(Configuration::NEW_ARRIVALS_MAX_ITEMS);
-    }
-
-    /**
-     * @return int|null
-     */
-    private function getMinItemsLimit()
-    {
-        return $this->getValueFromConfig(Configuration::NEW_ARRIVALS_MIN_ITEMS);
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    private function getValueFromConfig($key)
-    {
-        $key = Configuration::getConfigKeyByName($key);
-
-        return $this->getConfigManager()->get($key);
-    }
-
-    /**
-     * @param Query $query
-     */
-    private function setMaxItemsLimit($query)
-    {
-        if (is_int($this->getMaxItemsLimit())) {
-            $query->setMaxResults($this->getMaxItemsLimit());
-        }
-    }
-
-    /**
-     * @param Product[] $products
-     *
-     * @return Product[]
-     */
-    private function applyMinItemsLimit(array $products)
-    {
-        if (count($products) < $this->getMinItemsLimit()) {
+        $segment = $this->getSegment();
+        if (null === $segment) {
             return [];
         }
 
-        return $products;
+        $query = $this->segmentProductsQueryProvider->getQuery($segment, self::PRODUCT_LIST_TYPE);
+        if (null === $query) {
+            return [];
+        }
+
+        $this->aclHelper->apply($query);
+        if (null !== $maxItemsLimit) {
+            $query->setMaxResults($maxItemsLimit);
+        }
+        $rows = $query->getArrayResult();
+        if (!$rows || (count($rows) < $minItemsLimit)) {
+            return [];
+        }
+
+        return $this->productListBuilder->getProductsByIds(self::PRODUCT_LIST_TYPE, array_column($rows, 'id'));
     }
 
-    /**
-     * @return bool
-     */
-    private function isMinAndMaxLimitsValid()
+    private function getMinItemsLimit(?int $maxItemsLimit): ?int
     {
-        // if max limit is null, it is mean that there are no max limit
-        $maxLimit = $this->getMaxItemsLimit();
+        if (null === $maxItemsLimit) {
+            // if max limit is null, it is mean that there are no limits
+            return 0;
+        }
+        if ($maxItemsLimit <= 0) {
+            // max limit is invalid, return null to indicate that limits are not valid
+            return null;
+        }
 
         // if min limit is null, then we can operate it like zero
-        $minLimit = (int)$this->getMinItemsLimit();
+        $minItemsLimit = (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::NEW_ARRIVALS_MIN_ITEMS)
+        );
+        if ($maxItemsLimit < $minItemsLimit) {
+            // max limit must be greater or equal to min limit, return null to indicate that limits are not valid
+            return null;
+        }
 
-        return $maxLimit === null || ($maxLimit > 0 && $minLimit <= $maxLimit);
+        return $minItemsLimit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function restoreQuery(array $data)
+    private function getSegment(): ?Segment
     {
-        $query = parent::restoreQuery($data);
-        $this->setMaxItemsLimit($query);
+        $segmentId = $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::NEW_ARRIVALS_PRODUCT_SEGMENT_ID)
+        );
+        if (!$segmentId) {
+            return null;
+        }
 
-        return $query;
+        return $this->productSegmentProvider->getProductSegmentById($segmentId);
     }
 }

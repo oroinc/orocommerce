@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
@@ -35,10 +35,6 @@ class LoadProductVariants extends AbstractFixture implements DependentFixtureInt
         $manager->flush();
     }
 
-    /**
-     * @param Product       $configurableProducts
-     * @param array         $linkedProducts
-     */
     private function attachProductVariantsToConfigurableProduct(Product $configurableProducts, array $linkedProducts)
     {
         foreach ($linkedProducts as $linkedProduct) {

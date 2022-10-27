@@ -6,7 +6,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         street: 'First avenue'
         city: 'Hollywood'
         postalCode: '33019'
-        organization: '@organization'
+        organization: 'ORO'
         frontendOwner: '@amanda'
         owner: '@admin'
         systemOrganization: '@organization'

@@ -15,16 +15,12 @@ class QuoteProductListener
 
     /**
      * QuoteProductListener constructor.
-     * @param RequestStack $requestStack
      */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(PreUpdateEventArgs $event)
     {
         $fieldToKeep = 'commentCustomer';

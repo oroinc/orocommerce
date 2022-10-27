@@ -1,0 +1,95 @@
+data:
+    type: productcollection
+    id: '<toString(@catalog1_node11_variant2_es->id)>'
+    relationships:
+        products:
+            data:
+                -
+                    type: productsearch
+                    id: '<toString(@product1->id)>'
+included:
+    -
+        type: products
+        id: '<toString(@product1->id)>'
+        attributes:
+            sku: PSKU1
+            variantAttributeNames: []
+            createdAt: '@product1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: simple
+            featured: false
+            newArrival: true
+            name: 'Product 1 Spanish Name'
+            shortDescription: 'Product 1 Short Description'
+            description: '<style type="text/css">.test {color: red}</style>Product 1 Description. Twig Expr: "test".'
+            productAttributes:
+                testAttrString: null
+                testAttrFloat: null
+                testAttrMoney: null
+                testAttrDateTime: null
+                testAttrManyToOne: null
+                testToOneId: null
+                testAttrMultiEnum: []
+                testAttrManyToMany: []
+                testToManyId: []
+            unitPrecisions:
+                - { unit: item, precision: 0, conversionRate: 1, default: true }
+                - { unit: set, precision: 1, conversionRate: 10, default: false }
+            url: '/product1_slug_es'
+            urls:
+                - { url: '/product1_slug_default', localizationId: '<toString(@current_localization->id)>' }
+                - { url: '/product1_slug_default', localizationId: '<toString(@en_CA->id)>' }
+            prices:
+                - { price: '12.9900', currencyId: USD, quantity: '1', unit: item }
+                - { price: '11.0000', currencyId: USD, quantity: '10', unit: item }
+            lowInventory: false
+            upcoming: true
+            availabilityDate: null
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+        relationships:
+            images:
+                data: []
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            variantProducts:
+                data: []
+            parentProducts:
+                data: []
+    -
+        type: productsearch
+        id: '<toString(@product1->id)>'
+        attributes:
+            sku: PSKU1
+            name: 'Product 1 Spanish Name'
+            shortDescription: 'Product 1 Short Description'
+            productType: simple
+            isVariant: false
+            newArrival: true
+            unitPrecisions:
+                - { unit: item, precision: 0, default: true }
+                - { unit: set, precision: 1, default: false }
+            images: []
+            minimalPrices:
+                - { price: '11.0000', currencyId: USD, unit: item }
+            orderedAt: null
+        relationships:
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'

@@ -12,7 +12,7 @@ Feature: Product attribute currency
     When I click "Create Attribute"
     And I fill form with:
       | Field Name | CurrencyField |
-      | Type       | Currency      |
+      | Type       | Money         |
     And I click "Continue"
     Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
     And I should see that "Product Attribute Frontend Options" contains "Filterable"
@@ -25,7 +25,7 @@ Feature: Product attribute currency
     Then I should see "Attribute was successfully saved" flash message
     And I should not see "Update schema"
 
-    When I check "Currency" in "Data Type" filter
+    When I check "Money" in "Data Type" filter
     Then I should see following grid:
       | Name          | Storage type     |
       | CurrencyField | Serialized field |
@@ -61,3 +61,12 @@ Feature: Product attribute currency
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "CurrencyField" options
+
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "CurrencyField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should not see "Update schema"

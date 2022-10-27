@@ -8,6 +8,9 @@ use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchEnumFilter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
+/**
+ * The filter by a multi-enum entity for a datasource based on a search index.
+ */
 class SearchMultiEnumFilter extends SearchEnumFilter
 {
     /**

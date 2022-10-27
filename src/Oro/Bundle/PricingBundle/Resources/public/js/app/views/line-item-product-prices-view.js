@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var LineItemProductPricesView;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var ProductPricesEditableView = require('oropricing/js/app/views/product-prices-editable-view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const ProductPricesEditableView = require('oropricing/js/app/views/product-prices-editable-view');
 
-    LineItemProductPricesView = ProductPricesEditableView.extend({
+    const LineItemProductPricesView = ProductPricesEditableView.extend({
         elements: _.extend({}, ProductPricesEditableView.prototype.elements, {
             currency: '[data-name="field__currency"]'
         }),
@@ -26,32 +25,36 @@ define(function(require) {
         storedValues: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LineItemProductPricesView() {
-            LineItemProductPricesView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemProductPricesView(options) {
+            LineItemProductPricesView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         deferredInitialize: function(options) {
-            LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
+            LineItemProductPricesView.__super__.deferredInitialize.call(this, options);
 
             if (!this.options.editable) {
                 this.getElement('priceValue').prop('readonly', true);
-                var productId = this.model.get('id');
+                const productId = this.model.get('id');
                 if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
                     // store current values
                     this.storedValues = _.extend({}, this.model.attributes);
                 }
             }
 
-            mediator.on('pricing:collect:line-items', this.collectLineItems, this);
-            mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
+            this.listenTo(mediator, {
+                'pricing:collect:line-items': this.collectLineItems,
+                'pricing:refresh:products-tier-prices': this.refreshTierPrices,
+                'pricing:currency:changed': this.currencyChanged
+            });
 
-            mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
-                var productId = this.model.get('id');
+            mediator.trigger('pricing:currency:load', this.currencyChanged.bind(this));
+            mediator.trigger('pricing:get:products-tier-prices', tierPrices => {
+                const productId = this.model.get('id');
 
                 if (!_.isUndefined(productId) && _.isUndefined(tierPrices[productId])) {
                     // load prices from server for new line items
@@ -59,18 +62,18 @@ define(function(require) {
                 }
 
                 this.setTierPrices(tierPrices, false);
-            }, this));
+            });
         },
 
         updateTierPrices: function() {
-            var productId = this.model.get('id');
+            const productId = this.model.get('id');
             if (productId.length === 0) {
                 this.refreshTierPrices({});
             } else {
                 mediator.trigger(
                     'pricing:load:products-tier-prices',
                     [productId],
-                    _.bind(this.refreshTierPrices, this)
+                    this.refreshTierPrices.bind(this)
                 );
             }
         },
@@ -81,14 +84,14 @@ define(function(require) {
          */
         setTierPrices: function(tierPrices, silent) {
             this.tierPrices = tierPrices;
-            var prices = {};
+            let prices = {};
 
-            var productId = this.model.get('id');
+            const productId = this.model.get('id');
             if (!_.isUndefined(productId) && productId.length !== 0) {
                 prices = tierPrices[productId] || {};
             }
 
-            var currency = this.model.get('currency');
+            const currency = this.model.get('currency');
             if (currency) {
                 prices = _.filter(prices, function(price) {
                     return price.currency === currency;
@@ -104,7 +107,7 @@ define(function(require) {
          * @param {Object} tierPrices
          */
         refreshTierPrices: function(tierPrices) {
-            var productId = this.model.get('id');
+            const productId = this.model.get('id');
             this.setTierPrices(tierPrices, false);
             if (!this.options.editable) {
                 this.filterValues();
@@ -118,7 +121,7 @@ define(function(require) {
          * @param {Array} items
          */
         collectLineItems: function(items) {
-            var productId = this.model.get('id');
+            const productId = this.model.get('id');
 
             if (!_.isUndefined(productId) && productId.length) {
                 items.push({
@@ -131,13 +134,13 @@ define(function(require) {
         },
 
         filterValues: function() {
-            var productId = this.model.get('id');
-            var prices = {};
+            const productId = this.model.get('id');
+            let prices = {};
             if (!_.isUndefined(productId) && productId.length !== 0) {
                 prices = this.tierPrices[productId] || {};
             }
-            var currencies = [];
-            var units = [];
+            const currencies = [];
+            const units = [];
 
             _.each(prices, function(price) {
                 currencies.push(price.currency);
@@ -165,7 +168,7 @@ define(function(require) {
         updatePriceValue: function() {
             this.setTierPrices(this.tierPrices);
             if (!this.options.editable) {
-                var price;
+                let price;
                 if (this.storedValues &&
                     this.model.get('id') === this.storedValues.id &&
                     this.model.get('unit') === this.storedValues.unit &&
@@ -181,15 +184,19 @@ define(function(require) {
             }
         },
 
+        currencyChanged: function(options) {
+            if (options.currency) {
+                this.model.set('currency', options.currency);
+            }
+        },
+
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
                 return;
             }
-
-            mediator.off(null, null, this);
 
             delete this.storedValues;
 

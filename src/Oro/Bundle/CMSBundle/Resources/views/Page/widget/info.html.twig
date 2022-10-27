@@ -1,11 +1,19 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroRedirectBundle::macros.html.twig' as Redirect %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroRedirect/macros.html.twig' as Redirect %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('oro.cms.page.titles.singular_label'|trans, entity.defaultTitle) }}
-            {{ Redirect.renderGeneratedSlugs(entity.slugs) }}
+            {% set slugCollection = entity.slugs %}
+            {% if slugCollection is empty %}
+                {% set slugCollection = entity|get_slug_urls_for_prototypes %}
+            {% endif %}
+            {{ Redirect.renderGeneratedSlugs(slugCollection) }}
+        </div>
+        <div>
+            {{ entityConfig.renderDynamicFields(entity) }}
         </div>
     </div>
 </div>

@@ -18,7 +18,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -51,7 +51,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
@@ -202,7 +202,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($em);
 
         $result = $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertInstanceOf(ShoppingList::class, $result[0]);
     }
 
@@ -296,20 +296,28 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'organization' => $organization
         ]);
 
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList1 */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList1 */
         $shoppingList1 = $this->getEntity(ShoppingList::class, [
             'id' => 25,
             'website' => $website1,
             'organization' => $organization
         ]);
-        $expectedShoppingList1 = clone $shoppingList1;
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList2 */
+        $expectedShoppingList1 = $this->getEntity(ShoppingList::class, [
+            'id' => 25,
+            'website' => $website1,
+            'organization' => $organization
+        ]);
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList2 */
         $shoppingList2 = $this->getEntity(ShoppingList::class, [
             'id' => 31,
             'website' => $website2,
             'organization' => $organization
         ]);
-        $expectedShoppingList2 = clone $shoppingList2;
+        $expectedShoppingList2 = $this->getEntity(ShoppingList::class, [
+            'id' => 31,
+            'website' => $website2,
+            'organization' => $organization
+        ]);
 
         $customerVisitorWithFewShoppingLists->addShoppingList($shoppingList1);
         $customerVisitorWithFewShoppingLists->addShoppingList($shoppingList2);
@@ -391,14 +399,18 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'organization' => $organization
         ]);
 
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList1 */
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList1 */
         $shoppingList1 = $this->getEntity(ShoppingList::class, [
             'id' => 25,
             'website' => $website,
             'organization' => $organization
         ]);
-        $expectedShoppingList = clone $shoppingList1;
-        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList2 */
+        $expectedShoppingList = $this->getEntity(ShoppingList::class, [
+            'id' => 25,
+            'website' => $website,
+            'organization' => $organization
+        ]);
+        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList2 */
         $shoppingList2 = $this->getEntity(ShoppingList::class, [
             'id' => 31,
             'website' => $website,

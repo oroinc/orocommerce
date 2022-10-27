@@ -11,7 +11,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         precision: '1'
         sell: true
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: Product1
 
@@ -22,9 +22,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'AA1'
         primaryUnitPrecision: '@precision1'
         additionalUnitPrecisions: ['@precision2']
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        attributeFamily: '@defaultProductFamily'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
@@ -43,6 +45,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         customerUser: '@amanda'
         organization: '@organization'
         website: '@website1'
+        owner: '@admin'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

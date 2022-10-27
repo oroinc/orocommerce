@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
@@ -14,11 +15,16 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -48,26 +54,25 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $slugUrlDiffer;
 
-    protected function setUp()
+    /**
+     * @var UniqueContentNodeSlugPrototypesResolver|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $uniqueSlugPrototypesResolver;
+
+    protected function setUp(): void
     {
         $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
-        $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->slugUrlDiffer = $this->getMockBuilder(SlugUrlDiffer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->redirectGenerator = $this->createMock(RedirectGenerator::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->slugUrlDiffer = $this->createMock(SlugUrlDiffer::class);
+        $this->uniqueSlugPrototypesResolver = $this->createMock(UniqueContentNodeSlugPrototypesResolver::class);
 
         $this->slugGenerator = new SlugGenerator(
             $this->contentVariantTypeRegistry,
             $this->redirectGenerator,
             $this->localizationHelper,
-            $this->slugUrlDiffer
+            $this->slugUrlDiffer,
+            $this->uniqueSlugPrototypesResolver
         );
     }
 
@@ -85,7 +90,12 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $contentVariant = $this->createContentVariant($scope, 'test_type');
 
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
         $contentNode->addContentVariant($contentVariant);
 
         $this->contentVariantTypeRegistry->expects($this->once())
@@ -99,26 +109,30 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl(SlugGenerator::ROOT_URL)
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope)
+            ->setOrganization($organization);
 
         $this->assertCount(1, $contentNode->getLocalizedUrls());
-        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        $expectedUrl = (new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
     public function testGenerate()
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         /** @var Localization $localization */
         $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
 
@@ -131,6 +145,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $parentContentVariant->addSlug($parentSlug);
 
         $parentContentNode = new ContentNode();
+        $parentContentNode->setWebCatalog($webCatalog);
         $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
         $parentContentNode->addLocalizedUrl($localizedUrl);
         $parentContentNode->addContentVariant($parentContentVariant);
@@ -175,6 +190,10 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGenerateWithFallback()
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         /** @var Localization $parentLocalization */
         $parentLocalization = $this->getEntity(Localization::class, ['id' => 123, 'name' => 'parent_localization']);
         /** @var Localization $localization */
@@ -190,6 +209,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $parentContentVariant->addSlug($parentSlug);
 
         $parentContentNode = new ContentNode();
+        $parentContentNode->setWebCatalog($webCatalog);
         $parentContentNode->addContentVariant($parentContentVariant);
         $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
         $parentContentNode->addLocalizedUrl($localizedUrl);
@@ -209,6 +229,10 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $targetContentNode = new ContentNode();
         $sourceContentNode = new ContentNode();
 
+        $this->uniqueSlugPrototypesResolver->expects($this->once())
+            ->method('resolveSlugPrototypeUniqueness')
+            ->with($targetContentNode, $sourceContentNode);
+
         $this->slugUrlDiffer->expects($this->once())
             ->method('getSlugUrlsChanges')
             ->with(new ArrayCollection(), new ArrayCollection())
@@ -220,6 +244,10 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGenerateWithExistingSlugs()
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         $routeId = 'route_id';
         $routeParameters = [];
         $routData = new RouteData($routeId, $routeParameters);
@@ -237,6 +265,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $contentVariant->addSlug($existingSlug);
 
         $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
         $contentNode->addContentVariant($contentVariant);
 
         $this->contentVariantTypeRegistry->expects($this->once())
@@ -256,25 +285,28 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl(SlugGenerator::ROOT_URL)
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope);
 
-        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        $expectedUrl = (new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
     public function testGenerateWithExistingSlugsWithoutGenerateRedirects()
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         $routeId = 'route_id';
         $routeParameters = [];
         $routData = new RouteData($routeId, $routeParameters);
@@ -292,6 +324,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $contentVariant->addSlug($existingSlug);
 
         $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
         $contentNode->addContentVariant($contentVariant);
 
         $this->contentVariantTypeRegistry->expects($this->once())
@@ -311,25 +344,28 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl(SlugGenerator::ROOT_URL)
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope);
 
-        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        $expectedUrl = (new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
     public function testGenerateWithoutLocalization()
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         $parentNodeSlugUrl = '/parent/node';
         $parentSlug = new Slug();
         $parentSlug->setUrl($parentNodeSlugUrl);
@@ -338,6 +374,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $parentContentVariant->addSlug($parentSlug);
 
         $parentContentNode = new ContentNode();
+        $parentContentNode->setWebCatalog($webCatalog);
         $parentContentNode->addContentVariant($parentContentVariant);
         $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
         $parentContentNode->addLocalizedUrl($localizedUrl);
@@ -345,7 +382,6 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $slugPrototype = new LocalizedFallbackValue();
         $slugPrototype->setString('test-url');
-
 
         $routeId = 'route_id';
         $routeParameters = [];
@@ -359,34 +395,71 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($localizedUrl);
 
         $contentNode = $this->prepareContentNode($parentContentNode, $routData, $scope, $slugPrototype);
+        $contentNode->setWebCatalog($webCatalog);
         /** @var ContentVariant $actualContentVariant */
         $actualContentVariant = $contentNode->getContentVariants()->first();
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl('/parent/node/test-url')
-                ->setSlugPrototype('test-url')
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl('/parent/node/test-url')
+            ->setSlugPrototype('test-url')
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope)
+            ->setOrganization($organization);
 
-        $expectedUrls = [(new LocalizedFallbackValue())->setText('/parent/node/test-url')];
+        $expectedUrl = (new LocalizedFallbackValue())->setText('/parent/node/test-url');
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
             $this->assertNull($slug->getLocalization());
         }
     }
 
-    /**
-     * @param Localization $localization
-     * @param ContentNode $parentContentNode
-     */
+    public function testGenerateForVariantWithoutScopes()
+    {
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('test-url');
+
+        $routeData = new RouteData('route_id', []);
+        $scope = new Scope();
+
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
+        $contentVariantType->expects($this->once())
+            ->method('getRouteData')
+            ->willReturn($routeData);
+
+        $slug = new Slug();
+        $slug->setUrl('/test-url');
+
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType('test_type');
+        $contentVariant->addSlug($slug);
+
+        $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
+        $contentNode->setParentNode(new ContentNode());
+        $contentNode->addContentVariant($contentVariant);
+        $contentNode->addSlugPrototype($slugPrototype);
+        $contentNode->addScope($scope);
+
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->willReturn($contentVariantType);
+
+        $this->slugGenerator->generate($contentNode);
+
+        $this->assertCount(0, $contentVariant->getSlugs());
+    }
+
     protected function doTestGenerate(Localization $localization, ContentNode $parentContentNode)
     {
         $slugPrototype = new LocalizedFallbackValue();
@@ -405,24 +478,22 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $actualSlugs = $actualContentVariant->getSlugs();
 
         $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl('/parent/node/test-url')
-                ->setSlugPrototype('test-url')
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-                ->setLocalization($localization)
-        ];
+        $expectedSlug = (new Slug())
+            ->setUrl('/parent/node/test-url')
+            ->setSlugPrototype('test-url')
+            ->setRouteName($routeId)
+            ->setRouteParameters($routeParameters)
+            ->addScope($scope)
+            ->setLocalization($localization)
+            ->setOrganization($parentContentNode->getWebCatalog()->getOrganization());
 
-        $expectedUrls = [
-            (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization)
-        ];
+        $expectedUrl = (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization);
         foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
+            $this->assertEquals($expectedUrl, $url);
         }
 
         foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
+            $this->assertEquals($expectedSlug, $slug);
         }
     }
 
@@ -446,7 +517,12 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $contentVariant = $this->createContentVariant($scope, 'test_type');
 
+        $organization = $this->getEntity(Organization::class, ['id' => 2]);
+        $webCatalog = new WebCatalog();
+        $webCatalog->setOrganization($organization);
+
         $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
         $contentNode->setParentNode($parentContentNode);
         $contentNode->addContentVariant($contentVariant);
         $contentNode->addSlugPrototype($slugPrototype);
@@ -454,6 +530,9 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->contentVariantTypeRegistry->expects($this->once())
             ->method('getContentVariantType')
             ->willReturn($contentVariantType);
+        $this->uniqueSlugPrototypesResolver->expects($this->once())
+            ->method('resolveSlugPrototypeUniqueness')
+            ->with($parentContentNode, $contentNode);
 
         $this->slugGenerator->generate($contentNode);
 
@@ -524,7 +603,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
         $expectedSlugUrls = new ArrayCollection([
             $defaultLocalizationId => new SlugUrl('/parent/default/defaultUrl', null, 'defaultUrl'),
             $englishLocalization->getId()
-                => new SlugUrl('/parent/english/englishUrl', $englishLocalization, 'englishUrl'),
+            => new SlugUrl('/parent/english/englishUrl', $englishLocalization, 'englishUrl'),
             $frenchLocalization->getId() => new SlugUrl('/parent/french/frenchUrl', $frenchLocalization, 'frenchUrl')
         ]);
 

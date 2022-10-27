@@ -1,0 +1,304 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    localProductName{1..20}:
+        string: 'Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    localProductDescription{1..20}:
+        wysiwyg: 'Product Description<current()>'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+
+    localProductAttributeFamilyCustom:
+        string: 'Product Attribute Family Custom'
+
+    localProductAttributeFamilyGroupGeneral:
+        string: 'General'
+
+    localProductAttributeFamilyGroupInventory:
+        string: 'Inventory'
+
+    localProductAttributeFamilyGroupImages:
+        string: 'Images'
+
+    localProductAttributeFamilyGroupProductPrices:
+        string: 'Product Prices'
+
+    localProductAttributeFamilyGroupSEO:
+        string: 'SEO'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localCategoryTitle{1..4}:
+        string: 'Category <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..20}:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        code: 'product_attribute_family_code'
+        __calls:
+            - addLabel: ['@localProductAttributeFamily']
+        owner: '@organization'
+    productAttributeFamilyCustom:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code_custom'
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyCustom']
+        owner: '@organization'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
+    attributeGroupGeneral:
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupGeneral']
+        code: 'general'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: true
+    attributeGroupInventory:
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupInventory']
+        code: 'inventory'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: false
+    attributeGroupImages:
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupImages']
+        code: 'images'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: true
+    attributeGroupProductPrices:
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupProductPrices']
+        code: 'prices'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: true
+    attributeGroupSEO:
+        __calls:
+            - addLabel: ['@localProductAttributeFamilyGroupSEO']
+        code: 'seo'
+        attributeFamily: '@productAttributeFamily'
+        isVisible: false
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
+    attributeGroupGeneralRelationSku:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_sku->id'
+    attributeGroupGeneralRelationIs Featured:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_featured->id'
+    attributeGroupGeneralRelationNew Arrival:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_newArrival->id'
+    attributeGroupGeneralRelationName:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_names->id'
+    attributeGroupGeneralRelationDescription:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_descriptions->id'
+    attributeGroupGeneralRelationShort Description:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_shortDescriptions->id'
+    attributeGroupGeneralRelationBrand:
+        attributeGroup: '@attributeGroupGeneral'
+        entityConfigFieldId: '@product_attribute_brand->id'
+    attributeGroupGeneralRelationInventory Status:
+        attributeGroup: '@attributeGroupInventory'
+        entityConfigFieldId: '@product_attribute_inventory_status->id'
+    attributeGroupGeneralRelationImages:
+        attributeGroup: '@attributeGroupImages'
+        entityConfigFieldId: '@product_attribute_images->id'
+    attributeGroupGeneralRelationProduct prices:
+        attributeGroup: '@attributeGroupProductPrices'
+        entityConfigFieldId: '@product_attribute_productPriceAttributesPrices->id'
+    attributeGroupGeneralRelationMetaTitle:
+        attributeGroup: '@attributeGroupSEO'
+        entityConfigFieldId: '@product_attribute_metaTitles->id'
+    attributeGroupGeneralRelationMetaDescription:
+        attributeGroup: '@attributeGroupSEO'
+        entityConfigFieldId: '@product_attribute_metaDescriptions->id'
+    attributeGroupGeneralRelationMetaKeywords:
+        attributeGroup: '@attributeGroupSEO'
+        entityConfigFieldId: '@product_attribute_metaKeywords->id'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..5}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision<current()>']
+
+    product6:
+        type: 'simple'
+        sku: 'PSKU6'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'disabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName6']
+            - addDescription: ['@localProductDescription6']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision6']
+
+    product7:
+        type: 'simple'
+        sku: 'PSKU7'
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName7']
+            - addDescription: ['@localProductDescription7']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision7']
+
+    product8:
+        type: 'simple'
+        sku: 'PSKU8'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode2'
+        __calls:
+            - addName: ['@localProductName8']
+            - addDescription: ['@localProductDescription8']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision8']
+
+    product9:
+        type: 'configurable'
+        sku: 'PSKU9'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName9']
+            - addDescription: ['@localProductDescription9']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision9']
+
+    product10:
+        newArrival: true
+        type: 'simple'
+        sku: 'PSKU10'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName10']
+            - addDescription: ['@localProductDescription10']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision10']
+
+    product{11..18}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName<current()>']
+            - addDescription: ['@localProductDescription<current()>']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision<current()>']
+
+    product19:
+        type: 'simple'
+        sku: 'PSKU19'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamilyCustom'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName19']
+            - addDescription: ['@localProductDescription19']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision19']
+
+    product20:
+        type: 'simple'
+        sku: 'PSKU20'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        taxCode: '@productTaxCode1'
+        __calls:
+            - addName: ['@localProductName20']
+            - addDescription: ['@localProductDescription20']
+            - setPrimaryUnitPrecision: ['@productUnitPrecision20']
+
+Doctrine\Common\Collections\ArrayCollection:
+    products1:
+        __construct: [['@product1', '@product2', '@product3', '@product4', '@product5']]
+    products2:
+        __construct: [['@product6', '@product7', '@product8', '@product9', '@product10']]
+    products3:
+        __construct: [['@product11', '@product12', '@product13', '@product14', '@product15']]
+    products4:
+        __construct: [['@product16', '@product17', '@product18', '@product19', '@product20']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category{1..4}:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localCategoryTitle<current()>']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products<current()>']
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    productTaxCode{1..2}:
+        code: 'productTaxCode<current()>'
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price{1..20}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: <current()>
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    priceAttributeProductPrice{1..20}:
+        product: '@product<current()>'
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: <current(10)>
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..20}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    priceAttributePriceList:
+        name: 'Price Attribute'
+        fieldName: 'priceAttribute'
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency:
+    priceAttributeCurrency:
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'

@@ -3,6 +3,7 @@
 @ticket-BB-11080
 @ticket-BB-12075
 @automatically-ticket-tagged
+@waf-skip
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
 Feature: Backoffice Quote Flow with Approvals
   In order to edit quote internal statuses and aprove quotes after price changes
@@ -353,6 +354,8 @@ Feature: Backoffice Quote Flow with Approvals
     And I click "Create new Quote"
     And click "Submit"
     Then I should see "Quote #32 successfully created" flash message
+    And email with Subject "Quote #32 has been created" containing the following was sent:
+      | Subject | Quote #32 has been created |
     And should see Quote with:
       | Quote #         | 32    |
       | PO Number       | PO8   |
@@ -444,8 +447,12 @@ Feature: Backoffice Quote Flow with Approvals
 
   Scenario: Create a Quote from RFQ: Internal status: Draft, customer status: N/A, invisible for customer
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
-    And request a quote from shopping list "Shopping List 1" with data:
+    And I open page with shopping list Shopping List 1
+    And I click "More Actions"
+    And I click "Request Quote"
+    And I fill form with:
       | PO Number | PO35 |
+    And I click "Submit Request"
 
     Then I am on dashboard
     And create a quote from RFQ with PO Number "PO35"

@@ -1,0 +1,46 @@
+/* @theme: default; */
+
+.product-view-media-slider {
+    max-height: $product-view-media-slider-max-height;
+
+    border: $product-view-media-slider-border;
+
+    overflow: hidden;
+
+    &__image {
+        max-width: 100%;
+        max-height: $product-view-media-gallery-image-max-height;
+    }
+
+    &__image-item {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+
+        height: 378px;
+    }
+
+    &.slick-initialized {
+        overflow: visible;
+
+        .product-view-media-slider__image-item {
+            // Should for reset slick display value
+            display: flex;
+        }
+    }
+
+    @include slick-arrow(
+        $slick-arrow-width: $product-view-media-slider-arrow-width,
+        $slick-arrow-height: $product-view-media-slider-arrow-height,
+        $slick-arrow-outline: none,
+        $slick-arrow-icon-size: $product-view-media-slider-arrow-icon-size,
+        $slick-arrow-icon-color: $product-view-media-slider-arrow-icon-color,
+        $slick-arrow-icon-hover-color: $product-view-media-slider-arrow-icon-hover-color,
+        $slick-arrow-prev-icon: $product-view-media-slider-arrow-icon-prev,
+        $slick-arrow-next-icon: $product-view-media-slider-arrow-icon-next,
+        $slick-arrow-next-right: $product-view-media-slider-arrow-side-position,
+        $slick-arrow-prev-left: $product-view-media-slider-arrow-side-position
+    );
+    @include slick-dots();
+}

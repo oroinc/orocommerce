@@ -13,54 +13,106 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Provides a way to get product visibility scopes.
+ */
 class VisibilityScopeProvider
 {
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
+    /** @var ScopeManager */
+    private $scopeManager;
 
     public function __construct(ScopeManager $scopeManager)
     {
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * @param WebsiteInterface $website
-     * @return Scope
-     */
-    public function getProductVisibilityScope(WebsiteInterface $website)
+    public function getProductVisibilityScope(WebsiteInterface $website): Scope
     {
-        return $this->scopeManager->findOrCreate(ProductVisibility::getScopeType());
+        return $this->findOrCreateScope(ProductVisibility::getScopeType());
     }
 
-    /**
-     * @param Customer $customer
-     * @param WebsiteInterface $website
-     * @return Scope
-     */
-    public function getCustomerProductVisibilityScope(Customer $customer, WebsiteInterface $website)
+    public function findProductVisibilityScope(WebsiteInterface $website): ?Scope
     {
-        return $this->scopeManager->findOrCreate(
+        return $this->findScope(ProductVisibility::getScopeType());
+    }
+
+    public function findProductVisibilityScopeId(WebsiteInterface $website): ?int
+    {
+        return $this->findScopeId(ProductVisibility::getScopeType());
+    }
+
+    public function getCustomerProductVisibilityScope(
+        Customer $customer,
+        WebsiteInterface $website
+    ): Scope {
+        return $this->findOrCreateScope(
             CustomerProductVisibility::getScopeType(),
-            [
-                ScopeCustomerCriteriaProvider::ACCOUNT => $customer
-            ]
+            [ScopeCustomerCriteriaProvider::CUSTOMER => $customer]
         );
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param WebsiteInterface $website
-     * @return Scope
-     */
-    public function getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, WebsiteInterface $website)
-    {
-        return $this->scopeManager->findOrCreate(
-            CustomerGroupProductVisibility::getScopeType(),
-            [
-                ScopeCustomerGroupCriteriaProvider::FIELD_NAME => $customerGroup
-            ]
+    public function findCustomerProductVisibilityScope(
+        Customer $customer,
+        WebsiteInterface $website
+    ): ?Scope {
+        return $this->findScope(
+            CustomerProductVisibility::getScopeType(),
+            [ScopeCustomerCriteriaProvider::CUSTOMER => $customer]
         );
+    }
+
+    public function findCustomerProductVisibilityScopeId(
+        Customer $customer,
+        WebsiteInterface $website
+    ): ?int {
+        return $this->findScopeId(
+            CustomerProductVisibility::getScopeType(),
+            [ScopeCustomerCriteriaProvider::CUSTOMER => $customer]
+        );
+    }
+
+    public function getCustomerGroupProductVisibilityScope(
+        CustomerGroup $customerGroup,
+        WebsiteInterface $website
+    ): Scope {
+        return $this->findOrCreateScope(
+            CustomerGroupProductVisibility::getScopeType(),
+            [ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP => $customerGroup]
+        );
+    }
+
+    public function findCustomerGroupProductVisibilityScope(
+        CustomerGroup $customerGroup,
+        WebsiteInterface $website
+    ): ?Scope {
+        return $this->findScope(
+            CustomerGroupProductVisibility::getScopeType(),
+            [ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP => $customerGroup]
+        );
+    }
+
+    public function findCustomerGroupProductVisibilityScopeId(
+        CustomerGroup $customerGroup,
+        WebsiteInterface $website
+    ): ?int {
+        return $this->findScopeId(
+            CustomerGroupProductVisibility::getScopeType(),
+            [ScopeCustomerGroupCriteriaProvider::CUSTOMER_GROUP => $customerGroup]
+        );
+    }
+
+    protected function findOrCreateScope(string $scopeType, array $context = null): Scope
+    {
+        return $this->scopeManager->findOrCreate($scopeType, $context);
+    }
+
+    protected function findScope(string $scopeType, array $context = null): ?Scope
+    {
+        return $this->scopeManager->find($scopeType, $context);
+    }
+
+    protected function findScopeId(string $scopeType, array $context = null): ?int
+    {
+        return $this->scopeManager->findId($scopeType, $context);
     }
 }

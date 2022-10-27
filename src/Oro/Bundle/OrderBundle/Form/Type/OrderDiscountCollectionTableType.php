@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Order Discount Collection.
+ */
 class OrderDiscountCollectionTableType extends AbstractType
 {
     const NAME = 'oro_order_discount_collection_table';
@@ -33,7 +36,7 @@ class OrderDiscountCollectionTableType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'template_name' => 'OroOrderBundle:Discount:order_discount_collection.html.twig',
+                'template_name' => '@OroOrder/Discount/order_discount_collection.html.twig',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [
                     'view' => 'oroorder/js/app/views/discount-collection-view',

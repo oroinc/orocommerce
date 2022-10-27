@@ -1,35 +1,34 @@
 define(function(require) {
     'use strict';
 
-    var ProductImageTypeRadioControlComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
 
-    ProductImageTypeRadioControlComponent = BaseComponent.extend({
+    const ProductImageTypeRadioControlComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductImageTypeRadioControlComponent() {
-            ProductImageTypeRadioControlComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductImageTypeRadioControlComponent(options) {
+            ProductImageTypeRadioControlComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            var form = this.options._sourceElement.closest('form');
-            var allRadiosWithImageTypeSelector = 'input[type=radio][data-image-type]:checked';
+            const form = this.options._sourceElement.closest('form');
+            const allRadiosWithImageTypeSelector = 'input[type=radio][data-image-type]:checked';
 
             form.on('change', allRadiosWithImageTypeSelector, function() {
-                var currentType = this.dataset.imageType;
-                var withCurrentTypeSelector = 'input[type=radio][data-image-type="' + currentType + '"]:checked';
+                const currentType = this.dataset.imageType;
+                const withCurrentTypeSelector = 'input[type=radio][data-image-type="' + currentType + '"]:checked';
 
                 form.find(withCurrentTypeSelector).not(this).prop('checked', false);
             });

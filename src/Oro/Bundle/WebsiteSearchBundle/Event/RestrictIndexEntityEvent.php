@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class RestrictIndexEntityEvent extends Event
 {
@@ -15,11 +15,6 @@ class RestrictIndexEntityEvent extends Event
     /** @var array */
     protected $context;
 
-    /**
-     * @param QueryBuilder $qb
-     * @param array $context
-     * @param array $context
-     */
     public function __construct(QueryBuilder $qb, array $context)
     {
         $this->queryBuilder = $qb;

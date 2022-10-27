@@ -1,8 +1,9 @@
 <?php
+
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
@@ -23,7 +24,7 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceListReferenceChecker;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->priceListReferenceChecker = new PriceListReferenceChecker($this->registry);
@@ -37,7 +38,7 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
         $repository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $repository->expects($this->once())
             ->method('getRelationIds')
             ->willReturn([1, 2]);

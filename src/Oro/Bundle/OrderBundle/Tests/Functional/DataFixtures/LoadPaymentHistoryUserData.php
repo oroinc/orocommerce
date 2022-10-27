@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
 
 class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
@@ -20,7 +21,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
         return [
             self::ROLE_VIEW_HISTORY => [
                 [
-                    'class' => 'oro_order.entity.order.class',
+                    'class' => Order::class,
                     'acls'  => [
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -35,7 +36,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
             ],
             self::ROLE_VIEW_ORDER => [
                 [
-                    'class' => 'oro_order.entity.order.class',
+                    'class' => Order::class,
                     'acls'  => [
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -59,7 +60,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
                 'password'  => self::USER_PAYMENT_HISTORY_VIEWER,
                 'firstname' => 'User',
                 'lastname'  => 'User',
-                'roles'     => [self::ROLE_VIEW_HISTORY],
+                'userRoles'     => [self::ROLE_VIEW_HISTORY],
             ],
             [
                 'email'     => self::USER_ORDER_VIEWER . '@test.com',
@@ -67,7 +68,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
                 'password'  => self::USER_ORDER_VIEWER,
                 'firstname' => 'User',
                 'lastname'  => 'User',
-                'roles'     => [self::ROLE_VIEW_ORDER],
+                'userRoles'     => [self::ROLE_VIEW_ORDER],
             ],
         ];
     }

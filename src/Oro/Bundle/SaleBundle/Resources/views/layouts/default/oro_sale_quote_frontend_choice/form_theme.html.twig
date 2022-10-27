@@ -1,4 +1,6 @@
 {% block oro_sale_quote_product_demand_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set isQuantityValid = form.quantity.vars.valid %}
     {% set selectedOffer = form.quoteProductOffer.vars.data %}
@@ -10,12 +12,14 @@
     {% endif %}
 
     {% set componentOptions = {
+        unitPrecisions: unitPrecisions,
         offerSelector: '[name="%s"]'|format(form.quoteProductOffer.vars.full_name),
         quantitySelector: '[name="%s"]'|format(form.quantity.vars.full_name),
         unitInputSelector: '[name="%s"]'|format(form.unit.vars.full_name),
         unitSelector: '[data-role="unit-view"]',
         unitPriceSelector: '[data-role="price-view"]',
         quoteProductId: quoteProduct.id,
+        quoteDemandId: form.vars.value.quoteDemand.id,
         calculatingMessage: 'oro.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
         notAvailableMessage: 'oro.frontend.sale.quoteproductoffer.not_available.message'|trans,
         currentLineItemSelector: '#' ~ id
@@ -26,9 +30,16 @@
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="grid-cell grid-cell--offset-l-none-mobile primary-cell">
             <h3 class="oro-grid-table__title">
-                {{ quoteProduct.productName }}
+                {% if (quoteProduct.product.id is defined) %}
+                    {{ UI.link({
+                        path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
+                        label : quoteProduct.product.names|localized_value,
+                    }) }}
+                {% else %}
+                    {{ quoteProduct.productName }}
+                {% endif %}
             </h3>
-            <div>
+            <div class="customer-line-items__row">
                 {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }}
                 <span class="customer-line-items__sku-value">
                     {% if quoteProduct.isTypeNotAvailable %}
@@ -44,17 +55,25 @@
             {{ form_errors(form.quoteProductOffer) }}
         </td>
         <td class="grid-cell qty-cell">
-            <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
-                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
-                {{ form_widget(form.unit) }}
-                <span data-role="unit-view">
+            <div class="fields-row">
+                <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
+                    {% set quantityReadOnly = form.quantity.vars.attr.readonly is defined and true %}
+                    {{ form_widget(form.quantity, {
+                        'attr': {
+                            'data-valid': isQuantityValid|json_encode,
+                            'class': attr.class|default('') ~ quantityReadOnly ? 'disabled'
+                        }})
+                    }}
+                    {{ form_widget(form.unit) }}
                     {% if oro_is_unit_code_visible(defaultUnitCode) %}
-                        {{ defaultUnitCode }}
+                        <span data-role="unit-view">{{ defaultUnitCode }}</span>
                     {% endif %}
-                </span>
+                </div>
+                <div class="fields-row-error">
+                    {{ form_errors(form.quantity) }}
+                    {{ form_errors(form.unit) }}
+                </div>
             </div>
-            {{ form_errors(form.quantity) }}
-            {{ form_errors(form.unit) }}
         </td>
         <td class="grid-cell grid-cell--offset-l-none-mobile">
             <span class="hide-on-desktop hide-on-strict-tablet" aria-hidden="true">
@@ -86,7 +105,7 @@
 
 {% block oro_sale_quote_product_demand_collection_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container customer-line-items' }) %}
-    {% spaceless %}
+    {% apply spaceless %}
         <div {{ block('widget_container_attributes') }}>
             <table class="oro-grid-table customer-line-items__table">
                 <thead class="grid-header hide-on-mobile-landscape">
@@ -108,7 +127,7 @@
             {{ form_rest(form) }}
             {{ form_errors(form) }}
         </div>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
 
 {% block oro_sale_quote_product_demand_offer_choice_widget %}
@@ -126,6 +145,7 @@
 
                         {% set attr = {
                             'data-value': offer.id,
+                            'data-allow-increment': offer.allowIncrements ? 'true' : 'false',
                             'data-unit': offer.productUnitCode,
                             'data-formatted-unit': formattedUnitCode,
                             'data-quantity': offer.quantity,

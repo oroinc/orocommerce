@@ -1,0 +1,3 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+{{ dataGrid.renderGrid('shopping-list-orders-grid', {shopping_list_id: entity.id}, {cssClass: 'inner-grid'}) }}

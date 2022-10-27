@@ -15,46 +15,29 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SitemapDumperTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_PROVIDER_TYPE = 'product';
-    const STORAGE_TYPE = 'url';
+    private const PRODUCT_PROVIDER_TYPE = 'product';
+    private const STORAGE_TYPE = 'url';
 
-    /**
-     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteUrlProvidersService;
 
-    /**
-     * @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject */
     private $filesystemAdapter;
 
-    /**
-     * @var SitemapStorageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SitemapStorageFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $sitemapStorageFactory;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var SitemapDumper
-     */
+    /** @var SitemapDumper */
     private $dumper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteUrlProvidersService = $this->createMock(WebsiteUrlProvidersServiceInterface::class);
-
-        $this->sitemapStorageFactory = $this->getMockBuilder(SitemapStorageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->filesystemAdapter = $this->getMockBuilder(SitemapFilesystemAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->sitemapStorageFactory = $this->createMock(SitemapStorageFactory::class);
+        $this->filesystemAdapter = $this->createMock(SitemapFilesystemAdapter::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->dumper = new SitemapDumper(
@@ -66,13 +49,36 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getWebsite(int $id): WebsiteInterface
+    {
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $website;
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     * @param string $version
+     */
+    private function expectDispatchDumpFinishEvent($website, $version)
+    {
+        $event = new OnSitemapDumpFinishEvent($website, $version);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $event,
+                sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, self::STORAGE_TYPE)
+            );
+    }
+
     public function testDumpWithOneProviderWhenOneSitemapFileCreated()
     {
-        /** @var WebsiteInterface $website */
-        $website = $this->createMock(WebsiteInterface::class);
+        $website = $this->getWebsite(123);
         $version = 1;
 
-        /** @var UrlItemsProviderInterface|\PHPUnit\Framework\MockObject\MockObject $provider */
         $provider = $this->createMock(UrlItemsProviderInterface::class);
         $urlItem = new UrlItem('http://somedomain.com/firsturi');
         $provider->expects($this->once())
@@ -86,7 +92,6 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
             ->with($website)
             ->willReturn($providers);
 
-        /** @var SitemapStorageInterface|\PHPUnit\Framework\MockObject\MockObject $urlsStorage */
         $urlsStorage = $this->createMock(SitemapStorageInterface::class);
         $urlsStorage->expects($this->once())
             ->method('addUrlItem')
@@ -104,7 +109,6 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE)),
                 $website,
-                $version,
                 $urlsStorage
             );
 
@@ -115,8 +119,7 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
 
     public function testDumpWithOneProviderWhenSeveralSitemapFileCreated()
     {
-        /** @var WebsiteInterface $website */
-        $website = $this->createMock(WebsiteInterface::class);
+        $website = $this->getWebsite(123);
         $version = 1;
 
         $productProvider = $this->createMock(UrlItemsProviderInterface::class);
@@ -163,13 +166,11 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
                 [
                     $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE)),
                     $website,
-                    $version,
                     $firstUrlsStorage
                 ],
                 [
                     $this->stringEndsWith(sprintf('sitemap-%s-2.xml', self::PRODUCT_PROVIDER_TYPE)),
                     $website,
-                    $version,
                     $secondUrlsStorage
                 ]
             );
@@ -181,8 +182,7 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
 
     public function testDumpWithAllProviders()
     {
-        /** @var WebsiteInterface $website */
-        $website = $this->createMock(WebsiteInterface::class);
+        $website = $this->getWebsite(123);
         $version = 1;
 
         $productProvider = $this->createMock(UrlItemsProviderInterface::class);
@@ -234,13 +234,11 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
                 [
                     $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE)),
                     $website,
-                    $version,
                     $productUrlsStorage
                 ],
                 [
                     $this->stringEndsWith(sprintf('sitemap-%s-1.xml', $pageProviderType)),
                     $website,
-                    $version,
                     $pageUrlsStorage
                 ]
             );
@@ -258,24 +256,5 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
     public function testGetFilenamePatternSpecificType()
     {
         $this->assertEquals('sitemap-index-*.xml*', SitemapDumper::getFilenamePattern('index'));
-    }
-
-    /**
-     * @param WebsiteInterface $website
-     * @param string $version
-     */
-    private function expectDispatchDumpFinishEvent($website, $version)
-    {
-        $event = new OnSitemapDumpFinishEvent($website, $version);
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                sprintf(
-                    '%s.%s',
-                    OnSitemapDumpFinishEvent::EVENT_NAME,
-                    self::STORAGE_TYPE
-                ),
-                $event
-            );
     }
 }

@@ -8,11 +8,12 @@ Feature: Check validation for Shipping Rule - Flat rate
     Given I login as administrator
     And go to System/ Shipping Rules
     And I click "Create Shipping Rule"
-    And I fill form with:
+    And fill "Shipping Rule" with:
       | Name       | test rule |
       | Sort Order | 1         |
       | Currency   | USD       |
-    And I add shipping method "Flat Rate" with:
+      | Method     | Flat Rate |
+    And fill "Fast Shipping Rule Form" with:
       | Handling Fee | 10       |
       | Type         | per_item |
     And I save and close form

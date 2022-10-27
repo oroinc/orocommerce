@@ -9,6 +9,9 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
+/**
+ * Resolver to apply zero tax to digital product for US customers from states without digital product taxes
+ */
 class DigitalItemResolver implements ResolverInterface
 {
     /** {@inheritdoc} */
@@ -38,6 +41,8 @@ class DigitalItemResolver implements ResolverInterface
         );
 
         if ($isStateWithoutDigitalTax && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
+            $taxable->makeDestinationAddressTaxable();
+
             $unitPrice = BigDecimal::of($taxable->getPrice());
             $unitResultElement = ResultElement::create($unitPrice, $unitPrice, BigDecimal::zero(), BigDecimal::zero());
             $result->offsetSet(Result::UNIT, $unitResultElement);
@@ -47,8 +52,6 @@ class DigitalItemResolver implements ResolverInterface
             $result->offsetSet(Result::ROW, $rowResultElement);
 
             $result->lockResult();
-
-            $taxable->makeDestinationAddressTaxable();
         }
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Manager;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
-use Oro\Bundle\UserBundle\Entity\BaseUserManager;
+use Oro\Bundle\PricingBundle\Provider\CurrentCurrencyProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -18,50 +19,38 @@ class UserCurrencyManager
 {
     const SESSION_CURRENCIES = 'currency_by_website';
 
-    /**
-     * @var Session
-     */
+    /** @var Session */
     protected $session;
 
-    /**
-     * @var CurrencyProviderInterface
-     */
-    protected $currencyProvider;
-
-    /**
-     * @var WebsiteManager
-     */
-    protected $websiteManager;
-
-    /**
-     * @var TokenStorageInterface
-     */
+    /** @var TokenStorageInterface */
     protected $tokenStorage;
 
-    /**
-     * @var BaseUserManager
-     */
-    protected $userManager;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
-    /**
-     * @param Session $session
-     * @param TokenStorageInterface $tokenStorage
-     * @param CurrencyProviderInterface $currencyProvider
-     * @param WebsiteManager $websiteManager
-     * @param BaseUserManager $userManager
-     */
+    /** @var CurrencyProviderInterface */
+    protected $currencyProvider;
+
+    /** @var WebsiteManager */
+    protected $websiteManager;
+
+    /** @var CurrentCurrencyProviderInterface */
+    protected $currentCurrencyProvider;
+
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
+        ManagerRegistry $doctrine,
         CurrencyProviderInterface $currencyProvider,
         WebsiteManager $websiteManager,
-        BaseUserManager $userManager
+        CurrentCurrencyProviderInterface $currentCurrencyProvider
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
         $this->currencyProvider = $currencyProvider;
         $this->websiteManager = $websiteManager;
-        $this->userManager = $userManager;
+        $this->currentCurrencyProvider = $currentCurrencyProvider;
     }
 
     /**
@@ -70,9 +59,12 @@ class UserCurrencyManager
      */
     public function getUserCurrency(Website $website = null)
     {
-        $currency = null;
-        $website = $this->getWebsite($website);
+        $currency = $this->currentCurrencyProvider->getCurrentCurrency();
+        if ($currency) {
+            return $this->sanitizeCurrency($currency);
+        }
 
+        $website = $this->getWebsite($website);
         if ($website) {
             $user = $this->getLoggedUser();
             if ($user instanceof CustomerUser) {
@@ -88,11 +80,7 @@ class UserCurrencyManager
             }
         }
 
-        if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
-            $currency = $this->getDefaultCurrency();
-        }
-
-        return $currency;
+        return $this->sanitizeCurrency($currency);
     }
 
     /**
@@ -114,7 +102,7 @@ class UserCurrencyManager
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setCurrency($currency);
-            $this->userManager->getStorageManager()->flush();
+            $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
         } elseif ($this->session->isStarted()) {
             $sessionCurrencies = $this->getSessionCurrencies();
             $sessionCurrencies[$website->getId()] = $currency;
@@ -136,6 +124,20 @@ class UserCurrencyManager
     public function getDefaultCurrency()
     {
         return $this->currencyProvider->getDefaultCurrency();
+    }
+
+    /**
+     * @param string|null $currency
+     *
+     * @return string|null
+     */
+    protected function sanitizeCurrency($currency)
+    {
+        if (!$currency || !in_array($currency, $this->getAvailableCurrencies(), true)) {
+            $currency = $this->getDefaultCurrency();
+        }
+
+        return $currency;
     }
 
     /**

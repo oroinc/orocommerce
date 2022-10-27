@@ -3,21 +3,17 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
 class WebCatalogControllerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
         $this->client->useHashNavigation(true);
-
         $this->loadFixtures([
             LoadWebCatalogData::class,
             LoadContentNodesData::class,
@@ -47,7 +43,6 @@ class WebCatalogControllerTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        /** TODO Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
@@ -59,9 +54,7 @@ class WebCatalogControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var ContentNodeRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroWebCatalogBundle:ContentNode')
-            ->getRepository('OroWebCatalogBundle:ContentNode');
+        $repository = $this->getContainer()->get('doctrine')->getRepository(ContentNode::class);
         $node = $repository->find($this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1)->getId());
         $this->assertEquals(LoadContentNodesData::CATALOG_1_ROOT, $node->getParentNode()->getTitle());
     }

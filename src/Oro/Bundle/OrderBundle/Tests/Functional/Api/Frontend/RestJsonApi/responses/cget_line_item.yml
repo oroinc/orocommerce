@@ -1,0 +1,73 @@
+data:
+    -
+        type: orderlineitems
+        id: '<toString(@order1_line_item1->id)>'
+        attributes:
+            productSku: SKU1
+            productName: 'Product 1'
+            freeFormProduct: product_1
+            quantity: 5
+            productUnitCode: set
+            price: '15.7000'
+            currency: USD
+            shipUntil: '2018-05-20'
+            comment: 'Test comment for line item 1'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@order1->id)>'
+    -
+        type: orderlineitems
+        id: '<toString(@order1_line_item2->id)>'
+        attributes:
+            productSku: SKU2
+            productName: 'Product 2'
+            freeFormProduct: null
+            quantity: 12
+            productUnitCode: item
+            price: '30.5000'
+            currency: USD
+            shipUntil: null
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@order1->id)>'
+    -
+        type: orderlineitems
+        id: '<toString(@order2_line_item1->id)>'
+        attributes:
+            productSku: SKU2
+            productName: 'Product 2'
+            freeFormProduct: null
+            quantity: 3
+            productUnitCode: item
+            price: '10.4000'
+            currency: EUR
+            shipUntil: null
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@order2->id)>'
+    -
+        type: orderlineitems
+        id: '<toString(@order3_line_item1->id)>'
+        attributes:
+            productSku: SKU2
+            productName: 'Product 2'
+            freeFormProduct: null
+            quantity: 12
+            productUnitCode: item
+            price: '30.5000'
+            currency: USD
+            shipUntil: null
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@order3->id)>'

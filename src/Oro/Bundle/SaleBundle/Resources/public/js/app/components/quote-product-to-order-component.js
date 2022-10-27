@@ -1,17 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var QuoteProductToOrderComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
-    QuoteProductToOrderComponent = BaseComponent.extend({
+    const QuoteProductToOrderComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
+            unitPrecisions: null,
             offerSelector: '.radiobox',
             quantitySelector: '.quantity',
             unitInputSelector: '.unitInput',
@@ -21,10 +23,12 @@ define(function(require) {
                 unit: 'unit',
                 formatted_unit: 'formatted-unit',
                 quantity: 'quantity',
-                price: 'price'
+                price: 'price',
+                allow_increment: 'allow-increment'
             },
             matchOfferRoute: 'oro_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
+            quoteDemandId: null,
             calculatingMessage: 'Calculating...',
             notAvailableMessage: 'N/A'
         },
@@ -65,14 +69,14 @@ define(function(require) {
         quantityEventsEnabled: true,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function QuoteProductToOrderComponent() {
-            QuoteProductToOrderComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuoteProductToOrderComponent(options) {
+            QuoteProductToOrderComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -85,20 +89,22 @@ define(function(require) {
             this.$unitPrice = this.$el.find(this.options.unitPriceSelector);
             this.$offerSelector = this.$el.find(this.options.offerSelector);
 
-            this.$offerSelector.on('change', _.bind(this.onOfferChange, this));
+            this.$offerSelector.on('change', this.onOfferChange.bind(this));
             this.addQuantityEvents();
+            this.updateQuantityInputPrecision(this.$offerSelector.filter(':checked'));
         },
 
         /**
          * @param {Event} e
          */
         onOfferChange: function(e) {
-            var target = $(e.target);
+            const target = $(e.target);
 
             this.quantityEventsEnabled = false;
 
+            this.updateQuantityInputPrecision(target);
             if (!this.blockQuantityUpdate) {
-                this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
+                this.updateQuantityInputValue(target.data(this.options.data_attributes.quantity));
             }
             this.setValidAttribute(this.$quantity, true);
             this.updateUnitValue(
@@ -111,9 +117,9 @@ define(function(require) {
         },
 
         onQuantityChange: function() {
-            var self = this;
-            var quantity = this.$quantity.val();
-            if (!this.isQuantityValueValid(quantity)) {
+            const self = this;
+            const quantity = this.$quantity.val();
+            if (!QuantityHelper.isQuantityLocalizedValueValid(quantity)) {
                 return;
             }
 
@@ -122,6 +128,7 @@ define(function(require) {
                     this.options.matchOfferRoute,
                     {
                         id: this.options.quoteProductId,
+                        demandId: this.options.quoteDemandId,
                         unit: this.$unitInput.val(),
                         qty: quantity
                     }
@@ -146,26 +153,25 @@ define(function(require) {
         },
 
         /**
-         * @param {String} value
-         * @returns {Boolean}
-         */
-        isQuantityValueValid: function(value) {
-            var floatValue = parseFloat(value);
-            return !_.isNaN(floatValue) && floatValue > 0;
-        },
-
-        /**
          * @param {Object} field
          * @param {Boolean} value
          */
         setValidAttribute: function(field, value) {
-            var $field = $(field);
+            const $field = $(field);
             $field.data('valid', value);
+            $field.attr('data-valid', value.toString());
             $field.valid();
         },
 
         addQuantityEvents: function() {
-            this.$quantity.on('change', _.bind(function() {
+            const disableFixedQuoteQuantityChange = Boolean(_.reduce(this.$offerSelector, function(disable, element) {
+                return disable &= !$(element).data(this.options.data_attributes.allow_increment);
+            }, true, this));
+
+            this.$quantity.prop('readonly', disableFixedQuoteQuantityChange);
+            this.$quantity.toggleClass('disabled', disableFixedQuoteQuantityChange);
+
+            this.$quantity.on('change', () => {
                 if (!this.quantityEventsEnabled) {
                     return;
                 }
@@ -173,10 +179,10 @@ define(function(require) {
                     clearTimeout(this.quantityChange);
                 }
                 this.onQuantityChange();
-            }, this));
+            });
 
-            this.$quantity.on('keyup', _.bind(function() {
-                if (this.isQuantityValueValid(this.$quantity.val())) {
+            this.$quantity.on('keyup', () => {
+                if (QuantityHelper.isQuantityLocalizedValueValid(this.$quantity.val())) {
                     this.updateUnitPriceValue(this.options.calculatingMessage);
                 } else {
                     this.updateUnitPriceValue(this.options.notAvailableMessage);
@@ -188,15 +194,15 @@ define(function(require) {
                     clearTimeout(this.quantityChange);
                 }
                 this.setValidAttribute(this.$quantity, true);
-                this.quantityChange = setTimeout(_.bind(this.onQuantityChange, this), 1500);
-            }, this));
+                this.quantityChange = setTimeout(this.onQuantityChange.bind(this), 1500);
+            });
         },
 
         /**
          * @param {Number} quantity
          */
         updateQuantityInputValue: function(quantity) {
-            this.$quantity.val(quantity);
+            this.$quantity.val(QuantityHelper.formatQuantity(quantity));
             this.$quantity.data(this.options.data_attributes.quantity, quantity);
         },
 
@@ -216,12 +222,19 @@ define(function(require) {
             this.$unitPrice.text(price);
         },
 
+        updateQuantityInputPrecision: function(target) {
+            const unit = target.data(this.options.data_attributes.unit);
+            if (unit in this.options.unitPrecisions) {
+                this.$quantity.data('precision', this.options.unitPrecisions[unit]).inputWidget('refresh');
+            }
+        },
+
         /**
          * @param {Integer} id
          */
         updateSelector: function(id) {
             this.blockQuantityUpdate = true;
-            var selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
+            const selector = $(this.options.offerSelector + '[data-value="' + id + '"]');
             selector.prop('checked', 'checked');
             selector.trigger('change');
             this.blockQuantityUpdate = false;

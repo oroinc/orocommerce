@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ConfirmSlugChangeComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
-    var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
-    var __ = require('orotranslation/js/translator');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
+    const mediator = require('oroui/js/mediator');
+    const messenger = require('oroui/js/messenger');
+    const __ = require('orotranslation/js/translator');
+    const _ = require('underscore');
+    const $ = require('jquery');
 
-    ConfirmSlugChangeComponent = BaseComponent.extend({
+    const ConfirmSlugChangeComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -56,10 +55,10 @@ define(function(require) {
         confirmModal: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ConfirmSlugChangeComponent() {
-            ConfirmSlugChangeComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ConfirmSlugChangeComponent(options) {
+            ConfirmSlugChangeComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -67,9 +66,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
             }
@@ -80,6 +79,8 @@ define(function(require) {
 
         initializeElements: function() {
             this.disabled = this.options.disabled;
+            this.onSubmit = this.onSubmit.bind(this);
+
             if (!this.disabled) {
                 this.$form = this.options._sourceElement.closest('form');
                 this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
@@ -87,7 +88,7 @@ define(function(require) {
                 this._saveSlugFieldsInitialState();
                 this.$form
                     .off(this.eventNamespace())
-                    .on('submit' + this.eventNamespace(), this.onSubmit.bind(this));
+                    .on('submit' + this.eventNamespace(), this.onSubmit);
             }
         },
 
@@ -100,7 +101,7 @@ define(function(require) {
          * @return {Boolean}
          */
         onSubmit: function(event) {
-            var validator = $(event.target).data('validator');
+            const validator = $(event.target).data('validator');
 
             if (validator && !validator.valid()) {
                 return true;
@@ -123,9 +124,8 @@ define(function(require) {
         },
 
         loadSlugListAndShowConfirmModal: function() {
-            var formData = this.$form.serialize();
-            var urls = {};
-            var that = this;
+            const formData = this.$form.serialize();
+            let urls = {};
 
             mediator.execute('showLoading');
             $.ajax({
@@ -133,20 +133,20 @@ define(function(require) {
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
-                success: function(response) {
+                success: response => {
                     mediator.execute('hideLoading');
                     urls = response;
 
                     if (!_.isArray(urls)) {
                         this.confirmModal = new ConfirmSlugChangeModal({
-                            changedSlugs: that._getUrlsList(urls),
-                            confirmState: that.$createRedirectCheckbox.prop('checked')
+                            changedSlugs: this._getUrlsList(urls),
+                            confirmState: this.$createRedirectCheckbox.prop('checked')
                         })
-                            .on('ok', _.bind(that.onConfirmModalOk, that))
-                            .on('confirm-option-changed', _.bind(that.onConfirmModalOptionChange, that))
+                            .on('ok', this.onConfirmModalOk.bind(this))
+                            .on('confirm-option-changed', this.onConfirmModalOptionChange.bind(this))
                             .open();
                     } else {
-                        that.onConfirmModalOk();
+                        this.onConfirmModalOk();
                     }
                 },
                 error: function() {
@@ -169,7 +169,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
@@ -183,7 +183,7 @@ define(function(require) {
             this._removeConfirmModal();
 
             if (this.$form) {
-                this.$form.off('submit', $.proxy(this.onSubmit, this));
+                this.$form.off('submit', this.onSubmit);
             }
             mediator.off(null, null, this);
 
@@ -194,9 +194,9 @@ define(function(require) {
          * @private
          */
         _saveSlugFieldsInitialState: function() {
-            this.$slugFields.each(_.bind(function(index, item) {
+            this.$slugFields.each((index, item) => {
                 this.slugFieldsInitialState.splice(index, 0, $(item).val());
-            }, this));
+            });
         },
 
         /**
@@ -204,14 +204,14 @@ define(function(require) {
          * @private
          */
         _isSlugFieldsChanged: function() {
-            var isChanged = false;
-            this.$slugFields.each(_.bind(function(index, item) {
+            let isChanged = false;
+            this.$slugFields.each((index, item) => {
                 if (this.slugFieldsInitialState[index] !== $(item).val()) {
                     isChanged = true;
                     return false;
                 }
                 return true;
-            }, this));
+            });
             return isChanged;
         },
 
@@ -222,14 +222,20 @@ define(function(require) {
          * @private
          */
         _getUrlsList: function(urls) {
-            var list = '';
-            for (var localization in urls) {
+            let list = '';
+            for (const localization in urls) {
                 if (urls.hasOwnProperty(localization)) {
+                    const oldSlug = _.macros('oroui::renderDirection')({
+                        content: urls[localization].before
+                    }).trim();
+                    const newSlug = _.macros('oroui::renderDirection')({
+                        content: urls[localization].after
+                    }).trim();
                     list += '\n' + __(
                         'oro.redirect.confirm_slug_change.changed_localized_slug_item',
                         {
-                            old_slug: urls[localization].before,
-                            new_slug: urls[localization].after,
+                            old_slug: oldSlug,
+                            new_slug: newSlug,
                             purpose: localization
                         }
                     );

@@ -1,0 +1,26 @@
+{% import '@OroShipping/ShippingMethodsConfigsRule/macros.html.twig' as ShipRuleMacro %}
+
+{% apply spaceless %}
+    {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
+    {% if methodLabel|length > 0 %}
+        <li>{{ methodLabel }}
+        <ul>
+    {% endif %}
+    {% for type in methodData.types %}
+        <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }}
+            {% set surchargeType = 'oro.fixed_product.method.surcharge_type.values.' ~ type.options['surcharge_type'] %}
+            ({{ 'oro.fixed_product.method.surcharge_type.label'|trans }}: {{ surchargeType|trans }}
+            {%- if type.options['surcharge_on'] is defined and type.options['surcharge_on'] is not empty -%}
+                {%- set surchargeOn = 'oro.fixed_product.method.surcharge_on.values.' ~ type.options['surcharge_on'] -%}
+                , {{ 'oro.fixed_product.method.surcharge_on.label'|trans }}: {{ surchargeOn|trans }},
+                {{ 'oro.fixed_product.method.surcharge_amount.label'|trans }}: {{ type.options['surcharge_amount'] ~ '%' }}
+            {%- else -%}
+                , {{ 'oro.fixed_product.method.surcharge_amount.label'|trans }}: {{ type.options['surcharge_amount']|oro_format_currency({'currency': currency}) }}
+            {%- endif -%}
+            ) {{ ShipRuleMacro.renderShippingMethodDisabledFlag(methodData.identifier) }}</li>
+    {% endfor %}
+    {% if methodLabel|length > 0 %}
+        </ul>
+        </li>
+    {% endif %}
+{% endapply %}

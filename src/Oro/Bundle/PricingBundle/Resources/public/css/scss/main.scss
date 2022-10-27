@@ -1,7 +1,7 @@
 /* @theme: admin.oro; */
 
-@import "oroui/css/scss/colors";
-@import "./style";
-@import "./product-prices";
-@import "./price-rule";
-@import "./base-currency-row";
+@import 'style';
+@import 'product-prices';
+@import 'price-rule';
+@import 'base-currency-row';
+@import 'mobile/main';

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodTypeConfigsWithFakeTypes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -11,42 +12,37 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ShippingMethodConfigRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ShippingMethodConfigRepository
-     */
-    protected $repository;
+    private ShippingMethodConfigRepository $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
-        $this->loadFixtures([
-            LoadShippingMethodTypeConfigsWithFakeTypes::class,
-        ]);
+        $this->initClient([], self::generateBasicAuthHeader());
+        $this->loadFixtures([LoadShippingMethodTypeConfigsWithFakeTypes::class]);
 
-        $this->repository = static::getContainer()->get('doctrine')
-            ->getRepository('OroShippingBundle:ShippingMethodConfig');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(ShippingMethodConfig::class);
     }
 
     public function testDeleteByMethod()
     {
         $method = 'ups';
 
-        static::assertNotEmpty($this->repository->findByMethod($method));
+        self::assertNotEmpty($this->repository->findByMethod($method));
 
         $this->repository->deleteByMethod($method);
 
-        static::assertEmpty($this->repository->findByMethod($method));
+        self::assertEmpty($this->repository->findByMethod($method));
     }
 
     public function testFindMethodConfigIdsWithoutTypeConfigs()
     {
         $methodConfig = $this->getReference('shipping_rule.3.method_config_without_type_configs');
 
-        static::assertEmpty($methodConfig->getTypeConfigs());
+        self::assertEmpty($methodConfig->getTypeConfigs());
 
         $ids = $this->repository->findIdsWithoutTypeConfigs();
 
-        static::assertEquals([$methodConfig->getId()], $ids);
+        self::assertEquals([$methodConfig->getId()], $ids);
     }
 
     public function testDeleteMethodConfigByIds()
@@ -57,7 +53,7 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
 
         $this->repository->deleteByIds($ids);
 
-        static::assertEmpty($this->repository->findBy(['id' => $ids]));
+        self::assertEmpty($this->repository->findBy(['id' => $ids]));
     }
 
     public function testFindByType()
@@ -66,7 +62,7 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
 
         $expectedConfig = $this->getReference('shipping_rule.2.method_config.1');
 
-        static::assertContains($expectedConfig, $actualConfigs);
+        self::assertContains($expectedConfig, $actualConfigs);
     }
 
     public function testFindByTypes()
@@ -84,7 +80,7 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
         ];
 
         foreach ($expectedConfigs as $expectedConfig) {
-            static::assertContains($expectedConfig, $actualConfigs);
+            self::assertContains($expectedConfig, $actualConfigs);
         }
     }
 }

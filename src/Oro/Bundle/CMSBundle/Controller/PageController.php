@@ -4,15 +4,21 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
+use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PageController extends Controller
+/**
+ * CRUD actions for Page entity
+ */
+class PageController extends AbstractController
 {
     /**
      * @Route("/view/{id}", name="oro_cms_page_view", requirements={"id"="\d+"})
@@ -23,11 +29,8 @@ class PageController extends Controller
      *      class="OroCMSBundle:Page",
      *      permission="VIEW"
      * )
-     *
-     * @param Page $page
-     * @return array
      */
-    public function viewAction(Page $page)
+    public function viewAction(Page $page): array
     {
         return [
             'entity' => $page
@@ -38,11 +41,8 @@ class PageController extends Controller
      * @Route("/info/{id}", name="oro_cms_page_info", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_cms_page_view")
-     *
-     * @param Page $page
-     * @return array
      */
-    public function infoAction(Page $page)
+    public function infoAction(Page $page): array
     {
         return [
             'entity' => $page
@@ -53,10 +53,8 @@ class PageController extends Controller
      * @Route("/", name="oro_cms_page_index")
      * @Template
      * @AclAncestor("oro_cms_page_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => Page::class
@@ -65,7 +63,7 @@ class PageController extends Controller
 
     /**
      * @Route("/create", name="oro_cms_page_create")
-     * @Template("OroCMSBundle:Page:update.html.twig")
+     * @Template("@OroCMS/Page/update.html.twig")
      *
      * @Acl(
      *      id="oro_cms_page_create",
@@ -73,10 +71,8 @@ class PageController extends Controller
      *      class="OroCMSBundle:Page",
      *      permission="CREATE"
      * )
-     *
-     * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         $page = new Page();
         return $this->update($page);
@@ -91,50 +87,42 @@ class PageController extends Controller
      *      class="OroCMSBundle:Page",
      *      permission="EDIT"
      * )
-     * @param Page $page
-     * @return array|RedirectResponse
      */
-    public function updateAction(Page $page)
+    public function updateAction(Page $page): array|RedirectResponse
     {
         return $this->update($page);
     }
 
-    /**
-     * @param Page $page
-     * @return array|RedirectResponse
-     */
-    protected function update(Page $page)
+    protected function update(Page $page): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $page,
             $this->createForm(PageType::class, $page),
-            function (Page $page) {
-                return [
-                    'route' => 'oro_cms_page_update',
-                    'parameters' => ['id' => $page->getId()]
-                ];
-            },
-            function (Page $page) {
-                return [
-                    'route' => 'oro_cms_page_view',
-                    'parameters' => ['id' => $page->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.cms.controller.page.saved.message')
+            $page->getDraftUuid()
+                ? $this->get(TranslatorInterface::class)->trans('oro.draft.operations.create.success')
+                : $this->get(TranslatorInterface::class)->trans('oro.cms.controller.page.saved.message')
         );
     }
 
     /**
      * @Route("/get-changed-urls/{id}", name="oro_cms_page_get_changed_urls", requirements={"id"="\d+"})
-     *
      * @AclAncestor("oro_cms_page_update")
-     *
-     * @param Page $page
-     * @return JsonResponse
      */
-    public function getChangedSlugsAction(Page $page)
+    public function getChangedSlugsAction(Page $page): JsonResponse
     {
-        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+        return new JsonResponse($this->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($page, PageType::class));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ChangedSlugsHelper::class,
+            TranslatorInterface::class,
+            UpdateHandlerFacade::class
+        ]);
     }
 }

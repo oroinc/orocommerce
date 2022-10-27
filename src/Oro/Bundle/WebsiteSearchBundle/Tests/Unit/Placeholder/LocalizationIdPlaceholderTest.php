@@ -2,43 +2,47 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
+use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
+class LocalizationIdPlaceholderTest extends TestCase
 {
-    /** @var LocalizationIdPlaceholder */
-    private $placeholder;
+    private LocalizationIdPlaceholder $placeholder;
 
-    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationManager;
+    private LocalizationManager|MockObject $localizationManager;
 
-    protected function setUp()
+    private CurrentLocalizationProvider|MockObject $localizationProvider;
+
+    protected function setUp(): void
     {
-        $this->localizationManager = $this->getMockBuilder(UserLocalizationManager::class)
+        $this->localizationProvider = $this->getMockBuilder(CurrentLocalizationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->localizationManager = $this->createMock(LocalizationManager::class);
 
-        $this->placeholder = new LocalizationIdPlaceholder($this->localizationManager);
+        $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider, $this->localizationManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        unset($this->placeholder, $this->localizationManager);
+        unset($this->placeholder, $this->localizationProvider);
     }
 
-    public function testGetPlaceholder()
+    public function testGetPlaceholder(): void
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals('LOCALIZATION_ID', $this->placeholder->getPlaceholder());
     }
 
-    public function testReplaceDefault()
+    public function testReplaceDefaultByCurrentLocalization(): void
     {
         $localization = $this->getMockBuilder(Localization::class)->getMock();
 
-        $this->localizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
@@ -48,18 +52,43 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
         $value = $this->placeholder->replaceDefault('string_LOCALIZATION_ID');
 
-        $this->assertInternalType('string', $value);
+        $this->assertIsString($value);
         $this->assertEquals('string_1', $value);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Can't get current localization
-     */
-    public function testGetValueWithUnknownLocalization()
+    public function testReplaceDefaultByDefaultLocalization(): void
     {
-        $this->localizationManager->expects($this->once())
+        $localization = $this->getMockBuilder(Localization::class)->getMock();
+
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
+            ->willReturn(null);
+
+        $this->localizationManager->expects($this->once())
+            ->method('getDefaultLocalization')
+            ->willReturn($localization);
+
+        $localization->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+
+        $value = $this->placeholder->replaceDefault('string_LOCALIZATION_ID');
+
+        $this->assertIsString($value);
+        $this->assertEquals('string_1', $value);
+    }
+
+    public function testGetValueWithUnknownLocalization(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Can't get current localization");
+
+        $this->localizationProvider->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn(null);
+
+        $this->localizationManager->expects($this->once())
+            ->method('getDefaultLocalization')
             ->willReturn(null);
 
         $this->assertEquals(
@@ -68,9 +97,9 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testReplace()
+    public function testReplace(): void
     {
-        $this->localizationManager->expects($this->never())->method($this->anything());
+        $this->localizationProvider->expects($this->never())->method($this->anything());
 
         $this->assertEquals(
             'string_1',
@@ -78,9 +107,9 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testReplaceWithoutValue()
+    public function testReplaceWithoutValue(): void
     {
-        $this->localizationManager->expects($this->never())->method($this->anything());
+        $this->localizationProvider->expects($this->never())->method($this->anything());
 
         $this->assertEquals(
             'string_LOCALIZATION_ID',

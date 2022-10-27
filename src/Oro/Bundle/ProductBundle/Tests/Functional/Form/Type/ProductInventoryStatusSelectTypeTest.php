@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ProductInventoryStatusSelectTypeTest extends WebTestCase
 {
@@ -14,18 +13,12 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
      */
     protected $formFactory;
 
-    /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $tokenManager;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
-        $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
     }
 
     /**
@@ -40,6 +33,7 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
         $form = $this->formFactory->create(ProductInventoryStatusSelectType::class, []);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
         if ($isValid) {
             $this->assertEquals($submitData, $form->getData());
         }
@@ -57,15 +51,15 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
             ],
             'invalid data' => [
                 'submitData' => ['test'],
-                'isValid' => false
+                'isValid' => false,
             ],
             'valid data' => [
                 'submitData' => [
                     'in_stock',
                     'out_of_stock',
-                    'discontinued'
+                    'discontinued',
                 ],
-                'isValid' => true
+                'isValid' => true,
             ],
         ];
     }

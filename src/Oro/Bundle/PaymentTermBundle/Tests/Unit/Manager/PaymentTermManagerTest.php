@@ -18,7 +18,7 @@ class PaymentTermManagerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentTermAssociationProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()

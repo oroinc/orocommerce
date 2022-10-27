@@ -10,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
+ * PayPalSettings entity
  * @ORM\Entity(repositoryClass="Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository")
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -27,16 +28,16 @@ class PayPalSettings extends Transport
     const EXPRESS_CHECKOUT_LABELS_KEY = 'express_checkout_labels';
     const EXPRESS_CHECKOUT_SHORT_LABELS_KEY = 'express_checkout_short_labels';
     const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
-    
+
     const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
     const PARTNER_KEY = 'partner';
     const VENDOR_KEY = 'vendor';
     const USER_KEY = 'user';
     const PASSWORD_KEY = 'password';
-    
+
     const TEST_MODE_KEY = 'test_mode';
     const DEBUG_MODE_KEY = 'debug_mode';
-    
+
     const USE_PROXY_KEY = 'use_proxy';
     const PROXY_HOST_KEY = 'proxy_host';
     const PROXY_PORT_KEY = 'proxy_port';
@@ -45,7 +46,7 @@ class PayPalSettings extends Transport
     const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
     const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
     const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
-    
+
     /**
      * @var ParameterBag
      */
@@ -162,28 +163,28 @@ class PayPalSettings extends Transport
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_partner", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_partner", type="crypted_string", length=255, nullable=false)
      */
     protected $partner;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_vendor", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_vendor", type="crypted_string", length=255, nullable=false)
      */
     protected $vendor;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_user", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_user", type="crypted_string", length=255, nullable=false)
      */
     protected $user;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_password", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_password", type="crypted_string", length=255, nullable=false)
      */
     protected $password;
 
@@ -232,14 +233,14 @@ class PayPalSettings extends Transport
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_proxy_host", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_proxy_host", type="crypted_string", length=255, nullable=false)
      */
     protected $proxyHost;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pp_proxy_port", type="string", length=255, nullable=false)
+     * @ORM\Column(name="pp_proxy_port", type="crypted_string", length=255, nullable=false)
      */
     protected $proxyPort;
 

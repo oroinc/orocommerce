@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var BackendToolbar;
-    var _ = require('underscore');
-    var Toolbar = require('orodatagrid/js/datagrid/toolbar');
-    var BackendPagination = require('oroproduct/js/app/datagrid/backend-pagination-input');
-    var BackendPageSize = require('oroproduct/js/app/datagrid/backend-page-size');
-    var BackendSortingDropdown = require('oroproduct/js/app/datagrid/sorting/backend-dropdown');
+    const _ = require('underscore');
+    const Toolbar = require('orodatagrid/js/datagrid/toolbar');
+    const BackendPagination = require('oroproduct/js/app/datagrid/backend-pagination-input');
+    const BackendPageSize = require('oroproduct/js/app/datagrid/backend-page-size');
+    const BackendSortingDropdown = require('oroproduct/js/app/datagrid/sorting/backend-dropdown');
 
-    BackendToolbar = Toolbar.extend({
+    const BackendToolbar = Toolbar.extend({
         /** @property */
         template: null,
 
@@ -27,14 +26,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function BackendToolbar() {
-            BackendToolbar.__super__.constructor.apply(this, arguments);
+        constructor: function BackendToolbar(options) {
+            BackendToolbar.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             options = options || {};
@@ -45,8 +44,8 @@ define(function(require) {
 
             this.collection = options.collection;
 
-            var optionsPagination = _.defaults({collection: this.collection}, options.pagination);
-            var optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
+            const optionsPagination = _.defaults({collection: this.collection}, options.pagination);
+            const optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
 
             options.columns.trigger('configureInitializeOptions', this.pagination, optionsPagination, this);
             options.columns.trigger('configureInitializeOptions', this.pageSize, optionsPageSize, this);
@@ -54,14 +53,17 @@ define(function(require) {
             options.pagination = optionsPagination;
             options.pageSize = optionsPageSize;
 
+            if (options.className) {
+                this.$el.addClass(options.className);
+            }
             BackendToolbar.__super__.initialize.call(this, options);
         },
 
         /**
-         *  @inheritDoc
+         *  @inheritdoc
          */
         render: function() {
-            var $pagination;
+            let $pagination;
 
             if (this.subviews.pagination) {
                 $pagination = this.subviews.pagination.render().$el;

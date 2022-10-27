@@ -5,134 +5,182 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
-class FormViewListenerTest extends FormViewListenerTestCase
+class FormViewListenerTest extends TestCase
 {
-    /**
-     * @var FormViewListener
-     */
-    protected $listener;
+    private DoctrineHelper|MockObject $doctrineHelper;
+    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+    private Environment|MockObject $env;
+    private FormViewListener $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        parent::setUp();
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
-    }
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function ($id) {
+                return $id . '.trans';
+            });
 
-    protected function tearDown()
-    {
-        unset($this->listener);
-        parent::tearDown();
+        $this->env = $this->createMock(Environment::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        $this->listener = new FormViewListener(
+            $translator,
+            $this->doctrineHelper,
+            $this->authorizationChecker
+        );
     }
 
     public function testOnProductEdit()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock(\Twig_Environment::class);
-
         $formView = new FormView();
 
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
-            ->with('OroCatalogBundle:Product:category_update.html.twig', ['form' => $formView])
+            ->with('@OroCatalog/Product/category_update.html.twig', ['form' => $formView])
             ->willReturn('');
 
-        $event = new BeforeListRenderEvent($env, new ScrollData(), new Product(), $formView);
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product(), $formView);
+        $this->listener->onProductEdit($event);
+    }
+
+    public function testOnProductEditWhenCatalogViewDisabledByAcl()
+    {
+        $formView = new FormView();
+
+        $this->env->expects($this->never())
+            ->method('render');
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product(), $formView);
         $this->listener->onProductEdit($event);
     }
 
     public function testOnProductView()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository $repository */
-        $repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByProduct'])
-            ->getMock();
+        $repository = $this->createMock(CategoryRepository::class);
 
         $product = new Product();
         $category = new Category();
 
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('findOneByProduct')
             ->with($product)
             ->willReturn($category);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock(\Twig_Environment::class);
-        $env->expects($this->once())
+        $this->env->expects($this->once())
             ->method('render')
-            ->with('OroCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
+            ->with('@OroCatalog/Product/category_view.html.twig', ['entity' => $category])
             ->willReturn('');
 
         $scrollData = $this->getPreparedScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, new Product());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new Product());
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
 
         $this->listener->onProductView($event);
         $this->assertScrollData($scrollData);
     }
 
+    public function testOnProductViewWhenCatalogViewDisabledByAcl()
+    {
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityRepository');
+
+        $this->env->expects($this->never())
+            ->method('render');
+
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product());
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $this->listener->onProductView($event);
+    }
+
     public function testOnProductViewWithoutCategory()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryRepository $repository */
-        $repository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByProduct'])
-            ->getMock();
+        $repository = $this->createMock(CategoryRepository::class);
 
         $product = new Product();
 
-        $repository
-            ->expects($this->once())
+        $repository->expects($this->once())
             ->method('findOneByProduct')
             ->with($product)
             ->willReturn(null);
 
-        $this->doctrineHelper
-            ->expects($this->once())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCatalogBundle:Category')
             ->willReturn($repository);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->createMock(\Twig_Environment::class);
-        $env->expects($this->never())
+        $this->env->expects($this->never())
             ->method('render');
 
-        $event = new BeforeListRenderEvent($env, new ScrollData(), new Product());
+        $event = new BeforeListRenderEvent($this->env, new ScrollData(), new Product());
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
 
         $this->listener->onProductView($event);
     }
 
-    /**
-     * @expectedException \Oro\Component\Exception\UnexpectedTypeException
-     */
     public function testOnProductViewInvalidEntity()
     {
-        $env = $this->createMock(\Twig_Environment::class);
+        $this->expectException(\Oro\Component\Exception\UnexpectedTypeException::class);
         $scrollData = new ScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, new \stdClass());
+        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());
+
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
 
         $this->listener->onProductView($event);
     }
 
-    /**
-     * @return ScrollData
-     */
-    protected function getPreparedScrollData()
+    private function getPreparedScrollData(): ScrollData
     {
         $data[ScrollData::DATA_BLOCKS][FormViewListener::GENERAL_BLOCK][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = [
             'productName' => [],
@@ -141,9 +189,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
         return new ScrollData($data);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     */
     private function assertScrollData(ScrollData $scrollData)
     {
         $data = $scrollData->getData();

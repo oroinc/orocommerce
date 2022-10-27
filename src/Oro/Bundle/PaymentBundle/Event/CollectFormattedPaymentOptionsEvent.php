@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Event;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event to collect payment method options based on payment method view
@@ -22,19 +22,12 @@ class CollectFormattedPaymentOptionsEvent extends Event
      */
     private $options;
 
-    /**
-     * @param PaymentMethodViewInterface $paymentMethodView
-     * @param array $options
-     */
     public function __construct(PaymentMethodViewInterface $paymentMethodView, array $options = [])
     {
         $this->paymentMethodView = $paymentMethodView;
         $this->options = $options;
     }
 
-    /**
-     * @return PaymentMethodViewInterface
-     */
     public function getPaymentMethodView(): PaymentMethodViewInterface
     {
         return $this->paymentMethodView;

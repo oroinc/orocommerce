@@ -7,11 +7,12 @@ use Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\MethodTypeLabelsProvide
 use Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\NonDeletableMethodTypeIdentifiersProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection\Builder;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,7 +54,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->parentShippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);
         $this->errorFactory = $this->createMock(
@@ -209,8 +210,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
         );
 
         $builder = $this->createMock(
-            Validator\Result\Error\Collection\Builder\Common\
-            CommonShippingMethodValidatorResultErrorCollectionBuilderInterface::class
+            Builder\Common\CommonShippingMethodValidatorResultErrorCollectionBuilderInterface::class
         );
 
         $errorCollection->expects(static::once())

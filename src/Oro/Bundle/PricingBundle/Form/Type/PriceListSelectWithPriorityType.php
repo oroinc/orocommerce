@@ -14,10 +14,6 @@ class PriceListSelectWithPriorityType extends AbstractType
     const PRICE_LIST_FIELD = 'priceList';
     const SORT_ORDER_FIELD = 'sort_order';
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -50,9 +46,6 @@ class PriceListSelectWithPriorityType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

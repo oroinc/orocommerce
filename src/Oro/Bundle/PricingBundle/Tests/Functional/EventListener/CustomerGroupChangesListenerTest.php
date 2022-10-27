@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -17,35 +18,34 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class CustomerGroupChangesListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use OperationAwareTestTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                LoadPriceListRelations::class
-            ]
-        );
+        $this->loadFixtures([LoadPriceListRelations::class]);
     }
 
-    /**
-     * @param CustomerGroup $group
-     */
-    protected function sendDeleteCustomerGroupRequest(CustomerGroup $group)
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass(CustomerGroup::class);
+    }
+
+    private function sendDeleteCustomerGroupRequest(CustomerGroup $group)
     {
         $groupId = $group->getId();
 
         $operationName = 'oro_customer_groups_delete';
-        $entityClass = $this->getContainer()->getParameter('oro_customer.entity.customer_group.class');
+        $entityClass = CustomerGroup::class;
         $this->client->request(
             'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
-                    'entityId[id]' => $groupId,
-                    'entityClass' => $entityClass,
+                    'entityId[id]'  => $groupId,
+                    'entityClass'   => $entityClass,
                 ]
             ),
             $this->getOperationExecuteParams($operationName, ['id' => $groupId], $entityClass),
@@ -55,11 +55,10 @@ class CustomerGroupChangesListenerTest extends WebTestCase
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        static::getContainer()->get('doctrine')->getManagerForClass(CustomerGroup::class)->clear();
+        $em = $this->getEntityManager();
+        $em->clear();
 
-        $removedGroup = static::getContainer()
-            ->get('doctrine')
-            ->getRepository('OroCustomerBundle:CustomerGroup')
+        $removedGroup = $em->getRepository(CustomerGroup::class)
             ->find($groupId);
 
         static::assertNull($removedGroup);
@@ -70,11 +69,14 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         $this->sendDeleteCustomerGroupRequest($this->getReference(LoadGroups::GROUP1));
 
         self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            MassRebuildCombinedPriceListsTopic::getName(),
             [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1.3')->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => null
+                'assignments' => [
+                    [
+                        'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                        'customer' => $this->getReference('customer.level_1.3')->getId()
+                    ]
+                ]
             ]
         );
     }
@@ -83,31 +85,6 @@ class CustomerGroupChangesListenerTest extends WebTestCase
     {
         $this->sendDeleteCustomerGroupRequest($this->getReference(LoadGroups::GROUP3));
 
-        self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
+        self::assertEmptyMessages(MassRebuildCombinedPriceListsTopic::getName());
     }
 }

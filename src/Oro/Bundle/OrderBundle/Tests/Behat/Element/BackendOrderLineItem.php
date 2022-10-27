@@ -3,16 +3,23 @@
 namespace Oro\Bundle\OrderBundle\Tests\Behat\Element;
 
 use Behat\Mink\Element\NodeElement;
-use Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridRow;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
-class BackendOrderLineItem extends GridRow
+/**
+ * Backend Order Line Item Row elment representation
+ */
+class BackendOrderLineItem extends TableRow
 {
     /**
-     * {@inheritdoc}
+     * @param string $action
+     * @return NodeElement
      */
-    public function getProductSKU()
+    public function getActionLink($action)
     {
-        return $this->getCellValue('SKU');
+        $link = $this->findActionLink($action);
+        self::assertNotNull($link, sprintf('Row "%s" has no "%s" action', $this->getText(), $action));
+
+        return $link;
     }
 
     /**

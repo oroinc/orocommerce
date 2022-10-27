@@ -9,6 +9,9 @@ use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSett
 use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
+/**
+ * Create Rate Service request by a given context and settings.
+ */
 class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSettingsFactoryInterface
 {
     /**
@@ -31,12 +34,6 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
      */
     private $convertToFedexUnitsModifier;
 
-    /**
-     * @param SymmetricCrypterInterface $crypter
-     * @param FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory
-     * @param FedexPackagesByLineItemsAndPackageSettingsFactoryInterface $packagesFactory
-     * @param ShippingLineItemCollectionBySettingsModifierInterface $convertToFedexUnitsModifier
-     */
     public function __construct(
         SymmetricCrypterInterface $crypter,
         FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface $packageSettingsFactory,
@@ -67,6 +64,10 @@ class FedexRateServiceRequestFactory implements FedexRequestByRateServiceSetting
 
         $packages = $this->packagesFactory->create($lineItems, $packageSettings);
         if (empty($packages)) {
+            return null;
+        }
+
+        if (!$context->getShippingOrigin() || !$context->getShippingAddress()) {
             return null;
         }
 

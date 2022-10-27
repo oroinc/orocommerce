@@ -1,0 +1,58 @@
+data:
+      type: orders
+      id: '<toString(@simple_order->id)>'
+      attributes:
+          identifier: 'simple_order'
+          poNumber: '1234567890'
+          customerNotes: null
+          shipUntil: '@simple_order->shipUntil->format("Y-m-d")'
+          currency: 'USD'
+          subtotalValue: '789.0000'
+          totalValue: '1234.0000'
+          shippingMethod: null
+          shippingMethodType: null
+          estimatedShippingCostAmount: null
+          overriddenShippingCostAmount: null
+          sourceEntityIdentifier: null
+          totalDiscountsAmount: null
+          createdAt: '@simple_order->createdAt->format("Y-m-d\TH:i:s\Z")'
+          updatedAt: '@simple_order->updatedAt->format("Y-m-d\TH:i:s\Z")'
+      relationships:
+          billingAddress:
+              data: null
+          shippingAddress:
+              data: null
+          lineItems:
+              data:
+                  -
+                      type: orderlineitems
+                      id: '<toString(@order_line_item.1->id)>'
+                  -
+                      type: orderlineitems
+                      id: '<toString(@order_line_item.2->id)>'
+          discounts:
+              data: []
+          shippingTrackings:
+              data: []
+          paymentTerm:
+              data:
+                  type: paymentterms
+                  id: '<toString(@payment_term.net_10->id)>'
+          source:
+              data: null
+          owner:
+              data:
+                  type: users
+                  id: '<toString(@order.simple_user->id)>'
+          organization:
+              data:
+                  type: organizations
+                  id: '<toString(@organization->id)>'
+          customerUser:
+              data:
+                   type: customerusers
+                   id: '<toString(@simple_order->customerUser->id)>'
+          customer:
+              data:
+                   type: customers
+                   id: '<toString(@simple_order->customer->id)>'

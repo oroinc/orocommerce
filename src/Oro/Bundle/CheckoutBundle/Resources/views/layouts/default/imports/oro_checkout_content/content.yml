@@ -1,7 +1,13 @@
 layout:
+    imports:
+        -
+            id: checkout_line_items_grid
+            root: __checkout_order_summary_line_items_container
+            namespace: checkout_order_summary_line_items
+
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/imports/oro_checkout_content/content.html.twig'
+            themes: '@OroCheckout/layouts/default/imports/oro_checkout_content/content.html.twig'
         - '@add':
             id: order_taxes_template
             blockType: block
@@ -20,7 +26,8 @@ layout:
                     blockType: checkout_information_title
                     options:
                         workflowStep: '=data["workflowStep"]'
-                        stepOrder: '-'
+                        stepOrder: '=data["oro_checkout_steps"].getStepOrder(data["workflowItem"], context["workflowStepName"], excludedSteps)'
+                        excludedSteps: '=["enter_credentials_step"]'
                 __checkout_information_body:
                     blockType: container
                 __checkout_form:
@@ -28,6 +35,12 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                __checkout_form_errors:
+                    blockType: checkout_form_errors
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
                 __checkout_form_fields:
                     blockType: checkout_form_fields
                     options:
@@ -40,6 +53,7 @@ layout:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
+                        visible: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                 __checkout_order_summary_container:
                     blockType: container
                 __checkout_order_summary:
@@ -51,12 +65,6 @@ layout:
                     blockType: container
                 __checkout_order_summary_title:
                     blockType: container
-                __checkout_order_summary_title_text:
-                    blockType: container
-                __checkout_order_summary_subtitle:
-                    blockType: checkout_order_summary_total_line_items
-                    options:
-                        lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
                 __checkout_order_summary_edit_link:
                     blockType: checkout_order_summary_edit_link
                     options:
@@ -64,48 +72,44 @@ layout:
                 __checkout_order_summary_content:
                     blockType: container
                 __checkout_order_summary_line_items_container:
-                    blockType: checkout_order_summary_total_line_items
-                    options:
-                        lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
-                __checkout_order_summary_line_items:
-                    blockType: checkout_order_summary_line_items
-                    options:
-                        checkout: '=data["checkout"]'
-                        lineItemErrors: '=data["oro_line_item_violations"].getLineItemErrors(data["checkout"].getLineItems(), data["workflowItem"])'
-                        lineItemWarnings: '=data["oro_line_item_violations"].getLineItemWarnings(data["checkout"].getLineItems(), data["workflowItem"])'
-                        lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
-                        workflowItem: '=data["workflowItem"]'
-                        configurableProducts: '=data["oro_product_configurable_products"].getProducts(data["checkout"].getLineItems())'
+                    blockType: container
 
-                __checkout_order_summary_line_item_row:
+                __checkout_order_summary_notes_container:
                     blockType: container
-                __checkout_order_summary_line_item_info_column:
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        vars:
+                            notes: '=data["checkout"].getCustomerNotes()'
+                __checkout_order_summary_notes_title:
+                    blockType: block
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        vars:
+                            notes: '=data["checkout"].getCustomerNotes()'
+                __checkout_order_summary_notes:
+                    blockType: order_summary_notes
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        notes: '=data["checkout"].getCustomerNotes()'
+
+                __checkout_order_footer:
                     blockType: container
-                __checkout_order_summary_line_item_name:
-                    blockType: block
-                __checkout_order_summary_line_item_sku_column:
+
+                __checkout_order_footer_col_first:
                     blockType: container
-                __checkout_order_summary_line_item_sku:
-                    blockType: block
-                __checkout_order_summary_line_item_configurable_products:
-                    blockType: block
-                __checkout_order_summary_line_item_quantity_column:
+
+                __checkout_order_footer_col_second:
                     blockType: container
-                __checkout_order_summary_line_item_quantity:
-                    blockType: block
-                __checkout_order_summary_line_item_price_per_item_column:
+
+                __checkout_order_summary_totals_main:
                     blockType: container
-                __checkout_order_summary_line_item_price_per_item:
-                    blockType: block
-                __checkout_order_summary_line_item_price_total_column:
-                    blockType: container
-                __checkout_order_summary_line_item_price_total:
-                    blockType: block
-                __checkout_order_summary_line_item_edit:
-                    blockType: block
 
                 __checkout_order_summary_totals_container:
-                    blockType: container
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
                 __checkout_order_summary_totals:
                     blockType: price_totals
                     options:
@@ -118,6 +122,10 @@ layout:
                             form: '[name$="oro_workflow_transition"]'
                         skipMaskView: true
                         route: 'oro_checkout_frontend_totals'
+                        vars:
+                            itemsCount: '=data["oro_checkout_line_items_totals"].getData(data["checkout"]).count()'
+                            totalsConainerClassName: ''
+
                 __checkout_form_buttons:
                     blockType: container
                 __checkout_button_continue:
@@ -125,6 +133,8 @@ layout:
                     options:
                         transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                         checkout: '=data["checkout"]'
+                        vars:
+                            showRequiredLabel: true
                 __checkout_button_back:
                     blockType: checkout_transition_back
                     options:
@@ -138,6 +148,7 @@ layout:
                                 __checkout_information_title: ~
                             __checkout_information_body:
                                 __checkout_form:
+                                    __checkout_form_errors: ~
                                     __checkout_form_fields:
                                         __checkout_additional_options: ~
                                     __checkout_form_buttons:
@@ -147,23 +158,15 @@ layout:
                             __checkout_order_summary:
                                 __checkout_order_summary_header:
                                     __checkout_order_summary_title:
-                                        __checkout_order_summary_title_text:
-                                            __checkout_order_summary_subtitle: ~
                                     __checkout_order_summary_edit_link: ~
                                 __checkout_order_summary_content:
-                                    __checkout_order_summary_line_items_container:
-                                        __checkout_order_summary_line_items:
-                                            __checkout_order_summary_line_item_row:
-                                                __checkout_order_summary_line_item_info_column:
-                                                    __checkout_order_summary_line_item_name: ~
-                                                    __checkout_order_summary_line_item_configurable_products: ~
-                                                __checkout_order_summary_line_item_sku_column:
-                                                    __checkout_order_summary_line_item_sku: ~
-                                                __checkout_order_summary_line_item_quantity_column:
-                                                    __checkout_order_summary_line_item_quantity: ~
-                                                __checkout_order_summary_line_item_price_per_item_column:
-                                                    __checkout_order_summary_line_item_price_per_item: ~
-                                                __checkout_order_summary_line_item_price_total_column:
-                                                    __checkout_order_summary_line_item_price_total: ~
+                                    __checkout_order_summary_line_items_container: ~
+                        __checkout_order_footer:
+                            __checkout_order_footer_col_first:
+                                __checkout_order_summary_notes_container:
+                                    __checkout_order_summary_notes_title: ~
+                                    __checkout_order_summary_notes: ~
+                            __checkout_order_footer_col_second:
+                                __checkout_order_summary_totals_main:
                                     __checkout_order_summary_totals_container:
                                         __checkout_order_summary_totals: ~

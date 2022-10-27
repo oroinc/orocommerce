@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
@@ -11,22 +10,14 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 
 abstract class AbstractCacheBuilderTest extends WebTestCase
 {
-    /** @var  Registry */
-    protected $registry;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadProductVisibilityData::class,
-        ]);
-
-        $this->registry = $this->client->getContainer()->get('doctrine');
+        $this->loadFixtures([LoadProductVisibilityData::class]);
     }
 
-
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('doctrine')->getManager()->clear();
         parent::tearDown();
@@ -34,11 +25,8 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
 
     /**
      * @dataProvider buildCacheDataProvider
-     *
-     * @param $expectedStaticCount
-     * @param $expectedCategoryCount
      */
-    public function testBuildCache($expectedStaticCount, $expectedCategoryCount)
+    public function testBuildCache(int $expectedStaticCount, int $expectedCategoryCount)
     {
         $repository = $this->getRepository();
         $repository->clearTable();
@@ -65,18 +53,9 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->assertEquals($expectedCategoryCount, $actualCategoryCount);
     }
 
-    /**
-     * @return AbstractVisibilityRepository
-     */
-    abstract protected function getRepository();
+    abstract protected function getRepository(): AbstractVisibilityRepository;
 
-    /**
-     * @return array
-     */
-    abstract public function buildCacheDataProvider();
+    abstract public function buildCacheDataProvider(): array;
 
-    /**
-     * @return CacheBuilderInterface
-     */
-    abstract protected function getCacheBuilder();
+    abstract protected function getCacheBuilder(): CacheBuilderInterface;
 }

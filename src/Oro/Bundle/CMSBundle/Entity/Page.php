@@ -6,17 +6,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CMSBundle\Model\ExtendPage;
+use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
+use Oro\Bundle\DraftBundle\Entity\DraftableTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
+ * Represents CMS Page
+ *
  * @ORM\Table(name="oro_cms_page")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @ORM\AssociationOverrides({
@@ -73,15 +78,26 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          "form"={
  *              "form_type"="Oro\Bundle\CMSBundle\Form\Type\PageSelectType",
  *              "grid_name"="cms-page-select-grid"
+ *          },
+ *          "draft"={
+ *              "draftable"=true
+ *          },
+ *          "slug"={
+ *              "source"="titles"
  *          }
  *      }
  * )
  */
-class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
+class Page extends ExtendPage implements
+    DatesAwareInterface,
+    SluggableInterface,
+    DraftableInterface,
+    OrganizationAwareInterface
 {
     use AuditableOrganizationAwareTrait;
     use DatesAwareTrait;
     use SluggableTrait;
+    use DraftableTrait;
 
     /**
      * @var integer
@@ -113,6 +129,9 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "draft"={
+     *              "draftable"=true
      *          }
      *      }
      * )
@@ -122,11 +141,17 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="wysiwyg", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
-     *              "auditable"=true
+     *              "auditable"=false
+     *          },
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          },
+     *          "draft"={
+     *              "draftable"=true
      *          }
      *      }
      * )
@@ -214,6 +239,13 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
      */
     public function __toString()
     {
-        return (string) $this->getDefaultTitle();
+        return (string)$this->getDefaultTitle();
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
     }
 }

@@ -3,14 +3,17 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadBrandData extends LoadProductData implements DependentFixtureInterface
+class LoadBrandData extends LoadProductData implements DependentFixtureInterface, ContainerAwareInterface
 {
+    use MakeProductAttributesTrait;
     use UserUtilityTrait;
 
     const BRAND_1 = 'brand-1';
@@ -43,6 +46,8 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
+        $this->makeBrandFilterable();
+
         /** @var EntityManager $manager */
         $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
@@ -60,6 +65,7 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
                 ->setStatus($item['status']);
 
             $this->addAdvancedValue($item, $brand);
+            $this->setReference($item['reference'], $brand);
 
             $manager->persist($brand);
         }
@@ -67,10 +73,19 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
         $manager->flush();
     }
 
-    /**
-     * @param array $item
-     * @param Brand $brand
-     */
+    private function makeBrandFilterable()
+    {
+        $this->updateProductAttributes(
+            [
+                'brand' => [
+                    'filterable' => true,
+                ],
+            ]
+        );
+
+        $this->getConfigManager()->flush();
+    }
+
     private function addAdvancedValue(array $item, Brand $brand)
     {
         if (!empty($item['names'])) {

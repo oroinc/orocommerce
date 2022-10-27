@@ -24,7 +24,12 @@ Oro\Bundle\RFPBundle\Entity\Request:
             - Length:
                 max: 255
         shipUntil:
-            - Date: ~
+            - Type:
+                  type: DateTimeInterface
+                  message: oro.rfp.request.ship_until.type.message
+                  payload:
+                      jsValidation:
+                          type: Date
         requestProducts:
             - Valid: ~
 
@@ -45,6 +50,9 @@ Oro\Bundle\RFPBundle\Entity\RequestProduct:
             - Valid: ~
 
 Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
     properties:
         requestProduct:
             - NotBlank: ~

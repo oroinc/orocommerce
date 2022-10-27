@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event for website search entity indexation.
+ */
 final class ReindexationRequestEvent extends Event
 {
     const EVENT_NAME = 'oro_website_search.reindexation_request';
@@ -25,30 +28,38 @@ final class ReindexationRequestEvent extends Event
     /**
      * @var boolean
      */
-    private $scheduled = true;
+    private $scheduled;
+
+    /**
+     * @var null|array
+     */
+    private $fieldGroups;
 
     /**
      * @param array $classesNames
      * @param array $websitesIds
      * @param array $ids
      * @param bool  $scheduled
+     * @param null|array $fieldGroups
      */
     public function __construct(
         array $classesNames = [],
         array $websitesIds = [],
         array $ids = [],
-        $scheduled = true
+        bool $scheduled = true,
+        array $fieldGroups = null
     ) {
         $this->classesNames = $classesNames;
         $this->websitesIds  = $websitesIds;
         $this->ids          = $ids;
         $this->scheduled    = $scheduled;
+        $this->fieldGroups  = $fieldGroups;
     }
 
     /**
      * @return array
      */
-    public function getClassesNames()
+    public function getClassesNames(): array
     {
         return $this->classesNames;
     }
@@ -56,7 +67,7 @@ final class ReindexationRequestEvent extends Event
     /**
      * @return array
      */
-    public function getWebsitesIds()
+    public function getWebsitesIds(): array
     {
         return $this->websitesIds;
     }
@@ -64,7 +75,7 @@ final class ReindexationRequestEvent extends Event
     /**
      * @return array
      */
-    public function getIds()
+    public function getIds(): array
     {
         return $this->ids;
     }
@@ -72,8 +83,16 @@ final class ReindexationRequestEvent extends Event
     /**
      * @return boolean
      */
-    public function isScheduled()
+    public function isScheduled(): bool
     {
         return $this->scheduled;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getFieldGroups(): ?array
+    {
+        return $this->fieldGroups;
     }
 }

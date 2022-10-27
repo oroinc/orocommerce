@@ -10,9 +10,6 @@ class DefaultTemplate extends ProductTemplate
 {
     const ELEMENT_PREFIX = 'Default Page';
 
-    /**
-     * {@inheritdoc}
-     */
     public function assertGroupWithValue($groupName, TableNode $table)
     {
         $tabContainer = null;
@@ -33,13 +30,7 @@ class DefaultTemplate extends ProductTemplate
 
         foreach ($table->getRows() as $row) {
             list($label, $value) = $row;
-
-            self::assertContains(
-                sprintf('%s: %s', $label, $value),
-                $activeTab->getText(),
-                '',
-                true
-            );
+            static::assertStringContainsStringIgnoringCase(\sprintf('%s: %s', $label, $value), $activeTab->getText());
         }
     }
 

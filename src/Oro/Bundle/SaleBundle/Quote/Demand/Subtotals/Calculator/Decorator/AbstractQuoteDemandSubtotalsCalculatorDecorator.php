@@ -12,9 +12,6 @@ class AbstractQuoteDemandSubtotalsCalculatorDecorator implements QuoteDemandSubt
      */
     private $quoteDemandSubtotalsCalculator;
 
-    /**
-     * @param QuoteDemandSubtotalsCalculatorInterface $quoteDemandSubtotalsCalculator
-     */
     public function __construct(QuoteDemandSubtotalsCalculatorInterface $quoteDemandSubtotalsCalculator)
     {
         $this->quoteDemandSubtotalsCalculator = $quoteDemandSubtotalsCalculator;

@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
@@ -16,7 +19,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertFalse($this->extension->isAddItemCalled());
     }
@@ -49,32 +52,32 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         ];
 
         $this->assertMetadataCalled([
-            'product' => ['targetClass' => 'Oro\Bundle\ProductBundle\Entity\Product'],
-            'assignedUsers' => ['targetClass' => 'Oro\Bundle\UserBundle\Entity\User'],
-            'assignedCustomerUsers' => ['targetClass' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'],
+            'product' => ['targetClass' => Product::class],
+            'assignedUsers' => ['targetClass' => User::class],
+            'assignedCustomerUsers' => ['targetClass' => CustomerUser::class],
         ]);
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertTrue($this->extension->isAddItemCalled());
 
-        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $this->entity->product);
+        $this->assertInstanceOf(Product::class, $this->entity->product);
         $this->assertEquals(1, $this->entity->product->getId());
         $this->assertEquals(1, $this->entity->scalar);
         $this->assertCount(3, $this->entity->assignedUsers);
         $this->assertCount(2, $this->entity->assignedCustomerUsers);
 
         foreach ($this->entity->assignedUsers as $assignedUser) {
-            $this->assertInstanceOf('Oro\Bundle\UserBundle\Entity\User', $assignedUser);
+            $this->assertInstanceOf(User::class, $assignedUser);
             $this->assertContains($assignedUser->getId(), $assignedUsers);
             unset($assignedUsers[array_search($assignedUser->getId(), $assignedUsers)]);
         }
 
         foreach ($this->entity->assignedCustomerUsers as $assignedCustomerUser) {
-            $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $assignedCustomerUser);
+            $this->assertInstanceOf(CustomerUser::class, $assignedCustomerUser);
             $this->assertContains($assignedCustomerUser->getId(), $assignedCustomerUsers);
             unset($assignedCustomerUsers[array_search($assignedCustomerUser->getId(), $assignedCustomerUsers)]);
         }

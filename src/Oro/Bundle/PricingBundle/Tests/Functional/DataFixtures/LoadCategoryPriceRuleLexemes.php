@@ -4,9 +4,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 
 class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentFixtureInterface
@@ -16,9 +18,11 @@ class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentF
      */
     public function load(ObjectManager $manager)
     {
+        $category = $this->getCategory($manager);
+
         $data = [
             [
-                'category' => $manager->getRepository(Category::class)->getMasterCatalogRoot(),
+                'category' => $category,
                 'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
                 'field' => 'id',
             ],
@@ -54,6 +58,25 @@ class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentF
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function getCategory(ObjectManager $manager): Category
+    {
+        /** @var Organization $organization */
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $manager->getRepository(Category::class);
+        $queryBuilder = $categoryRepository->getMasterCatalogRootQueryBuilder();
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
 
     /**

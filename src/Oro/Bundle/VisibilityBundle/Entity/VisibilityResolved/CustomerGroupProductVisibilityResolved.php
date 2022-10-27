@@ -23,10 +23,6 @@ class CustomerGroupProductVisibilityResolved extends BaseProductVisibilityResolv
      */
     protected $sourceProductVisibility;
 
-    /**
-     * @param Scope $scope
-     * @param Product $product
-     */
     public function __construct(Scope $scope, Product $product)
     {
         parent::__construct($scope, $product);

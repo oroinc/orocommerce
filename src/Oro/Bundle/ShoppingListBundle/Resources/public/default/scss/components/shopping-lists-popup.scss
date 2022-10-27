@@ -1,0 +1,93 @@
+/* @theme: default; */
+
+.shopping-lists-popup {
+    width: $shopping-lists-popup-width;
+
+    font-family: $shopping-lists-popup-font-family;
+
+    &__content {
+        display: $shopping-lists-popup-content-display;
+        overflow-y: $shopping-lists-popup-content-overflow-y;
+
+        max-height: $shopping-lists-popup-content-max-height;
+    }
+
+    &__item {
+        display: $shopping-lists-popup-item-display;
+
+        border-top: $shopping-lists-popup-item-border-top;
+    }
+
+    &__list,
+    &__quantity {
+        display: $shopping-lists-popup-list-display;
+
+        vertical-align: $shopping-lists-popup-list-vertical-align;
+    }
+
+    &__list {
+        width: $shopping-lists-popup-list-width;
+        padding: $shopping-lists-popup-list-inner-offset;
+    }
+
+    &__quantity {
+        width: $shopping-lists-popup-quantity-width;
+        padding: $shopping-lists-popup-quantity-inner-offset;
+    }
+
+    &__headline {
+        background: $shopping-lists-popup-headline-background;
+
+        text-align: $shopping-lists-popup-headline-text-align;
+    }
+
+    &__headline &__item {
+        border: $shopping-lists-popup-headline-item-text-border;
+    }
+
+    &__headline &__list,
+    &__headline &__quantity {
+        padding: $shopping-lists-popup-headline-list-text-inner-offset;
+    }
+
+    &__footer {
+        background: $shopping-lists-popup-footer-background;
+    }
+
+    &__footer &__list {
+        padding: $shopping-lists-popup-footer-list-inner-offset;
+
+        vertical-align: $shopping-lists-popup-footer-list-vertical-align;
+    }
+
+    &__footer &__quantity {
+        padding: $shopping-lists-popup-footer-quantity-inner-offset;
+
+        vertical-align: $shopping-lists-popup-footer-quantity-vertical-align;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .shopping-lists-popup {
+        &__quantity {
+            width: $shopping-lists-popup-quantity-width-mobile;
+            padding: $shopping-lists-popup-quantity-inner-offset-mobile;
+        }
+
+        &__list {
+            width: $shopping-lists-popup-list-width-mobile;
+        }
+
+        &__footer & {
+            &__list {
+                width: $shopping-lists-popup-footer-list-width-mobile;
+                padding: $shopping-lists-popup-footer-list-inner-offset-mobile;
+            }
+
+            &__quantity {
+                width: $shopping-lists-popup-footer-quantity-width-mobile;
+                padding: $shopping-lists-popup-footer-quantity-inner-offset-mobile;
+            }
+        }
+    }
+}

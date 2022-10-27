@@ -22,23 +22,11 @@ class BuiltInTaxProviderTest extends \PHPUnit\Framework\TestCase
     /** @var BuiltInTaxProvider */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxManager = $this->createMock(TaxManager::class);
+
         $this->provider = new BuiltInTaxProvider($this->taxManager);
-    }
-
-    public function tearDown()
-    {
-        unset($this->provider);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('built_in', $this->provider->getName());
     }
 
     public function testGetLabel()

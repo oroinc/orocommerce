@@ -2,62 +2,48 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentTermProvider;
+    /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTermProvider;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    /** @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentConfig;
 
-    /**
-     * @var PaymentTermView
-     */
-    protected $methodView;
+    /** @var PaymentTermView */
+    private $methodView;
 
-    /**
-     * @var PaymentTermConfigInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentConfig;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->translator = new StubTranslator();
-
+        $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);
         $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
 
-        $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->paymentConfig);
-    }
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(function (string $key) {
+                return sprintf('[trans]%s[/trans]', $key);
+            });
 
-    protected function tearDown()
-    {
-        unset($this->methodView, $this->configManager, $this->translator, $this->paymentTermProvider);
+        $this->methodView = new PaymentTermView($this->paymentTermProvider, $translator, $this->paymentConfig);
     }
 
     public function testGetOptionsEmpty()
     {
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -76,9 +62,8 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 
         $customer = $this->createMock(Customer::class);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::any())
+        $context->expects(self::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -93,11 +78,36 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetOptionsWithCheckout()
+    {
+        $paymentTerm = new PaymentTerm();
+        $paymentTerm->setLabel('testLabel');
+
+        $checkoutSourceEntity = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceEntity = $this->createMock(CheckoutInterface::class);
+        $sourceEntity->expects($this->once())
+            ->method('getSourceEntity')
+            ->willReturn($checkoutSourceEntity);
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::any())
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getObjectPaymentTerm')
+            ->with($checkoutSourceEntity)
+            ->willReturn($paymentTerm);
+
+        $this->assertEquals(
+            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
+            $this->methodView->getOptions($context)
+        );
+    }
+
     public function testGetOptionsNullCustomer()
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::once())
+        $context->expects(self::once())
             ->method('getCustomer')
             ->willReturn(null);
 

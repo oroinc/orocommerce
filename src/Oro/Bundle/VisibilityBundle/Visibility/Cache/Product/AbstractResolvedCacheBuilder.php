@@ -2,126 +2,34 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * The base class for visibility cache builders.
+ */
 abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
+    protected ManagerRegistry $doctrine;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $cacheClass;
-
-    /**
-     * @var int
-     */
-    protected $visibilityFromConfig;
-
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
-    /**
-     * @var ProductIndexScheduler
-     */
-    protected $indexScheduler;
-
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertExecutor;
-
-    /**
-     * @var ProductReindexManager
-     */
-    protected $productReindexManager;
-
-    /**
-     * @param ManagerRegistry               $registry
-     * @param ScopeManager                  $scopeManager
-     * @param ProductIndexScheduler         $indexScheduler
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ProductReindexManager         $productReindexManager
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        ScopeManager $scopeManager,
-        ProductIndexScheduler $indexScheduler,
-        InsertFromSelectQueryExecutor $insertExecutor,
-        ProductReindexManager $productReindexManager
-    ) {
-        $this->registry = $registry;
-        $this->scopeManager = $scopeManager;
-        $this->indexScheduler = $indexScheduler;
-        $this->insertExecutor = $insertExecutor;
-        $this->productReindexManager = $productReindexManager;
+    public function __construct(ManagerRegistry $doctrine)
+    {
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param string $cacheClass
-     */
-    public function setCacheClass($cacheClass)
-    {
-        $this->cacheClass = $cacheClass;
-    }
-
-    /**
-     * @param string $selectedVisibility
-     * @param VisibilityInterface $productVisibility|null
-     * @return array
-     */
-    protected function resolveStaticValues($selectedVisibility, VisibilityInterface $productVisibility = null)
-    {
-        $updateData = [
-            'sourceProductVisibility' => $productVisibility,
-            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'category' => null,
-        ];
-
-        if ($selectedVisibility === VisibilityInterface::VISIBLE) {
-            $updateData['visibility'] = BaseVisibilityResolved::VISIBILITY_VISIBLE;
-        } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
-            $updateData['visibility'] = BaseVisibilityResolved::VISIBILITY_HIDDEN;
-        }
-
-        return $updateData;
-    }
-
-    /**
-     * @param EntityRepository|BasicOperationRepositoryTrait $repository
-     * @param bool $insert
-     * @param bool $delete
-     * @param array $update
-     * @param array $where
-     */
-    protected function executeDbQuery(EntityRepository $repository, $insert, $delete, array $update, array $where)
-    {
+    protected function executeDbQuery(
+        EntityRepository $repository,
+        bool $insert,
+        bool $delete,
+        array $update,
+        array $where
+    ): void {
+        /** @var BasicOperationRepositoryTrait $repository */
         if ($insert) {
             $repository->insertEntity(array_merge($update, $where));
         } elseif ($delete) {
@@ -131,37 +39,11 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         }
     }
 
-    /**
-     * @param boolean $isVisible
-     * @return integer
-     */
-    protected function convertVisibility($isVisible)
-    {
-        return $isVisible ? BaseVisibilityResolved::VISIBILITY_VISIBLE
-            : BaseVisibilityResolved::VISIBILITY_HIDDEN;
-    }
-
-    /**
-     * @param string $visibility
-     * @return int
-     */
-    protected function convertStaticVisibility($visibility)
-    {
-        return $visibility === VisibilityInterface::VISIBLE
-            ? BaseVisibilityResolved::VISIBILITY_VISIBLE
-            : BaseVisibilityResolved::VISIBILITY_HIDDEN;
-    }
-
-    /**
-     * @param object $entity
-     * @return object|null
-     */
-    protected function refreshEntity($entity)
+    protected function refreshEntity(object $entity): ?object
     {
         $entityClass = ClassUtils::getClass($entity);
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->registry->getManagerForClass($entityClass);
-
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->doctrine->getManagerForClass($entityClass);
         if ($entityManager->getUnitOfWork()->getEntityState($entity) !== UnitOfWork::STATE_MANAGED) {
             $identifier = $entityManager->getClassMetadata($entityClass)->getIdentifierValues($entity);
             if ($identifier) {
@@ -174,52 +56,5 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         }
 
         return $entity;
-    }
-
-    /**
-     * Use category ID as array index
-     *
-     * @param array $visibilities
-     * @param string $fieldName
-     * @return array
-     */
-    protected function indexVisibilities(array $visibilities, $fieldName)
-    {
-        $indexedVisibilities = [];
-        foreach ($visibilities as $visibility) {
-            $index = $visibility[$fieldName];
-            $indexedVisibilities[$index] = $visibility;
-        }
-
-        return $indexedVisibilities;
-    }
-
-    /**
-     * @param Product $product
-     * @param Website $website
-     */
-    protected function triggerProductReindexation(Product $product, Website $website = null)
-    {
-        $this->productReindexManager->reindexProduct(
-            $product,
-            $website ? $website->getId() : null,
-            false
-        );
-    }
-
-    /**
-     * @param array|Category[]|int[] $categories
-     */
-    protected function triggerCategoriesReindexation(array $categories)
-    {
-        $this->indexScheduler->scheduleProductsReindex($categories, null);
-    }
-
-    /**
-     * @param EntityRepository $repository
-     */
-    public function setRepository($repository)
-    {
-        $this->repository = $repository;
     }
 }

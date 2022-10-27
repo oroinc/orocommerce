@@ -4,6 +4,10 @@ namespace Oro\Bundle\CatalogBundle\Form\Type;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -16,6 +20,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Provides functionality to create new Category instances.
+ */
 class CategoryType extends AbstractType
 {
     const NAME = 'oro_catalog_category';
@@ -35,9 +42,6 @@ class CategoryType extends AbstractType
      */
     protected $urlGenerator;
 
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
@@ -73,7 +77,10 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.titles.label',
                     'required' => true,
-                    'entry_options' => ['constraints' => [new NotBlank()]],
+                    'value_class' => CategoryTitle::class,
+                    'entry_options' => ['constraints' => [
+                        new NotBlank(['message' => 'oro.catalog.category.title.blank'])]
+                    ],
                 ]
             )
             ->add(
@@ -82,16 +89,18 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.short_descriptions.label',
                     'required' => false,
+                    'value_class' => CategoryShortDescription::class,
                     'field' => 'text',
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
-                            'statusbar' => true,
+                            'autoRender' => false,
+                            'elementpath' => true,
                             'resize' => true,
-                            'width' => 500,
                             'height' => 200,
                         ],
                     ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -100,16 +109,14 @@ class CategoryType extends AbstractType
                 [
                     'label' => 'oro.catalog.category.long_descriptions.label',
                     'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
+                    'value_class' => CategoryLongDescription::class,
+                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
+                    'entry_type' => WYSIWYGValueType::class,
                     'entry_options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 200,
-                        ],
+                        'entity_class' => CategoryLongDescription::class,
+                        'error_mapping' => ['wysiwygStyle' => 'wysiwyg_style'],
                     ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -161,15 +168,13 @@ class CategoryType extends AbstractType
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'titles'
+                    'source_field' => 'titles',
+                    'allow_slashes' => true,
                 ]
             )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetDataListener(FormEvent $event)
     {
         $category = $event->getData();
@@ -187,7 +192,8 @@ class CategoryType extends AbstractType
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
                     'source_field' => 'names',
-                    'get_changed_slugs_url' => $url
+                    'get_changed_slugs_url' => $url,
+                    'allow_slashes' => true,
                 ]
             );
         }

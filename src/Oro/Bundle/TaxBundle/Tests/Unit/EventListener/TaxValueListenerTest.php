@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\TaxValueListener;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
@@ -11,23 +11,16 @@ use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TaxValueManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $taxValueManager;
+    private $taxValueManager;
 
     /** @var TaxValueListener */
-    protected $listener;
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->taxValueManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxValueManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxValueManager = $this->createMock(TaxValueManager::class);
 
         $this->listener = new TaxValueListener($this->taxValueManager);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener, $this->taxValueManager);
     }
 
     public function testPostRemove()
@@ -37,10 +30,7 @@ class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
 
         $taxValue = new TaxValue();
 
-        /** @var ObjectManager $objectManager */
-        $objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectManager = $this->createMock(ObjectManager::class);
 
         $event = new LifecycleEventArgs($taxValue, $objectManager);
 

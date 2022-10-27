@@ -9,10 +9,6 @@ use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
 
 class AddSkuUppercaseColumn implements Migration
 {
-    /**
-     * @param Schema   $schema
-     * @param QueryBag $queries
-     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $productTableName = 'oro_product';

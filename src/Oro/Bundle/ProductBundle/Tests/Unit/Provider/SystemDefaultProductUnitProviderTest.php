@@ -2,38 +2,27 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
 
 class SystemDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var SystemDefaultProductUnitProvider
-     */
-    protected $defaultProductUnitProvider;
+    /** @var SystemDefaultProductUnitProvider */
+    private $defaultProductUnitProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->defaultProductUnitProvider = new SystemDefaultProductUnitProvider(
             $this->configManager,
@@ -46,18 +35,19 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
         $unitCode = 'each';
         $precision = 10;
 
-        $this->configManager->expects(static::at(0))
+        $this->configManager->expects(self::exactly(2))
             ->method('get')
-            ->with('oro_product.default_unit')
-            ->willReturn($unitCode);
-
-        $this->configManager->expects(static::at(1))
-            ->method('get')
-            ->with('oro_product.default_unit_precision')
-            ->willReturn($precision);
+            ->withConsecutive(
+                ['oro_product.default_unit'],
+                ['oro_product.default_unit_precision']
+            )
+            ->willReturnOnConsecutiveCalls(
+                $unitCode,
+                $precision
+            );
 
         $unit = $this->createMock(ProductUnit::class);
-        $this->doctrineHelper->expects(static::once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityReference')
             ->with(ProductUnit::class, $unitCode)
             ->willReturn($unit);

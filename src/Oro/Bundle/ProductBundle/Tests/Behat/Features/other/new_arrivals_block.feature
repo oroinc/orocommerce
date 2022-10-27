@@ -1,6 +1,9 @@
 @ticket-BB-13978
+@ticket-BB-16275
+@ticket-BAP-19790
 @fixture-OroProductBundle:new_arrivals_block.yml
 @regression
+
 Feature: New Arrivals Block
   In order to promote new arrivals on the store homepage
   As an Administrator
@@ -47,8 +50,14 @@ Feature: New Arrivals Block
     And go to Products/ Products
     And I click Edit "SKU6" in grid
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat1.jpg | 1     | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
     When I save and close form
     Then I should see "Product has been saved" flash message
     # Enable localizations
@@ -173,6 +182,7 @@ Feature: New Arrivals Block
     And go to System/ Websites
     And click "Set default" on row "NewSite" in grid
     And click "Configuration" on row "Default" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
     |URL Use System       |false                            |
     |URL                  |http://non-existing-url.local    |
@@ -236,6 +246,7 @@ Feature: New Arrivals Block
     And go to System/ Websites
     And click "Set default" on row "Default" in grid
     And click "Configuration" on row "Default" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
       |URL Use System       |true|
       |Secure URL Use System|true|
@@ -243,6 +254,7 @@ Feature: New Arrivals Block
     And I should see "Configuration saved" flash message
     And go to System/ Websites
     And click "Configuration" on row "NewSite" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
       |URL Use System       |false                            |
       |URL                  |http://non-existing-url.local    |
@@ -257,8 +269,28 @@ Feature: New Arrivals Block
       |SKU6|
       |SKU7|
 
-  Scenario: Check that product name is localized
+  Scenario: Check that product name is displayed properly
     Given I proceed as the User
+    Then should see the following products in the "New Arrivals Block":
+      | Title                  |
+      | Product6`"'&йёщ®&reg;> |
+
+  Scenario: Check that alt attributes contain proper product name
+    Given I open product gallery for "SKU6" product
+    Then I should see gallery image with alt "Product6`\"'&йёщ®&reg;>"
+    And I should see picture "Popup Gallery Widget Picture" element
+    When I click "Popup Gallery Widget Close"
+    Then I should see preview image with alt "Product6`\"'&йёщ®&reg;>" for "SKU6" product
+    And I should see picture for "SKU6" product in the "New Arrivals Block"
+
+  Scenario: Check that product name is localized in shopping lists widget
+    When I click "Add to Shopping List" for "SKU6" product
+    And click "In Shopping List" for "SKU6" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product6`"'&йёщ®&reg;> |
+    And I close ui dialog
+
+  Scenario: Check that product name is localized
     When I click "Localization Switcher"
     And I select "Localization 1" localization
     Then should see the following products in the "New Arrivals Block":
@@ -272,8 +304,6 @@ Feature: New Arrivals Block
     Then I should see preview image with alt "Product6 (Localization 1)" for "SKU6" product
 
   Scenario: Check that product name is localized in shopping lists widget
-    Given I proceed as the User
-    And click "Add to Shopping List" for "SKU6" product
-    When click "In Shopping List" for "SKU6" product
+    When I click "In Shopping List" for "SKU6" product
     Then I should see "UiDialog" with elements:
       | Title | Product6 (Localization 1) |

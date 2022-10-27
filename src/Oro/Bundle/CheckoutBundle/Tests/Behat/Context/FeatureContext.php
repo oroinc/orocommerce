@@ -3,8 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
+use Behat\Mink\Element\NodeElement;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -14,10 +13,12 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary;
 
     /** @var array */
     protected static $formMapping = [
@@ -27,6 +28,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /** @var array */
     protected static $valueMapping = [
+        'Use billing address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Ship to this address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
@@ -50,12 +52,40 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function selectValueOnCheckoutStepAndPressButton($value, $step, $button)
     {
         $this->assertTitle($step);
-
         $page = $this->getSession()->getPage();
         $page->selectFieldOption(self::$formMapping[$step], $value);
 
-        $page->pressButton($button);
-        $this->waitForAjax();
+        $this->pressNextButton($button);
+    }
+
+    private function pressNextButton(string $button): void
+    {
+        $page = $this->getSession()->getPage();
+
+        /** @var NodeElement $element */
+        $element = $this->spin(static function () use ($page, $button) {
+            $element = $page->findButton($button);
+
+            return $element->isVisible() && null === $element->getAttribute('disabled') ? $element : false;
+        }, 5);
+
+        self::assertNotNull($element, sprintf('Button "%s" not found', $button));
+
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $oldTitle = $checkoutStep->getStepTitle();
+
+        $spinExecutionResult = $this->spin(function () use ($element, $oldTitle) {
+            $element->press();
+            $this->waitForAjax();
+
+            $this->assertNotTitle($oldTitle);
+            return true;
+        }, 6);
+
+        if ($spinExecutionResult === null) {
+            $this->assertNotTitle($oldTitle);
+        }
     }
 
     /**
@@ -67,11 +97,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function checkValueOnCheckoutStepAndPressButton($value, $step, $button)
     {
+        $this->waitForAjax();
         $this->assertTitle($step);
         $this->checkValueOnCheckoutPage($value);
 
-        $page = $this->getSession()->getPage();
-        $page->pressButton($button);
+        $this->pressNextButton($button);
+    }
+
+    /**
+     * Example: When I wait until all blocks on one step checkout page are reloaded
+     * @When /^I wait until all blocks on one step checkout page are reloaded$/
+     */
+    public function iWaitUntilAllBlocksOnOneStepCheckoutPageAreReloaded()
+    {
         $this->waitForAjax();
     }
 
@@ -104,7 +142,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function unCheckValueOnCheckoutPage($value)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->findField(self::$valueMapping[$value]);
+        $element = $page->findField(self::$valueMapping[$value] ?? $value);
 
         self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
 
@@ -129,11 +167,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->assertTitle($step);
         $this->uncheckValueOnCheckoutPage($value);
 
-        $page = $this->getSession()->getPage();
-        $page->pressButton($button);
-        $this->waitForAjax();
+        $this->pressNextButton($button);
     }
-
 
     /**
      * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
@@ -144,9 +179,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function onCheckoutStepAndPressButton($step, $button)
     {
         $this->assertTitle($step);
-        $page = $this->getSession()->getPage();
-        $page->pressButton($button);
-        $this->waitForAjax();
+        $this->pressNextButton($button);
     }
 
     /**
@@ -166,9 +199,42 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     protected function assertTitle($title)
     {
-        /** @var CheckoutStep $checkoutStep */
-        $checkoutStep = $this->createElement('CheckoutStep');
-        $checkoutStep->assertTitle($title);
+        $spinExecutionResult = $this->spin(function () use ($title) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+            $checkoutStep->assertTitle($title);
+
+            return true;
+        }, 5);
+
+        if ($spinExecutionResult === null) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+
+            // Check finally once again to throw proper expectation exception.
+            $checkoutStep->assertTitle($title);
+        }
+    }
+
+    protected function assertNotTitle(string $oldTitle): void
+    {
+        $spinExecutionResult = $this->spin(function () use ($oldTitle) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+            if ($checkoutStep->getElement('CheckoutStepTitle')->isValid()) {
+                $checkoutStep->assertNotTitle($oldTitle);
+            }
+
+            return true;
+        }, 5);
+
+        if ($spinExecutionResult === null) {
+            /** @var CheckoutStep $checkoutStep */
+            $checkoutStep = $this->createElement('CheckoutStep');
+
+            // Check finally once again to throw proper expectation exception.
+            $checkoutStep->assertNotTitle($oldTitle);
+        }
     }
 
     /**
@@ -234,13 +300,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
             if ($contains) {
                 self::assertTrue($productFound, sprintf(
-                    'Product %s, QTY: %s %s has not been found',
-                    ...$row
+                    'Product %s has not been found',
+                    implode(', ', $row)
                 ));
             } else {
                 self::assertFalse($productFound, sprintf(
-                    'Product %s, QTY: %s %s has been found',
-                    ...$row
+                    'Product %s has been found',
+                    implode(', ', $row)
                 ));
             }
         }
@@ -256,6 +322,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->assertTitle($step);
 
+        /** @var CheckoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $oldTitle = $checkoutStep->getStepTitle();
+
         $goBackButton = null;
         $titleAttribute = 'data-title';
         foreach ($this->findAllElements('CheckoutGoBackButton') as $goBackButton) {
@@ -264,8 +334,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             }
 
             if ($goBackButton->getAttribute($titleAttribute) === $buttonTitle) {
-                $goBackButton->click();
-                $this->waitForAjax();
+                $spinExecutionResult = $this->spin(function () use ($goBackButton, $oldTitle) {
+                    $goBackButton->click();
+                    $this->waitForAjax();
+
+                    $this->assertNotTitle($oldTitle);
+                    return true;
+                }, 3);
+
+                if ($spinExecutionResult === null) {
+                    $this->assertNotTitle($oldTitle);
+                }
 
                 return;
             }
@@ -290,12 +369,31 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     private function matchProductLine(Element $productLine, array $row, $elementName)
     {
-        list($name, $quantity, $unit) = $row;
-
         try {
-            self::assertContains($name, $productLine->getElement($elementName . 'ProductLineName')->getText());
-            self::assertContains($quantity, $productLine->getElement($elementName . 'ProductLineQuantity')->getText());
-            self::assertContains($unit, $productLine->getElement($elementName . 'ProductLineUnit')->getText());
+            static::assertStringContainsString(
+                $row[0],
+                $productLine->getElement($elementName . 'ProductLineName')->getText()
+            );
+            static::assertStringContainsString(
+                $row[1],
+                $productLine->getElement($elementName . 'ProductLineQuantity')->getText()
+            );
+            static::assertStringContainsString(
+                $row[2],
+                $productLine->getElement($elementName . 'ProductLineUnit')->getText()
+            );
+            if (isset($row[3])) {
+                static::assertStringContainsString(
+                    $row[3],
+                    $productLine->getElement($elementName . 'ProductLinePrice')->getText()
+                );
+            }
+            if (isset($row[4])) {
+                static::assertStringContainsString(
+                    $row[4],
+                    $productLine->getElement($elementName . 'ProductLineSubtotal')->getText()
+                );
+            }
         } catch (\Exception $exception) {
             return false;
         }
@@ -331,88 +429,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function iShouldSeeButtonEnabled($field)
     {
-        $this->spin(function () use ($field) {
-            $button = $this->elementFactory->createElement($field);
+        self::assertTrue(
+            $this->spin(function () use ($field) {
+                $button = $this->elementFactory->createElement($field);
 
-            return !$button->hasAttribute('disabled');
-        }, 5);
-    }
-
-    /**
-     * @When /^(?:|I )expand "(?P<entity>(?:[^"]|\\")*)" permissions in "(?P<section>(?:[^"]|\\")*)" section$/
-     *
-     * @param string $entity
-     * @param string $section
-     */
-    public function iExpandEntityPermissions($entity, $section)
-    {
-        $page = $this->getSession()->getPage();
-        $expandElement = $page->find(
-            'xpath',
-            "//h4[contains(@class,'scrollspy-title')][text()=\"$section\"]/.." .
-            "//div[contains(@class,'entity-name')][text()=\"$entity\"]" .
-            "/..//*[contains(@class,'collapse-action')]"
+                return !$button->hasAttribute('disabled');
+            }, 5),
+            'Button is disabled'
         );
-        if ($expandElement) {
-            $expandElement->focus();
-            $expandElement->click();
-        }
     }
 
     /**
-     * @When /^(?:|I )click Perform Transition permissions for "(?P<transition>(?:[^"]|\\")*)" transition$/
-     *
-     * @param string $transition
+     * @Then /^(?:|I )should see "(?P<field>(?:[^"]|\\")*)" button disabled/
      */
-    public function iClickPerformTransitionPermissions($transition)
+    public function iShouldSeeButtonDisabled($field)
     {
-        $page = $this->getSession()->getPage();
-        $element = $page->find(
-            'xpath',
-            "//*[contains(@class,'field-name')][contains(text(),'$transition')]/" .
-            "..//*[contains(@class,'action-permissions__item')]"
+        self::assertTrue(
+            $this->spin(function () use ($field) {
+                $button = $this->elementFactory->createElement($field);
+
+                return $button->hasAttribute('disabled');
+            }, 5),
+            'Button is enabled'
         );
-        if ($element) {
-            $element->focus();
-            $element->click();
-        }
-    }
-
-    /**
-     * @Then /^(?:|I )should see next items in permissions dropdown:$/
-     *
-     * @param TableNode $table
-     */
-    public function iShouldSeeItemsInPermissionsDropdown(TableNode $table)
-    {
-        $itemElements = $this->findAllElements('Permissions Dropdown Items');
-        $actualItems = [];
-        if (count($itemElements)) {
-            foreach ($itemElements as $itemElement) {
-                $actualItems[] = $itemElement->getText();
-            }
-        }
-
-        $expectedItems = [];
-        foreach ($table->getRows() as $row) {
-            $expectedItems[] = reset($row);
-        }
-
-        self::assertEquals($expectedItems, $actualItems);
-    }
-
-    /**
-     * @Then /^(?:|I )choose "(?P<option>[^"]*)" in permissions dropdown$/
-     *
-     * @param string $option
-     */
-    public function iSelectOptionInPermissionsDropdown($option)
-    {
-        $itemElement = $this->findElementContains('Permissions Dropdown Items', $option);
-
-        self::assertNotNull($itemElement, "Selected Option is not found in permissions dropdown");
-
-        $itemElement->focus();
-        $itemElement->click();
     }
 }

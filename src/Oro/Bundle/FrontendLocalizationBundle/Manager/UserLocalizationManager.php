@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
-use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -17,12 +17,18 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Represents the entry point for the localization settings of the store frontend.
  */
-class UserLocalizationManager
+class UserLocalizationManager implements UserLocalizationManagerInterface
 {
     const SESSION_LOCALIZATIONS = 'localizations_by_website';
 
     /** @var Session */
     protected $session;
+
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var ConfigManager */
     protected $configManager;
@@ -30,43 +36,32 @@ class UserLocalizationManager
     /** @var WebsiteManager */
     protected $websiteManager;
 
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    /** @var BaseUserManager */
-    protected $userManager;
-
     /** @var LocalizationManager */
     protected $localizationManager;
 
-    /**
-     * @param Session $session
-     * @param TokenStorageInterface $tokenStorage
-     * @param ConfigManager $configManager
-     * @param WebsiteManager $websiteManager
-     * @param BaseUserManager $userManager
-     * @param LocalizationManager $localizationManager
-     */
+    /** @var array */
+    private $currentLocalizations = [];
+
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
+        ManagerRegistry $doctrine,
         ConfigManager $configManager,
         WebsiteManager $websiteManager,
-        BaseUserManager $userManager,
         LocalizationManager $localizationManager
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
+        $this->doctrine = $doctrine;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
-        $this->userManager = $userManager;
         $this->localizationManager = $localizationManager;
     }
 
     /**
-     * @return Localization[]
+     * {@inheritDoc}
      */
-    public function getEnabledLocalizations()
+    public function getEnabledLocalizations(): array
     {
         $ids = array_map(function ($id) {
             return (int)$id;
@@ -76,9 +71,9 @@ class UserLocalizationManager
     }
 
     /**
-     * @return Localization|null
+     * {@inheritDoc}
      */
-    public function getDefaultLocalization()
+    public function getDefaultLocalization(): ?Localization
     {
         $localization = $this->localizationManager->getLocalization(
             (int)$this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION))
@@ -88,10 +83,9 @@ class UserLocalizationManager
     }
 
     /**
-     * @param Website|null $website
-     * @return Localization|null
+     * {@inheritDoc}
      */
-    public function getCurrentLocalization(Website $website = null)
+    public function getCurrentLocalization(Website $website = null): ?Localization
     {
         $website = $this->getWebsite($website);
 
@@ -99,34 +93,36 @@ class UserLocalizationManager
             return null;
         }
 
-        $localization = null;
-
         $user = $this->getLoggedUser();
-        if ($user instanceof CustomerUser) {
+
+        $websiteId = $website->getId();
+        $userId = $user instanceof CustomerUser ? $user->getId() : 0;
+        if (isset($this->currentLocalizations[$websiteId][$userId])) {
+            return $this->currentLocalizations[$websiteId][$userId];
+        }
+
+        $localization = null;
+        $enabledLocalizations = $this->getEnabledLocalizations();
+        if ($userId !== 0) {
             $userSettings = $user->getWebsiteSettings($website);
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
             }
         } elseif ($this->session->isStarted()) {
-            $sessionStoredLocalizations = $this->getSessionLocalizations();
-            if (array_key_exists($website->getId(), $sessionStoredLocalizations)) {
-                $localization = $this->localizationManager->getLocalization(
-                    $sessionStoredLocalizations[$website->getId()]
-                );
-            }
+            $localization = $enabledLocalizations[$this->getSessionLocalizationIdByWebsiteId($websiteId)] ?? null;
         }
 
-        if (!$localization || !array_key_exists($localization->getId(), $this->getEnabledLocalizations())) {
+        if (!$localization || !isset($enabledLocalizations[$localization->getId()])) {
             $localization = $this->getDefaultLocalization();
         }
+
+        $this->currentLocalizations[$websiteId][$userId] = $localization;
 
         return $localization;
     }
 
     /**
-     * @param CustomerUser $customerUser
-     * @param Website|null $website
-     * @return null|Localization
+     * {@inheritDoc}
      */
     public function getCurrentLocalizationByCustomerUser(
         CustomerUser $customerUser,
@@ -152,10 +148,9 @@ class UserLocalizationManager
     }
 
     /**
-     * @param Localization $localization
-     * @param Website|null $website
+     * {@inheritdoc}
      */
-    public function setCurrentLocalization(Localization $localization, Website $website = null)
+    public function setCurrentLocalization(Localization $localization, Website $website = null): void
     {
         $website = $this->getWebsite($website);
         if (!$website) {
@@ -170,8 +165,8 @@ class UserLocalizationManager
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setLocalization($localization);
-            $this->userManager->getStorageManager()->flush();
-        } elseif ($this->session->isStarted()) {
+            $this->doctrine->getManagerForClass(CustomerUser::class)->flush();
+        } else {
             $sessionLocalizations = $this->getSessionLocalizations();
             $sessionLocalizations[$website->getId()] = $localization->getId();
             $this->session->set(self::SESSION_LOCALIZATIONS, $sessionLocalizations);
@@ -179,7 +174,7 @@ class UserLocalizationManager
     }
 
     /**
-     * @return null|CustomerUser
+     * @return mixed
      */
     protected function getLoggedUser()
     {
@@ -205,10 +200,11 @@ class UserLocalizationManager
         return (array)$this->session->get(self::SESSION_LOCALIZATIONS);
     }
 
-    /**
-     * @param Website $website
-     * @return Localization|null
-     */
+    private function getSessionLocalizationIdByWebsiteId(int $websiteId): int
+    {
+        return $this->getSessionLocalizations()[$websiteId] ?? 0;
+    }
+
     private function getWebsiteDefaultLocalization(Website $website): ?Localization
     {
         $localization = $this->localizationManager->getLocalization(

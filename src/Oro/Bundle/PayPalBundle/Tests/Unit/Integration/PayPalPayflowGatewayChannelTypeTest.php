@@ -9,7 +9,7 @@ class PayPalPayflowGatewayChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalPayflowGatewayChannelType */
     private $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->channel = new PayPalPayflowGatewayChannelType();
     }

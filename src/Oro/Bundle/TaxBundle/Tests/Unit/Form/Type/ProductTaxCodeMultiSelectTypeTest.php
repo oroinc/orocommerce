@@ -10,20 +10,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
 {
     /** @var ProductTaxCodeMultiSelectType */
-    protected $formType;
+    private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ProductTaxCodeMultiSelectType();
 
         parent::setUp();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testGetParent()

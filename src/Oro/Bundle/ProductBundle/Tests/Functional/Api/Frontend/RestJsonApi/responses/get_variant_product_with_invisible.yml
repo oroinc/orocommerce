@@ -1,0 +1,54 @@
+data:
+    type: products
+    id: '<toString(@configurable_product1_variant1->id)>'
+    attributes:
+        sku: CVPSKU1
+        createdAt: '@configurable_product1_variant1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@configurable_product1_variant1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        productType: simple
+        featured: false
+        newArrival: false
+        name: 'Variant 1 for Configurable Product 1'
+        shortDescription: 'Variant 1 for Configurable Product 1 Short Description'
+        description: 'Variant 1 for Configurable Product 1 Description'
+        metaTitle: null
+        metaDescription: null
+        metaKeywords: null
+        productAttributes:
+            testAttrString: 'Variant 1 for CPSKU1'
+            testAttrBoolean: false
+            testAttrFloat: null
+            testAttrMoney: null
+            testAttrDateTime: null
+            testAttrManyToOne: null
+            testToOneId: null
+            testAttrEnum:
+                id: option1
+                targetValue: 'Option 1'
+            testAttrMultiEnum: []
+            testAttrManyToMany: []
+            testToManyId: []
+        unitPrecisions:
+            - { unit: '@item->code', precision: 0, conversionRate: 1, default: true }
+        prices: []
+        lowInventory: true
+        upcoming: true
+        availabilityDate: '2119-10-20T10:20:30Z'
+        variantAttributeNames: []
+    relationships:
+        inventoryStatus:
+            data:
+                type: productinventorystatuses
+                id: '<toString(@in_stock->id)>'
+        productFamily:
+            data:
+                type: productfamilies
+                id: '<toString(@default_product_family->id)>'
+        variantProducts:
+            data: []
+        parentProducts:
+            data:
+                - { type: products, id: '<toString(@configurable_product1->id)>' }
+                - { type: products, id: '<toString(@configurable_product3->id)>' }
+        images:
+            data: []

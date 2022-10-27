@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Tests\Cache;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Cache;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\RedirectBundle\Cache\UrlLocalCache;
-use Oro\Bundle\RedirectBundle\Tests\Unit\Stub\CacheAllCapabilities;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,13 +14,13 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
     private $urlCache;
 
     /**
-     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->cache = $this->createMock(Cache::class);
+        $this->cache = $this->createMock(CacheItemPoolInterface::class);
         $this->urlCache = new UrlLocalCache($this->cache);
     }
 
@@ -36,7 +36,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $key = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1';
 
         $this->cache->expects($this->once())
-            ->method('contains')
+            ->method('hasItem')
             ->with($key)
             ->willReturn($expected);
         $this->assertSame($expected, $this->urlCache->has($routeName, $routeParameters, $localization));
@@ -65,10 +65,17 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $localization = 1;
         $key = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1';
 
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with($key)
+        $item = $this->createMock(CacheItemInterface::class);
+        $item->expects($this->once())
+            ->method('isHit')
+            ->willReturn($data !== null);
+        $item->expects($this->any())
+            ->method('get')
             ->willReturn($data);
+        $this->cache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($item);
 
         $this->assertSame($expected, $this->urlCache->getUrl($routeName, $routeParameters, $localization));
     }
@@ -80,6 +87,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'has in cache' => [[UrlLocalCache::URL_KEY => '/test', UrlLocalCache::SLUG_KEY => 'test'], '/test'],
+            'has in cache NULL' => [[UrlLocalCache::URL_KEY => null, UrlLocalCache::SLUG_KEY => null], null],
             'does not contain' => [null, false]
         ];
     }
@@ -96,10 +104,17 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $localization = 1;
         $key = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1';
 
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with($key)
+        $item = $this->createMock(CacheItemInterface::class);
+        $item->expects($this->once())
+            ->method('isHit')
+            ->willReturn($data !== null);
+        $item->expects($this->any())
+            ->method('get')
             ->willReturn($data);
+        $this->cache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($item);
 
         $this->assertSame($expected, $this->urlCache->getSlug($routeName, $routeParameters, $localization));
     }
@@ -124,12 +139,18 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
 
         $url = '/test';
         $slug = 'test';
+
+        $item = $this->createMock(CacheItemInterface::class);
+        $item->expects($this->any())
+            ->method('set')
+            ->with([UrlLocalCache::URL_KEY => $url, UrlLocalCache::SLUG_KEY => $slug]);
+        $this->cache->expects($this->once())
+            ->method('getItem')
+            ->with($key)
+            ->willReturn($item);
         $this->cache->expects($this->once())
             ->method('save')
-            ->with(
-                $key,
-                [UrlLocalCache::URL_KEY => $url, UrlLocalCache::SLUG_KEY => $slug]
-            );
+            ->with($item);
 
         $this->urlCache->setUrl($routeName, $routeParameters, $url, $slug, $localization);
     }
@@ -142,27 +163,17 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $key = 'test_YToxOntzOjI6ImlkIjtpOjE7fQ==_1';
 
         $this->cache->expects($this->once())
-            ->method('delete')
+            ->method('deleteItem')
             ->with($key);
 
         $this->urlCache->removeUrl($routeName, $routeParameters, $localization);
     }
 
-    public function testDeleteAllDefault()
+    public function testDeleteAll()
     {
-        $this->cache->expects($this->never())
-            ->method($this->anything());
+        $this->cache->expects($this->once())
+            ->method('clear');
+
         $this->urlCache->deleteAll();
-    }
-
-    public function testDeleteAllClearable()
-    {
-        /** @var Cache|\PHPUnit\Framework\MockObject\MockObject $cache */
-        $cache = $this->createMock(CacheAllCapabilities::class);
-        $cache->expects($this->once())
-            ->method('deleteAll');
-
-        $urlCache = new UrlLocalCache($cache);
-        $urlCache->deleteAll();
     }
 }

@@ -1,8 +1,10 @@
+/* @theme: custom; */
+
 .shopping-list {
     &__content {
         padding: 15px;
 
-        border: 1px solid get-color('additional', 'light');
+        border: $shopping-list-content-border;
         border-top: 0;
     }
 }

@@ -74,7 +74,33 @@ system_configuration:
             icon: 'fa-list'
         limit_filters_sorters:
             title: oro.product.system_configuration.groups.limit_filters_sorters.title
-
+        disable_filters:
+            title: oro.product.system_configuration.groups.disable_filters.title
+        filters_display_settings:
+            title: oro.product.system_configuration.groups.filters_display_settings.title
+        images_general:
+            title: oro.product.system_configuration.groups.images_general.title
+            description: oro.product.system_configuration.groups.images_general.description
+            description_style: warning
+        product_search:
+            title: oro.product.system_configuration.groups.product_search.title
+            icon: 'fa-search'
+        product_fulltext_search:
+            title: oro.product.system_configuration.groups.product_fulltext_search.title
+        product_search_autocomplete:
+            title: oro.product.system_configuration.groups.product_search_autocomplete.title
+        customer_settings:
+            title: oro.product.system_configuration.groups.customer_settings.title
+            icon: 'fa-cogs'
+        product_data_export:
+            title: oro.product.system_configuration.groups.product_data_export.title
+        product_seo:
+            title: oro.product.system_configuration.groups.product_seo.title
+            icon: 'fa-columns'
+        schema_org:
+            title: oro.product.system_configuration.groups.schema_org.title
+            description: oro.product.system_configuration.groups.schema_org.description
+            description_style: warning
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -99,6 +125,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.max_number_of_related_products.label
                 tooltip: oro.product.system_configuration.fields.max_number_of_related_products.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -119,6 +146,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.max_number_of_upsell_products.label
                 tooltip: oro.product.system_configuration.fields.max_number_of_upsell_products.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -132,6 +160,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.related_products_max_items.label
                 tooltip: oro.product.system_configuration.fields.related_products_max_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -145,6 +174,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.related_products_min_items.label
                 tooltip: oro.product.system_configuration.fields.related_products_min_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -174,6 +204,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.upsell_products_max_items.label
                 tooltip: oro.product.system_configuration.fields.upsell_products_max_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -187,6 +218,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.upsell_products_min_items.label
                 tooltip: oro.product.system_configuration.fields.upsell_products_min_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -215,7 +247,7 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.unit_rounding_type.label
-                tooltip: oro.product.form.tooltip.unit_rounding_type
+                tooltip: oro.product.system_configuration.fields.unit_rounding_type.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~
@@ -257,6 +289,9 @@ system_configuration:
             priority: 20
             options:
                 label: oro.product.system_configuration.fields.default_unit.label
+                required: true
+                constraints:
+                    - NotBlank: ~
 
         oro_product.default_unit_precision:
             data_type: integer
@@ -265,6 +300,9 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
+                required: true
+                constraints:
+                    - NotBlank: ~
 
         oro_product.product_image_watermark_file:
             data_type: string
@@ -274,7 +312,18 @@ system_configuration:
                 label: oro.product.system_configuration.fields.product_image_watermark_file.label
                 required: false
                 fileConstraints:
-                    - Image: ~
+                    - Oro\Bundle\AttachmentBundle\Validator\Constraints\Image: ~
+
+        oro_product.product_image_placeholder:
+            data_type: string
+            type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
+            priority: 50
+            options:
+                label: oro.product.system_configuration.fields.product_image_placeholder.label
+                tooltip: oro.product.system_configuration.fields.product_image_placeholder.tooltip
+                required: false
+                fileConstraints:
+                    - Oro\Bundle\AttachmentBundle\Validator\Constraints\Image: ~
 
         oro_product.product_image_watermark_size:
             data_type: integer
@@ -284,6 +333,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_size.label
                 tooltip: oro.product.system_configuration.fields.product_image_watermark_size.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -298,6 +348,9 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_position.label
                 choice_translation_domain: messages
+                required: true
+                constraints:
+                    - NotBlank: ~
                 choices:
                     oro.product.system_configuration.fields.product_image_watermark_position.topleft.label: topleft
                     oro.product.system_configuration.fields.product_image_watermark_position.top.label: top
@@ -317,6 +370,7 @@ system_configuration:
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+                required: false
 
         oro_product.enable_quick_order_form:
             data_type: boolean
@@ -353,6 +407,13 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
+        oro_product.product_collections_indexation_partial:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.product_collections_indexation_partial.label
+                tooltip: oro.product.system_configuration.fields.product_collections_indexation_partial.tooltip
+
         oro_product.product_collections_indexation_cron_schedule:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
@@ -375,6 +436,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.product_collection_mass_action_limitation.label
                 tooltip: oro.product.system_configuration.fields.product_collection_mass_action_limitation.tooltip
+                required: true
                 constraints:
                     - GreaterThan:
                         value: 0
@@ -404,6 +466,7 @@ system_configuration:
                 label: oro.product.system_configuration.fields.new_arrivals_products_segment.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+                required: false
 
         oro_product.new_arrivals_max_items:
             data_type: integer
@@ -413,6 +476,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_max_items.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_max_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -426,6 +490,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_min_items.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_min_items.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -480,18 +545,6 @@ system_configuration:
                     oro.product.system_configuration.fields.matrix_form_on_product_listing.inline.label: inline
                     oro.product.system_configuration.fields.matrix_form_on_product_listing.popup.label: popup
 
-        oro_product.matrix_form_on_shopping_list:
-            data_type: string
-            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
-            priority: 10
-            options:
-                tooltip: oro.product.system_configuration.fields.matrix_form_on_shopping_list.tooltip
-                label: oro.product.system_configuration.fields.matrix_form_on_shopping_list.label
-                choices:
-                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.none.label: none
-                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.inline.label: inline
-                    oro.product.system_configuration.fields.matrix_form_on_shopping_list.popup.label: popup
-
         oro_product.matrix_form_allow_empty:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -509,6 +562,7 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.display_simple_variations.tooltip
                 choices:
                     oro.product.system_configuration.fields.display_simple_variations.everywhere.label: everywhere
+                    oro.product.system_configuration.fields.display_simple_variations.hide_catalog.label: hide_catalog
                     oro.product.system_configuration.fields.display_simple_variations.hide_completely.label: hide_completely
 
         oro_product.limit_filters_sorters_on_product_listing:
@@ -518,6 +572,107 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.limit_filters_sorters_on_product_listing.label
                 tooltip: oro.product.system_configuration.fields.limit_filters_sorters_on_product_listing.tooltip
+
+        oro_product.disable_filters_on_product_listing:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 5
+            options:
+                label: oro.product.system_configuration.fields.disable_filters_on_product_listing.label
+                tooltip: oro.product.system_configuration.fields.disable_filters_on_product_listing.tooltip
+
+        oro_product.filters_display_settings_state:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.filters_display_settings.label
+                tooltip: oro.product.system_configuration.fields.filters_display_settings.tooltip
+                choices:
+                    oro.product.system_configuration.fields.filters_display_settings.options.collapsed: collapsed
+                    oro.product.system_configuration.fields.filters_display_settings.options.expanded: expanded
+
+        oro_product.filters_position:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.filters_position.label
+                tooltip: oro.product.system_configuration.fields.filters_position.tooltip
+                choices:
+                    oro.product.system_configuration.fields.filters_position.options.top: top
+                    oro.product.system_configuration.fields.filters_position.options.sidebar: sidebar
+
+        oro_product.original_file_names_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.original_file_names_enabled.label
+                tooltip: oro.product.system_configuration.fields.original_file_names_enabled.tooltip
+
+        oro_product.allow_partial_product_search:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.allow_partial_product_search.label
+                tooltip: oro.product.system_configuration.fields.allow_partial_product_search.tooltip
+
+        oro_product.search_autocomplete_max_products:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.search_autocomplete_max_products.label
+                tooltip: oro.product.system_configuration.fields.search_autocomplete_max_products.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+        oro_product.product_data_export_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 30
+            page_reload: true
+            options:
+                label: oro.product.system_configuration.fields.product_data_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.product_data_export_enabled.tooltip
+        oro_product.product_prices_export_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.product_prices_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.product_prices_export_enabled.tooltip
+        oro_product.product_price_tiers_export_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.product_price_tiers_export_enabled.label
+                tooltip: oro.product.system_configuration.fields.product_price_tiers_export_enabled.tooltip
+        oro_product.microdata_without_prices_disabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            options:
+                label: oro.product.system_configuration.fields.microdata_without_prices_disabled.label
+                tooltip: oro.product.system_configuration.fields.microdata_without_prices_disabled.tooltip
+                required: false
+
+        oro_product.schema_org_description_field:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            options:
+                label: oro.product.system_configuration.fields.schema_org_description_field.label
+                tooltip: oro.product.system_configuration.fields.schema_org_description_field.tooltip
+                choices:
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.meta.label: 'oro_product_seo_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'
+                    oro.product.system_configuration.fields.schema_org_description_field.choice.short.label: 'oro_product_short_description'
 
     tree:
         system_configuration:
@@ -541,6 +696,11 @@ system_configuration:
                                     limit_filters_sorters:
                                         children:
                                             - oro_product.limit_filters_sorters_on_product_listing
+                                            - oro_product.disable_filters_on_product_listing
+                                    filters_display_settings:
+                                        children:
+                                            - oro_product.filters_display_settings_state
+                                            - oro_product.filters_position
                             related_items:
                                 priority: 100
                                 children:
@@ -581,6 +741,9 @@ system_configuration:
                             product_images:
                                 priority: 200
                                 children:
+                                    images_general:
+                                        children:
+                                            - oro_product.original_file_names_enabled
                                     product_image_watermark:
                                         children:
                                             - oro_product.product_image_watermark_file
@@ -590,6 +753,13 @@ system_configuration:
                                         children:
                                             - oro_product.image_preview_on_product_listing_enabled
                                             - oro_product.popup_gallery_on_product_view
+                            product_search:
+                                priority: 150
+                                children:
+                                    product_fulltext_search:
+                                        children:
+                                            - oro_product.allow_partial_product_search
+                                            - oro_product.search_autocomplete_max_products
                             featured_products:
                                 priority: 100
                                 children:
@@ -615,7 +785,6 @@ system_configuration:
                                         children:
                                             - oro_product.matrix_form_on_product_view
                                             - oro_product.matrix_form_on_product_listing
-                                            - oro_product.matrix_form_on_shopping_list
                                             - oro_product.matrix_form_allow_empty
                                     configurable_products_variations:
                                         children:
@@ -627,6 +796,15 @@ system_configuration:
                                         children:
                                             - oro_product.product_collections_indexation_cron_schedule
                                             - oro_product.product_collections_mass_action_limitation
+                                            - oro_product.product_collections_indexation_partial
+                            customer_settings:
+                                priority: 0
+                                children:
+                                    product_data_export:
+                                        children:
+                                            - oro_product.product_data_export_enabled
+                                            - oro_product.product_prices_export_enabled
+                                            - oro_product.product_price_tiers_export_enabled
                     product_inventory:
                         priority: 650
                         children:
@@ -647,7 +825,24 @@ system_configuration:
                                     guest_quick_order_form:
                                         children:
                                             - oro_product.guest_quick_order_form
-
+                    design:
+                        children:
+                            theme:
+                                children:
+                                    theme_settings:
+                                        children:
+                                            - oro_product.product_image_placeholder
+                    guests:
+                        priority: 2000
+                        children:
+                            product_seo:
+                                priority: 90
+                                children:
+                                    schema_org:
+                                        priority: 100
+                                        children:
+                                            - oro_product.microdata_without_prices_disabled
+                                            - oro_product.schema_org_description_field
         organization_configuration:
             commerce:
                 children:
@@ -674,6 +869,12 @@ system_configuration:
                                             - oro_product.upsell_products_use_slider_on_mobile
                     product:
                         children:
+                            product_images:
+                                children:
+                                    images_general:
+                                        priority: 500
+                                        children:
+                                            - oro_product.original_file_names_enabled
                             configurable_products:
                                 priority: 50
                                 children:
@@ -681,7 +882,6 @@ system_configuration:
                                         children:
                                             - oro_product.matrix_form_on_product_view
                                             - oro_product.matrix_form_on_product_listing
-                                            - oro_product.matrix_form_on_shopping_list
                                             - oro_product.matrix_form_allow_empty
                                     configurable_products_variations:
                                         children:

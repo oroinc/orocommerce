@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddFormButtonComponent;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var Modal = require('oroui/js/modal');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const Modal = require('oroui/js/modal');
 
-    QuickAddFormButtonComponent = BaseComponent.extend({
+    const QuickAddFormButtonComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -53,14 +52,14 @@ define(function(require) {
         confirmMessage: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function QuickAddFormButtonComponent() {
-            QuickAddFormButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddFormButtonComponent(options) {
+            QuickAddFormButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -83,11 +82,11 @@ define(function(require) {
             // make own messages property from prototype
             this.messages = _.extend({}, this.defaultMessages, this.messages);
 
-            this.$button.on('click', _.bind(this.submit, this));
+            this.$button.on('click', this.submit.bind(this));
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
@@ -95,9 +94,8 @@ define(function(require) {
             }
 
             delete this.messages;
-            delete this.confirmModal;
 
-            QuickAddFormButtonComponent.__super__.dispose.apply(this, arguments);
+            QuickAddFormButtonComponent.__super__.dispose.call(this);
         },
 
         /**
@@ -111,16 +109,16 @@ define(function(require) {
                 return;
             }
 
-            _.each(this.options, _.bind(function(selector, data) {
+            _.each(this.options, (selector, data) => {
                 if (data === '_sourceElement') {
                     return;
                 }
 
                 this.$form.find(selector).val(this.$button.data(data));
-            }, this));
+            });
 
             if (this.confirmation) {
-                this.getConfirmDialog(_.bind(this.executeConfiguredAction, this)).open();
+                this.getConfirmDialog(this.executeConfiguredAction.bind(this)).open();
             } else {
                 this.executeConfiguredAction();
             }
@@ -137,17 +135,16 @@ define(function(require) {
          * @return {Function}
          */
         getConfirmDialog: function(callback) {
-            if (!this.confirmModal) {
-                this.confirmModal = (new this.confirmModalConstructor({
-                    title: __(this.messages.confirm_title),
-                    content: this.confirmMessage,
-                    okText: __(this.messages.confirm_ok),
-                    cancelText: __(this.messages.confirm_cancel)
-                }));
-                this.listenTo(this.confirmModal, 'ok', callback);
-            }
+            const confirmModal = new this.confirmModalConstructor({
+                title: __(this.messages.confirm_title),
+                content: this.confirmMessage,
+                okText: __(this.messages.confirm_ok),
+                cancelText: __(this.messages.confirm_cancel)
+            });
 
-            return this.confirmModal;
+            confirmModal.on('ok', callback);
+
+            return confirmModal;
         },
 
         executeConfiguredAction: function() {

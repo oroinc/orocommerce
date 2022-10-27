@@ -87,7 +87,7 @@ services:
             - '@oro_paypal.paypal.payflow.nvp_encoder'
 
     oro_paypal.paypal.payflow.client.http:
-        class: 'Guzzle\Http\Client'
+        class: 'GuzzleHttp\Client'
         public: false
         lazy: true
 

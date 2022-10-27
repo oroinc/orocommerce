@@ -68,7 +68,7 @@ The following is the list of the modified files:
             <li>A new template for FilterManager that is rendered depending on a renderMode parameter.</li>
          </ol>
     </dd>
-    <dt>CustomThemeBundle/Resources/views/layouts/custom/config/requirejs.yml</dt>
+    <dt>CustomThemeBundle/Resources/views/layouts/custom/config/jsmodules.yml</dt>
     <dd>
          <ol>
             <li>New *.js files are included and orofilter/js/plugins/filters-toggle-plugin is overriden from a default theme.</li>
@@ -77,11 +77,11 @@ The following is the list of the modified files:
     <dt>CustomThemeBundle/../layouts/custom/oro_product_frontend_product_index/product_index.yml</dt>
     <dd>
          <ol>
-            <li>A new data-layout="separate" attribute is set in the product_require_js_config block to support `collapse-widget` initializing.
+            <li>A new data-layout="separate" attribute is set in the product_js_modules_config block to support `collapse` initializing.
             </li>
          </ol>
     </dd>
-    <dt>CustomThemeBundle/../layouts/custom/oro_product_frontend_product_index/require_js_config.html.twig</dt>
+    <dt>CustomThemeBundle/../layouts/custom/oro_product_frontend_product_index/js_modules_config.html.twig</dt>
     <dd>
          <ol>
             <li>A frontend-collection-filters-manager is used from a custom theme.</li>

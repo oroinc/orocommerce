@@ -12,36 +12,21 @@ use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 
 class UnitResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UnitResolver
-     */
-    protected $resolver;
+    /** @var Calculator|\PHPUnit\Framework\MockObject\MockObject */
+    private $calculator;
 
-    /**
-     * @var Calculator| \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $calculator;
+    /** @var UnitResolver */
+    private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->calculator = $this->getMockBuilder('Oro\Bundle\TaxBundle\Calculator\Calculator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->calculator = $this->createMock(Calculator::class);
 
         $this->resolver = new UnitResolver($this->calculator);
     }
 
-    protected function tearDown()
-    {
-        unset($this->calculator, $this->resolver);
-    }
-
     /**
      * @dataProvider unitPriceDataProvider
-     * @param array      $taxRules
-     * @param BigDecimal $amount
-     * @param            $taxRate
-     * @param            $expected
      */
     public function testResolveUnitPrice(array $taxRules, BigDecimal $amount, $taxRate, ResultElement $expected)
     {
@@ -72,10 +57,7 @@ class UnitResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($resultElement, $result->getUnit());
     }
 
-    /**
-     * @return array
-     */
-    public function unitPriceDataProvider()
+    public function unitPriceDataProvider(): array
     {
         return [
             [
@@ -90,19 +72,15 @@ class UnitResolverTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $taxCode
-     * @param string $taxRate
-     * @return TaxRule
-     */
-    protected function getTaxRule($taxCode, $taxRate)
+    private function getTaxRule(string $taxCode, string $taxRate): TaxRule
     {
-        $taxRule = new TaxRule();
         $tax = new Tax();
-        $tax
-            ->setRate($taxRate)
-            ->setCode($taxCode);
+        $tax->setRate($taxRate);
+        $tax->setCode($taxCode);
+
+        $taxRule = new TaxRule();
         $taxRule->setTax($tax);
+
         return $taxRule;
     }
 }

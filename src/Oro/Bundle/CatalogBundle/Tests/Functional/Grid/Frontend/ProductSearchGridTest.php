@@ -7,7 +7,6 @@ use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
-use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,12 +15,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ProductSearchGridTest extends FrontendWebTestCase
 {
-    /**
-     * @var Client
-     */
+    private const PRODUCT_GRID_NAME = 'frontend-product-search-grid';
+
+    /** @var Client */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -39,40 +38,35 @@ class ProductSearchGridTest extends FrontendWebTestCase
     public function testSorters()
     {
         $products = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [],
             ['[sku]' => AbstractSorterExtension::DIRECTION_ASC]
         );
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_ASC);
 
         $products = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [],
             ['[sku]' => AbstractSorterExtension::DIRECTION_DESC,]
         );
         $this->checkSorting($products, 'sku', AbstractSorterExtension::DIRECTION_DESC);
 
         $products = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [],
             ['[names]' => AbstractSorterExtension::DIRECTION_ASC,]
         );
         $this->checkSorting($products, 'names', AbstractSorterExtension::DIRECTION_ASC);
 
         $products = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [],
             ['[names]' => AbstractSorterExtension::DIRECTION_DESC,]
         );
         $this->checkSorting($products, 'names', AbstractSorterExtension::DIRECTION_DESC);
     }
 
-    /**
-     * @param array  $data
-     * @param string $column
-     * @param string $orderDirection
-     */
-    protected function checkSorting(array $data, $column, $orderDirection)
+    private function checkSorting(array $data, string $column, string $orderDirection)
     {
         $this->assertNotEmpty($data);
 
@@ -92,15 +86,13 @@ class ProductSearchGridTest extends FrontendWebTestCase
 
     public function testFilters()
     {
-        $data = $this->getDatagridData(
-            ProductController::GRID_NAME
-        );
+        $data = $this->getDatagridData(self::PRODUCT_GRID_NAME);
 
         $indexes = array_keys($data);
         $lastRow = $data[end($indexes)];
 
         $filteredData = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 '[sku][value]' => $lastRow['sku'],
                 '[sku][type]' => '1',
@@ -130,7 +122,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
     public function testGridFiltersWithForceLikeOption($filter, $field, $searchString, $expectedFieldValue)
     {
         $products = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 sprintf('[%s][value]', $filter) => $searchString,
                 sprintf('[%s][type]', $filter) => 1
@@ -161,13 +153,13 @@ class ProductSearchGridTest extends FrontendWebTestCase
             'sku' => [
                 'filter' => 'sku',
                 'field' => 'sku',
-                'searchString' => substr(LoadProductData::PRODUCT_1, 2, 5),
+                'searchString' => substr(LoadProductData::PRODUCT_1, 0, 5),
                 'expectedFieldValue' => LoadProductData::PRODUCT_1
             ],
             'names filter' => [
                 'filter' => 'names',
                 'field' => 'name',
-                'searchString' => substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 7, 12),
+                'searchString' => substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 0, 12),
                 'expectedFieldValue' => LoadProductData::PRODUCT_1_DEFAULT_NAME
             ]
         ];
@@ -183,7 +175,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
     public function testDoesNotContainFilterWithForceLikeOption($filter, $searchString, $expectedFieldValues)
     {
         $products = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 sprintf('[%s][value]', $filter) => $searchString,
                 sprintf('[%s][type]', $filter) => 2
@@ -201,15 +193,12 @@ class ProductSearchGridTest extends FrontendWebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function dataProviderForDoesNotContainFilter()
+    public function dataProviderForDoesNotContainFilter(): array
     {
         return [
             'sku not like' => [
                 'sku',
-                substr(LoadProductData::PRODUCT_8, 5),
+                LoadProductData::PRODUCT_8,
                 [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -220,10 +209,13 @@ class ProductSearchGridTest extends FrontendWebTestCase
                 ],
             ],
             'sku not like inside' => [
-                'sku', substr(LoadProductData::PRODUCT_8, 3, 4), [],
+                'sku', substr(LoadProductData::PRODUCT_8, 0, 4), [
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_9,
+                ],
             ],
             'names not like inside' => [
-                'names', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 6, 12), [
+                'names', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 0, 12), [
                     LoadProductData::PRODUCT_2_DEFAULT_NAME,
                     LoadProductData::PRODUCT_3_DEFAULT_NAME,
                     LoadProductData::PRODUCT_6_DEFAULT_NAME,
@@ -237,16 +229,14 @@ class ProductSearchGridTest extends FrontendWebTestCase
 
     public function testAllTextFilter()
     {
-        $data = $this->getDatagridData(
-            ProductController::GRID_NAME
-        );
+        $data = $this->getDatagridData(self::PRODUCT_GRID_NAME);
 
         $indexes = array_keys($data);
         $lastRow = $data[end($indexes)];
         $allTextValue = substr($lastRow['shortDescription'], 0, 12);
 
         $filteredData = $this->getDatagridData(
-            ProductController::GRID_NAME,
+            self::PRODUCT_GRID_NAME,
             [
                 '[all_text][value]' => $allTextValue,
                 '[all_text][type]' => '1'
@@ -262,19 +252,19 @@ class ProductSearchGridTest extends FrontendWebTestCase
 
     public function testPagination()
     {
-        $first2Rows = $this->getDatagridData(ProductController::GRID_NAME, [], [], [
+        $first2Rows = $this->getDatagridData(self::PRODUCT_GRID_NAME, [], [], [
             '[_page]'     => 1,
             '[_per_page]' => 2,
         ]);
         $first2Skus = array_column($first2Rows, 'sku');
 
-        $second2Rows = $this->getDatagridData(ProductController::GRID_NAME, [], [], [
+        $second2Rows = $this->getDatagridData(self::PRODUCT_GRID_NAME, [], [], [
             '[_page]'     => 2,
             '[_per_page]' => 2,
         ]);
         $second2Skus = array_column($second2Rows, 'sku');
 
-        $first4Rows = $this->getDatagridData(ProductController::GRID_NAME, [], [], [
+        $first4Rows = $this->getDatagridData(self::PRODUCT_GRID_NAME, [], [], [
             '[_page]'     => 1,
             '[_per_page]' => 4,
         ]);
@@ -283,15 +273,12 @@ class ProductSearchGridTest extends FrontendWebTestCase
         $this->assertEquals($first4Skus, array_merge($first2Skus, $second2Skus));
     }
 
-    /**
-     * @param string $gridName
-     * @param array  $filters
-     * @param array  $sorters
-     * @param array  $pager
-     * @return array
-     */
-    protected function getDatagridData($gridName, array $filters = [], array $sorters = [], array $pager = [])
-    {
+    private function getDatagridData(
+        string $gridName,
+        array $filters = [],
+        array $sorters = [],
+        array $pager = []
+    ): array {
         $gridParameters = ['gridName' => $gridName];
 
         $result = [];
@@ -308,15 +295,12 @@ class ProductSearchGridTest extends FrontendWebTestCase
         $response = $this->client->requestFrontendGrid($gridParameters, $result);
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        return json_decode($response->getContent(), true)['data'];
+        $responseContent = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        return $responseContent['data'];
     }
 
-    /**
-     * @param array $rows
-     * @param string $sku
-     * @return array|null
-     */
-    protected function getRowBySku(array $rows, $sku)
+    private function getRowBySku(array $rows, string $sku): ?array
     {
         foreach ($rows as $row) {
             if ($row['sku'] === $sku) {

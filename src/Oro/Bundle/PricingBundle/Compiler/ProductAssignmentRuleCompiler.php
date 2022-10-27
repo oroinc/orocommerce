@@ -7,12 +7,16 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Compile product assignment rule to Query builder with all applied restrictions.
+ */
 class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 {
     /**
      * @var array
      */
     protected $fieldsOrder = [
+        'id',
         'product',
         'priceList',
         'manual'
@@ -25,6 +29,12 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      */
     public function compile(PriceList $priceList, array $products = [])
     {
+        if (!$priceList->getId()) {
+            throw new \InvalidArgumentException(
+                sprintf('Cannot compile product assignment rule: %s was expected to have id', PriceList::class)
+            );
+        }
+
         if (!$priceList->getProductAssignmentRule()) {
             return null;
         }
@@ -32,18 +42,25 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         $cacheKey = 'ar_' . $priceList->getId();
         $qb = $this->cache->fetch($cacheKey);
         if (!$qb) {
-            $qb = $this->createQueryBuilder($priceList);
-            $aliases = $qb->getRootAliases();
-            $rootAlias = reset($aliases);
-
-            $this->modifySelectPart($qb, $priceList, $rootAlias);
-            $this->applyRuleConditions($qb, $priceList);
-            $this->restrictByManualPrices($qb, $priceList, $rootAlias);
-            $qb->addGroupBy($rootAlias . '.id');
+            $qb = $this->compileQueryBuilder($priceList);
 
             $this->cache->save($cacheKey, $qb);
         }
         $this->restrictByGivenProduct($qb, $products);
+
+        return $qb;
+    }
+
+    public function compileQueryBuilder(PriceList $priceList): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder($priceList);
+        $aliases = $qb->getRootAliases();
+        $rootAlias = reset($aliases);
+
+        $this->modifySelectPart($qb, $priceList, $rootAlias);
+        $this->applyRuleConditions($qb, $priceList);
+        $this->restrictByManualPrices($qb, $priceList, $rootAlias);
+        $qb->addGroupBy($rootAlias . '.id');
 
         return $qb;
     }
@@ -79,17 +96,14 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         $this->addSelectInOrder(
             $qb,
             [
+                'id' => 'UUID()',
                 'product' => $rootAlias . '.id',
-                'priceList' => (string)$qb->expr()->literal($priceList->getId()),
+                'priceList' => (string)$qb->expr()->literal((int)$priceList->getId()),
                 'manual' => 'CAST(0 as boolean)'
             ]
         );
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param PriceList $priceList
-     */
     protected function applyRuleConditions(QueryBuilder $qb, PriceList $priceList)
     {
         $params = [];

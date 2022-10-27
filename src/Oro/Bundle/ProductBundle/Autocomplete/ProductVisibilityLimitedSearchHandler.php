@@ -4,73 +4,61 @@ namespace Oro\Bundle\ProductBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * The search handler with additional check for product visibility.
+ */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
-    /** @var RequestStack */
-    protected $requestStack;
+    /** @var bool */
+    private $allowConfigurableProducts = false;
 
-    /** @var ProductRepository */
-    protected $entityRepository;
+    /** @var RequestStack */
+    private $requestStack;
 
     /** @var ProductManager */
-    protected $productManager;
+    private $productManager;
 
     /** @var FrontendHelper */
-    protected $frontendHelper;
+    private $frontendHelper;
 
-    /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */
-    protected $searchRepository;
+    /** @var ProductSearchRepository */
+    private $searchRepository;
+
+    /** @var LocalizationHelper */
+    private $localizationHelper;
 
     /**
-     * @param string         $entityName
-     * @param array          $properties
-     * @param RequestStack   $requestStack
-     * @param ProductManager $productManager
+     * @param string                  $entityName
+     * @param RequestStack            $requestStack
+     * @param ProductManager          $productManager
+     * @param ProductSearchRepository $searchRepository
+     * @param LocalizationHelper      $localizationHelper
+     * @param FrontendHelper          $frontendHelper
      */
     public function __construct(
         $entityName,
-        array $properties,
         RequestStack $requestStack,
-        ProductManager $productManager
+        ProductManager $productManager,
+        ProductSearchRepository $searchRepository,
+        LocalizationHelper $localizationHelper,
+        FrontendHelper $frontendHelper
     ) {
-        $this->requestStack   = $requestStack;
+        parent::__construct($entityName, ['sku', 'defaultName.string']);
+        $this->requestStack = $requestStack;
         $this->productManager = $productManager;
-        parent::__construct($entityName, $properties);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function checkAllDependenciesInjected()
-    {
-        if (!$this->entityRepository || !$this->idFieldName) {
-            throw new \RuntimeException('Search handler is not fully configured');
-        }
-    }
-
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
-    {
-        $this->frontendHelper = $frontendHelper;
-    }
-
-    /**
-     * @param \Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository
-     */
-    public function setSearchRepository(ProductSearchRepository $searchRepository)
-    {
         $this->searchRepository = $searchRepository;
+        $this->localizationHelper = $localizationHelper;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -84,33 +72,44 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
         }
 
-        foreach ($this->getProperties() as $destinationKey => $property) {
-            if ($this->isItem($item)) {
-                $result[$property] = $this->getSelectedData($item, $destinationKey);
-                continue;
+        if (is_object($item) && method_exists($item, 'getSelectedData')) {
+            $selectedData = $item->getSelectedData();
+            if (isset($selectedData['sku'], $selectedData['name'])) {
+                $result += [
+                    'sku'                => $selectedData['sku'],
+                    'defaultName.string' => $selectedData['name']
+                ];
             }
-            $result[$property] = $this->getPropertyValue($property, $item);
+        } elseif ($item instanceof Product) {
+            $result += [
+                'sku'                => $item->getSku(),
+                'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames())
+            ];
+        } else {
+            throw new InvalidArgumentException('Given item could not be converted');
         }
 
         return $result;
     }
 
     /**
-     * @return array
+     * Enables configurable products selection.
+     * In most forms configurable products require additional option selection which is not implemented yet, thus they
+     * are disabled by default, but can be enabled in forms where no additional functionality for selection is needed.
      */
-    public function getProperties()
+    public function enableConfigurableProducts(): void
     {
-        if (!isset($this->properties['orm'])) {
-            return $this->properties; // usual case
+        $this->allowConfigurableProducts = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function checkAllDependenciesInjected()
+    {
+        if (!$this->entityRepository || !$this->idFieldName) {
+            throw new \RuntimeException('Search handler is not fully configured');
         }
-
-        $request = $this->requestStack->getCurrentRequest();
-
-        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
-            return $this->properties['orm'];
-        }
-
-        return $this->properties['search'];
     }
 
     /**
@@ -123,7 +122,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $params = [];
         }
 
-        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
+        if (!$this->frontendHelper->isFrontendUrl($request->getPathInfo())) {
             return $this->searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params);
         }
 
@@ -135,18 +134,18 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param $firstResult
      * @param $maxResults
      * @param $params
+     *
      * @return array
      */
-    protected function searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params)
+    private function searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params)
     {
-        $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
+        $queryBuilder = $this->getProductRepository()->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
 
-        // Configurable products require additional option selection is not implemented yet
-        // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
-        $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
-            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+        if (!$this->allowConfigurableProducts) {
+            $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
+                ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+        }
 
         $query = $this->aclHelper->apply($queryBuilder);
 
@@ -157,57 +156,34 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param $search
      * @param $firstResult
      * @param $maxResults
+     *
      * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
      */
-    protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
+    private function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
-        $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
+        $request = $this->requestStack->getCurrentRequest();
+        $skuList = $request->request->get('sku');
+        if ($skuList) {
+            $searchQuery = $this->searchRepository->getFilterSkuQuery($skuList);
+        } else {
+            $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
+        }
 
-        // Configurable products require additional option selection is not implemented yet
-        // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
-        $searchQuery->addWhere(
-            Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
-        );
+        if (!$this->allowConfigurableProducts) {
+            $searchQuery->addWhere(
+                Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
+            );
+        }
 
+        // Add marker `autocomplete_record_id` to be able to determine query context in listeners
+        $searchQuery->addSelect('integer.system_entity_id as autocomplete_record_id');
         $result = $searchQuery->getResult();
 
         return $result->getElements();
     }
 
-    /**
-     * @param Item   $item
-     * @param string $property
-     * @return null|string
-     */
-    protected function getSelectedData($item, $property)
+    private function getProductRepository(): ProductRepository
     {
-        $data = $item->getSelectedData();
-
-        if (empty($data)) {
-            return null;
-        }
-
-        foreach ($data as $key => $value) {
-            if ($key === $property) {
-                return (string)$value;
-            }
-
-            // support localized properties
-            if (strpos($key, $property) === 0) {
-                return (string)$value;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $object
-     * @return bool
-     */
-    protected function isItem($object)
-    {
-        return is_object($object) && method_exists($object, 'getSelectedData');
+        return $this->entityRepository;
     }
 }

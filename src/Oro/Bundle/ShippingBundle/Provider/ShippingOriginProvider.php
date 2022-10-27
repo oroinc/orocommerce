@@ -14,10 +14,6 @@ class ShippingOriginProvider
     /** @var ShippingOriginModelFactory */
     protected $shippingOriginModelFactory;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param ShippingOriginModelFactory $shippingOriginModelFactory
-     */
     public function __construct(ConfigManager $configManager, ShippingOriginModelFactory $shippingOriginModelFactory)
     {
         $this->configManager = $configManager;

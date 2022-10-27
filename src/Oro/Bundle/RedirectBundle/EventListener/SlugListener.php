@@ -6,56 +6,42 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+/**
+ * Sends messages to the message queue to synchronize redirect scopes for all changed slugs.
+ */
 class SlugListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private MessageProducerInterface $messageProducer;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    protected $messageProducer;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param MessageProducerInterface $messageProducer
-     */
-    public function __construct(ManagerRegistry $registry, MessageProducerInterface $messageProducer)
+    public function __construct(MessageProducerInterface $messageProducer)
     {
-        $this->registry = $registry;
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
-    public function onFlush(OnFlushEventArgs $event)
+    public function onFlush(OnFlushEventArgs $event): void
     {
         if (!$this->enabled) {
             return;
         }
 
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-        foreach ($this->getUpdatedSlugs($unitOfWork) as $changedSlug) {
+        $changedSlugs = $this->getUpdatedSlugs($event->getEntityManager()->getUnitOfWork());
+        foreach ($changedSlugs as $changedSlug) {
             $this->synchronizeRedirectScopes($changedSlug);
         }
     }
 
     /**
      * @param UnitOfWork $unitOfWork
-     * @return array|Slug[]
+     *
+     * @return Slug[]
      */
-    protected function getUpdatedSlugs(UnitOfWork $unitOfWork)
+    private function getUpdatedSlugs(UnitOfWork $unitOfWork): array
     {
         $updatedSlugs = [];
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
@@ -67,14 +53,8 @@ class SlugListener implements OptionalListenerInterface
         return $updatedSlugs;
     }
 
-    /**
-     * @param Slug $slug
-     */
-    protected function synchronizeRedirectScopes(Slug $slug)
+    private function synchronizeRedirectScopes(Slug $slug): void
     {
-        $this->messageProducer->send(
-            Topics::SYNC_SLUG_REDIRECTS,
-            new Message(['slugId' => $slug->getId()])
-        );
+        $this->messageProducer->send(SyncSlugRedirectsTopic::getName(), ['slugId' => $slug->getId()]);
     }
 }

@@ -2,83 +2,44 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\ClearableCache;
-use Doctrine\Common\Cache\FileCache;
-use Doctrine\Common\Cache\FlushableCache;
-use Doctrine\Common\Cache\MultiGetCache;
-use Doctrine\Common\Cache\MultiPutCache;
-use Symfony\Component\Filesystem\Filesystem;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * URL key-value cache is designed to store URL caches in key-value based storage like redis
- * Avoid it's usage with filesystem caches as it may contain a lot of cached keys each of whick will be stored
+ * Avoid its usage with filesystem caches as it may contain a lot of cached keys each of which will be stored
  * in separate file. This may lead to exceeding inode FS limit
  */
-class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCache
+class UrlKeyValueCache implements UrlCacheInterface, FlushableCacheInterface
 {
-    /**
-     * @var Cache
-     */
-    private $persistentCache;
+    private CacheItemPoolInterface $persistentCache;
+    private CacheItemPoolInterface $localCache;
+    private array $changedKeys = [];
 
-    /**
-     * @var Cache
-     */
-    private $localCache;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var array
-     */
-    private $changedKeys = [];
-
-    /**
-     * @param Cache $persistentCache
-     * @param Cache $localCache
-     * @param Filesystem $filesystem
-     */
-    public function __construct(Cache $persistentCache, Cache $localCache, Filesystem $filesystem)
+    public function __construct(CacheItemPoolInterface $persistentCache, CacheItemPoolInterface $localCache)
     {
         $this->persistentCache = $persistentCache;
         $this->localCache = $localCache;
-        $this->filesystem = $filesystem;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has($routeName, $routeParameters, $localizationId = null): bool
     {
         $cacheKey = $this->getCacheKey(self::URL_KEY, $routeName, $routeParameters, $localizationId);
 
-        return $this->localCache->contains($cacheKey) || $this->persistentCache->contains($cacheKey);
+        return $this->localCache->hasItem($cacheKey) || $this->persistentCache->hasItem($cacheKey);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUrl($routeName, $routeParameters, $localizationId = null)
+    public function getUrl($routeName, $routeParameters, $localizationId = null) : false|string
     {
         return $this->getFromCacheByType(self::URL_KEY, $routeName, $routeParameters, $localizationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSlug($routeName, $routeParameters, $localizationId = null)
+    public function getSlug($routeName, $routeParameters, $localizationId = null) : false|string
     {
         return $this->getFromCacheByType(self::SLUG_KEY, $routeName, $routeParameters, $localizationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
+    public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null) : void
     {
         $this->saveToCacheByType($url, self::URL_KEY, $routeName, $routeParameters, $localizationId);
         if ($slug) {
@@ -86,134 +47,110 @@ class UrlKeyValueCache implements UrlCacheInterface, ClearableCache, FlushableCa
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeUrl($routeName, $routeParameters, $localizationId = null)
+    public function removeUrl($routeName, $routeParameters, $localizationId = null) : void
     {
         // Clear URL cache
         $urlCacheKey = $this->getCacheKey(self::URL_KEY, $routeName, $routeParameters, $localizationId);
-        $this->localCache->delete($urlCacheKey);
-        $this->persistentCache->delete($urlCacheKey);
+        $this->localCache->deleteItem($urlCacheKey);
+        $this->persistentCache->deleteItem($urlCacheKey);
 
         // Clear Slug cache
         $slugCacheKey = $this->getCacheKey(self::SLUG_KEY, $routeName, $routeParameters, $localizationId);
-        $this->localCache->delete($slugCacheKey);
-        $this->persistentCache->delete($slugCacheKey);
+        $this->localCache->deleteItem($slugCacheKey);
+        $this->persistentCache->deleteItem($slugCacheKey);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteAll()
+    public function deleteAll() : void
     {
         $this->clearLocalCache();
         $this->clearPersistentCache();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function flushAll()
+    public function flushAll() : void
     {
-        $changedData = $this->getChangedData();
-        $this->saveMultiToPersistentCache($changedData);
+        $this->saveMultiToPersistentCache($this->getChangedData());
         $this->clearLocalCache();
     }
 
-    /**
-     * @return array
-     */
-    protected function getChangedData()
+    protected function getChangedData() : array
     {
-        if ($this->localCache instanceof MultiGetCache) {
-            return $this->localCache->fetchMultiple(array_keys($this->changedKeys));
-        }
-
         $changes = [];
-        foreach (array_keys($this->changedKeys) as $changedKey) {
-            $changes[$changedKey] = $this->localCache->fetch($changedKey);
+        foreach ($this->localCache->getItems(array_keys($this->changedKeys)) as $key => $item) {
+            $changes[$key] = $item->get();
         }
 
         return $changes;
     }
 
-    /**
-     * @param array $values
-     */
-    protected function saveMultiToPersistentCache(array $values)
+    protected function saveMultiToPersistentCache(array $values) : void
     {
-        if ($this->persistentCache instanceof MultiPutCache) {
-            $this->persistentCache->saveMultiple($values);
-        } else {
-            foreach ($values as $key => $value) {
-                $this->persistentCache->save($key, $value);
-            }
+        if (empty($values)) {
+            return;
         }
+        foreach ($values as $cacheKey => $cacheValue) {
+            $cacheItem = $this->persistentCache->getItem($cacheKey);
+            $cacheItem->set($cacheValue);
+            $this->persistentCache->saveDeferred($cacheItem);
+        }
+        $this->persistentCache->commit();
     }
 
-    /**
-     * @param string $type
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|int $localizationId
-     * @return string|null
-     */
-    protected function getFromCacheByType($type, $routeName, $routeParameters, $localizationId = null)
-    {
+    protected function getFromCacheByType(
+        string $type,
+        string $routeName,
+        array $routeParameters,
+        null|int $localizationId = null
+    ) : string|false {
         $cacheKey = $this->getCacheKey($type, $routeName, $routeParameters, $localizationId);
-        if (!$this->localCache->contains($cacheKey)) {
-            $url = $this->persistentCache->fetch($cacheKey);
-
-            if ($url) {
-                $this->localCache->save($cacheKey, $url);
-            }
+        $urlItem = $this->localCache->getItem($cacheKey);
+        if ($urlItem->isHit()) {
+            return $urlItem->get() ?? false;
         }
 
-        return $this->localCache->fetch($cacheKey);
+        $cacheItem = $this->persistentCache->getItem($cacheKey);
+        if ($cacheItem->isHit()) {
+            $urlItem->set($cacheItem->get());
+            $this->localCache->save($urlItem);
+            return $cacheItem->get() ?? false;
+        }
+
+        return false;
     }
 
-    /**
-     * @param string $value
-     * @param string $type
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|int $localizationId
-     */
-    protected function saveToCacheByType($value, $type, $routeName, $routeParameters, $localizationId = null)
-    {
+    protected function saveToCacheByType(
+        string|null $value,
+        string $type,
+        string $routeName,
+        array $routeParameters,
+        null|int $localizationId = null
+    ) : void {
         $cacheKey = $this->getCacheKey($type, $routeName, $routeParameters, $localizationId);
         $this->changedKeys[$cacheKey] = true;
 
-        $this->localCache->save($cacheKey, $value);
+        $urlItem = $this->localCache->getItem($cacheKey);
+        $urlItem->set($value);
+        $this->localCache->save($urlItem);
     }
 
-    /**
-     * @param string $type
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|int $localizationId
-     * @return string
-     */
-    protected function getCacheKey($type, $routeName, $routeParameters, $localizationId = null)
-    {
-        return implode('_', [$routeName, base64_encode(serialize($routeParameters)), (int)$localizationId, $type]);
+    protected function getCacheKey(
+        string $type,
+        string $routeName,
+        array $routeParameters,
+        null|int $localizationId = null
+    ) : string {
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            implode('_', [$routeName, base64_encode(serialize($routeParameters)), (int)$localizationId, $type])
+        );
     }
 
-    protected function clearLocalCache()
+    protected function clearLocalCache() : void
     {
-        if ($this->localCache instanceof ClearableCache) {
-            $this->localCache->deleteAll();
-        }
+        $this->localCache->clear();
+        $this->changedKeys = [];
     }
 
-    protected function clearPersistentCache()
+    protected function clearPersistentCache() : void
     {
-        if ($this->persistentCache instanceof FileCache) {
-            $cache = $this->persistentCache;
-            $this->filesystem->remove($cache->getDirectory() . DIRECTORY_SEPARATOR . $cache->getNamespace());
-        } elseif ($this->persistentCache instanceof ClearableCache) {
-            $this->persistentCache->deleteAll();
-        }
+        $this->persistentCache->clear();
     }
 }

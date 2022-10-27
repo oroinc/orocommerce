@@ -1,4 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'OroTaxBundle:layouts:blank/page/templates.html.twig'

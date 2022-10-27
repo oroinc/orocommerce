@@ -30,6 +30,7 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
 
         $form->submit($data);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $formData = $form->getData();
 

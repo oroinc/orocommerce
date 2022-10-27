@@ -33,12 +33,6 @@ class TimeInTransitProvider implements TimeInTransitProviderInterface
      */
     private $logger;
 
-    /**
-     * @param TimeInTransitRequestFactoryInterface $requestFactory
-     * @param UpsClientFactoryInterface            $clientFactory
-     * @param TimeInTransitResultFactoryInterface  $resultFactory
-     * @param LoggerInterface                      $logger
-     */
     public function __construct(
         TimeInTransitRequestFactoryInterface $requestFactory,
         UpsClientFactoryInterface $clientFactory,

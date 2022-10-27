@@ -1,7 +1,19 @@
 /* @theme: default; */
 
-$embedded-products-slider-arrow-top: 18%;
+$embedded-products-btn-arrow-width: 36px !default;
+$embedded-products-item-count-desktop: 4 !default;
+$embedded-products-slider-arrow-top: 18% !default;
 
 // desktop
 $embedded-products-item-image-height-desktop: 249px !default;
-$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop / 2) - ($embedded-list-slider-btn-arrow-height / 2) !default;
+$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop * .5) -
+    ($embedded-list-slider-btn-arrow-height * .5) !default;
+
+// tablet-small
+$embedded-products-item-width-count-tablet-small: 3 !default;
+
+// mobile-big
+$embedded-products-item-count-mobile-big: 2 !default;
+
+// mobile-landscape
+$embedded-products-item-count-mobile-landscape: 1 !default;

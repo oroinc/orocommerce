@@ -20,10 +20,6 @@ class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
      */
     private $identifierGenerator;
 
-    /**
-     * @param LocalizationHelper                      $localizationHelper
-     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
-     */
     public function __construct(
         LocalizationHelper $localizationHelper,
         IntegrationIdentifierGeneratorInterface $identifierGenerator

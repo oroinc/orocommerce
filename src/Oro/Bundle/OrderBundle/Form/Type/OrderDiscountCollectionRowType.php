@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for order discount row.
+ */
 class OrderDiscountCollectionRowType extends AbstractType
 {
     const NAME = 'oro_order_discount_collection_row';
@@ -40,8 +44,8 @@ class OrderDiscountCollectionRowType extends AbstractType
         $builder
             ->add('type', HiddenType::class)
             ->add('description', HiddenType::class)
-            ->add('percent', HiddenType::class)
-            ->add('amount', HiddenType::class);
+            ->add('percent', OroHiddenNumberType::class)
+            ->add('amount', OroHiddenNumberType::class);
     }
 
     /**

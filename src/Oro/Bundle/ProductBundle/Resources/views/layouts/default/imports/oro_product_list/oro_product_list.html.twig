@@ -1,0 +1,12 @@
+{% block __oro_product_list__product_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'product-item',
+        '~class': ' product-item',
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block __oro_product_list__product_sku_widget %}
+    {{- 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
+{% endblock %}

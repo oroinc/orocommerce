@@ -1,0 +1,37 @@
+Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria:
+  attributes:
+    customer:
+      groups: ['product_price_scope_criteria']
+    website:
+      groups: ['product_price_scope_criteria']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  attributes:
+    id:
+      groups: ['product_price_scope_criteria']
+
+Oro\Bundle\WebsiteBundle\Entity\Website:
+  attributes:
+    id:
+      groups: ['product_price_scope_criteria']
+
+Oro\Bundle\PricingBundle\Model\ProductPriceCriteria:
+  attributes:
+    product:
+      groups: ['product_price_criteria']
+    productUnit:
+      groups: ['product_price_criteria']
+    quantity:
+      groups: ['product_price_criteria']
+    currency:
+      groups: ['product_price_criteria']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['product_price_criteria']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+  attributes:
+    code:
+      groups: ['product_price_criteria']

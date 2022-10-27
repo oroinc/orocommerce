@@ -15,6 +15,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Credit card form
+ */
 class CreditCardType extends AbstractType
 {
     const NAME = 'oro_paypal_credit_card';
@@ -44,14 +47,14 @@ class CreditCardType extends AbstractType
                     ],
                     'data-credit-card-type-validator' => 'credit-card-type',
                     'data-card-number' => true,
-                    'autocomplete' => 'off',
+                    'autocomplete' => 'cc-number',
                     'data-gateway' => true,
                     'placeholder' => false,
                 ],
                 'constraints' => [
                     new Integer(),
                     new NotBlank(),
-                    new Length(['min' => '12', 'max' => '19']),
+                    new Length(['min' => '12', 'max' => '19', 'allowEmptyString' => false]),
                 ],
             ]
         )->add(
@@ -62,11 +65,12 @@ class CreditCardType extends AbstractType
                 'label' => 'oro.paypal.credit_card.expiration_date.label',
                 'mapped' => false,
                 'placeholder' => [
-                    'year' => 'Year',
-                    'month' => 'Month',
+                    'year' => 'oro.paypal.credit_card.expiration_date.year',
+                    'month' => 'oro.paypal.credit_card.expiration_date.month',
                 ],
                 'attr' => [
                     'data-expiration-date' => true,
+                    'data-validation-ignore-onblur' => true,
                 ],
             ]
         )->add(
@@ -91,7 +95,7 @@ class CreditCardType extends AbstractType
                     'constraints' => [
                         new Integer(['message' => 'oro.payment.number.error']),
                         new NotBlank(),
-                        new Length(['min' => 3, 'max' => 4]),
+                        new Length(['min' => 3, 'max' => 4, 'allowEmptyString' => false]),
                     ],
                     'attr' => [
                         'data-card-cvv' => true,
@@ -131,7 +135,6 @@ class CreditCardType extends AbstractType
             'requireCvvEntryEnabled' => true,
         ]);
     }
-
 
     /**
      * {@inheritdoc}

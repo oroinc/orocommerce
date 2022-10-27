@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Provider;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
@@ -10,7 +11,9 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 interface VisibilityRootScopesProviderInterface
 {
     /**
+     * @param Product|null $product
+     *
      * @return Scope[]
      */
-    public function getScopes();
+    public function getScopes(Product $product = null);
 }

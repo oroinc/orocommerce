@@ -1,0 +1,17 @@
+/* @theme: default; */
+
+.product-price-filter {
+    display: inline-block;
+    vertical-align: middle;
+
+    margin: $product-price-filter-offset;
+    padding: $product-price-filter-inner-offset;
+
+    .product-price-unit-filter-separator {
+        margin: $product-price-filter-separator-offset;
+    }
+
+    &__unit {
+        margin: $product-price-filter-unit-offset;
+    }
+}

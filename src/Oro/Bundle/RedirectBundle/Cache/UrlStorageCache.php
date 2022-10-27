@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\ClearableCache;
-use Doctrine\Common\Cache\FileCache;
-use Doctrine\Common\Cache\FlushableCache;
+use Oro\Bundle\CacheBundle\Provider\DirectoryAwareFileCacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -13,46 +11,27 @@ use Symfony\Component\Filesystem\Filesystem;
  * used inode count. $splitDeep should be adjusted based on number of cached keys, use 2 for numbers lower 1M and higher
  * values for exceeding counts
  */
-class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCache
+class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, FlushableCacheInterface
 {
-    const DEFAULT_SPLIT_DEEP = 2;
+    private const DEFAULT_SPLIT_DEEP = 2;
+
+    private CacheItemPoolInterface $persistentCache;
+    private CacheItemPoolInterface $localCache;
+    private Filesystem $filesystem;
+    private array $usedKeys = [];
+    private int $splitDeep;
 
     /**
-     * @var Cache
-     */
-    private $persistentCache;
-
-    /**
-     * @var Cache
-     */
-    private $localCache;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var array
-     */
-    private $usedKeys = [];
-
-    /**
-     * @var int
-     */
-    private $splitDeep;
-
-    /**
-     * @param Cache $persistentCache
-     * @param Cache $localCache
+     * @param CacheItemPoolInterface $persistentCache
+     * @param CacheItemPoolInterface $localCache
      * @param Filesystem $filesystem
      * @param int $splitDeep
      */
     public function __construct(
-        Cache $persistentCache,
-        Cache $localCache,
+        CacheItemPoolInterface $persistentCache,
+        CacheItemPoolInterface $localCache,
         Filesystem $filesystem,
-        $splitDeep = self::DEFAULT_SPLIT_DEEP
+        int $splitDeep = self::DEFAULT_SPLIT_DEEP
     ) {
         $this->persistentCache = $persistentCache;
         $this->localCache = $localCache;
@@ -67,7 +46,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
     {
         $key = $this->getCacheKey($routeName, $routeParameters);
 
-        return $this->localCache->contains($key) || $this->persistentCache->contains($key);
+        return $this->localCache->hasItem($key) || $this->persistentCache->hasItem($key);
     }
 
     /**
@@ -91,7 +70,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
     }
 
     /**
-     * {@inheritdoc}
+     * Set URL to local cache.To save changes to persistent cache call flushAll().
      */
     public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
     {
@@ -100,48 +79,58 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
     }
 
     /**
-     * {@inheritdoc}
+     * Remove URL from local and persistent caches. To save changes to persistent cache call flushAll().
      */
     public function removeUrl($routeName, $routeParameters, $localizationId = null)
     {
-        $storage = $this->getUrlDataStorage($routeName, $routeParameters);
-        $storage->removeUrl($routeParameters, $localizationId);
+        $this->getUrlDataStorageFromPersistentStorage($routeName, $routeParameters)
+            ?->removeUrl($routeParameters, $localizationId);
+
+        $this->getUrlDataStorageFromLocalStorage($routeName, $routeParameters)
+            ?->removeUrl($routeParameters, $localizationId);
     }
 
     /**
-     * {@inheritdoc}
+     * Move collected changes from local cache to persistent cache and save changes.
      */
-    public function flushAll()
+    public function flushAll() : void
     {
-        foreach (array_keys($this->usedKeys) as $key) {
-            if ($this->localCache->contains($key)) {
-                $localStorage = $this->localCache->fetch($key);
-                if ($this->persistentCache->contains($key)) {
-                    /** @var UrlDataStorage $urlDataStorage */
-                    $urlDataStorage = $this->persistentCache->fetch($key);
-                    $urlDataStorage->merge($localStorage);
-                }
-
-                $this->persistentCache->save($key, $localStorage);
+        foreach (array_keys($this->usedKeys) as $cacheKey) {
+            // Item isn't present in local cache. Nothing to move to persistent storage, continue.
+            $localCacheItem = $this->localCache->getItem($cacheKey);
+            if (!$localCacheItem->isHit()) {
+                continue;
             }
+
+            $localUrlStorage = $localCacheItem->get();
+            $persistentCacheItem = $this->persistentCache->getItem($cacheKey);
+            if ($persistentCacheItem->isHit()) {
+                // Cache key is present in persistent cache. If it is not instance of UrlDataStorage - create new.
+                $persistentUrlStorage = $persistentCacheItem->get();
+                if (!$persistentUrlStorage instanceof UrlDataStorage) {
+                    $persistentUrlStorage = new UrlDataStorage();
+                }
+                // Merge URLs data from local storage with URL data in persistent storage.
+                $persistentUrlStorage->merge($localUrlStorage);
+            } else {
+                // Cache key isn't present in persistent storage. Save whole local URLs data to persistent storage.
+                $persistentCacheItem->set($localUrlStorage);
+            }
+            // Commit changes to persistent cache.
+            $this->persistentCache->save($persistentCacheItem);
         }
         $this->usedKeys = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteAll()
+    public function deleteAll() : void
     {
-        if ($this->localCache instanceof ClearableCache) {
-            $this->localCache->deleteAll();
-        }
-
-        if ($this->persistentCache instanceof FileCache) {
-            $cache = $this->persistentCache;
-            $this->filesystem->remove($cache->getDirectory() . DIRECTORY_SEPARATOR . $cache->getNamespace());
-        } elseif ($this->persistentCache instanceof ClearableCache) {
-            $this->persistentCache->deleteAll();
+        $this->localCache->clear();
+        if ($this->persistentCache instanceof DirectoryAwareFileCacheInterface
+            && $cacheDir = $this->persistentCache->getDirectory()
+        ) {
+            $this->filesystem->remove($cacheDir);
+        } elseif ($this->persistentCache instanceof CacheItemPoolInterface) {
+            $this->persistentCache->clear();
         }
     }
 
@@ -165,22 +154,45 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCache, FlushableCac
      *
      * @param string $routeName
      * @param array $routeParameters
-     * @return UrlDataStorage|false
+     * @return UrlDataStorage
      */
-    protected function getUrlDataStorage($routeName, $routeParameters)
+    protected function getUrlDataStorage(string $routeName, array $routeParameters): UrlDataStorage
     {
-        $key = $this->getCacheKey($routeName, $routeParameters);
-        $this->usedKeys[$key] = true;
-        if (!$this->localCache->contains($key)) {
-            $storage = $this->persistentCache->fetch($key);
+        $cacheKey = $this->getCacheKey($routeName, $routeParameters);
+        $this->usedKeys[$cacheKey] = true;
 
+        $localCacheItem = $this->localCache->getItem($cacheKey);
+        if (!$localCacheItem->isHit()) {
+            $storage = $this->getUrlDataStorageFromPersistentStorage($routeName, $routeParameters);
             if (!$storage instanceof UrlDataStorage) {
                 $storage = new UrlDataStorage();
             }
-
-            $this->localCache->save($key, $storage);
+            $localCacheItem->set($storage);
+            $this->localCache->save($localCacheItem);
         }
 
-        return $this->localCache->fetch($key);
+        return $localCacheItem->get();
+    }
+
+    private function getUrlDataStorageFromLocalStorage(string $routeName, array $routeParameters): ?UrlDataStorage
+    {
+        $cacheKey = $this->getCacheKey($routeName, $routeParameters);
+        $persistentCacheItem = $this->localCache->getItem($cacheKey);
+        if ($persistentCacheItem->isHit()) {
+            return $persistentCacheItem->get();
+        }
+
+        return null;
+    }
+
+    private function getUrlDataStorageFromPersistentStorage(string $routeName, array $routeParameters): ?UrlDataStorage
+    {
+        $cacheKey = $this->getCacheKey($routeName, $routeParameters);
+        $persistentCacheItem = $this->persistentCache->getItem($cacheKey);
+        if ($persistentCacheItem->isHit()) {
+            return $persistentCacheItem->get();
+        }
+
+        return null;
     }
 }

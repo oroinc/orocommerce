@@ -2,30 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
+/**
+ * Handles price rule changes, schedule dependent price rule recalculation.
+ */
 class PriceRuleEntityListener
 {
     const FIELD_QUANTITY = 'quantity';
-    /**
-     * @var Cache
-     */
+
+    /** @var RuleCache */
     protected $cache;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @param Cache $cache
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     */
-    public function __construct(Cache $cache, PriceListTriggerHandler $priceListTriggerHandler)
+    public function __construct(RuleCache $cache, PriceListTriggerHandler $priceListTriggerHandler)
     {
         $this->cache = $cache;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
@@ -33,22 +29,17 @@ class PriceRuleEntityListener
 
     /**
      * Recalculate price rules on price rule change.
-     *
-     * @param PriceRule $priceRule
      */
     public function postPersist(PriceRule $priceRule)
     {
         $priceList = $priceRule->getPriceList();
         $priceList->setActual(false);
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
     /**
      * Recalculate price rules on price rule change.
-     *
-     * @param PriceRule $priceRule
-     * @param PreUpdateEventArgs $event
      */
     public function preUpdate(PriceRule $priceRule, PreUpdateEventArgs $event)
     {
@@ -60,32 +51,21 @@ class PriceRuleEntityListener
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(
-            Topics::RESOLVE_PRICE_RULES,
-            $priceList
-        );
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
     /**
      * Recalculate price rules on price rule remove.
-     *
-     * @param PriceRule $priceRule
      */
     public function preRemove(PriceRule $priceRule)
     {
         $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
         $priceList = $priceRule->getPriceList();
-        
-        $this->priceListTriggerHandler->addTriggerForPriceList(
-            Topics::RESOLVE_PRICE_RULES,
-            $priceList
-        );
+
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList);
     }
 
-    /**
-     * @param PriceRule $priceRule
-     */
     protected function clearCache(PriceRule $priceRule)
     {
         $this->cache->delete('pr_' . $priceRule->getId());

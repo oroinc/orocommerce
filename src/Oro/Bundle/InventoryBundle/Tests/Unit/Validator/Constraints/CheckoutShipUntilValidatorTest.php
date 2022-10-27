@@ -4,53 +4,37 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntilValidator;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class CheckoutShipUntilValidatorTest extends \PHPUnit\Framework\TestCase
+class CheckoutShipUntilValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $upcomingProvider;
+    /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $upcomingProvider;
 
-    /**
-     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutLineItemsManager;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * @var CheckoutShipUntilValidator
-     */
-    protected $validator;
-
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->upcomingProvider = $this->createMock(ProductUpcomingProvider::class);
+        $this->upcomingProvider = $this->createMock(UpcomingProductProvider::class);
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
+        parent::setUp();
+    }
 
-        $this->validator = new CheckoutShipUntilValidator($this->upcomingProvider, $this->checkoutLineItemsManager);
-        $this->validator->initialize($this->context);
+    protected function createValidator()
+    {
+        return new CheckoutShipUntilValidator($this->upcomingProvider, $this->checkoutLineItemsManager);
     }
 
     /**
      * @dataProvider getValidationData
-     *
-     * @param \DateTime|null $shipUntil
-     * @param \DateTime|null $latestDate
-     * @param bool $isErrorExpected
      */
-    public function testValidate($shipUntil, $latestDate, $isErrorExpected)
+    public function testValidate(?\DateTime $shipUntil, ?\DateTime $latestDate, bool $isErrorExpected)
     {
         $checkout = new Checkout();
         $checkout->setShipUntil($shipUntil);
@@ -67,14 +51,18 @@ class CheckoutShipUntilValidatorTest extends \PHPUnit\Framework\TestCase
             ->with([$product1, $product2])
             ->willReturn($latestDate);
 
-        $this->context->expects($isErrorExpected ? $this->once() : $this->never())->method('addViolation');
-        $this->validator->validate($checkout, new CheckoutShipUntil());
+        $constraint = new CheckoutShipUntil();
+        $this->validator->validate($checkout, $constraint);
+
+        if ($isErrorExpected) {
+            $this->buildViolation($constraint->message)
+                ->assertRaised();
+        } else {
+            $this->assertNoViolation();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function getValidationData()
+    public function getValidationData(): array
     {
         return [
             [

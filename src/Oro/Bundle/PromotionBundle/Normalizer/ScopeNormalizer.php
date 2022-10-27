@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Normalizer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,9 +20,6 @@ class ScopeNormalizer implements NormalizerInterface
      */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

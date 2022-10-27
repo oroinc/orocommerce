@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 {
@@ -24,14 +24,6 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 
     /**
      * Processor constructor.
-     * @param UrlGeneratorInterface $router
-     * @param ProductDataStorage $storage
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param Session $session
-     * @param TranslatorInterface $translator
-     * @param RequestDataStorageExtension $requestDataStorageExtension
-     * @param FeatureChecker $featureChecker
      */
     public function __construct(
         UrlGeneratorInterface $router,

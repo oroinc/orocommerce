@@ -1,0 +1,56 @@
+data:
+    -
+        type: shoppinglists
+        id: '<toString(@shopping_list1->id)>'
+        attributes:
+            name: 'Shopping List 1'
+            notes: 'Shopping List 1 Notes'
+            createdAt: '@shopping_list1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@shopping_list1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            default: false
+            currency: USD
+            total: '29.55'
+            subTotal: '29.55'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item2->id)>'
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item1->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+    -
+        type: shoppinglists
+        id: '<toString(@shopping_list5->id)>'
+        attributes:
+            name: 'Shopping List 5'
+            notes: null
+            createdAt: '@shopping_list5->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@shopping_list5->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            default: true
+            currency: USD
+            total: '1.23'
+            subTotal: '1.23'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item6->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'

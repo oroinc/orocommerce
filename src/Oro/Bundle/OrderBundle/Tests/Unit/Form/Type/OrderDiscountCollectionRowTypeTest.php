@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -14,7 +16,7 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new OrderDiscountCollectionRowType();
         $this->type->setDataClass(OrderDiscount::class);
@@ -46,9 +48,8 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
         $form->submit($submitted);
 
         static::assertTrue($form->isValid());
-        if ($form->isValid()) {
-            static::assertEquals($expected, $form->getData());
-        }
+        static::assertTrue($form->isSynchronized());
+        static::assertEquals($expected, $form->getData());
     }
 
     /**
@@ -88,8 +89,16 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+
         return [
-            new PreloadedExtension([$this->type], []),
+            new PreloadedExtension(
+                [
+                    $this->type,
+                    OroHiddenNumberType::class => new OroHiddenNumberType($numberFormatter),
+                ],
+                []
+            ),
             $this->getValidatorExtension(false)
         ];
     }
@@ -98,6 +107,6 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
     {
         $this->type->setDataClass(\stdClass::class);
         $form = $this->factory->create(OrderDiscountCollectionRowType::class);
-        static::assertArraySubset(['data_class' => \stdClass::class], $form->getConfig()->getOptions());
+        $this->assertSame(\stdClass::class, $form->getConfig()->getOptions()['data_class']);
     }
 }

@@ -1,24 +1,17 @@
 {% block _quick_add_subtotal_widget %}
-    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
     <div class="quick-order-add__col quick-order-add__subtotal"
-         data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-module="oroproduct/js/app/components/quick-add-row-extension-view-component"
          data-page-component-options="{{ {
-             view: 'oropricing/js/app/views/quick-add-item-price-view',
-             elements: {
-                 pricesHint: '[data-name="prices-hint"]',
-                 pricesHintContent: '[data-name="prices-hint-content"]',
-             }
+             view: 'oropricing/js/app/views/quick-add-row-price-view',
+             relatedSiblingComponents: {
+                 quickAddRowComponent: row_component_name
+             },
+             pricesHintTemplateSelector: '[data-name="prices_hint' ~ _collection_unique_prefix ~ '"]',
+             pricesHintTemplateContentSelector: '[data-name="prices_hint_content' ~ _collection_unique_prefix ~ '"]',
          }|json_encode }}"
+         data-label="{{ 'oro.pricing.price.label'|trans }}"
     >
-        <label class="quick-order-add__label">{{ 'oro.pricing.price.label'|trans }}</label>
-        <script type="text/template" data-name="prices-hint-content">
-            {{ block('product_price_hint_content_js_widget') }}
-        </script>
-        <script type="text/template" data-name="prices-hint">
-            {{ block('product_price_hint_js_widget') }}
-        </script>
-
         <input type="text" class="input input--full quick-order-add__subtotal-input"
-               data-name="field__product-subtotal" disabled>
+               data-name="field__product-subtotal" disabled aria-label="{{ 'oro.pricing.productprice.price_input.aria_label'|trans }}">
     </div>
 {% endblock %}

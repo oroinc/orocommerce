@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var BaseProductVariantsView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    BaseProductVariantsView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const BaseProductVariantsView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             showLoading: true
         },
@@ -20,19 +19,23 @@ define(function(require) {
 
         elementsEvents: {},
 
-        /**
-         * @inheritDoc
-         */
-        constructor: function BaseProductVariantsView() {
-            BaseProductVariantsView.__super__.constructor.apply(this, arguments);
+        events: {
+            submit: 'onSubmit'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function BaseProductVariantsView(options) {
+            BaseProductVariantsView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
-            BaseProductVariantsView.__super__.initialize.apply(this, arguments);
+            BaseProductVariantsView.__super__.initialize.call(this, options);
 
             this.initModel(options);
             this.initializeElements(options);
@@ -44,15 +47,29 @@ define(function(require) {
             }
         },
 
-        updateProductInfo: function(id) {
-            this.model.set('id', id ? parseInt(id, 10) : 0);
+        onSubmit: function(e) {
+            // Prevent default submit form when Select 2 dropdown is detached
+            e.preventDefault();
+        },
+
+        /**
+         * Update model of product
+         * @param {Object} data
+         * @param {Boolean} silent
+         */
+        updateProductModel: function(data = {id: 0}, silent = false) {
+            if (_.isObject(data)) {
+                data.id = data.id ? parseInt(data.id, 10) : 0;
+
+                this.model.set(data, {silent});
+            }
         },
 
         showLoading: function() {
             if (!this.options.showLoading) {
                 return;
             }
-            var $container = this.$el.closest('[data-role="layout-subtree-loading-container"]');
+            let $container = this.$el.closest('[data-role="layout-subtree-loading-container"]');
             if (!$container.length) {
                 $container = this.$el;
             }
@@ -71,7 +88,7 @@ define(function(require) {
 
         dispose: function() {
             this.disposeElements();
-            BaseProductVariantsView.__super__.dispose.apply(this, arguments);
+            BaseProductVariantsView.__super__.dispose.call(this);
         }
     }));
 

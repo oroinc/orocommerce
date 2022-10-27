@@ -22,9 +22,8 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
-**Please note:**
-
-*The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable by api, because they depend on the workflow states.*
+**Note:**
+The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.
 
 {@request:json_api}
 Example:
@@ -32,8 +31,8 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requests",    
-    "attributes": {   
+    "type": "rfqs",    
+    "attributes": { 
       "firstName": "Ronald",
       "lastName": "Rivera",
       "email": "rrivera0@live.com",
@@ -48,14 +47,14 @@ Example:
       "requestProducts": {
         "data": [
           {
-            "type": "requestproducts",
+            "type": "rfqproducts",
             "id": "1"
           }
         ]
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -79,9 +78,8 @@ The updated record is returned in the response.
 
 {@inheritdoc}
 
-**Please note:**
-
-*The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable by api, because they depend on the workflow states.*
+**Note:**
+The fields **internal_status**, **customer_status**, **requestAdditionalNotes** are not configurable by API, because they depend on the workflow states.
 
 {@request:json_api}
 Example:
@@ -89,9 +87,9 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "requests",
+    "type": "rfqs",
     "id": "1",
-    "attributes": {   
+    "attributes": { 
       "firstName": "Ronald",
       "lastName": "Rivera",
       "email": "rrivera0@live.com",
@@ -106,14 +104,14 @@ Example:
       "requestProducts": {
         "data": [
           {
-            "type": "requestproducts",
+            "type": "rfqproducts",
             "id": "1"
           }
         ]
       },      
       "customerUser": {
         "data": {
-          "type": "customer_users",
+          "type": "customerusers",
           "id": "5"
         }
       },
@@ -149,15 +147,13 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### lastName
 
@@ -165,15 +161,13 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### email
 
@@ -181,15 +175,13 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### company
 
@@ -197,15 +189,37 @@ Delete a collection of request records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
+**This field must not be empty, if it is passed.**
 
-*This field is **required** and must remain defined.*
+### customer_status
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### internal_status
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### requestAdditionalNotes
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 
@@ -309,11 +323,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -332,11 +346,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -355,11 +369,11 @@ Example:
 {
   "data": [
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "1"
     },
     {
-      "type": "customer_users",
+      "type": "customerusers",
       "id": "2"
     }
   ]
@@ -388,16 +402,15 @@ Example:
 {
   "data": [
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "1"
     },
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "2"
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -412,16 +425,15 @@ Example:
 {
   "data": [
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "1"
     },
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "2"
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -436,16 +448,15 @@ Example:
 {
   "data": [
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "1"
     },
     {
-      "type": "requestadditionalnotes",
+      "type": "rfqadditionalnotes",
       "id": "2"
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -470,16 +481,15 @@ Example:
 {
   "data": [
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "1"
     },
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "2"
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -494,16 +504,15 @@ Example:
 {
   "data": [
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "1"
     },
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "2"
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -518,16 +527,15 @@ Example:
 {
   "data": [
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "1"
     },
     {
-      "type": "requestproducts",
+      "type": "rfqproducts",
       "id": "2"
     }
   ]
 }
-
 ```
 {@/request}
 
@@ -578,7 +586,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "customer_users",
+    "type": "customerusers",
     "id": "1"
   }
 }
@@ -605,7 +613,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "rfpcustomerstatuses",
+    "type": "rfqcustomerstatuses",
     "id": "cancelled"
   }
 }
@@ -632,7 +640,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "rfpinternalstatuses",
+    "type": "rfqinternalstatuses",
     "id": "cancelled_by_customer"
   }
 }
@@ -660,33 +668,6 @@ Example:
 {
   "data": {
     "type": "organizations",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
-### website
-
-#### get_subresource
-
-Retrieve the website where the Request For Quote was created.
-
-#### get_relationship
-
-Retrieve the website ID where the Request For Quote was created.
-
-#### update_relationship
-
-Replace the wesbite where the Request For Quote was created.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "websites",
     "id": "1"
   }
 }

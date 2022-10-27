@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 
 /**
  * This entity represents price list with price attributes
@@ -21,11 +23,18 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              "type"="ACL",
  *              "group_name"=""
  *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          }
  *      }
  * )
  */
-class PriceAttributePriceList extends BasePriceList
+class PriceAttributePriceList extends BasePriceList implements OrganizationAwareInterface
 {
+    use OrganizationAwareTrait;
+
     /**
      * @var Collection|PriceAttributeProductPrice[]
      *
@@ -64,6 +73,13 @@ class PriceAttributePriceList extends BasePriceList
     protected $fieldName;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_enabled_in_export", type="boolean", options={"default"=false})
+     */
+    protected $enabledInExport = false;
+
+    /**
      * @return string
      */
     public function getFieldName()
@@ -75,9 +91,25 @@ class PriceAttributePriceList extends BasePriceList
      * @param string $fieldName
      * @return $this
      */
-    public function setFieldName($fieldName)
+    public function setFieldName($fieldName): self
     {
         $this->fieldName = $fieldName;
+
+        return $this;
+    }
+
+    public function isEnabledInExport(): bool
+    {
+        return $this->enabledInExport;
+    }
+
+    /**
+     * @param bool $enabledInExport
+     * @return $this
+     */
+    public function setEnabledInExport(bool $enabledInExport): self
+    {
+        $this->enabledInExport = $enabledInExport;
 
         return $this;
     }

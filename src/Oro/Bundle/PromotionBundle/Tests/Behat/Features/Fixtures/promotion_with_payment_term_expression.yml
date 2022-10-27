@@ -1,0 +1,42 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    orderDiscountPromotionLabel:
+        string: 'Order Discount Promotion'
+    orderDiscountPromotionDesc:
+        string: 'Order Discount Promotion Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    orderDiscountPromotionSegment:
+        name: 'Promotion Matching Products #2'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"type":"filter_not_empty_option"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderDiscountPromotionDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 10.0
+            discount_currency: USD
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'order Discount Promotion'
+        expression: <("paymentMethod = 'payment_term_".@paymentTermIntegration->getId()."'")>
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderDiscountPromotion:
+        __calls:
+            - addLabel: ['@orderDiscountPromotionLabel']
+            - addDescription: ['@orderDiscountPromotionDesc']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotionRule'
+        discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false

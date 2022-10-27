@@ -7,9 +7,9 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
-        string: 'Product1'
+        string: <("Product1`\"'&йёщ®&reg;>")>
     locvalue1_loc1:
         string: 'Product1 (Localization1)'
         localization: '@localization1'
@@ -21,6 +21,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product4'
     locvalue5:
         string: 'Product5(disabled)'
+    locvalue6:
+        string: 'Product6Class'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
 
@@ -45,6 +49,10 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '1'
         sell: true
+    precision6:
+        unit: '@item'
+        precision: '1'
+        sell: true
     precision-set:
         unit: '@set'
         precision: '1'
@@ -52,9 +60,11 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
-        addTitle: ['@localNewCategory']
-        setParentCategory: [1]
-        addProduct: ['@product1']
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -64,7 +74,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        setNames: [['@locvalue1' , '@locvalue1_loc1']]
+        __calls:
+            - setNames: [['@locvalue1' , '@locvalue1_loc1']]
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product2:
@@ -73,9 +84,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision2'
-        addUnitPrecision: ['@precision-set']
+        __calls:
+            - addUnitPrecision: ['@precision-set']
+            - addName: ['@locvalue2']
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product3:
@@ -85,7 +97,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision3'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
+        __calls:
+            - addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product4:
@@ -95,7 +108,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision4'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue4']
+        __calls:
+            - addName: ['@locvalue4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product5:
@@ -105,9 +119,21 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision5'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue5']
+        __calls:
+            - addName: ['@locvalue5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
+    product6:
+        sku: 'classPSKU'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision6'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            -   addName: [ '@locvalue6' ]
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     price1:
@@ -116,7 +142,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
         quantity: 1
         unit: '@item'
-        value: 95
+        value: 45
     price2:
         product: '@product2'
         priceList: '@defaultPriceList'
@@ -130,7 +156,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
         quantity: 1
         unit: '@set'
-        value: 85
+        value: 35
     price4:
         product: '@product3'
         priceList: '@defaultPriceList'
@@ -145,6 +171,13 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: 2
         unit: '@item'
         value: 6
+    price6:
+        product: '@product6'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 12
+        unit: '@item'
+        value: 10
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation1:
@@ -159,32 +192,9 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation5:
         product: '@product5'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPriceProduct1:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'PSKU1'
-        quantity: 1
-        unit: '@item'
-        value: 45
-        currency: 'USD'
-   combinedProductPriceProduct2:
-        pricelist: '@combinedPriceList'
-        product: '@product2'
-        productSku: 'PSKU2'
-        quantity: 1
-        unit: '@set'
-        value: 35
-        currency: 'USD'
-   combinedProductPriceProduct3:
-        pricelist: '@combinedPriceList'
-        product: '@product3'
-        productSku: 'PSKU3'
-        quantity: 1
-        unit: '@item'
-        value: 5
-        currency: 'USD'
+    priceRelation6:
+        product: '@product6'
+        priceList: '@defaultPriceList'
 
 Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     inventoryLevel1:
@@ -206,4 +216,8 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     inventoryLevel5:
         product: '@product5'
         productUnitPrecision: '@precision4'
+        quantity: 100
+    inventoryLevel6:
+        product: '@product6'
+        productUnitPrecision: '@precision6'
         quantity: 100

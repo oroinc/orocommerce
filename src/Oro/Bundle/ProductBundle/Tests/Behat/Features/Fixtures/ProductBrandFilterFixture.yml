@@ -12,11 +12,13 @@ Oro\Bundle\ProductBundle\Entity\Brand:
     brand1:
         owner: '@business_unit'
         organization: '@organization'
-        addName: ['@brand1NameDefault']
+        __calls:
+            - addName: ['@brand1NameDefault']
     brand2:
         owner: '@business_unit'
         organization: '@organization'
-        addName: ['@brand2NameDefault']
+        __calls:
+            - addName: ['@brand2NameDefault']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -27,7 +29,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@precision1'
         unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         brand: '@brand2'
@@ -39,7 +42,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@precision2'
         unitPrecisions: []
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         brand: '@brand1'

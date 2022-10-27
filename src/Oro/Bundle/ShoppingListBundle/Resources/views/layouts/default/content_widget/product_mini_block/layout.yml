@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@appendOption':
+            id: content_widget_container
+            optionName: vars.blockContext
+            optionValue:
+                productShoppingLists: '=data["product"] ? data["oro_shopping_list_product_units_quantity"].getByProduct(data["product"]) : []'

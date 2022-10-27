@@ -4,8 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -119,10 +119,6 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         $this->em->flush();
     }
 
-
-    /**
-     * @param Product $product
-     */
     protected function createProductVisibility(Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
@@ -134,10 +130,6 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         $this->em->persist($productVisibility);
     }
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param Product $product
-     */
     protected function createCustomerGroupProductVisibilityResolved(CustomerGroup $customerGroup, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
@@ -152,10 +144,6 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         $this->em->persist($customerGroupVisibility);
     }
 
-    /**
-     * @param Customer $customer
-     * @param Product $product
-     */
     protected function createCustomerProductVisibilityResolved(Customer $customer, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(

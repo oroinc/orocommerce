@@ -2,21 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Form type for line item on frontend
+ * The form type for line item on the storefront.
  */
 class FrontendLineItemType extends AbstractType
 {
-    use ProductAwareTrait;
-
-    const NAME = 'oro_product_frontend_line_item';
-
-    const UNIT_FILED_NAME = 'unit';
+    public const NAME = 'oro_product_frontend_line_item';
 
     /**
      * {@inheritdoc}
@@ -25,7 +20,7 @@ class FrontendLineItemType extends AbstractType
     {
         $builder
             ->add(
-                self::UNIT_FILED_NAME,
+                'unit',
                 ProductUnitSelectionType::class,
                 [
                     'required' => true,
@@ -43,8 +38,8 @@ class FrontendLineItemType extends AbstractType
                     'attr' => [
                         'placeholder' => 'oro.product.lineitem.quantity.placeholder',
                     ],
-                    'product_holder' => $builder->getData(),
-                    'product_unit_field' => 'unit',
+                    'grouping' => true,
+                    'useInputTypeNumberValueFormat' => true
                 ]
             );
     }

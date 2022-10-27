@@ -2,28 +2,30 @@
 
 namespace Oro\Bundle\TaxBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
+/**
+ * Adds taxCode field to the products grid.
+ */
 class ProductTaxCodeGridListener extends TaxCodeGridListener
 {
     /**
-     * @param DatagridConfiguration $config
+     * {@inheritDoc}
      */
-    protected function addColumn(DatagridConfiguration $config)
+    protected function addColumn(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
             sprintf('[columns][%s]', $this->getDataName()),
             [
                 'label' => $this->getColumnLabel(),
+                'renderable' => false,
                 'inline_editing' => [
                     'enable' => true,
                     'editor' => [
                         'view' => 'orotax/js/app/views/editor/product-tax-code-editor-view',
                         'view_options' => [
-                            'value_field_name' => 'taxCode',
-                        ],
+                            'value_field_name' => $this->getTaxCodeField()
+                        ]
                     ],
                     'autocomplete_api_accessor' => [
                         'class' => 'oroui/js/tools/search-api-accessor',
@@ -37,5 +39,15 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
                 ]
             ]
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function addFilter(DatagridConfiguration $config): void
+    {
+        parent::addFilter($config);
+
+        $config->offsetSetByPath(sprintf('[filters][columns][%s][renderable]', $this->getDataName()), false);
     }
 }

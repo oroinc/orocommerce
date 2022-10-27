@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\BooleanSearchableAttributeType;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
@@ -15,30 +16,28 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return BooleanSearchableAttributeType::class;
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
-        $this->getSearchableAttributeType()->getFilterStorageFieldType();
+        $this->assertSame(
+            [SearchAttributeTypeInterface::VALUE_MAIN => Query::TYPE_INTEGER],
+            $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute)
+        );
     }
 
     public function testGetSorterStorageFieldType()
     {
         $this->assertSame(
             Query::TYPE_INTEGER,
-            $this->getSearchableAttributeType()->getSorterStorageFieldType()
+            $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute)
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterTypeException()
     {
-        $this->getSearchableAttributeType()->getFilterType();
+        $this->assertSame(
+            SearchAttributeTypeInterface::FILTER_TYPE_BOOLEAN,
+            $this->getSearchableAttributeType()->getFilterType($this->attribute)
+        );
     }
 
     public function testIsLocalizable()
@@ -46,13 +45,12 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->assertFalse($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterableFieldNameException()
     {
-        $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute);
+        $this->assertSame(
+            [SearchAttributeTypeInterface::VALUE_MAIN => self::FIELD_NAME],
+            $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute)
+        );
     }
 
     public function testGetSortableFieldName()
@@ -61,5 +59,13 @@ class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
             self::FIELD_NAME,
             $this->getSearchableAttributeType()->getSortableFieldName($this->attribute)
         );
+    }
+
+    public function testGetSearchableFieldName()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getSearchableFieldName($this->attribute);
     }
 }

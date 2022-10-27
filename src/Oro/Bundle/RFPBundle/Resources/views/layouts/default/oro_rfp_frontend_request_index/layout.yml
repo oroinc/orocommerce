@@ -1,13 +1,15 @@
 layout:
     imports:
         -
+            id: oro_customer_page
+        -
             id: oro_rfp_request_grid
             root: page_content
             namespace: requests
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_index/layout.html.twig'
+            themes: '@OroRFP/layouts/default/oro_rfp_frontend_request_index/layout.html.twig'
 
         - '@setOption':
             id: page_title

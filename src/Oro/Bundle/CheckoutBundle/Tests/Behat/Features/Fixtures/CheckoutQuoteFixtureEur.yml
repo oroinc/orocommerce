@@ -1,0 +1,19 @@
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    quoteProductPriceEur:
+        value: 4.5
+        currency: EUR
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOfferEur:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPriceEur'
+        quantity: 4
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequestEur:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPriceEur'
+        quantity: 4

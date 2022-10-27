@@ -19,15 +19,13 @@ class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->converter = new OrderLineItemsToDiscountLineItemsConverter();
     }
 
     /**
      * @dataProvider converterDataProvider
-     * @param array $lineItems
-     * @param array $expected
      */
     public function testConvert(array $lineItems, array $expected)
     {

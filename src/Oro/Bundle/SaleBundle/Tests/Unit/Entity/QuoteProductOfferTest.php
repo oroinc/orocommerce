@@ -6,9 +6,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class QuoteProductOfferTest extends AbstractTest
+class QuoteProductOfferTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $properties = [
@@ -31,7 +35,8 @@ class QuoteProductOfferTest extends AbstractTest
 
         $this->assertNull($item->getPrice());
 
-        $this->setProperty($item, 'value', 10)->setProperty($item, 'currency', 'USD');
+        ReflectionUtil::setPropertyValue($item, 'value', 10);
+        ReflectionUtil::setPropertyValue($item, 'currency', 'USD');
 
         $item->postLoad();
 
@@ -45,8 +50,8 @@ class QuoteProductOfferTest extends AbstractTest
 
         $item->updatePrice();
 
-        $this->assertEquals(11, $this->getProperty($item, 'value'));
-        $this->assertEquals('EUR', $this->getProperty($item, 'currency'));
+        $this->assertEquals(11, ReflectionUtil::getPropertyValue($item, 'value'));
+        $this->assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
     }
 
     public function testSetPrice()
@@ -58,8 +63,8 @@ class QuoteProductOfferTest extends AbstractTest
 
         $this->assertEquals($price, $item->getPrice());
 
-        $this->assertEquals(22, $this->getProperty($item, 'value'));
-        $this->assertEquals('EUR', $this->getProperty($item, 'currency'));
+        $this->assertEquals(22, ReflectionUtil::getPropertyValue($item, 'value'));
+        $this->assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
     }
 
     public function testSetProductUnit()

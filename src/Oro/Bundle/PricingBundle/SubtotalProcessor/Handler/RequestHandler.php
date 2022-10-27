@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Handler;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
-use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Handles total with subtotals calculation request.
+ */
 class RequestHandler
 {
     /** @var TotalProcessorProvider */
@@ -23,25 +26,18 @@ class RequestHandler
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /** @var  EntityRoutingHelper */
+    /** @var EntityRoutingHelper */
     protected $entityRoutingHelper;
 
-    /** @var  Registry */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
-    /**
-     * @param TotalProcessorProvider $totalProvider
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param EntityRoutingHelper $entityRoutingHelper
-     * @param Registry $doctrine
-     */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         EventDispatcherInterface $eventDispatcher,
         AuthorizationCheckerInterface $authorizationChecker,
         EntityRoutingHelper $entityRoutingHelper,
-        Registry $doctrine
+        ManagerRegistry $doctrine
     ) {
         $this->totalProvider = $totalProvider;
         $this->eventDispatcher = $eventDispatcher;
@@ -91,7 +87,7 @@ class RequestHandler
     protected function dispatchPreCalculateTotalEvent($entity, $request)
     {
         $event = new TotalCalculateBeforeEvent($entity, $request);
-        $event = $this->eventDispatcher->dispatch(TotalCalculateBeforeEvent::NAME, $event);
+        $event = $this->eventDispatcher->dispatch($event, TotalCalculateBeforeEvent::NAME);
 
         return $event;
     }

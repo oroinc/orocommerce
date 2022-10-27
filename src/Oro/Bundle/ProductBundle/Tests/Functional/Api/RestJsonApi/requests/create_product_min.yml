@@ -1,0 +1,46 @@
+data:
+    type: products
+    attributes:
+        sku: 'test-api-10'
+    relationships:
+        names:
+            data:
+                -
+                    type: productnames
+                    id: 'names-1'
+        attributeFamily:
+            data:
+                type: attributefamilies
+                id: '<toString(@default_family->getId())>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: 'product-unit-precision-id-1'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: 'product-unit-precision-id-1'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: 'out_of_stock'
+included:
+    -
+        type: productnames
+        id: 'names-1'
+        attributes:
+            fallback: null
+            string: 'Test product'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-1'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->getCode())>'

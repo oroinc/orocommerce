@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
 
 /**
+ * Represents billing and shipping address for an order.
  * @ORM\Table("oro_order_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
@@ -18,14 +19,16 @@ use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
  *          "entity"={
  *              "icon"="fa-map-marker"
  *          },
- *          "note"={
- *              "immutable"=true
- *          },
  *          "activity"={
  *              "immutable"=true
  *          },
  *          "attachment"={
  *              "immutable"=true
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"="commerce",
+ *              "category"="orders",
  *          }
  *      }
  * )

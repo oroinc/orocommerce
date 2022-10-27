@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
@@ -10,13 +10,18 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Handles batch adding products to a shopping list.
+ */
 class ShoppingListLineItemHandler
 {
     const FLUSH_BATCH_SIZE = 100;
@@ -27,11 +32,17 @@ class ShoppingListLineItemHandler
     /** @var ShoppingListManager */
     protected $shoppingListManager;
 
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
+
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
     /** @var TokenAccessorInterface */
     protected $tokenAccessor;
+
+    /** @var FeatureChecker */
+    protected $featureChecker;
 
     /** @var string */
     protected $productClass;
@@ -45,28 +56,27 @@ class ShoppingListLineItemHandler
     /** @var ProductManager */
     protected $productManager;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param ShoppingListManager $shoppingListManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param FeatureChecker $featureChecker
-     * @param ProductManager $productManager
-     */
+    /** @var AclHelper */
+    private $aclHelper;
+
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
+        CurrentShoppingListManager $currentShoppingListManager,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         FeatureChecker $featureChecker,
-        ProductManager $productManager
+        ProductManager $productManager,
+        AclHelper $aclHelper
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
+        $this->currentShoppingListManager = $currentShoppingListManager;
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenAccessor = $tokenAccessor;
         $this->featureChecker = $featureChecker;
         $this->productManager = $productManager;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -90,17 +100,17 @@ class ShoppingListLineItemHandler
 
         $queryBuilder = $productsRepo->getProductsQueryBuilder($productIds);
         $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, []);
-        $iterableResult = $queryBuilder->getQuery()->iterate();
+        $iterableResult = $this->aclHelper->apply($queryBuilder)->iterate();
         $lineItems = [];
 
-        $skus = array_map('strtoupper', array_keys($productUnitsWithQuantities));
+        $skus = array_map('mb_strtoupper', array_keys($productUnitsWithQuantities));
         $values = array_values($productUnitsWithQuantities);
         $productUnitsWithQuantities = array_combine($skus, $values);
 
         foreach ($iterableResult as $entityArray) {
             /** @var Product $product */
             $product = reset($entityArray);
-            $upperSku = strtoupper($product->getSku());
+            $upperSku = mb_strtoupper($product->getSku());
             if (isset($productUnitsWithQuantities[$upperSku])) {
                 $productLineItems = $this->createLineItemsWithQuantityAndUnit(
                     $product,
@@ -168,7 +178,7 @@ class ShoppingListLineItemHandler
      */
     public function prepareLineItemWithProduct(CustomerUser $customerUser, Product $product)
     {
-        $shoppingList = $this->shoppingListManager->getCurrent();
+        $shoppingList = $this->currentShoppingListManager->getCurrent();
 
         $lineItem = new LineItem();
         $lineItem
@@ -182,10 +192,6 @@ class ShoppingListLineItemHandler
         return $lineItem;
     }
 
-    /**
-     * @param LineItem $lineItem
-     * @param Form $form
-     */
     public function processLineItem(LineItem $lineItem, Form $form)
     {
         $shoppingList = $form->get('lineItem')->get('shoppingList')->getData();
@@ -194,7 +200,7 @@ class ShoppingListLineItemHandler
             /* @var $form Form */
             $name = $form->get('lineItem')->get('shoppingListLabel')->getData();
 
-            $shoppingList = $this->shoppingListManager->createCurrent($name);
+            $shoppingList = $this->currentShoppingListManager->createCurrent($name);
         }
 
         $lineItem->setShoppingList($shoppingList);
@@ -227,7 +233,7 @@ class ShoppingListLineItemHandler
      */
     public function getShoppingList($shoppingListId = null)
     {
-        return $this->shoppingListManager->getForCurrentUser($shoppingListId);
+        return $this->currentShoppingListManager->getForCurrentUser($shoppingListId, true);
     }
 
     /**

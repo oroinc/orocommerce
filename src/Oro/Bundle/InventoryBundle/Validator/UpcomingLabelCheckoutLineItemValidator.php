@@ -3,36 +3,34 @@
 namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides upcoming notification message for checkout line item.
+ */
 class UpcomingLabelCheckoutLineItemValidator
 {
     /**
      * @var TranslatorInterface
      */
-    protected $translator;
+    private $translator;
 
     /**
-     * @var DateTimeFormatter
+     * @var DateTimeFormatterInterface
      */
-    protected $dateFormatter;
+    private $dateFormatter;
 
     /**
-     * @var ProductUpcomingProvider
+     * @var UpcomingProductProvider
      */
-    protected $productUpcomingProvider;
+    private $productUpcomingProvider;
 
-    /**
-     * @param ProductUpcomingProvider $ProductUpcomingProvider
-     * @param TranslatorInterface $translator
-     * @param DateTimeFormatter $dateFormatter
-     */
     public function __construct(
-        ProductUpcomingProvider $ProductUpcomingProvider,
+        UpcomingProductProvider $ProductUpcomingProvider,
         TranslatorInterface $translator,
-        DateTimeFormatter $dateFormatter
+        DateTimeFormatterInterface $dateFormatter
     ) {
         $this->productUpcomingProvider = $ProductUpcomingProvider;
         $this->translator = $translator;
@@ -47,11 +45,14 @@ class UpcomingLabelCheckoutLineItemValidator
     public function getMessageIfLineItemUpcoming(CheckoutLineItem $lineItem)
     {
         $product = $lineItem->getProduct();
+
         if ($this->productUpcomingProvider->isUpcoming($product)) {
             $availabilityDate = $this->productUpcomingProvider->getAvailabilityDate($product);
             if ($availabilityDate) {
-                $message = $this->translator->trans('oro.inventory.is_upcoming.notification_with_date');
-                return $message . $this->dateFormatter->formatDate($availabilityDate);
+                return $this->translator->trans(
+                    'oro.inventory.is_upcoming.notification_with_date',
+                    ['%date%' => $this->dateFormatter->formatDate($availabilityDate)]
+                );
             }
 
             return $this->translator->trans('oro.inventory.is_upcoming.notification');

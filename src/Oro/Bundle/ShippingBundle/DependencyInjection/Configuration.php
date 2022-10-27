@@ -8,14 +8,16 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_NODE = 'oro_shipping';
+
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
-        $rootNode = $treeBuilder->root(OroShippingExtension::ALIAS);
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
@@ -26,7 +28,7 @@ class Configuration implements ConfigurationInterface
                 'freight_classes' => ['type' => 'array', 'value' => ['parcel']]
             ]
         );
-        
+
         return $treeBuilder;
     }
 }

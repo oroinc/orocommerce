@@ -34,13 +34,6 @@ connector:
                         processor: oro_importexport.processor.import_delegate
                         writer:    oro_pricing.importexport.writer.product_price
                     parameters: ~
-                send_recalculate_message:
-                    title: send_recalculate_message
-                    class: Oro\Bundle\PricingBundle\Model\Step\SendPriceRecalculationMessageStep
-                    services:
-                        registry: doctrine
-                        priceListTriggerHandler: oro_pricing.price_list_trigger_handler
-                        lexemeTriggerHandler: oro_pricing.price_rule_lexeme_trigger_handler
 
         price_attribute_product_price_import_from_csv:
             title: "Import Product Price Attributes values from CSV"

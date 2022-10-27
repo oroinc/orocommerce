@@ -4,8 +4,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -21,7 +22,7 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     private $placeholder;
 
     /**
-     * @var PriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
+     * @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
      */
     private $priceListTreeHandler;
 
@@ -30,15 +31,20 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $tokenStorage;
 
-    protected function setUp()
-    {
-        $this->priceListTreeHandler = $this->getMockBuilder(PriceListTreeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+    /**
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $featureChecker;
 
+    protected function setUp(): void
+    {
+        $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->placeholder = new CPLIdPlaceholder($this->priceListTreeHandler, $this->tokenStorage);
+        $this->placeholder->setFeatureChecker($this->featureChecker);
+        $this->placeholder->addFeature('oro_price_lists_combined');
     }
 
     public function testGetPlaceholder()
@@ -51,11 +57,32 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame("test_1", $this->placeholder->replace("test_CPL_ID", ["CPL_ID" => 1]));
     }
 
+    public function testReplaceDefaultFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+
+        $this->tokenStorage->expects($this->never())
+            ->method($this->anything());
+
+        $this->priceListTreeHandler->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertSame('test_', $this->placeholder->replaceDefault("test_CPL_ID"));
+    }
+
     public function testReplaceDefault()
     {
         $user = new CustomerUser();
         $customer = new Customer();
         $user->setCustomer($customer);
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
 
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
@@ -71,6 +98,11 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceDefaultUserNotAuthenticated()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn(null);
         $this->tokenStorage->method('getToken')->willReturn($token);
@@ -85,6 +117,11 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceDefaultNoToken()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
             ->with(null)
@@ -93,12 +130,16 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame("test_1", $this->placeholder->replaceDefault("test_CPL_ID"));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Can't get current cpl
-     */
     public function testReplaceDefaultCplNotFound()
     {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Can't get current cpl");
+
         $user = new CustomerUser();
         $customer = new Customer();
         $user->setCustomer($customer);

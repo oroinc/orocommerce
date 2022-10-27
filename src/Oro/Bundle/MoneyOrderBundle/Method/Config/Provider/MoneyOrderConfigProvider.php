@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactoryInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
@@ -30,11 +30,6 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
      */
     protected $logger;
 
-    /**
-     * @param ManagerRegistry                  $doctrine
-     * @param LoggerInterface                  $logger
-     * @param MoneyOrderConfigFactoryInterface $configFactory
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,

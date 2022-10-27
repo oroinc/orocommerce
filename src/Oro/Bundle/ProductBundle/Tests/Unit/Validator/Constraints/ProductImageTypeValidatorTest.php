@@ -9,22 +9,18 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType as ProductImageTypeConstraint;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ProductImageTypeValidatorTest extends AbstractConstraintValidatorTest
+class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
-     */
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $imageTypeProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -83,7 +79,6 @@ class ProductImageTypeValidatorTest extends AbstractConstraintValidatorTest
             ->method('containsKey')
             ->willReturn(true);
 
-
         $productImage = new ProductImage();
         $productImage->setTypes($productImageTypesCollection);
 
@@ -103,7 +98,6 @@ class ProductImageTypeValidatorTest extends AbstractConstraintValidatorTest
             ->willReturn('Main');
 
         $this->validator->validate($value, $this->constraint);
-
 
         $this->buildViolation('oro.product.product_image_type.already_exists')
             ->setParameters(

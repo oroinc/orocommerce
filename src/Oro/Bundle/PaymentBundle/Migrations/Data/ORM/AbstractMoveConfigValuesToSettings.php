@@ -3,16 +3,20 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Entity\ConfigValue;
 use Oro\Bundle\ConfigBundle\Entity\Repository\ConfigValueRepository;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEventDispatcherInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Migration move configuration values to the settings
+ */
 abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implements ContainerAwareInterface
 {
     const SECTION_NAME = '';
@@ -38,7 +42,7 @@ abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implem
     public function setContainer(ContainerInterface $container = null)
     {
         $this->doctrine = $container->get('doctrine');
-        $this->installed = $container->hasParameter('installed') && $container->getParameter('installed');
+        $this->installed = $container->get(ApplicationState::class)->isInstalled();
         $this->dispatcher = $container->get('oro_payment.method.event.dispatcher.method_renaming');
     }
 
@@ -55,10 +59,6 @@ abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implem
         }
     }
 
-    /**
-     * @param ObjectManager         $manager
-     * @param OrganizationInterface $organization
-     */
     abstract protected function moveConfigFromSystemConfigToIntegration(
         ObjectManager $manager,
         OrganizationInterface $organization

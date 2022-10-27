@@ -2,34 +2,22 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
 
-use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
+use Oro\Bundle\EntityBundle\Provider\EntityClassNameProviderInterface;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SourceDocumentFormatter
-     */
-    protected $sourceDocumentFormatter;
+    /** @var EntityClassNameProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityClassNameProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ChainEntityClassNameProvider
-     */
-    protected $chainEntityClassNameProvider;
+    /** @var SourceDocumentFormatter */
+    private $sourceDocumentFormatter;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->chainEntityClassNameProvider = $this
-            ->getMockBuilder('Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityClassNameProvider = $this->createMock(EntityClassNameProviderInterface::class);
 
-        $this->sourceDocumentFormatter = new SourceDocumentFormatter(
-            $this->chainEntityClassNameProvider
-        );
+        $this->sourceDocumentFormatter = new SourceDocumentFormatter($this->entityClassNameProvider);
     }
 
     /**
@@ -49,13 +37,11 @@ class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
         $expectUseGetEntityClassName
     ) {
         if ($expectUseGetEntityClassName) {
-            $this->chainEntityClassNameProvider
-                ->expects($this->once())
+            $this->entityClassNameProvider->expects($this->once())
                 ->method('getEntityClassName')
                 ->willReturn($sourceDocumentClass);
         } else {
-            $this->chainEntityClassNameProvider
-                ->expects($this->never())
+            $this->entityClassNameProvider->expects($this->never())
                 ->method('getEntityClassName');
         }
 
@@ -77,28 +63,28 @@ class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
             'empty class and empty identifier' => [
                 'sourceDocumentClass' => null,
                 'sourceDocumentId' => null,
-                '$sourceDocumentIdentifier' => null,
+                'sourceDocumentIdentifier' => null,
                 'expectedFormat' => '',
                 'expectUseGetEntityClassName' => false
             ],
             'order without identifier' => [
                 'sourceDocumentClass' => 'Order',
                 'sourceDocumentId' => 1,
-                '$sourceDocumentIdentifier' => null,
+                'sourceDocumentIdentifier' => null,
                 'expectedFormat' => 'Order 1',
                 'expectUseGetEntityClassName' => true
             ],
             'order with identifier' => [
                 'sourceDocumentClass' => 'Order',
                 'sourceDocumentId' => 1,
-                '$sourceDocumentIdentifier' => 'FR1012401',
-                'expectedFormat' => 'Order FR1012401',
+                'sourceDocumentIdentifier' => 'FR1012401',
+                'expectedFormat' => 'Order "FR1012401"',
                 'expectUseGetEntityClassName' => true
             ],
             'order without identifier and id' => [
                 'sourceDocumentClass' => 'Order',
                 'sourceDocumentId' => null,
-                '$sourceDocumentIdentifier' => null,
+                'sourceDocumentIdentifier' => null,
                 'expectedFormat' => 'Order',
                 'expectUseGetEntityClassName' => true
             ]

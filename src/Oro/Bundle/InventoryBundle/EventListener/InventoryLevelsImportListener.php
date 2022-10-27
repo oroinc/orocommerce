@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
-use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-use Akeneo\Bundle\BatchBundle\Event\StepExecutionEvent;
-use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
+use Oro\Bundle\BatchBundle\Entity\JobExecution;
+use Oro\Bundle\BatchBundle\Entity\StepExecution;
+use Oro\Bundle\BatchBundle\Event\StepExecutionEvent;
+use Oro\Bundle\BatchBundle\Item\ExecutionContext;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy;
 
+/**
+ * Clears cache on the InventoryLevelStrategy when a batch job step is completed.
+ */
 class InventoryLevelsImportListener
 {
     const INVENTORY_IMPORT_PROCESSOR_ALIAS = 'oro_inventory.inventory_level';
@@ -18,16 +21,12 @@ class InventoryLevelsImportListener
 
     /**
      * InventoryLevelsImportListener constructor.
-     * @param InventoryLevelStrategy $inventoryLevelStrategy
      */
     public function __construct(InventoryLevelStrategy $inventoryLevelStrategy)
     {
         $this->inventoryLevelStrategy = $inventoryLevelStrategy;
     }
 
-    /**
-     * @param StepExecutionEvent $event
-     */
     public function onBatchStepCompleted(StepExecutionEvent $event)
     {
         /** @var StepExecution $stepExecution */

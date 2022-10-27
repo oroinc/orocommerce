@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -14,6 +14,8 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
 {
     const ORDER_ADDRESS_1 = 'order_address.office';
     const ORDER_ADDRESS_2 = 'order_address.warehouse';
+    const ORDER_ADDRESS_3 = 'order_address.order2.billing';
+    const ORDER_ADDRESS_4 = 'order_address.order2.shipping';
 
     /**
      * @var array
@@ -32,6 +34,28 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
         ],
         self::ORDER_ADDRESS_2 => [
             'order' => LoadOrders::ORDER_1,
+            'type' => 'shipping',
+            'country' => 'US',
+            'city' => 'Romney',
+            'region' => 'US-IN',
+            'street' => '2413 Capitol Avenue',
+            'postalCode' => '47981',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+        ],
+        self::ORDER_ADDRESS_3 => [
+            'order' => LoadOrders::ORDER_2,
+            'type' => 'billing',
+            'country' => 'US',
+            'city' => 'Rochester',
+            'region' => 'US-NY',
+            'street' => '1215 Caldwell Road',
+            'postalCode' => '14608',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+        ],
+        self::ORDER_ADDRESS_4 => [
+            'order' => LoadOrders::ORDER_2,
             'type' => 'shipping',
             'country' => 'US',
             'city' => 'Romney',
@@ -82,13 +106,13 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
     protected function createOrderAddress(ObjectManager $manager, $name, array $address)
     {
         /** @var Country $country */
-        $country = $manager->getReference('OroAddressBundle:Country', $address['country']);
+        $country = $manager->getReference(Country::class, $address['country']);
         if (!$country) {
             throw new \RuntimeException('Can\'t find country with ISO ' . $address['country']);
         }
 
         /** @var Region $region */
-        $region = $manager->getReference('OroAddressBundle:Region', $address['region']);
+        $region = $manager->getReference(Region::class, $address['region']);
         if (!$region) {
             throw new \RuntimeException(
                 sprintf('Can\'t find region with code %s', $address['region'])

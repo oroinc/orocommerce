@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FrontendProductPriceFilterTest extends FrontendWebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
@@ -25,9 +25,6 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
 
     /**
      * @dataProvider testProductGridProvider
-     *
-     * @param array $expected
-     * @param array $filter
      */
     public function testProductGrid(array $expected, array $filter)
     {
@@ -55,7 +52,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         return [
             'sort by price' => [
                 'expected' => [
-                    'product-7',
+                    'продукт-7',
                     'product-3',
                     'product-1',
                     'product-2',

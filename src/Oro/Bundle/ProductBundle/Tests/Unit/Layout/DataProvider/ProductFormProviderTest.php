@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
+use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -21,35 +24,42 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'product_variants_get_available_variants_url';
-
-    use EntityTrait;
-
-    /** @var ProductFormProvider */
-    protected $provider;
-
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
+    private $formFactory;
 
     /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $router;
+    private $router;
 
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productVariantAvailabilityProvider;
+    private $productVariantAvailabilityProvider;
 
-    protected function setUp()
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
+    /** @var ProductFormProvider */
+    private $provider;
+
+    protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->router = $this->createMock(UrlGeneratorInterface::class);
-        $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->provider = new ProductFormProvider(
             $this->formFactory,
             $this->router,
-            $this->productVariantAvailabilityProvider
+            $this->productVariantAvailabilityProvider,
+            $this->doctrine
         );
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
     }
 
     public function testGetQuickAddFormView()
@@ -66,13 +76,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getQuickAddFormView();
-        $this->assertInstanceOf(FormView::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getQuickAddFormView();
-        $this->assertInstanceOf(FormView::class, $data);
+        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddFormView());
+        // test memory cache
+        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddFormView());
     }
 
     public function testGetQuickAddForm()
@@ -84,13 +90,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getQuickAddForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getQuickAddForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddForm());
+        // test memory cache
+        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddForm());
     }
 
     public function testGetQuickAddCopyPasteFormView()
@@ -107,13 +109,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getQuickAddCopyPasteFormView();
-        $this->assertInstanceOf(FormView::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getQuickAddCopyPasteFormView();
-        $this->assertInstanceOf(FormView::class, $data);
+        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddCopyPasteFormView());
+        // test memory cache
+        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddCopyPasteFormView());
     }
 
     public function testGetQuickAddCopyPasteForm()
@@ -125,13 +123,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getQuickAddCopyPasteForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getQuickAddCopyPasteForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddCopyPasteForm());
+        // test memory cache
+        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddCopyPasteForm());
     }
 
     public function testGetQuickAddImportFormView()
@@ -148,13 +142,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddImportFromFileType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getQuickAddImportFormView();
-        $this->assertInstanceOf(FormView::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getQuickAddImportFormView();
-        $this->assertInstanceOf(FormView::class, $data);
+        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddImportFormView());
+        // test memory cache
+        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddImportFormView());
     }
 
     public function testGetQuickAddImportForm()
@@ -166,13 +156,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddImportFromFileType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getQuickAddImportForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getQuickAddImportForm();
-        $this->assertInstanceOf(FormInterface::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddImportForm());
+        // test memory cache
+        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddImportForm());
     }
 
     public function testGetLineItemFormView()
@@ -189,13 +175,9 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getLineItemFormView();
-        $this->assertInstanceOf(FormView::class, $data);
-
-        // Get form with existing data in locale cache
-        $data = $this->provider->getLineItemFormView();
-        $this->assertInstanceOf(FormView::class, $data);
+        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView(null));
+        // test memory cache
+        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView(null));
     }
 
     public function testGetLineItemFormViewWithInstanceName()
@@ -212,14 +194,12 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
-        // Get form without existing data in locale cache
         $data1 = $this->provider->getLineItemFormView(null, 'form1');
 
-        // Get form with existing data in locale cache
-        $data1Cache = $this->provider->getLineItemFormView(null, 'form1');
-        $this->assertSame($data1, $data1Cache);
+        // test memory cache
+        $this->assertSame($data1, $this->provider->getLineItemFormView(null, 'form1'));
 
-        // Get new form instance
+        // get new form instance
         $data2 = $this->provider->getLineItemFormView(null, 'form2');
         $this->assertSame($data1, $data2);
         $this->assertEquals($data1, $data2);
@@ -242,25 +222,51 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $product = $this->createMock(Product::class);
         $product->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
-        // Get form without existing data in locale cache
-        $data = $this->provider->getLineItemFormView($product);
-        $this->assertInstanceOf(FormView::class, $data);
+        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+        // test memory cache
+        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+    }
 
-        // Get form with existing data in locale cache
-        $data = $this->provider->getLineItemFormView($product);
-        $this->assertInstanceOf(FormView::class, $data);
+    public function testGetLineItemFormViewWithProductView()
+    {
+        $formView = $this->createMock(FormView::class);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendLineItemType::class)
+            ->willReturn($expectedForm);
+
+        $product = new ProductView();
+        $product->set('id', 1);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->exactly(2))
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($em);
+        $em->expects($this->exactly(2))
+            ->method('getReference')
+            ->with(Product::class, 1)
+            ->willReturn($this->createMock(Product::class));
+
+        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+        // test memory cache
+        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
     }
 
     public function testGetVariantFieldsFormView()
     {
         $formView = $this->createMock(FormView::class);
 
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1001]);
-        /** @var Product $productVariant */
-        $productVariant = $this->getEntity(Product::class, ['id' => 2002]);
+        $product = $this->getProduct(1001);
+        $productVariant = $this->getProduct(2002);
 
         $this->productVariantAvailabilityProvider->expects($this->atLeastOnce())
             ->method('getSimpleProductByVariantFields')
@@ -281,20 +287,43 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($form);
 
-        $data = $this->provider->getVariantFieldsFormView($product);
-        $this->assertSame($formView, $data);
+        $this->assertSame($formView, $this->provider->getVariantFieldsFormView($product));
+        // test memory cache
+        $this->assertSame($formView, $this->provider->getVariantFieldsFormView($product));
+    }
 
-        //check local cache
-        $data = $this->provider->getVariantFieldsFormView($product);
-        $this->assertSame($formView, $data);
+    public function testGetVariantFieldsFormViewByVariantProduct()
+    {
+        $formView = $this->createMock(FormView::class);
+
+        $product = $this->getProduct(1001);
+        $variantProduct = $this->getProduct(1003);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(
+                FrontendVariantFiledType::class,
+                $variantProduct,
+                $this->getProductVariantExpectedOptions($product, 2)
+            )
+            ->willReturn($form);
+
+        $formView1 = $this->provider->getVariantFieldsFormViewByVariantProduct($product, $variantProduct);
+        $this->assertSame($formView, $formView1);
+        // test memory cache
+        $formView2 = $this->provider->getVariantFieldsFormViewByVariantProduct($product, $variantProduct);
+        $this->assertSame($formView1, $formView2);
     }
 
     public function testGetVariantFieldsForm()
     {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1001]);
-        /** @var Product $productVariant */
-        $productVariant = $this->getEntity(Product::class, ['id' => 2002]);
+        $product = $this->getProduct(1001);
+        $productVariant = $this->getProduct(2002);
 
         $this->productVariantAvailabilityProvider->expects($this->atLeastOnce())
             ->method('getSimpleProductByVariantFields')
@@ -312,20 +341,12 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($form);
 
-        $data = $this->provider->getVariantFieldsForm($product);
-        $this->assertSame($form, $data);
-
-        //check local cache
-        $data = $this->provider->getVariantFieldsForm($product);
-        $this->assertSame($form, $data);
+        $this->assertSame($form, $this->provider->getVariantFieldsForm($product));
+        // test memory cache
+        $this->assertSame($form, $this->provider->getVariantFieldsForm($product));
     }
 
-    /**
-     * @param Product $product
-     * @param int $expects
-     * @return array
-     */
-    private function getProductVariantExpectedOptions(Product $product, $expects = 1)
+    private function getProductVariantExpectedOptions(Product $product, int $expects = 1): array
     {
         $this->router->expects($this->exactly($expects))
             ->method('generate')

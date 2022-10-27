@@ -1,0 +1,158 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &pn-btn {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+
+        font-size: $base-font-size--m;
+        line-height: 24px;
+        min-width: 32px;
+        min-height: 32px;
+
+        &.fa-code {
+            margin-top: -1px;
+        }
+
+        &.fa-square-o {
+            &.#{$pn-prefix}active {
+                &::before {
+                    content: $fa-var-check-square;
+                }
+            }
+        }
+    }
+
+    &btn {
+        &-prim {
+            color: $primary-inverse;
+            padding: 7px 5px 6px;
+        }
+    }
+
+    &mdl-btn-close {
+        color: $primary-inverse;
+        font-size: 0;
+        top: 16px;
+        opacity: 1;
+
+        &::before {
+            content: $fa-var-close;
+            font-size: $base-font-size--l;
+
+            font-family: $fa-font-family;
+            text-align: center;
+            line-height: 1;
+        }
+    }
+}
+
+.content-template-block {
+    overflow: hidden;
+    padding: 0;
+    justify-content: center;
+    position: relative;
+
+    &.highlight-not-found {
+        display: none;
+    }
+
+    .#{$app-prefix}block-label {
+        background-color: rgba($primary-inverse, .8);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        font-size: 11px;
+        padding: 5px 5px 4px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: $primary-400;
+    }
+
+    .#{$app-prefix}block__media {
+        margin-bottom: 0;
+
+        img {
+            max-width: 100%;
+        }
+    }
+}
+
+.content-templates-container {
+    height: 100%;
+    overflow: hidden;
+
+    &__panel {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .gjs-title {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__blocks {
+        overflow-y: auto;
+        height: 100%;
+        position: relative;
+
+        .#{$app-prefix}blocks-c {
+            padding: 12px 8px 0;
+            gap: 12px;
+        }
+
+        .#{$app-prefix}block {
+            margin: 0;
+            padding: 2px;
+            height: 120px;
+        }
+    }
+
+    .title-text {
+        width: 100%;
+    }
+
+    .quick-search {
+        &-container {
+            display: flex;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        &-button {
+            position: relative;
+
+            .btn {
+                &:hover,
+                &:focus {
+                    z-index: 1;
+                }
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                margin: auto;
+                height: 16px;
+                border-left: 1px solid $additional-ultra-light;
+            }
+        }
+
+        &-control {
+            width: 100%;
+
+            input[type='text'] {
+                width: 100%;
+                height: 32px;
+                padding-right: 32px;
+            }
+        }
+    }
+}

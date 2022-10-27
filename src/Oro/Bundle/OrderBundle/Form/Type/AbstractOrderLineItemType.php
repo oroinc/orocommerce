@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Abstract Form type for order line item
+ */
 abstract class AbstractOrderLineItemType extends AbstractType
 {
     /**
@@ -40,9 +43,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
         return $this->sectionProvider;
     }
 
-    /**
-     * @param SectionProvider $sectionProvider
-     */
     public function setSectionProvider(SectionProvider $sectionProvider)
     {
         $this->sectionProvider = $sectionProvider;
@@ -77,7 +77,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'required' => true,
                     'label' => 'oro.order.orderlineitem.quantity.label',
                     'default_data' => 1,
-                    'product_holder' => $builder->getData()
                 ]
             )
             ->add(
@@ -192,8 +191,5 @@ abstract class AbstractOrderLineItemType extends AbstractType
         }
     }
 
-    /**
-     * @param FormInterface $form
-     */
     abstract protected function updateAvailableUnits(FormInterface $form);
 }

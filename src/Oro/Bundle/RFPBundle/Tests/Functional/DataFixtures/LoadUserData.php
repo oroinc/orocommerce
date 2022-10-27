@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\AbstractLoadCustomerUserFixture;
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
@@ -35,45 +37,45 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
     protected $roles = [
         self::ROLE1 => [
             [
-                'class' => 'oro_rfp.entity.request.class',
+                'class' => Request::class,
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => [],
             ],
             [
-                'oid' => ['workflow', '(root)'],
-                'acls'  => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
+                'oid'  => 'workflow:(root)',
+                'acls' => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
             ],
         ],
         self::ROLE2 => [
             [
-                'class' => 'oro_rfp.entity.request.class',
+                'class' => Request::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE3 => [
             [
-                'class' => 'oro_rfp.entity.request.class',
+                'class' => Request::class,
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE4 => [
             [
-                'class' => 'oro_rfp.entity.request.class',
+                'class' => Request::class,
                 'acls'  => ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'],
             ],
             [
-                'class' => 'oro_customer.entity.customer_user.class',
+                'class' => CustomerUser::class,
                 'acls'  => ['VIEW_DEEP'],
             ],
         ]
@@ -188,23 +190,20 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
         parent::load($manager);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function loadUsers(ObjectManager $manager)
     {
-        /* @var $userManager UserManager */
-        $userManager    = $this->container->get('oro_user.manager');
+        /* @var UserManager $userManager */
+        $userManager = $this->container->get('oro_user.manager');
 
-        $defaultUser    = $this->getUser($manager);
+        $defaultUser = $this->getUser($manager);
 
-        $businessUnit   = $defaultUser->getOwner();
-        $organization   = $defaultUser->getOrganization();
+        $businessUnit = $defaultUser->getOwner();
+        $organization = $defaultUser->getOrganization();
+        $roles = $defaultUser->getUserRoles();
 
         foreach ($this->users as $item) {
-            /* @var $user User */
+            /* @var User $user */
             $user = $userManager->createUser();
-
             $user
                 ->setEmail($item['email'])
                 ->setFirstName($item['firstname'])
@@ -212,10 +211,10 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
+                ->addUserRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
+                ->setEnabled(true);
             $userManager->updateUser($user);
 
             $this->setReference($user->getUsername(), $user);

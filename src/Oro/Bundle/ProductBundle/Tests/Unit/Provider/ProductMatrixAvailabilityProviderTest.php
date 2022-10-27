@@ -1,74 +1,63 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductMatrixAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 
 class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productVariantAvailability;
+    private $variantAvailability;
+
+    /** @var FrontendProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitsProvider;
 
     /** @var ProductMatrixAvailabilityProvider */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->productVariantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
+        $this->productUnitsProvider = $this->createMock(FrontendProductUnitsProvider::class);
 
         $this->provider = new ProductMatrixAvailabilityProvider(
-            $this->productVariantAvailability
+            $this->variantAvailability,
+            $this->productUnitsProvider
         );
     }
 
     public function testIsMatrixFormAvailableWithSimpleProduct()
     {
-        /** @var Product $simpleProduct */
-        $simpleProduct = $this->getEntity(Product::class);
-        $this->productVariantAvailability->expects($this->never())
+        $simpleProduct = new ProductStub();
+        $this->variantAvailability->expects($this->never())
             ->method('getVariantFieldsAvailability');
 
         $this->assertEquals(false, $this->provider->isMatrixFormAvailable($simpleProduct));
     }
 
     /**
-     * @param array $attributes
-     * @param ProductUnitPrecision $unitPrecision
-     * @param Product[] $simpleProducts
-     * @param bool $expected
-     *
      * @dataProvider isMatrixFormAvailableProvider
      */
     public function testIsMatrixFormAvailableWithOneArgument(
-        array $attributes,
+        array $variantFields,
         ProductUnitPrecision $unitPrecision,
         array $simpleProducts,
         bool $expected
     ) {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, [
-            'id' => 123,
-            'primaryUnitPrecision' => $unitPrecision,
-            'type' => Product::TYPE_CONFIGURABLE
-        ]);
+        $product = (new ProductStub())
+            ->setId(123)
+            ->setPrimaryUnitPrecision($unitPrecision)
+            ->setType(Product::TYPE_CONFIGURABLE)
+            ->setVariantFields($variantFields);
 
-        $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsAvailability')
-            ->with($product)
-            ->willReturn($attributes);
-
-        // Matrix form should be available only for 1 or 2 attributes
-        $this->productVariantAvailability->expects($this->exactly(count($attributes) <= 2 ? 1 : 0))
+        // matrix form should be available only for 1 or 2 attributes
+        $this->variantAvailability->expects($this->exactly(count($variantFields) <= 2 ? 1 : 0))
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($simpleProducts);
@@ -78,41 +67,153 @@ class ProductMatrixAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isMatrixFormAvailable($product));
     }
 
-    /**
-     * @return array
-     */
-    public function isMatrixFormAvailableProvider()
+    public function isMatrixFormAvailableProvider(): array
     {
-        $unit = $this->getEntity(ProductUnit::class);
-        $unitPrecision = $this->getEntity(ProductUnitPrecision::class, ['unit' => $unit]);
-
-        $simpleProduct = $this->getEntity(Product::class, ['id' => 321, 'primaryUnitPrecision' => $unitPrecision]);
+        $unit = new ProductUnit();
+        $unitPrecision = (new ProductUnitPrecision())->setUnit($unit);
+        $simpleProduct = (new ProductStub())
+            ->setId(321)
+            ->setPrimaryUnitPrecision($unitPrecision);
 
         return [
             'one attribute' => [
-                'attributes' => [1],
+                'variantFields' => ['sampleField1'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [$simpleProduct],
                 'expected' => true,
             ],
             'two attributes' => [
-                'attributes' => [1, 2],
+                'variantFields' => ['sampleField1', 'sampleField2'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [$simpleProduct],
                 'expected' => true,
             ],
             'two attributes, no simple' => [
-                'attributes' => [1, 2],
+                'variantFields' => ['sampleField1', 'sampleField2'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [],
                 'expected' => false,
             ],
             'tree attributes' => [
-                'attributes' => [1, 2, 3],
+                'variantFields' => ['sampleField1', 'sampleField2', 'sampleField3'],
                 'unitPrecision' => $unitPrecision,
                 'simpleProducts' => [$simpleProduct],
                 'expected' => false,
             ],
         ];
+    }
+
+    public function testIsMatrixFormAvailableForProductsWhenNotConfigurable(): void
+    {
+        $simpleProduct = new ProductStub();
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getSimpleProductIdsGroupedByConfigurable');
+
+        $this->assertEmpty($this->provider->isMatrixFormAvailableForProducts([$simpleProduct]));
+    }
+
+    /**
+     * @dataProvider isMatrixFormAvailableForProductsDataProvider
+     */
+    public function testIsMatrixFormAvailableForProducts(Product $configurableProduct, array $expectedResult): void
+    {
+        $this->assertSame($expectedResult, $this->provider->isMatrixFormAvailableForProducts([$configurableProduct]));
+    }
+
+    public function isMatrixFormAvailableForProductsDataProvider(): array
+    {
+        $productWith0VariantFields = (new ProductStub())
+            ->setId(123)
+            ->setType(Product::TYPE_CONFIGURABLE);
+
+        $productWith2VariantFields = (new ProductStub())
+            ->setId(456)
+            ->setType(Product::TYPE_CONFIGURABLE)
+            ->setVariantFields(['sampleField1', 'sampleField2']);
+
+        $productWith3VariantFields = (new ProductStub())
+            ->setId(789)
+            ->setType(Product::TYPE_CONFIGURABLE)
+            ->setVariantFields(['sampleField1', 'sampleField2', 'sampleField3']);
+
+        return [
+            '0 attributes' => [
+                'configurableProduct' => $productWith0VariantFields,
+                'expectedResult' => [],
+            ],
+            '2 attributes' => [
+                'configurableProduct' => $productWith2VariantFields,
+                'expectedResult' => [$productWith2VariantFields->getId() => $productWith2VariantFields],
+            ],
+            '3 attributes' => [
+                'configurableProduct' => $productWith3VariantFields,
+                'expectedResult' => [],
+            ],
+        ];
+    }
+
+    public function testGetMatrixAvailabilityByConfigurableProductDataWhenVariantsCountIsNotAcceptable(): void
+    {
+        $configurableProductData = [
+            100 => ['each', 0]
+        ];
+        $matrixAvailability = [
+            100 => false
+        ];
+
+        $this->variantAvailability->expects($this->never())
+            ->method('getSimpleProductIdsByVariantFieldsGroupedByConfigurable');
+
+        $this->assertSame(
+            $matrixAvailability,
+            $this->provider->getMatrixAvailabilityByConfigurableProductData($configurableProductData)
+        );
+    }
+
+    public function testGetMatrixAvailabilityByConfigurableProductData(): void
+    {
+        $configurableProductData = [
+            100 => ['each', 1],
+            101 => ['each', 2],
+            102 => ['each', 0],
+            103 => ['each', 2],
+            104 => ['kg', 2]
+        ];
+        $matrixAvailability = [
+            102 => false, // variants count is not acceptable
+            100 => true,
+            101 => false, // no product units for simple product
+            103 => false, // no simple products
+            104 => false // not all simple products have applicable product units
+        ];
+        $configurableProductIdsForProductsWithAcceptableVariantsCount = [100, 101, 103, 104];
+        $simpleProducts = [
+            100 => [11, 12],
+            101 => [13],
+            104 => [14, 15],
+        ];
+        $simpleProductIds = [11, 12, 13, 14, 15];
+        $simpleProductUnits = [
+            11 => ['items', 'each'],
+            12 => ['each'],
+            14 => ['items', 'kg'],
+            15 => ['each']
+        ];
+
+        $this->variantAvailability->expects($this->once())
+            ->method('getSimpleProductIdsByVariantFieldsGroupedByConfigurable')
+            ->with($configurableProductIdsForProductsWithAcceptableVariantsCount)
+            ->willReturn($simpleProducts);
+
+        $this->productUnitsProvider->expects($this->once())
+            ->method('getUnitsForProducts')
+            ->with($simpleProductIds)
+            ->willReturn($simpleProductUnits);
+
+        $this->assertSame(
+            $matrixAvailability,
+            $this->provider->getMatrixAvailabilityByConfigurableProductData($configurableProductData)
+        );
     }
 }

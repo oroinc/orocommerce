@@ -1,3 +1,0 @@
-parameters:
-    oro_application.factory.class: Oro\Bundle\ApplicationBundle\Factory\ModelFactory
-    oro_application.repository.class: Oro\Bundle\ApplicationBundle\Repository\ModelRepository

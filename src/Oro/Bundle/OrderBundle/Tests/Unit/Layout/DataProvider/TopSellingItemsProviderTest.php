@@ -4,72 +4,142 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\TopSellingItemsProvider;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\Testing\ReflectionUtil;
 
 class TopSellingItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetAllWithDefaultQuantity()
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
+
+    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $productManager;
+
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
+    /** @var ProductListBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $productListBuilder;
+
+    /** @var TopSellingItemsProvider */
+    private $provider;
+
+    protected function setUp(): void
     {
-        $queryBuilder = $this->createQueryBuilder();
-        $productRepository = $this->createProductRepository();
-        $productRepository->expects($this->once())
-            ->method('getFeaturedProductsQueryBuilder')
-            ->with(TopSellingItemsProvider::DEFAULT_QUANTITY)
-            ->will($this->returnValue($queryBuilder));
-        $productManager = $this->createProductManager();
-        $productManager->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder, []);
-        $this->createFeaturedProductsProvider($productRepository, $productManager)->getProducts();
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->productManager = $this->createMock(ProductManager::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->productListBuilder = $this->createMock(ProductListBuilder::class);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($this->productRepository);
+
+        $this->provider = new TopSellingItemsProvider(
+            $doctrine,
+            $this->productManager,
+            $this->aclHelper,
+            $this->productListBuilder
+        );
     }
 
-    /**
-     * @param ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository
-     * @param ProductManager|\PHPUnit\Framework\MockObject\MockObject    $productManager
-     *
-     * @return TopSellingItemsProvider
-     */
-    protected function createFeaturedProductsProvider($productRepository, $productManager)
+    private function getProduct(int $id): Product
     {
-        return new TopSellingItemsProvider($productRepository, $productManager);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createProductRepository()
+    private function getProductView(int $id): ProductView
     {
-        return $this->createMock(ProductRepository::class);
+        $productView = new ProductView();
+        $productView->set('id', $id);
+
+        return $productView;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createProductManager()
-    {
-        return $this->createMock(ProductManager::class);
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createQueryBuilder()
+    public function testGetProductsWhenNoTopSellingItems()
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder->expects($this->once())
-            ->method('getQuery')
-            ->willReturn($this->createQuery());
+        $queryBuilder->expects(self::once())
+            ->method('select')
+            ->with('product.id')
+            ->willReturnSelf();
 
-        return $queryBuilder;
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects(self::once())
+            ->method('getArrayResult')
+            ->willReturn([]);
+
+        $this->productRepository->expects(self::once())
+            ->method('getFeaturedProductsQueryBuilder')
+            ->with(10)
+            ->willReturn($queryBuilder);
+
+        $this->productManager->expects(self::once())
+            ->method('restrictQueryBuilder')
+            ->with($queryBuilder, []);
+
+        $this->aclHelper->expects(self::once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
+        $this->productListBuilder->expects(self::never())
+            ->method('getProductsByIds');
+
+        self::assertSame([], $this->provider->getProducts());
+        // test memory cache
+        self::assertSame([], $this->provider->getProducts());
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createQuery()
+    public function testGetProducts()
     {
-        return $this->createMock(AbstractQuery::class);
+        $product = $this->getProduct(1);
+        $expectedProducts = [$this->getProductView($product->getId())];
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder->expects(self::once())
+            ->method('select')
+            ->with('product.id')
+            ->willReturnSelf();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects(self::once())
+            ->method('getArrayResult')
+            ->willReturn([['id' => $product->getId()]]);
+
+        $this->productRepository->expects(self::once())
+            ->method('getFeaturedProductsQueryBuilder')
+            ->with(10)
+            ->willReturn($queryBuilder);
+
+        $this->productManager->expects(self::once())
+            ->method('restrictQueryBuilder')
+            ->with($queryBuilder, []);
+
+        $this->aclHelper->expects(self::once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
+
+        $this->productListBuilder->expects(self::once())
+            ->method('getProductsByIds')
+            ->with('top_selling_items', [$product->getId()])
+            ->willReturn($expectedProducts);
+
+        self::assertEquals($expectedProducts, $this->provider->getProducts());
+        // test memory cache
+        self::assertEquals($expectedProducts, $this->provider->getProducts());
     }
 }

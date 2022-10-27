@@ -1,0 +1,11 @@
+{% extends '@OroAction/Operation/form.html.twig' %}
+
+{% if form is defined %}
+    {% form_theme form '@OroFrontend/layouts/default/form_theme.html.twig' %}
+{% endif %}
+
+{% block form_widget %}
+    <div class="shopping-list-rename-form form-row">
+        {{ form_widget(form.label, {'attr': {'class': 'input input--full'}}) }}
+    </div>
+{% endblock %}

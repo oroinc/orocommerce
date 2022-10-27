@@ -2,18 +2,32 @@
 
 namespace Oro\Bundle\PricingBundle\ORM;
 
-use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\Query;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 
 /**
  * This executor should be used only for queries that will reduce result count after each execution by itself
  * Be aware that BufferedQueryResultIterator won't work correct for such queries, because it uses SKIP, LIMIT operators
  */
-class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
+class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implements
+    ShardQueryExecutorNativeSqlInterface
 {
-    const BUFFER_SIZE = 200; //use the same value as iterator
+    /**
+     * @var int
+     */
+    private $batchSize = 200; //use the same value as iterator
+
+    public function setBatchSize(int $batchSize)
+    {
+        $this->batchSize = $batchSize;
+    }
+
+    public function getBatchSize(): int
+    {
+        return $this->batchSize;
+    }
 
     /**
      * {@inheritDoc}
@@ -21,49 +35,114 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
     public function execute($className, array $fields, QueryBuilder $selectQueryBuilder)
     {
         $insertToTableName = $this->getTableName($className, $fields, $selectQueryBuilder);
-        $columns = $this->getColumns($className, $fields);
+
         $selectQuery = $selectQueryBuilder->getQuery();
         $selectQuery->useQueryCache(false);
-        $selectQuery->setMaxResults(static::BUFFER_SIZE);
-        $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
-        $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $selectQuery->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
 
-        $sql = sprintf('insert into %s (%s) values ', $insertToTableName, implode(',', $columns));
+        if ($this->batchSize > 0) {
+            $iterator = new BufferedIdentityQueryResultIterator($selectQuery);
+            $iterator->setBufferSize($this->batchSize);
+        } else {
+            $iterator = $selectQuery->toIterable();
+        }
+
+        return $this->executeNativeQueryInBatches(
+            $insertToTableName,
+            $className,
+            $iterator,
+            $fields,
+            true
+        );
+    }
+
+    public function executeNative(
+        string $insertToTableName,
+        string $className,
+        string $sourceSql,
+        array $fields = [],
+        array $params = [],
+        array $types = [],
+        bool $applyOnDuplicateKeyUpdate = true
+    ): int {
         $connection = $this->shardManager->getEntityManager()->getConnection();
 
+        return $this->executeNativeQueryInBatches(
+            $insertToTableName,
+            $className,
+            $connection->executeQuery($sourceSql, $params, $types),
+            $fields,
+            $applyOnDuplicateKeyUpdate
+        );
+    }
+
+    /**
+     * @param string $insertToTableName
+     * @param string $className
+     * @param iterable $sourceIterator
+     * @param array $fields
+     * @param bool $applyOnDuplicateKeyUpdate
+     * @return int
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    private function executeNativeQueryInBatches(
+        string $insertToTableName,
+        string $className,
+        iterable $sourceIterator,
+        array $fields = [],
+        bool $applyOnDuplicateKeyUpdate = true
+    ) {
+        $columns = $this->helper->getColumns($className, $fields);
+        $sql = sprintf('insert into %s (%s) values ', $insertToTableName, implode(',', $columns));
+
         $total = 0;
-        do {
-            $rows = $selectQuery->getArrayResult();
-            $rowsCount = 0;
-            $values = [];
-            $columnsCount = count($columns);
-            $allTypes = [];
-            $types = [];
-            foreach ($rows as $row) {
-                $total++;
-                if (count($types) === 0) {
-                    $types = $this->prepareParametersTypes($row);
-                }
-                $values = array_merge($values, array_values($row));
-                $allTypes = array_merge($allTypes, array_values($types));
-                $rowsCount++;
-                if ($rowsCount % static::BUFFER_SIZE === 0) {
-                    $fullSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
-                    $connection->executeUpdate($fullSql, $values, $allTypes);
-                    $rowsCount = 0;
-                    unset($values);
-                    unset($allTypes);
-                    $values = [];
-                    $allTypes = [];
-                }
+        $batches = [];
+        $rowsCount = 0;
+        $values = [];
+        $columnsCount = count($columns);
+        $allTypes = [];
+        $rowDataTypes = [];
+        foreach ($sourceIterator as $row) {
+            $total++;
+            if (count($rowDataTypes) === 0) {
+                $rowDataTypes = $this->prepareParametersTypes($row);
             }
-            if ($rowsCount > 0) {
-                $fullSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
-                $connection->executeUpdate($fullSql, $values, $allTypes);
-                unset($values);
-                unset($allTypes);
+            $values = array_merge($values, array_values($row));
+            $allTypes = array_merge($allTypes, array_values($rowDataTypes));
+            $rowsCount++;
+            if ($this->batchSize && $rowsCount % $this->batchSize === 0) {
+                $batchSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
+                if ($applyOnDuplicateKeyUpdate) {
+                    $batchSql = $this->applyOnDuplicateKeyUpdate($className, $batchSql);
+                }
+                $batches[] = [
+                    $batchSql,
+                    $values,
+                    $allTypes
+                ];
+                $rowsCount = 0;
+                unset($values, $allTypes);
+                $values = [];
+                $allTypes = [];
             }
-        } while (count($rows) > 0);
+        }
+        if ($rowsCount > 0) {
+            $batchSql = $sql . $this->prepareSqlPlaceholders($columnsCount, $rowsCount);
+            if ($applyOnDuplicateKeyUpdate) {
+                $batchSql = $this->applyOnDuplicateKeyUpdate($className, $batchSql);
+            }
+            $batches[] = [
+                $batchSql,
+                $values,
+                $allTypes
+            ];
+            unset($values, $allTypes);
+        }
+
+        $connection = $this->shardManager->getEntityManager()->getConnection();
+        foreach ($batches as $batch) {
+            $connection->executeStatement(...$batch);
+        }
 
         return $total;
     }
@@ -100,16 +179,16 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor
         foreach ($values as $value) {
             switch (true) {
                 case is_bool($value):
-                    $types[] = Type::BOOLEAN;
+                    $types[] = Types::BOOLEAN;
                     break;
                 case is_float($value):
-                    $types[] = Type::FLOAT;
+                    $types[] = Types::FLOAT;
                     break;
-                case is_integer($value):
-                    $types[] = Type::INTEGER;
+                case is_int($value):
+                    $types[] = Types::INTEGER;
                     break;
                 default:
-                    $types[] = Type::STRING;
+                    $types[] = Types::STRING;
             }
         }
 

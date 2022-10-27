@@ -34,7 +34,7 @@ abstract class AbstractEngineTest extends WebTestCase
      */
     protected $engine;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
@@ -50,7 +50,7 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->engine = $this->getSearchEngine();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getContainer()->get('event_dispatcher')->removeListener(IndexEntityEvent::NAME, $this->listener);
 
@@ -105,29 +105,11 @@ abstract class AbstractEngineTest extends WebTestCase
         return $listener;
     }
 
-    public function testRecordUrlForSearchAll()
-    {
-        $query = new Query();
-        $query->from('*');
-        $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
-        $items = $this->getSearchItems($query);
-
-        $this->assertCount(LoadSearchItemData::COUNT, $items);
-        $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
-        $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
-        $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
-        $this->assertStringStartsWith('item4@mail.com', $items[3]->getRecordTitle());
-        $this->assertStringStartsWith('item5@mail.com', $items[4]->getRecordTitle());
-        $this->assertStringStartsWith('item6@mail.com', $items[5]->getRecordTitle());
-        $this->assertStringStartsWith('item7@mail.com', $items[6]->getRecordTitle());
-        $this->assertStringStartsWith('item8@mail.com', $items[7]->getRecordTitle());
-        $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
-    }
-
     public function testSearchAll()
     {
         $query = new Query();
         $query->from('*');
+        $query->getCriteria()->andWhere(new Comparison('text.stringValue', '~', 'item'));
         $items = $this->getSearchItems($query);
 
         $this->assertCount(LoadSearchItemData::COUNT, $items);
@@ -209,7 +191,6 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->assertArrayHasKey($field, $aggregatedData);
         $this->assertSame($expected, $aggregatedData[$field]);
     }
-
 
     /**
      * @return array

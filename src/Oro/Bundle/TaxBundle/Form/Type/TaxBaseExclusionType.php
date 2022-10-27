@@ -27,9 +27,6 @@ class TaxBaseExclusionType extends AbstractType
      */
     private $countryAndRegionSubscriber;
 
-    /**
-     * @param AddressCountryAndRegionSubscriber $countryAndRegionSubscriber
-     */
     public function __construct(AddressCountryAndRegionSubscriber $countryAndRegionSubscriber)
     {
         $this->countryAndRegionSubscriber = $countryAndRegionSubscriber;
@@ -43,10 +40,6 @@ class TaxBaseExclusionType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->countryAndRegionSubscriber);

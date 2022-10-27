@@ -5,16 +5,14 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Datagrid\Extension\MassAction;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponUnassignActionHandler;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTest
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 
@@ -36,10 +34,12 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
     /**
      * {@inheritdoc}
      */
-    protected function assertExecuteCalled(array $coupons, MassActionHandlerArgs $args)
-    {
-        foreach ($coupons as $couponMock) {
-            $couponMock->expects($this->once())
+    protected function assertExecuteCalled(
+        array $coupons,
+        MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
+    ): void {
+        foreach ($coupons as $coupon) {
+            $coupon->expects($this->once())
                 ->method('setPromotion')
                 ->with(null);
         }
@@ -48,14 +48,13 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
     /**
      * {@inheritdoc}
      */
-    protected function assertGetResponseCalled($entitiesCount)
+    protected function assertGetResponseCalled(int $entitiesCount): MassActionResponse
     {
         $translatedMessage = $entitiesCount . ' processed';
         $this->translator->expects($this->once())
-            ->method('transChoice')
+            ->method('trans')
             ->with(
                 'oro.promotion.mass_action.unassign.success_message',
-                $entitiesCount,
                 ['%count%' => $entitiesCount]
             )
             ->willReturn($translatedMessage);

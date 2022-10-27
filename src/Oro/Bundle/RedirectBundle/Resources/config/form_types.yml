@@ -3,6 +3,7 @@ services:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
         arguments:
             - '@oro_redirect.helper.slugify_form_helper'
+            - '@oro_redirect.helper.slugify_entity_helper'
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
 
@@ -48,3 +49,4 @@ services:
 
     oro_redirect.form.transformer.prefix_with_redirect_to_string:
         class: 'Oro\Bundle\RedirectBundle\Form\DataTransformer\PrefixWithRedirectToStringTransformer'
+        public: true

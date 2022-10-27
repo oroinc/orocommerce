@@ -1,0 +1,27 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: new_arrival_products_container
+            namespace: new_arrival
+    actions:
+        - '@add':
+            id: new_arrival_products_container
+            parentId: page_content
+            blockType: container
+        - '@setOption':
+            id: new_arrival_products
+            optionName: items
+            optionValue: '=data["new_arrivals"].getProducts()'
+        - '@appendOption':
+            id: new_arrival_product
+            optionName: attr.class
+            optionValue: new-arrival-product
+        - '@setOption':
+            id: new_arrival_products
+            optionName: label
+            optionValue: oro.product.new_arrivals.label
+        - '@setOption':
+            id: new_arrival_products
+            optionName: attr.data-page-component-name
+            optionValue: 'new-arrivals-list'

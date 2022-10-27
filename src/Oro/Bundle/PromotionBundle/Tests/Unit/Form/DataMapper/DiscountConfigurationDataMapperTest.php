@@ -15,22 +15,15 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
 {
-    const ANY_FIELD = 'anyField';
+    private const ANY_FIELD = 'anyField';
 
-    /**
-     * @var DiscountConfigurationDataMapper
-     */
+    /** @var DiscountConfigurationDataMapper */
     private $dataMapper;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dispatcher;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->dataMapper = new DiscountConfigurationDataMapper();
@@ -41,6 +34,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
         $amountDiscountValueForm->expects($this->never())
             ->method('getConfig');
+
         /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
 
@@ -50,7 +44,6 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
     public function testMapDataToFormsWithInvalidData()
     {
         $data = 'any not acceptable';
-        /** @var DiscountConfigurationDataMapper|\PHPUnit\Framework\MockObject\MockObject $dataMapper */
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
         /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
@@ -64,6 +57,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         $amountDiscountValueForm = $this->createMock(FormInterface::class);
         $amountDiscountValueForm->expects($this->never())
             ->method('getConfig');
+
         /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
         $forms = new \ArrayIterator([$amountDiscountValueForm]);
 
@@ -115,10 +109,10 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         $this->addTypeForm($forms);
         $forms[DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD]->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue($valueBasedOnData));
+            ->willReturn($valueBasedOnData);
         $forms[AbstractDiscount::DISCOUNT_TYPE]->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue(DiscountInterface::TYPE_AMOUNT));
+            ->willReturn(DiscountInterface::TYPE_AMOUNT);
 
         $actualData = [];
         $this->dataMapper->mapFormsToData($forms, $actualData);
@@ -156,10 +150,10 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         $this->addTypeForm($forms);
         $forms[DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD]->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue($valueBasedOnData));
+            ->willReturn($valueBasedOnData);
         $forms[AbstractDiscount::DISCOUNT_TYPE]->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue(DiscountInterface::TYPE_PERCENT));
+            ->willReturn(DiscountInterface::TYPE_PERCENT);
 
         $actualData = [];
         $this->dataMapper->mapFormsToData($forms, $actualData);
@@ -190,7 +184,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         $forms = $this->getForms();
         $forms[self::ANY_FIELD]->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue($valueBasedOnData));
+            ->willReturn($valueBasedOnData);
 
         $actualData = [];
         $this->dataMapper->mapFormsToData($forms, $actualData);
@@ -210,7 +204,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         );
         $amountDiscountValueForm = $this->getMockBuilder(Form::class)
             ->setConstructorArgs([$config])
-            ->setMethods(['setData', 'getData'])
+            ->onlyMethods(['setData', 'getData'])
             ->getMock();
 
         $config = new FormConfigBuilder(
@@ -220,13 +214,13 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         );
         $percentDiscountValueForm = $this->getMockBuilder(Form::class)
             ->setConstructorArgs([$config])
-            ->setMethods(['setData', 'getData'])
+            ->onlyMethods(['setData', 'getData'])
             ->getMock();
 
         $config = new FormConfigBuilder(self::ANY_FIELD, \stdClass::class, $this->dispatcher);
         $anyFieldForm = $this->getMockBuilder(Form::class)
             ->setConstructorArgs([$config])
-            ->setMethods(['setData', 'getData'])
+            ->onlyMethods(['setData', 'getData'])
             ->getMock();
 
         /** @var FormInterface[]|\PHPUnit\Framework\MockObject\MockObject[] $forms */
@@ -251,7 +245,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         );
         $discountTypeForm = $this->getMockBuilder(Form::class)
             ->setConstructorArgs([$config])
-            ->setMethods(['setData', 'getData'])
+            ->onlyMethods(['setData', 'getData'])
             ->getMock();
         $forms[AbstractDiscount::DISCOUNT_TYPE] = $discountTypeForm;
     }

@@ -1,0 +1,36 @@
+services:
+    oro_product.provider.product_image_placeholder.config:
+        parent: oro_layout.provider.image_placeholder.config.abstract
+        public: false
+        arguments:
+            - 'oro_product.product_image_placeholder'
+
+    oro_product.provider.product_image_placeholder.theme:
+        parent: oro_layout.provider.image_placeholder.theme.abstract
+        public: false
+        arguments:
+            - 'product'
+
+    oro_product.provider.product_image_placeholder.default:
+        parent: oro_layout.provider.image_placeholder.default.abstract
+        arguments:
+            - '/bundles/oroproduct/images/no_image.png'
+
+    oro_product.provider.product_image_placeholder:
+        parent: oro_layout.provider.image_placeholder.chain.abstract
+        public: true
+        calls:
+            - [addProvider, ['@oro_product.provider.product_image_placeholder.config']]
+            - [addProvider, ['@oro_product.provider.product_image_placeholder.theme']]
+            - [addProvider, ['@oro_product.provider.product_image_placeholder.default']]
+
+    oro_product.provider.product_image_placeholder.cache:
+        parent: oro.cache.adapter.array
+        public: false
+
+    oro_product.provider.product_image_placeholder.cache_decorator:
+        parent: oro_layout.provider.image_placeholder.cache.abstract
+        decorates: oro_product.provider.product_image_placeholder
+        arguments:
+            - '@.inner'
+            - '@oro_product.provider.product_image_placeholder.cache'

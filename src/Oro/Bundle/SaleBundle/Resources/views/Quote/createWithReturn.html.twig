@@ -1,9 +1,11 @@
-{% extends 'OroSaleBundle:Quote:update.html.twig' %}
+{% extends '@OroSale/Quote/update.html.twig' %}
 
 {% set addQueryParameters = false %}
 {% set formAction = path('oro_sale_quote_create', {'redirect_back': true}) %}
 
 {% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {{ UI.cancelButton(path(
         return_route.route|default('oro_sale_quote_index'),
         return_route.parameters|default({})

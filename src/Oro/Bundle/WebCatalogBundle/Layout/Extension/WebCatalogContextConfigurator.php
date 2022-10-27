@@ -15,9 +15,6 @@ class WebCatalogContextConfigurator implements ContextConfiguratorInterface
      */
     protected $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;

@@ -5,13 +5,10 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
-                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/order_review.html.twig'
-
-        - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 5
+                - '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
+                - '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/order_review.html.twig'
+        - '@setFormTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/order_review_form.html.twig'
 
         - '@add':
             id: payment_additional_data
@@ -23,38 +20,44 @@ layout:
                     views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                     payment_method: '=data["checkout"].getPaymentMethod()'
 
-        - '@addTree':
-            items:
-                checkout_button_continue_right:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
-                checkout_button_back_right:
-                    blockType: checkout_transition_back
-                    options:
-                        transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
-            tree:
-                checkout_form_buttons:
-                    checkout_button_continue_right: ~
-                    checkout_button_back_right: ~
+        - '@add':
+            id: checkout_button_back_right
+            blockType: checkout_transition_back
+            parentId: checkout_order_footer_col_first
+            options:
+                transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
+                attr:
+                    class: 'checkout-form__back--no-offset'
 
-        - '@move':
-            id: checkout_order_summary_subtitle
-            parentId: checkout_information_title
+        - '@add':
+            id: checkout_button_continue_right
+            blockType: checkout_transition_continue
+            parentId: checkout_order_summary_totals_main
+            prepend: false
+            options:
+                transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
+
         - '@move':
             id: checkout_order_summary_edit_link
             parentId: checkout_information_head
             siblingId: checkout_information_title
+
         - '@move':
             id: checkout_order_summary_content
-            parentId: checkout_form_fields
+            parentId: checkout_information_body
             prepend: true
+
         - '@move':
-            id: checkout_order_summary_totals_container
-            parentId: checkout_form_fields
-            siblingId: checkout_additional_options
+            id: checkout_form_errors
+            parentId: checkout_information_body
+            prepend: true
+
+        - '@move':
+            id: checkout_order_footer
+            parentId: checkout_form
+            prepend: false
 
         - '@remove':
             id: checkout_order_summary_container

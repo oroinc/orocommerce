@@ -1,0 +1,13 @@
+{% block  __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
+    <div class="datagrid-toolbar__start" data-section="left-side">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
+    <div class="datagrid-toolbar__end" data-section="right-side">
+        <% if (toolbarPosition !== 'bottom') { %>
+        {{ block_widget(block) }}
+        <% } %>
+    </div>
+{% endblock %}

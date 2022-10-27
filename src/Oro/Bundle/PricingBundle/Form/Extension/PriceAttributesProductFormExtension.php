@@ -2,47 +2,51 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Responsible for render a form with price attributes for product.
+ */
 class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
     const PRODUCT_PRICE_ATTRIBUTES_PRICES = 'productPriceAttributesPrices';
 
     /**
-     * @var ObjectManager
+     * @var ManagerRegistry
      */
-    protected $objectManager;
+    private $registry;
 
     /**
-     * @var RegistryInterface
+     * @var AclHelper
      */
-    protected $registry;
+    private $aclHelper;
 
-    /**
-     * @param RegistryInterface $registry
-     */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
     {
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ProductType::class;
+        return [ProductType::class];
     }
 
     /**
@@ -61,16 +65,73 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         /** @var Product $product */
         $product = $event->getData();
 
-        $neededPrices = $this->getAvailablePricesForProduct($product);
-        $existingPrices = $this->getProductExistingPrices($product);
+        $attributes = $this->getAvailablePriceListForProduct();
+        $existingPrices = $this->getProductExistingPrices($product, $attributes);
+
+        $formData = $this->transformPriceAttributes($product, $attributes, $existingPrices);
+        $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->setData($formData);
+    }
+
+    public function onPostSubmit(FormEvent $event)
+    {
+        $data = $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
+
+        foreach ($data as $attributePrices) {
+            /** @var PriceAttributeProductPrice $price */
+            foreach ($attributePrices as $price) {
+                //remove nullable prices
+                if ($price->getPrice()->getValue() === null) {
+                    if (null !== $price->getId()) {
+                        $this->registry->getManagerForClass(PriceAttributeProductPrice::class)->remove($price);
+                    }
+                    continue;
+                }
+
+                // persist new prices
+                if (null === $price->getId()) {
+                    $this->registry->getManagerForClass(PriceAttributeProductPrice::class)->persist($price);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $newInstanceData
+     * @param Product $product
+     * @return PriceAttributeProductPrice
+     */
+    protected function createPrice(array $newInstanceData, Product $product)
+    {
+        return (new PriceAttributeProductPrice())
+            ->setUnit($newInstanceData['unit'])
+            ->setProduct($product)
+            ->setPrice(Price::create(null, $newInstanceData['currency']))
+            ->setPriceList($newInstanceData['attribute']);
+    }
+
+    /**
+     * @param Product $product
+     * @param array $attributes
+     * @param array $existingPrices
+     *
+     * @return array
+     */
+    private function transformPriceAttributes(Product $product, array $attributes, array $existingPrices): array
+    {
+        $neededPrices = [];
+        $unites = $product->getAvailableUnits();
+        foreach ($attributes as $attribute) {
+            foreach ($attribute->getCurrencies() as $currency) {
+                foreach ($unites as $unit) {
+                    $neededPrices[] = ['attribute' => $attribute, 'currency' => $currency, 'unit' => $unit];
+                }
+            }
+        }
 
         $formData = [];
         foreach ($existingPrices as $price) {
@@ -95,90 +156,38 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             $formData[$price->getPriceList()->getId()][] = $price;
         }
 
-        $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->setData($formData);
+        return $formData;
     }
 
     /**
-     * @param FormEvent $event
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        $data = $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
-
-        foreach ($data as $attributePrices) {
-            /** @var PriceAttributeProductPrice $price */
-            foreach ($attributePrices as $price) {
-                //remove nullable prices
-                if ($price->getPrice()->getValue() === null) {
-                    if (null !== $price->getId()) {
-                        $this->getManager()->remove($price);
-                    }
-                    continue;
-                }
-
-                // persist new prices
-                if (null === $price->getId()) {
-                    $this->getManager()->persist($price);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param array $newInstanceData
-     * @param Product $product
-     * @return PriceAttributeProductPrice
-     */
-    protected function createPrice(array $newInstanceData, Product $product)
-    {
-        return (new PriceAttributeProductPrice())
-            ->setUnit($newInstanceData['unit'])
-            ->setProduct($product)
-            ->setPrice(Price::create(null, $newInstanceData['currency']))
-            ->setPriceList($newInstanceData['attribute']);
-    }
-
-    /**
-     * @return ObjectManager|null
-     */
-    protected function getManager()
-    {
-        if (!$this->objectManager) {
-            $this->objectManager = $this->registry->getManagerForClass(Product::class);
-        }
-        return $this->objectManager;
-    }
-
-    /**
-     * @param Product $product
      * @return array
      */
-    protected function getAvailablePricesForProduct(Product $product)
+    private function getAvailablePriceListForProduct()
     {
-        $neededPrices = [];
-        $unites = $product->getAvailableUnits();
-        $priceAttributes = $this->getManager()
-            ->getRepository('OroPricingBundle:PriceAttributePriceList')
-            ->findAll();
+        /** @var PriceAttributePriceListRepository $priceAttributeRepository */
+        $priceAttributeRepository = $this->registry
+            ->getManagerForClass(PriceAttributePriceList::class)
+            ->getRepository(PriceAttributePriceList::class);
 
-        foreach ($priceAttributes as $attribute) {
-            foreach ($attribute->getCurrencies() as $currency) {
-                foreach ($unites as $unit) {
-                    $neededPrices[] = ['attribute' => $attribute, 'currency' => $currency, 'unit' => $unit];
-                }
-            }
-        }
+        $qb = $priceAttributeRepository->getPriceAttributesQueryBuilder();
+        $options = [self::PRODUCT_PRICE_ATTRIBUTES_PRICES => true];
 
-        return $neededPrices;
+        return $this->aclHelper->apply($qb, BasicPermission::VIEW, $options)->getResult() ?? [];
     }
 
     /**
-     * @param $product
+     * @param Product $product
+     * @param array $priceLists
+     *
      * @return array|PriceAttributeProductPrice[]
      */
-    protected function getProductExistingPrices($product)
+    private function getProductExistingPrices(Product $product, array $priceLists)
     {
-        return $this->getManager()->getRepository('OroPricingBundle:PriceAttributeProductPrice')
-            ->findBy(['product' => $product]);
+        $result = $this->registry
+            ->getManagerForClass(PriceAttributeProductPrice::class)
+            ->getRepository(PriceAttributeProductPrice::class)
+            ->findBy(['product' => $product, 'priceList' => $priceLists]);
+
+        return $result ?? [];
     }
 }

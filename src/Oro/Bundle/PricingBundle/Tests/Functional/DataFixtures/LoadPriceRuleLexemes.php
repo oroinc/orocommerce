@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -86,7 +86,7 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
                 ->setClassName($lexeme['className'])
                 ->setFieldName($lexeme['fieldName'])
                 ->setPriceList($this->getReference($lexeme['priceList']));
-            
+
             if ($lexeme['priceRule']) {
                 /** @var PriceRule $priceRule */
                 $priceRule = $this->getReference($lexeme['priceRule']);

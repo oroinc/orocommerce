@@ -3,12 +3,13 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
 class TaxJurisdictionDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -28,7 +29,7 @@ class TaxJurisdictionDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $taxJurisdiction->getId(),
-            'oro_tax.entity.tax_jurisdiction.class',
+            TaxJurisdiction::class,
             'oro_tax_jurisdiction_index'
         );
     }

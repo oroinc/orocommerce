@@ -5,72 +5,45 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
 class TotalProviderTest extends AbstractSubtotalProviderTest
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|SubtotalProviderRegistry
-     */
-    protected $subtotalProviderRegistry;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
+    private $processorProvider;
 
-    /**
-     * @var TotalProvider
-     */
-    protected $provider;
+    /** @var TotalProvider */
+    private $provider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider
-     */
-    protected $processorProvider;
-
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|RateConverterInterface */
-    protected $rateConverter;
-
-    /** @var  \PHPUnit\Framework\MockObject\MockObject|DefaultCurrencyProviderInterface */
-    protected $currencyProvider;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->processorProvider =
-            $this->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->processorProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->rateConverter = $this->createMock(RateConverterInterface::class);
 
-        $this->currencyProvider = $this
-            ->createMock('Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface');
-        $this->currencyProvider
-            ->expects($this->any())
+        $currencyProvider = $this->createMock(DefaultCurrencyProviderInterface::class);
+        $currencyProvider->expects($this->any())
             ->method('getDefaultCurrency')
             ->willReturn('USD');
-        $this->rateConverter = $this->createMock('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface');
 
         $this->provider = new TotalProvider(
             $this->processorProvider,
-            $this->currencyProvider,
+            $currencyProvider,
             $this->rateConverter
         );
     }
 
-    protected function tearDown()
-    {
-        unset($this->provider);
-    }
-
     /**
      * @dataProvider subtotalsProvider
-     * @param $original
-     * @param $expectedResult
      */
-    public function testGetTotalWithSubtotalsWithBaseCurrencyValues($original, $expectedResult)
+    public function testGetTotalWithSubtotalsWithBaseCurrencyValues(array $original, array $expectedResult)
     {
-        $order = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
+        $order = $this->createMock(Order::class);
         $order->expects($this->any())
             ->method('getBaseTotalValue')
             ->willReturn($original[TotalProcessorProvider::TYPE]['base_amount']);
@@ -94,18 +67,18 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
 
         $subtotals = new ArrayCollection([$subtotal]);
 
-        $this->processorProvider
-            ->expects($this->once())
-            ->method('getTotal')
+        $this->processorProvider->expects($this->once())
+            ->method('getTotalForSubtotals')
+            ->with($order, $subtotals)
             ->willReturn($total);
 
-        $this->processorProvider
-            ->expects($this->once())
+        $this->processorProvider->expects($this->once())
             ->method('getSubtotals')
+            ->with($order)
             ->willReturn($subtotals);
 
         $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);
-        $this->assertInternalType('array', $totals);
+        $this->assertIsArray($totals);
         $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         $this->assertEquals(
             $totals[TotalProcessorProvider::TYPE],
@@ -118,7 +91,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    public function subtotalsProvider()
+    public function subtotalsProvider(): array
     {
         return [
             'set with totals not in base currency' => [

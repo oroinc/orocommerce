@@ -3,7 +3,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         rule:
             - Valid: ~
         useCoupons:
-            - NotBlank: ~
+            - NotNull: ~
         schedules:
             - Valid: ~
         scopes:
@@ -39,11 +39,22 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
             - Length:
                 min: 1
                 max: 255
+                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
         validFrom:
-            - Date: ~
+            - Type:
+                type: DateTimeInterface
+                message: oro.promotion.coupon.valid_from.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         validUntil:
-            - Date: ~
+            - Type:
+                type: DateTimeInterface
+                message: oro.promotion.coupon.valid_until.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         usesPerCoupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:

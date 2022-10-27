@@ -6,6 +6,9 @@ Oro\Bundle\CMSBundle\Entity\Page:
             - Valid: ~
         slugPrototypes:
             - Valid: ~
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
 
 Oro\Bundle\CMSBundle\Entity\ContentBlock:
     constraints:
@@ -23,8 +26,123 @@ Oro\Bundle\CMSBundle\Entity\ContentBlock:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         contentVariants:
             - Valid: ~
+            - Count:
+                min: 1
+                minMessage: oro.cms.contentblock.content_variants.empty.message
+
+Oro\Bundle\CMSBundle\Entity\ContentWidget:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [organization, name]
+            errorPath: name
+        - Oro\Bundle\CMSBundle\Validator\Constraints\NotEmptyContentWidgetLayout: ~
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                  max: 255
+            - Regex:
+                  pattern: '/^[a-zA-Z0-9_\-]*$/'
+                  message: oro.cms.contentwidget.alias.regex.message
+        widgetType:
+            - NotBlank: ~
+            - Length:
+                  max: 255
+        layout:
+            - Length:
+                  max: 255
+        organization:
+            - NotBlank: ~
+
+Oro\Bundle\CMSBundle\Entity\ImageSlide:
+    properties:
+        contentWidget:
+            - NotBlank: ~
+        slideOrder:
+            - NotBlank: ~
+            - Type: numeric
+        url:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+            - Oro\Bundle\SecurityBundle\Validator\Constraints\NotDangerousProtocol:
+                message: oro.cms.image_slider.url.not_dangerous_protocol.message
+        displayInSameWindow:
+            - Type: boolean
+        title:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+        textAlignment:
+            - NotBlank: ~
+            - Choice:
+                choices:
+                    - center
+                    - left
+                    - right
+                    - top_left
+                    - top_center
+                    - top_right
+                    - bottom_left
+                    - bottom_center
+                    - bottom_right
+        mainImage:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+        contentStyle:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~
+
+Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel:
+    constraints:
+        - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGFieldsName: ~
+
+Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
+    properties:
+        title:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+        contentStyle:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~
+        itemOrder:
+            - NotBlank: ~
+            - Type: numeric
+        contentWidget:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+
+Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+                allowEmptyString: false
+        content:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+        contentStyle:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~

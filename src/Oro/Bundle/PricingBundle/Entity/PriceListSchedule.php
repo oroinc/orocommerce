@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalInterface;
-use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalTrait;
 
 /**
@@ -44,10 +43,6 @@ class PriceListSchedule implements ScheduleIntervalInterface
      */
     protected $deactivateAt;
 
-    /**
-     * @param \DateTime|null $activeAt
-     * @param \DateTime|null $deactivateAt
-     */
     public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
     {
         $this->activeAt = $activeAt;

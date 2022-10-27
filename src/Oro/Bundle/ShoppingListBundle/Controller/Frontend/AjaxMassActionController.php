@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxMassActionController extends Controller
+/**
+ * Controller for getting mass actions for datagrid
+ */
+class AjaxMassActionController extends AbstractController
 {
     /**
      * Get grid mass actions
@@ -17,7 +19,6 @@ class AjaxMassActionController extends Controller
      *      "/get-mass-actions",
      *      name="oro_shopping_list_frontend_get_mass_actions",
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @return JsonResponse
      */
@@ -29,11 +30,21 @@ class AjaxMassActionController extends Controller
         return new JsonResponse($formattedMassActions);
     }
 
-    /**
-     * @return AddLineItemMassActionProvider
-     */
-    private function getMassActionProvider()
+    private function getMassActionProvider(): AddLineItemMassActionProvider
     {
-        return $this->get('oro_shopping_list.action.datagrid.mass_action_provider');
+        return $this->get(AddLineItemMassActionProvider::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                AddLineItemMassActionProvider::class,
+            ]
+        );
     }
 }

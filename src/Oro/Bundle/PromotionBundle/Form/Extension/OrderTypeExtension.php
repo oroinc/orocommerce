@@ -21,9 +21,6 @@ class OrderTypeExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSetData(FormEvent $event)
     {
         $event->getForm()->add('appliedCoupons', AppliedCouponCollectionType::class, ['entity' => $event->getData()]);
@@ -32,8 +29,8 @@ class OrderTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritDoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return OrderType::class;
+        return [OrderType::class];
     }
 }

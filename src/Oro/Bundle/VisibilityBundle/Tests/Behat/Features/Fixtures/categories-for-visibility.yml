@@ -1,0 +1,19 @@
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localValueLightingProducts']
+            - setParentCategory: ['@root_category']
+
+    categoryMedicalApparel:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localValueMedicalApparel']
+            - setParentCategory: ['@root_category']
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localValueLightingProducts:
+        string: 'Lighting Products'
+
+    localValueMedicalApparel:
+        string: 'Medical Apparel'

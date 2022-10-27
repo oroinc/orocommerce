@@ -1,0 +1,18 @@
+Oro\Bundle\TranslationBundle\Entity\TranslationKey:
+    empty_grid_key:
+        key: 'oro.product.datagrid.empty_grid'
+        domain: 'messages'
+    empty_filtered_grid_key:
+        key: 'oro.product.datagrid.empty_filtered_grid'
+        domain: 'messages'
+Oro\Bundle\TranslationBundle\Entity\Translation:
+    translation_empty_product_grid:
+        translationKey: '@empty_grid_key'
+        value: 'Empty grid custom message'
+        language: '@en_language'
+        scope: 1
+    translation_empty_filtered_product_grid:
+        translationKey: '@empty_filtered_grid_key'
+        value: 'Empty filtered grid custom message'
+        language: '@en_language'
+        scope: 1

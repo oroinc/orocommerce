@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orofrontendlocalization/js/app/components/localization-switcher-component': 'bundles/orofrontendlocalization/js/app/components/localization-switcher-component.js'

@@ -16,9 +16,6 @@ class OroPromotionBundle implements Migration
         $this->addValidFromField($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addValidFromField(Schema $schema)
     {
         $table = $schema->getTable('oro_promotion_coupon');

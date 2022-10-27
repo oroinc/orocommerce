@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\JsTree;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
@@ -12,29 +14,26 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFixtures()
+    protected function getFixtures(): array
     {
-        return 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData';
+        return [LoadCategoryData::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getHandlerId()
+    protected function getHandlerId(): string
     {
         return 'oro_catalog.category_tree_handler';
     }
 
     /**
      * @dataProvider createDataProvider
-     * @param string|null $entityReference
-     * @param bool $includeRoot
-     * @param array $expectedData
      */
-    public function testCreateTree($entityReference, $includeRoot, array $expectedData)
+    public function testCreateTree(?string $entityReference, bool $includeRoot, array $expectedData)
     {
         $entity = null;
-        if ($entityReference !== null) {
+        if (null !== $entityReference) {
             /** @var Category $entity */
             $entity = $this->getReference($entityReference);
         }
@@ -55,10 +54,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertTreeCreated($expectedData, $entity, $includeRoot);
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
+    public function createDataProvider(): array
     {
         return [
             [
@@ -111,16 +107,113 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         ];
     }
 
+    public function testCreateTreeByMasterCatalogRoot()
+    {
+        $rootId = 1;
+        /** @var Category $firstLevel */
+        $firstLevel = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        /** @var Category $secondLevel1 */
+        $secondLevel1 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        /** @var Category $thirdLevel1 */
+        $thirdLevel1 = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
+        /** @var Category $fourthLevel1 */
+        $fourthLevel1 = $this->getReference(LoadCategoryData::FOURTH_LEVEL1);
+        /** @var Category $secondLevel2 */
+        $secondLevel2 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
+        /** @var Category $thirdLevel2 */
+        $thirdLevel2 = $this->getReference(LoadCategoryData::THIRD_LEVEL2);
+        /** @var Category $fourthLevel2 */
+        $fourthLevel2 = $this->getReference(LoadCategoryData::FOURTH_LEVEL2);
+
+        $expectedData = [
+            [
+                'id' => $rootId,
+                'parent' => AbstractTreeHandler::ROOT_PARENT_VALUE,
+                'state' => [
+                    'opened' => true
+                ],
+                'text' => 'All Products'
+            ],
+            [
+                'id' => $firstLevel->getId(),
+                'parent' => $rootId,
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $firstLevel->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $secondLevel1->getId(),
+                'parent' => $firstLevel->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $secondLevel1->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $thirdLevel1->getId(),
+                'parent' => $secondLevel1->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $thirdLevel1->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $fourthLevel1->getId(),
+                'parent' => $thirdLevel1->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $fourthLevel1->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $secondLevel2->getId(),
+                'parent' => $firstLevel->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $secondLevel2->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $thirdLevel2->getId(),
+                'parent' => $secondLevel2->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $thirdLevel2->getDefaultTitle()->getString()
+            ],
+            [
+                'id' => $fourthLevel2->getId(),
+                'parent' => $thirdLevel2->getId(),
+                'state' => [
+                    'opened' => false
+                ],
+                'text' => $fourthLevel2->getDefaultTitle()->getString()
+            ]
+        ];
+
+        $this->setAdminToken();
+
+        $actualTree = $this->handler->createTreeByMasterCatalogRoot();
+        $actualTree = array_reduce($actualTree, function ($result, $data) {
+            $result[] = $data;
+            return $result;
+        }, []);
+        ksort($expectedData);
+        ksort($actualTree);
+        $this->assertEquals($expectedData, $actualTree);
+    }
+
     /**
      * @dataProvider moveDataProvider
-     * @param string $entityReference
-     * @param string $parent
-     * @param int $position
-     * @param array $expectedStatus
-     * @param array $expectedData
      */
-    public function testMove($entityReference, $parent, $position, array $expectedStatus, array $expectedData)
-    {
+    public function testMove(
+        string $entityReference,
+        string $parent,
+        int $position,
+        array $expectedStatus,
+        array $expectedData
+    ) {
         $entityId = $this->getReference($entityReference)->getId();
         if ($parent !== AbstractTreeHandler::ROOT_PARENT_VALUE) {
             $parent = $this->getReference($parent)->getId();
@@ -129,10 +222,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertNodeMove($expectedStatus, $expectedData, $entityId, $parent, $position);
     }
 
-    /**
-     * @return array
-     */
-    public function moveDataProvider()
+    public function moveDataProvider(): array
     {
         return [
             [
@@ -171,10 +261,11 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getActualNodeHierarchy($entityId, $parentId, $position)
+    protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
-        $entities = $this->getContainer()->get('doctrine')->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
+        $entities = $this->getContainer()->get('doctrine')
+            ->getRepository(Category::class)
+            ->findBy([], ['level' => 'DESC', 'left' => 'DESC']);
         return array_reduce($entities, function ($result, Category $category) {
             $result[$category->getDefaultTitle()->getString()] = [];
             if ($category->getParentCategory()) {
@@ -183,5 +274,23 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
             }
             return $result;
         }, []);
+    }
+
+    private function setAdminToken()
+    {
+        $container = self::getContainer();
+        /** @var Organization $organization */
+        $organization = $container->get('doctrine')
+            ->getRepository(Organization::class)
+            ->getFirst();
+
+        $adminToken = new UsernamePasswordOrganizationToken(
+            'admin',
+            'admin',
+            'key',
+            $organization
+        );
+
+        $container->get('security.token_storage')->setToken($adminToken);
     }
 }

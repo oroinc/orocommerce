@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductGridWidgetRenderEvent extends Event
 {
@@ -13,9 +13,6 @@ class ProductGridWidgetRenderEvent extends Event
      */
     protected $widgetRouteParameters = [];
 
-    /**
-     * @param array $widgetRouteParameters
-     */
     public function __construct(array $widgetRouteParameters)
     {
         $this->widgetRouteParameters = $widgetRouteParameters;

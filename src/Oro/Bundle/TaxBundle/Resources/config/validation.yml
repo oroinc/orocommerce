@@ -1,6 +1,6 @@
 Oro\Bundle\TaxBundle\Entity\AbstractTaxCode:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [code, organization]
     properties:
         code:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
@@ -8,6 +8,7 @@ Oro\Bundle\TaxBundle\Entity\AbstractTaxCode:
             - Length:
                 min: 1
                 max: 255
+                allowEmptyString: false
 
 Oro\Bundle\TaxBundle\Entity\Tax:
     constraints:
@@ -18,6 +19,7 @@ Oro\Bundle\TaxBundle\Entity\Tax:
             - Length:
                 min: 1
                 max: 255
+                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         rate:
             - NotBlank: ~
@@ -35,6 +37,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
             - NotBlank: ~
         taxJurisdiction:
             - NotBlank: ~
+
 Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
@@ -44,6 +47,7 @@ Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
             - Length:
                 min: 1
                 max: 255
+                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         zipCodes:
             - Valid: ~

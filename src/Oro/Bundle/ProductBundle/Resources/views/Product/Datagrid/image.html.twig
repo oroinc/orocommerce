@@ -1,0 +1,15 @@
+{% set productImageMain = record.getValue('productImageMain')|default(record.getValue('productImageListing')) %}
+{% set productImageListing = record.getValue('productImageListing')|default(productImageMain) %}
+{% set pictureSources = product_filtered_picture_sources(productImageMain, 'product_original') %}
+
+<a class="view-image no-hash"
+   tabindex="-1"
+   data-gallery="product-image{{ record.getValue('id') }}"
+   data-sources="{{ pictureSources.sources|json_encode }}"
+   href="{{ pictureSources.src }}"
+>
+    {% include '@OroAttachment/Twig/picture.html.twig' with {
+        sources: product_filtered_picture_sources(productImageListing, 'product_small'),
+        img_attrs: { class: 'thumbnail', alt: record.getValue('productName'), width: 82, height: 82 }
+    } %}
+</a>

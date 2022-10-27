@@ -12,10 +12,7 @@ class ProductDBQueryRestrictionEventTest extends \PHPUnit\Framework\TestCase
     {
         $dataParameters = new ParameterBag(['test']);
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
         $event = new ProductDBQueryRestrictionEvent($queryBuilder, $dataParameters);
 

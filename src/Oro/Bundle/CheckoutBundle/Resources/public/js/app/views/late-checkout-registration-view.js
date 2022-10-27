@@ -2,12 +2,11 @@
 define(function(require) {
     'use strict';
 
-    var LateRegistrationView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/views/base/view');
 
-    LateRegistrationView = BaseComponent.extend({
+    const LateRegistrationView = BaseComponent.extend({
 
         /**
          * @property {jQuery}
@@ -22,27 +21,27 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LateRegistrationView() {
-            LateRegistrationView.__super__.constructor.apply(this, arguments);
+        constructor: function LateRegistrationView(options) {
+            LateRegistrationView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options);
 
             this.$switcher = this.$el.find(this.options.selectors.switcher);
             this.$fieldsContainer = this.$el.find(this.options.selectors.fieldsContainer);
-            this.$switcher.on('change', _.bind(this.onOptionChange, this));
+            this.$switcher.on('change', this.onOptionChange.bind(this));
             this.onOptionChange();
         },
 
         onOptionChange: function() {
-            var inputs = this.$fieldsContainer.find('input');
-            var validationDisabled = false;
+            const inputs = this.$fieldsContainer.find('input');
+            let validationDisabled = false;
             if ($(this.$switcher).is(':checked')) {
                 $(this.$fieldsContainer).show();
             } else {

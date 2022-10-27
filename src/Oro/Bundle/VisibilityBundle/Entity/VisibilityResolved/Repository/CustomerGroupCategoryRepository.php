@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -18,7 +17,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryV
  *  - scope
  *  - category
  */
-class CustomerGroupCategoryRepository extends EntityRepository
+class CustomerGroupCategoryRepository extends ServiceEntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;
@@ -78,9 +77,6 @@ class CustomerGroupCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(
@@ -234,7 +230,6 @@ class CustomerGroupCategoryRepository extends EntityRepository
             'customerGroupIds' => $customerGroupIds
         ]);
         $scopeManager->getCriteriaForRelatedScopes(CustomerGroupCategoryVisibility::VISIBILITY_TYPE, []);
-
 
         $fallBackToGroupVisibilities = [];
         $arrayResult = $qb->getQuery()->getArrayResult();

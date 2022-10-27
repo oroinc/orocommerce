@@ -2,53 +2,34 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
-    use EntityTrait;
     use FlatRateIntegrationTrait;
 
-    /**
-     * @var ShippingMethodsConfigsRuleRepository
-     */
-    protected $repository;
+    private ShippingMethodsConfigsRuleRepository $repository;
 
-    /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures([
-            LoadShippingMethodsConfigsRulesWithConfigs::class,
-        ]);
+        $this->loadFixtures([LoadShippingMethodsConfigsRulesWithConfigs::class]);
 
-        $this->em = static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroShippingBundle:ShippingMethodsConfigsRule');
-        $this->repository = $this->em->getRepository('OroShippingBundle:ShippingMethodsConfigsRule');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(ShippingMethodsConfigsRule::class);
     }
 
-    /**
-     * @param array $entities
-     *
-     * @return array
-     */
-    private function getEntitiesIds(array $entities)
+    private function getEntitiesIds(array $entities): array
     {
         return array_map(function ($entity) {
             return $entity->getId();
@@ -57,12 +38,8 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getByDestinationAndCurrencyDataProvider
-     *
-     * @param array                        $shippingAddressData
-     * @param string                       $currency
-     * @param ShippingMethodsConfigsRule[] $expectedRules
      */
-    public function testGetByDestinationAndCurrency(array $shippingAddressData, $currency, array $expectedRules)
+    public function testGetByDestinationAndCurrency(array $shippingAddressData, string $currency, array $expectedRules)
     {
         $expectedRulesIds = $this->getEntitiesIds($this->getEntitiesByReferences($expectedRules));
         $actualRules = $this->repository->getByDestinationAndCurrencyAndWebsite(
@@ -73,10 +50,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $this->assertEquals($expectedRulesIds, $this->getEntitiesIds($actualRules));
     }
 
-    /**
-     * @return array
-     */
-    public function getByDestinationAndCurrencyDataProvider()
+    public function getByDestinationAndCurrencyDataProvider(): array
     {
         return [
             [
@@ -118,8 +92,8 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
         $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
 
-        static::assertCount(4, $rulesWithoutShippingMethods);
-        static::assertCount(3, $enabledRulesWithoutShippingMethods);
+        self::assertCount(4, $rulesWithoutShippingMethods);
+        self::assertCount(3, $enabledRulesWithoutShippingMethods);
     }
 
     public function testDisableRulesWithoutShippingMethods()
@@ -129,8 +103,8 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
         $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
 
-        static::assertCount(4, $rulesWithoutShippingMethods);
-        static::assertCount(0, $enabledRulesWithoutShippingMethods);
+        self::assertCount(4, $rulesWithoutShippingMethods);
+        self::assertCount(0, $enabledRulesWithoutShippingMethods);
     }
 
     public function testGetRulesByMethod()
@@ -150,31 +124,26 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
             'shipping_rule_with_disabled_type_configs',
         ];
         foreach ($expectedRuleReferences as $expectedRuleReference) {
-            static::assertContains($this->getReference($expectedRuleReference), $rulesByExistingMethod);
+            self::assertContains($this->getReference($expectedRuleReference), $rulesByExistingMethod);
         }
 
         $rulesByNotExistingMethod = $this->repository->getRulesByMethod('not_existing_method');
-        static::assertCount(0, $rulesByNotExistingMethod);
+        self::assertCount(0, $rulesByNotExistingMethod);
     }
 
     /**
      * @dataProvider getEnabledRulesByMethodDataProvider
-     *
-     * @param string[] $expectedRuleReferences
      */
     public function testGetEnabledRulesByMethod(array $expectedRuleReferences)
     {
         $actualRules = $this->repository->getEnabledRulesByMethod($this->getFlatRateIdentifier());
 
         foreach ($expectedRuleReferences as $expectedRuleReference) {
-            static::assertContains($this->getReference($expectedRuleReference), $actualRules);
+            self::assertContains($this->getReference($expectedRuleReference), $actualRules);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getEnabledRulesByMethodDataProvider()
+    public function getEnabledRulesByMethodDataProvider(): array
     {
         return [
             [
@@ -193,33 +162,21 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $rules
-     *
-     * @return array
-     */
-    protected function getEntitiesByReferences(array $rules)
+    private function getEntitiesByReferences(array $rules): array
     {
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return AddressInterface|object
-     */
-    protected function createShippingAddress(array $data)
+    private function createShippingAddress(array $data): AddressInterface
     {
-        return $this->getEntity(ShippingAddressStub::class, [
-            'country' => new Country($data['country']),
-            'region' => $this->getEntity(Region::class, [
-                'combinedCode' => $data['region']['combinedCode'],
-                'code' => $data['region']['code'],
-            ]),
-            'postalCode' => $data['postalCode'],
-        ]);
+        $address = new ShippingOrigin();
+        $address->setCountry(new Country($data['country']));
+        $address->setRegion((new Region($data['region']['combinedCode']))->setCode($data['region']['code']));
+        $address->setPostalCode($data['postalCode']);
+
+        return $address;
     }
 
     public function testGetByCurrency()

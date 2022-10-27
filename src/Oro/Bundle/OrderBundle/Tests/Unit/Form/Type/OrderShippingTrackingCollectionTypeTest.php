@@ -18,12 +18,10 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var OrderShippingTrackingCollectionType
-     */
-    protected $type;
+    /** @var OrderShippingTrackingCollectionType */
+    private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new OrderShippingTrackingCollectionType();
         parent::setUp();
@@ -31,10 +29,6 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array|OrderShippingTracking[] $existing
-     * @param array $submitted
-     * @param array|OrderShippingTracking[] $expected
      */
     public function testSubmit(array $existing, array $submitted, array $expected = null)
     {
@@ -47,14 +41,12 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OrderShippingTrackingCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
-        static::assertTrue($form->isValid());
-        static::assertEquals($expected, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'test' => [
@@ -87,9 +79,9 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -106,37 +98,32 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        static::assertSame(CollectionType::class, $this->type->getParent());
+        self::assertSame(CollectionType::class, $this->type->getParent());
     }
 
     public function testGetBlockPrefix()
     {
-        static::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getBlockPrefix());
+        self::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
      * @dataProvider finishViewDataProvider
-     * @param array $options
      */
     public function testFinishView(array $options)
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $formView = new FormView();
         $this->type->finishView($formView, $form, $options);
 
-        static::assertArrayHasKey('page_component', $formView->vars);
-        static::assertEquals($options['page_component'], $formView->vars['page_component']);
+        self::assertArrayHasKey('page_component', $formView->vars);
+        self::assertEquals($options['page_component'], $formView->vars['page_component']);
 
-        static::assertArrayHasKey('page_component_options', $formView->vars);
-        static::assertEquals($options['page_component_options'], $formView->vars['page_component_options']);
+        self::assertArrayHasKey('page_component_options', $formView->vars);
+        self::assertEquals($options['page_component_options'], $formView->vars['page_component_options']);
     }
 
-    /**
-     * @return array
-     */
-    public function finishViewDataProvider()
+    public function finishViewDataProvider(): array
     {
         return [
             'test1' => [

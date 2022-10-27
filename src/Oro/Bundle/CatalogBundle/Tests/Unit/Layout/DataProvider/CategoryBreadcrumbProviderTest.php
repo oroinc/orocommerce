@@ -4,188 +4,177 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
-use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CategoryProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $categoryProvider;
+    private CategoryProvider|\PHPUnit\Framework\MockObject\MockObject $categoryProvider;
 
-    /**
-     * @var CategoryBreadcrumbProvider
-     */
-    protected $categoryBreadcrumbProvider;
+    private LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject $localizationHelper;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localizationHelper;
+    private UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $urlGenerator;
 
-    /**
-     * @var Router|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $router;
+    private Category|\PHPUnit\Framework\MockObject\MockObject $category;
 
-    /**
-     * @var Category|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $category;
+    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    private CategoryBreadcrumbProvider $categoryBreadcrumbProvider;
 
-    /**
-     * @inheritdoc
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->category        = $this->createMock(Category::class);
-        $requestProductHandler = $this->createMock(RequestProductHandler::class);
-        $categoryRepository    = $this->createMock(CategoryRepository::class);
-        $categoryTreeProvider  = $this->createMock(CategoryTreeProvider::class);
-
-        $this->categoryProvider = $this->getMockBuilder(CategoryProvider::class)
-            ->setConstructorArgs([$requestProductHandler, $categoryRepository, $categoryTreeProvider])
-            ->getMock();
-
-        $this->categoryProvider
-            ->method('getCurrentCategory')
-            ->willReturn($this->category);
-
-        $this->router             = $this->createMock(Router::class);
+        $this->categoryProvider = $this->createMock(CategoryProvider::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
-        $this->requestStack       = $this->createMock(RequestStack::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+
+        $this->category = $this->createMock(Category::class);
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects(self::any())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($categoryRepository);
+
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($manager);
 
         $this->categoryBreadcrumbProvider = new CategoryBreadcrumbProvider(
             $this->categoryProvider,
             $this->localizationHelper,
-            $this->router,
+            $this->urlGenerator,
             $this->requestStack
         );
     }
 
-    public function testGetItemsRoot()
+    public function testGetItemsRoot(): void
     {
         $collection = $this->createMock(Collection::class);
 
-        $this->router->method('generate')
+        $this->urlGenerator->expects(self::once())
+            ->method('generate')
             ->willReturn('/');
 
-        $this->category->method('getTitles')
+        $this->category->expects(self::once())
+            ->method('getTitles')
             ->willReturn($collection);
 
-        $this->categoryProvider
-            ->method('getParentCategories')
-            ->willReturn([]);
+        $this->categoryProvider->expects(self::once())
+            ->method('getCategoryPath')
+            ->willReturn([$this->category]);
 
-        $this->localizationHelper
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
             ->with($collection)
             ->willReturn('root');
 
-        $result     = $this->categoryBreadcrumbProvider->getItems();
-        $breadcrumb = [
-            'label' => 'root',
-            'url'   => '/'
+        $result = $this->categoryBreadcrumbProvider->getItems();
+
+        $expectedBreadcrumbs = [
+            [
+                'label' => 'root',
+                'url'   => '/',
+            ],
         ];
-        $this->assertEquals([$breadcrumb], $result);
+        self::assertEquals($expectedBreadcrumbs, $result);
     }
 
-    public function testGetItems()
+    public function testGetItems(): void
     {
+        $categoryId = 2;
+
         $collection1 = new ArrayCollection();
         $collection2 = new ArrayCollection();
 
-        $parentCategory = $this->createMock(Category::class);
-
-        $this->category->method('getTitles')
-            ->willReturn($collection1);
-
-        $parentCategory->method('getTitles')
+        $parentCategoryA = $this->createMock(Category::class);
+        $parentCategoryA->expects(self::once())
+            ->method('getTitles')
             ->willReturn($collection2);
 
-        $this->category->method('getId')
-            ->willReturn(2);
+        $this->category->expects(self::once())
+            ->method('getTitles')
+            ->willReturn($collection1);
+        $this->category->expects(self::once())
+            ->method('getId')
+            ->willReturn($categoryId);
 
-        $this->localizationHelper->expects($this->at(0))
+        $this->localizationHelper->expects(self::exactly(2))
             ->method('getLocalizedValue')
-            ->with($collection1)
-            ->willReturn('root');
+            ->withConsecutive([$collection1], [$collection2])
+            ->willReturnOnConsecutiveCalls('root', 'office');
 
-        $this->localizationHelper->expects($this->at(1))
-            ->method('getLocalizedValue')
-            ->with($collection2)
-            ->willReturn('office');
-
-        $this->categoryProvider
-            ->method('getParentCategories')
-            ->willReturn([$parentCategory]);
-
-        $this->categoryProvider
+        $this->categoryProvider->expects(self::once())
+            ->method('getCategoryPath')
+            ->willReturn([$parentCategoryA, $this->category]);
+        $this->categoryProvider->expects(self::once())
             ->method('getIncludeSubcategoriesChoice')
-            ->willReturn(1);
+            ->willReturn(true);
 
-        $this->router->expects($this->at(0))
+        $this->urlGenerator->expects(self::exactly(2))
             ->method('generate')
-            ->with(
-                'oro_product_frontend_product_index'
-            )->willReturn('/');
-
-        $this->router->expects($this->at(1))
-            ->method('generate')
-            ->with(
-                'oro_product_frontend_product_index',
+            ->withConsecutive(
+                ['oro_product_frontend_product_index'],
                 [
-                    'categoryId'           => 2,
-                    'includeSubcategories' => 1
+                    'oro_product_frontend_product_index',
+                    [
+                        'categoryId'           => $categoryId,
+                        'includeSubcategories' => 1
+                    ]
                 ]
-            )->willReturn('/?c=2');
+            )
+            ->willReturnOnConsecutiveCalls(
+                '/',
+                '/?c=2'
+            );
 
-        $result      = $this->categoryBreadcrumbProvider->getItems();
-        $breadcrumbs = [
+        $result = $this->categoryBreadcrumbProvider->getItems();
+
+        $expectedBreadcrumbs = [
             [
                 'label' => 'root',
-                'url'   => '/'
+                'url'   => '/',
             ],
             [
                 'label' => 'office',
-                'url'   => '/?c=2'
-            ]
+                'url'   => '/?c=2',
+            ],
         ];
-        $this->assertEquals($breadcrumbs, $result);
+        self::assertEquals($expectedBreadcrumbs, $result);
     }
 
-    public function testGetItemsForProduct()
+    public function testGetItemsForProduct(): void
     {
         $categoryId = 4;
 
         $collection1 = new ArrayCollection();
         $collection2 = new ArrayCollection();
 
-        $parentCategory = $this->createMock(Category::class);
-        $parentCategory->method('getTitles')
+        $parentCategoryA = $this->createMock(Category::class);
+        $parentCategoryA->expects(self::once())
+            ->method('getTitles')
             ->willReturn($collection2);
 
-        $this->category->method('getTitles')
+        $this->category->expects(self::once())
+            ->method('getTitles')
             ->willReturn($collection1);
-        $this->category->method('getId')
+        $this->category->expects(self::once())
+            ->method('getId')
             ->willReturn($categoryId);
 
-        $this->localizationHelper->expects($this->exactly(2))
+        $this->localizationHelper->expects(self::exactly(2))
             ->method('getLocalizedValue')
             ->withConsecutive(
                 [$collection1],
@@ -193,14 +182,14 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls('root', 'office');
 
-        $this->categoryProvider
-            ->method('getParentCategories')
-            ->willReturn([$parentCategory]);
-        $this->categoryProvider
+        $this->categoryProvider->expects(self::once())
+            ->method('getCategoryPath')
+            ->willReturn([$parentCategoryA, $this->category]);
+        $this->categoryProvider->expects(self::once())
             ->method('getIncludeSubcategoriesChoice')
-            ->willReturn(1);
+            ->willReturn(true);
 
-        $this->router->expects($this->exactly(2))
+        $this->urlGenerator->expects(self::exactly(2))
             ->method('generate')
             ->withConsecutive(
                 ['oro_product_frontend_product_index'],
@@ -214,14 +203,15 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls('/', '/?c=2');
 
-        $currentRequest             = Request::create('/', Request::METHOD_GET);
+        $currentRequest = Request::create('/', Request::METHOD_GET);
         $currentRequest->attributes = new ParameterBag();
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($currentRequest);
 
-        $currentPageTitle    = '220 Lumen Rechargeable Headlamp';
-        $result              = $this->categoryBreadcrumbProvider->getItemsForProduct($categoryId, $currentPageTitle);
+        $currentPageTitle = '220 Lumen Rechargeable Headlamp';
+        $result = $this->categoryBreadcrumbProvider->getItemsForProduct($categoryId, $currentPageTitle);
+
         $expectedBreadcrumbs = [
             [
                 'label' => 'root',
@@ -236,6 +226,6 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
                 'url'   => null
             ]
         ];
-        $this->assertEquals($expectedBreadcrumbs, $result);
+        self::assertEquals($expectedBreadcrumbs, $result);
     }
 }

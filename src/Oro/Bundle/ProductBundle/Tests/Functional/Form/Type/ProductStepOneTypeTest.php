@@ -8,28 +8,18 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ProductStepOneTypeTest extends WebTestCase
 {
     const CATEGORY_ID = 1;
 
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
+    protected FormFactoryInterface $formFactory;
+    protected AttributeFamily $defaultFamily;
+    protected CsrfTokenManagerInterface $tokenManager;
 
-    /**
-     * @var $defaultFamily AttributeFamily;
-     */
-    protected $defaultFamily;
-
-    /**
-     * @var CsrfTokenManagerInterface
-     */
-    protected $tokenManager;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
@@ -42,6 +32,12 @@ class ProductStepOneTypeTest extends WebTestCase
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
+
+        $request = Request::createFromGlobals();
+        $this->loginUser(self::AUTH_USER);
+        $this->updateUserSecurityToken(self::AUTH_USER);
+
+        $this->getClientInstance()->getContainer()->get('request_stack')->push($request);
     }
 
     /**
@@ -58,6 +54,7 @@ class ProductStepOneTypeTest extends WebTestCase
         $form = $this->formFactory->create(ProductStepOneType::class, null);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
         if ($isValid) {
             $this->assertEquals($submitData['category'], $form->get('category')->getViewData());
             $this->assertEquals($submitData['type'], $form->get('type')->getViewData());

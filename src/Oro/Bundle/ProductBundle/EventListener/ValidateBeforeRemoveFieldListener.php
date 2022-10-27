@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Event\ValidateBeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ValidateBeforeRemoveFieldListener
 {
@@ -15,19 +15,12 @@ class ValidateBeforeRemoveFieldListener
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->translator = $translator;
     }
 
-    /**
-     * @param ValidateBeforeRemoveFieldEvent $event
-     */
     public function onValidateBeforeRemoveField(ValidateBeforeRemoveFieldEvent $event)
     {
         $field = $event->getFieldConfig();

@@ -1,5 +1,0 @@
-data:
-    type: paymentterms
-    id: '<toString(@payment_term_test_data_net 10->id)>'
-    attributes:
-        label: 'net 11'

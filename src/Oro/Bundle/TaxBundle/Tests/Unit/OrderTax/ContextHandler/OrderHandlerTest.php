@@ -18,22 +18,15 @@ class OrderHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var TaxCodeProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxCodeProvider;
+    /** @var TaxCodeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxCodeProvider;
 
-    /**
-     * @var OrderHandler
-     */
-    protected $handler;
+    /** @var OrderHandler */
+    private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->taxCodeProvider = $this
-            ->getMockBuilder(TaxCodeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxCodeProvider = $this->createMock(TaxCodeProvider::class);
 
         $this->handler = new OrderHandler($this->taxCodeProvider);
     }
@@ -73,9 +66,7 @@ class OrderHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(TaxCodeInterface::TYPE_ACCOUNT, $customer)
             ->willReturn($customerTaxCode);
 
-
-        $this->taxCodeProvider
-            ->expects($this->once())
+        $this->taxCodeProvider->expects($this->once())
             ->method('preloadTaxCodes')
             ->with(TaxCodeInterface::TYPE_PRODUCT, $products);
 

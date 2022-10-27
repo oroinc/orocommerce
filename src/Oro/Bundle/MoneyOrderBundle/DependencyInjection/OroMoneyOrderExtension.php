@@ -9,8 +9,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroMoneyOrderExtension extends Extension
 {
-    const ALIAS = 'oro_money_order';
-
     /**
      * {@inheritdoc}
      */
@@ -21,13 +19,5 @@ class OroMoneyOrderExtension extends Extension
         $loader->load('integration.yml');
         $loader->load('factory.yml');
         $loader->load('services.yml');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

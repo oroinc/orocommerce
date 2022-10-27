@@ -11,7 +11,6 @@ use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Symfony\Component\Form\FormInterface;
 
 class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCase
@@ -36,7 +35,7 @@ class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCa
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->getMockBuilder(OrderShippingContextFactory::class)
             ->disableOriginalConstructor()
@@ -56,8 +55,6 @@ class PossibleShippingMethodsEventListenerTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider onOrderEventEmptyKeyDataProvider
-     *
-     * @param array $submittedData
      */
     public function testOnOrderEventEmptyKey(array $submittedData)
     {

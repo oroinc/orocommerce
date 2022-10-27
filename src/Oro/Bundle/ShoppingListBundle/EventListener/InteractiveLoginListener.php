@@ -14,6 +14,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
+/**
+ * Listener to migrate guest shopping list during interactive login.
+ */
 class InteractiveLoginListener
 {
     /**
@@ -39,13 +42,6 @@ class InteractiveLoginListener
     /** @var SendChangedEntitiesToMessageQueueListener */
     private $sendChangedEntitiesToMessageQueueListener;
 
-    /**
-     * @param CustomerVisitorManager $visitorManager
-     * @param GuestShoppingListMigrationManager $guestShoppingListMigrationManager
-     * @param LoggerInterface $logger
-     * @param ConfigManager $configManager
-     * @param SendChangedEntitiesToMessageQueueListener $sendChangedEntitiesToMessageQueueListener
-     */
     public function __construct(
         CustomerVisitorManager $visitorManager,
         GuestShoppingListMigrationManager $guestShoppingListMigrationManager,
@@ -60,9 +56,6 @@ class InteractiveLoginListener
         $this->sendChangedEntitiesToMessageQueueListener = $sendChangedEntitiesToMessageQueueListener;
     }
 
-    /**
-     * @param InteractiveLoginEvent $event
-     */
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
         $user = $event->getAuthenticationToken()->getUser();
@@ -83,7 +76,7 @@ class InteractiveLoginListener
                     $shoppingLists = $visitor->getShoppingLists();
                     /** @var ShoppingList $visitorShoppingList */
                     $visitorShoppingList = $shoppingLists->first();
-                    if ($visitorShoppingList && $visitorShoppingList->getLineItems()->count()) {
+                    if ($visitorShoppingList) {
                         $this->guestShoppingListMigrationManager
                             ->migrateGuestShoppingList($visitor, $user, $visitorShoppingList);
                     }

@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 
 /**
  * Loads 4 ProductImage entities
@@ -20,7 +19,7 @@ class ProductImageData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         $product = new Product();
-        $product->setDefaultName('Test Product');
+        $product->addName((new ProductName())->setString('Test Product'));
         $product->setSku('TestProduct123');
         $manager->persist($product);
         $manager->flush();

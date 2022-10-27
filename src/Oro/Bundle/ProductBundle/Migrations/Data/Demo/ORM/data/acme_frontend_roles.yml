@@ -1,0 +1,11 @@
+ACME_ADMINISTRATOR:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]
+
+ACME_BUYER:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]
+
+ACME_ANONYMOUS:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]

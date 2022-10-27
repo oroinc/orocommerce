@@ -15,6 +15,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
+ * Entity that represents webcatalog content variants
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository")
  * @ORM\AssociationOverrides({
  *     @ORM\AssociationOverride(
@@ -96,6 +98,18 @@ class ContentVariant extends ExtendContentVariant implements
      * )
      */
     protected $scopes;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="override_variant_configuration", type="boolean", options={"default"=false})
+     */
+    protected $overrideVariantConfiguration = false;
+
+    /**
+     * @var boolean
+     */
+    protected $expanded = false;
 
     /**
      * {@inheritdoc}
@@ -235,5 +249,40 @@ class ContentVariant extends ExtendContentVariant implements
     public function isDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @param bool $overrideVariantConfiguration
+     * @return $this
+     */
+    public function setOverrideVariantConfiguration($overrideVariantConfiguration)
+    {
+        $this->overrideVariantConfiguration = $overrideVariantConfiguration;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOverrideVariantConfiguration()
+    {
+        return $this->overrideVariantConfiguration;
+    }
+
+    /**
+     * @param bool|mixed $expanded
+     * @return $this
+     */
+    public function setExpanded($expanded)
+    {
+        $this->expanded = (bool) $expanded;
+
+        return $this;
+    }
+
+    public function isExpanded(): bool
+    {
+        return $this->expanded;
     }
 }

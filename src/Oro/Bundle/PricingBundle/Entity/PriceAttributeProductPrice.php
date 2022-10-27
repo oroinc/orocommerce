@@ -7,6 +7,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Entity to store Prices of Product Price attributes
+ *
  * @ORM\Table(
  *      name="oro_price_attribute_price",
  *      uniqueConstraints={
@@ -27,6 +29,22 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  */
 class PriceAttributeProductPrice extends BaseProductPrice
 {
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $id;
+
     /**
      * @var PriceAttributePriceList
      *

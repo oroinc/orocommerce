@@ -1,0 +1,29 @@
+data:
+    id: '<toString(@product_shipping_options.1->id)>'
+    type: 'productshippingoptions'
+    attributes:
+        weightValue: 42
+        dimensionsLength: 1
+        dimensionsWidth: 2
+        dimensionsHeight: 3
+    relationships:
+        product:
+            data:
+                id: '<toString(@product-1->id)>'
+                type: 'products'
+        productUnit:
+            data:
+                id: '<toString(@product_unit.liter->code)>'
+                type: 'productunits'
+        weightUnit:
+            data:
+                id: '<toString(@weight_unit.kilo->code)>'
+                type: 'weightunits'
+        dimensionsUnit:
+            data:
+                id: '<toString(@length_unit.in->code)>'
+                type: 'lengthunits'
+        freightClass:
+            data:
+                id: '<toString(@freight_class.pcl->code)>'
+                type: 'freightclasses'

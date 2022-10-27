@@ -1,0 +1,3 @@
+{% block __oro_product_grid__product_price_container_widget %}
+    {{ block_widget(block, {productPrices: product.prices|default([])}) }}
+{% endblock %}

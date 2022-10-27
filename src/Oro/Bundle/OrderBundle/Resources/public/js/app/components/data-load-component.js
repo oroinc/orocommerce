@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var DataLoadComponent;
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    DataLoadComponent = BaseComponent.extend({
+    const DataLoadComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -23,28 +22,20 @@ define(function(require) {
 
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function DataLoadComponent() {
-            DataLoadComponent.__super__.constructor.apply(this, arguments);
+        constructor: function DataLoadComponent(options) {
+            DataLoadComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.extend(this.options, options);
-            mediator.on('page:afterChange', this.updateOrderData, this);
-        },
-
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('page:afterChange', this.updateOrderData, this);
-
-            DataLoadComponent.__super__.dispose.call(this);
+            this.listenTo(mediator, {
+                'page:afterChange': this.updateOrderData
+            });
         },
 
         updateOrderData: function() {

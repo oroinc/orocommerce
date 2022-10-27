@@ -1,0 +1,14 @@
+layout:
+    imports:
+        -
+            id: oro_customer_page
+        -
+            id: customer_user_shopping_lists_grid
+            root: page_content
+            namespace: customer_user_shopping_lists
+
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue: 'oro.shoppinglist.entity_plural_label'

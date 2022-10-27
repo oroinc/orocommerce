@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
@@ -12,20 +14,27 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtensionTest
 {
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
     /** @var PriceAttributeProductPriceDatagridExtension */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
+
+        $this->aclHelper = $this->createMock(AclHelper::class);
 
         $this->extension = new PriceAttributeProductPriceDatagridExtension(
             $this->priceListRequestHandler,
             $this->doctrineHelper,
-            $this->selectedFieldsProvider
+            $this->selectedFieldsProvider,
+            $this->aclHelper
         );
     }
 
@@ -34,30 +43,38 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->mockAttributesWithCurrencies([], ['USD']);
 
         $this->datagridConfiguration
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('offsetAddToArrayByPath');
         $this->extension->processConfigs($this->datagridConfiguration);
     }
 
-    /**
-     * @param array $attributesWithCurrencies
-     * @param array $currencies
-     */
     private function mockAttributesWithCurrencies(array $attributesWithCurrencies, array $currencies): void
     {
         $this->mockPriceListCurrencies($this->createMock(PriceList::class), $currencies);
 
+        $repository = $this->createMock(PriceAttributePriceListRepository::class);
         $this->doctrineHelper
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getEntityRepository')
             ->with(PriceAttributePriceList::class)
-            ->willReturn($repository = $this->createMock(PriceAttributePriceListRepository::class));
+            ->willReturn($repository);
 
-        $repository
-            ->expects(self::once())
-            ->method('getAttributesWithCurrencies')
-            ->with($currencies)
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getResult')
             ->willReturn($attributesWithCurrencies);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $repository->expects($this->once())
+            ->method('getAttributesWithCurrenciesQueryBuilder')
+            ->with($currencies)
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
     }
 
     public function testProcessConfigsWhenNoSelectedFields(): void
@@ -65,7 +82,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->assertColumnsAddedToConfig();
 
         $this->selectedFieldsProvider
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getSelectedFields')
             ->with($this->datagridConfiguration, $this->datagridParameters)
             ->willReturn([]);
@@ -79,7 +96,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->mockAttributesWithCurrencies([['id' => 1, 'name' => 'Sample Attribute', 'currency' => 'USD']], ['USD']);
 
         $this->datagridConfiguration
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('offsetAddToArrayByPath')
             ->withConsecutive(
                 [
@@ -88,7 +105,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
                         'price_attribute_price_column_usd_1' => [
                             'label' => 'Sample Attribute (USD)',
                             'type' => 'twig',
-                            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+                            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                             'renderable' => true,
                         ],
@@ -140,34 +157,29 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
         $this->extension->processConfigs($this->datagridConfiguration);
     }
 
-    /**
-     * @param string $selectedField
-     * @param string $selectExpression
-     * @param string $joinExpression
-     */
     private function assertColumnsAddedToQueryConfig(
         string $selectedField,
         string $selectExpression,
         string $joinExpression
     ): void {
         $this->selectedFieldsProvider
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getSelectedFields')
             ->with($this->datagridConfiguration, $this->datagridParameters)
             ->willReturn([$selectedField]);
 
         $this->datagridConfiguration
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getOrmQuery')
             ->willReturn($ormQueryConfiguration = $this->createMock(OrmQueryConfiguration::class));
 
         $ormQueryConfiguration
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('addSelect')
             ->with($selectExpression);
 
         $ormQueryConfiguration
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('addLeftJoin')
             ->with(
                 PriceAttributeProductPrice::class,
@@ -181,7 +193,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
     {
         $resultsObject = $this->createMock(ResultsObject::class);
         $resultsObject
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('getData');
 
         $this->extension->visitResult($this->datagridConfiguration, $resultsObject);
@@ -189,22 +201,19 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
 
     /**
      * @dataProvider visitResultDataProvider
-     *
-     * @param string $rawPrices
-     * @param array $unpackedPrices
      */
     public function testVisitResult(string $rawPrices, array $unpackedPrices): void
     {
         $this->assertColumnsAddedToConfig();
 
         $this->selectedFieldsProvider
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getSelectedFields')
             ->with($this->datagridConfiguration, $this->datagridParameters)
             ->willReturn([$selectedField = 'price_attribute_price_column_usd_1']);
 
         $this->datagridConfiguration
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getOrmQuery')
             ->willReturn($this->createMock(OrmQueryConfiguration::class));
 
@@ -213,27 +222,24 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
 
         $resultsObject = $this->createMock(ResultsObject::class);
         $resultsObject
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getData')
             ->willReturn([$record = $this->createMock(ResultRecord::class)]);
 
         $record
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getValue')
             ->with($selectedField)
             ->willReturn($rawPrices);
 
         $record
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setValue')
             ->with($selectedField, $unpackedPrices);
 
         $this->extension->visitResult($this->datagridConfiguration, $resultsObject);
     }
 
-    /**
-     * @return array
-     */
     public function visitResultDataProvider(): array
     {
         return [

@@ -13,9 +13,6 @@ class DatesChainValidator extends ConstraintValidator
      */
     protected $propertyAccessor;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(PropertyAccessor $propertyAccessor)
     {
         $this->propertyAccessor = $propertyAccessor;

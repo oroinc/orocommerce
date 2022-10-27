@@ -11,12 +11,12 @@ class ProductDataConverterEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDataConverterEventListener */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->listener = new ProductDataConverterEventListener();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
     }

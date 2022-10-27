@@ -5,59 +5,42 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\Strategy;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\Provider\ChainEntityClassNameProvider;
+use Oro\Bundle\EntityBundle\Provider\EntityClassNameProviderInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Oro\Bundle\ImportExportBundle\Field\RelatedEntityStateHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ImportStrategyHelper;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\NewEntitiesHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\PriceAttributeProductPriceImportResetStrategy;
-use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 {
-    const DELETED_COUNT = 5;
+    private const DELETED_COUNT = 5;
 
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fieldHelper;
+    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
+    private ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context;
 
-    /**
-     * @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
+    private DatabaseHelper|\PHPUnit\Framework\MockObject\MockObject $databaseHelper;
 
-    /**
-     * @var DatabaseHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseHelper;
+    private PriceAttributeProductPriceImportResetStrategy $strategy;
 
-    /**
-     * @var PriceAttributeProductPriceImportResetStrategy
-     */
-    private $strategy;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->fieldHelper
+        $fieldHelper = $this->createMock(FieldHelper::class);
+        $fieldHelper
             ->expects(static::any())
             ->method('getIdentityValues')
             ->willReturn(['value']);
-        $this->fieldHelper
+        $fieldHelper
             ->expects(static::any())
-            ->method('getFields')
+            ->method('getEntityFields')
             ->willReturn([]);
 
         $strategyHelper = $this->createMock(ImportStrategyHelper::class);
@@ -73,40 +56,32 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
         $this->strategy = new PriceAttributeProductPriceImportResetStrategy(
             $this->createMock(EventDispatcherInterface::class),
             $strategyHelper,
-            $this->fieldHelper,
+            $fieldHelper,
             $this->databaseHelper,
-            $this->createMock(ChainEntityClassNameProvider::class),
+            $this->createMock(EntityClassNameProviderInterface::class),
             $this->createMock(TranslatorInterface::class),
             $this->createMock(NewEntitiesHelper::class),
             $this->doctrineHelper,
-            $this->createMock(OwnerChecker::class)
+            $this->createMock(RelatedEntityStateHelper::class)
         );
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(PriceAttributeProductPrice::class);
     }
 
-    public function testProcessForNoPriceList()
+    public function testProcessForNoPriceList(): void
     {
-        $this->doctrineHelper
-            ->expects(static::never())
-            ->method('getEntityManager');
-
         $this->strategy->process(new PriceAttributeProductPrice());
     }
 
-    public function testProcessForNewPriceList()
+    public function testProcessForNewPriceList(): void
     {
-        $this->doctrineHelper
-            ->expects(static::never())
-            ->method('getEntityManager');
-
         $entity = new PriceAttributeProductPrice();
         $entity->setPriceList(new PriceAttributePriceList());
 
         $this->strategy->process($entity);
     }
 
-    public function testProcessResetsPricesOnlyOnce()
+    public function testProcessResetsPricesOnlyOnce(): void
     {
         $priceListName = 'msrp';
 
@@ -125,12 +100,10 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
         $this->databaseHelper
             ->expects(static::any())
             ->method('findOneBy')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array(PriceAttributePriceList::class, ['name' => $priceListName], $priceList),
-                    )
-                )
+            ->willReturnMap(
+                [
+                    [PriceAttributePriceList::class, ['name' => $priceListName], $priceList],
+                ]
             );
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
@@ -140,7 +113,7 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
             ->willReturn($repository);
 
         $this->doctrineHelper
-            ->expects(static::once())
+            ->expects(static::any())
             ->method('getEntityManager')
             ->willReturn($entityManager);
 

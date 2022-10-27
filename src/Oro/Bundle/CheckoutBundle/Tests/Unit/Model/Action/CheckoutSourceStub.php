@@ -11,19 +11,22 @@ class CheckoutSourceStub extends CheckoutSource
     protected $shoppingList;
 
     /**
-     * @return ShoppingList
+     * @param int $id
+     * @return CheckoutSource
      */
-    public function getShoppingList()
+    public function setId($id): CheckoutSource
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getShoppingList(): ?ShoppingList
     {
         return $this->shoppingList;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return CheckoutSourceStub
-     */
-    public function setShoppingList($shoppingList)
+    public function setShoppingList(ShoppingList $shoppingList): CheckoutSourceStub
     {
         $this->shoppingList = $shoppingList;
 

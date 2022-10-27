@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Normalizer;
 
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 
-class InventoryStatusNormalizer implements NormalizerInterface
+/**
+ * Normalizes product inventory status.
+ */
+class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = array())
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         $processors = [
             'oro_product.inventory_status_only',
@@ -18,14 +21,14 @@ class InventoryStatusNormalizer implements NormalizerInterface
         ];
 
         return isset($context['processorAlias'])
-                && in_array($context['processorAlias'], $processors)
+                && in_array($context['processorAlias'], $processors, true)
                 && $data instanceof Product;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = array())
+    public function normalize($object, string $format = null, array $context = [])
     {
         return [
             'product' => [

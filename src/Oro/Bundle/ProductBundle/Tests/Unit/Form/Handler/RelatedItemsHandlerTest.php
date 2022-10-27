@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +27,7 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->relatedAssigner = $this->createMock(AssignerStrategyInterface::class);
@@ -67,7 +67,6 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider exceptionsProvider()
-     * @param \Exception $exception
      */
     public function testProcessErrorOnAddingProductToItself(\Exception $exception)
     {
@@ -77,6 +76,10 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('addError')
             ->with($this->isInstanceOf(FormError::class));
         $removeField = $this->getField();
+
+        $this->translator->expects(self::any())
+            ->method('trans')
+            ->willReturnCallback(static fn ($value) =>  $value . '_translated');
 
         $this->assignerShouldThrowException($exception);
         $this->handler->addAssigner(RelatedItemsHandler::RELATED_PRODUCTS, $this->relatedAssigner);
@@ -183,9 +186,6 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($product, $productsToRemove);
     }
 
-    /**
-     * @param \Exception $exception
-     */
     private function assignerShouldThrowException(\Exception $exception)
     {
         $this->relatedAssigner->expects($this->once())

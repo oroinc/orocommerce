@@ -11,6 +11,11 @@ Feature: Move node in tree
     When I go to Marketing/Web Catalogs
     And I click view "Default Web Catalog" in grid
     Then I click "Edit Content Tree"
+    When I click "Add System Page"
+    And I fill "Content Node Form" with:
+      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+    And I click "Save"
+    Then I should see "Content Node has been saved" flash message
 
     When I drag and drop "Products" before "Clearance"
     Then I should not see "Changing Page URLs"
@@ -25,8 +30,8 @@ Feature: Move node in tree
     And I drag and drop "By Brand" before "Products"
     And I click "Apply" in modal window
     Then I should see "By Brand" after "New Arrivals" in tree
-
     When I click "Save"
+    And I should see "Content Node has been saved" flash message
     Then I should see "By Brand" after "New Arrivals" in tree
 
   Scenario: Move node as new root

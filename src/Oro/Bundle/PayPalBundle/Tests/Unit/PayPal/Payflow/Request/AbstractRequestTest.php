@@ -3,16 +3,14 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request\Stub;
 
 class AbstractRequestTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Call AbstractRequest->withResolver($resolver) first
-     */
     public function testResolverMissing()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Call AbstractRequest->withResolver($resolver) first');
+
         $request = new Stub\NoResolverAbstractRequestStub();
         $request->configureOptions(new Option\OptionsResolver());
     }
@@ -34,12 +32,11 @@ class AbstractRequestTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
-     * @expectedExceptionMessage The option "TRXTYPE" with value "another_action" is invalid.
-     */
     public function testLockTrxTypeToRequest()
     {
+        $this->expectException(\Symfony\Component\OptionsResolver\Exception\InvalidOptionsException::class);
+        $this->expectExceptionMessage('The option "TRXTYPE" with value "another_action" is invalid.');
+
         $request = new Stub\AbstractRequestStub();
         $resolver = new Option\OptionsResolver();
         $request->configureOptions($resolver);

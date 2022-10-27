@@ -10,7 +10,8 @@ Feature: Product collection confirmation and reset
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
-    When type "PSKU2" in "value"
+    And I click on "First Content Variant Expand Button"
+    And type "PSKU2" in "value"
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     And I click "Cancel" in modal window
@@ -24,6 +25,7 @@ Feature: Product collection confirmation and reset
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     And I click "Continue" in modal window
+    And I click on "First Content Variant Expand Button"
     And I should see following grid:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |
@@ -51,7 +53,8 @@ Feature: Product collection confirmation and reset
   Scenario: Reset Product Collection after filters change
     When I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
-    When type "SKU42" in "value"
+    And I click on "First Content Variant Expand Button"
+    And type "SKU42" in "value"
     And I click "Preview Results"
     And I click on "Reset"
     Then I should not see "SKU42"

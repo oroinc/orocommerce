@@ -1,7 +1,8 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% if collection|length %}
-    <table class="grid table-hover table table-bordered table-condensed">
+    <table class="grid grid-main-container table-hover table table-bordered table-condensed">
         <thead>
             <tr>
                 <th>
@@ -36,9 +37,9 @@
                 >
                     <td>
                         {% if item.couponCode %}
-                            {{ item.couponCode }}
+                            <span dir="ltr">{{ item.couponCode }}</span>
                         {% else %}
-                            <span class="not-available">{{ 'N/A'|trans }}</span>
+                            {{ dataGrid.renderBlankCellValue() }}
                         {% endif %}
                     </td>
                     <td>{{ item.promotionName }}</td>
@@ -51,8 +52,12 @@
                         {% endif %}
                     </td>
                     <td class="discount">
-                        {% set amount =  item.amount > 0 ? -item.amount : item.amount %}
-                        {{ amount|oro_format_currency({currency: item.currency}) }}
+                        {% if item.amount > 0 %}
+                            {% set amount = -item.amount %}
+                            <span dir="ltr">{{ amount|oro_format_currency({currency: item.currency}) }}</span>
+                        {% else %}
+                            {{ item.amount|oro_format_currency({currency: item.currency}) }}
+                        {% endif %}
                     </td>
                     <td class="action">
                         {% if item.id %}
@@ -64,7 +69,8 @@
                         {{ UI.clientLink({
                             'dataUrl': route,
                             'label': 'oro.product.content_variant.ui.add'|trans,
-                            'class': 'fa-eye hide-text',
+                            'class': 'btn btn-icon btn-square-lighter',
+                            'iCss': 'fa-eye hide-text',
                             'title': 'oro.promotion.appliedpromotion.actions.view'|trans,
                             'widget': {
                                 'type': 'dialog',
@@ -85,7 +91,7 @@
                     </td>
                     {% if editable is defined and editable %}
                         <td class="action">
-                            <a data-role="applied-promotion-change-active-button" href="javascript:void(0);">
+                            <a data-role="applied-promotion-change-active-button" href="#">
                                 {% if item.active %}
                                     <i class="fa-close hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.deactivate'|trans }}">
                                         {{ 'oro.promotion.appliedpromotion.actions.deactivate'|trans }}
@@ -98,7 +104,7 @@
                             </a>
                         </td>
                         <td class="action">
-                            <a data-role="applied-promotion-remove-button" href="javascript:void(0);">
+                            <a data-role="applied-promotion-remove-button" href="#">
                                 <i class="fa-trash hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.remove'|trans }}">
                                     {{ 'oro.promotion.appliedpromotion.actions.remove'|trans }}
                                 </i>
@@ -110,5 +116,7 @@
         </tbody>
     </table>
 {% elseif editable is not defined or not editable %}
-    <div class="no-data"><span>{{ 'oro.promotion.appliedpromotion.no_entities'|trans }}<span></span></span></div>
+    <div class="no-data">
+        {{ 'oro.promotion.appliedpromotion.no_entities'|trans }}
+    </div>
 {% endif %}

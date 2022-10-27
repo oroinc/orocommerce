@@ -1,7 +1,7 @@
 {% block oro_fedex_settings_widget %}
     {{ form_widget(form) }}
 
-    <div class="control-group control-group-text">
+    <div class="control-group control-group-button">
         <div class="controls">
             <button type="button"
                     class="btn btn-primary"
@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block oro_fedex_shipping_method_options_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {{ UI.tooltip('oro.fedex.shipping_method_options.surcharge.tooltip', {}, 'right') }}
     {{ form_widget(form) }}
 {% endblock %}

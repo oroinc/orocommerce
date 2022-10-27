@@ -200,11 +200,11 @@ Retrieve the ID of the small image record assigned to a specific category record
 
 #### get_subresource
 
-Retrieve the parent category records assigned to a specific category record.
+Retrieve the parent category record assigned to a specific category record.
 
 #### get_relationship
 
-Retrieve the IDs of the patent category records assigned to a specific category record.
+Retrieve the ID of the patent category record assigned to a specific category record.
 
 ### highlightLowInventory
 
@@ -225,3 +225,13 @@ Retrieve the service records that store category low inventory threshold data.
 #### get_relationship
 
 Retrieve the IDs of the service records that store category low inventory threshold data.
+
+### organization
+
+#### get_subresource
+
+Retrieve the record of the organization a specific category belongs to.
+
+#### get_relationship
+
+Retrieve the ID of the organization that a specific category belongs to.

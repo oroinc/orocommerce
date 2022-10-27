@@ -19,17 +19,11 @@ class WebCatalogUsageListener
     /** @var CacheableWebCatalogUsageProvider */
     private $cacheableWebCatalogUsageProvider;
 
-    /**
-     * @param CacheableWebCatalogUsageProvider $cacheableWebCatalogUsageProvider
-     */
     public function __construct(CacheableWebCatalogUsageProvider $cacheableWebCatalogUsageProvider)
     {
         $this->cacheableWebCatalogUsageProvider = $cacheableWebCatalogUsageProvider;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onConfigurationUpdate(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(WebCatalogUsageProvider::SETTINGS_KEY)) {
@@ -37,9 +31,6 @@ class WebCatalogUsageListener
         }
     }
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         if ($this->hasInsertedOrDeletedWebsites($args->getEntityManager()->getUnitOfWork())) {

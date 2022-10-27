@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
@@ -52,7 +52,7 @@ class OroCheckoutBundle implements
             new ParametrizedSqlMigrationQuery(
                 'DELETE FROM oro_entity_config WHERE class_name = :class_name',
                 ['class_name' => 'Oro\Bundle\CheckoutBundle\Entity\Checkout'],
-                ['class_name' => Type::STRING]
+                ['class_name' => Types::STRING]
             )
         );
         $queries->addPostQuery(
@@ -62,7 +62,7 @@ class OroCheckoutBundle implements
                     'new_class_name' => 'Oro\Bundle\CheckoutBundle\Entity\Checkout',
                     'class_name' => 'Oro\Bundle\CheckoutBundle\Entity\BaseCheckout'
                 ],
-                ['new_class_name' => Type::STRING, 'class_name' => Type::STRING]
+                ['new_class_name' => Types::STRING, 'class_name' => Types::STRING]
             )
         );
 
@@ -74,9 +74,6 @@ class OroCheckoutBundle implements
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_checkout', 'oro_checkout'));
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCheckoutTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_checkout');
@@ -93,10 +90,6 @@ class OroCheckoutBundle implements
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function addCheckoutTableForeignKeys(Schema $schema, QueryBag $queries)
     {
         $this->renameExtension->addForeignKeyConstraint(
@@ -119,9 +112,6 @@ class OroCheckoutBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function dropDefaultCheckoutTable(Schema $schema)
     {
         $schema->dropTable('orob2b_default_checkout');

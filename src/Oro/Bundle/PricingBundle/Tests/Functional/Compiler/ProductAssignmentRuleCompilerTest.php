@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Compiler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
@@ -29,7 +29,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
      */
     protected $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -213,13 +213,13 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         $priceList = $this->createPriceList($assignmentRule);
         $qb = $this->getQueryBuilder($priceList);
 
-        $this->assertContains(
+        static::assertStringContainsString(
             'FROM Oro\Bundle\ProductBundle\Entity\Product t1'
             . ' LEFT JOIN t1.category t2'
             . ' WHERE',
             $qb->getDQL()
         );
-        $this->assertNotContains(
+        static::assertStringNotContainsString(
             'FROM Oro\Bundle\ProductBundle\Entity\Product t1'
             . ' LEFT JOIN Oro\Bundle\CatalogBundle\Entity\Category t2 WITH t1 MEMBER OF t2.products'
             . ' WHERE',
@@ -268,9 +268,10 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
     {
         $actual = $qb->getQuery()->getArrayResult();
         $actual = array_map(
-            function (array $value) {
+            static function (array $value) {
+                unset($value['id']);
                 return array_map(
-                    function ($val) {
+                    static function ($val) {
                         if (is_numeric($val)) {
                             $val = (int)$val;
                         }

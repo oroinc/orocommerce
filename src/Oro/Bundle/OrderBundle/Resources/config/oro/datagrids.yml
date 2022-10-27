@@ -1,8 +1,8 @@
 datagrids:
     base-orders-grid:
-        extended_entity_name: '%oro_order.entity.order.class%'
+        extended_entity_name: 'Oro\Bundle\OrderBundle\Entity\Order'
         options:
-            entityHint:        orders
+            entityHint: oro.order.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -17,14 +17,18 @@ datagrids:
                     - order1.shipUntil
                     - order1.createdAt
                     - order1.updatedAt
-                    - payment_status.paymentStatus
+                    - payment_status.paymentStatus as paymentStatus
                     - order1.shippingMethod
                     - order1.shippingMethodType
+                    - order1.totalDiscountsAmount
                 from:
-                    - { table: '%oro_order.entity.order.class%', alias: order1 }
+                    - { table: 'Oro\Bundle\OrderBundle\Entity\Order', alias: order1 }
                 join:
                     left:
-                        - { join: '%oro_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%oro_order.entity.order.class%'" }
+                        - join: 'Oro\Bundle\PaymentBundle\Entity\PaymentStatus'
+                          alias: payment_status
+                          conditionType: WITH
+                          condition: 'payment_status.entityIdentifier = order1.id AND payment_status.entityClass = ''Oro\Bundle\OrderBundle\Entity\Order'''
         properties:
             id: ~
             view_link:
@@ -62,7 +66,7 @@ datagrids:
             shippingAddress:
                 label: oro.order.shipping_address.label
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/shippingAddress.html.twig'
+                template: '@OroOrder/Order/Datagrid/frontendShippingAddress.html.twig'
                 frontend_type: html
             total:
                 label:  oro.order.total.label
@@ -74,13 +78,13 @@ datagrids:
             paymentMethods:
                 label: oro.order.payment_method.label
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/paymentMethod.html.twig'
+                template: '@OroOrder/Order/Datagrid/paymentMethod.html.twig'
                 frontend_type: html
             paymentStatus:
                 label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      '@OroOrder/Order/Datagrid/frontendPaymentStatus.html.twig'
             #Hidden fields goes next
             poNumber:
                 label:         oro.order.po_number.label
@@ -104,7 +108,7 @@ datagrids:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/frontendShippingMethodFull.html.twig'
                 renderable:    false
             updatedAt:
                 label:         oro.ui.updated_at
@@ -129,7 +133,7 @@ datagrids:
                 total:
                     data_name: total
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 poNumber:
@@ -146,7 +150,7 @@ datagrids:
                     data_name: order1.updatedAt
                 paymentStatus:
                     type:      choice
-                    data_name: payment_status.paymentStatus
+                    data_name: paymentStatus
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
@@ -162,7 +166,7 @@ datagrids:
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    enabled:   false
+                    renderable: false
                 total:
                     type:      currency
                     data_name: total
@@ -170,8 +174,17 @@ datagrids:
             id: ~
             view_link:
                 route: oro_order_frontend_view
+            view_aria_label:
+                type:   translatable
+                key:    oro.frontend.order.action.view.aria_label
+                params: [identifier]
+            start_from_order_aria_label:
+                type:   translatable
+                key:    oro.frontend.order.action.start_from_order.aria_label
+                params: [identifier]
         actions:
             view:
+                ariaLabel:     view_aria_label
                 acl_resource:  oro_order_frontend_view
 
     orders-grid:
@@ -187,6 +200,7 @@ datagrids:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
+                    - SUM(appliedDiscount.amount) as promotionalDiscountsAmount
                     - internalStatus.name as internalStatusName
                     - internalStatus.id as internalStatusId
                 join:
@@ -195,6 +209,11 @@ datagrids:
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
                         - { join: order1.internal_status, alias: internalStatus }
+                        - { join: order1.appliedPromotions, alias: appliedPromotion }
+                        - { join: appliedPromotion.appliedDiscounts, alias: appliedDiscount }
+                groupBy:  order1.id
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -220,6 +239,12 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     currency_field: currency
+            promotionalDiscountsAmount:
+                label:         oro.order.order_discount.columns.title
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/promotionalDiscount.html.twig'
+                renderable:    false
             customerName:
                 label:         oro.order.customer.label
             customerUserName:
@@ -232,29 +257,29 @@ datagrids:
                 label:         oro.order.payment_status.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/paymentStatus.html.twig'
+                template:      '@OroOrder/Order/Datagrid/paymentStatus.html.twig'
             paymentMethods:
                 label: oro.order.payment_method.label
                 renderable: true
                 type: twig
-                template: 'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
+                template: '@OroOrder/Order/Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
             sourceEntityClass:
                 label:         oro.order.source_document.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/sourceDocument.html.twig
+                template:      '@OroOrder/Order/Datagrid/sourceDocument.html.twig'
                 renderable:    false
             totalDiscountsAmount:
-                label:         oro.order.discount.label
+                label:         oro.order.order_discount.columns.special_discount.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/discount.html.twig
+                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -290,7 +315,7 @@ datagrids:
                 updatedAt:
                     data_name: order1.updatedAt
         default:
-            createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+            createdAt: DESC
         filters:
             columns:
                 identifier:
@@ -311,7 +336,7 @@ datagrids:
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    enabled:   false
+                    renderable:   false
                 total:
                     type:      currency
                     data_name: total
@@ -330,13 +355,15 @@ datagrids:
                     data_name: owner
                 paymentStatus:
                     type:      choice
-                    data_name: payment_status.paymentStatus
+                    data_name: paymentStatus
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                 totalDiscountsAmount:
                     type:      number
                     data_name: order1.totalDiscountsAmount
+                    options:
+                        data_type: Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
@@ -354,33 +381,33 @@ datagrids:
         views_list: '@oro_order.datagrid.orders_view_list'
 
     embed-orders-grid:
+        extends: base-orders-grid
         acl_resource: oro_order_view
-        extended_entity_name: '%oro_order.entity.order.class%'
-        options:
-            entityHint:        orders
-            entity_pagination: true
         source:
-            type:         orm
             query:
                 select:
-                    - order1.id
-                    - order1.identifier
-                    - order1.subtotalValue as subtotal
-                    - order1.totalValue as total
-                    - order1.currency
-                    - order1.poNumber
-                    - order1.shipUntil
                     - COUNT(lineItems.id) as lineItemsCount
-                    - order1.createdAt
-                    - order1.updatedAt
-                from:
-                    - { table: '%oro_order.entity.order.class%', alias: order1 }
+                    - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
+                    - internalStatus.name as internalStatusName
+                    - internalStatus.id as internalStatusId
                 join:
                     left:
                         - { join: order1.lineItems, alias: lineItems}
+                        - { join: order1.owner, alias: order_owner }
+                        - { join: order1.internal_status, alias: internalStatus }
+                groupBy: order1.id
         columns:
             identifier:
                 label:         oro.order.identifier.label
+            poNumber:
+                label:         oro.order.po_number.label
+                renderable:    false
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+                renderable:    false
+            currency:
+                label:         oro.order.currency.label
             subtotal:
                 label:  oro.order.subtotal.label
                 frontend_type: multi-currency
@@ -400,11 +427,31 @@ datagrids:
                 label:         oro.order.line_items_count.label
                 type: field
                 frontend_type: integer
-            poNumber:
-                label:         oro.order.po_number.label
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
+            internalStatusName:
+                label:         oro.order.internal_status.label
+            owner:
+                label:         oro.order.owner.label
+                renderable:    false
+            paymentStatus:
+                label:         oro.order.payment_status.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/paymentStatus.html.twig'
+            paymentMethods:
+                label:         oro.order.payment_method.label
+                type:          twig
+                template:      '@OroOrder/Order/Datagrid/paymentMethodAdmin.html.twig'
+                frontend_type: html
+            shippingMethod:
+                label:         oro.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
+            totalDiscountsAmount:
+                label:         oro.order.order_discount.columns.special_discount.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -425,21 +472,41 @@ datagrids:
                     data_name: order1.poNumber
                 shipUntil:
                     data_name: order1.shipUntil
+                currency:
+                    data_name: order1.currency
+                internalStatusName:
+                    data_name: internalStatusName
+                owner:
+                    data_name: owner
+                totalDiscountsAmount:
+                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
                     data_name: order1.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 identifier:
                     type:      string
                     data_name: order1.identifier
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    enabled:   false
+                    renderable: false
+                currency:
+                    type:      choice
+                    data_name: order1.currency
+                    options:
+                        field_options:
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 total:
                     type:      currency
                     data_name: total
@@ -447,12 +514,22 @@ datagrids:
                     type:      number
                     data_name: lineItemsCount
                     filter_by_having: true
-                poNumber:
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: order_internal_status
+                owner:
                     type:      string
-                    data_name: order1.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
+                    data_name: owner
+                paymentStatus:
+                    type:      choice
+                    data_name: paymentStatus
+                    options:
+                        field_options:
+                            choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
+                totalDiscountsAmount:
+                    type:      number
+                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     type: datetime
                     data_name: order1.createdAt
@@ -460,19 +537,11 @@ datagrids:
                     type: datetime
                     data_name: order1.updatedAt
         properties:
-            id: ~
             view_link:
                 route: oro_order_view
-                type:  url
-                params: [ id ]
         actions:
             view:
                 acl_resource:  oro_order_view
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye
-                rowAction:     true
 
     customer-user-orders-grid:
         extends: embed-orders-grid
@@ -515,10 +584,48 @@ datagrids:
                     type:      string
                     data_name: customerUserName
 
+    shopping-list-orders-grid:
+        extends: embed-orders-grid
+        source:
+            query:
+                select:
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - customer.name as customerName
+                join:
+                    inner:
+                        - { join: order1.customerUser, alias: customerUser }
+                        - { join: order1.customer, alias: customer }
+                        -
+                            join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+                            alias: shopping_list
+                            conditionType: WITH
+                            condition: 'order1.sourceEntityClass = ''Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'' AND order1.sourceEntityId = shopping_list.id AND shopping_list.id = :shopping_list_id'
+            bind_parameters:
+                - shopping_list_id
+        columns:
+            customerName:
+                label:         oro.order.customer.label
+            customerUserName:
+                label:         oro.order.customer_user.label
+        sorters:
+            columns:
+                customerName:
+                    data_name: customerName
+                customerUserName:
+                    data_name: customerUserName
+        filters:
+            columns:
+                customerName:
+                    type:      string
+                    data_name: customerName
+                customerUserName:
+                    type:      string
+                    data_name: customerUserName
+
     base-order-line-items-grid:
-        extended_entity_name: '%oro_order.entity.order_line_item.class%'
+        extended_entity_name: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
         options:
-            entityHint: order line items
+            entityHint: oro.order.orderlineitem.entity_plural_label
         source:
             type: orm
             query:
@@ -531,8 +638,9 @@ datagrids:
                     - order_item.shipBy
                     - order_item.comment
                     - order_item.productName
+                    - order_item.productVariantFields
                 from:
-                    - { table: '%oro_order.entity.order_line_item.class%', alias: order_item }
+                    - { table: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', alias: order_item }
                 join:
                     left:
                         - { join: order_item.product, alias: product }
@@ -550,20 +658,22 @@ datagrids:
         columns:
             productSku:
                 label: oro.product.sku.label
+                cellClassName: 'direction-ltr'
             product:
                 label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/product.html.twig
+                template:      '@OroOrder/Order/Datagrid/product.html.twig'
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+                frontend_type: decimal
             productUnitCode:
                 label: oro.order.orderlineitem.product_unit_code.label
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/price.html.twig
+                template:      '@OroOrder/Order/Datagrid/price.html.twig'
             shipBy:
                 label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
@@ -577,17 +687,17 @@ datagrids:
                 label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
+                template:      '@OroOrder/Order/Datagrid/frontendProduct.html.twig'
             quantity:
                 label: oro.order.orderlineitem.quantity.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/frontendQuantity.html.twig
+                template:      '@OroOrder/Order/Datagrid/frontendQuantity.html.twig'
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/price.html.twig
+                template:      '@OroOrder/Order/Datagrid/price.html.twig'
             shipBy:
                 label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
@@ -600,9 +710,9 @@ datagrids:
             frontend: true
 
     order-shipping-trackings-grid:
-        extended_entity_name: '%oro_order.entity.order_shipping_tracking.class%'
+        extended_entity_name: 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'
         options:
-            entityHint: order shipping trackings
+            entityHint: oro.order.shipping_tracking.entity_plural_label
             entity_pagination: false
             toolbarOptions:
                 hide: true
@@ -615,7 +725,7 @@ datagrids:
                     - shipping_tracking.method
                     - shipping_tracking.number
                 from:
-                    - { table: '%oro_order.entity.order_shipping_tracking.class%', alias: shipping_tracking }
+                    - { table: 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking', alias: shipping_tracking }
                 where:
                     and:
                         - shipping_tracking.order = :order_id
@@ -625,18 +735,18 @@ datagrids:
             method:
                 label: oro.order.shipping_tracking.method.label
                 type: twig
-                template: OroOrderBundle:Order:Datagrid/shippingTrackingMethod.html.twig
+                template: '@OroOrder/Order/Datagrid/shippingTrackingMethod.html.twig'
                 frontend_type: html
             number:
                 label: oro.order.shipping_tracking.number.label
                 type: twig
-                template: OroOrderBundle:Order:Datagrid/shippingTrackingLink.html.twig
+                template: '@OroOrder/Order/Datagrid/shippingTrackingLink.html.twig'
                 frontend_type: html
 
     best-selling-products:
-        entity_name: '%oro_report.calendar_date.entity.class%'
+        entity_name: 'Oro\Bundle\ReportBundle\Entity\CalendarDate'
         options:
-            entityHint: calendar dates
+            entityHint: oro.calendardate.entity_plural_label
             export: true
         source:
             type: orm
@@ -648,11 +758,11 @@ datagrids:
                     - SUM (lineitem.quantity) as qtySold
                     - lineitem.productUnitCode as unitCode
                 from:
-                    - { table: '%oro_report.calendar_date.entity.class%', alias: calendarDate }
+                    - { table: 'Oro\Bundle\ReportBundle\Entity\CalendarDate', alias: calendarDate }
                 join:
                     left:
                         -
-                            join: '%oro_order.entity.order.class%'
+                            join: 'Oro\Bundle\OrderBundle\Entity\Order'
                             alias: orderAlias
                             conditionType: WITH
                             condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
@@ -668,12 +778,13 @@ datagrids:
                 label:         oro.report.datagrid.column.time_period.label
             productSku:
                 label:         oro.product.sku.label
+                cellClassName: 'direction-ltr'
             productName:
                 label:         oro.product.names.label
             qtySold:
                 label:         oro.product.qty_sold.label
                 type:          twig
-                template:      OroOrderBundle:Order:Datagrid/productQtySold.html.twig
+                template:      '@OroOrder/Order/Datagrid/productQtySold.html.twig'
                 frontend_type: html
         sorters:
             columns:
@@ -687,8 +798,8 @@ datagrids:
                 qtySold:
                     data_name: qtySold
             default:
-                timePeriod: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
-                productSku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                timePeriod: DESC
+                productSku: DESC
         filters:
             columns:
                 timePeriod:
@@ -716,8 +827,8 @@ datagrids:
                     type:               date_grouping
                     data_name:          calendarDate.date
                     column_name:        timePeriod
-                    calendar_entity:    '%oro_report.calendar_date.entity.class%'
-                    target_entity:      '%oro_order.entity.order.class%'
+                    calendar_entity:    'Oro\Bundle\ReportBundle\Entity\CalendarDate'
+                    target_entity:      'Oro\Bundle\OrderBundle\Entity\Order'
                     not_nullable_field: product.id
                     joined_column:      createdAt
                     joined_table:       joinedTableAlias
@@ -741,7 +852,7 @@ datagrids:
             query:
                 where:
                     and:
-                        - payment_transaction.entityClass = '%oro_order.entity.order.class%'
+                        - payment_transaction.entityClass = 'Oro\Bundle\OrderBundle\Entity\Order'
                         - payment_transaction.entityIdentifier = :order_id
             bind_parameters:
                 - order_id
@@ -752,10 +863,10 @@ datagrids:
         source:
             query:
                 select:
-                    - datetime.ordered_at_by_CUSTOMER_USER_ID as recency
+                    - datetime.ordered_at_by.CUSTOMER_USER_ID as recency
                 where:
                     and:
-                        - datetime.ordered_at_by_CUSTOMER_USER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
+                        - datetime.ordered_at_by.CUSTOMER_USER_ID >= @oro_order.previously_purchased.configuration->getPreviouslyPurchasedStartDateString()
         columns:
             recency:
                 label: oro.order.recency.label
@@ -767,6 +878,6 @@ datagrids:
             columns:
                 recency:
                     type: datetime
-                    data_name: ordered_at_by_CUSTOMER_USER_ID
+                    data_name: datetime.ordered_at_by.CUSTOMER_USER_ID
             default:
-                recency: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                recency: DESC

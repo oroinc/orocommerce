@@ -21,6 +21,9 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Component\DependencyInjection\ServiceLink;
 
+/**
+ * Manager provides useful methods to work with already applied promotions to Order entity.
+ */
 class AppliedPromotionManager
 {
     /**
@@ -43,11 +46,6 @@ class AppliedPromotionManager
      */
     protected $promotionExecutor;
 
-    /**
-     * @param ServiceLink $promotionExecutorServiceLink
-     * @param DoctrineHelper $doctrineHelper
-     * @param AppliedPromotionMapper $promotionMapper
-     */
     public function __construct(
         ServiceLink $promotionExecutorServiceLink,
         DoctrineHelper $doctrineHelper,
@@ -64,6 +62,10 @@ class AppliedPromotionManager
      */
     public function createAppliedPromotions(Order $order, $removeOrphans = false)
     {
+        if (!$this->getPromotionExecutor()->supports($order)) {
+            return;
+        }
+
         $discountContext = $this->getPromotionExecutor()->execute($order);
 
         $appliedPromotions = $this->updateAppliedPromotions($discountContext, $order);
@@ -205,11 +207,6 @@ class AppliedPromotionManager
         }
     }
 
-    /**
-     * @param DiscountInformation $discountInformation
-     * @param Order $order
-     * @return AppliedDiscount
-     */
     private function createAppliedDiscount(DiscountInformation $discountInformation, Order $order): AppliedDiscount
     {
         $appliedDiscount = new AppliedDiscount();
@@ -219,9 +216,6 @@ class AppliedPromotionManager
         return $appliedDiscount;
     }
 
-    /**
-     * @return PromotionExecutor
-     */
     protected function getPromotionExecutor(): PromotionExecutor
     {
         if (!$this->promotionExecutor) {

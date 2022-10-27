@@ -14,13 +14,11 @@ abstract class FrontendWebTestCase extends WebTestCase
     use WebsiteManagerTrait;
 
     /**
-     * @after
+     * @beforeResetClient
      */
-    public function afterFrontendTest()
+    public static function afterFrontendTest()
     {
-        if (null !== $this->client) {
-            $this->getWebsiteManagerStub()->disableStub();
-        }
+        self::getWebsiteManagerStub()->disableStub();
     }
 
     /**
@@ -33,7 +31,15 @@ abstract class FrontendWebTestCase extends WebTestCase
             ->getRepository(CustomerUser::class)
             ->findOneBy(['email' => $email]);
 
-        $token = new UsernamePasswordOrganizationToken($user, false, 'k', $user->getOrganization(), $user->getRoles());
+        $token = new UsernamePasswordOrganizationToken(
+            $user,
+            false,
+            'k',
+            $user->getOrganization(),
+            $user->getUserRoles()
+        );
+
+        $this->ensureSessionIsAvailable();
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 }

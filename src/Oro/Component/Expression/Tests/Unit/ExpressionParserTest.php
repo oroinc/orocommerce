@@ -23,7 +23,7 @@ class ExpressionParserTest extends \PHPUnit\Framework\TestCase
      */
     protected $fieldsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->expressionParser = new ExpressionParser(

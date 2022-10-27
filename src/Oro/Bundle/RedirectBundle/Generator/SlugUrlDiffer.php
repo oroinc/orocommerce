@@ -5,7 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SlugUrlDiffer
 {
@@ -19,10 +19,6 @@ class SlugUrlDiffer
      */
     private $translator;
 
-    /**
-     * @param LocalizationHelper $localizationHelper
-     * @param TranslatorInterface $translator
-     */
     public function __construct(LocalizationHelper $localizationHelper, TranslatorInterface $translator)
     {
         $this->localizationHelper = $localizationHelper;

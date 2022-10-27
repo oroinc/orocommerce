@@ -12,7 +12,7 @@ class PayPalCATest extends \PHPUnit\Framework\TestCase
      */
     private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processor = new PayPalCA();
     }
@@ -25,7 +25,6 @@ class PayPalCATest extends \PHPUnit\Framework\TestCase
 
         $this->processor->configureOptions($resolver);
     }
-
 
     public function testConfigureOptionsRemoveSwipe()
     {

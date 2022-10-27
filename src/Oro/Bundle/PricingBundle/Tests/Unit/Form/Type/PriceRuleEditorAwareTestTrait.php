@@ -12,10 +12,13 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleEditorType;
 use Oro\Bundle\PricingBundle\Form\Type\RuleEditorCurrencyExpressionType;
 use Oro\Bundle\PricingBundle\Form\Type\RuleEditorUnitExpressionType;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Twig\Environment;
 
 trait PriceRuleEditorAwareTestTrait
 {
@@ -41,8 +44,8 @@ trait PriceRuleEditorAwareTestTrait
         $formFactory->expects($this->any())
             ->method('createNamed')
             ->willReturn($priceListSelectForm);
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder(\Twig_Environment::class)
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
+        $twig = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject $entityAliasResolver */
@@ -55,6 +58,7 @@ trait PriceRuleEditorAwareTestTrait
             $twig,
             $entityAliasResolver
         );
+        $formatter = $this->createMock(UnitLabelFormatter::class);
         $priceRuleEditor = new PriceRuleEditorType($priceRuleOptionsConfigurator);
         $priceRuleEditorText = new PriceRuleEditorTextType($priceRuleOptionsConfigurator);
 
@@ -71,7 +75,8 @@ trait PriceRuleEditorAwareTestTrait
             RuleEditorTextareaType::NAME => $ruleEditor,
             RuleEditorTextType::NAME => $ruleEditorText,
             RuleEditorCurrencyExpressionType::NAME => $currencyExpressionType,
-            RuleEditorUnitExpressionType::NAME => $unitExpressionType
+            RuleEditorUnitExpressionType::NAME => $unitExpressionType,
+            ProductUnitSelectType::NAME => new ProductUnitSelectType($formatter),
         ];
     }
 }

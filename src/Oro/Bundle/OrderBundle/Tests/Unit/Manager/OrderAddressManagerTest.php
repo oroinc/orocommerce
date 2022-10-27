@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -23,38 +27,24 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     protected $manager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressProvider */
-    protected $provider;
+    private $provider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->provider = $this->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->provider = $this->createMock(OrderAddressProvider::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->manager = new OrderAddressManager(
             $this->provider,
             $this->registry,
-            'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+            OrderAddress::class
         );
     }
 
-    protected function tearDown()
-    {
-        unset($this->manager, $this->provider, $this->registry);
-    }
-
     /**
-     * @param AbstractAddress $address
-     * @param OrderAddress|null $expected
-     * @param AbstractAddress|null $expectedCustomerAddress
-     * @param AbstractAddress|null $expectedCustomerUserAddress
-     * @param OrderAddress|null $orderAddress
-     *
      * @dataProvider orderDataProvider
      */
     public function testUpdateFromAbstract(
@@ -64,15 +54,22 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedCustomerUserAddress = null,
         OrderAddress $orderAddress = null
     ) {
-        $classMetadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $classMetadata->expects($this->once())->method('getFieldNames')->willReturn(['street', 'city', 'label']);
-        $classMetadata->expects($this->once())->method('getAssociationNames')
+        $classMetadata = $this->createMock(ClassMetadata::class);
+        $classMetadata->expects($this->once())
+            ->method('getFieldNames')
+            ->willReturn(['street', 'city', 'label']);
+        $classMetadata->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['country', 'region']);
 
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $em->expects($this->once())->method('getClassMetadata')->willReturn($classMetadata);
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($this->once())
+            ->method('getClassMetadata')
+            ->willReturn($classMetadata);
 
-        $this->registry->expects($this->any())->method('getManagerForClass')->with($this->isType('string'))
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with($this->isType('string'))
             ->willReturn($em);
 
         $orderAddress = $this->manager->updateFromAbstract($address, $orderAddress);
@@ -81,10 +78,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         $this->assertEquals($expectedCustomerUserAddress, $orderAddress->getCustomerUserAddress());
     }
 
-    /**
-     * @return array
-     */
-    public function orderDataProvider()
+    public function orderDataProvider(): array
     {
         $country = new Country('US');
         $region = new Region('US-AL');
@@ -154,11 +148,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param Order $order
-     * @param array $customerAddresses
-     * @param array $customerUserAddresses
-     * @param array $expected
-     *
      * @dataProvider groupedAddressDataProvider
      */
     public function testGetGroupedAddresses(
@@ -167,11 +156,15 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         array $customerUserAddresses = [],
         array $expected = []
     ) {
-        $this->provider->expects($this->any())->method('getCustomerAddresses')->willReturn($customerAddresses);
-        $this->provider->expects($this->any())->method('getCustomerUserAddresses')->willReturn($customerUserAddresses);
+        $this->provider->expects($this->any())
+            ->method('getCustomerAddresses')
+            ->willReturn($customerAddresses);
+        $this->provider->expects($this->any())
+            ->method('getCustomerUserAddresses')
+            ->willReturn($customerUserAddresses);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
-        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
+        $this->manager->addEntity('au', CustomerUserAddress::class);
+        $this->manager->addEntity('a', CustomerAddress::class);
 
         $result = $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING);
 
@@ -179,83 +172,44 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         $this->assertEquals($expected, $result->toArray());
     }
 
-    /**
-     * @return array
-     */
-    public function groupedAddressDataProvider()
+    public function groupedAddressDataProvider(): array
     {
         return [
             'empty customer user' => [new Order()],
             'empty customer' => [
                 (new Order())->setCustomerUser(new CustomerUser()),
                 [],
-                [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
-                ],
+                [$this->getCustomerUserAddress(1), $this->getCustomerUserAddress(2)],
                 [
                     'oro.order.form.address.group_label.customer_user' => [
-                        'au_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
-                            1
-                        ),
-                        'au_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
-                            2
-                        ),
+                        'au_1' => $this->getCustomerUserAddress(1),
+                        'au_2' => $this->getCustomerUserAddress(2)
                     ],
                 ],
             ],
             'customer' => [
                 (new Order())->setCustomerUser(new CustomerUser())->setCustomer(new Customer()),
-                [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
-                ],
+                [$this->getCustomerAddress(1), $this->getCustomerAddress(2)],
                 [],
                 [
                     'oro.order.form.address.group_label.customer' => [
-                        'a_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
-                            1
-                        ),
-                        'a_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
-                            2
-                        ),
+                        'a_1' => $this->getCustomerAddress(1),
+                        'a_2' => $this->getCustomerAddress(2)
                     ],
                 ],
             ],
             'full' => [
                 (new Order())->setCustomerUser(new CustomerUser())->setCustomer(new Customer()),
-                [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
-                ],
-                [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
-                ],
+                [$this->getCustomerAddress(1), $this->getCustomerAddress(2)],
+                [$this->getCustomerUserAddress(1), $this->getCustomerUserAddress(2)],
                 [
                     'oro.order.form.address.group_label.customer' => [
-                        'a_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
-                            1
-                        ),
-                        'a_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
-                            2
-                        ),
+                        'a_1' => $this->getCustomerAddress(1),
+                        'a_2' => $this->getCustomerAddress(2)
                     ],
                     'oro.order.form.address.group_label.customer_user' => [
-                        'au_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
-                            1
-                        ),
-                        'au_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
-                            2
-                        ),
+                        'au_1' => $this->getCustomerUserAddress(1),
+                        'au_2' => $this->getCustomerUserAddress(2)
                     ],
                 ],
             ],
@@ -263,11 +217,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     }
 
     /**
-     * @param Order $order
-     * @param array $customerAddresses
-     * @param array $customerUserAddresses
-     * @param array $addresses
-     *
      * @dataProvider groupedAddressDataProvider
      */
     public function testGetAddressTypes(
@@ -287,12 +236,10 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturnMap(
-                [
-                    ['OroCustomerBundle:CustomerAddressToAddressType', $customerManager],
-                    ['OroCustomerBundle:CustomerUserAddressToAddressType', $customerUserManager]
-                ]
-            );
+            ->willReturnMap([
+                ['OroCustomerBundle:CustomerAddressToAddressType', $customerManager],
+                ['OroCustomerBundle:CustomerUserAddressToAddressType', $customerUserManager]
+            ]);
 
         $expectedTypes = [];
         if (array_key_exists('oro.order.form.address.group_label.customer', $addresses)) {
@@ -306,20 +253,15 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             }
         }
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
-        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
+        $this->manager->addEntity('au', CustomerUserAddress::class);
+        $this->manager->addEntity('a', CustomerAddress::class);
         $this->assertEquals($expectedTypes, $this->manager->getAddressTypes($addresses));
     }
 
-    /**
-     * @param array $addresses
-     * @param array $types
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getManager(array $addresses, $types)
+    private function getManager(array $addresses, array $types): ObjectManager
     {
-        $repo = $this->createMock('\Doctrine\Common\Persistence\ObjectRepository');
-        $manager = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
+        $repo = $this->createMock(ObjectRepository::class);
+        $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
             ->willReturn($repo);
@@ -331,22 +273,13 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         return $manager;
     }
 
-    /**
-     * @param array $addresses
-     * @param array $types
-     * @return array
-     */
-    protected function getTypes(array $addresses, array $types)
+    private function getTypes(array $addresses, array $types): array
     {
         $result = [];
         foreach ($addresses as $address) {
             foreach ($types as $type) {
                 $typeEntity = new AddressType($type);
-                $typeToEntity = $this
-                    ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType')
-                    ->disableOriginalConstructor()
-                    ->setMethods(['getAddress', 'getType'])
-                    ->getMockForAbstractClass();
+                $typeToEntity = $this->createMock(AbstractAddressToAddressType::class);
                 $typeToEntity->expects($this->any())
                     ->method('getAddress')
                     ->willReturn($address);

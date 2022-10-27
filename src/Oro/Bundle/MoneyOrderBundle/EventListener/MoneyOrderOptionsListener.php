@@ -5,7 +5,7 @@ namespace Oro\Bundle\MoneyOrderBundle\EventListener;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Event\CollectFormattedPaymentOptionsEvent;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Listener collects formatted payment options for money/order payment method
@@ -17,17 +17,11 @@ class MoneyOrderOptionsListener
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param CollectFormattedPaymentOptionsEvent $event
-     */
     public function onCollectPaymentOptions(CollectFormattedPaymentOptionsEvent $event)
     {
         $paymentMethodView = $event->getPaymentMethodView();

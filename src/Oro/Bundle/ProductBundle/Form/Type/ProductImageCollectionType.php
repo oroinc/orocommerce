@@ -18,9 +18,6 @@ class ProductImageCollectionType extends AbstractType
      */
     protected $imageTypeProvider;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     */
     public function __construct(ImageTypeProvider $imageTypeProvider)
     {
         $this->imageTypeProvider = $imageTypeProvider;

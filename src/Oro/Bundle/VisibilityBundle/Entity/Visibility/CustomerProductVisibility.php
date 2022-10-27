@@ -9,6 +9,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 
 /**
+ * The entity to store configured customer product visibility rules.
+ *
  * @ORM\Entity(
  *      repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository"
  * )
@@ -128,12 +130,21 @@ class CustomerProductVisibility implements VisibilityInterface, ScopeAwareInterf
      */
     public static function getVisibilityList($product)
     {
+        if (method_exists($product, 'getCategory') && !$product->getCategory()) {
+            return [
+                self::CUSTOMER_GROUP,
+                self::CURRENT_PRODUCT,
+                self::HIDDEN,
+                self::VISIBLE
+            ];
+        }
+
         return [
             self::CUSTOMER_GROUP,
             self::CURRENT_PRODUCT,
             self::CATEGORY,
             self::HIDDEN,
-            self::VISIBLE,
+            self::VISIBLE
         ];
     }
 

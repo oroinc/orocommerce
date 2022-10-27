@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 
 class LengthUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configureFormatter();
         $this->configureProvider();
@@ -17,6 +17,6 @@ class LengthUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(LengthUnitSelectType::NAME, $this->formType->getBlockPrefix());
+        static::assertEquals(LengthUnitSelectType::NAME, $this->formType->getBlockPrefix());
     }
 }

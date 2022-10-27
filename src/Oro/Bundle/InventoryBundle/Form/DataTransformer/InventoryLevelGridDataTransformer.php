@@ -23,10 +23,6 @@ class InventoryLevelGridDataTransformer implements DataTransformerInterface
      */
     protected $product;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param Product $product
-     */
     public function __construct(DoctrineHelper $doctrineHelper, Product $product)
     {
         $this->doctrineHelper = $doctrineHelper;

@@ -6,13 +6,18 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxOrderController extends Controller
+/**
+ * The controller that implement AJAX entry point for Orders.
+ */
+class AjaxOrderController extends AbstractController
 {
     /**
      * @Route("/entry-point/{id}", name="oro_order_entry_point", defaults={"id" = 0})
@@ -26,7 +31,7 @@ class AjaxOrderController extends Controller
     {
         if (!$order) {
             $order = new Order();
-            $order->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+            $order->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
         }
 
         $form = $this->getType($order);
@@ -36,7 +41,7 @@ class AjaxOrderController extends Controller
         $form->submit($submittedData);
 
         $event = new OrderEvent($form, $form->getData(), $submittedData);
-        $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
+        $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
 
         return new JsonResponse($event->getData());
     }
@@ -48,5 +53,19 @@ class AjaxOrderController extends Controller
     protected function getType(Order $order)
     {
         return $this->createForm(OrderType::class, $order);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                WebsiteManager::class,
+                EventDispatcherInterface::class,
+            ]
+        );
     }
 }

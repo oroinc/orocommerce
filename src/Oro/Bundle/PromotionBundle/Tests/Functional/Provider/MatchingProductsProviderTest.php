@@ -15,11 +15,11 @@ class MatchingProductsProviderTest extends WebTestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([LoadPromotionSegmentData::class]);
-        $this->provider = new MatchingProductsProvider(static::getContainer()->get('oro_segment.segment_manager'));
+        $this->provider = $this->getContainer()->get('oro_promotion.alias.provider.matching_products_provider');
     }
 
     public function testGetMatchingProductsWhenEmptyIntersection()

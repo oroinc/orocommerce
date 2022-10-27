@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -8,61 +8,57 @@ use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes;
 use Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\TestCase
+class NotEmptyConfigurableAttributesValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var NotEmptyConfigurableAttributesValidator */
-    private $validator;
-
-    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $context;
-
     /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(VariantFieldProvider::class);
-
-        $this->validator = new NotEmptyConfigurableAttributesValidator($this->provider);
-
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->validator->initialize($this->context);
+        parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    protected function createValidator(): NotEmptyConfigurableAttributesValidator
     {
-        unset($this->validator, $this->context, $this->provider);
+        return new NotEmptyConfigurableAttributesValidator($this->provider);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
-    public function testValidateUnsupportedClass()
+    public function testGetTargets(): void
     {
-        $this->validator->validate(new \stdClass(), new NotEmptyConfigurableAttributes());
+        $constraint = new NotEmptyConfigurableAttributes();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
-    public function testValidateNotConfigurable()
+    public function testValidateUnsupportedClass(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
+        $constraint = new NotEmptyConfigurableAttributes();
+        $this->validator->validate(new \stdClass(), $constraint);
+    }
+
+    public function testValidateNotConfigurable(): void
     {
         $product = new Product();
         $product->setType(Product::TYPE_SIMPLE);
 
-        $this->provider->expects($this->never())->method('getVariantFields');
-        $this->context->expects($this->never())->method('addViolation');
+        $this->provider->expects($this->never())
+            ->method('getVariantFields');
 
-        $this->validator->validate($product, new NotEmptyConfigurableAttributes());
+        $constraint = new NotEmptyConfigurableAttributes();
+        $this->validator->validate($product, $constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateConfigurableValid()
+    public function testValidateConfigurableValid(): void
     {
         $attributeFamily = new AttributeFamily();
 
@@ -70,18 +66,18 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setAttributeFamily($attributeFamily);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('getVariantFields')
             ->with($attributeFamily)
             ->willReturn([new VariantField('', '')]);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new NotEmptyConfigurableAttributes();
+        $this->validator->validate($product, $constraint);
 
-        $this->validator->validate($product, new NotEmptyConfigurableAttributes());
+        $this->assertNoViolation();
     }
 
-    public function testValidateConfigurableNotValid()
+    public function testValidateConfigurableNotValid(): void
     {
         $attributeFamily = new AttributeFamily();
         $attributeFamily->setCode('default_family');
@@ -90,19 +86,30 @@ class NotEmptyConfigurableAttributesValidatorTest extends \PHPUnit\Framework\Tes
         $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setAttributeFamily($attributeFamily);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('getVariantFields')
             ->with($attributeFamily)
             ->willReturn([]);
 
         $constraint = new NotEmptyConfigurableAttributes();
+        $this->validator->validate($product, $constraint);
 
-        $this->context
-            ->expects($this->once())
-            ->method('addViolation')
-            ->with($constraint->message, ['%attributeFamily%' => 'default_family']);
+        $this->buildViolation($constraint->message)
+            ->setParameter('%attributeFamily%', 'default_family')
+            ->assertRaised();
+    }
 
-        $this->validator->validate($product, new NotEmptyConfigurableAttributes());
+    public function testValidateConfigurableWithoutAttributeFamily(): void
+    {
+        $product = new Product();
+        $product->setType(Product::TYPE_CONFIGURABLE);
+
+        $this->provider->expects($this->never())
+            ->method('getVariantFields');
+
+        $constraint = new NotEmptyConfigurableAttributes();
+        $this->validator->validate($product, $constraint);
+
+        $this->assertNoViolation();
     }
 }

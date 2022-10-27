@@ -2,28 +2,31 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class CustomerTaxCodeController extends Controller
+/**
+ * CRUD for customer tax codes.
+ */
+class CustomerTaxCodeController extends AbstractController
 {
     /**
      * @Route("/", name="oro_tax_customer_tax_code_index")
      * @Template
      * @AclAncestor("oro_tax_customer_tax_code_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.customer_tax_code.class')
+            'entity_class' => CustomerTaxCode::class
         ];
     }
 
@@ -36,11 +39,8 @@ class CustomerTaxCodeController extends Controller
      *      class="OroTaxBundle:CustomerTaxCode",
      *      permission="VIEW"
      * )
-     *
-     * @param CustomerTaxCode $customerTaxCode
-     * @return array
      */
-    public function viewAction(CustomerTaxCode $customerTaxCode)
+    public function viewAction(CustomerTaxCode $customerTaxCode): array
     {
         return [
             'entity' => $customerTaxCode
@@ -49,17 +49,15 @@ class CustomerTaxCodeController extends Controller
 
     /**
      * @Route("/create", name="oro_tax_customer_tax_code_create")
-     * @Template("OroTaxBundle:CustomerTaxCode:update.html.twig")
+     * @Template("@OroTax/CustomerTaxCode/update.html.twig")
      * @Acl(
      *      id="oro_tax_customer_tax_code_create",
      *      type="entity",
      *      class="OroTaxBundle:CustomerTaxCode",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new CustomerTaxCode());
     }
@@ -73,37 +71,32 @@ class CustomerTaxCodeController extends Controller
      *      class="OroTaxBundle:CustomerTaxCode",
      *      permission="EDIT"
      * )
-     *
-     * @param CustomerTaxCode $customerTaxCode
-     * @return array
      */
-    public function updateAction(CustomerTaxCode $customerTaxCode)
+    public function updateAction(CustomerTaxCode $customerTaxCode): array|RedirectResponse
     {
         return $this->update($customerTaxCode);
     }
 
-    /**
-     * @param CustomerTaxCode $customerTaxCode
-     * @return array|RedirectResponse
-     */
-    protected function update(CustomerTaxCode $customerTaxCode)
+    protected function update(CustomerTaxCode $customerTaxCode): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $customerTaxCode,
             $this->createForm(CustomerTaxCodeType::class, $customerTaxCode),
-            function (CustomerTaxCode $customerTaxCode) {
-                return [
-                    'route' => 'oro_tax_customer_tax_code_update',
-                    'parameters' => ['id' => $customerTaxCode->getId()]
-                ];
-            },
-            function (CustomerTaxCode $customerTaxCode) {
-                return [
-                    'route' => 'oro_tax_customer_tax_code_view',
-                    'parameters' => ['id' => $customerTaxCode->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.tax.controller.customer_tax_code.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.customer_tax_code.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
         );
     }
 }

@@ -1,0 +1,28 @@
+/* @theme: default; */
+
+.totals-placeholder {
+    height: 110px;
+    text-align: right;
+
+    &::before {
+        content: '';
+        background: $totals-placeholder-before-background;
+        height: 30px;
+        display: block;
+    }
+
+    &::after {
+        content: '';
+        background: $totals-placeholder-after-background;
+        width: 50%;
+        height: 20px;
+        display: block;
+        margin-bottom: 30px;
+    }
+}
+
+.combined-buttons-placeholder {
+    height: 40px;
+    border-radius: 5px;
+    background: $combined-buttons-placeholder-background;
+}

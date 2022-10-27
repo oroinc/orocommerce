@@ -29,11 +29,6 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
      */
     protected $config;
 
-    /**
-     * @param FormFactoryInterface            $formFactory
-     * @param PayPalCreditCardConfigInterface $config
-     * @param PaymentTransactionProvider      $paymentTransactionProvider
-     */
     public function __construct(
         FormFactoryInterface $formFactory,
         PayPalCreditCardConfigInterface $config,

@@ -23,7 +23,7 @@ class ButtonSourceTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "BUTTONSOURCE" with value 100001 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['BUTTONSOURCE' => 'OroCommerce_SP'], ['BUTTONSOURCE' => 'OroCommerce_SP']],

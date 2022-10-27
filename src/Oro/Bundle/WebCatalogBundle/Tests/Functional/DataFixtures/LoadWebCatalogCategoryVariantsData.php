@@ -4,11 +4,12 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
+use Oro\Bundle\ScopeBundle\Tests\Functional\DataFixtures\LoadScopeData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
 class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements DependentFixtureInterface
@@ -29,9 +30,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
      */
     public function load(ObjectManager $manager)
     {
-        /**
-         * @var $scope Scope
-         */
+        /** @var Scope $scope */
         $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
 
         foreach (LoadContentNodesData::$data as $nodes) {
@@ -40,6 +39,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
                     unset($nodeData);
                     continue;
                 }
+                /** @var Category $category */
                 $category = $this->getReference(self::$data[$nodeReference]);
 
                 $node = $this->getReference($nodeReference);
@@ -50,6 +50,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
                 $slug->setRouteName($this->getRoute());
                 $slug->setRouteParameters(['categoryId' => $category->getId(), 'includeSubcategories'=>1]);
                 $slug->addScope($scope);
+                $slug->setOrganization($category->getOrganization());
 
                 $manager->persist($slug);
 

@@ -6,30 +6,30 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroProductBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroCheckoutBundle::FeatureContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroUIBundle::TypeaheadContext
-        - OroImportExportBundle::ImportExportContext:
-            - '@oro_entity.entity_alias_resolver'
-            - '@oro_importexport.processor.registry'
-        - OroEmailBundle::EmailContext
-        - OroCustomerBundle::ACLContext
-        - OroShoppingListBundle::FeatureContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\TypeaheadContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
   elements:
     AddPrice:
       selector: '.product-price-collection .add-list-item'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     UnassignPriceList:
       selector: '.pricing-price-list .removeRow'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     ProductPriceForm:
       selector:
         type: xpath
@@ -44,8 +44,12 @@ oro_behat_extension:
     PriceSelectionStrategyForm:
       selector: '.control-group-oro_pricing_list_strategy_selection'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+    Product Price Container:
+      selector: '.product-price__container'
     Product Price Main:
       selector: '.product-price__main'
+    Product Price Your:
+      selector: '.product-price__your'
     Product Price Listed:
       selector: '.product-price__listed'
     Product Price Hint:
@@ -74,6 +78,12 @@ oro_behat_extension:
       selector: '.active.expression-editor-data-source .entity-select-btn'
     Price List Select Clear Button:
       selector: '.active.expression-editor-data-source .select2-search-choice-close'
+    Product Price Attributes Table:
+      selector: 'table.grid.product-price-attributes'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+    Product Price Attributes Grid 1:
+      selector: 'div[data-page-component-name="product-price-attributes-grid:1"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
     ProductPricesGrid:
       selector: 'div[data-page-component-name="product-prices-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -84,19 +94,21 @@ oro_behat_extension:
         selector: 'div[data-page-component-name="product-prices-grid"] div.toolbar div.actions-panel'
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
     ProductPricesGridFiltersState:
-        selector: 'div[data-page-component-name="product-prices-grid"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        selector: 'div[data-page-component-name="product-prices-grid"] .filters-state'
     ProductPricesGridFilterItem:
       selector: 'div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
     ProductPricesGridFiltersButton:
       selector:
-        locator: '//div/h4[text()="Product Prices"]/../..//div[@class="oro-datagrid"]/div[@class="toolbar"]//a[@title="Filters"]'
+        locator: '//div/h4[text()="Product Prices"]/../..//div[@class="oro-datagrid"]/div[@class="toolbar"]//a[@title="Filter Toggle"]'
         type: xpath
     PriceListFilterHint:
       selector:
         locator: '//div[@class="filter-item oro-drop"]/div[contains(text(), "Price List")]/span[@class="filter-item-hint"]/span/b'
         type: 'xpath'
+    PriceListSidebarSelector:
+      selector: 'input[name="oro_pricing_price_list_select"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
     PricingConfigurationForm:
       selector: 'form[name="pricing"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -105,10 +117,15 @@ oro_behat_extension:
           Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
           Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
           Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
-          Pricing Precision System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
-          Pricing Precision: 'pricing[oro_pricing___precision][value]'
+          Subtotals Calculation Precision in Sales Documents System: 'pricing[oro_pricing___precision][use_parent_scope_value]'
+          Subtotals Calculation Precision in Sales Documents: 'pricing[oro_pricing___precision][value]'
           Pricing Rounding Type System: 'pricing[oro_pricing___rounding_type][use_parent_scope_value]'
           Pricing Rounding Type: 'pricing[oro_pricing___rounding_type][value]'
+          Pricing Default Price List Use Default: 'pricing[oro_pricing___default_price_list][use_parent_scope_value]'
+          Pricing Default Price List:
+            type: 'xpath'
+            locator: '//input[@name="pricing[oro_pricing___default_price_list][value]"]'
+            element: Select2Entity
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'
@@ -121,6 +138,38 @@ oro_behat_extension:
           Quantity: 'oro_action_operation[price][quantity]'
           Unit: 'oro_action_operation[price][unit]'
           Price: 'oro_action_operation[price][price][value]'
+          Currency: 'oro_action_operation[price][price][currency]'
+
+    Update Product Price Form:
+      selector: '[id^="oro_pricing_price_list_product_price-uid"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'oro_pricing_price_list_product_price[quantity]'
+          Unit: 'oro_pricing_price_list_product_price[unit]'
+          Price: 'oro_pricing_price_list_product_price[price][value]'
+          Currency: 'oro_pricing_price_list_product_price[price][currency]'
+
+    Price Product hamburger:
+      selector:
+        locator: '//label[text()="Product"]/../..//button[contains(@class,"entity-select-btn")]'
+        type: xpath
+
+    Price List Form:
+      selector: 'form[name="oro_pricing_price_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_pricing_price_list[name]'
+          Currencies: 'oro_pricing_price_list[currencies][]'
+          Active: 'oro_pricing_price_list[active]'
+          Activate At (first):
+            type: 'xpath'
+            locator: '//input[contains(@name,"oro_pricing_price_list_schedules_0_activeAt-uid")]'
+          Deactivate At (first):
+            type: 'xpath'
+            locator: '//input[contains(@name,"oro_pricing_price_list_schedules_0_deactivateAt-uid")]'
+          Rule: 'oro_pricing_price_list[productAssignmentRule]'
 
     Order Review Form:
       selector: '[name="oro_workflow_transition"]'
@@ -136,10 +185,42 @@ oro_behat_extension:
     Currency Switcher:
       selector:
         type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]'
+        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]'
+
+    Currency Switcher Button:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]/div[@data-toggle="dropdown"]'
+
+    Open Price Dropdown Button:
+      selector:
+        type: 'xpath'
+        locator: '//button[@data-prices-hint-trigger]'
 
     Export Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//a[@role="button" and contains(text(),"Export")]'
         type: xpath
+
+    Chosen Select Option:
+      selector:
+        locator: '//span[@class="select2-chosen"]'
+        type: 'xpath'
+
+    Open Filters Panel Button:
+      selector:
+        type: 'xpath'
+        locator: '//div[@class="btn-group not-expand frontend-datagrid__panel"]/a[@title="Filter Toggle"]'
+
+    Price Modal Window Form:
+      selector: 'form[id^="oro_pricing_price_list_product_price"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price: 'oro_pricing_price_list_product_price[price][value]'
+
+    QuickOrderFirstSkuField:
+      selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][productDisplayName]"]'
+
+    QuickOrderFirstSkuFieldTypeahead:
+      selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][productDisplayName]"] + .oro-select2__dropdown'

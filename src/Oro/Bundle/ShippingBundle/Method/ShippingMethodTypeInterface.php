@@ -5,6 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Method;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * An interface for shipping method type.
+ */
 interface ShippingMethodTypeInterface
 {
     /**
@@ -15,7 +18,7 @@ interface ShippingMethodTypeInterface
     /**
      * @return string
      */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * @return int

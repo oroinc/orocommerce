@@ -10,12 +10,10 @@ use Symfony\Component\Routing\RouterInterface;
 
 class ValidateActionTest extends AbstractActionTest
 {
-    const PAYMENT_METHOD = 'testPaymentMethod';
+    private const PAYMENT_METHOD = 'testPaymentMethod';
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $data
-     * @param array $expected
      */
     public function testExecuteAction(array $data, array $expected)
     {
@@ -28,17 +26,14 @@ class ValidateActionTest extends AbstractActionTest
             $responseValue = $this->throwException($data['response']);
         }
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects($this->any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
         $this->action->initialize($options);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
-        /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
             ->setAction(PaymentMethodInterface::VALIDATE)
@@ -49,46 +44,38 @@ class ValidateActionTest extends AbstractActionTest
             ->with($paymentTransaction->getAction(), $paymentTransaction)
             ->will($responseValue);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('createPaymentTransaction')
             ->with($options['paymentMethod'], PaymentMethodInterface::VALIDATE, $options['object'])
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodProvider
-            ->expects($this->atLeastOnce())
+        $this->paymentMethodProvider->expects($this->atLeastOnce())
             ->method('hasPaymentMethod')
             ->with($options['paymentMethod'])
             ->willReturn(true);
 
-        $this->paymentMethodProvider
-            ->expects($this->atLeastOnce())
+        $this->paymentMethodProvider->expects($this->atLeastOnce())
             ->method('getPaymentMethod')
             ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('savePaymentTransaction')
             ->with($paymentTransaction)
-            ->willReturnCallback(
-                function (PaymentTransaction $paymentTransaction) use ($options) {
-                    if (!empty($options['transactionOptions'])) {
-                        $this->assertEquals(
-                            $options['transactionOptions'],
-                            $paymentTransaction->getTransactionOptions()
-                        );
-                    }
+            ->willReturnCallback(function (PaymentTransaction $paymentTransaction) use ($options) {
+                if (!empty($options['transactionOptions'])) {
+                    $this->assertEquals(
+                        $options['transactionOptions'],
+                        $paymentTransaction->getTransactionOptions()
+                    );
                 }
-            );
+            });
 
-        $this->contextAccessor
-            ->expects($this->once())
+        $this->contextAccessor->expects($this->once())
             ->method('setValue')
             ->with($context, $options['attribute'], $expected);
 
-        $this->router
-            ->expects($this->exactly(2))
+        $this->router->expects($this->exactly(2))
             ->method('generate')
             ->withConsecutive(
                 [
@@ -106,15 +93,12 @@ class ValidateActionTest extends AbstractActionTest
                     RouterInterface::ABSOLUTE_URL
                 ]
             )
-            ->will($this->returnArgument(0));
+            ->willReturnArgument(0);
 
         $this->action->execute($context);
     }
 
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
+    public function executeDataProvider(): array
     {
         return [
             'throw exception' => [

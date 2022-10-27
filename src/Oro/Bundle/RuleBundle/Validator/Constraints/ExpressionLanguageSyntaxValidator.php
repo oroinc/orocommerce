@@ -2,36 +2,46 @@
 
 namespace Oro\Bundle\RuleBundle\Validator\Constraints;
 
-use Oro\Component\ExpressionLanguage\BasicExpressionLanguageValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator as SymfonyExpressionLanguageValidator;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * Decorates {@see SymfonyExpressionLanguageSyntaxValidator} and adds the following:
+ * 1 Allows expression to be numeric or null.
+ * 2 Skips validation is expression is empty string.
+ * 3 Removes trailing spaces from expression.
+ */
 class ExpressionLanguageSyntaxValidator extends ConstraintValidator
 {
-    /**
-     * @var BasicExpressionLanguageValidator
-     */
-    private $basicExpressionLanguageValidator;
+    private SymfonyExpressionLanguageValidator $innerExpressionLanguageValidator;
 
-    /**
-     * @param BasicExpressionLanguageValidator $basicExpressionLanguageValidator
-     */
-    public function __construct(BasicExpressionLanguageValidator $basicExpressionLanguageValidator)
+    public function __construct(SymfonyExpressionLanguageValidator $innerExpressionLanguageValidator)
     {
-        $this->basicExpressionLanguageValidator = $basicExpressionLanguageValidator;
+        $this->innerExpressionLanguageValidator = $innerExpressionLanguageValidator;
     }
 
     /**
-     * @param string     $expression
-     * @param Constraint $constraint
+     * {@inheritdoc}
      */
-    public function validate($expression, Constraint $constraint)
+    public function validate($expression, Constraint $constraint): void
     {
-        if ($expression) {
-            $validateResult = $this->basicExpressionLanguageValidator->validate($expression);
-            if ($validateResult) {
-                $this->context->addViolation($validateResult);
-            }
+        if (is_numeric($expression) || is_null($expression)) {
+            $expression = (string) $expression;
         }
+
+        $expression = trim($expression);
+
+        if ($expression === '') {
+            return;
+        }
+
+        $this->innerExpressionLanguageValidator->validate($expression, $constraint);
+    }
+
+    public function initialize(ExecutionContextInterface $context): void
+    {
+        $this->innerExpressionLanguageValidator->initialize($context);
     }
 }

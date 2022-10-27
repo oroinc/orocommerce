@@ -5,14 +5,19 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
-use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 
 /**
  * Website search index event listener that updates snapshot for segments which are used to form product collections and
- * therefore are related to content variants. Needs to be executed before WebsiteSearchProductIndexerListener listener.
+ * therefore are related to content variants.
+ * Needs to be executed before WebCatalogEntityIndexerListener and ManuallyAddedProductCollectionIndexerListener.
  */
 class WebsiteSearchSegmentListener
 {
+    use ContextTrait;
+
     /**
      * @var ContentVariantSegmentProvider
      */
@@ -23,10 +28,6 @@ class WebsiteSearchSegmentListener
      */
     private $staticSegmentManager;
 
-    /**
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     * @param StaticSegmentManager $staticSegmentManager
-     */
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
         StaticSegmentManager $staticSegmentManager
@@ -35,34 +36,40 @@ class WebsiteSearchSegmentListener
         $this->staticSegmentManager = $staticSegmentManager;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
-    public function onWebsiteSearchIndex(IndexEntityEvent $event)
+    public function process(BeforeReindexEvent $event)
     {
-        // entity check is done inside the listener intentionally because common event has to be used instead of
-        // product specific event to make sure that this listener will be executed
-        // before the Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener
-        if ($event->getEntityClass() !== Product::class) {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
             return;
         }
 
-        foreach ($this->contentVariantSegmentProvider->getContentVariantSegments() as $segment) {
-            $this->staticSegmentManager->run($segment, $this->getEntityIds($event));
+        $classes = \is_array($event->getClassOrClasses())
+            ? $event->getClassOrClasses()
+            : (array) $event->getClassOrClasses();
+        if ($classes && !\in_array(Product::class, $classes, true)) {
+            return;
+        }
+
+        $ids = $event->getContext()[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] ?? [];
+        $websiteIds = $this->getContextWebsiteIds($event->getContext());
+        if ($websiteIds) {
+            foreach ($websiteIds as $websiteId) {
+                $this->runSegmentActualization(
+                    $this->contentVariantSegmentProvider->getContentVariantSegmentsByWebsiteId($websiteId),
+                    $ids
+                );
+            }
+        } else {
+            $this->runSegmentActualization(
+                $this->contentVariantSegmentProvider->getContentVariantSegments(),
+                $ids
+            );
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @return array
-     */
-    private function getEntityIds(IndexEntityEvent $event): array
+    private function runSegmentActualization(iterable $segments, array $ids)
     {
-        return array_map(
-            function (Product $product) {
-                return $product->getId();
-            },
-            $event->getEntities()
-        );
+        foreach ($segments as $segment) {
+            $this->staticSegmentManager->run($segment, $ids);
+        }
     }
 }

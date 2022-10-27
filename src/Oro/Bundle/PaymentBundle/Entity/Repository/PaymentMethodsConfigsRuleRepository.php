@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class PaymentMethodsConfigsRuleRepository extends EntityRepository
+/**
+ * Returns payment method config rules by destination, currency and website
+ */
+class PaymentMethodsConfigsRuleRepository extends ServiceEntityRepository
 {
     /**
      * @var AclHelper
      */
     private $aclHelper;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function setAclHelper(AclHelper $aclHelper)
     {
         $this->aclHelper = $aclHelper;
@@ -38,6 +38,8 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
     ): array {
         $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('methodsConfigsRule.rule', 'rule')
+            ->addSelect('rule', 'destination', 'postalCode')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
             ->andWhere('destination.country = :country or destination.country is null')
@@ -94,12 +96,6 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
             ->setParameter('currency', $currency);
     }
 
-    /**
-     * @param string       $currency
-     * @param Website|null $website
-     *
-     * @return QueryBuilder
-     */
     private function getByCurrencyAndWebsiteQueryBuilder(string $currency, Website $website = null): QueryBuilder
     {
         $queryBuilder = $this->getByCurrencyQueryBuilder($currency);
@@ -108,10 +104,18 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
             return $queryBuilder;
         }
 
-        return $queryBuilder
+        $queryBuilder
             ->addSelect('websites')
             ->leftJoin('methodsConfigsRule.websites', 'websites')
             ->andWhere('websites.id is null or websites = :website')
             ->setParameter('website', $website);
+
+        if ($website->getOrganization() === null) {
+            return $queryBuilder;
+        }
+
+        return $queryBuilder
+            ->andWhere($queryBuilder->expr()->eq('methodsConfigsRule.organization', ':organization'))
+            ->setParameter('organization', $website->getOrganization());
     }
 }

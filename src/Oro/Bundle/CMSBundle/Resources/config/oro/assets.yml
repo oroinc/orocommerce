@@ -1,4 +1,17 @@
-assets:
-    css:
-        'orocms':
-            - 'bundles/orocms/css/scss/main.scss'
+css:
+    inputs:
+        # Variables
+        - 'bundles/orocms/css/scss/variables/variables.scss'
+
+        # Styles
+        - 'bundles/orocms/css/scss/main.scss'
+
+wysiwyg_canvas:
+    inputs:
+        # Settings
+        - 'bundles/oroui/css/scss/settings/global-settings.scss'
+
+        - 'bundles/oroui/css/scss/oro/loading/loading-mask.scss'
+        - 'bundles/orocms/css/scss/grapesjs/grapesjs-canvas-styles.scss'
+
+    output: 'css/wysiwyg_canvas.css'

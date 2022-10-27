@@ -7,8 +7,11 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+// @codingStandardsIgnoreStart
+// CS-fixer tries to join the class name and extends, and the new line has more than 250 characters
 class ScopedProductSearchQueryRestrictionEventListenerTest extends
  AbstractProductSearchQueryRestrictionEventListenerTest
+// @codingStandardsIgnoreEnd
 {
     const SCOPE = 'test_scope';
 
@@ -80,12 +83,11 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends
         $this->listener->onSearchQuery($this->getEvent());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Scope not configured for ProductSearchQueryRestrictionEventListener
-     */
     public function testScopeEmpty()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Scope not configured for ProductSearchQueryRestrictionEventListener');
+
         $this->listener->setFrontendSystemConfigurationPath('path');
         $this->listener->setScope(null);
 

@@ -1,0 +1,51 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: 'Product1'
+    productName2:
+        string: 'Product2'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@set'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@productName1']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        primaryUnitPrecision: '@precision2'
+        __calls:
+            - addName: ['@productName2']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel1:
+        product: '@product1'
+        productUnitPrecision: '@precision1'
+        quantity: 1
+    inventoryLevel2:
+        product: '@product2'
+        productUnitPrecision: '@precision2'
+        quantity: 1

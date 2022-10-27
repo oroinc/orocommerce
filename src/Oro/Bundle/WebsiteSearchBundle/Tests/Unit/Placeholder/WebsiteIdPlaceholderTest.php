@@ -17,7 +17,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteIdPlaceholder */
     private $placeholder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
             ->disableOriginalConstructor()
@@ -26,14 +26,14 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->placeholder = new WebsiteIdPlaceholder($this->websiteManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->websiteManager, $this->placeholder);
     }
 
     public function testGetPlaceholder()
     {
-        $this->assertInternalType('string', $this->placeholder->getPlaceholder());
+        $this->assertIsString($this->placeholder->getPlaceholder());
         $this->assertEquals('WEBSITE_ID', $this->placeholder->getPlaceholder());
     }
 
@@ -48,16 +48,15 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 
         $value = $this->placeholder->replaceDefault('string_WEBSITE_ID');
 
-        $this->assertInternalType('string', $value);
+        $this->assertIsString($value);
         $this->assertEquals('string_1', $value);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Current website is not defined.
-     */
     public function testReplaceWithoutWebsiteId()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Current website is not defined.');
+
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn(null);

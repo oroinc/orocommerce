@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\CatalogBundle\JsTree;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
+/**
+ * Provides actions that can be performed with the category tree
+ */
 class CategoryTreeHandler extends AbstractTreeHandler
 {
     /** @var TokenAccessorInterface */
@@ -16,21 +20,24 @@ class CategoryTreeHandler extends AbstractTreeHandler
     /** @var CategoryTreeProvider */
     protected $categoryTreeProvider;
 
+    /** @var MasterCatalogRootProviderInterface */
+    private $masterCatalogRootProvider;
+
     /**
      * {@inheritdoc}
-     *
-     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         $entityClass,
         ManagerRegistry $managerRegistry,
         TokenAccessorInterface $tokenAccessor,
-        CategoryTreeProvider $categoryTreeProvider
+        CategoryTreeProvider $categoryTreeProvider,
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider
     ) {
         parent::__construct($entityClass, $managerRegistry);
 
         $this->tokenAccessor = $tokenAccessor;
         $this->categoryTreeProvider = $categoryTreeProvider;
+        $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
     /**
@@ -43,6 +50,18 @@ class CategoryTreeHandler extends AbstractTreeHandler
             $root,
             $includeRoot
         );
+    }
+
+    /**
+     * @param bool $includeRoot
+     * @return array
+     */
+    public function createTreeByMasterCatalogRoot($includeRoot = true)
+    {
+        $root = $this->masterCatalogRootProvider->getMasterCatalogRoot();
+        $tree = $this->getNodes($root, $includeRoot);
+
+        return $this->formatTree($tree, $root, $includeRoot);
     }
 
     /**

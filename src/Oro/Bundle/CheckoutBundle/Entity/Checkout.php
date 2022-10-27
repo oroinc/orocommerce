@@ -15,9 +15,8 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait; // required by DatesAwareTrait
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
@@ -183,7 +182,7 @@ class Checkout extends ExtendCheckout implements
     protected $completed = false;
 
     /**
-     * @var CompletedCheckoutData
+     * @var array|CompletedCheckoutData
      *
      * @ORM\Column(name="completed_data", type="json_array")
      */
@@ -487,6 +486,10 @@ class Checkout extends ExtendCheckout implements
      */
     public function getCompletedData()
     {
+        if (!$this->completedData instanceof CompletedCheckoutData) {
+            $this->completedData = CompletedCheckoutData::jsonDeserialize($this->completedData);
+        }
+
         return $this->completedData;
     }
 
@@ -496,10 +499,6 @@ class Checkout extends ExtendCheckout implements
     public function postLoad()
     {
         $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
-
-        if (!$this->completedData instanceof CompletedCheckoutData) {
-            $this->completedData = CompletedCheckoutData::jsonDeserialize($this->completedData);
-        }
     }
 
     /**

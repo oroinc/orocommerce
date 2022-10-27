@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -23,26 +25,18 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
      */
     protected $matchingPriceActionUrl = 'oro_pricing_matching_price';
 
-    protected function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp(): void
     {
-        $this->initClient(
-            [],
-            array_merge(
-                $this->generateBasicAuthHeader(),
-                [
-                    'HTTP_X-CSRF-Header' => 1,
-                    'X-Requested-With' => 'XMLHttpRequest'
-                ]
-            )
-        );
+        $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-            ]
-        );
+        $this->loadFixtures([
+            LoadCombinedProductPrices::class,
+            LoadProductPrices::class,
+            LoadPriceListRelations::class,
+        ]);
     }
 
     public function testUpdate()
@@ -133,15 +127,12 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertRegExp('/"savedId":[\s\d-]*/i', $html);
+        $this->assertMatchesRegularExpression('/"savedId":[\s\d-]*/i', $html);
         $error = $this->getContainer()->get('translator')
             ->trans($message, [], 'validators');
-        $this->assertContains($error, $html);
+        static::assertStringContainsString($error, $html);
     }
 
-    /**
-     * @param Form $form
-     */
     protected function assertSaved(Form $form)
     {
         $this->client->followRedirects(true);
@@ -151,7 +142,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertRegExp('/"savedId":"[\w\d-]+"/i', $html);
+        $this->assertMatchesRegularExpression('/"savedId":"[\w\d-]+"/i', $html);
     }
 
     /**
@@ -173,14 +164,11 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'default, without customer and website' => [
                 'product' => 'product-1',
                 'expected' => [
-                    ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],
                     ['price' => '13.1000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
-                    ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 11, 'unit' => 'bottle'],
                     ['price' => '10.0000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
                     ['price' => '12.2000', 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                 ]
             ],
-
         ];
     }
 }

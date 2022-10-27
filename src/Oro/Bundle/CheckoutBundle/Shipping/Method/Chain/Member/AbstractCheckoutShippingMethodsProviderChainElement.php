@@ -13,9 +13,6 @@ abstract class AbstractCheckoutShippingMethodsProviderChainElement implements Ch
      */
     private $checkoutShippingMethodsProvider;
 
-    /**
-     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-     */
     public function setSuccessor(
         CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
     ) {

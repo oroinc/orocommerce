@@ -24,7 +24,7 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
      */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
@@ -57,7 +57,7 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
     {
         /** @var ContentVariantStub **/
         $contentVariant = new ContentVariantStub();
-        
+
         /** @var Page $page */
         $page = $this->getEntity(Page::class, ['id' => 42]);
         $contentVariant->setCmsPage($page);
@@ -65,6 +65,34 @@ class CmsPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             new RouteData('oro_cms_frontend_page_view', ['id' => 42]),
             $this->type->getRouteData($contentVariant)
+        );
+    }
+
+    public function testGetAttachedEntity()
+    {
+        /** @var ContentVariantStub **/
+        $contentVariant = new ContentVariantStub();
+
+        /** @var Page $page */
+        $page = $this->getEntity(Page::class, ['id' => 42]);
+        $contentVariant->setCmsPage($page);
+
+        $this->assertEquals(
+            $page,
+            $this->type->getAttachedEntity($contentVariant)
+        );
+    }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(Page::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'IDENTITY(e.cms_page)',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
         );
     }
 }

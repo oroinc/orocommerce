@@ -9,7 +9,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Facade for formatting operations
@@ -37,12 +37,6 @@ class QuoteProductFormatter
      */
     protected $numberFormatter;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param NumberFormatter $numberFormatter
-     * @param UnitValueFormatterInterface $productUnitValueFormatter
-     * @param UnitLabelFormatterInterface $productUnitLabelFormatter
-     */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
@@ -132,10 +126,10 @@ class QuoteProductFormatter
                 $transConstant = 'oro.sale.quoteproductoffer.item';
         }
 
-        $str = $this->translator->transChoice(
+        $str = $this->translator->trans(
             $transConstant,
-            (int)$item->isAllowIncrements(),
             [
+                '%count%'   => (int)$item->isAllowIncrements(),
                 '{units}'   => $this->formatProductUnit($item),
                 '{price}'   => $this->formatPrice($item),
                 '{unit}'    => $this->formatUnitCode($item),

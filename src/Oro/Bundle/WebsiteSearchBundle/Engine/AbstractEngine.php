@@ -21,11 +21,6 @@ abstract class AbstractEngine implements EngineInterface
     /** @var AbstractSearchMappingProvider */
     protected $mappingProvider;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param QueryPlaceholderResolverInterface $queryPlaceholderResolver
-     * @param AbstractSearchMappingProvider $mappingProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         QueryPlaceholderResolverInterface $queryPlaceholderResolver,
@@ -49,7 +44,7 @@ abstract class AbstractEngine implements EngineInterface
     public function search(Query $query, array $context = [])
     {
         $event = new BeforeSearchEvent($query, $context);
-        $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch($event, BeforeSearchEvent::EVENT_NAME);
 
         $query = $event->getQuery();
 

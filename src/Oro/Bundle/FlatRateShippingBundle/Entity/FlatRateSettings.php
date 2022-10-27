@@ -37,7 +37,6 @@ class FlatRateSettings extends Transport
     /** @var ParameterBag */
     private $settings;
 
-
     public function __construct()
     {
         $this->labels = new ArrayCollection();

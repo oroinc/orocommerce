@@ -7,9 +7,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroRFPExtensionTest extends ExtensionTestCase
 {
-    /**
-     * Test Extension
-     */
     public function testExtension()
     {
         $extension = new OroRFPExtension();
@@ -21,22 +18,6 @@ class OroRFPExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
-        $expectedParameters = [
-            'oro_rfp.entity.request.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
-
-        $this->assertEquals('oro_rfp', $extension->getAlias());
-
-        $this->assertExtensionConfigsLoaded([OroRFPExtension::ALIAS]);
-    }
-
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
-    {
-        $extension = new OroRFPExtension();
-        $this->assertEquals(OroRFPExtension::ALIAS, $extension->getAlias());
+        $this->assertExtensionConfigsLoaded(['oro_rfp']);
     }
 }

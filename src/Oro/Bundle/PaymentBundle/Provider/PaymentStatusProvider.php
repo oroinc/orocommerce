@@ -8,6 +8,9 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Provides payment status of passed entity according to its transactions.
+ */
 class PaymentStatusProvider implements PaymentStatusProviderInterface
 {
     const FULL = 'full';
@@ -16,6 +19,8 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     const AUTHORIZED = 'authorized';
     const DECLINED = 'declined';
     const PENDING = 'pending';
+    const CANCELED = 'canceled';
+    const CANCELED_PARTIALLY = 'canceled_partially';
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -23,10 +28,6 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
     /** @var TotalProcessorProvider */
     protected $totalProcessorProvider;
 
-    /**
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param TotalProcessorProvider $totalProcessorProvider
-     */
     public function __construct(
         PaymentTransactionProvider $paymentTransactionProvider,
         TotalProcessorProvider $totalProcessorProvider
@@ -52,6 +53,14 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
      */
     private function getStatusByEntityAndTransactions($entity, ArrayCollection $paymentTransactions)
     {
+        if ($this->isCanceledPartially($paymentTransactions)) {
+            return self::CANCELED_PARTIALLY;
+        }
+
+        if ($this->hasCanceledTransactions($paymentTransactions)) {
+            return self::CANCELED;
+        }
+
         $total = $this->totalProcessorProvider->getTotal($entity);
 
         if ($this->hasSuccessfulTransactions($paymentTransactions, $total)) {
@@ -193,5 +202,42 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
                     }
                 )
                 ->isEmpty();
+    }
+
+    /**
+     * @param ArrayCollection $paymentTransactions
+     *
+     * @return bool
+     */
+    protected function hasCanceledTransactions(ArrayCollection $paymentTransactions)
+    {
+        $canceledTransactions = $this->getCanceledTransactions($paymentTransactions);
+        return $canceledTransactions->count() > 0;
+    }
+
+    protected function getCanceledTransactions(ArrayCollection $paymentTransactions)
+    {
+        return $paymentTransactions
+            ->filter(
+                function (PaymentTransaction $paymentTransaction) {
+                    if ($paymentTransaction->isClone()) {
+                        return false;
+                    }
+
+                    return $paymentTransaction->isSuccessful()
+                        && $paymentTransaction->getAction() === PaymentMethodInterface::CANCEL;
+                }
+            );
+    }
+
+    protected function isCanceledPartially(ArrayCollection $paymentTransactions)
+    {
+        $canceledTransactions = $this->getCanceledTransactions($paymentTransactions);
+        $successfulTransactions = $this->getSuccessfulTransactions($paymentTransactions);
+
+        return $canceledTransactions->count()
+            && $successfulTransactions
+            && $this->getTransactionAmounts($successfulTransactions) >
+            $this->getTransactionAmounts($canceledTransactions);
     }
 }

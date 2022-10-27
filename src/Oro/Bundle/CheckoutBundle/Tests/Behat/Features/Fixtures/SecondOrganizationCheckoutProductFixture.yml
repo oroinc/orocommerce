@@ -1,0 +1,39 @@
+include:
+    - '@OroMultiWebsiteBundle:SecondOrganizationCustomerRoleFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precisionSecondOrganization:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValueSecondOrganization:
+        string: 'Touchscreen POS System'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    productSecondOrganization:
+        sku: 'SKU123'
+        type: 'simple'
+        primaryUnitPrecision: '@precisionSecondOrganization'
+        __calls:
+            - addName: ['@locValueSecondOrganization']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@second_organization'
+        owner: '@second_organization_business_unit'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProductSecondOrganization:
+        priceList: '@defaultPriceList'
+        product: '@productSecondOrganization'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPriceSecondOrganization:
+        pricelist: '@defaultPriceList'
+        product: '@productSecondOrganization'
+        productSku: 'SKU123'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'

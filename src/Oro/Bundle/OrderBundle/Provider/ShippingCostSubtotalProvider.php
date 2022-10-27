@@ -8,12 +8,14 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for shipping. ROUND(shippingValue)
+ */
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
-    const NAME = 'oro_order.subtotal_shipping_cost';
     const SUBTOTAL_SORT_ORDER = 200;
 
     /**
@@ -26,11 +28,6 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
      */
     protected $rounding;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
@@ -40,14 +37,6 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
 
         $this->translator = $translator;
         $this->rounding = $rounding;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**
@@ -65,14 +54,14 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
         $translation = 'oro.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
-        $subtotal->setVisible(false);
+        $subtotal->setVisible((bool) $entity->getShippingCost());
+        $subtotal->setCurrency($this->getBaseCurrency($entity));
 
+        $subtotalAmount = 0.0;
         if ($entity->getShippingCost() !== null) {
             $subtotalAmount = $entity->getShippingCost()->getValue();
-            $subtotal->setAmount($this->rounding->round($subtotalAmount))
-                ->setCurrency($this->getBaseCurrency($entity))
-                ->setVisible(true);
         }
+        $subtotal->setAmount($this->rounding->round($subtotalAmount));
 
         return $subtotal;
     }

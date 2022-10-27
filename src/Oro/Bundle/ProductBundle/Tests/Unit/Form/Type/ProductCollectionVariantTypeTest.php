@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType;
@@ -12,6 +13,7 @@ use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -20,34 +22,29 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(Product::class, false)
-            ->willReturn($em);
-
-        /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject $tokenStorage */
-        $tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $segmentFilterBuilderType = new SegmentFilterBuilderType($doctrineHelper, $tokenStorage);
-
-        /** @var ProductCollectionDefinitionConverter|\PHPUnit\Framework\MockObject\MockObject $definitionConverter */
-        $definitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);
-        /** @var PropertyAccessor|\PHPUnit\Framework\MockObject\MockObject $propertyAccessor */
-        $propertyAccessor = $this->createMock(PropertyAccessor::class);
-        $productCollectionSegmentType = new ProductCollectionSegmentType($definitionConverter, $propertyAccessor);
+            ->willReturn($this->createMock(EntityManagerInterface::class));
 
         return [
             new PreloadedExtension(
                 [
-                    SegmentFilterBuilderType::class => $segmentFilterBuilderType,
-                    ProductCollectionSegmentType::class => $productCollectionSegmentType
+                    new SegmentFilterBuilderType(
+                        $doctrineHelper,
+                        $this->createMock(TokenStorageInterface::class)
+                    ),
+                    new ProductCollectionSegmentType(
+                        $this->createMock(ProductCollectionDefinitionConverter::class),
+                        $this->createMock(PropertyAccessor::class)
+                    )
                 ],
-                []
+                [
+                    FormType::class => [new TooltipFormExtensionStub($this)]
+                ]
             ),
             $this->getValidatorExtension(false)
         ];
@@ -55,9 +52,10 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create(ProductCollectionVariantType::class, null);
+        $form = $this->factory->create(ProductCollectionVariantType::class);
 
         $this->assertTrue($form->has('productCollectionSegment'));
+        $this->assertTrue($form->has('overrideVariantConfiguration'));
         $this->assertEquals(
             ProductCollectionContentVariantType::TYPE,
             $form->getConfig()->getOption('content_variant_type')
@@ -72,12 +70,10 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
 
     public function testDefaultOptions()
     {
-        $form = $this->factory->create(ProductCollectionVariantType::class, null);
-
-        $expectedDefaultOptions = [
-            'content_variant_type' => ProductCollectionContentVariantType::TYPE
-        ];
-
-        $this->assertArraySubset($expectedDefaultOptions, $form->getConfig()->getOptions());
+        $form = $this->factory->create(ProductCollectionVariantType::class);
+        $this->assertSame(
+            ProductCollectionContentVariantType::TYPE,
+            $form->getConfig()->getOptions()['content_variant_type']
+        );
     }
 }

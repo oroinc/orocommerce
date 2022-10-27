@@ -11,7 +11,7 @@ class RuleFiltrationServiceTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
     }
@@ -69,10 +69,6 @@ class RuleFiltrationServiceTest extends WebTestCase
     }
 
     /**
-     * @param array $context
-     * @param array $ruleOwners
-     * @param array $expectedFilteredRules
-     *
      * @dataProvider ruleFiltrationProvider
      */
     public function testRuleFiltration(array $context, array $ruleOwners, array $expectedFilteredRules)

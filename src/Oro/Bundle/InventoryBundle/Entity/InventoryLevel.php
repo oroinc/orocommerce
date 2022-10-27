@@ -5,10 +5,14 @@ namespace Oro\Bundle\InventoryBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\InventoryBundle\Model\ExtendInventoryLevel;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 /**
+ * Represents inventory level (the current amount of a product that a business has in stock)
+ *
  * @ORM\Table(
  *     name="oro_inventory_level",
  * )
@@ -18,12 +22,19 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
  *          }
  *      }
  * )
  */
-class InventoryLevel extends ExtendInventoryLevel
+class InventoryLevel extends ExtendInventoryLevel implements OrganizationAwareInterface
 {
+    use OrganizationAwareTrait;
+
     /**
      * @var int
      *

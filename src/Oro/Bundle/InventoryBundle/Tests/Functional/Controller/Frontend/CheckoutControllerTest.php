@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,7 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyPath;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @dbIsolationPerTest
@@ -24,6 +25,8 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const CONTINUE_BUTTON = "//button[contains(text(), 'Continue')]";
     const CHECKOUT_STEP_LABEL2 = "//h2[text()[contains(.,'%s')]]";
     const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
@@ -45,17 +48,17 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected $configManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->emFallback = $this->registry->getManagerForClass(
             EntityFieldFallbackValue::class
         );
         $this->translator = $this->getContainer()->get('translator');
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->updateSystemQuantityLimits(null, null);
     }
@@ -161,9 +164,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $stepLabel = $crawler->filterXPath(self::CHECKOUT_STEP_LABEL)->text();
         if ($shouldBeFirstStep) {
-            $this->assertContains('Billing Information', $stepLabel);
+            static::assertStringContainsString('Billing Information', $stepLabel);
         } else {
-            $this->assertNotContains('Billing Information', $stepLabel);
+            static::assertStringNotContainsString('Billing Information', $stepLabel);
         }
     }
 
@@ -179,10 +182,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         return $crawler;
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param Product $product
-     */
     protected function validateStep(Crawler $crawler, Product $product)
     {
         $this->verifyQuantityError($crawler, $product, false, false, false, null);
@@ -222,10 +221,10 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $continueButton = $crawler->filterXPath(self::CONTINUE_BUTTON);
         $buttonClasses = $continueButton->attr('class');
 
-        if (!$minError && !$maxError) {
-            $this->assertContains('btn--info', $buttonClasses);
+        if ($minError || $maxError) {
+            static::assertStringContainsString('btn--disabled', $buttonClasses);
         } else {
-            $this->assertNotContains('btn--info', $buttonClasses);
+            static::assertStringNotContainsString('btn--disabled', $buttonClasses);
         }
 
         $this->assertCurrentStep($crawler, $shouldBeFirstStep);
@@ -233,16 +232,16 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $content = $this->client->getResponse()->getContent();
         $minMessage = $this->getErrorMessage($product, $quantityLimit, true);
         if ($minError) {
-            $this->assertContains($minMessage, $content);
+            static::assertStringContainsString($minMessage, $content);
         } else {
-            $this->assertNotContains($minMessage, $content);
+            static::assertStringNotContainsString($minMessage, $content);
         }
 
         $maxMessage = $this->getErrorMessage($product, $quantityLimit, false);
         if ($maxError) {
-            $this->assertContains($maxMessage, $content);
+            static::assertStringContainsString($maxMessage, $content);
         } else {
-            $this->assertNotContains($maxMessage, $content);
+            static::assertStringNotContainsString($maxMessage, $content);
         }
     }
 
@@ -272,15 +271,12 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function updateSystemQuantityLimits($minLimit, $maxLimit)
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_inventory.minimum_quantity_to_order', $minLimit);
         $configManager->set('oro_inventory.maximum_quantity_to_order', $maxLimit);
         $configManager->flush();
     }
 
-    /**
-     * @param Product $product
-     */
     protected function initProductLimitAsSystemFallback(Product $product)
     {
         $entityFallback = new EntityFieldFallbackValue();
@@ -295,14 +291,10 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->emFallback->flush();
     }
 
-    /**
-     * @param QuoteDemand $quoteDemand
-     */
     protected function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand)
     {
         $this->startCheckoutByData($this->getCheckoutFromQuoteDemandData($quoteDemand));
     }
-
 
     /**
      * @param QuoteDemand $quoteDemand

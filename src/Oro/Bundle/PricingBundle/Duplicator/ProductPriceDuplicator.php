@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Duplicator;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
@@ -29,10 +29,6 @@ class ProductPriceDuplicator
      */
     protected $insertQueryExecutor;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardQueryExecutorInterface $insertQueryExecutor
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardQueryExecutorInterface $insertQueryExecutor
@@ -41,10 +37,6 @@ class ProductPriceDuplicator
         $this->insertQueryExecutor = $insertQueryExecutor;
     }
 
-    /**
-     * @param BasePriceList $sourcePriceList
-     * @param BasePriceList $targetPriceList
-     */
     public function duplicate(BasePriceList $sourcePriceList, BasePriceList $targetPriceList)
     {
         $this->getRepository()->copyPrices($sourcePriceList, $targetPriceList, $this->insertQueryExecutor);

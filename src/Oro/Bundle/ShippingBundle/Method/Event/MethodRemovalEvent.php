@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class MethodRemovalEvent extends Event
 {

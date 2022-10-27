@@ -9,10 +9,16 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue: 'oro.checkout.open_order.label'
+
         - '@setOption':
-            id: checkout_order_summary_line_items_container
-            optionName: keepState
-            optionValue: true
+            id: checkout_information_title
+            optionName: excludedSteps
+            optionValue: '=data["oro_frontend_consent_provider"].getExcludedSteps(["enter_credentials_step"], !data["workflowItem"].getData().get("consents_available"))'
+
+        - '@setOption':
+            id: checkout_sidebar
+            optionName: excludedSteps
+            optionValue: '=data["oro_frontend_consent_provider"].getExcludedSteps(["enter_credentials_step"], !data["workflowItem"].getData().get("consents_available"))'
 
     imports:
         -

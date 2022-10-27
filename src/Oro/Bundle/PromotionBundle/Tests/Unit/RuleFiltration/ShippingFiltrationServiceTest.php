@@ -21,7 +21,7 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
      */
     protected $shippingFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->shippingFiltrationService = new ShippingFiltrationService($this->filtrationService);
@@ -29,7 +29,6 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     /**
      * @dataProvider contextDataProvider
-     * @param array $context
      */
     public function testFilterRuleOwnersWithNotSupportedClass(array $context)
     {
@@ -66,7 +65,6 @@ class ShippingFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     /**
      * @dataProvider contextDataProvider
-     * @param array $context
      */
     public function testFilterShippingPromotionsWithNotMatchedShippingOptions(array $context)
     {

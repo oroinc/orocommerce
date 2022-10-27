@@ -1,12 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/shipping_method.html.twig'
-
-        - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 3
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/shipping_method.html.twig'
 
         - '@add':
             id: shipping_methods
@@ -15,7 +10,7 @@ layout:
             prepend: true
             options:
                 attr:
-                    class: 'grid__column grid__column--offset-y grid__column--6'
+                    class: 'grid-col-6 grid-col-mobile-landscape-12'
                 class_prefix: 'checkout'
                 methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
                 currentShippingMethod: '=data["checkout"].getShippingMethod()'

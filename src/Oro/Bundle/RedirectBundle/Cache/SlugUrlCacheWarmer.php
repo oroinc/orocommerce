@@ -2,38 +2,43 @@
 
 namespace Oro\Bundle\RedirectBundle\Cache;
 
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic;
+use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+/**
+ * Schedules Slug Url cache warming.
+ */
 class SlugUrlCacheWarmer implements CacheWarmerInterface
 {
-    /**
-     * @var MessageProducerInterface
-     */
-    private $messageProducer;
+    private MessageProducerInterface $messageProducer;
+    private RoutingInformationProvider $routingInformationProvider;
+    private MessageFactoryInterface $messageFactory;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
-    public function __construct(MessageProducerInterface $messageProducer)
-    {
+    public function __construct(
+        MessageProducerInterface $messageProducer,
+        RoutingInformationProvider $routingInformationProvider,
+        MessageFactoryInterface $messageFactory
+    ) {
         $this->messageProducer = $messageProducer;
+        $this->routingInformationProvider = $routingInformationProvider;
+        $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isOptional()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function warmUp($cacheDir)
     {
-        $this->messageProducer->send(Topics::CALCULATE_URL_CACHE_MASS, '');
+        foreach ($this->routingInformationProvider->getEntityClasses() as $entityClass) {
+            $this->messageProducer->send(
+                CalculateSlugCacheMassTopic::getName(),
+                $this->messageFactory->createMassMessage($entityClass, [], false)
+            );
+        }
     }
 }

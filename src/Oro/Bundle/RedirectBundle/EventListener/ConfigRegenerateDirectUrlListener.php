@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\RegenerateDirectUrlForEntityTypeTopic;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
@@ -69,9 +69,6 @@ class ConfigRegenerateDirectUrlListener
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged($this->configParameter)) {
@@ -83,7 +80,7 @@ class ConfigRegenerateDirectUrlListener
             }
 
             $message = $this->messageFactory->createMassMessage($this->entityClass, [], $createRedirect);
-            $this->messageProducer->send(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $message);
+            $this->messageProducer->send(RegenerateDirectUrlForEntityTypeTopic::getName(), $message);
         }
     }
 

@@ -8,14 +8,14 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CallbackControllerTest extends WebTestCase
 {
-    const ALLOWED_REMOTE_ADDR = '173.0.81.1';
+    private const ALLOWED_REMOTE_ADDR = '173.0.81.1';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
     }
 
     public function testWithoutTransactionNoErrors()
@@ -45,12 +45,7 @@ class CallbackControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @param string $method
-     * @param string $route
-     */
-    protected function assertCallback(PaymentTransaction $paymentTransaction, $method, $route)
+    private function assertCallback(PaymentTransaction $paymentTransaction, string $method, string $route): void
     {
         $parameters = [
             'PNREF' => 'Transaction Reference ' . $method . $route,
@@ -72,7 +67,7 @@ class CallbackControllerTest extends WebTestCase
         );
 
         $objectManager = $this->getContainer()->get('doctrine')
-            ->getRepository('OroPaymentBundle:PaymentTransaction');
+            ->getRepository(PaymentTransaction::class);
 
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $objectManager->find($paymentTransaction->getId());

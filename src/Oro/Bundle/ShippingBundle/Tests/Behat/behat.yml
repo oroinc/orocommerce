@@ -4,20 +4,20 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\FixturesContext
-        - OroActivityListBundle::ActivityContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroSecurityBundle::ACLContext
-        - OroSecurityBundle::PermissionContext
-        - OroSearchBundle::SearchContext
-        - OroConfigBundle::FeatureContext
-        - OroAddressBundle::AddressContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroOrderBundle::OrderContext
-        - OroShippingBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroRedirectBundle::SlugPrototypesContext
+        - Oro\Bundle\ActivityListBundle\Tests\Behat\Context\ActivityContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AddressBundle\Tests\Behat\Context\AddressContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
       paths:
         - '@OroShippingBundle/Tests/Behat/Features'
 
@@ -27,23 +27,18 @@ oro_behat_extension:
 
     CheckoutTotalTrigger:
       selector: '.checkout-order-summary__header [data-collapse-trigger]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CheckoutTotalSum:
-      selector: 'td.order-checkout-widget__total span.blue'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'td.order-checkout-widget__total span.order-checkout-widget__total-price'
 
     CheckoutFormRow:
-      selector: '.checkout-form span.custom-radio__text'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.checkout-form label.checkbox-label'
 
     Flat Rate Shipping Method Icon:
-      selector: '.shipping-method-config .fa-plus-square-o'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.shipping-method-config .fa-minus-square-o'
 
     Flat Rate Shipping Method Body:
       selector: '.shipping-method-config .shipping-method-config__body'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Shipping Rule:
       selector: 'form[name="oro_shipping_methods_configs_rule"]'
@@ -59,11 +54,9 @@ oro_behat_extension:
             locator: 'select[name="oro_shipping_methods_configs_rule[method]"]'
             element: Shipping Method Config Type Field
           Country: 'oro_shipping_methods_configs_rule[destinations][0][country]'
-          Country1: 'oro_shipping_methods_configs_rule[destinations][1][country]'
-          Country2: 'oro_shipping_methods_configs_rule[destinations][2][country]'
+          Country2: 'oro_shipping_methods_configs_rule[destinations][1][country]'
           ZIP: 'oro_shipping_methods_configs_rule[destinations][0][postalCodes]'
-          ZIP1: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
-          ZIP2: 'oro_shipping_methods_configs_rule[destinations][2][postalCodes]'
+          ZIP2: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
           Config Enable: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'
 
     Shipping Origin System Config Form:
@@ -84,12 +77,24 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Price: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'
-          Type: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][type]'
-          HandlingFee: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
-          Price1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][price]'
-          Type1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][type]'
-          HandlingFee1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][handling_fee]'
+          Price for Flat Rate:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate"]]//*[@data-name="field__price"]'
+          Type for Flat Rate:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate"]]//*[@data-name="field__type"]'
+          HandlingFee for Flat Rate:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate"]]//*[@data-name="field__handling-fee"]'
+          Price for Flat Rate 2:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate 2"]]//*[@data-name="field__price"]'
+          Type for Flat Rate 2:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate 2"]]//*[@data-name="field__type"]'
+          HandlingFee for Flat Rate 2:
+            type: 'xpath'
+            locator: '//*[@data-role="method-view" and .//*[@title="Flat Rate 2"]]//*[@data-name="field__handling-fee"]'
 
     Address:
       selector: 'form[name="oro_workflow_transition"]'
@@ -100,10 +105,8 @@ oro_behat_extension:
 
     Notification Alert:
       selector: '.notification--alert .notification__text'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CreateOrderFlashMessage:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#flash-messages div.notification-flash__text'
 
     Integration Form:
@@ -118,9 +121,15 @@ oro_behat_extension:
 
     Deactivate Integration Confirm Button:
       selector: '.modal-footer .btn-primary'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Shipping Method Flat Rate Radio Button:
       selector:
         type: 'xpath'
         locator: "//input[@name='possibleShippingMethodType']"
+
+    Shipping Method Configurations Select:
+      selector: 'select[name="oro_shipping_methods_configs_rule[method]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+    Shipping Choose State Select:
+      selector: '[id^="s3id_shipping_origin_oro_shipping___shipping_origin_value_region"]'

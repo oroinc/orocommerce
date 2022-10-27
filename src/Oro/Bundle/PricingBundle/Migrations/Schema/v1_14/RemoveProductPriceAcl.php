@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_14;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -23,7 +23,7 @@ class RemoveProductPriceAcl implements Migration
         $query->addSql(
             'DELETE FROM acl_classes WHERE class_type = :class_type',
             ['class_type' => $entityClass],
-            ['class_type' => Type::STRING]
+            ['class_type' => Types::STRING]
         );
 
         $queries->addPostQuery($query);

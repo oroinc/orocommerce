@@ -1,6 +1,8 @@
 services:
     Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand:
         public: false
-        class: Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand
+        arguments:
+            - '@oro_seo.provider.sitemap_generation_scheduler'
+            - '@oro_config.manager'
         tags:
             - { name: console.command }

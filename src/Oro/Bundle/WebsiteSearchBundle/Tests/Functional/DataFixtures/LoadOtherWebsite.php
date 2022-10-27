@@ -3,9 +3,9 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Event\ConnectionEventArgs;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Oro\Bundle\WebsiteBundle\Provider\CacheableWebsiteProvider;
@@ -24,8 +24,7 @@ class LoadOtherWebsite extends AbstractFixture implements ContainerAwareInterfac
      */
     public function load(ObjectManager $manager)
     {
-        $mainWebsite = $manager
-            ->getRepository('OroWebsiteBundle:Website')
+        $mainWebsite = $manager->getRepository(Website::class)
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
 
         $website = new Website();

@@ -1,11 +1,14 @@
-define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, UrlHelper) {
+define(function(require) {
     'use strict';
 
-    var DisplayOptions = function() {
-        this.initialize.apply(this, arguments);
-    };
+    const $ = require('jquery');
+    const UrlHelper = require('orodatagrid/js/url-helper');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    _.extend(DisplayOptions.prototype, {
+    const DisplayOptions = BaseComponent.extend({
+        constructor: function DisplayOptions(options) {
+            DisplayOptions.__super__.constructor.call(this, options);
+        },
         /**
          * @property {Grid}
          */
@@ -24,17 +27,19 @@ define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, Url
             this.datagrid = options.grid;
             this.displaySelector = options.options.metadata.options.displayOptions.selector;
 
-            this.datagrid.collection.on('reset', _.bind(this._addDatagridStateTo, this));
+            this.listenTo(this.datagrid.collection, 'reset', this._addDatagridStateTo);
             this._addDatagridStateTo();
+
+            DisplayOptions.__super__.initialize.call(this, options);
         },
 
         _addDatagridStateTo: function() {
-            var self = this;
+            const self = this;
             $(this.displaySelector).find('a').each(function(index, aTagElement) {
-                var aTag = $(aTagElement);
-                var url = aTag.attr('href');
-                var key = self.datagrid.collection.stateHashKey();
-                var value = self.datagrid.collection.stateHashValue();
+                const aTag = $(aTagElement);
+                const url = aTag.attr('href');
+                const key = self.datagrid.collection.stateHashKey();
+                const value = self.datagrid.collection.stateHashValue();
                 aTag.attr('href', UrlHelper.addUrlParameter(url, key, value));
             });
         }
@@ -47,7 +52,7 @@ define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, Url
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var validation = new DisplayOptions({
+                const validation = new DisplayOptions({
                     grid: grid,
                     options: options
                 });

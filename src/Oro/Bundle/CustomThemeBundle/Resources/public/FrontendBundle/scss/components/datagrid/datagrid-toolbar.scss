@@ -1,0 +1,11 @@
+/* @theme: custom; */
+
+.catalog-actions-panel-container {
+    display: none;
+}
+
+@include breakpoint('mobile-landscape') {
+    .catalog-actions-panel-container {
+        display: block;
+    }
+}

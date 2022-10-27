@@ -13,9 +13,6 @@ class QuickAddMenuBuilder implements BuilderInterface
      */
     protected $componentRegistry;
 
-    /**
-     * @param ComponentProcessorRegistry $componentRegistry
-     */
     public function __construct(ComponentProcessorRegistry $componentRegistry)
     {
         $this->componentRegistry = $componentRegistry;

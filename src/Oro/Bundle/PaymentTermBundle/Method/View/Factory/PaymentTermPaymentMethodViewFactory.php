@@ -4,13 +4,16 @@ namespace Oro\Bundle\PaymentTermBundle\Method\View\Factory;
 
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Factory for a payment term view.
+ */
 class PaymentTermPaymentMethodViewFactory implements PaymentTermPaymentMethodViewFactoryInterface
 {
     /**
-     * @var PaymentTermProvider
+     * @var PaymentTermProviderInterface
      */
     protected $paymentTermProvider;
 
@@ -19,11 +22,7 @@ class PaymentTermPaymentMethodViewFactory implements PaymentTermPaymentMethodVie
      */
     protected $translator;
 
-    /**
-     * @param PaymentTermProvider $paymentTermProvider
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(PaymentTermProvider $paymentTermProvider, TranslatorInterface $translator)
+    public function __construct(PaymentTermProviderInterface $paymentTermProvider, TranslatorInterface $translator)
     {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->translator = $translator;

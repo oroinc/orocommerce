@@ -4,4 +4,4 @@
 @isSystem = 1
 @isEditable = 1
 
-Quote #{{ entity.id }} has been restored {% if transitionUser is defined and transitionUser is not empty %}by {{ transitionUser.firstName }} {{ transitionUser.lastName }}{% endif %} on {{ transitionRecord.transitionDate|oro_format_date }} at {{ transitionRecord.transitionDate|oro_format_time }} (<a href="{{ entity.url.view }}">view quote online</a>).
+Quote #{{ entity.id }} has been restored {% if transitionUser is defined and transitionUser is not empty %}by {{ transitionUser.firstName }} {{ transitionUser.lastName }}{% endif %} on {{ transitionRecord.transitionDate|oro_format_date_by_entity(entity) }} at {{ transitionRecord.transitionDate|oro_format_time_by_entity(entity) }} (<a href="{{ entity.url.view }}">view quote online</a>).

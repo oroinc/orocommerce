@@ -68,7 +68,7 @@ class FedexShippingMethodFactoryTest extends TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

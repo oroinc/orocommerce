@@ -7,8 +7,13 @@ use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
 
 class OffersDataStorageTest extends AbstractSessionDataStorageTest
 {
-    protected function initStorage()
+    protected function initStorage(): void
     {
-        $this->storage = new OffersDataStorage($this->session);
+        $this->storage = new OffersDataStorage($this->requestStack);
+    }
+
+    protected function getKey(): string
+    {
+        return 'offers';
     }
 }

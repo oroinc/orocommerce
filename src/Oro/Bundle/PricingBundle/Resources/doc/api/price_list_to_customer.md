@@ -18,6 +18,8 @@ Retrieve a collection of price list to customer relation records.
 
 Create a new price list to customer relation.
 
+The created record is returned in the response.
+
 {@inheritdoc}
 
 {@request:json_api}
@@ -34,13 +36,13 @@ Example:
         "relationships": {
             "priceList": {
                 "data": {
-                    "type":"pricelists",
+                    "type": "pricelists",
                     "id": "2"
                 }
             },
             "customer": {
                 "data": {
-                    "type":"customers",
+                    "type": "customers",
                     "id": "2"
                 }
             }
@@ -53,6 +55,8 @@ Example:
 ### update
 
 Edit a specific price list to customer relation record.
+
+The updated record is returned in the response.
 
 {@inheritdoc}
 
@@ -71,7 +75,7 @@ Example:
         "relationships": {
             "priceList": {
                 "data": {
-                    "type":"pricelists",
+                    "type": "pricelists",
                     "id": "3"
                 }
             }
@@ -95,14 +99,6 @@ Delete a collection of price list to customer relation records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field**
-
 ### mergeAllowed
 
 Whether to allow merging of the current price list to other price lists for the current customer.
@@ -115,7 +111,7 @@ The priority of the current price list in a scope of the current customer.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### customer
 
@@ -125,7 +121,13 @@ The customer this relation is tied to.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ### priceList
 
@@ -135,7 +137,15 @@ The price list this relation is tied to.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+### website
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

@@ -8,6 +8,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Form type for quick add form import file.
+ */
 class QuickAddImportFromFileType extends AbstractType
 {
     const NAME = 'oro_product_quick_add_import_from_file';
@@ -29,6 +32,7 @@ class QuickAddImportFromFileType extends AbstractType
                         new File(
                             [
                                 'mimeTypes' => [
+                                    'text/csv',
                                     'text/plain',
                                     'application/zip',
                                     'application/vnd.oasis.opendocument.spreadsheet',

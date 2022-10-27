@@ -1,0 +1,32 @@
+<div class="filter-box <%- renderMode %>">
+    <div class="filter-container">
+        <div class="filter-container-header">
+            <div class="filter-container-title">
+                <h2><%- _.__('oro.product.sidebar_filters.title') %></h2>
+            </div>
+
+            <div class="filter-container-manager">
+                <div class="filter-actions" data-role="filter-actions">
+                    <% if (obj.enableMultiselectWidget) { %>
+                        <div data-role="filter-container-manager">
+                            <select data-action="add-filter-select" data-skip-input-widgets multiple>
+                                <% _.each(filters, function (filter, name) { %>
+                                    <% if (filter.visible) { %>
+                                        <option class="<%- filter.visible ? '' : 'hidden' %>"
+                                            title="<%- filter.label %>"
+                                            value="<%- name %>"
+                                        <% if (filter.renderable) { %>selected<% } %>
+                                        ><%- filter.label %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div data-filters-items>
+            <div class="filter-items"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+api:
+    entities:
+        Oro\Bundle\CatalogBundle\Entity\Category:
+            documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/category.md'
+            fields:
+                metaTitle:
+                    data_type: localizedFallbackValue:metaTitles
+                metaDescription:
+                    data_type: localizedFallbackValue:metaDescriptions
+                metaKeywords:
+                    data_type: localizedFallbackValue:metaKeywords
+                # rename "metaKeywords" entity property
+                # to be able to use this name for localized fallback value field
+                _metaKeywords:
+                    property_path: metaKeywords
+
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/product.md'
+            fields:
+                metaTitle:
+                    data_type: localizedFallbackValue:metaTitles
+                metaDescription:
+                    data_type: localizedFallbackValue:metaDescriptions
+                metaKeywords:
+                    data_type: localizedFallbackValue:metaKeywords
+                # rename "metaKeywords" entity property
+                # to be able to use this name for localized fallback value field
+                _metaKeywords:
+                    property_path: metaKeywords
+
+        Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+            documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/content_node.md'
+            fields:
+                metaTitle:
+                    data_type: localizedFallbackValue:metaTitles
+                metaDescription:
+                    data_type: localizedFallbackValue:metaDescriptions
+                metaKeywords:
+                    data_type: localizedFallbackValue:metaKeywords
+                # rename "metaKeywords" entity property
+                # to be able to use this name for localized fallback value field
+                _metaKeywords:
+                    property_path: metaKeywords
+
+        Oro\Bundle\CMSBundle\Entity\Page:
+            documentation_resource: '@OroSEOBundle/Resources/doc/api_frontend/page.md'
+            fields:
+                metaTitle:
+                    data_type: localizedFallbackValue:metaTitles
+                metaDescription:
+                    data_type: localizedFallbackValue:metaDescriptions
+                metaKeywords:
+                    data_type: localizedFallbackValue:metaKeywords
+                # rename "metaKeywords" entity property
+                # to be able to use this name for localized fallback value field
+                _metaKeywords:
+                    property_path: metaKeywords

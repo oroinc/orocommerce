@@ -1,3 +1,20 @@
+oro_cms:
+    content_restrictions:
+        # secure, selective, unsecure
+        mode: secure
+
+doctrine:
+    dbal:
+        types:
+            wysiwyg: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType
+            wysiwyg_style: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGStyleType
+            wysiwyg_properties: Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGPropertiesType
+    orm:
+        entity_managers:
+            default:
+                hydrators:
+                    oro.cms.entity.hydrator.matching_variant: Oro\Bundle\CMSBundle\Entity\Hydrator\MatchingVariantHydrator
+
 liip_imagine:
     filter_sets:
         login_page_logo:
@@ -14,3 +31,120 @@ liip_imagine:
             quality:          95
             filters:
                 strip:        ~
+        content_template_preview_small:
+            quality: 95
+            filters:
+                relative_resize:
+                    widen: 200
+        content_template_preview_medium:
+            quality: 95
+            filters:
+                relative_resize:
+                    widen: 400
+        content_template_preview_original:
+            quality: 95
+
+oro_entity_serialized_fields:
+    dbal_types:
+        wysiwyg: string
+        wysiwyg_style: string
+        wysiwyg_properties: json
+
+oro_form:
+    html_purifier_modes:
+        lax:
+            extends: default
+            allowed_html_elements:
+                div:
+                    attributes:
+                        - role
+                        - aria-label
+                        - aria-labelledby
+                        - aria-orientation
+                        - aria-valuenow
+                        - aria-valuemin
+                        - aria-valuemax
+                        - aria-live
+                        - aria-atomic
+                        - data-title
+                        - data-type
+                        - data-spy
+                        - data-ride
+                        - data-interval
+                        - data-parent
+                        - data-target
+                        - data-offset
+                        - data-delay
+                        - data-autohide
+                        - tabindex
+                        - aria-hidden
+                button:
+                    attributes:
+                        - type
+                        - title
+                        - aria-label
+                        - aria-haspopup
+                        - aria-expanded
+                        - aria-labelledby
+                        - aria-controls
+                        - data-dismiss
+                        - data-toggle
+                        - data-target
+                        - data-display
+                        - data-content
+                        - data-container
+                        - data-placement
+                        - disabled
+                span:
+                    attributes:
+                        - title
+                        - role
+                        - aria-hidden
+                        - data-toggle
+                        - data-content
+                        - tabindex
+                        - data-title
+                        - data-type
+                nav:
+                    attributes:
+                        - aria-label
+                ul:
+                    attributes:
+                        - role
+                        - type
+                ol:
+                    attributes:
+                        - type
+                li:
+                    attributes:
+                        - aria-current
+                        - aria-selected
+                        - data-target
+                        - data-slide-to
+                cite:
+                    attributes:
+                        - title
+                a:
+                    attributes:
+                        - tabindex
+                        - role
+                        - data-toggle
+                        - data-slide
+                        - data-trigger
+                        - aria-label
+                        - aria-disabled
+                        - aria-expanded
+                        - aria-controls
+                        - aria-haspopup
+                        - aria-selected
+                        - data-content
+                        - data-placement
+                blockquote:
+                    attributes:
+                        - cite
+
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\CMSBundle\Entity\ContentWidget:
+            full: [ name ]
+            short: [ name ]

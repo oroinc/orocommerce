@@ -17,13 +17,13 @@ class BeforeSearchEventTest extends \PHPUnit\Framework\TestCase
      */
     private $query;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->query = new Query();
         $this->event = new BeforeSearchEvent($this->query, []);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->query, $this->event);
     }
@@ -36,7 +36,7 @@ class BeforeSearchEventTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContext()
     {
-        $this->assertInternalType('array', $this->event->getContext());
+        $this->assertIsArray($this->event->getContext());
         $this->assertSame([], $this->event->getContext());
     }
 }

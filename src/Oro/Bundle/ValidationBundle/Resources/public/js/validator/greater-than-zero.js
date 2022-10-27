@@ -1,14 +1,12 @@
-define([
-    'module',
-    'underscore',
-    'orotranslation/js/translator',
-    'orolocale/js/formatter/number'
-], function(module, _, __, numberFormatter) {
+define(function(require, exports, module) {
     'use strict';
 
-    var config = module.config();
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const numberFormatter = require('orolocale/js/formatter/number');
+    const config = require('module-config').default(module.id);
 
-    var defaultParam = {
+    const defaultParam = {
         message: 'This value should be greater than {{ compared_value }}.'
     };
 
@@ -22,8 +20,8 @@ define([
             return this.optional(element) || value > 0;
         },
         function(param, element) {
-            var value = this.elementValue(element);
-            var placeholders = {compared_value: 0};
+            const value = this.elementValue(element);
+            const placeholders = {compared_value: 0};
             param = _.extend({}, defaultParam, param, config);
             placeholders.value = value;
             return __(param.message, placeholders);

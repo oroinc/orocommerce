@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener;
+use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Symfony\Component\Form\FormInterface;
 
@@ -12,31 +13,22 @@ class OrderTotalEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use SubtotalTrait;
 
-    /** @var OrderTotalEventListener */
-    protected $listener;
-
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $totalProvider;
+    private $totalProvider;
 
-    protected function setUp()
+    /** @var OrderTotalEventListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        $this->totalProvider = $this
-            ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\TotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalProvider = $this->createMock(TotalProvider::class);
 
         $this->listener = new OrderTotalEventListener($this->totalProvider);
     }
 
-    protected function tearDown()
-    {
-        unset($this->listener, $this->totalProvider);
-    }
-
     public function testOnOrderEvent()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $order = new Order();
 

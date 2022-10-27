@@ -14,9 +14,6 @@ class BasicShippingContextBuilderFactory implements ShippingContextBuilderFactor
 
     private $shippingOriginProvider;
 
-    /**
-     * @param ShippingOriginProvider                     $shippingOriginProvider
-     */
     public function __construct(ShippingOriginProvider $shippingOriginProvider)
     {
         $this->shippingOriginProvider = $shippingOriginProvider;

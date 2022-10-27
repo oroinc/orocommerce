@@ -6,10 +6,21 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
+/**
+ * Trait for entities which implement LocalizedSlugPrototypeAwareInterface.
+ * Contains validation constraints on slugPrototypes relation which is useful when validation is executed on entity
+ * itself (e.g. during import).
+ */
 trait LocalizedSlugPrototypeAwareTrait
 {
     /**
      * @var Collection|LocalizedFallbackValue[]
+     *
+     * @Symfony\Component\Validator\Constraints\All(
+     *     constraints = {
+     *         @Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype()
+     *     }
+     * )
      *
      * @ORM\ManyToMany(
      *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",

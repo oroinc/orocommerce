@@ -12,7 +12,7 @@ class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -36,7 +36,6 @@ class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fieldsData
      */
     public function testGetDataProviderConfig(array $fieldsData)
     {

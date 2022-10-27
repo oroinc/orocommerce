@@ -2,23 +2,41 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 {
+    public function testOnCustomerViewFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
+
+        $this->requestStack->expects($this->never())
+            ->method('getCurrentRequest');
+
+        $event = $this->createEvent($this->env);
+        $listener->onCustomerView($event);
+    }
+
     /**
-     * @param RequestStack $requestStack
      * @return CustomerFormViewListener
      */
-    protected function getListener(RequestStack $requestStack)
+    protected function getListener()
     {
         return new CustomerFormViewListener(
-            $requestStack,
+            $this->requestStack,
             $this->translator,
             $this->doctrineHelper,
             $this->websiteProvider
@@ -45,20 +63,14 @@ class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
         $fallbackEntity->setFallback(PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY);
         $fallbackEntity->setWebsite(current($websites));
 
-        $priceToCustomerRepository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceToCustomerRepository = $this->createMock(PriceListToCustomerRepository::class);
 
         $priceToCustomerRepository->expects($this->once())
             ->method('findBy')
             ->with(['customer' => $customer, 'website' => $websites])
             ->willReturn($priceListsToCustomer);
 
-        $fallbackRepository = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fallbackRepository = $this->createMock(EntityRepository::class);
 
         $fallbackRepository->expects($this->once())
             ->method('findOneBy')
@@ -71,14 +83,10 @@ class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['OroPricingBundle:PriceListToCustomer', $priceToCustomerRepository],
-                        ['OroPricingBundle:PriceListCustomerFallback', $fallbackRepository],
-                    ]
-                )
-            );
+            ->willReturnMap([
+                ['OroPricingBundle:PriceListToCustomer', $priceToCustomerRepository],
+                ['OroPricingBundle:PriceListCustomerFallback', $fallbackRepository],
+            ]);
 
         return [$priceListToCustomer1, $priceListToCustomer2];
     }
@@ -86,9 +94,16 @@ class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function processEvent(RequestStack $requestStack, BeforeListRenderEvent $event)
+    protected function processEvent(BeforeListRenderEvent $event)
     {
-        $listener = $this->getListener($requestStack);
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $listener = $this->getListener();
+        $listener->setFeatureChecker($this->featureChecker);
+        $listener->addFeature('feature1');
         $listener->onCustomerView($event);
     }
 

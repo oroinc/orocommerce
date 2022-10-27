@@ -18,40 +18,27 @@ use Oro\Bundle\TaxBundle\Resolver\ShippingResolver;
 
 class ShippingResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingResolver
-     */
-    protected $resolver;
+    /** @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $excTaxCalculator;
 
-    /**
-     * @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $excTaxCalculator;
+    /** @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $incTaxCalculator;
 
-    /**
-     * @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $incTaxCalculator;
+    /** @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $matcher;
 
-    /**
-     * @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $matcher;
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxationSettingsProvider;
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxationSettingsProvider;
+    /** @var ShippingResolver */
+    private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->excTaxCalculator = $this->getMockBuilder(TaxCalculatorInterface::class)->getMock();
-        $this->incTaxCalculator = $this->getMockBuilder(TaxCalculatorInterface::class)->getMock();
-        $this->matcher = $this->getMockBuilder(MatcherInterface::class)
-            ->getMock();
-        $this->taxationSettingsProvider = $this->getMockBuilder(TaxationSettingsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->excTaxCalculator = $this->createMock(TaxCalculatorInterface::class);
+        $this->incTaxCalculator = $this->createMock(TaxCalculatorInterface::class);
+        $this->matcher = $this->createMock(MatcherInterface::class);
+        $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->resolver = new ShippingResolver(
             $this->incTaxCalculator,
@@ -132,6 +119,29 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
+    public function testTaxableWithoutShippingCost()
+    {
+        $taxable = new Taxable();
+        $item = new Taxable();
+        $taxable->addItem($item);
+        $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'ACCOUNT_TAX_CODE');
+
+        $shippingAddress = new ShippingAddressStub();
+        $taxable->setTaxationAddress($shippingAddress);
+
+        $this->taxationSettingsProvider->expects($this->never())
+            ->method('isShippingRatesIncludeTax');
+
+        $this->matcher->expects($this->never())
+            ->method('match');
+        $this->incTaxCalculator->expects($this->never())
+            ->method('calculate');
+        $this->excTaxCalculator->expects($this->never())
+            ->method('calculate');
+
+        $this->resolver->resolve($taxable);
+    }
+
     public function testTaxableWithoutAddress()
     {
         $taxable = new Taxable();
@@ -153,10 +163,11 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableWithoutShippingCost()
+    public function testTaxableNegativeShippingCost()
     {
         $taxable = new Taxable();
         $item = new Taxable();
+        $taxable->setShippingCost('-10');
         $taxable->addItem($item);
         $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'ACCOUNT_TAX_CODE');
 
@@ -212,18 +223,13 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    /**
-     * @param string $taxCode
-     * @param string $taxRate
-     * @return TaxRule
-     */
-    protected function getTaxRule($taxCode, $taxRate)
+    private function getTaxRule(string $taxCode, string $taxRate): TaxRule
     {
-        $taxRule = new TaxRule();
         $tax = new Tax();
-        $tax
-            ->setRate($taxRate)
-            ->setCode($taxCode);
+        $tax->setRate($taxRate);
+        $tax->setCode($taxCode);
+
+        $taxRule = new TaxRule();
         $taxRule->setTax($tax);
 
         return $taxRule;

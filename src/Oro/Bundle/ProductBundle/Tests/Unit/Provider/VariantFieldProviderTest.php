@@ -20,7 +20,7 @@ class VariantFieldProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $serializedFieldProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
             ->disableOriginalConstructor()

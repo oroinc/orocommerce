@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
@@ -10,7 +11,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -18,15 +18,11 @@ use Symfony\Component\DomCrawler\Form;
  */
 class ProductControllerTest extends ProductHelperTestCase
 {
-    /**
-     * @var array
-     */
-    private static $expectedProductImageMatrixHeaders = ['File', 'Main', 'Listing', 'Additional'];
+    use ConfigManagerAwareTestTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    private static array $expectedProductImageMatrixHeaders = ['File', 'Main', 'Listing', 'Additional'];
+
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -37,7 +33,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('products-grid', $crawler->html());
+        self::assertStringContainsString('products-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -61,9 +57,8 @@ class ProductControllerTest extends ProductHelperTestCase
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @depends testCreate
-     * @return int
      */
-    public function testUpdate()
+    public function testUpdate(): int
     {
         $product = $this->getProductDataBySku(ProductTestHelper::TEST_SKU);
         $id = $product->getId();
@@ -73,7 +68,6 @@ class ProductControllerTest extends ProductHelperTestCase
             1,
             $crawler->filterXPath("//nav/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $data = $form->getPhpValues()['oro_product'];
@@ -91,7 +85,7 @@ class ProductControllerTest extends ProductHelperTestCase
             ]
         ];
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $filesData);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -126,9 +120,8 @@ class ProductControllerTest extends ProductHelperTestCase
 
     /**
      * @depends testUpdate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
 
@@ -136,13 +129,13 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains(
+        self::assertStringContainsString(
             ProductTestHelper::UPDATED_SKU . ' - ' . ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::UPDATED_STATUS, $html);
-        $this->assertContains(ProductTestHelper::TYPE, $html);
+        self::assertStringContainsString(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::UPDATED_STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::TYPE, $html);
         $this->assertProductPrecision(
             $id,
             ProductTestHelper::SECOND_UNIT_CODE,
@@ -168,45 +161,40 @@ class ProductControllerTest extends ProductHelperTestCase
 
     /**
      * @depends testView
-     * @param $entityId
-     *
-     * @return int
      */
-    public function testDuplicate($entityId)
+    public function testDuplicate(): int
     {
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $crawler = $this->client->getCrawler();
         $button = $crawler->selectLink('Duplicate');
         $this->assertCount(1, $button);
-        $operationName = 'oro_product_duplicate';
-        $entityClass = Product::class;
-        $operationExecuteParams = $this->getOperationExecuteParams($operationName, ['id' => $entityId], $entityClass);
-        $url = $button->attr('data-operation-url');
+        $buttonOptions = json_decode((string) $button->attr('data-options'), true, 512, JSON_THROW_ON_ERROR);
+
         $this->client->request(
             'POST',
-            $url,
-            $operationExecuteParams,
+            $button->attr('data-operation-url'),
+            $buttonOptions['executionTokenData'] ?? [],
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
-        $data = json_decode($response->getContent(), true);
+        $data = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
         $html = $crawler->html();
-        $this->assertContains('Product has been duplicated', $html);
-        $this->assertContains(
+        self::assertStringContainsString('Product has been duplicated', $html);
+        self::assertStringContainsString(
             ProductTestHelper::FIRST_DUPLICATED_SKU . ' - ' .
             ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::STATUS, $html);
 
-        $this->assertContains(
+        self::assertStringContainsString(
             $this->createPrimaryUnitPrecisionString(
                 ProductTestHelper::FIRST_UNIT_FULL_NAME,
                 ProductTestHelper::FIRST_UNIT_PRECISION
@@ -244,10 +232,8 @@ class ProductControllerTest extends ProductHelperTestCase
 
     /**
      * @depends testDuplicate
-     *
-     * @return int
      */
-    public function testSaveAndDuplicate()
+    public function testSaveAndDuplicate(): int
     {
         $product = $this->getProductDataBySku(ProductTestHelper::FIRST_DUPLICATED_SKU);
         $id = $product->getId();
@@ -256,7 +242,6 @@ class ProductControllerTest extends ProductHelperTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $data = $form->getPhpValues()['oro_product'];
@@ -286,7 +271,7 @@ class ProductControllerTest extends ProductHelperTestCase
                 ],
                 'descriptions' => [
                     'values' => [
-                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
+                        'default' => ['wysiwyg' => ProductTestHelper::DEFAULT_DESCRIPTION],
                         'localizations' => [
                             $localization->getId() => [
                                 'fallback' => FallbackType::SYSTEM
@@ -314,7 +299,7 @@ class ProductControllerTest extends ProductHelperTestCase
             ]),
         ];
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
         $result = $this->client->getResponse();
@@ -329,14 +314,12 @@ class ProductControllerTest extends ProductHelperTestCase
 
     /**
      * @depends testUpdate
-     * @return int
      */
-    public function testPrimaryPrecisionAdditionalPrecisionSwap()
+    public function testPrimaryPrecisionAdditionalPrecisionSwap(): int
     {
         $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
         $id = $product->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
@@ -363,13 +346,13 @@ class ProductControllerTest extends ProductHelperTestCase
                     ->html(),
                 'precision' => $crawler
                     ->filter('input[name="oro_product[primaryUnitPrecision][precision]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'conversionRate' => $crawler
                     ->filter('input[name="oro_product[primaryUnitPrecision][conversionRate]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
                 'sell' => $crawler
                     ->filter('input[name="oro_product[primaryUnitPrecision][sell]"]')
-                    ->extract('value')[0],
+                    ->extract(['value'])[0],
             ],
             $this->getActualAdditionalUnitPrecision($crawler, 0),
             $this->getActualAdditionalUnitPrecision($crawler, 1),
@@ -400,14 +383,12 @@ class ProductControllerTest extends ProductHelperTestCase
 
     /**
      * @depends testUpdate
-     * @return int
      */
-    public function testRemoveAddSameAdditionalPrecision()
+    public function testRemoveAddSameAdditionalPrecision(): int
     {
         $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
         $id = $product->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
@@ -510,19 +491,18 @@ class ProductControllerTest extends ProductHelperTestCase
 
         $expectedData = [
             'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
-            'English' => ['before' => '/old-english-slug','after' => '/english-slug']
+            'English (United States)' => ['before' => '/old-english-slug','after' => '/english-slug']
         ];
 
         $response = $this->client->getResponse();
-        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($expectedData, JSON_THROW_ON_ERROR),
+            $response->getContent()
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function getChangedDefaultSlugDataProvider()
+    public function getChangedDefaultSlugDataProvider(): array
     {
-        // @codingStandardsIgnoreStart
         return [
             'Product name empty, redirect strategy empty' => [
                 'requestParams' => [],
@@ -534,32 +514,30 @@ class ProductControllerTest extends ProductHelperTestCase
                     'productName' => 'New product name',
                 ],
                 'redirectStrategy' => Configuration::STRATEGY_ASK,
-                'expected' => '{"showRedirectConfirmation":true,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+                'expected' => '{"showRedirectConfirmation":true,'
+                    . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
             ],
             'Product name set, redirect strategy never' => [
                 'requestParams' => [
                     'productName' => 'New product name',
                 ],
                 'redirectStrategy' => Configuration::STRATEGY_NEVER,
-                'expected' => '{"showRedirectConfirmation":false,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+                'expected' => '{"showRedirectConfirmation":false,'
+                    . '"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
             ],
         ];
-        // @codingStandardsIgnoreEnd
     }
 
     /**
      * @depends testGetChangedUrlsWhenSlugChanged
-     * @param array $requestParams
-     * @param string $redirectStrategy
-     * @param string $expected
      * @dataProvider getChangedDefaultSlugDataProvider
      */
-    public function testGetChangedDefaultSlug($requestParams, $redirectStrategy, $expected)
+    public function testGetChangedDefaultSlug(array $requestParams, string $redirectStrategy, string $expected)
     {
         /** @var Product $product */
         $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
         $configManager->flush();
         $configManager->reload();
@@ -576,24 +554,18 @@ class ProductControllerTest extends ProductHelperTestCase
 
     /**
      * @depends testSaveAndDuplicate
-     * @param int $id
      */
-    public function testDelete($id)
+    public function testDelete(int $id)
     {
-        $entityClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
-        $operationName = 'DELETE';
-        $operationExecuteParams = $this->getOperationExecuteParams($operationName, $id, $entityClass);
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
+        $button = $crawler->selectLink('Delete');
+        $this->assertNotEmpty($button);
+        $buttonOptions = json_decode((string) $button->attr('data-options'), true, 512, JSON_THROW_ON_ERROR);
+
         $this->client->request(
             'POST',
-            $this->getUrl(
-                'oro_action_operation_execute',
-                [
-                    'operationName' => $operationName,
-                    'entityId'      => $id,
-                    'entityClass'   => $entityClass,
-                ]
-            ),
-            $operationExecuteParams,
+            $button->attr('data-operation-url'),
+            $buttonOptions['executionTokenData'] ?? [],
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
@@ -604,9 +576,9 @@ class ProductControllerTest extends ProductHelperTestCase
                 'message'     => '',
                 'messages'    => [],
                 'redirectUrl' => $this->getUrl('oro_product_index'),
-                'pageReload' => true
+                'pageReload'  => true
             ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            json_decode($this->client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR)
         );
 
         $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
@@ -618,13 +590,16 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testFeaturedProductsOnFrontendRootAfterUpdatingProduct()
     {
         $this->loadFixtures([LoadProductData::class]);
-        $product = $this->getProductDataBySku('product-7');
+        $this->getContainer()->get('oro_website_search.indexer')
+            ->reindex(Product::class);
+
+        $product = $this->getProductDataBySku('продукт-7');
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_product_update', ['id' => $product->getId()])
         );
-        $form    = $crawler->selectButton('Save and Close')->form();
-        $this->client->followRedirects(true);
+        $form = $crawler->selectButton('Save and Close')->form();
+        $this->client->followRedirects();
         $this->client->submit($form);
 
         $this->initClient(
@@ -646,7 +621,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
         $formValues['oro_product_step_one']['attributeFamily'] = ProductTestHelper::ATTRIBUTE_FAMILY_ID;
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -661,7 +636,7 @@ class ProductControllerTest extends ProductHelperTestCase
         ];
         $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
@@ -675,23 +650,20 @@ class ProductControllerTest extends ProductHelperTestCase
         );
     }
 
-    /**
-     * @param Crawler $crawler
-     */
-    protected function checkDuplicateProduct(Crawler $crawler)
+    private function checkDuplicateProduct(Crawler $crawler): void
     {
         $html = $crawler->html();
 
-        $this->assertContains('Product has been saved and duplicated', $html);
-        $this->assertContains(
+        self::assertStringContainsString('Product has been saved and duplicated', $html);
+        self::assertStringContainsString(
             ProductTestHelper::SECOND_DUPLICATED_SKU . ' - ' .
             ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        self::assertStringContainsString(ProductTestHelper::STATUS, $html);
 
-        $this->assertContains(
+        self::assertStringContainsString(
             $this->createPrimaryUnitPrecisionString(
                 ProductTestHelper::FIRST_UNIT_FULL_NAME,
                 ProductTestHelper::FIRST_UNIT_PRECISION
@@ -710,30 +682,5 @@ class ProductControllerTest extends ProductHelperTestCase
         );
 
         $this->assertEmpty($this->parseProductImages($crawler));
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = static::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

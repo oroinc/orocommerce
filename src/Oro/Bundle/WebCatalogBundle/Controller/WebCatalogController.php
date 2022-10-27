@@ -2,28 +2,33 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class WebCatalogController extends Controller
+/**
+ * Web сatalog сontroller
+ */
+class WebCatalogController extends AbstractController
 {
     /**
      * @Route("/", name="oro_web_catalog_index")
      * @Template
      * @AclAncestor("oro_web_catalog_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => WebCatalog::class
@@ -40,11 +45,8 @@ class WebCatalogController extends Controller
      *      permission="VIEW"
      * )
      * @Template()
-     *
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function viewAction(WebCatalog $webCatalog)
+    public function viewAction(WebCatalog $webCatalog): array
     {
         return [
             'entity' => $webCatalog
@@ -53,17 +55,15 @@ class WebCatalogController extends Controller
 
     /**
      * @Route("/create", name="oro_web_catalog_create")
-     * @Template("OroWebCatalogBundle:WebCatalog:update.html.twig")
+     * @Template("@OroWebCatalog/WebCatalog/update.html.twig")
      * @Acl(
      *      id="oro_web_catalog_create",
      *      type="entity",
      *      class="OroWebCatalogBundle:WebCatalog",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new WebCatalog());
     }
@@ -78,11 +78,8 @@ class WebCatalogController extends Controller
      *      permission="EDIT"
      * )
      * @Template()
-     *
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function updateAction(WebCatalog $webCatalog)
+    public function updateAction(WebCatalog $webCatalog): array|RedirectResponse
     {
         return $this->update($webCatalog);
     }
@@ -96,15 +93,10 @@ class WebCatalogController extends Controller
      *      class="OroWebCatalogBundle:WebCatalog",
      *      permission="EDIT"
      * )
-     *
-     * @param Request $request
-     * @param WebCatalog $webCatalog
-     * @return array
      */
-    public function moveAction(Request $request, WebCatalog $webCatalog)
+    public function moveAction(Request $request, WebCatalog $webCatalog): array
     {
-        $handler = $this->get('oro_web_catalog.content_node_tree_handler');
-        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+        $handler = $this->get(ContentNodeTreeHandler::class);
         $contentNodeRepository = $this->getDoctrine()->getRepository("OroWebCatalogBundle:ContentNode");
 
         $root = $handler->getTreeRootByWebCatalog($webCatalog);
@@ -135,7 +127,8 @@ class WebCatalogController extends Controller
             foreach ($collection->source as $source) {
                 if ($createRedirect) {
                     $sourceContentNode = $contentNodeRepository->find($source->getKey());
-                    $urlChanges = $slugGenerator->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
+                    $urlChanges = $this->get(SlugGenerator::class)
+                        ->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
                 }
 
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
@@ -154,30 +147,25 @@ class WebCatalogController extends Controller
         return array_merge($responseData, ['form' => $form->createView()]);
     }
 
-    /**
-     * @param WebCatalog $webCatalog
-     * @return array|RedirectResponse
-     */
-    protected function update(WebCatalog $webCatalog)
+    protected function update(WebCatalog $webCatalog): array|RedirectResponse
     {
-        $form = $this->createForm(WebCatalogType::class, $webCatalog);
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $webCatalog,
-            $form,
-            function (WebCatalog $webCatalog) {
-                return [
-                    'route' => 'oro_web_catalog_update',
-                    'parameters' => ['id' => $webCatalog->getId()]
-                ];
-            },
-            function (WebCatalog $webCatalog) {
-                return [
-                    'route' => 'oro_web_catalog_view',
-                    'parameters' => ['id' => $webCatalog->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.webcatalog.controller.webcatalog.saved.message')
+            $this->createForm(WebCatalogType::class, $webCatalog),
+            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.webcatalog.saved.message')
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ContentNodeTreeHandler::class,
+            SlugGenerator::class,
+            TranslatorInterface::class,
+            UpdateHandlerFacade::class
+        ]);
     }
 }

@@ -1,38 +1,30 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\SaleBundle\DependencyInjection\OroSaleExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroSaleExtensionTest extends ExtensionTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function buildContainerMock()
+    protected function buildContainerMock(): ContainerBuilder
     {
-        $mockBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter'])
-            ->getMock();
+        $containerBuilder = parent::buildContainerMock();
 
-        $mockBuilder
-            ->expects($this->once())
+        $containerBuilder
+            ->expects(static::once())
             ->method('getParameter')
             ->with('kernel.bundles')
             ->willReturn(['OroShippingBundle' => []]);
 
-        return $mockBuilder;
+        return $containerBuilder;
     }
 
-    public function testLoad()
+    public function testLoad(): void
     {
         $this->loadExtension(new OroSaleExtension());
-
-        $expectedParameters = [
-            'oro_sale.entity.quote.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
             // validators
@@ -61,15 +53,6 @@ class OroSaleExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
-        $this->assertExtensionConfigsLoaded([OroSaleExtension::ALIAS]);
-    }
-
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
-    {
-        $extension = new OroSaleExtension();
-        $this->assertEquals(OroSaleExtension::ALIAS, $extension->getAlias());
+        $this->assertExtensionConfigsLoaded(['oro_sale']);
     }
 }

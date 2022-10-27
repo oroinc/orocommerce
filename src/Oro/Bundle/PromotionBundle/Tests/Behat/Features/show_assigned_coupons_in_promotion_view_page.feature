@@ -35,7 +35,7 @@ Feature: Show Assigned Coupons in Promotion view page
 
   Scenario: Should be ability to edit coupon
     Given I click edit "test2" in grid
-    And I fill form with:
+    When I fill "Coupon Form" with:
       | Coupon Code     | test23                           |
       | Uses per Coupon | 3                                |
       | Uses per Person | 3                                |

@@ -2,27 +2,29 @@
 
 namespace Oro\Bundle\PricingBundle\Filter;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
- * A filter that can be used on frontend`s product grid to get products by prices range.
+ * The filter by a product price on the storefront.
  */
 class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
-    /**
-     * @var UnitLabelFormatterInterface
-     */
-    protected $formatter;
+    /** @var UnitLabelFormatterInterface */
+    private $formatter;
 
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    public function __construct(
+        FormFactoryInterface $factory,
+        FilterUtility $util,
+        UnitLabelFormatterInterface $formatter
+    ) {
+        parent::__construct($factory, $util);
+        $this->formatter = $formatter;
+    }
 
     /**
      * {@inheritdoc}
@@ -34,33 +36,13 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
     }
 
     /**
-     * @param UnitLabelFormatterInterface $formatter
-     */
-    public function setFormatter($formatter)
-    {
-        $this->formatter = $formatter;
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     */
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
+
         $metadata['unitChoices'] = [];
-
-        if ($this->configManager) {
-            $metadata['precision'] = (int)$this->configManager->get('oro_pricing.precision');
-        }
-
         $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [

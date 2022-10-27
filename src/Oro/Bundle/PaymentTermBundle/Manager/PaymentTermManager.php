@@ -14,10 +14,6 @@ class PaymentTermManager
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PaymentTermAssociationProvider $paymentTermAssociationProvider

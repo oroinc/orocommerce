@@ -17,10 +17,6 @@ class ShoppingListGridTotalCurrencyHelper
      */
     protected $defaultCurrencyProvider;
 
-    /**
-     * @param DefaultCurrencyProviderInterface $defaultCurrencyProvider
-     * @param WebsiteCurrencyProvider $websiteCurrencyProvider
-     */
     public function __construct(
         DefaultCurrencyProviderInterface $defaultCurrencyProvider,
         WebsiteCurrencyProvider $websiteCurrencyProvider

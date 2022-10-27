@@ -14,26 +14,20 @@ class ProductStatusVoterTest extends FrontendWebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->setCurrentWebsite('default');
-        $this->loadFixtures(
-            [
-                LoadProductData::class,
-            ]
-        );
+        $this->loadFixtures([LoadProductData::class]);
     }
 
     /**
      * @dataProvider statusDataProvider
-     * @param string $productReference
-     * @param int $expectedCode
      */
-    public function testStatus($productReference, $expectedCode)
+    public function testStatus(string $productReference, int $expectedCode)
     {
         $product = $this->getReference($productReference);
         $this->client->request(
@@ -45,10 +39,7 @@ class ProductStatusVoterTest extends FrontendWebTestCase
         $this->assertSame($response->getStatusCode(), $expectedCode);
     }
 
-    /**
-     * @return array
-     */
-    public function statusDataProvider()
+    public function statusDataProvider(): array
     {
         return [
             'enabled product' => [

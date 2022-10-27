@@ -1,0 +1,101 @@
+api:
+    entity_aliases:
+        Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+            alias:        webcatalogtree
+            plural_alias: webcatalogtree
+        Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage:
+            alias:        systempage
+            plural_alias: systempages
+
+    entities:
+        Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+            documentation_resource: '@OroWebCatalogBundle/Resources/doc/api_frontend/content_node.md'
+            fields:
+                materializedPath:
+                    exclude: true
+                root:
+                    exclude: true
+                left:
+                    exclude: true
+                right:
+                    exclude: true
+                parentScopeUsed:
+                    exclude: true
+                rewriteVariantTitle:
+                    exclude: true
+                childNodes:
+                    exclude: true
+                title:
+                    data_type: localizedFallbackValue:titles
+                order:
+                    property_path: left
+                url:
+                    data_type: string
+                    property_path: _
+                urls:
+                    data_type: objects
+                    property_path: _
+                parent:
+                    property_path: parentNode
+                path:
+                    target_class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
+                    target_type: to-many
+                    property_path: _
+                    depends_on: [ materializedPath ]
+                # declare excluded field for "materializedPath" entity property
+                # to be able to use "materializedPath" property in "depends_on" option
+                _materializedPath:
+                    property_path: materializedPath
+                    exclude: true
+                content:
+                    target_class: Oro\Bundle\ApiBundle\Model\EntityIdentifier
+                    target_type: to-one
+                    property_path: _
+            filters:
+                fields:
+                    level:
+                        allow_array: false
+                        allow_range: false
+                        operators: ['=', '<', '<=', '>', '>=']
+                    root:
+                        data_type: integer
+                        type: nestedTree
+            actions:
+                get:
+                    description: Get Web Catalog Tree Node
+                get_list:
+                    description: Get Web Catalog Tree Nodes
+                    page_size: -1 # disable paging
+                    disable_sorting: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+            subresources:
+                path:
+                    filters:
+                        # disable all filters
+                        exclusion_policy: all
+                    actions:
+                        get_relationship:
+                            page_size: -1 # disable paging
+                            disable_sorting: true
+                        get_subresource:
+                            page_size: -1 # disable paging
+                            disable_sorting: true
+
+        Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage:
+            documentation_resource: '@OroWebCatalogBundle/Resources/doc/api_frontend/system_page.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                url:
+                    data_type: string
+            actions:
+                get_list: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false

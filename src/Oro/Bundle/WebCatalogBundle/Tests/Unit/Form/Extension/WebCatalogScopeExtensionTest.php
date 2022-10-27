@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalog\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
@@ -19,17 +19,13 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var WebCatalogScopeExtension
-     */
+    /** @var WebCatalogScopeExtension */
     protected $extension;
 
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject $scopeManager
-     */
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new WebCatalogScopeExtension();
 
@@ -68,9 +64,9 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
         );
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(ScopeType::class, $this->extension->getExtendedType());
+        $this->assertEquals([ScopeType::class], WebCatalogScopeExtension::getExtendedTypes());
     }
 
     /**

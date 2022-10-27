@@ -29,10 +29,6 @@ class ProductUnitPrecisionType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

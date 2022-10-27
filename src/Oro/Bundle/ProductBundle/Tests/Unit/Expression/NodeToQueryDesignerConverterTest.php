@@ -4,20 +4,18 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
-use Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 use Oro\Component\Expression\ColumnInformationProviderInterface;
 use Oro\Component\Expression\Node\NodeInterface;
 
 class NodeToQueryDesignerConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var NodeToQueryDesignerConverter
-     */
-    protected $converter;
+    /** @var NodeToQueryDesignerConverter */
+    private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->converter = new NodeToQueryDesignerConverter(Product::class);
+        $this->converter = new NodeToQueryDesignerConverter();
     }
 
     public function testConvert()
@@ -47,8 +45,10 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit\Framework\TestCase
         $this->converter->addColumnInformationProvider($columnInfoProvider);
 
         $source = $this->converter->convert($node);
-        $this->assertInstanceOf(NodeExpressionQueryDesigner::class, $source);
         $this->assertEquals(Product::class, $source->getEntity());
-        $this->assertJsonStringEqualsJsonString(json_encode($expectedDefinition), $source->getDefinition());
+        $this->assertJsonStringEqualsJsonString(
+            QueryDefinitionUtil::encodeDefinition($expectedDefinition),
+            $source->getDefinition()
+        );
     }
 }

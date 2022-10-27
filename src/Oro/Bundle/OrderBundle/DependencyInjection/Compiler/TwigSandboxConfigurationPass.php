@@ -5,14 +5,14 @@ namespace Oro\Bundle\OrderBundle\DependencyInjection\Compiler;
 use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
 /**
- * Compiler pass that collects extensions for service `oro_order.twig.order_shipping` by `oro_email.email_renderer` tag
+ * Registers the "oro_order_shipping_method_label" Twig function for the email templates rendering sandbox:
  */
 class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
     /**
      * {@inheritDoc}
      */
-    protected function getFunctions()
+    protected function getFunctions(): array
     {
         return [
             'oro_order_shipping_method_label'
@@ -22,7 +22,15 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritDoc}
      */
-    protected function getFilters()
+    protected function getFilters(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTags(): array
     {
         return [];
     }
@@ -30,7 +38,7 @@ class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             'oro_order.twig.order_shipping'

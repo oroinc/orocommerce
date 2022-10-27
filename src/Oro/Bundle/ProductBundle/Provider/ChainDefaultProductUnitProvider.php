@@ -4,21 +4,20 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Delegates the getting of a default product unit precision to child providers.
+ */
 class ChainDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
-    /**
-     * @var DefaultProductUnitProviderInterface[]
-     */
-    protected $providers = [];
+    /** @var iterable|DefaultProductUnitProviderInterface[] */
+    private $providers;
 
     /**
-     * Registers the given provider in the chain
-     *
-     * @param DefaultProductUnitProviderInterface $provider
+     * @param iterable|DefaultProductUnitProviderInterface[] $providers
      */
-    public function addProvider(DefaultProductUnitProviderInterface $provider)
+    public function __construct(iterable $providers)
     {
-        $this->providers[] = $provider;
+        $this->providers = $providers;
     }
 
     /**
@@ -32,6 +31,7 @@ class ChainDefaultProductUnitProvider implements DefaultProductUnitProviderInter
                 return $defaultPrecision;
             }
         }
+
         return null;
     }
 }

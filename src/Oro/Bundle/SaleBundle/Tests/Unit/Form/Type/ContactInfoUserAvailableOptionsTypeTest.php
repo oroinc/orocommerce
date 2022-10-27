@@ -25,7 +25,7 @@ class ContactInfoUserAvailableOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->optionProvider = $this->createMock(OptionsProviderInterface::class);
         $this->formType = new ContactInfoUserAvailableOptionsType($this->optionProvider);
@@ -88,6 +88,7 @@ class ContactInfoUserAvailableOptionsTypeTest extends FormIntegrationTestCase
         static::assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
         $form->submit($submittedData);
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($submittedData, $form->getData());
 
         return $form;

@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@addTree':
+            items:
+                hero_promo:
+                    blockType: content_block
+                    prepend: true
+                    options:
+                        alias: home-page-slider
+                        vars:
+                            hideTitle: true
+                        attr:
+                            class: 'cms-typography'
+            tree:
+                page_content:
+                    hero_promo: ~

@@ -1,0 +1,47 @@
+data:
+    type: orders
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: billing1
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: shipping1
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: item1
+included:
+    -
+        type: orderlineitems
+        id: item1
+        attributes:
+            quantity: 10
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: orderaddresses
+        id: billing1
+        relationships:
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'
+    -
+        type: orderaddresses
+        id: shipping1
+        relationships:
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'

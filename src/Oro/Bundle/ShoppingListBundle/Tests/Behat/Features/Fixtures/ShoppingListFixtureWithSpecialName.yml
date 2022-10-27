@@ -1,0 +1,32 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: Product1
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'AA1'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: '"Shopping list":\\'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'

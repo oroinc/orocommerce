@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Model;
 
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -9,8 +9,6 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider propertiesDataProvider
-     * @param array $data
-     * @param array $replaceWith
      */
     public function testProperties(array $data, array $replaceWith)
     {
@@ -44,12 +42,11 @@ class TaxBaseExclusionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Option values is "val", one of "destination,shipping_origin" allowed
-     */
     public function testAddInvalidOptionSetter()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Option values is "val", one of "destination,shipping_origin" allowed');
+
         $this->createModel()->setOption('val');
     }
 

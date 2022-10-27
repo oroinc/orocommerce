@@ -2,55 +2,41 @@
 
 namespace Oro\Bundle\PricingBundle\Cache;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
-class RuleCache implements Cache
+/**
+ * Keeps cache with built pricing rule query
+ */
+class RuleCache
 {
-    const DQL_PARTS_KEY = 'dql_parts';
-    const PARAMETERS_KEY = 'parameters';
-    const HASH = 'hash';
+    private const DQL_PARTS_KEY = 'dql_parts';
+    private const PARAMETERS_KEY = 'parameters';
+    private const HASH = 'hash';
 
-    /**
-     * @var Cache
-     */
-    protected $cacheStorage;
+    private CacheItemPoolInterface $cacheStorage;
+    private ManagerRegistry $registry;
+    private SymmetricCrypterInterface $crypter;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var SymmetricCrypterInterface
-     */
-    private $crypter;
-
-    /**
-     * @param Cache $cache
-     * @param ManagerRegistry $registry
-     * @param SymmetricCrypterInterface $crypter
-     */
-    public function __construct(Cache $cache, ManagerRegistry $registry, SymmetricCrypterInterface $crypter)
-    {
+    public function __construct(
+        CacheItemPoolInterface $cache,
+        ManagerRegistry $registry,
+        SymmetricCrypterInterface $crypter
+    ) {
         $this->cacheStorage = $cache;
         $this->registry = $registry;
         $this->crypter = $crypter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetch($id)
+    public function fetch(string $id): bool|QueryBuilder
     {
-        if ($this->contains($id)) {
-            $data = $this->cacheStorage->fetch($id);
-            if ($data
-                && (!empty($data[self::HASH]) && $this->getHash($data[self::DQL_PARTS_KEY]) === $data[self::HASH])
-            ) {
+        $cacheItem = $this->cacheStorage->getItem($id);
+        if ($cacheItem->isHit()) {
+            $data = $cacheItem->get();
+            if ((!empty($data[self::HASH]) && $this->getHash($data[self::DQL_PARTS_KEY]) === $data[self::HASH])) {
                 return $this->restoreQueryBuilder($data);
             }
         }
@@ -58,55 +44,31 @@ class RuleCache implements Cache
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function contains($id)
+    public function contains(string $id): bool
     {
-        return $this->cacheStorage->contains($id);
+        return $this->cacheStorage->hasItem($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($id, $data, $lifeTime = 0)
+    public function save(string $id, mixed $data, int $lifeTime = 0): bool
     {
         if ($data instanceof QueryBuilder) {
-            return $this->cacheStorage->save(
-                $id,
-                [
-                    self::DQL_PARTS_KEY => $data->getDQLParts(),
-                    self::PARAMETERS_KEY => $data->getParameters(),
-                    self::HASH => $this->getHash($data->getDQLParts())
-                ],
-                $lifeTime
-            );
+            $cacheItem = $this->cacheStorage->getItem($id);
+            return $this->cacheStorage->save($cacheItem->set([
+                self::DQL_PARTS_KEY => $data->getDQLParts(),
+                self::PARAMETERS_KEY => $data->getParameters(),
+                self::HASH => $this->getHash($data->getDQLParts())
+            ])->expiresAfter($lifeTime));
         }
 
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
+    public function delete(string $id): bool
     {
-        return $this->cacheStorage->delete($id);
+        return $this->cacheStorage->deleteItem($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getStats()
-    {
-        return $this->cacheStorage->getStats();
-    }
-
-    /**
-     * @param array $data
-     * @return QueryBuilder|bool
-     */
-    protected function restoreQueryBuilder(array $data)
+    protected function restoreQueryBuilder(array $data): QueryBuilder|bool
     {
         if (empty($data[self::DQL_PARTS_KEY]) || !array_key_exists(self::PARAMETERS_KEY, $data)) {
             return false;
@@ -124,15 +86,11 @@ class RuleCache implements Cache
         }
 
         $qb->setParameters($data[self::PARAMETERS_KEY]);
-        
+
         return $qb;
     }
 
-    /**
-     * @param array $dqlParts
-     * @return string
-     */
-    private function getHash(array $dqlParts)
+    private function getHash(array $dqlParts): string
     {
         return md5($this->crypter->encryptData(serialize($dqlParts)));
     }

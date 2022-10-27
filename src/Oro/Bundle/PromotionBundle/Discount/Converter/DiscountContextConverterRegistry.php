@@ -5,19 +5,20 @@ namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 
+/**
+ * The registry of discount context converters.
+ */
 class DiscountContextConverterRegistry implements DiscountContextConverterInterface
 {
-    /**
-     * @var array|DiscountContextConverterInterface[]
-     */
-    private $converters = [];
+    /** @var iterable|DiscountContextConverterInterface[] */
+    private $converters;
 
     /**
-     * @param DiscountContextConverterInterface $converter
+     * @param iterable|DiscountContextConverterInterface[] $converters
      */
-    public function registerConverter(DiscountContextConverterInterface $converter)
+    public function __construct(iterable $converters)
     {
-        $this->converters[] = $converter;
+        $this->converters = $converters;
     }
 
     /**
@@ -43,7 +44,8 @@ class DiscountContextConverterRegistry implements DiscountContextConverterInterf
 
     /**
      * @param object $sourceEntity
-     * @return null|DiscountContextConverterInterface
+     *
+     * @return DiscountContextConverterInterface|null
      */
     private function getConverterForEntity($sourceEntity)
     {

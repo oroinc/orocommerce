@@ -19,8 +19,6 @@ class OroRedirectBundle implements Migration
 
     /**
      * Create orob2b_redirect_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BRedirectSlugTable(Schema $schema)
     {

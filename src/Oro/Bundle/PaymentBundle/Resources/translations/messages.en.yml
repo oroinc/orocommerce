@@ -44,6 +44,7 @@ oro:
 
         security.transaction: Work with payments
         capture: Capture
+        cancel: Cancel
 
         status:
             label: Payment Status
@@ -53,6 +54,8 @@ oro:
             declined: Payment declined
             partially: Paid partially
             invoiced: Invoiced
+            canceled: Payment canceled
+            canceled_partially: Canceled partially
 
         message:
             error: 'General error. We were unable to process action.'
@@ -60,6 +63,7 @@ oro:
         paymentmethodconfig:
             entity_label: Payment Method Config
             entity_plural_label: Payment Method Configs
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label: Id
             methods_configs_rule.label: Payment Methods Configs Rule
             type.label: Method
@@ -70,6 +74,7 @@ oro:
             entity_short_plural_label: Payment Rules
             entity_label: Payment Rule
             entity_plural_label: Payment Rules
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             method_configs.label: Payment Methods Configs
             rule.label: Rule
@@ -82,9 +87,15 @@ oro:
                 enabled: Payment rule has been enabled successfully
                 disabled: Payment rule has been disabled successfully
 
+            feature:
+                manage:
+                    label: Payment Rule Management
+                    description: Enables creating a payment rule to activate a particular payment method for the provided destinations and websites.
+
         paymentmethodsconfigsruledestination:
             entity_label: Payment Methods Configs Rule Destination
             entity_plural_label: Payment Methods Configs Rule Destinations
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             methods_configs_rule.label: Payment Methods Configs Rule
             postal_codes.label: Postal Codes
@@ -95,17 +106,32 @@ oro:
         paymentmethodsconfigsruledestinationpostalcode:
             entity_label: Payment Methods Configs Rule Destination Postal Code
             entity_plural_label: Payment Methods Configs Rule Destination Postal Codes
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             name.label: Name
             destination.label: Destination
 
         paymenttransaction:
+            entity_plural_label: Payment Transactions
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_label: Payment Transaction
             id.label: Id
             paymentMethod.label: Payment Method
             action.label: Type
             amount.label: Amount
             active.label: Active
+            currency.label: Currency
+            payment_method.label: Payment Method
+            reference.label: Reference
+            frontend_owner.label: Frontend Owner
+            source_payment_transaction.label: Source Payment Transaction
             successful.label: Successful
+            access_identifier.label: Access Identifier
+            entity_class.label: Entity Class
+            entity_identifier.label: Entity Identifier
+            organization.label: Organization
+            owner.label: Owner
+            related_payment_transactions.label: Related Payment Transactions
             types:
                 authorize.label: Authorize
                 charge.label: Charge
@@ -113,6 +139,8 @@ oro:
                 capture.label: Capture
                 purchase.label: Purchase
                 invoice.label: Invoice
+                pending.label: Pending
+                cancel.label: Cancel
 
         sections:
             general: 'General Information'

@@ -2,103 +2,89 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Tests\Unit\Stub\AttributeFamilyStub;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
+class ProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
 {
-    const VARIANT_FIELD_KEY_COLOR = 'color';
-    const VARIANT_FIELD_KEY_SIZE = 'size';
-    const VARIANT_FIELD_KEY_SLIM_FIT = 'slim_fit';
+    private const VARIANT_FIELD_KEY_COLOR = 'color';
+    private const VARIANT_FIELD_KEY_SIZE = 'size';
+    private const VARIANT_FIELD_KEY_SLIM_FIT = 'slim_fit';
 
-    /**
-     * @var ProductVariantLinksValidator
-     */
-    protected $service;
-
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function createValidator(): ProductVariantLinksValidator
     {
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->service = new ProductVariantLinksValidator($propertyAccessor);
-        $this->service->initialize($this->context);
+        return new ProductVariantLinksValidator(PropertyAccess::createPropertyAccessor());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    public function testGetTargets(): void
     {
-        unset($this->service, $this->context);
+        $constraint = new ProductVariantLinks();
+        self::assertEquals(
+            [Constraint::CLASS_CONSTRAINT, Constraint::PROPERTY_CONSTRAINT],
+            $constraint->getTargets()
+        );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
-    public function testValidateUnsupportedClass()
+    public function testValidateUnsupportedClass(): void
     {
-        $this->service->validate(new \stdClass(), new ProductVariantLinks());
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
+        $constraint = new ProductVariantLinks();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
-    public function testDoesNothingIfProductDoesNotHaveVariants()
+    public function testDoesNothingIfProductDoesNotHaveVariants(): void
     {
         $product = new Product();
         $product->setType(Product::TYPE_SIMPLE);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new ProductVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantLinks());
+        $this->assertNoViolation();
     }
 
-    public function testAddViolationWhenVariantFieldsEmptyAndLinkPresent()
+    public function testAddViolationWhenVariantFieldsEmptyAndLinkPresent(): void
     {
+        $defaultAttributeFamily = new AttributeFamilyStub();
         $product = $this->prepareProduct(
             [],
             [
                 [
                     self::VARIANT_FIELD_KEY_SIZE => 'L',
-                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Blue'
                 ],
                 [
                     self::VARIANT_FIELD_KEY_SIZE => 'M',
-                    self::VARIANT_FIELD_KEY_COLOR => 'Black',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Black'
                 ]
-            ]
+            ],
+            $defaultAttributeFamily,
+            $defaultAttributeFamily
         );
 
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with((new ProductVariantLinks())->variantFieldRequiredMessage)
-            ->willReturn($builder);
-        $builder->expects($this->once())
-            ->method('atPath')
-            ->with($this->isType('string'))
-            ->willReturnSelf();
-        $builder->expects($this->once())
-            ->method('addViolation');
+        $constraint = new ProductVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantLinks());
+        $this->buildViolation($constraint->variantFieldRequiredMessage)
+            ->atPath('property.path.variantFields')
+            ->assertRaised();
     }
 
-    public function testSkipIfProductIsMissingAndValidatedByNotBlank()
+    public function testSkipIfProductIsMissingAndValidatedByNotBlank(): void
     {
         $product = new Product();
         $product->setType(Product::TYPE_CONFIGURABLE);
@@ -106,13 +92,15 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
         $variantLink = new ProductVariantLink($product);
         $product->addVariantLink($variantLink);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new ProductVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantLinks());
+        $this->assertNoViolation();
     }
 
-    public function testAddViolationWhenProductHasNoFilledField()
+    public function testAddViolationWhenProductHasNoFilledField(): void
     {
+        $defaultAttributeFamily = new AttributeFamilyStub();
         $product = $this->prepareProduct(
             [
                 self::VARIANT_FIELD_KEY_SIZE,
@@ -125,46 +113,160 @@ class ProductVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     self::VARIANT_FIELD_KEY_SIZE => 'M',
-                    self::VARIANT_FIELD_KEY_COLOR => 'Black',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Black'
                 ]
-            ]
+            ],
+            $defaultAttributeFamily,
+            $defaultAttributeFamily
         );
 
         $constraint = new ProductVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with($constraint->variantLinkHasNoFilledFieldMessage);
+        $this->buildViolation($constraint->variantLinkHasNoFilledFieldMessage)
+            ->setParameters(['%product_sku%' => '', '%fields%' => 'size, color, slim_fit'])
+            ->assertRaised();
+    }
 
-        $this->service->validate($product, $constraint);
+    public function testUnreachablePropertyException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not access property "test" for class "stdClass"');
+
+        $constraint = new ProductVariantLinks();
+        $constraint->property = 'test';
+        $this->validator->validate(new \stdClass(), $constraint);
+    }
+
+    public function testNotValidatePropertyNull(): void
+    {
+        $variantLink = new ProductVariantLink();
+
+        $constraint = new ProductVariantLinks();
+        $constraint->property = 'parentProduct';
+        $this->validator->validate($variantLink, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testAddViolationWhenProductByPropertyHasNoFilledField(): void
+    {
+        $defaultAttributeFamily = new AttributeFamilyStub();
+        $product = $this->prepareProduct(
+            [
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
+                self::VARIANT_FIELD_KEY_SLIM_FIT
+            ],
+            [
+                [
+                    self::VARIANT_FIELD_KEY_SLIM_FIT => true
+                ],
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'M',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Black'
+                ]
+            ],
+            $defaultAttributeFamily,
+            $defaultAttributeFamily
+        );
+        $simpleProduct = new Product();
+        $simpleProduct->setAttributeFamily(new AttributeFamilyStub());
+        $variantLink = new ProductVariantLink($product, $simpleProduct);
+
+        $constraint = new ProductVariantLinks();
+        $constraint->property = 'parentProduct';
+        $this->validator->validate($variantLink, $constraint);
+
+        $this->buildViolation($constraint->variantLinkHasNoFilledFieldMessage)
+            ->setParameters(['%product_sku%' => '', '%fields%' => 'size, color, slim_fit'])
+            ->assertRaised();
     }
 
     /**
-     * @param array $variantFields
-     * @param array $variantLinkFields
-     * @return Product
+     * @dataProvider getProductAndVariantLinksWithDifferentFamilyDataProvider
      */
-    private function prepareProduct(array $variantFields, array $variantLinkFields)
+    public function testAddViolationWhenProductHasVariantLinksFromDifferentFamily(
+        AttributeFamily $parentProductAttributeFamily = null,
+        AttributeFamily $variantLinkAttributeFamily = null
+    ): void {
+        $product = $this->prepareProduct(
+            [
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
+                self::VARIANT_FIELD_KEY_SLIM_FIT
+            ],
+            [
+                [
+                    self::VARIANT_FIELD_KEY_SLIM_FIT => true
+                ],
+                [
+                    self::VARIANT_FIELD_KEY_SIZE => 'M',
+                    self::VARIANT_FIELD_KEY_COLOR => 'Black'
+                ]
+            ],
+            $parentProductAttributeFamily,
+            $variantLinkAttributeFamily
+        );
+
+        $constraint = new ProductVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->buildViolation($constraint->variantLinkBelongsAnotherFamilyMessage)
+            ->setParameter('%products_sku%', ', ')
+            ->assertRaised();
+    }
+
+    public function getProductAndVariantLinksWithDifferentFamilyDataProvider(): array
     {
+        $productAttributeFamily = new AttributeFamilyStub();
+        $productAttributeFamily->setCode('test1');
+        $simpleProductAttributeFamily = new AttributeFamilyStub();
+        $simpleProductAttributeFamily->setCode('test2');
+
+        return [
+            'empty parent product family' => [
+                'parentProductAttributeFamily' => null,
+                'variantLinkAttributeFamily' => $simpleProductAttributeFamily,
+            ],
+            'empty simple product family' => [
+                'parentProductAttributeFamily' => $productAttributeFamily,
+                'variantLinkAttributeFamily' => null,
+            ],
+            'different parent product and simple product attribute family' => [
+                'parentProductAttributeFamily' => $productAttributeFamily,
+                'variantLinkAttributeFamily' => $simpleProductAttributeFamily,
+            ],
+        ];
+    }
+
+    private function prepareProduct(
+        array $variantFields,
+        array $variantLinkFields,
+        AttributeFamily $parentProductAttributeFamily = null,
+        AttributeFamily $variantLinkAttributeFamily = null
+    ): Product {
         $product = new Product();
         $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setVariantFields($variantFields);
+        if ($parentProductAttributeFamily) {
+            $product->setAttributeFamily($parentProductAttributeFamily);
+        }
 
         foreach ($variantLinkFields as $fields) {
             $variantProduct = new Product();
-
+            if ($variantLinkAttributeFamily) {
+                $variantProduct->setAttributeFamily($variantLinkAttributeFamily);
+            }
             if (array_key_exists(self::VARIANT_FIELD_KEY_SIZE, $fields)) {
                 $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
             }
-
             if (array_key_exists(self::VARIANT_FIELD_KEY_COLOR, $fields)) {
                 $variantProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
             }
-
             if (array_key_exists(self::VARIANT_FIELD_KEY_SLIM_FIT, $fields)) {
                 $variantProduct->setSlimFit((bool)$fields[self::VARIANT_FIELD_KEY_SLIM_FIT]);
             }
-
             $product->addVariantLink(new ProductVariantLink($product, $variantProduct));
         }
 

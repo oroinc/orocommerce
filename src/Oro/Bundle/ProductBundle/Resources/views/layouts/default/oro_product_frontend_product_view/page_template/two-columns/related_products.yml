@@ -6,7 +6,7 @@ layout:
             namespace: two_column_related
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/page_template/two-columns/related_products.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/page_template/two-columns/related_products.html.twig'
         - '@setOption':
             id: two_column_related_products
             optionName: items
@@ -20,15 +20,7 @@ layout:
             optionName: label
             optionValue: oro.product.related_products.label
         - '@setOption':
-            id: two_column_related_product_line_item_form_fields
-            optionName: instance_name
-            optionValue: two_column_related_products
-        - '@setOption':
-            id: two_column_related_product_line_item_form_start
-            optionName: instance_name
-            optionValue: two_column_related_products
-        - '@setOption':
-            id: two_column_related_product_line_item_form_end
+            id: two_column_related_product_line_item_form
             optionName: instance_name
             optionValue: two_column_related_products
         - '@setOption':
@@ -49,3 +41,5 @@ layout:
             blockType: container
             prepend: false
     conditions: '!context["is_mobile"]'
+
+

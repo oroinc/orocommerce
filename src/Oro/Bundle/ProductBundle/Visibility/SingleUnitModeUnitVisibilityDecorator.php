@@ -16,10 +16,6 @@ class SingleUnitModeUnitVisibilityDecorator implements UnitVisibilityInterface
      */
     private $singleUnitModeService;
 
-    /**
-     * @param UnitVisibilityInterface $unitVisibility
-     * @param SingleUnitModeServiceInterface $singleUnitModeService
-     */
     public function __construct(
         UnitVisibilityInterface $unitVisibility,
         SingleUnitModeServiceInterface $singleUnitModeService

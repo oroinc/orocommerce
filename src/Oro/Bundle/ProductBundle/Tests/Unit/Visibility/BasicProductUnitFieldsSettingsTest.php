@@ -20,7 +20,7 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
      */
     private $settings;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()->getMock();
@@ -37,7 +37,6 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productsDataProvider
-     * @param Product|null $product
      */
     public function testIsProductPrimaryUnitVisible(Product $product = null)
     {
@@ -46,7 +45,6 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productsDataProvider
-     * @param Product|null $product
      */
     public function testIsAddingAdditionalUnitsToProductAvailable(Product $product = null)
     {

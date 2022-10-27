@@ -22,13 +22,13 @@ class RestrictProductVariantEventListenerTest extends \PHPUnit\Framework\TestCas
     /** @var RestrictProductVariantEventListener */
     private $listener;
 
-    /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject*/
+    /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject */
     private $event;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
 

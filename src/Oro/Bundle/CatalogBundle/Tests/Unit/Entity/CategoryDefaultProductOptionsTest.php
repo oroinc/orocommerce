@@ -5,16 +5,17 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var  CategoryDefaultProductOptions $defaultProductOptions */
+    /** @var CategoryDefaultProductOptions */
     protected $entity;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->entity = new CategoryDefaultProductOptions();
     }
@@ -31,61 +32,49 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertNull($this->entity->getId());
 
-        $this->setProperty($this->entity, 'id', 123);
-
+        ReflectionUtil::setId($this->entity, 123);
         $this->assertSame(123, $this->entity->getId());
     }
 
     public function testSetGetUnitPrecision()
     {
-        $this->assertNull($this->entity->getUnitPrecision());
+        static::assertNull($this->entity->getUnitPrecision());
 
         $this->entity->updateUnitPrecision();
-        $this->assertAttributeEquals(null, 'unit', $this->entity);
-        $this->assertAttributeEquals(null, 'precision', $this->entity);
+        $this->entity->loadUnitPrecision();
+        static::assertNull($this->entity->getUnitPrecision()->getPrecision());
+        static::assertNull($this->entity->getUnitPrecision()->getUnit());
 
         $precision = 11.1;
         $unit = new ProductUnit();
 
-        $this->setProperty($this->entity, 'precision', $precision);
-        $this->setProperty($this->entity, 'unit', $unit);
+        ReflectionUtil::setPropertyValue($this->entity, 'precision', $precision);
+        ReflectionUtil::setPropertyValue($this->entity, 'unit', $unit);
         $this->entity->loadUnitPrecision();
 
         $unitPrecision = $this->entity->getUnitPrecision();
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision', $unitPrecision);
-        $this->assertEquals($precision, $unitPrecision->getPrecision());
-        $this->assertSame($unit, $unitPrecision->getUnit());
+        static::assertInstanceOf(CategoryUnitPrecision::class, $unitPrecision);
+        static::assertEquals($precision, $unitPrecision->getPrecision());
+        static::assertSame($unit, $unitPrecision->getUnit());
 
         $unitPrecision = CategoryUnitPrecision::create(3, new ProductUnit('set'));
         $this->entity->setUnitPrecision($unitPrecision);
-        $this->assertSame($unitPrecision, $this->entity->getUnitPrecision());
+        static::assertSame($unitPrecision, $this->entity->getUnitPrecision());
 
         $this->entity->updateUnitPrecision();
-        $this->assertAttributeEquals($unitPrecision->getPrecision(), 'precision', $this->entity);
-        $this->assertAttributeEquals($unitPrecision->getUnit(), 'unit', $this->entity);
+        static::assertEquals($unitPrecision->getPrecision(), $this->entity->getUnitPrecision()->getPrecision());
+        static::assertEquals($unitPrecision->getUnit(), $this->entity->getUnitPrecision()->getUnit());
 
-        $this->setProperty($this->entity, 'unitPrecision', null);
+        ReflectionUtil::setPropertyValue($this->entity, 'unitPrecision', null);
         $this->entity->updateUnitPrecision();
-        $this->assertAttributeEquals(null, 'precision', $this->entity);
-        $this->assertAttributeEquals(null, 'unit', $this->entity);
+        $this->entity->loadUnitPrecision();
+        static::assertNull($this->entity->getUnitPrecision()->getPrecision());
+        static::assertNull($this->entity->getUnitPrecision()->getUnit());
     }
 
     public function testToString()
     {
-        $this->setProperty($this->entity, 'id', 123);
-
-        $this->assertEquals('123', (string)$this->entity);
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
+        ReflectionUtil::setId($this->entity, 123);
+        $this->assertSame('123', (string)$this->entity);
     }
 }

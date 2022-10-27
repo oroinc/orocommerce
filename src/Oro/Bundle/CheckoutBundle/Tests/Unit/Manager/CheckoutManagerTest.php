@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Manager;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -24,7 +24,7 @@ class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->checkoutManager = new CheckoutManager($this->doctrineHelper);
@@ -37,7 +37,6 @@ class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
             ->method('find')
             ->with(777)
             ->willReturn(null);
-
 
         $this->checkoutManager->assignRegisteredCustomerUserToCheckout(new CustomerUser(), 777);
     }
@@ -96,7 +95,6 @@ class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($checkout->getRegisteredCustomerUser());
         $this->assertSame($customerUser, $checkout->getCustomerUser());
     }
-
 
     /**
      * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject

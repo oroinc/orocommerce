@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractUnitFormatter
 {
@@ -12,9 +12,6 @@ abstract class AbstractUnitFormatter
     /** @var string */
     private $translationPrefix;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;

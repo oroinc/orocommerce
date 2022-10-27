@@ -3,16 +3,23 @@
 namespace Oro\Bundle\PricingBundle\Placeholder;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class CPLIdPlaceholder extends AbstractPlaceholder
+/**
+ * Replace Search Placeholder CPL_ID with current CPL id provided by PriceListTreeHandler.
+ */
+class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const NAME = 'CPL_ID';
 
     /**
-     * @var PriceListTreeHandler
+     * @var CombinedPriceListTreeHandler
      */
     private $priceListTreeHandler;
 
@@ -21,11 +28,7 @@ class CPLIdPlaceholder extends AbstractPlaceholder
      */
     private $tokenStorage;
 
-    /**
-     * @param PriceListTreeHandler $priceListTreeHandler
-     * @param TokenStorageInterface $tokenStorage
-     */
-    public function __construct(PriceListTreeHandler $priceListTreeHandler, TokenStorageInterface $tokenStorage)
+    public function __construct(CombinedPriceListTreeHandler $priceListTreeHandler, TokenStorageInterface $tokenStorage)
     {
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->tokenStorage = $tokenStorage;
@@ -44,6 +47,10 @@ class CPLIdPlaceholder extends AbstractPlaceholder
      */
     public function getDefaultValue()
     {
+        if (!$this->isFeaturesEnabled()) {
+            return '';
+        }
+
         $token = $this->tokenStorage->getToken();
         $customer = null;
 

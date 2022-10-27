@@ -1,0 +1,13 @@
+search:
+    Oro\Bundle\ConsentBundle\Entity\Consent:
+        alias:                 oro_consent_list
+        route:
+            name:              oro_consent_view
+            parameters:
+                id:            id
+        search_template:       '@OroConsent/Consent/searchResult.html.twig'
+        fields:
+            -
+                name:          defaultName
+                target_type:   text
+                target_fields: [defaultName]

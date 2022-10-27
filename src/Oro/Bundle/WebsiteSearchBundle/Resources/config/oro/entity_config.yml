@@ -1,0 +1,23 @@
+entity_config:
+    attribute:
+        # You can find out more about attributes in the documentation: https://doc.oroinc.com/backend/configuration/annotation/config-field/#attribute
+        field:
+            items:
+                search_boost:
+                    options:
+                        value_type: 'decimal'
+                    constraints:
+                        - Range:
+                              min: 0
+                        - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+                    form:
+                        type: 'Oro\Bundle\EntityConfigBundle\Form\Type\NumberType'
+                        options:
+                            block: 'attribute'
+                            required: false
+                            label: 'oro.website_search.entity_config.search_boost.label'
+                            tooltip: 'oro.website_search.entity_config.search_boost.tooltip'
+                    import_export:
+                        import_template:
+                            use_in_template: true
+                            value: 0

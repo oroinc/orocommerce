@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,17 +26,12 @@ class RequestProductTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var RequestProductType
-     */
+    /** @var RequestProductType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->formType     = new RequestProductType();
+        $this->formType = new RequestProductType();
         $this->formType->setDataClass(RequestProduct::class);
 
         parent::setUp();
@@ -43,9 +39,8 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(static::once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
                 $this->assertArrayHasKey('data_class', $options);
@@ -58,11 +53,11 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
-        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
+        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', Price::create(20, 'USD'));
 
         return [
             'empty form' => [
@@ -132,13 +127,13 @@ class RequestProductTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $priceType = $this->preparePriceType();
+        $entityType = $this->prepareProductSelectType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $requestProductItemType = $this->prepareRequestProductItemType();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
 
         $requestProductType = new BaseRequestProductType();
         $requestProductType->setDataClass(RequestProduct::class);
@@ -147,7 +142,6 @@ class RequestProductTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     $this->formType,
-                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
                     PriceType::class                => $priceType,
                     ProductSelectType::class        => $entityType,
                     RequestProductType::class       => $requestProductType,
@@ -158,11 +152,28 @@ class RequestProductTypeTest extends AbstractTest
                 ],
                 [
                     FormType::class => [
-                        new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                        new StripTagsExtensionStub($this),
                     ]
                 ]
             ),
             $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators(): array
+    {
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($quantity) {
+                return (float)$quantity;
+            });
+
+        return [
+            'oro_product_quantity_unit_precision' => new QuantityUnitPrecisionValidator($roundingService),
         ];
     }
 }

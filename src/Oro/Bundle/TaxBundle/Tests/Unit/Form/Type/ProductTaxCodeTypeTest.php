@@ -2,15 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Form\Type\AbstractTaxCodeType;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
 
 class ProductTaxCodeTypeTest extends AbstractTaxCodeTypeTest
 {
-    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode';
     /**
      * {@inheritdoc}
      */
-    protected function createTaxCodeType()
+    protected function createTaxCodeType(): AbstractTaxCodeType
     {
         return new ProductTaxCodeType();
     }
@@ -18,8 +19,8 @@ class ProductTaxCodeTypeTest extends AbstractTaxCodeTypeTest
     /**
      * {@inheritdoc}
      */
-    protected function getDataClass()
+    protected function getDataClass(): string
     {
-        return self::DATA_CLASS;
+        return ProductTaxCode::class;
     }
 }

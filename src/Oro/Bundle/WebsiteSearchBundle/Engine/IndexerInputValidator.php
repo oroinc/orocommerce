@@ -2,107 +2,150 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Validates Elasticsearch parameters, parses them and returns list of affected entities and websites
+ * Validates engine parameters, parses them and returns list of affected entities and websites.
  */
 class IndexerInputValidator
 {
     use ContextTrait;
 
-    /** @var WebsiteProviderInterface */
-    protected $websiteProvider;
+    private WebsiteProviderInterface $websiteProvider;
 
-    /** @var WebsiteSearchMappingProvider */
-    protected $mappingProvider;
+    private SearchMappingProvider $mappingProvider;
 
-    /**
-     * @param WebsiteProviderInterface $websiteProvider
-     * @param WebsiteSearchMappingProvider $mappingProvider
-     */
+    private ManagerRegistry $managerRegistry;
+
     public function __construct(
         WebsiteProviderInterface $websiteProvider,
-        WebsiteSearchMappingProvider $mappingProvider
+        SearchMappingProvider $mappingProvider,
+        ManagerRegistry $managerRegistry
     ) {
         $this->websiteProvider = $websiteProvider;
         $this->mappingProvider = $mappingProvider;
+        $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * @param string|array|null $classOrClasses
-     * @param array $context
-     * $context = [
-     *     'entityIds' int[] Array of entities ids to reindex
-     *     'websiteIds' int[] Array of websites ids to reindex
-     * ]
-     *
-     * @return array
-     */
-    public function validateRequestParameters(
-        $classOrClasses,
-        array $context
-    ) {
-        if (is_array($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
-            throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
-        }
-
-        $entityClassesToIndex = $this->getEntitiesToIndex($classOrClasses);
-        $websiteIdsToIndex    = $this->getWebsiteIdsToIndex($context);
-
-        if (empty($entityClassesToIndex)) {
-            throw new \LogicException('No entities defined to index');
-        }
-
-        return [$entityClassesToIndex, $websiteIdsToIndex];
-    }
-
-    /**
-     * @param string $class
-     * @throws \InvalidArgumentException
-     */
-    private function ensureEntityClassIsSupported($class)
+    public function validateRequestParameters(array|string|null $classOrClasses, array $context): array
     {
-        if (!$this->mappingProvider->isClassSupported($class)) {
-            throw new \InvalidArgumentException('There is no such entity in mapping config.');
-        }
+        $parameters = $this->validateClassAndContext(['class' => $classOrClasses, 'context' => $context]);
+
+        return [$parameters['class'], $this->getContextWebsiteIds($parameters['context'])];
     }
 
-    /**
-     * @param string|null $class
-     * @return array
-     */
-    private function getEntitiesToIndex($class = null)
+    public function validateClassAndContext(array $parameters): array
     {
-        if ($class) {
-            $entityClasses = (array)$class;
-            foreach ($entityClasses as $entityClass) {
-                $this->ensureEntityClassIsSupported($entityClass);
+        $resolver = $this->getOptionResolver();
+        $this->configureClassOptions($resolver);
+        $this->configureGranulizeOptions($resolver);
+        $this->configureContextOptions($resolver);
+
+        return $resolver->resolve($parameters);
+    }
+
+    public function configureContextOptions(OptionsResolver $optionsResolver): void
+    {
+        $optionsResolver->setRequired('context');
+        $optionsResolver->setAllowedTypes('context', 'array');
+        $optionsResolver->setDefault('context', function (OptionsResolver $resolver) {
+            $resolver->setDefined('skip_pre_processing');
+            $resolver->setDefined(AbstractIndexer::CONTEXT_FIELD_GROUPS);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_ENTITY_CLASS_KEY);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_WEBSITE_IDS);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY);
+
+            $resolver->setAllowedTypes('skip_pre_processing', ['bool']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_FIELD_GROUPS, ['string[]']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_WEBSITE_IDS, ['int[]', 'string[]']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, ['int[]', 'string[]']);
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY, 'int');
+
+            $resolver->setDefault(AbstractIndexer::CONTEXT_WEBSITE_IDS, $this->websiteProvider->getWebsiteIds());
+            $resolver->setNormalizer(
+                AbstractIndexer::CONTEXT_WEBSITE_IDS,
+                fn (OptionsResolver $resolver, array $ids) => $ids ?: $this->websiteProvider->getWebsiteIds()
+            );
+
+            /**
+             * The data included in the index comes from different sources, so it is impossible to guarantee that
+             * their type will be the same, so allow the types 'int' and 'string' with subsequent normalization
+             * to the 'int' type.
+             */
+            $toIntCallBack = fn (OptionsResolver $resolver, array $ids) => array_map('intval', $ids);
+            $resolver->addNormalizer(AbstractIndexer::CONTEXT_WEBSITE_IDS, $toIntCallBack);
+            $resolver->addNormalizer(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, $toIntCallBack);
+        });
+    }
+
+    public function configureClassOptions(OptionsResolver $optionsResolver): void
+    {
+        $classesNormalizer = static fn ($classes) => is_array($classes) ? $classes : array_filter([$classes]);
+        $optionsResolver->setDefined('class');
+        $optionsResolver->setDefault('class', []);
+        $optionsResolver->setAllowedValues('class', function ($classes) use ($classesNormalizer) {
+            $classes = $classesNormalizer($classes);
+            $supported = array_filter($classes, fn ($class) => $this->mappingProvider->isClassSupported($class));
+
+            return $classes === $supported;
+        });
+
+        $optionsResolver->setNormalizer('class', function (Options $options, $classes) use ($classesNormalizer) {
+            $definedClass = $this->mappingProvider->getEntityClasses();
+
+            return $classesNormalizer($classes) ?: $definedClass;
+        });
+    }
+
+    public function configureEntityOptions(OptionsResolver $optionsResolver): void
+    {
+        $optionsResolver->setRequired('entity');
+        $optionsResolver->setAllowedTypes('entity', 'array');
+        $optionsResolver->setAllowedValues('entity', function ($value) {
+            if (!count($value)) {
+                throw new InvalidOptionsException('Option "entity" was not expected to be empty');
             }
-        } else {
-            $entityClasses = $this->mappingProvider->getEntityClasses();
-        }
 
-        return $entityClasses;
+            return true;
+        });
+
+        $optionsResolver->setDefault('entity', function (OptionsResolver $resolver, Options $options) {
+            $resolver->setPrototype(true);
+            $resolver->setRequired('class');
+            $resolver->setRequired('id');
+            $resolver->setAllowedValues('class', fn ($class) => $this->mappingProvider->isClassSupported($class));
+            $resolver->setAllowedTypes('id', 'int');
+        });
+
+        $optionsResolver->setNormalizer('entity', function (Options $options, array $value) {
+            return array_map(
+                fn (array $entityData) => $this->getReference($entityData['class'], $entityData['id']),
+                $value
+            );
+        });
     }
 
-    /**
-     * @param array $context
-     * $context = [
-     *     'websiteIds' int[] Array of websites ids to reindex
-     * ]
-     *
-     * @return array
-     */
-    private function getWebsiteIdsToIndex(array $context)
+    private function getReference(string $entityClass, int $entityId): object
     {
-        $websiteIds = $this->getContextWebsiteIds($context);
-        if ($websiteIds) {
-            return $websiteIds;
-        }
+        return $this->managerRegistry->getManagerForClass($entityClass)->getReference($entityClass, $entityId);
+    }
 
-        return $this->websiteProvider->getWebsiteIds();
+    public function configureGranulizeOptions(OptionsResolver $optionsResolver): void
+    {
+        $optionsResolver->setRequired('granulize');
+        $optionsResolver->setDefault('granulize', false);
+        $optionsResolver->setAllowedTypes('granulize', ['bool']);
+    }
+
+    protected function getOptionResolver(): OptionsResolver
+    {
+        return new OptionsResolver();
     }
 }

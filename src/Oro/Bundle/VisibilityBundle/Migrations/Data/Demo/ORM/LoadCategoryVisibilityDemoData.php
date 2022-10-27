@@ -4,9 +4,10 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerDemoData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
@@ -14,6 +15,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibilit
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Sets proper visibility setting to demo categories
+ */
 class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -76,15 +80,22 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         $manager->flush();
         $this->container->get('oro_visibility.visibility.cache.product.category.cache_builder')->buildCache();
     }
+
     /**
-     * @param ObjectManager $manager
-     * @param string $title
-     * @return Category
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getCategory(ObjectManager $manager, $title)
+    private function getCategory(ObjectManager $manager, string  $title): Category
     {
-        return $manager->getRepository('OroCatalogBundle:Category')->findOneByDefaultTitle($title);
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        $queryBuilder = $manager->getRepository(Category::class)->findOneByDefaultTitleQueryBuilder($title);
+        $queryBuilder
+            ->andWhere('category.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        return $queryBuilder->getQuery()->getSingleResult();
     }
+
     /**
      * @param ObjectManager $manager
      * @param int $id

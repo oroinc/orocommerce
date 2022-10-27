@@ -7,8 +7,8 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 
 class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,20 +17,20 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductIndexScheduler|\PHPUnit\Framework\MockObject\MockObject */
     private $productIndexScheduler;
 
-    /** @var DataProviderCacheCleaner|\PHPUnit\Framework\MockObject\MockObject */
-    private $cacheCleaner;
+    /** @var AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject */
+    private $categoryCache;
 
     /** @var CategoryEntityListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productIndexScheduler = $this->createMock(ProductIndexScheduler::class);
-        $this->cacheCleaner = $this->createMock(DataProviderCacheCleaner::class);
+        $this->categoryCache = $this->createMock(AbstractAdapter::class);
 
         $this->listener = new CategoryEntityListener(
             $this->productIndexScheduler,
-            $this->cacheCleaner
+            $this->categoryCache
         );
     }
 
@@ -43,10 +43,10 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->productIndexScheduler->expects($this->once())
             ->method('scheduleProductsReindex')
-            ->with([$category]);
+            ->with([$category], null, true, ['main', 'inventory']);
 
-        $this->cacheCleaner->expects($this->once())
-            ->method('clearCache');
+        $this->categoryCache->expects($this->once())
+            ->method('clear');
 
         return $category;
     }

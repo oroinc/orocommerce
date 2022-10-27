@@ -6,40 +6,33 @@ use Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
 {
-    const PROPERTY_PATH_NAME = 'testPropertyPath';
+    private const PROPERTY_PATH_NAME = 'testPropertyPath';
 
-    /**
-     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $repository;
+    /** @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    /**
-     * @var PropertyPathInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $propertyPath;
+    /** @var PropertyPathInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $propertyPath;
 
-    /**
-     * @var ShippingMethodHasShippingRules
-     */
-    protected $shippingMethodHasShippingRulesCondition;
+    /** @var ShippingMethodHasShippingRules */
+    private $shippingMethodHasShippingRulesCondition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);
 
         $this->propertyPath = $this->createMock(PropertyPathInterface::class);
         $this->propertyPath->expects($this->any())
             ->method('__toString')
-            ->will($this->returnValue(self::PROPERTY_PATH_NAME));
+            ->willReturn(self::PROPERTY_PATH_NAME);
         $this->propertyPath->expects($this->any())
             ->method('getElements')
-            ->will($this->returnValue([self::PROPERTY_PATH_NAME]));
+            ->willReturn([self::PROPERTY_PATH_NAME]);
 
         $this->shippingMethodHasShippingRulesCondition = new ShippingMethodHasShippingRules($this->repository);
     }
@@ -52,12 +45,11 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Missing "method_identifier" option
-     */
     public function testInitializeInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "method_identifier" option');
+
         $this->assertInstanceOf(
             ShippingMethodHasShippingRules::class,
             $this->shippingMethodHasShippingRulesCondition->initialize([])
@@ -74,13 +66,10 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider evaluateProvider
-     *
-     * @param ShippingMethodsConfigsRule[] $rules
-     * @param bool                         $expected
      */
-    public function testEvaluate($rules, $expected)
+    public function testEvaluate(array $rules, bool $expected)
     {
-        $this->repository->expects(static::once())
+        $this->repository->expects(self::once())
             ->method('getRulesByMethod')
             ->willReturn($rules);
 
@@ -88,10 +77,7 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->shippingMethodHasShippingRulesCondition->evaluate([]));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
         return [
             'no_rules' => [
@@ -122,27 +108,18 @@ class ShippingMethodHasShippingRulesTest extends \PHPUnit\Framework\TestCase
     {
         $result = $this->shippingMethodHasShippingRulesCondition->compile('$factoryAccessor');
 
-        $this->assertContains('$factoryAccessor->create(\'shipping_method_has_shipping_rules\'', $result);
+        self::assertStringContainsString('$factoryAccessor->create(\'shipping_method_has_shipping_rules\'', $result);
     }
 
     public function testSetContextAccessor()
     {
-        /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor * */
-        $contextAccessor = $this->getMockBuilder(ContextAccessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextAccessor = $this->createMock(ContextAccessorInterface::class);
 
         $this->shippingMethodHasShippingRulesCondition->setContextAccessor($contextAccessor);
 
-        $reflection = new \ReflectionProperty(
-            get_class($this->shippingMethodHasShippingRulesCondition),
-            'contextAccessor'
-        );
-        $reflection->setAccessible(true);
-
         $this->assertInstanceOf(
             get_class($contextAccessor),
-            $reflection->getValue($this->shippingMethodHasShippingRulesCondition)
+            ReflectionUtil::getPropertyValue($this->shippingMethodHasShippingRulesCondition, 'contextAccessor')
         );
     }
 }

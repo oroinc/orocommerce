@@ -3,13 +3,20 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
-class ProductDuplicateListener
+/**
+ * Creates copies of product prices
+ */
+class ProductDuplicateListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var DoctrineHelper
      */
@@ -30,9 +37,6 @@ class ProductDuplicateListener
      */
     protected $priceManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -46,9 +50,6 @@ class ProductDuplicateListener
         $this->productPriceClass = $productPriceClass;
     }
 
-    /**
-     * @param PriceManager $priceManager
-     */
     public function setPriceManager(PriceManager $priceManager)
     {
         $this->priceManager = $priceManager;
@@ -56,11 +57,13 @@ class ProductDuplicateListener
 
     /**
      * Copy product prices
-     *
-     * @param ProductDuplicateAfterEvent $event
      */
     public function onDuplicateAfter(ProductDuplicateAfterEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 
@@ -83,9 +86,6 @@ class ProductDuplicateListener
         return $this->doctrineHelper->getEntityRepository($this->productPriceClass);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     */
     public function setShardManager(ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;

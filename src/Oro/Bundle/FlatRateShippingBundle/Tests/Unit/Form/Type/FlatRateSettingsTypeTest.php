@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateSettingsType;
-use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\FallbackPropertyType;
@@ -15,81 +15,74 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FlatRateSettingsTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    const LOCALIZATION_ID = 998;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
+    private const LOCALIZATION_ID = 998;
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $repositoryLocalization = $this->createMock(ObjectRepository::class);
         $repositoryLocalization->expects($this->any())
             ->method('find')
-            ->willReturnCallback(
-                function ($id) {
-                    return $this->getEntity(Localization::class, ['id' => $id]);
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $this->getLocalization($id);
+            });
 
         $repositoryLocalizedFallbackValue = $this->createMock(ObjectRepository::class);
         $repositoryLocalizedFallbackValue->expects($this->any())
             ->method('find')
-            ->willReturnCallback(
-                function ($id) {
-                    return $this->getEntity(LocalizedFallbackValue::class, ['id' => $id]);
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                $value = new LocalizedFallbackValue();
+                ReflectionUtil::setId($value, $id);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+                return $value;
+            });
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    ['OroLocaleBundle:Localization', null, $repositoryLocalization],
-                    ['OroLocaleBundle:LocalizedFallbackValue', null, $repositoryLocalizedFallbackValue],
-                ]
-            );
-        $this->translator = $this->createMock(TranslatorInterface::class);
+            ->willReturnMap([
+                [Localization::class, null, $repositoryLocalization],
+                [LocalizedFallbackValue::class, null, $repositoryLocalizedFallbackValue],
+            ]);
 
         return [
             new PreloadedExtension(
                 [
-                    LocalizedPropertyType::class => new LocalizedPropertyType(),
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
-                        $this->registry
-                    ),
-                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub(
-                        [
-                            $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID]),
-                        ]
-                    ),
-                    FallbackValueType::class => new FallbackValueType(),
-                    FallbackPropertyType::class => new FallbackPropertyType($this->translator),
+                    new LocalizedPropertyType(),
+                    new LocalizedFallbackValueCollectionType($doctrine),
+                    new FallbackValueType(),
+                    new FallbackPropertyType($this->createMock(TranslatorInterface::class)),
+                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub([
+                        $this->getLocalization(self::LOCALIZATION_ID)
+                    ]),
                 ],
-                [FormType::class => [new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))]]
+                [
+                    FormType::class => [new TooltipFormExtensionStub($this)]
+                ]
             ),
             new ValidatorExtension(Validation::createValidator()),
         ];
+    }
+
+    private function getLocalization(int $id): Localization
+    {
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, $id);
+
+        return $localization;
     }
 
     public function testSubmitValid()
@@ -110,26 +103,18 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
 
         $form->submit($submitData);
         $expected = (new FlatRateSettings())
-            ->addLabel($this->createLocalizedValue(
-                'Label 2_stripped',
-                null,
-                $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID])
-            ))->addLabel($this->createLocalizedValue(
-                'Label 1_stripped'
-            ));
+            ->addLabel($this->createLocalizedValue('Label 2', null, $this->getLocalization(self::LOCALIZATION_ID)))
+            ->addLabel($this->createLocalizedValue('Label 1'));
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @param string|null $string
-     * @param string|null $text
-     * @param Localization|null $localization
-     *
-     * @return LocalizedFallbackValue
-     */
-    protected function createLocalizedValue($string = null, $text = null, Localization $localization = null)
-    {
+    private function createLocalizedValue(
+        string $string,
+        string $text = null,
+        Localization $localization = null
+    ): LocalizedFallbackValue {
         $value = new LocalizedFallbackValue();
         $value->setString($string)
             ->setText($text)
@@ -141,18 +126,15 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefixReturnsString()
     {
         $formType = new FlatRateSettingsType();
-        static::assertTrue(is_string($formType->getBlockPrefix()));
+        self::assertIsString($formType->getBlockPrefix());
     }
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects(static::once())
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => FlatRateSettings::class,
-            ]);
+            ->with(['data_class' => FlatRateSettings::class]);
 
         $formType = new FlatRateSettingsType();
         $formType->configureOptions($resolver);

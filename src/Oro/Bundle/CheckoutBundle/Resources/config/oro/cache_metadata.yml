@@ -1,0 +1,110 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  attributes:
+    id:
+      groups: ['checkout']
+
+Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal:
+  attributes:
+    currency:
+      groups: ['checkout']
+    amount:
+      groups: ['checkout']
+    data:
+      groups: ['checkout']
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  attributes:
+    id:
+      groups: ['checkout']
+    quantity:
+      groups: ['checkout']
+    product:
+      groups: ['checkout']
+    unit:
+      groups: ['checkout']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+  attributes:
+    code:
+      groups: ['checkout']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['checkout']
+
+Oro\Bundle\CheckoutBundle\Entity\Checkout:
+  attributes:
+    id:
+      groups: ['checkout']
+    shipToBillingAddress:
+      groups: ['checkout']
+    billingAddress:
+      groups: ['checkout']
+    shippingAddress:
+      groups: ['checkout']
+    shippingMethod:
+      groups: ['checkout']
+    shippingMethodType:
+      groups: ['checkout']
+    paymentMethod:
+      groups: ['checkout']
+    shippingCost:
+      groups: ['checkout']
+    currency:
+      groups: ['checkout']
+    lineItems:
+      groups: ['checkout']
+    subtotals:
+      groups: ['checkout']
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+  attributes:
+    street:
+      groups: ['checkout']
+    street2:
+      groups: ['checkout']
+    city:
+      groups: ['checkout']
+    postalCode:
+      groups: ['checkout']
+    country:
+      groups: ['checkout']
+    region:
+      groups: ['checkout']
+    organization:
+      groups: ['checkout']
+    regionText:
+      groups: ['checkout']
+    namePrefix:
+      groups: ['checkout']
+    firstName:
+      groups: ['checkout']
+    middleName:
+      groups: ['checkout']
+    lastName:
+      groups: ['checkout']
+    nameSuffix:
+      groups: ['checkout']
+    phone:
+      groups: ['checkout']
+
+Oro\Bundle\AddressBundle\Entity\Region:
+  attributes:
+    code:
+      groups: ['checkout']
+
+Oro\Bundle\AddressBundle\Entity\Country:
+  attributes:
+    iso2Code:
+      groups: ['checkout']
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+  attributes:
+    id:
+      groups: ['checkout']
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal:
+  attributes:
+    subtotal:
+      groups: ['checkout']

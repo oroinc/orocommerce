@@ -9,9 +9,9 @@ class BrandFormExtension extends BaseMetaFormExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return BrandType::class;
+        return [BrandType::class];
     }
 
     /**

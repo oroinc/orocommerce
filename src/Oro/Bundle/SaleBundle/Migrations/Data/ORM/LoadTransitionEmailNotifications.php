@@ -4,17 +4,19 @@ namespace Oro\Bundle\SaleBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\NotificationBundle\Entity\EmailNotification;
-use Oro\Bundle\NotificationBundle\Entity\Event;
 use Oro\Bundle\NotificationBundle\Entity\RecipientList;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
-use Oro\Bundle\WorkflowBundle\Migrations\Data\ORM\LoadWorkflowNotificationEvents;
+use Oro\Bundle\WorkflowBundle\Event\WorkflowEvents;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Fixture for email notifications
+ */
 class LoadTransitionEmailNotifications extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -29,12 +31,12 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
         'quote_approved' => 'approve_transition',
         'quote_approved_and_sent_to_customer' => 'approve_and_send_to_customer_transition',
         'quote_cancelled' => 'cancel_transition',
-        'quote_created' => 'create_new_quote_transition',
+        'quote_created' => '__start__',
         'quote_declined' => 'decline_transition',
         'quote_declined_by_customer' => 'decline_by_customer_transition',
         'quote_deleted' => 'delete_transition',
         'quote_edited' => 'edit_transition',
-        'quote_expired_automatic' => 'expire_transition',
+        'quote_expired_automatic' => 'auto_expire_transition',
         'quote_expired_manual' => 'expire_transition',
         'quote_not_approved' => 'decline_by_reviewer_transition',
         'quote_reopened' => 'reopen_transition',
@@ -57,7 +59,6 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $event = $this->getEvent($manager);
         $workflow = $this->getWorkflowDefinition($manager);
 
         foreach (self::$notifications as $emailTemplateName => $transitionName) {
@@ -70,7 +71,7 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
 
             $entity = new EmailNotification();
             $entity->setEntityName(Quote::class)
-                ->setEvent($event)
+                ->setEventName(WorkflowEvents::NOTIFICATION_TRANSIT_EVENT)
                 ->setTemplate($emailTemplate)
                 ->setRecipientList($recipientList)
                 ->setWorkflowDefinition($workflow)
@@ -96,25 +97,6 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
         }
 
         return $workflow;
-    }
-
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return object|Event
-     */
-    private function getEvent(ObjectManager $manager)
-    {
-        $event = $manager->getRepository(Event::class)
-            ->findOneBy(['name' => LoadWorkflowNotificationEvents::TRANSIT_EVENT]);
-
-        if (!$event) {
-            throw new \RuntimeException(
-                sprintf('Required notification event "%s" not found', LoadWorkflowNotificationEvents::TRANSIT_EVENT)
-            );
-        }
-
-        return $event;
     }
 
     /**

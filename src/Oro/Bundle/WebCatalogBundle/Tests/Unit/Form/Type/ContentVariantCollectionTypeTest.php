@@ -26,7 +26,7 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
      */
     private $variantTypeRegistry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->variantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
 

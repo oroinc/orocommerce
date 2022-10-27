@@ -1,0 +1,4 @@
+{% from '@OroAddress/macros.html.twig' import renderAddress %}
+
+{% set shippingAddress = record.getValue('shippingAddress') %}
+{{ renderAddress(shippingAddress, true, false) }}

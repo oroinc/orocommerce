@@ -18,33 +18,27 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
-    const PAYMENT_TYPE = 'payment_type_mock';
-    
-    /**
-     * @var RuleMethodConfigCollectionSubscriberProxy
-     */
-    protected $subscriber;
+    private const PAYMENT_TYPE = 'payment_type_mock';
 
-    /**
-     * @var CompositePaymentMethodProvider
-     */
-    protected $paymentMethodProvider;
+    /** @var RuleMethodConfigCollectionSubscriberProxy */
+    private $subscriber;
 
-    public function setUp()
+    /** @var CompositePaymentMethodProvider */
+    private $paymentMethodProvider;
+
+    protected function setUp(): void
     {
-        $this->paymentMethodProvider = new CompositePaymentMethodProvider();
+        $this->paymentMethodProvider = new CompositePaymentMethodProvider([]);
         $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
         $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->paymentMethodProvider);
@@ -92,9 +86,9 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
-        $roundingService = $this->getMockBuilder(RoundingServiceInterface::class)->getMock();
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);
@@ -102,21 +96,17 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject $currencyProvider */
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
-            ->setMethods(['configureOptions', 'buildForm'])
+            ->onlyMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var CompositePaymentMethodViewProvider $methodViewProvider */
-        $methodViewProvider = new CompositePaymentMethodViewProvider();
+        $methodViewProvider = new CompositePaymentMethodViewProvider([]);
 
         return [
             new PreloadedExtension(
@@ -140,7 +130,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class)),
+                    new StripTagsExtensionStub($this),
                 ]]
             ),
             $this->getValidatorExtension(true)
@@ -150,12 +140,11 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
-
         return [
-            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            'oro_rule.validator_constraints.expression_language_syntax_validator' =>
+                $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 }

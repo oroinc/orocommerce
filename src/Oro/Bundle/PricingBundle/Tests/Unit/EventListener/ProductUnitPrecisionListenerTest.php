@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener;
@@ -16,38 +19,32 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-    
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
-     */
-    protected $eventDispatcher;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
+    private $eventDispatcher;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shardManager;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
+    private $doctrineHelper;
 
-    /**
-     * @var ProductUnitPrecisionListener
-     */
-    protected $listener;
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shardManager;
 
-    /**
-     * @var string
-     */
-    protected $productPriceClass;
+    /** @var ProductUnitPrecisionListener */
+    private $listener;
 
-    protected function setUp()
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
+
+    /** @var string */
+    private $productPriceClass;
+
+    protected function setUp(): void
     {
         $this->productPriceClass = 'stdClass';
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->shardManager = $this->createMock(ShardManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->listener = new ProductUnitPrecisionListener(
             $this->productPriceClass,
             $this->eventDispatcher,
@@ -56,17 +53,36 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testOnBeforeFlushFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+
+        $event = $this->createMock(LifecycleEventArgs::class);
+        $entity = $this->createMock(ProductUnitPrecision::class);
+        $entity->expects($this->never())
+            ->method('getProduct');
+
+        $this->listener->postRemove($entity, $event);
+    }
+
     public function testPostRemoveWithExistingProduct()
     {
         $entity = new ProductUnitPrecision();
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
         $unit = new ProductUnit();
         $entity->setProduct($product)
             ->setUnit($unit);
 
-        $event = $this->createMock('Doctrine\ORM\Event\LifecycleEventArgs');
+        $event = $this->createMock(LifecycleEventArgs::class);
 
-        $repository =$this->createMock('Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository');
+        $repository =$this->createMock(ProductPriceRepository::class);
         $repository->expects($this->once())
             ->method('deleteByProductUnit')
             ->with($this->shardManager, $product, $unit);
@@ -78,19 +94,20 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch');
-        $this->eventDispatcher->expects($this->at(0))
+        $this->eventDispatcher->expects($this->exactly(2))
             ->method('dispatch')
-            ->with(
-                ProductPricesRemoveBefore::NAME,
-                $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore')
-            );
-        $this->eventDispatcher->expects($this->at(1))
-            ->method('dispatch')
-            ->with(
-                ProductPricesRemoveAfter::NAME,
-                $this->isInstanceOf('Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter')
+            ->withConsecutive(
+                [$this->isInstanceOf(ProductPricesRemoveBefore::class), ProductPricesRemoveBefore::NAME],
+                [$this->isInstanceOf(ProductPricesRemoveAfter::class), ProductPricesRemoveAfter::NAME]
             );
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
         $this->listener->postRemove($entity, $event);
     }
 
@@ -102,7 +119,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
         $entity->setProduct($product)
             ->setUnit($unit);
 
-        $event = $this->createMock('Doctrine\ORM\Event\LifecycleEventArgs');
+        $event = $this->createMock(LifecycleEventArgs::class);
 
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityRepository');

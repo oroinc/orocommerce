@@ -6,7 +6,7 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\EntityFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DefaultPriceListFilterType extends EntityFilterType
 {

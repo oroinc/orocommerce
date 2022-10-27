@@ -16,9 +16,6 @@ class OrderLineItemGridListener
      */
     protected $taxationSettingsProvider;
 
-    /**
-     * @param TaxationSettingsProvider $taxationSettingsProvider
-     */
     public function __construct(TaxationSettingsProvider $taxationSettingsProvider)
     {
         $this->taxationSettingsProvider = $taxationSettingsProvider;
@@ -34,8 +31,6 @@ class OrderLineItemGridListener
      *      Row Total After Discount Exclude Tax (if Taxes are enabled)
      *      Row Total After Discount (if Taxes are disabled)
      * data to the grid
-     *
-     * @param BuildBefore $event
      */
     public function onBuildBefore(BuildBefore $event)
     {
@@ -44,12 +39,8 @@ class OrderLineItemGridListener
         $this->addColumns($configuration);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addSelect(DatagridConfiguration $config)
     {
-        // TODO: Fix this
         $rootAlias = $config->getOrmQuery()->getRootAlias();
         $config->getOrmQuery()->addSelect(
             '(SELECT SUM(discount.amount) FROM Oro\\Bundle\\PromotionBundle\\Entity\\AppliedDiscount AS discount '
@@ -57,9 +48,6 @@ class OrderLineItemGridListener
         );
     }
 
-    /**
-     * @param DatagridConfiguration $datagridConfiguration
-     */
     protected function addColumns(DatagridConfiguration $datagridConfiguration)
     {
         $datagridConfiguration->offsetSetByPath(
@@ -69,7 +57,7 @@ class OrderLineItemGridListener
                 'type' => 'twig',
                 'frontend_type' => 'html',
                 'data_name' => 'discountAmount',
-                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalDiscountAmount.html.twig',
+                'template' => '@OroPromotion/Datagrid/Order/rowTotalDiscountAmount.html.twig',
                 'renderable' => false
             ]
         );
@@ -82,7 +70,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountIncludingTax.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountIncludingTax.html.twig',
                     'renderable' => false
                 ]
             );
@@ -93,7 +81,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountExcludingTax.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountExcludingTax.html.twig',
                     'renderable' => false
                 ]
             );
@@ -105,7 +93,7 @@ class OrderLineItemGridListener
                     'type' => 'twig',
                     'frontend_type' => 'html',
                     'data_name' => 'discountAmount',
-                    'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscount.html.twig',
+                    'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscount.html.twig',
                     'renderable' => false
                 ]
             );
@@ -114,8 +102,6 @@ class OrderLineItemGridListener
 
     /**
      * Check if Taxes are enabled
-     *
-     * @return bool
      */
     protected function isTaxesEnabled(): bool
     {

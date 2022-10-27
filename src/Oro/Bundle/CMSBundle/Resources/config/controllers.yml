@@ -1,0 +1,46 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\CMSBundle\Controller\Frontend\PageController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\PageController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\ContentWidgetController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_cms.content_widget.frontend_emulator, key: Oro\Bundle\CMSBundle\ContentWidget\FrontendEmulator }
+
+    Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\LoginPageController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\ContentBlockController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CMSBundle\Controller\ContentTemplateController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

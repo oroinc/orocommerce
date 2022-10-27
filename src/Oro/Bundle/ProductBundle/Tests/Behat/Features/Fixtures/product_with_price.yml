@@ -1,0 +1,87 @@
+include:
+  - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  product1_name:
+    string: 'Product1'
+  product2_name:
+    string: 'Product2'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  unit_precision1:
+    unit: '@item'
+    precision: '1'
+  unit_precision2:
+    unit: '@item'
+    precision: '1'
+  unit_precision_additional1:
+    unit: '@set'
+    precision: '1'
+  unit_precision_additional2:
+    unit: '@set'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    type: 'simple'
+    sku: 'PSKU1'
+    organization: '@organization'
+    owner: '@business_unit'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - addName: ['@product1_name']
+      - setPrimaryUnitPrecision: ['@unit_precision1']
+      - addAdditionalUnitPrecision: ['@unit_precision_additional1']
+    status: 'enabled'
+    inventoryStatus: '@enumInventoryStatuses'
+
+  product2:
+    type: 'simple'
+    sku: 'PSKU2'
+    organization: '@organization'
+    owner: '@business_unit'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - addName: ['@product2_name']
+      - setPrimaryUnitPrecision: ['@unit_precision2']
+      - addAdditionalUnitPrecision: ['@unit_precision_additional2']
+    status: 'enabled'
+    inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  product1ItemPrice:
+    product: '@product1'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@item'
+    value: 10
+  product1SetPrice:
+    product: '@product1'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@set'
+    value: 445.50
+  product2ItemPrice:
+    product: '@product2'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@item'
+    value: 7
+  product2SetPrice:
+    product: '@product2'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@set'
+    value: 432.30
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceRelationRpoduct1DefaultPriceList:
+    product: '@product1'
+    priceList: '@defaultPriceList'
+  priceRelationRpoduct2DefaultPriceList:
+    product: '@product2'
+    priceList: '@defaultPriceList'

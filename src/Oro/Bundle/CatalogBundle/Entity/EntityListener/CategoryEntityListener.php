@@ -5,55 +5,45 @@ namespace Oro\Bundle\CatalogBundle\Entity\EntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Component\Cache\Layout\DataProviderCacheCleaner;
+use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * Schedules product reindex and clears a cache for category layout data provider
+ * when a Category entity is created, removed or changed.
+ */
 class CategoryEntityListener
 {
-    /** @var ProductIndexScheduler */
-    private $productIndexScheduler;
+    private ProductIndexScheduler $productIndexScheduler;
+    private CacheInterface $categoryCache;
 
-    /** @var DataProviderCacheCleaner */
-    private $categoryCacheCleaner;
-
-    /**
-     * @param ProductIndexScheduler $productIndexScheduler
-     * @param DataProviderCacheCleaner $cacheCleaner
-     */
     public function __construct(
         ProductIndexScheduler $productIndexScheduler,
-        DataProviderCacheCleaner $cacheCleaner
+        CacheInterface $categoryCache
     ) {
         $this->productIndexScheduler = $productIndexScheduler;
-        $this->categoryCacheCleaner = $cacheCleaner;
+        $this->categoryCache = $categoryCache;
     }
 
-    /**
-     * @param Category $category
-     */
-    public function preRemove(Category $category)
+    public function preRemove(Category $category): void
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCacheCleaner->clearCache();
+        $this->scheduleCategoryReindex($category);
     }
 
-    /**
-     * @param Category $category
-     */
-    public function postPersist(Category $category)
+    public function postPersist(Category $category): void
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
-        $this->categoryCacheCleaner->clearCache();
+        $this->scheduleCategoryReindex($category);
     }
 
-    /**
-     * @param Category $category
-     * @param PreUpdateEventArgs $eventArgs
-     */
-    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs)
+    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs): void
     {
         if ($eventArgs->getEntityChangeSet()) {
-            $this->productIndexScheduler->scheduleProductsReindex([$category]);
-            $this->categoryCacheCleaner->clearCache();
+            $this->scheduleCategoryReindex($category);
         }
+    }
+
+    private function scheduleCategoryReindex(Category $category): void
+    {
+        $this->productIndexScheduler->scheduleProductsReindex([$category], null, true, ['main', 'inventory']);
+        $this->categoryCache->clear();
     }
 }

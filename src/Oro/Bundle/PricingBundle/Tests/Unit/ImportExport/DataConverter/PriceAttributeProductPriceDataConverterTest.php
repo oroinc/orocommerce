@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ImportExport\DataConverter;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\ImportExport\DataConverter\PriceAttributeProductPriceDataConverter;
 use PHPUnit\Framework\TestCase;
 
@@ -20,11 +21,12 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->converter = new PriceAttributeProductPriceDataConverter(
             $this->createMock(FieldHelper::class),
-            $this->createMock(RelationCalculator::class)
+            $this->createMock(RelationCalculator::class),
+            $this->createMock(LocaleSettings::class)
         );
     }
 
@@ -44,9 +46,6 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     private function getFileFormatData(): array
     {
         return [
@@ -58,9 +57,6 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     private function getBackendFormatData():array
     {
         return [

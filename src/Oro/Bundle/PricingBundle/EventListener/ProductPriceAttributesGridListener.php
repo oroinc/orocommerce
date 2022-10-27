@@ -13,8 +13,10 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Adds price attribute columns to price attributes datagrids on the product view page.
+ */
 class ProductPriceAttributesGridListener
 {
     /**
@@ -27,28 +29,15 @@ class ProductPriceAttributesGridListener
      */
     protected $priceAttributePricesProvider;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @param DoctrineHelper $helper
-     * @param PriceAttributePricesProvider $provider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         DoctrineHelper $helper,
-        PriceAttributePricesProvider $provider,
-        TranslatorInterface $translator
+        PriceAttributePricesProvider $provider
     ) {
         $this->doctrineHelper = $helper;
         $this->priceAttributePricesProvider = $provider;
-        $this->translator = $translator;
     }
 
     /**
-     * @param BuildBefore $event
      * @throws \LogicException
      */
     public function onBuildBefore(BuildBefore $event)
@@ -64,8 +53,13 @@ class ProductPriceAttributesGridListener
         $config = $event->getConfig();
         foreach ($priceList->getCurrencies() as $currency) {
             $columnPath = sprintf(DatagridConfiguration::COLUMN_PATH, $currency);
-            $columnConfig = $config->offsetGetByPath($columnPath, []);
             $columnConfig['label'] = $currency;
+            $columnConfig = [
+                    'label' => $currency,
+                    'type' => 'twig',
+                    'template' => '@OroPricing/Datagrid/Column/priceValue.html.twig',
+                    'frontend_type' => 'html',
+                ] + $config->offsetGetByPath($columnPath, []);
             $config->offsetSetByPath($columnPath, $columnConfig);
 
             $sortersPath = sprintf(DatagridConfiguration::SORTER_PATH, $currency);
@@ -76,7 +70,6 @@ class ProductPriceAttributesGridListener
     }
 
     /**
-     * @param BuildAfter $event
      * @throws \LogicException
      */
     public function onBuildAfter(BuildAfter $event)
@@ -126,7 +119,7 @@ class ProductPriceAttributesGridListener
             foreach ($currencies as $currency) {
                 $result = !empty($prices[$currency]) ?
                     $prices[$currency]->getPrice()->getValue() :
-                    $this->translator->trans('oro.pricing.priceAttribute.withoutPrice');
+                    null;
 
                 $row[$currency] = $result;
             }

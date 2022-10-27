@@ -38,8 +38,6 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
 
     /**
      * Add dynamic radio/checkbox controls for available image types
-     *
-     * @param FormEvent $event
      */
     public function postSetData(FormEvent $event)
     {
@@ -64,8 +62,6 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
 
     /**
      * Converts data from dynamic image type controls to types array
-     *
-     * @param FormEvent $event
      */
     public function preSubmit(FormEvent $event)
     {

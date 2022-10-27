@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -16,26 +18,14 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodCo
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
+ * Entity that represents quote demand
  *
  * @ORM\Table(name="oro_quote_demand")
  * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-list-alt",
- *              "totals_mapping"={
- *                  "type"="entity_fields",
- *                  "fields"={
- *                       "currency"="totalCurrency",
- *                       "subtotal"="subtotal",
- *                       "total"="total"
- *                  }
- *              }
- *          },
- *          "ownership"={
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id"
+ *              "icon"="fa-list-alt"
  *          }
  *      }
  * )
@@ -46,6 +36,7 @@ class QuoteDemand implements
     ShippingAwareInterface,
     SubtotalAwareInterface,
     CustomerOwnerAwareInterface,
+    CustomerVisitorOwnerAwareInterface,
     ProductLineItemsHolderInterface,
     PreConfiguredShippingMethodConfigurationInterface
 {
@@ -68,6 +59,7 @@ class QuoteDemand implements
     protected $quote;
 
     /**
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteProductDemand",
      *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
@@ -95,6 +87,14 @@ class QuoteDemand implements
      * @ORM\Column(name="total_currency", type="string", length=3, nullable=true)
      */
     protected $totalCurrency;
+
+    /**
+     * @var CustomerVisitor|null
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor")
+     * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $visitor;
 
     public function __construct()
     {
@@ -297,5 +297,25 @@ class QuoteDemand implements
     public function getTotal()
     {
         return $this->total;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisitor()
+    {
+        return $this->visitor;
+    }
+
+    /**
+     * @param CustomerVisitor $visitor
+     *
+     * @return $this
+     */
+    public function setVisitor(CustomerVisitor $visitor)
+    {
+        $this->visitor = $visitor;
+
+        return $this;
     }
 }

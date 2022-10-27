@@ -15,10 +15,6 @@ class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvide
     /** @var PayPalExpressCheckoutConfigProviderInterface */
     private $configProvider;
 
-    /**
-     * @param PayPalExpressCheckoutPaymentMethodViewFactoryInterface $factory
-     * @param PayPalExpressCheckoutConfigProviderInterface $configProvider
-     */
     public function __construct(
         PayPalExpressCheckoutPaymentMethodViewFactoryInterface $factory,
         PayPalExpressCheckoutConfigProviderInterface $configProvider
@@ -37,9 +33,6 @@ class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvide
         }
     }
 
-    /**
-     * @param PayPalExpressCheckoutConfigInterface $config
-     */
     protected function addExpressCheckoutView(PayPalExpressCheckoutConfigInterface $config)
     {
         $this->addView(

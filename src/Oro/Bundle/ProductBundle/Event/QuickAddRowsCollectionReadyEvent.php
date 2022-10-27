@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Event;
 
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class QuickAddRowsCollectionReadyEvent extends Event
 {
@@ -14,9 +14,6 @@ class QuickAddRowsCollectionReadyEvent extends Event
      */
     private $collection;
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     public function __construct(QuickAddRowCollection $collection)
     {
         $this->collection = $collection;

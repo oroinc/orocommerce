@@ -1,4 +1,4 @@
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '1'
     currency: 'USD'
@@ -10,7 +10,7 @@ Oro\Bundle\UserBundle\Entity\User:
    username: charlie
    organization: '@organization'
    organizations: ['@organization']
-   roles: ['@userRole']
+   userRoles: ['@userRole']
    owner: '@business_unit'
    businessUnits: ['@business_unit']
    email: 'Charlie1@example.com'
@@ -41,6 +41,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     confirmed: '1'
     customer: '@company_A'
     organization: '@organization'
-    role: ['@buyer']
+    userRoles: ['@buyer']
     owner: '@charlie'
     website: '@website1'

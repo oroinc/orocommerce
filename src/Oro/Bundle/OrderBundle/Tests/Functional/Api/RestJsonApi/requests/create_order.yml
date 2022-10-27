@@ -1,0 +1,44 @@
+data:
+      type: orders
+      attributes:
+          identifier: 'new_order'
+          poNumber: '2345678'
+          shipUntil: '2017-04-12'
+          currency: 'USD'
+          createdAt: '2017-04-12T14:11:39Z'
+          updatedAt: '2017-04-12T14:11:39Z'
+      relationships:
+          lineItems:
+              data:
+                  -
+                      type: orderlineitems
+                      id: line_item_1
+          organization:
+              data:
+                  type: organizations
+                  id: '<toString(@simple_order->organization->id)>'
+          customerUser:
+              data:
+                   type: customerusers
+                   id: '<toString(@simple_order->customerUser->id)>'
+          customer:
+              data:
+                   type: customers
+                   id: '<toString(@simple_order->customer->id)>'
+included:
+    -
+        type: orderlineitems
+        id: line_item_1
+        attributes:
+            quantity: 1
+            value: 10
+            currency: 'USD'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'

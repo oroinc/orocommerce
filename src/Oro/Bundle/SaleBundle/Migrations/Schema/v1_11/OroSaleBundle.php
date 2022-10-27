@@ -24,9 +24,6 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
         $this->updateAccountData($queries);
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function updateAccountData(QueryBag $queries)
     {
         if ($this->platform instanceof MySqlPlatform) {
@@ -44,9 +41,6 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
         $queries->addQuery('DELETE FROM oro_quote_demand WHERE account_id IS NULL AND account_user_id IS NULL');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateOroSaleQuoteDemandTable(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');
@@ -54,9 +48,6 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroSaleQuoteDemandForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');

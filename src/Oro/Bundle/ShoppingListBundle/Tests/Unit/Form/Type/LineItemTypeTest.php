@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -23,23 +24,17 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\LineItem';
-    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
+    private const DATA_CLASS = LineItem::class;
+    private const PRODUCT_CLASS = Product::class;
 
-    /**
-     * @var LineItemType
-     */
-    protected $type;
+    private LineItemType $type;
 
-    /**
-     * @var array
-     */
-    protected $units = [
+    private array $units = [
         'item',
         'kg'
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new LineItemType();
         $this->type->setDataClass(self::DATA_CLASS);
@@ -75,42 +70,34 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(LineItemType::class);
 
-        $this->assertTrue($form->has('product'));
-        $this->assertTrue($form->has('quantity'));
-        $this->assertTrue($form->has('unit'));
-        $this->assertTrue($form->has('notes'));
+        self::assertTrue($form->has('product'));
+        self::assertTrue($form->has('quantity'));
+        self::assertTrue($form->has('unit'));
+        self::assertTrue($form->has('notes'));
     }
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param mixed $defaultData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit(LineItem $defaultData, array $submittedData, LineItem $expectedData): void
     {
         $form = $this->factory->create(LineItemType::class, $defaultData, []);
 
-        $this->assertEquals($defaultData, $form->getData());
-
-        $this->addRoundingServiceExpect();
+        self::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
 
-        $this->assertEmpty($form->getErrors(true)->count());
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals(0, $form->getErrors(true)->count());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $shoppingList = new ShoppingList();
 
@@ -127,8 +114,9 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes('my note');
 
-        $existingLineItem = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 2);
+        $existingLineItem = new LineItemStub();
         $existingLineItem
+            ->setId(2)
             ->setShoppingList($shoppingList)
             ->setProduct($expectedProduct)
             ->setQuantity(5)
@@ -157,68 +145,54 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
                     'notes'    => 'my note',
                 ],
                 'expectedData'  => $expectedLineItem,
-                'isExisting'    => false,
             ],
             'existing line item' => [
                 'defaultData'   => $existingLineItem,
                 'submittedData' => [
                     'product'  => 2,
-                    'quantity' => 15.1119,
+                    'quantity' => 15.112,
                     'unit'     => 'kg',
                     'notes'    => 'note1',
                 ],
                 'expectedData'  => $expectedLineItem2,
-                'isExisting'    => true,
             ],
             'missing product' => [
                 'defaultData'   => $existingLineItem,
                 'submittedData' => [
                     'unit'     => 'kg',
-                    'quantity' => 15.1119,
+                    'quantity' => 15.112,
                 ],
                 'expectedData'  => $expectedLineItem3,
-                'isExisting'    => true,
             ],
         ];
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = new OptionsResolver();
         $this->type->configureOptions($resolver);
         $resolvedOptions = $resolver->resolve();
 
-        $lineItem = new LineItem();
-        /** @var LineItem $lineItem2 */
-        $lineItem2 = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 1);
+        $lineItem = new LineItemStub();
+        $lineItem2 = (new LineItemStub())->setId(1);
 
-        $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
-        $this->assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));
-        $this->assertEquals(['update'], $resolvedOptions['validation_groups']($this->getForm($lineItem2)));
+        self::assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
+        self::assertTrue($resolvedOptions["ownership_disabled"]);
+        self::assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));
+        self::assertEquals(['update'], $resolvedOptions['validation_groups']($this->getForm($lineItem2)));
     }
 
-    /**
-     * @param LineItem $lineItem
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    protected function getForm(LineItem $lineItem)
+    private function getForm(LineItem $lineItem): FormInterface|\PHPUnit\Framework\MockObject\MockObject
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->once())
+        $form = $this->createMock(FormInterface::class);
+        $form->expects(self::once())
             ->method('getData')
-            ->will($this->returnValue($lineItem));
+            ->willReturn($lineItem);
 
         return $form;
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareProductUnitSelectionChoices()
+    private function prepareProductUnitSelectionChoices(): array
     {
         $choices = [];
         foreach ($this->units as $unitCode) {

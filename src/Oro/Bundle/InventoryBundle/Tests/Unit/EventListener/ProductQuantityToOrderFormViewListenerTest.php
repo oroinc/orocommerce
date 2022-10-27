@@ -4,13 +4,14 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\InventoryBundle\EventListener\ProductQuantityToOrderFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
     /** @var ProductQuantityToOrderFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -21,7 +22,7 @@ class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsF
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 
@@ -41,7 +42,14 @@ class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsF
      */
     protected function getExpectedScrollData()
     {
-        return ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]];
+        return [
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.product.sections.inventory.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
+                ]
+            ]
+        ];
     }
 
     /**

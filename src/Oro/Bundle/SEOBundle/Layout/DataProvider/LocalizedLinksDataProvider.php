@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Layout\DataProvider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -12,6 +12,9 @@ use Oro\Bundle\SEOBundle\Model\DTO\AlternateUrl;
 use Symfony\Component\Validator\Constraints\Locale;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Layout dataprovider for getting entity localized links.
+ */
 class LocalizedLinksDataProvider
 {
     /**
@@ -25,7 +28,7 @@ class LocalizedLinksDataProvider
     private $configManager;
 
     /**
-     * @var UserLocalizationManager
+     * @var UserLocalizationManagerInterface
      */
     private $userLocalizationManager;
 
@@ -34,16 +37,10 @@ class LocalizedLinksDataProvider
      */
     private $validator;
 
-    /**
-     * @param CanonicalUrlGenerator $urlGenerator
-     * @param ConfigManager $configManager
-     * @param UserLocalizationManager $userLocalizationManager
-     * @param ValidatorInterface $validator
-     */
     public function __construct(
         CanonicalUrlGenerator $urlGenerator,
         ConfigManager $configManager,
-        UserLocalizationManager $userLocalizationManager,
+        UserLocalizationManagerInterface $userLocalizationManager,
         ValidatorInterface $validator
     ) {
         $this->urlGenerator = $urlGenerator;
@@ -122,7 +119,8 @@ class LocalizedLinksDataProvider
 
         $localizations = [];
         foreach ($enabledLocalizations as $localization) {
-            if (!$this->validator->validate($localization->getLanguageCode(), new Locale())->count()) {
+            $locale = new Locale(['canonicalize' => true]);
+            if (!$this->validator->validate($localization->getLanguageCode(), $locale)->count()) {
                 $localizations[$localization->getId()] = true;
             }
         }

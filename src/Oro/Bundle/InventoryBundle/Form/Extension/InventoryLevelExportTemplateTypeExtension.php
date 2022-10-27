@@ -24,9 +24,9 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ExportTemplateType::class;
+        return [ExportTemplateType::class];
     }
 
     /**

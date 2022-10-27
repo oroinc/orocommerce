@@ -15,34 +15,25 @@ class WebCatalogExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $treeHandler;
+    private $treeHandler;
 
     /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $contentVariantTypeRegistry;
+    private $contentVariantTypeRegistry;
 
     /** @var WebCatalogExtension */
-    protected $extension;
+    private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contentVariantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->treeHandler = $this->createMock(ContentNodeTreeHandler::class);
+        $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_web_catalog.content_node_tree_handler', $this->treeHandler)
-            ->add('oro_web_catalog.content_variant_type.registry', $this->contentVariantTypeRegistry)
+            ->add(ContentNodeTreeHandler::class, $this->treeHandler)
+            ->add(ContentVariantTypeRegistry::class, $this->contentVariantTypeRegistry)
             ->getContainer($this);
 
         $this->extension = new WebCatalogExtension($container);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(WebCatalogExtension::NAME, $this->extension->getName());
     }
 
     public function testGetNodesTree()

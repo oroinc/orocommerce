@@ -1,9 +1,3 @@
-parameters:
-    oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
-    oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
-    oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
-    oro_web_catalog.type.content_variant_collection.class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType
-
 services:
     oro_web_catalog.provider.web_catalog_usage_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
@@ -18,7 +12,7 @@ services:
         decorates: 'oro_web_catalog.provider.web_catalog_usage_provider'
         decoration_priority: -255 # the cacheable provider should be at the top of the decoration chain
         arguments:
-            - '@oro_web_catalog.cacheable_web_catalog_usage_provider.inner'
+            - '@.inner'
 
     oro_web_catalog.web_catalog_usage_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogUsageListener
@@ -30,18 +24,23 @@ services:
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_web_catalog.provider.web_catalog_usage_provider'
+            - '@Psr\Container\ContainerInterface'
         calls:
-            - [setClassName, ['%oro_web_catalog.entity.web_catalog.class%']]
+            - [setClassName, ['Oro\Bundle\WebCatalogBundle\Entity\WebCatalog']]
         tags:
             - { name: security.voter, priority: 10 }
+            - { name: container.service_subscriber, id: oro_web_catalog.provider.web_catalog_usage_provider }
 
     oro_web_catalog.content_variant_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
         public: true
+        arguments:
+            - !tagged_iterator oro_web_catalog.content_variant_type
+
+    Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry:
+        alias: 'oro_web_catalog.content_variant_type.registry'
 
     oro_web_catalog.content_variant_type.system_page:
         class: Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType
@@ -49,30 +48,30 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_type }
 
-    oro_web_catalog.content_variant_provider.registry:
-        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
-        public: false
-
     oro_web_catalog.content_variant_provider:
-        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider'
+        class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantProvider
         arguments:
-            - '@oro_web_catalog.content_variant_provider.registry'
+            - !tagged_iterator oro_web_catalog.content_variant_provider
         public: false
 
     oro_web_catalog.content_node_tree_handler:
         class: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler
         arguments:
-            - '%oro_web_catalog.entity.content_node.class%'
+            - 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode'
             - '@doctrine'
             - '@oro_locale.helper.localization'
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
+            - '@oro_web_catalog.unique_content_node_slug_prototype_resolver'
+
+    Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler:
+        alias: 'oro_web_catalog.content_node_tree_handler'
 
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -84,15 +83,25 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postRemove }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }
+
+    oro_web_catalog.event_listener.orm.content_variant_entity_listener:
+        class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentVariantListener'
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.metadata_provider.chain'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentVariant', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentVariant', event: preUpdate }
 
     oro_web_catalog.event_listener.orm.content_variant_remove_entity_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\ContentVariantSlugsRemoveListener
         tags:
-            - { name: doctrine.event_listener, event: onFlush, method: onFlush }
+            - { name: doctrine.event_listener, event: onFlush }
 
     oro_web_catalog.model.content_node_materialized_path_modifier:
         class: 'Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier'
@@ -100,13 +109,15 @@ services:
         arguments:
             - '@doctrine'
 
-    oro_web_catalog.event_listener.system_config:
-        class: Oro\Bundle\WebCatalogBundle\EventListener\SystemConfigListener
+    oro_web_catalog.event_listener.system_config.web_catalog:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
         arguments:
             - '@doctrine'
+            - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
+            - 'oro_web_catalog.web_catalog'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_web_catalog.web_catalog, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
@@ -115,28 +126,25 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
 
-    oro_web_catalog.event_listener.request_listener:
-        class: Oro\Bundle\WebCatalogBundle\EventListener\RequestListener
+    oro_web_catalog.request_web_content_variant_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider
         arguments:
+            - '@request_stack'
             - '@doctrine'
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 20 }
 
-    oro_web_catalog.event_listener.scope_request_listener:
-        class: Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener
+    oro_web_catalog.request_web_content_scope_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider
         arguments:
+            - '@request_stack'
+            - '@doctrine'
             - '@oro_scope.scope_manager'
-            - '@oro_redirect.repository.slug'
             - '@oro_redirect.routing.matched_url_decision_maker'
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 0 }
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_web_catalog.entity.web_catalog.class%'
-            - ["name"]
+            - 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType, acl_resource: oro_web_catalog_view }
 
@@ -176,6 +184,15 @@ services:
         tags:
             - { name: form.type, alias: oro_web_catalog_content_variant_collection }
 
+    oro_web_catalog.generator.canonical_url_generator:
+        class: Oro\Bundle\WebCatalogBundle\Generator\CanonicalUrlGenerator
+        decorates: oro_redirect.generator.canonical_url
+        parent: oro_redirect.generator.canonical_url
+        calls:
+            - ['setContentNodeProvider', ['@oro_web_catalog.content_node_provider']]
+        tags:
+            - { name: oro_featuretogle.feature, feature: web_catalog_based_canonical_urls }
+
     oro_web_catalog.generator.slug_generator:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:
@@ -183,6 +200,10 @@ services:
             - '@oro_redirect.generator.redirect'
             - '@oro_locale.helper.localization'
             - '@oro_redirect.generator.slug_url_differ'
+            - '@oro_web_catalog.unique_content_node_slug_prototype_resolver'
+
+    Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator:
+        alias: 'oro_web_catalog.generator.slug_generator'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:
@@ -193,6 +214,9 @@ services:
         public: false
         arguments:
             - '@oro_web_catalog.web_catalog_provider'
+        tags:
+            - { name: oro_scope.provider, scopeType: web_content, priority: 250 }
+            - { name: oro_scope.provider, scopeType: web_content_for_sitemap, priority: 250 }
 
     oro_web_catalog.web_catalog_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider
@@ -201,11 +225,19 @@ services:
             - '@doctrine'
             - '@oro_config.manager'
 
-    oro_web_catalog.web_catalog_scope_criteria_provider.link:
-        public: false
-        tags:
-            - { name: oro_service_link, service: oro_web_catalog.web_catalog_scope_criteria_provider }
-            - { name: oro_scope.provider, scopeType: web_content, priority: 10000 }
+    oro_web_catalog.content_node_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\ContentNodeProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_scope.scope_manager'
+            - '@event_dispatcher'
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@stof_doctrine_extensions.listener.tree'
+
+    oro_web_catalog.unique_content_node_slug_prototype_resolver:
+        class: Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver
+        arguments:
+            - '@doctrine'
 
     oro_web_catalog.form.extension.web_catalog_scope:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension
@@ -216,6 +248,16 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
+
+    oro_web_catalog.form.extension.content_node_type:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\ContentNodeTypeExtension
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.metadata_provider.chain'
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType }
 
     oro_web_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'
@@ -229,58 +271,74 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
 
-    oro_web_catalog.content_node_tree_resolver.default:
+    oro_web_catalog.cacheable_content_node_tree_resolver:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver
+        decorates: oro_web_catalog.content_node_tree_resolver
+        arguments:
+            - '@.inner'
+            - '@oro_web_catalog.content_node_tree_cache'
+
+    oro_web_catalog.content_node_tree_resolver:
         class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_web_catalog.scope_matcher'
+            - '@oro_web_catalog.content_node_provider'
+            - '@oro_scope.scope_manager'
 
-    oro_web_catalog.content_node_tree_resolver.cache:
-        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_web_catalog.cache'
-
-    oro_web_catalog.content_node_tree_resolver:
-        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverFacade
-        arguments:
-            - '@oro_web_catalog.content_node_tree_resolver.cache'
-            - '@oro_web_catalog.cache.dumper.content_node_tree_dumper'
+    Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface:
+        alias: oro_web_catalog.content_node_tree_resolver
 
     oro_web_catalog.cache:
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_web_catalog' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_web_catalog' }
 
     oro_web_catalog.cache.content_node_tree_cache_warmer:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
         arguments:
             - '@oro_message_queue.client.message_producer'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
         tags:
             - { name: 'kernel.cache_warmer' }
 
-    oro_web_catalog.cache.dumper.content_node_tree_dumper:
-        class: Oro\Bundle\WebCatalogBundle\Cache\Dumper\ContentNodeTreeDumper
+    oro_web_catalog.content_node_tree_cache:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache
         arguments:
-            - '@oro_web_catalog.content_node_tree_resolver.default'
             - '@oro_entity.doctrine_helper'
             - '@oro_web_catalog.cache'
+
+    oro_web_catalog.content_node_tree_cache_dumper:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper
+        public: true
+        arguments:
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_web_catalog.content_node_tree_cache'
+            - '@doctrine'
 
     oro_web_catalog.layout.data_provider.menu_data:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
         arguments:
-            - '@doctrine'
             - '@oro_web_catalog.web_catalog_provider'
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_locale.helper.localization'
-            - '@request_stack'
+            - '@oro_web_catalog.request_web_content_scope_provider'
+            - '@oro_website.manager'
+        calls:
+            - [setCache, ['@oro_web_catalog.layout.data_provider.menu_data.cache']]
         tags:
             - { name: layout.data_provider, alias: web_catalog_menu }
+
+    oro_web_catalog.layout.data_provider.menu_data.cache:
+        public: false
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_web_catalog_layout_provider' }
 
     oro_web_catalog.layout.data_provider.content_variant:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider
         arguments:
-            - '@request_stack'
+            - '@oro_web_catalog.request_web_content_variant_provider'
         tags:
             - { name: layout.data_provider, alias: web_catalog_content_variant }
 
@@ -291,6 +349,7 @@ services:
             - '@doctrine'
             - '@oro_locale.helper.localization'
             - '@request_stack'
+            - '@oro_web_catalog.request_web_content_variant_provider'
             - '@oro_catalog.layout.data_provider.category_breadcrumb'
         tags:
             - { name: layout.data_provider, alias: web_catalog_breadcrumbs }
@@ -302,54 +361,16 @@ services:
         tags:
             - { name: layout.context_configurator }
 
-    oro_web_catalog.scope_matcher:
-        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ScopeMatcher
-        arguments:
-            - '@doctrine'
-            - '@oro_scope.scope_manager'
-
-    oro_web_catalog.async.web_catalog_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\WebCatalogCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_web_catalog.scope_matcher'
-            - '@doctrine'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_tree_cache_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeTreeCacheProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@oro_web_catalog.cache.dumper.content_node_tree_dumper'
-            - '@doctrine'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
-    oro_web_catalog.async.content_node_slug_processor:
-        class: Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_web_catalog.resolver.default_variant_scope'
-            - '@oro_web_catalog.generator.slug_generator'
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
-
     oro_web_catalog.resolver.default_variant_scope:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver
         arguments:
             - '@doctrine'
+            - '@oro_scope.scope_manager'
 
     oro_web_catalog.layout.data_provider.title_data:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider
         arguments:
-            - '@request_stack'
+            - '@oro_web_catalog.request_web_content_variant_provider'
             - '@oro_locale.helper.localization'
         tags:
             - { name: layout.data_provider, alias: web_catalog_title }
@@ -367,3 +388,80 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: oro_featuretogle.voter }
+
+    oro_web_catalog.validator_constraints.not_empty_scopes_validator:
+        class: 'Oro\Bundle\WebCatalogBundle\Validator\Constraint\NotEmptyScopesValidator'
+        public: true
+        arguments:
+            - '@oro_scope.scope_manager'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_web_catalog.validator_constraints.not_empty_scopes_validator }
+
+    oro_web_catalog.validator_constraints.same_organization_validator:
+        class: 'Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganizationValidator'
+        public: true
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_security.owner.entity_owner_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_web_catalog.validator_constraints.same_organization_validator }
+
+    oro_web_catalog.form.type.content_node_select_system_config:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectSystemConfigType
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_web_catalog_content_node_select }
+
+    oro_web_catalog.form.data_transformer.navigation_root_option:
+        class: 'Oro\Bundle\WebCatalogBundle\Form\DataTransformer\NavigationRootOptionTransformer'
+        public: true
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
+    oro_web_catalog.event_listener.navigation_root:
+        class: 'Oro\Bundle\WebCatalogBundle\EventListener\NavigationRootConfigChangeListener'
+        arguments:
+            - '@oro_web_catalog.layout.data_provider.menu_data.cache'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }
+
+    oro_web_catalog.migration.demo_data_fixtures_listener.disable_navigation_root_listener:
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
+        calls:
+            - [disableListener, ['oro_web_catalog.event_listener.navigation_root']]
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+
+    oro_web_catalog.form.type.content_node_from_web_catalog_select:
+        class: 'Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeFromWebCatalogSelectType'
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+        tags:
+            - { name: form.type }
+
+    Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler:
+        class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler
+        parent: oro_form.form.handler.default
+
+    Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider:
+        class: Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider
+
+    Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototypeValidator:
+        class: Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueSlugPrototypeValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_web_catalog.provider.content_variant_slug_source_entity:
+        class: Oro\Bundle\WebCatalogBundle\Provider\ContentVariantSlugSourceEntityProvider
+        arguments:
+            - '@oro_redirect.sluggable_entity_finder'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro_redirect.slug_source_entity_provider, priority: 100 }
+            - { name: oro_featuretogle.feature, feature: frontend_master_catalog }

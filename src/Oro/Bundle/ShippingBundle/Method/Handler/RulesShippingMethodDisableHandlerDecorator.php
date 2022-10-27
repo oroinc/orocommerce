@@ -23,11 +23,6 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
      */
     private $shippingMethodProvider;
 
-    /**
-     * @param ShippingMethodDisableHandlerInterface $handler
-     * @param ShippingMethodsConfigsRuleRepository  $repository
-     * @param ShippingMethodProviderInterface       $shippingMethodProvider
-     */
     public function __construct(
         ShippingMethodDisableHandlerInterface $handler,
         ShippingMethodsConfigsRuleRepository $repository,

@@ -1,110 +1,124 @@
-parameters:
-    oro_pricing.entity.price_list.class: Oro\Bundle\PricingBundle\Entity\PriceList
-    oro_pricing.entity.price_rule.class: Oro\Bundle\PricingBundle\Entity\PriceRule
-    oro_pricing.entity.price_rule_lexeme.class: Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme
-    oro_pricing.entity.price_list_schedule.class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule
-    oro_pricing.entity.combined_price_list.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceList
-
-    oro_pricing.entity.price_list_to_customer.class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer
-    oro_pricing.entity.price_list_to_customer_group.class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup
-    oro_pricing.entity.price_list_to_website.class: Oro\Bundle\PricingBundle\Entity\PriceListToWebsite
-
-    oro_pricing.entity.price_list_customer_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback
-    oro_pricing.entity.price_list_customer_group_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback
-    oro_pricing.entity.price_list_website_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback
-
-    oro_pricing.entity.combined_price_list_to_customer.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer
-    oro_pricing.entity.combined_price_list_to_customer_group.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup
-    oro_pricing.entity.combined_price_list_to_website.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite
-
-    oro_pricing.entity.product_price.class: Oro\Bundle\PricingBundle\Entity\ProductPrice
-    oro_pricing.entity.combined_product_price.class: Oro\Bundle\PricingBundle\Entity\CombinedProductPrice
-    oro_pricing.entity.price_list_currency.class: Oro\Bundle\PricingBundle\Entity\PriceListCurrency
-    oro_pricing.entity.price_attribute_price_list.class: Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList
-    oro_pricing.entity.price_attribute_currency.class: Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency
-    oro_pricing.entity.price_attribute_product_price.class: Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
-    oro_pricing.entity.price_list_to_product.class: Oro\Bundle\PricingBundle\Entity\PriceListToProduct
-
 services:
     oro_pricing.acl.voter.product_list:
         class: 'Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter'
-        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.price_list_reference_checker'
+            - '@Psr\Container\ContainerInterface'
         calls:
-            - [setClassName, ['%oro_pricing.entity.price_list.class%']]
+            - [setClassName, ['Oro\Bundle\PricingBundle\Entity\PriceList']]
         tags:
             - { name: security.voter, priority: 10 }
+            - { name: container.service_subscriber, id: oro_pricing.price_list_reference_checker }
 
     oro_pricing.datagrid.price_list_permissions_provider:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider'
+        public: true
 
     oro_pricing.form.autocomplete.price_list.search_handler:
-        public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_pricing.entity.price_list.class%'
-            - ["name"]
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
+            - ['name']
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\PricingBundle\Form\Type\PriceListType, acl_resource: oro_pricing_price_list_view }
 
     oro_pricing.listener.product_unit_precision:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener'
         arguments:
-            - '%oro_pricing.entity.product_price.class%'
+            - 'Oro\Bundle\PricingBundle\Entity\ProductPrice'
             - '@oro_workflow.changes.event.dispatcher'
             - '@oro_pricing.shard_manager'
             - '@oro_entity.doctrine_helper'
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', event: postRemove }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
-    oro_pricing.listener.product_unit_precision_on_post_remove:
-        class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
-        public: false
+    oro_pricing.listener.product_unit_precision.remove_product_price_attributes:
+        class: Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener
         arguments:
             - '@oro_pricing.shard_manager'
-        calls:
-            - [setPriceAttributeClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
         tags:
-            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision, event: postRemove }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.user_currency_manager:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
+        public: true
         arguments:
             - '@session'
             - '@security.token_storage'
+            - '@doctrine'
             - '@oro_currency.config.currency'
             - '@oro_website.manager'
-            - '@oro_customer_user.manager'
+            - '@oro_pricing.provider.current_currency'
 
-    oro_pricing.provider.abstract_product_price:
-        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
+    Oro\Bundle\PricingBundle\Manager\UserCurrencyManager:
+        alias: oro_pricing.user_currency_manager
+
+    oro_pricing.provider.current_currency:
+        class: 'Oro\Bundle\PricingBundle\Provider\ChainCurrentCurrencyProvider'
         public: false
-        abstract: true
+        arguments:
+            - !tagged_iterator oro_pricing.current_currency_provider
+
+    oro_pricing.storage.prices:
+        class: 'Oro\Bundle\PricingBundle\Storage\CompositeProductPriceStorage'
+        arguments:
+            - '@oro_pricing.storage.prices.flat'
+            - '@oro_pricing.storage.prices.combined'
+            - '@oro_featuretoggle.checker.feature_checker'
+
+    oro_pricing.storage.prices.flat:
+        class: 'Oro\Bundle\PricingBundle\Storage\ProductPriceORMStorage'
         arguments:
             - '@doctrine'
             - '@oro_pricing.shard_manager'
+            - '@oro_pricing.model.flat_price_list_tree_handler'
 
-    oro_pricing.provider.product_price:
-        parent: oro_pricing.provider.abstract_product_price
-        calls:
-            - [setClassName, ['%oro_pricing.entity.product_price.class%']]
+    oro_pricing.storage.prices.combined:
+        class: 'Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+            - '@oro_pricing.model.price_list_tree_handler'
+
+    oro_pricing.migrations.minimal_strategy_naming_migration:
+        class: Oro\Bundle\PricingBundle\Migrations\Service\MinimalStrategyNamingMigration
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+            - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
+            - '@oro_pricing.combined_price_list_relation_helper'
 
     oro_pricing.provider.combined_product_price:
-        parent: oro_pricing.provider.abstract_product_price
+        alias: oro_pricing.provider.product_price
+
+    oro_pricing.provider.product_price:
+        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
+        arguments:
+            - '@oro_pricing.storage.prices'
+            - '@oro_pricing.user_currency_manager'
         calls:
-            - [setClassName, ['%oro_pricing.entity.combined_product_price.class%']]
+            - [setMemoryCacheProvider, ['@oro_pricing.provider.product_price.cache']]
+
+    Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
+        alias: 'oro_pricing.provider.product_price'
+
+    oro_pricing.provider.product_price.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_pricing.provider.combined_price_list:
         class: 'Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider'
-        public: false
+        public: true
         arguments:
             - '@doctrine'
-        calls:
-            - [setClassName, ['%oro_pricing.entity.combined_price_list.class%']]
-            - [setActivationPlanBuilder, ['@oro_pricing.builder.combined_price_list_activation_plan_builder']]
+            - '@event_dispatcher'
+            - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.shard_manager'
 
     oro_pricing.provider.dependent_price_lists:
         class: Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider
@@ -119,20 +133,29 @@ services:
             - '@oro_config.global'
             - '@oro_pricing.system_config_converter'
 
-    oro_pricing.provider.product_virtual_relation_provider.config:
+    oro_pricing.virtual_relation_provider.product:
         class: 'Oro\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_entity.virtual_relation_provider, priority: 120 }
+            - { name: oro_entity.virtual_relation_provider, priority: -120 }
 
     oro_pricing.provider.frontend_product_prices:
         class: 'Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider'
-        public: false
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+
+    Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider:
+        alias: oro_pricing.provider.frontend_product_prices
+
+    oro_pricing.orm.query_executor_provider:
+        class: Oro\Bundle\PricingBundle\ORM\QueryExecutorProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.orm.insert_from_select_query_executor'
+            - '@oro_pricing.orm.multi_insert_shard_query_executor'
 
     oro_pricing.pricing_strategy.abstract_price_combining_strategy:
         class: 'Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy'
@@ -140,16 +163,17 @@ services:
         public: false
         arguments:
             - '@doctrine'
-            - '@oro_pricing.orm.multi_insert_shard_query_executor'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.orm.query_executor_provider'
 
     oro_pricing.pricing_strategy.merge_price_combining_strategy:
         class: Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy
         parent: oro_pricing.pricing_strategy.abstract_price_combining_strategy
+        calls:
+            - ['setTempTableManipulator', ['@oro_pricing.orm.temp_table_manipulator']]
         tags:
             - { name: oro_pricing.price_strategy, alias: merge_by_priority }
 
-    oro_pricing.pricing_strategy.minimal_proces_combining_strategy:
+    oro_pricing.pricing_strategy.minimal_prices_combining_strategy:
         class: Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy
         parent: oro_pricing.pricing_strategy.abstract_price_combining_strategy
         arguments:
@@ -164,84 +188,31 @@ services:
             - '@oro_config.global'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
-            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_customer.class%']]
-            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_customer_group.class%']]
-            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_website.class%']]
+            - [addRelationClass, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer']]
+            - [addRelationClass, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup']]
+            - [addRelationClass, ['Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite']]
+
+    oro_pricing.resolver.active_combined_price_list:
+        class: Oro\Bundle\PricingBundle\Resolver\ActiveCombinedPriceListResolver
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.resolver.combined_product_schedule_resolver'
 
     oro_pricing.builder.combined_price_list_garbage_collector:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector'
-        public: false
         arguments:
             - '@doctrine'
             - '@oro_config.global'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
-        calls:
-            - [setCombinedPriceListClass, ['%oro_pricing.entity.combined_price_list.class%']]
-
-    oro_pricing.builder.abstract_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder'
-        public: false
-        abstract: true
-        arguments:
-            - '@doctrine'
-            - '@oro_pricing.provider.price_list_collection'
-            - '@oro_pricing.provider.combined_price_list'
-            - '@oro_pricing.builder.combined_price_list_garbage_collector'
-            - '@oro_pricing.resolver.combined_product_schedule_resolver'
-            - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
-        calls:
-            - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
-
-    oro_pricing.builder.customer_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder'
-
-        parent: oro_pricing.builder.abstract_combined_price_list_builder
-        calls:
-            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_customer.class%']]
-            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_customer.class%']]
-            - [setFallbackClassName, ['%oro_pricing.entity.price_list_customer_fallback.class%']]
-
-    oro_pricing.builder.customer_group_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder'
-        parent: oro_pricing.builder.abstract_combined_price_list_builder
-        calls:
-            - [setCustomerCombinedPriceListsBuilder,  ['@oro_pricing.builder.customer_combined_price_list_builder']]
-            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_customer_group.class%']]
-            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_customer_group.class%']]
-            - [setFallbackClassName, ['%oro_pricing.entity.price_list_customer_group_fallback.class%']]
-
-    oro_pricing.builder.website_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder'
-        parent: oro_pricing.builder.abstract_combined_price_list_builder
-        calls:
-            - [setCustomerGroupCombinedPriceListsBuilder,  ['@oro_pricing.builder.customer_group_combined_price_list_builder']]
-            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_website.class%']]
-            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_website.class%']]
-            - [setFallbackClassName, ['%oro_pricing.entity.price_list_website_fallback.class%']]
-
-    oro_pricing.builder.combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder'
-        arguments:
-            - '@oro_config.global'
-            - '@oro_pricing.provider.price_list_collection'
-            - '@oro_pricing.provider.combined_price_list'
-            - '@oro_pricing.builder.combined_price_list_garbage_collector'
-            - '@oro_pricing.resolver.combined_product_schedule_resolver'
-            - '@oro_pricing.pricing_strategy.strategy_register'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
-            - '@oro_pricing.builder.website_combined_price_list_builder'
+            - '@oro_entity.orm.native_query_executor_helper'
 
     oro_pricing.builder.combined_price_list_builder_facade:
         class: Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade
+        public: true
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.builder.customer_combined_price_list_builder'
-            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
-            - '@oro_pricing.builder.website_combined_price_list_builder'
-            - '@oro_pricing.builder.combined_price_list_builder'
             - '@event_dispatcher'
             - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
 
     oro_pricing.builder.combined_price_list_activation_plan_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder'
@@ -249,8 +220,8 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.resolver.price_list_schedule_resolver'
-        calls:
-            - [setProvider, ['@oro_pricing.provider.combined_price_list']]
+            - '@oro_pricing.provider.combined_price_list'
+            - '@oro_pricing.combined_price_list_relation_helper'
 
     oro_pricing.resolver.price_list_schedule_resolver:
         class: Oro\Bundle\PricingBundle\Resolver\PriceListScheduleResolver
@@ -268,10 +239,12 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
             - '@security.authorization_checker'
+            - '@oro_security.acl_helper'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.event_listener.customer_form_view:
         class: 'Oro\Bundle\PricingBundle\EventListener\CustomerFormViewListener'
@@ -283,6 +256,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.event_listener.customer_group_form_view:
         class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupFormViewListener'
@@ -294,42 +268,89 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
-
-    oro_pricing.event_listener.datagrid:
-        class: 'Oro\Bundle\PricingBundle\EventListener\DatagridListener'
+    oro_pricing.pricing_feature_voter:
+        class: Oro\Bundle\PricingBundle\Feature\PricingStorageVoter
+        arguments:
+            - '@oro_config.global'
         tags:
-# TODO: BB-3826 add correct grid columns
-#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
-#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }
+            - { name: oro_featuretogle.voter }
 
-    oro_pricing.price_list_change_trigger_factory:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory'
+    oro_pricing.event_listener.system_config.default_price_list:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
         arguments:
             - '@doctrine'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
+            - 'oro_pricing.default_price_list'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    oro_pricing.event_listener.update_flat_price_list_system_config:
+        class: Oro\Bundle\PricingBundle\EventListener\UpdateFlatPriceListSystemConfigListener
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.price_list_relation_trigger_handler.flat'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_pricing.event_listener.price_calculation_precision_system_config_listener:
+        class: 'Oro\Bundle\PricingBundle\EventListener\PriceCalculationPrecisionSystemConfigListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.cache.rule_cache'
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
+
+    oro_pricing.price_list_relation_trigger_handler.combined:
+        class: 'Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationTriggerHandler'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@event_dispatcher'
+
+    oro_pricing.price_list_relation_trigger_handler.flat:
+        class: 'Oro\Bundle\PricingBundle\Model\FlatPriceListRelationTriggerHandler'
+        arguments:
+            - '@oro_website.website.provider'
+            - '@event_dispatcher'
+            - '@oro_config.manager'
 
     oro_pricing.price_list_relation_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler'
+        public: true
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler.combined'
+            - '@oro_pricing.price_list_relation_trigger_handler.flat'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.async.message_filter.price_list:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListMessageFilter'
+        arguments:
+            -
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic::NAME
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic::NAME
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic::NAME
+                - !php/const Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic::NAME
+        tags:
+            - { name: oro_message_queue.message_filter }
+
+    oro_pricing.async.message_filter.price_list_relation:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListRelationMessageFilter'
         arguments:
             - '@doctrine'
-            - '@oro_pricing.price_list_change_trigger_factory'
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_config.manager'
         tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
-            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
-
-    oro_pricing.price_list_trigger_factory:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
+            - { name: oro_message_queue.message_filter, topic: !php/const Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic::NAME }
 
     oro_pricing.price_list_trigger_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler'
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
             - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
-            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_rule_lexeme_trigger_handler:
         class: Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler
@@ -349,6 +370,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.customer-customers-grid, method: onResultAfter }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.event_listener.customer_groups_grid:
         class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupDataGridListener'
@@ -356,6 +378,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.customer-groups-grid, method: onResultAfter }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.event_listener.price_list_datagrid:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListDatagridListener'
@@ -365,13 +388,14 @@ services:
     oro_pricing.event_listener.frontend.product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener'
         arguments:
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.datagrid.provider.combined_product_price'
+            - '@oro_pricing.datagrid.provider.product_price'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+            - { name: oro_featuretogle.feature, feature: oro_pricing }
 
     oro_pricing.validator.product_price_allowed_units:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator'
@@ -401,21 +425,48 @@ services:
 
     oro_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
+        public: true
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+
+    Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface:
+        alias: oro_pricing.model.price_list_request_handler
+
+    oro_pricing.model.product_price_scope_criteria_factory:
+        class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory'
+
+    oro_pricing.model.product_price_scope_criteria_request_handler:
+        class: 'Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler'
+        public: true
         arguments:
             - '@request_stack'
             - '@oro_security.token_accessor'
-            - '@oro_pricing.model.price_list_tree_handler'
             - '@doctrine'
             - '@oro_customer.provider.customer_user_relations_provider'
             - '@oro_website.manager'
+            - '@security.authorization_checker'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
 
-    oro_pricing.model.price_list_tree_handler:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
+    Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler:
+        alias: 'oro_pricing.model.product_price_scope_criteria_request_handler'
+        public: true
+
+    oro_pricing.model.price_list_tree_handler.abstract:
+        class: 'Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler'
+        abstract: true
         arguments:
             - '@doctrine'
             - '@oro_website.manager'
-            - '@oro_config.global'
-            - '@oro_security.token_accessor'
+            - '@oro_config.manager'
+
+    oro_pricing.model.price_list_tree_handler:
+        class: 'Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler'
+        parent: oro_pricing.model.price_list_tree_handler.abstract
+
+    oro_pricing.model.flat_price_list_tree_handler:
+        class: 'Oro\Bundle\PricingBundle\Model\FlatPriceListTreeHandler'
+        parent: oro_pricing.model.price_list_tree_handler.abstract
 
     oro_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
@@ -425,26 +476,36 @@ services:
         tags:
             - { name: oro_action.action, alias: assign_user_currency }
 
-    oro_pricing.filter.abstract_product_price:
-        abstract: true
+    oro_pricing.combined_price_list_relation_helper:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelper
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+
+    oro_pricing.filter.price_attribute_product_price:
         class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceFilter'
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_pricing.model.price_list_request_handler'
-
-    oro_pricing.filter.price_attribute_product_price:
-        parent: oro_pricing.filter.abstract_product_price
         calls:
-            - [setProductPriceClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
+            - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: price-attribute-product-price }
 
     oro_pricing.filter.product_price:
-        parent: oro_pricing.filter.abstract_product_price
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceFilter'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_pricing.model.price_list_request_handler'
         calls:
-            - [setProductPriceClass, ['%oro_pricing.entity.product_price.class%']]
+            - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: product-price }
 
@@ -454,31 +515,30 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
-        calls:
-            - [setRegistry, ['@doctrine']]
+            - '@doctrine'
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: price-lists }
 
     oro_pricing.filter.frontend_product_price:
         class: 'Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter'
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
-        calls:
-            - [setFormatter, ['@oro_product.formatter.product_unit_label']]
-            - [setConfigManager, ['@oro_config.global']]
+            - '@oro_product.formatter.product_unit_label'
         tags:
-            - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
+            - { name: oro_search.extension.search_filter.filter, type: frontend-product-price }
 
     oro_pricing.event_listener.product_duplicate:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductDuplicateListener'
         calls:
-            - [setProductPriceClass, ['%oro_pricing.entity.product_price.class%']]
+            - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
             - [setDoctrineHelper,  ['@oro_entity.doctrine_helper']]
             - [setShardManager, ['@oro_pricing.shard_manager']]
             - [setPriceManager, ['@oro_pricing.manager.price_manager']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.model.frontend_product_list_modifier:
         class: 'Oro\Bundle\PricingBundle\Model\FrontendProductListModifier'
@@ -486,6 +546,8 @@ services:
         arguments:
             - '@security.token_storage'
             - '@oro_pricing.model.price_list_tree_handler'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.datagrid.extension.product_selection_grid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension'
@@ -527,18 +589,43 @@ services:
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
             - '@oro_pricing.price_list_relation_trigger_handler'
-            - '@oro_pricing.hander.price_rule_lexeme_handler'
+            - '@oro_pricing.handler.price_rule_lexeme_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_pricing_price_list, method: beforeSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_pricing_price_list, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_pricing_price_list, method: afterFlush }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.event_listener.combined_price_list:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CombinedPriceListListener'
+        lazy: true
+        arguments:
+            - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.create, method: onCreate }
 
     oro_pricing.system_config_converter:
         class: 'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter'
         public: false
         arguments:
             - '@doctrine'
-            - '%oro_pricing.entity.price_list.class%'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
+
+    oro_pricing.validator.price_rule_expressions:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionsValidator'
+        arguments:
+            - '@oro_pricing.compiler.price_list_rule_compiler'
+            - '%kernel.debug%'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_pricing.validator.product_assignment_rule_expression:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\ProductAssignmentRuleExpressionValidator'
+        arguments:
+            - '@oro_pricing.compiler.product_assignment_rule_compiler'
+            - '%kernel.debug%'
+        tags:
+            - { name: validator.constraint_validator }
 
     oro_pricing.validator.unique_price_list:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator'
@@ -560,9 +647,20 @@ services:
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.shard_manager'
             - '@event_dispatcher'
+            - '@oro_pricing.handler.combined_price_list_build_trigger'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.entity_listener.product_price_flat:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceFlatEntityListener'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
+            - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.entity_listener.price_list:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener'
@@ -573,19 +671,19 @@ services:
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.price_rule_lexeme_trigger_handler'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceList', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceList', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceList', event: postPersist }
 
     oro_pricing.entity_listener.price_list_currency:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListCurrencyEntityListener'
-        public: false
         arguments:
             - '@oro_pricing.cache.rule_cache'
             - '@oro_pricing.price_list_trigger_handler'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_currency.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_currency.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListCurrency', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListCurrency', event: postPersist }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.entity_listener.price_rule:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener'
@@ -594,17 +692,17 @@ services:
             - '@oro_pricing.cache.rule_cache'
             - '@oro_pricing.price_list_trigger_handler'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceRule', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceRule', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceRule', event: postPersist }
 
     oro_pricing.entity_listener.price_rule_lexeme:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleLexemeEntityListener'
         public: false
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule_lexeme.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule_lexeme.class%', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule_lexeme.class%', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme', event: postRemove }
 
     oro_pricing.entity_listener.abstract_rule_listener:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener'
@@ -619,31 +717,35 @@ services:
         parent: oro_pricing.entity_listener.abstract_rule_listener
         public: false
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', event: preRemove }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.event_listener.category:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
         parent: oro_pricing.entity_listener.abstract_rule_listener
         tags:
-            - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
+            - { name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.entity_listener.product:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductEntityListener'
         public: false
         parent: oro_pricing.entity_listener.abstract_rule_listener
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\Product', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\Product', event: preUpdate }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.entity_listener.price_attribute_product_price:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceAttributeProductPriceEntityListener'
         parent: oro_pricing.entity_listener.abstract_rule_listener
         public: false
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_attribute_product_price.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_attribute_product_price.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_attribute_product_price.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: preRemove }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.entity_listener.product_price:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener'
@@ -652,6 +754,24 @@ services:
             - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
             - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
 
+    oro_pricing.entity_listener.send_changed_product_prices_to_message_queue:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\SendChangedProductPricesToMessageQueueListener'
+        arguments:
+            - '@oro_message_queue.message_producer'
+            - '@security.token_storage'
+            - '@oro_dataaudit.converter.entity_to_entity_change_array'
+            - '@oro_dataaudit.audit_config_provider'
+            - '@oro_entity.entity_name_resolver'
+            - '@oro_dataaudit.provider.audit_message_body_provider'
+            - '@property_accessor'
+            - '@logger'
+            - '@oro_distribution.handler.application_status'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
+            - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated_after, method: onUpdated }
+            - { name: monolog.logger, channel: oro_pricing }
+
     oro_pricing.entity_listener.price_list_to_product:
         class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener
         arguments:
@@ -659,9 +779,9 @@ services:
             - '@oro_pricing.price_rule_lexeme_trigger_handler'
             - '@oro_pricing.shard_manager'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToProduct', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToProduct', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToProduct', event: postRemove }
             - { name: kernel.event_listener, event: oro_pricing.assignment_rule_builder.build, method: onAssignmentRuleBuilderBuild}
             - { name: kernel.event_listener, event: oro_pricing.price_list_to_product.save_after, method: onPriceListToProductSave }
 
@@ -672,24 +792,36 @@ services:
             - '@oro_pricing.builder.combined_price_list_builder_facade'
             - '@oro_pricing.builder.product_price_builder'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@oro_pricing.combined_price_list_associations_provider'
+            - '@oro_pricing.provider.combined_price_list'
         calls:
             - [disableListener, ['oro_pricing.entity_listener.product_price_cpl']]
             - [disableListener, ['oro_pricing.entity_listener.price_list_to_product']]
+            - [disableListener, ['oro_pricing.entity_listener.price_list_currency']]
+            - [disableListener, ['oro_pricing.entity_listener.send_changed_product_prices_to_message_queue']]
         tags:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.provider.matching_price:
         class: 'Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider'
+        public: true
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_entity.doctrine_helper'
-            - '%oro_product.entity.product.class%'
-            - '%oro_product.entity.product_unit.class%'
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
+            - 'Oro\Bundle\ProductBundle\Entity\ProductUnit'
+
+    Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider:
+        alias: 'oro_pricing.provider.matching_price'
 
     oro_pricing.subtotal_processor.subtotal_provider_registry:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
         public: false
+        arguments:
+            - !abstract '$providerNames defined in Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass'
+            - !abstract '$providerContainer defined in Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass'
 
     oro_pricing.subtotal_processor.total_processor_provider:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
@@ -699,6 +831,9 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.arguments'
 
+    Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider:
+        alias: oro_pricing.subtotal_processor.total_processor_provider
+
     oro_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
         arguments:
@@ -706,7 +841,10 @@ services:
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.arguments'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.subtotal }
+
+    Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider:
+        alias: oro_pricing.subtotal_processor.provider.subtotal_line_item
 
     oro_pricing.subtotal_processor.provider.arguments:
         class: Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments
@@ -719,15 +857,11 @@ services:
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.model.price_list_tree_handler'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.subtotal_processor.provider.arguments'
-        calls:
-            - [setProductClass, ['%oro_product.entity.product.class%']]
-            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
         tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
+            - { name: oro_pricing.subtotal_provider, alias: oro.pricing.subtotals.not_priced_subtotal, priority: 0 }
 
     oro_pricing.price_list_with_priority_collection.handler:
         class: 'Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler'
@@ -736,25 +870,49 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@property_accessor'
 
-    oro_pricing.entity_listener.customer_group:
-        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener'
+    oro_pricing.entity_listener.price_list_collection_aware.abstract:
+        class: Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListener
+        abstract: true
         arguments:
             - '@oro_pricing.price_list_with_priority_collection.handler'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
+            - '@event_dispatcher'
+
+    oro_pricing.entity_listener.customer_group:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener'
+        parent: oro_pricing.entity_listener.price_list_collection_aware.abstract
         tags:
             - { name: kernel.event_listener, event: oro_customer.customer_group.before_flush, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro_customer.customer_group.pre_remove, method: onGroupRemove }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.entity_listener.customer:
         class: 'Oro\Bundle\PricingBundle\EventListener\CustomerListener'
+        parent: oro_pricing.entity_listener.price_list_collection_aware.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_customer_type, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_change, method: onCustomerGroupChange }
+            - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_mass_change, method: onCustomerGroupMassChange }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.entity_listener.customer.flat_pricing:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerFlatPricingRelationFormListener'
         arguments:
-            - '@oro_pricing.price_list_with_priority_collection.handler'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_customer_type, method: onPostSubmit }
-            - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_change, method: onCustomerGroupChange }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.entity_listener.customer_group.flat_pricing:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupFlatPricingRelationFormListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro_customer.customer_group.before_flush, method: onPostSubmit }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.entity_listener.product_form:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductFormListener'
@@ -762,9 +920,14 @@ services:
             - '@oro_pricing.manager.price_manager'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_product, method: onBeforeFlush }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
+
+    Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler:
+        alias: oro_pricing.subtotal_processor.handler.request_handler
 
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
+        public: true
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@event_dispatcher'
@@ -774,22 +937,26 @@ services:
 
     oro_pricing.formatter.product_price_formatter:
         class: 'Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter'
-        public: false
         arguments:
             - '@oro_locale.formatter.number'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
 
+    Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter:
+        alias: oro_pricing.formatter.product_price_formatter
+
     oro_pricing.duplicator.schedule:
         class: 'Oro\Bundle\PricingBundle\Duplicator\ScheduleDuplicator'
+        public: true
 
     oro_pricing.duplicator.product_price_duplicator:
         class: 'Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_pricing.orm.insert_from_select_query_executor'
         calls:
-            - [setPriceListClass, ['%oro_pricing.entity.product_price.class%']]
+            - [setPriceListClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
 
     oro_pricing.compiler.abstract_rule_compiler:
         class: 'Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler'
@@ -807,6 +974,7 @@ services:
         parent: oro_pricing.compiler.abstract_rule_compiler
         calls:
             - [setFieldsProvider, ['@oro_product.expression.fields_provider']]
+            - [setConfigManager, ['@oro_config.manager']]
 
     oro_pricing.compiler.product_assignment_rule_compiler:
         class: 'Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler'
@@ -814,15 +982,20 @@ services:
 
     oro_pricing.builder.product_price_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder'
+        shared: false
         arguments:
             - '@doctrine'
             - '@oro_pricing.orm.insert_from_select_query_executor'
             - '@oro_pricing.compiler.price_list_rule_compiler'
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.shard_manager'
+            - '@oro_pricing.handler.combined_price_list_build_trigger'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.builder.price_list_product_assignment_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder'
+        shared: false
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
@@ -854,6 +1027,7 @@ services:
         arguments:
             - '@oro_product.expression.parser'
             - '@doctrine'
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.lexeme_circular_reference_validator }
 
@@ -877,8 +1051,9 @@ services:
         tags:
             - { name: oro_action.action, alias: price_list_recalculate }
 
-    oro_pricing.hander.price_rule_lexeme_handler:
+    oro_pricing.handler.price_rule_lexeme_handler:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_product.expression.parser'
@@ -886,9 +1061,9 @@ services:
 
     oro_pricing.cache.rule_cache.storage:
         public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'oro_pricing.cache.rule_cache' ] ]
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_pricing_rule_cache' }
 
     oro_pricing.cache.rule_cache:
         class: 'Oro\Bundle\PricingBundle\Cache\RuleCache'
@@ -900,59 +1075,121 @@ services:
 
     oro_pricing.duplicator.price_list_to_product_duplicator:
         class: 'Oro\Bundle\PricingBundle\Duplicator\PriceListToProductDuplicator'
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
         calls:
-            - [setEntityName, ['%oro_pricing.entity.price_list_to_product.class%']]
+            - [setEntityName, ['Oro\Bundle\PricingBundle\Entity\PriceListToProduct']]
 
-    oro_pricing.async.price_list_rule_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\PriceRuleProcessor'
+    oro_pricing.event.combined_price_list.association.collect_event_factory:
+        class: Oro\Bundle\PricingBundle\Event\CombinedPriceList\Assignment\CollectEventFactory
+
+    oro_pricing.combined_price_list_associations_provider:
+        class: Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider
+        public: true
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
-            - '@oro_pricing.builder.product_price_builder'
-            - '@logger'
-            - '@doctrine'
-            - '@oro_pricing.notification_message.messenger'
-            - '@translator'
+            - '@oro_pricing.event.combined_price_list.association.collect_event_factory'
+            - '@event_dispatcher'
+
+    oro_pricing.association_event_listener.collect_by_config:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationConfigEventListener
+        arguments:
+            - '@oro_pricing.provider.price_list_collection'
+            - '@oro_pricing.provider.combined_price_list'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_config, method: onCollectAssociations }
 
-    oro_pricing.async.price_list_assigned_products_processor:
-        class: Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor
+    oro_pricing.association_event_listener.collect_abstract:
+        abstract: true
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
-            - '@oro_pricing.builder.price_list_product_assignment_builder'
-            - '@logger'
-            - '@oro_pricing.notification_message.messenger'
-            - '@translator'
+            - '@oro_pricing.provider.price_list_collection'
+            - '@oro_pricing.provider.combined_price_list'
             - '@doctrine'
+            - '@event_dispatcher'
+
+    oro_pricing.association_event_listener.collect_by_website:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationWebsiteEventListener
+        parent: oro_pricing.association_event_listener.collect_abstract
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_config, method: onCollectAssociationsConfigLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_website, method: onCollectAssociations }
 
-    oro_pricing.async.combined_price_list_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
+    oro_pricing.association_event_listener.collect_by_customer_group:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationCustomerGroupEventListener
+        parent: oro_pricing.association_event_listener.collect_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_website, method: onCollectAssociationsWebsiteLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_customer_group, method: onCollectAssociations }
+
+    oro_pricing.association_event_listener.collect_by_customer:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\CollectAssociationCustomerEventListener
+        parent: oro_pricing.association_event_listener.collect_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_website, method: onCollectAssociationsWebsiteLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_customer_group, method: onCollectAssociationsCustomerGroupLevel }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.collect.by_customer, method: onCollectAssociations }
+
+    oro_pricing.association_event_listener.process_abstract:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\AbstractProcessAssociationEventListener
+        abstract: true
         arguments:
-            - '@logger'
-            - '@oro_pricing.price_list_change_trigger_factory'
+            - '@event_dispatcher'
             - '@doctrine'
-            - '@oro_entity.database_exception_helper'
+            - '@oro_pricing.resolver.active_combined_price_list'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
-            - '@oro_pricing.builder.combined_price_list_builder_facade'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor' }
 
-    oro_bundle_pricing.async.price_list_processor:
-        class: 'Oro\Bundle\PricingBundle\Async\PriceListProcessor'
+    oro_pricing.association_event_listener.process_config:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationConfigEventListener
         arguments:
-            - '@oro_pricing.price_list_trigger_factory'
-            - '@doctrine'
-            - '@oro_pricing.builder.combined_price_list_builder_facade'
-            - '@logger'
-            - '@oro_entity.database_exception_helper'
-            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@event_dispatcher'
+            - '@oro_pricing.resolver.active_combined_price_list'
+            - '@oro_config.global'
+            - '@oro_website.website.provider'
         tags:
-            - { name: 'oro_message_queue.client.message_processor' }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.association_event_listener.process_website:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationWebsiteEventListener
+        parent: oro_pricing.association_event_listener.process_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.association_event_listener.process_customer_group:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationCustomerGroupEventListener
+        parent: oro_pricing.association_event_listener.process_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.association_event_listener.process_customer:
+        class: Oro\Bundle\PricingBundle\EventListener\CombinedPriceListAssociation\ProcessAssociationCustomerEventListener
+        parent: oro_pricing.association_event_listener.process_abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.process, method: onProcessAssociations }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.assignment.get_associated_websites, method: onGetAssociatedWebsites }
+
+    oro_pricing.pricing_storage_switch_handler:
+        class: Oro\Bundle\PricingBundle\Model\PricingStorageSwitchHandler
+        arguments:
+            - '@oro_config.global'
+            - '@doctrine'
+            - '@oro_pricing.system_config_converter'
+
+    oro_pricing.combined_price_list_status_handler:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListStatusHandler
+        arguments:
+            - !tagged_iterator combined_price_list_status_handler
+
+    oro_pricing.combined_price_list_activation_status_handler:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: combined_price_list_status_handler, priority: 10 }
 
     oro_pricing.price_list_reference_checker:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker'
@@ -963,20 +1200,20 @@ services:
     oro_pricing.repository.combined_product_price:
         class: Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository
         factory: ['@doctrine', 'getRepository']
-        arguments: ['%oro_pricing.entity.combined_product_price.class%']
+        arguments: ['Oro\Bundle\PricingBundle\Entity\CombinedProductPrice']
 
-    oro_pricing.datagrid.provider.combined_product_price:
-        class: Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider
+    oro_pricing.datagrid.provider.product_price:
+        class: Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider
+        public: false
         arguments:
-            - '@oro_pricing.repository.combined_product_price'
-            - '@oro_locale.formatter.number'
-            - '@oro_product.formatter.product_unit_label'
-            - '@oro_product.formatter.product_unit_value'
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.formatter.product_price_formatter'
+            - '@oro_entity.doctrine_helper'
 
     oro_pricing.provider.quick_add_collection_price_provider:
         class: 'Oro\Bundle\PricingBundle\Provider\QuickAddCollectionPriceProvider'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.provider.product_price'
             - '@oro_pricing.user_currency_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
@@ -992,22 +1229,36 @@ services:
         class: 'Oro\Bundle\PricingBundle\EventListener\CalculatePriceForCollectionListener'
         arguments:
             - '@oro_pricing.provider.quick_add_collection_price_provider'
-            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
         tags:
             - { name: kernel.event_listener, event: oro_product.quick_add_rows_collection_ready, method: onQuickAddRowsCollectionReady }
-
 
     oro_pricing.form.autocomplete.product_with_prices.search_handler:
         class: Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler
         arguments:
-            - "%oro_product.entity.product.class%"
-            - "@oro_product.website_search.repository.product"
-            - "@oro_pricing.model.price_list_request_handler"
-            - "@doctrine"
+            - 'Oro\Bundle\ProductBundle\Entity\Product'
+            - '@oro_product.website_search.repository.product'
+            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
+            - '@doctrine'
             - '@oro_pricing.formatter.product_price_formatter'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.provider.product_price'
+            - '@request_stack'
+            - '@oro_security.acl_helper'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
+
+    oro_pricing.event_listener.website_search_index.flat:
+        class: 'Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceFlatIndexerListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_pricing.model.flat_price_list_tree_handler'
+            - '@oro_website_search.formatter.decimal_flat_value_formatter'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.event_listener.website_search_index:
         class: 'Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener'
@@ -1015,8 +1266,22 @@ services:
             - '@oro_website_search.manager.website_context_manager'
             - '@doctrine'
             - '@oro_config.manager'
+            - '@oro_website_search.formatter.decimal_flat_value_formatter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.price_list_id.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\PriceListIdPlaceholder'
+        public: false
+        arguments:
+            - '@oro_pricing.model.flat_price_list_tree_handler'
+            - '@security.token_storage'
+            - '@oro_config.manager'
+            - '@oro_customer.provider.customer_user_relations_provider'
+        tags:
+            - { name: website_search.placeholder }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.cpl.placeholder:
         class: 'Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder'
@@ -1026,6 +1291,7 @@ services:
             - '@security.token_storage'
         tags:
             - { name: website_search.placeholder }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.currency.placeholder:
         class: 'Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder'
@@ -1046,6 +1312,7 @@ services:
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
 
     oro_pricing.layout.attribute_block_type_mapper:
         class: 'Oro\Bundle\PricingBundle\Layout\Mapper\AttributeBlockTypeMapper'
@@ -1056,40 +1323,44 @@ services:
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
-    oro_pricing.database_triggers.manager.combined_prices:
-        parent: oro_entity.database_triggers.manager.abstract
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '%oro_pricing.entity.combined_product_price.class%'
-
     oro_pricing.shard_manager:
         class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
+        public: true
         calls:
             - [setRegistry, ['@doctrine']]
-            - [addEntityForShard, ['prices', '%oro_pricing.entity.product_price.class%']]
+            - [addEntityForShard, ['prices', 'Oro\Bundle\PricingBundle\Entity\ProductPrice']]
             - [setConfigProvider, ['@oro_entity_config.provider.sharding']]
             - [setEnableSharding, ['%enable_price_sharding%']]
 
+    Oro\Bundle\PricingBundle\Sharding\ShardManager:
+        alias: 'oro_pricing.shard_manager'
+
     oro_pricing.entity_listener.price_list_sharding:
-        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
+        class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener
         arguments:
             - '@oro_pricing.shard_manager'
         tags:
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\PricingBundle\Entity\PriceList, event: postPersist}
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\PricingBundle\Entity\PriceList, event: preRemove}
             - { name: doctrine.event_listener, event: postFlush }
 
-    oro_pricing.orm.insert_from_select_query_executor:
-        class: Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor
+    oro_pricing.orm.abstract_shard_query_executor:
+        class: Oro\Bundle\PricingBundle\ORM\AbstractShardQueryExecutor
+        abstract: true
         arguments:
             - '@oro_entity.orm.native_query_executor_helper'
             - '@oro_pricing.shard_manager'
+        calls:
+            - ['registerUniqueFields', ['Oro\Bundle\PricingBundle\Entity\ProductPrice', {search_fields: ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'], update_field: 'value'}]]
+
+    oro_pricing.orm.insert_from_select_query_executor:
+        class: Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor
+        parent: oro_pricing.orm.abstract_shard_query_executor
 
     oro_pricing.orm.multi_insert_shard_query_executor:
         class: Oro\Bundle\PricingBundle\ORM\MultiInsertShardQueryExecutor
-        arguments:
-           - '@oro_entity.orm.native_query_executor_helper'
-           - '@oro_pricing.shard_manager'
+        shared: false
+        parent: oro_pricing.orm.abstract_shard_query_executor
 
     oro_pricing.orm_walker.price_shard_walker_hint_provider:
         class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalkerHintProvider
@@ -1104,24 +1375,67 @@ services:
                 name: oro_entity.query_hint
                 hint: oro_pricing.price_shard
                 alias: HINT_PRICE_SHARD
-                output_walker: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker
+                output_walker: true
                 walker_hint_provider: oro_pricing.orm_walker.price_shard_walker_hint_provider
+
+    oro_pricing.sql_walker.price_shard:
+        class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier
+        abstract: true
+        tags:
+            - { name: oro_entity.sql_walker }
+
+    oro_pricing.sql_walker.temp_table:
+        class: Oro\Bundle\PricingBundle\ORM\Walker\TempTableOutputResultModifier
+        abstract: true
+        tags:
+            - { name: oro_entity.sql_walker }
+
+    oro_pricing.orm.temp_table_manipulator.abstract:
+        class: Oro\Bundle\PricingBundle\ORM\AbstractTempTableManipulator
+        abstract: true
+        arguments:
+            - '@doctrine'
+            - '@oro_entity.orm.native_query_executor_helper'
+            - '@oro_pricing.orm.multi_insert_shard_query_executor'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.orm.temp_table_manipulator.mysql:
+        class: Oro\Bundle\PricingBundle\ORM\MySqlTempTableManipulator
+        parent: oro_pricing.orm.temp_table_manipulator.abstract
+
+    oro_pricing.orm.temp_table_manipulator.postgresql:
+        class: Oro\Bundle\PricingBundle\ORM\PostgreSqlTempTableManipulator
+        parent: oro_pricing.orm.temp_table_manipulator.abstract
+
+    oro_pricing.orm.temp_table_manipulator:
+        class:  Oro\Bundle\PricingBundle\ORM\TempTableManipulator
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.orm.temp_table_manipulator.postgresql'
+            - '@oro_pricing.orm.temp_table_manipulator.mysql'
 
     oro_pricing.manager.price_manager:
         class: Oro\Bundle\PricingBundle\Manager\PriceManager
+        public: true
         arguments:
             - '@oro_pricing.shard_manager'
             - '@event_dispatcher'
+            - '@oro_message_queue.client.message_buffer_manager'
         tags:
             - { name: doctrine.event_listener, event: postFlush }
 
+    Oro\Bundle\PricingBundle\Manager\PriceManager:
+        alias: 'oro_pricing.manager.price_manager'
+
     oro_pricing.filter.price_list_filter:
         class: Oro\Bundle\PricingBundle\Filter\PriceListFilter
+        public: false
         arguments:
             - '@form.factory'
             - '@oro_filter.filter_utility'
+            - '@doctrine'
         tags:
-            - { name: oro_filter.extension.orm_filter.filter, type: price_list, datasource: orm }
+            - { name: oro_filter.extension.orm_filter.filter, type: price_list }
 
     oro_pricing.provider.price_list_provider:
         class: Oro\Bundle\PricingBundle\Provider\PriceListProvider
@@ -1134,6 +1448,17 @@ services:
         arguments:
             - '@oro_pricing.manager.price_manager'
 
+    Oro\Bundle\PricingBundle\Handler\ProductPriceHandler:
+        alias: 'oro_pricing.handler.product_price_handler'
+
+    oro_pricing.delete_handler.product_price:
+        class: Oro\Bundle\PricingBundle\Handler\ProductPriceDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_pricing.manager.price_manager'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\PricingBundle\Entity\ProductPrice }
+
     oro_pricing.providers.price_attribute_prices:
         class: Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider
         public: false
@@ -1144,18 +1469,19 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
-            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-price-attributes-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-price-attributes-grid, method: onBuildAfter }
 
     oro_pricing.pricing_strategy.strategy_register:
         class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
+        public: true
         arguments:
             - '@oro_config.manager'
 
     oro_pricing.provider.price_list_default_value:
         class: 'Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider'
+        public: true
         arguments:
             - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'
@@ -1167,17 +1493,19 @@ services:
             - '@oro_config.global'
             - '@oro_pricing.system_config_converter'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceList', event: preRemove }
 
     oro_pricing.locale_settings:
         class: 'Oro\Bundle\PricingBundle\Model\LocaleSettings'
         decorates: oro_locale.settings
         decoration_priority: -20
         arguments:
-            - '@oro_pricing.locale_settings.inner'
+            - '@.inner'
             - '@oro_frontend.request.frontend_helper'
-            - '@oro_frontend_localization.manager.user_localization'
+            - '@oro_locale.provider.current_localization'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_layout.layout_context_holder'
+            - '@oro_layout.theme_manager'
 
     oro_pricing.datagrid.extension.price:
         abstract: true
@@ -1195,9 +1523,125 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: oro_datagrid.extension }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.datagrid.extension.price_attribute_product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension'
-        parent: oro_pricing.datagrid.extension.price
+        public: false
+        arguments:
+            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_datagrid.provider.selected_fields'
+            - '@oro_security.acl_helper'
         tags:
             - { name: oro_datagrid.extension }
+
+    oro_pricing.entity_listener.import_export_result:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ImportExportResultListener'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
+            - '@oro_pricing.shard_manager'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ImportExportBundle\Entity\ImportExportResult', event: postPersist }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.provider.product_price_entity_name:
+        class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceEntityNameProvider'
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_pricing.event_listener.datagrid_line_items_data.pricing:
+        class: Oro\Bundle\PricingBundle\EventListener\DatagridLineItemsDataPricingListener
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+
+    oro_pricing.event_listener.product_autocomplete:
+        class: Oro\Bundle\PricingBundle\EventListener\ProductAutocompleteListener
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent, method: onCollectAutocompleteFields }
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.event_listener.price_list_view:
+        class: Oro\Bundle\PricingBundle\EventListener\PriceListViewListener
+        arguments:
+            - '@oro_pricing.notification_alert_manager'
+            - '@session.flash_bag'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.price-list-view, method: onPriceListView }
+
+    oro_pricing.notification_alert_manager:
+        class: Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager
+        arguments:
+            - 'Pricing'
+            - 'PriceList'
+            - '@doctrine'
+            - '@oro_security.token_accessor'
+            - '@logger'
+
+    Oro\Bundle\PricingBundle\EntityConfig\ShardingEntityConfiguration:
+        tags:
+            - oro_entity_config.validation.entity_config
+
+    oro_pricing.handler.combined_price_list_build_trigger:
+        class: Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.price_list_relation_trigger_handler'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.handler.price_list_relation_handler:
+        class: Oro\Bundle\PricingBundle\Handler\PriceListRelationHandler
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+            - '@oro_website.website.provider'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.entity_listener.product_prices:
+        class: Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPricesListener
+        arguments:
+            - '@oro_pricing.handler.combined_price_list_build_trigger'
+            - '@oro_pricing.price_list_trigger_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: onPricesUpdated }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.entity_listener.flat.price_list_relation:
+        class: Oro\Bundle\PricingBundle\EventListener\FlatPriceListRelationListener
+        arguments:
+            - '@oro_pricing.handler.price_list_relation_handler'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_config.manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup', event: prePersist }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.entity_listener.flat.price_list_config_relation:
+        class: Oro\Bundle\PricingBundle\EventListener\FlatPriceListRelationSystemConfigListener
+        arguments:
+            - '@oro_pricing.handler.price_list_relation_handler'
+            - '@oro_message_queue.client.message_producer'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_pricing.default_price_list, method: beforeSave}
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }

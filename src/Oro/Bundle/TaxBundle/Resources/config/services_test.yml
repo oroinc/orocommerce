@@ -1,0 +1,10 @@
+services:
+    oro_tax.tests.alias.transformer.tax_value:
+        alias: oro_tax.transformer.tax_value
+        public: true
+    oro_tax.tests.alias.tax_codes.cache:
+        alias: oro_tax.tax_codes.cache
+        public: true
+    oro_tax.tests.alias.taxation_provider.cache:
+        alias: oro_tax.taxation_provider.cache
+        public: true

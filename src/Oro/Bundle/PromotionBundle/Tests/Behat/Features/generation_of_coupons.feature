@@ -1,13 +1,12 @@
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: Generation of coupons
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Generate coupons with suffix and prefix
     Given I login as administrator
     And go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Promotion       | order Discount Promotion         |
       | Coupon Quantity | 10                               |
       | Enabled         | true                             |
@@ -31,7 +30,7 @@ Feature: Generation of coupons
     Given I go to Marketing/Promotions/Coupons
     And I click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Coupon Quantity | 150                              |
       | Uses per Coupon | 5                                |
       | Uses per Person | 5                                |
@@ -48,7 +47,7 @@ Feature: Generation of coupons
     And there are 10 records in grid
     And I click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Coupon Quantity | 150                              |
       | Uses per Coupon | 5                                |
       | Uses per Person | 5                                |

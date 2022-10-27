@@ -1,0 +1,49 @@
+data:
+    type: mastercatalogtree
+    id: '<toString(@category1_1->id)>'
+    attributes:
+        order: 3
+    relationships:
+        parent:
+            data:
+                type: mastercatalogtree
+                id: '<toString(@category1->id)>'
+        path:
+            data:
+                -
+                    type: mastercatalogtree
+                    id: '<toString(@root_category->id)>'
+                -
+                    type: mastercatalogtree
+                    id: '<toString(@category1->id)>'
+        category:
+            data:
+                type: mastercatalogcategories
+                id: '<toString(@category1_1->id)>'
+included:
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1_1->id)>'
+        attributes:
+            createdAt: '@category1_1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category1_1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 1_1'
+            shortDescription: 'Category 1_1 Short Description'
+            description: 'Category 1_1 Description'
+            url: '/category1_1_slug_default'
+            urls:
+                - { url: '/category1_1_slug_default', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/category1_1_slug_default', localizationId: '<toString(@es->id)>' }
+            images: []
+            metaTitle: 'Category 1_1 Meta Title'
+            metaDescription: 'Category 1_1 Meta Description'
+            metaKeywords: 'Category 1_1 Meta Keywords'
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@category1->id)>'

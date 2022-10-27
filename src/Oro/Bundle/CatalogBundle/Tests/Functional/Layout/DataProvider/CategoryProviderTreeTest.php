@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
@@ -14,44 +13,19 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryProviderTreeTest extends WebTestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    use CatalogTrait;
 
-    /**
-     * @var CategoryRepository
-     */
-    protected $repository;
-
-    /**
-     * @var CategoryProvider
-     */
-    protected $categoryProvider;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
-
-        $this->loadFixtures(
-            [
-                LoadMasterCatalogLocalizedTitles::class,
-                LoadCategoryData::class,
-                LoadCategoryProductData::class,
-            ]
-        );
-
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
+        $this->loadFixtures([
+            LoadMasterCatalogLocalizedTitles::class,
+            LoadCategoryData::class,
+            LoadCategoryProductData::class,
+        ]);
     }
 
-    /**
-     * Returns categoryProvider for given category identifier
-     *
-     * @param int $nodeId
-     * @return CategoryProvider
-     */
-    private function getCategoryProviderForNode($nodeId)
+    private function getCategoryProviderForNode(int $nodeId): CategoryProvider
     {
         $requestProductHandler = $this->createMock(RequestProductHandler::class);
         $requestProductHandler->expects($this->once())
@@ -60,8 +34,11 @@ class CategoryProviderTreeTest extends WebTestCase
 
         return new CategoryProvider(
             $requestProductHandler,
-            $this->repository,
-            $this->createMock(CategoryTreeProvider::class)
+            self::getContainer()->get('doctrine'),
+            $this->createMock(CategoryTreeProvider::class),
+            self::getContainer()->get('oro_security.token_accessor'),
+            self::getContainer()->get('oro_locale.helper.localization'),
+            self::getContainer()->get('oro_catalog.provider.master_catalog_root')
         );
     }
 
@@ -70,7 +47,8 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentTraverseToRootCategories()
     {
-        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3')->getId();
+        $category = $this->findCategory('category_1_2_3');
+        $categoryId = $category->getId();
         $categoryProvider = $this->getCategoryProviderForNode($categoryId);
         $parents = $categoryProvider->getParentCategories();
 
@@ -91,11 +69,10 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentRootHasNoPath()
     {
-        $root = $this->repository->getMasterCatalogRoot();
-        $categoryProvider = $this->getCategoryProviderForNode($root->getId());
+        $categoryProvider = $this->getCategoryProviderForNode($this->getRootCategory()->getId());
         $parents = $categoryProvider->getParentCategories();
 
-        $this->assertTrue(is_array($parents));
+        $this->assertIsArray($parents);
         $this->assertCount(0, $parents);
     }
 }

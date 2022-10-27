@@ -10,11 +10,11 @@ datagrids:
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
                 from:
-                    - { table: '%oro_product.entity.product_unit_precision.class%', alias: precision }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', alias: precision }
                 join:
                     left:
                         -
-                            join: '%oro_inventory.entity.inventory_level.class%'
+                            join: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel'
                             alias: level
                             conditionType: WITH
                             condition: "level.productUnitPrecision = precision.id"
@@ -32,7 +32,7 @@ datagrids:
                 label:         oro.product.productunit.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+                template:      '@OroProduct/ProductUnit/Datagrid/unitFullPlural.html.twig'
         sorters:
             columns:
                 levelQuantity:
@@ -40,7 +40,7 @@ datagrids:
                 productUnit:
                     data_name: productUnit
             default:
-                productUnit:   '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                productUnit: ASC
         properties:
             combinedId: ~
             unitCode: ~
@@ -55,11 +55,11 @@ datagrids:
                 columnName:
                     - levelQuantity
                 selector: '#inventory-level-quantities'
-            requireJSModules:
+            jsmodules:
                 - oroinventory/js/datagrid/builder/level-quantity-builder
 
     inventory-grid:
-        extended_entity_name: '%oro_inventory.entity.inventory_level.class%'
+        extended_entity_name: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel'
         acl_resource: oro_product_inventory_view
         source:
             type: orm
@@ -78,13 +78,15 @@ datagrids:
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                 from:
-                    - { table: '%oro_inventory.entity.inventory_level.class%', alias: inventory}
+                    - { table: 'Oro\Bundle\InventoryBundle\Entity\InventoryLevel', alias: inventory}
                 join:
                     left:
                         - { join: inventory.product, alias: product}
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: inventory.productUnitPrecision, alias: productPrecision}
                         - { join: productPrecision.unit, alias: precisionUnit}
+            hints:
+                - HINT_TRANSLATABLE
         properties:
             id: ~
             productId: ~
@@ -103,7 +105,7 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
                 inline_editing:
                     enable: true
                     editor:
@@ -121,17 +123,18 @@ datagrids:
                 inline_editing:
                     enable: true
                     editor:
-                        view: oroinventory/js/app/views/decimals-number-editor-view
+                        view: oroinventory/js/app/views/quantity-editor-view
                         view_options:
                             decimalsField: inventoryLevelPrecision
                     validation_rules:
                         DecimalsNumber:
                             decimalsField: inventoryLevelPrecision
+                    validation_groups: [Default]
             unit:
                 label:           oro.product.productunitprecision.unit.label
                 type:            twig
                 frontend_type:   html
-                template:        OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+                template:        '@OroProduct/ProductUnit/Datagrid/unitFullPlural.html.twig'
         sorters:
             columns:
                 sku:
@@ -165,11 +168,11 @@ datagrids:
                     type:            number
                 unit:
                     type:            choice
-                    data_name:       precisionUnit
+                    data_name:       unit
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"
                             multiple: true
         options:
-            requireJSModules:
+            jsmodules:
                 - oroinventory/js/datagrid/builder/inventory-status-builder

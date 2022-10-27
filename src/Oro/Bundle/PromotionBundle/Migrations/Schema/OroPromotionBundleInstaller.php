@@ -35,7 +35,7 @@ class OroPromotionBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_6';
     }
 
     /**
@@ -88,12 +88,11 @@ class OroPromotionBundleInstaller implements
         $this->addAppliedCouponsToOrder($schema);
         $this->addAppliedCouponsToCheckout($schema);
         $this->addAppliedPromotionsToOrder($schema);
+        $this->addDisablePromotionsToOrder($schema);
     }
 
     /**
      * Create oro_promotion table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionTable(Schema $schema)
     {
@@ -113,8 +112,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_coupon table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionCouponTable(Schema $schema)
     {
@@ -125,6 +122,7 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('enabled', 'boolean', ['default' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
+        $table->addColumn('code_uppercase', 'string', ['length' => 255]);
         $table->addColumn('uses_per_coupon', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('uses_per_person', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('created_at', 'datetime', []);
@@ -135,12 +133,11 @@ class OroPromotionBundleInstaller implements
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_promotion_coupon_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_promotion_coupon_updated_at', []);
+        $table->addIndex(['code_uppercase'], 'idx_oro_promotion_coupon_code_upper', []);
     }
 
     /**
      * Create oro_promotion_description table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionDescriptionTable(Schema $schema)
     {
@@ -153,8 +150,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_discount_config table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionDiscountConfigTable(Schema $schema)
     {
@@ -168,8 +163,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_label table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionLabelTable(Schema $schema)
     {
@@ -182,8 +175,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_schedule table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionScheduleTable(Schema $schema)
     {
@@ -197,8 +188,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionScopeTable(Schema $schema)
     {
@@ -210,8 +199,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_applied_discount table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedDiscountTable(Schema $schema)
     {
@@ -232,8 +219,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_coupon_usage table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionCouponUsageTable(Schema $schema)
     {
@@ -247,8 +232,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_applied_coupon table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedCouponTable(Schema $schema)
     {
@@ -265,8 +248,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Create oro_promotion_applied table
-     *
-     * @param Schema $schema
      */
     protected function createOroPromotionAppliedTable(Schema $schema)
     {
@@ -285,8 +266,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionForeignKeys(Schema $schema)
     {
@@ -325,8 +304,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_coupon foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionCouponForeignKeys(Schema $schema)
     {
@@ -353,8 +330,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_description foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionDescriptionForeignKeys(Schema $schema)
     {
@@ -375,8 +350,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_label foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionLabelForeignKeys(Schema $schema)
     {
@@ -397,8 +370,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_schedule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionScheduleForeignKeys(Schema $schema)
     {
@@ -413,8 +384,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionScopeForeignKeys(Schema $schema)
     {
@@ -435,8 +404,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_applied_discount foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionAppliedDiscountForeignKeys(Schema $schema)
     {
@@ -457,8 +424,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_coupon_usage foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionCouponUsageForeignKeys(Schema $schema)
     {
@@ -485,8 +450,6 @@ class OroPromotionBundleInstaller implements
 
     /**
      * Add oro_promotion_applied_coupon foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPromotionAppliedCouponForeignKeys(Schema $schema)
     {
@@ -499,17 +462,11 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addActivityAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_promotion');
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedCouponsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -552,9 +509,6 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedCouponsToCheckout(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -597,9 +551,6 @@ class OroPromotionBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAppliedPromotionsToOrder(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -634,10 +585,26 @@ class OroPromotionBundleInstaller implements
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
-                    'on_delete' => 'CASCADE'
+                    'on_delete' => 'CASCADE',
+                    'cascade' => ['remove'],
                 ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false]
+            ]
+        );
+    }
+
+    protected function addDisablePromotionsToOrder(Schema $schema)
+    {
+        $table = $schema->getTable('oro_order');
+        $table->addColumn(
+            'disablePromotions',
+            'boolean',
+            [
+                'oro_options' => [
+                    'extend'    => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
+                    'dataaudit' => ['auditable' => false]
+                ]
             ]
         );
     }

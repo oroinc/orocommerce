@@ -9,7 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesDa
 
 class ContentNodeDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -29,7 +29,7 @@ class ContentNodeDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $contentNodeId,
-            self::getContainer()->getParameter('oro_web_catalog.entity.content_node.class'),
+            ContentNode::class,
             ['datagrid' => 'web-catalog-grid']
         );
 

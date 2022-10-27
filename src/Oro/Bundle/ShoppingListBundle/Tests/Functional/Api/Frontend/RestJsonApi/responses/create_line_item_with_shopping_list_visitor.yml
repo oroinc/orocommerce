@@ -1,0 +1,46 @@
+data:
+    type: shoppinglistitems
+    id: new
+    attributes:
+        quantity: 10
+        notes: 'New Line Item Notes'
+        currency: null
+        value: null
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product2->id)>'
+        parentProduct:
+            data: null
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: new
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@set->code)>'
+included:
+    -
+        type: shoppinglists
+        id: new
+        meta:
+            includeId: new_shopping_list
+        attributes:
+            name: 'New Shopping List'
+            notes: null
+            default: true
+            currency: USD
+            total: '0'
+            subTotal: '0'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: new
+            customerUser:
+                data: null
+            customer:
+                data: null

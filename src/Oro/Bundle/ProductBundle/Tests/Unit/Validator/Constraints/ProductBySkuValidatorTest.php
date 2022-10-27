@@ -1,78 +1,65 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
+class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
 {
-    const PRODUCT_CLASS = 'OroProductBundle:Product';
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    protected $registry;
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductBySku
-     */
-    protected $constraint;
-
-    /**
-     * @var ProductBySkuValidator
-     */
-    protected $validator;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock(Registry::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint = $this->createMock(ProductBySku::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        parent::setUp();
+    }
 
-        $this->validator = new ProductBySkuValidator($this->registry);
-        $this->validator->initialize($this->context);
+    protected function createValidator(): ProductBySkuValidator
+    {
+        return new ProductBySkuValidator($this->doctrine, $this->aclHelper);
     }
 
     public function testValidateNoValue()
     {
-        $this->registry->expects($this->never())
+        $this->doctrine->expects($this->never())
             ->method('getRepository');
 
-        $this->context->expects($this->never())
-            ->method('addViolation');
+        $constraint = new ProductBySku();
+        $this->validator->validate('', $constraint);
 
-        $this->validator->validate('', $this->constraint);
+        $this->assertNoViolation();
     }
 
     /**
-     * @param bool $useOptions
-     * @param string $sku
-     * @param Product|null $product
      * @dataProvider validateProvider
      */
-    public function testValidate($useOptions, $sku, $product)
+    public function testValidate(bool $useOptions, string $sku, ?Product $product)
     {
         if ($useOptions) {
             $products = [];
-            if ($product) {
-                $products[strtoupper($sku)] = $product;
+            if (null !== $product) {
+                $products[mb_strtoupper($sku)] = $product;
             }
         } else {
             $products = null;
         }
 
-        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -91,60 +78,65 @@ class ProductBySkuValidatorTest extends \PHPUnit\Framework\TestCase
             ->with('products')
             ->willReturn($products);
 
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('offsetExists')
             ->with('products')
             ->willReturn(true);
-
         $form->expects($this->once())
             ->method('offsetGet')
             ->with('products')
             ->willReturn($form);
-        $form->expects($this->any())->method('getConfig')->willReturn($config);
-
-        $this->context->expects($this->once())
-            ->method('getPropertyPath')
-            ->willReturn('[products]');
-        $this->context->expects($this->once())
-            ->method('getRoot')
-            ->willReturn($form);
+        $form->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($config);
 
         if (!$useOptions) {
-            /** @var \PHPUnit\Framework\MockObject\MockObject|ProductRepository */
-            $repository = $this
-                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
+            $query = $this->createMock(AbstractQuery::class);
+            $query->expects($this->once())
+                ->method('getOneOrNullResult')
+                ->willReturn($product);
 
+            $queryBuilder = $this->createMock(QueryBuilder::class);
+
+            $repository = $this->createMock(ProductRepository::class);
             $repository->expects($this->once())
-                ->method('findOneBySku')
+                ->method('getBySkuQueryBuilder')
                 ->with($sku)
-                ->will($this->returnValue($product));
+                ->willReturn($queryBuilder);
 
-            $this->registry->expects($this->once())
+            $this->aclHelper->expects($this->once())
+                ->method('apply')
+                ->with($queryBuilder)
+                ->willReturn($query);
+
+            $this->doctrine->expects($this->once())
                 ->method('getRepository')
-                ->with(self::PRODUCT_CLASS)
-                ->will($this->returnValue($repository));
+                ->with(Product::class)
+                ->willReturn($repository);
         }
 
-        $this->context->expects($product ? $this->never() : $this->once())
-            ->method('addViolation')
-            ->with($this->constraint->message);
+        $this->setRoot($form);
+        $this->setPropertyPath('[products]');
+        $constraint = new ProductBySku();
+        $this->validator->validate($sku, $constraint);
 
-        $this->validator->validate($sku, $this->constraint);
+        if (null === $product) {
+            $this->buildViolation($constraint->message)
+                ->atPath('[products]')
+                ->assertRaised();
+        } else {
+            $this->assertNoViolation();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
         return [
-            'fail repo' => [false, 'S12', null],
-            'success repo' => [false, 'S12_1099', new Product()],
-            'fail options' => [true, 'S12', null],
-            'success options' => [true, 'S12_1099', new Product()],
+            'fail repo' => [false, 'sku1', null],
+            'success repo' => [false, 'sku1абв', new Product()],
+            'fail options' => [true, 'Sku2', null],
+            'success options' => [true, 'Sku2Абв', new Product()],
         ];
     }
 }

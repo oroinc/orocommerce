@@ -24,7 +24,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->visibilityProvider = $this->getMockBuilder(ProductVisibilityProvider::class)
             ->disableOriginalConstructor()
@@ -105,7 +105,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
                 'is_visible_by_default' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
                 ],
-                'visibility_customer_CUSTOMER_ID' => [
+                'visibility_customer.CUSTOMER_ID' => [
                     ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 1]), 'all_text' => false],
                 ]
             ],
@@ -119,7 +119,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
                 'is_visible_by_default' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
                 ],
-                'visibility_customer_CUSTOMER_ID' => [
+                'visibility_customer.CUSTOMER_ID' => [
                     ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 3]), 'all_text' => false]
                 ]
             ],
@@ -133,7 +133,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
                 'is_visible_by_default' => [
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
                 ],
-                'visibility_customer_CUSTOMER_ID' => [
+                'visibility_customer.CUSTOMER_ID' => [
                     ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 2]), 'all_text' => false],
                 ]
             ]

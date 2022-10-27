@@ -63,8 +63,6 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
 
     /**
      * Create orob2b_quote_demand table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteDemandTable(Schema $schema)
     {
@@ -76,8 +74,6 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
 
     /**
      * Create orob2b_quote_product_demand table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProductDemandTable(Schema $schema)
     {
@@ -91,8 +87,6 @@ class AddCheckoutSource implements Migration, ExtendExtensionAwareInterface
 
     /**
      * Add orob2b_quote_product_demand foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProductDemandForeignKeys(Schema $schema)
     {

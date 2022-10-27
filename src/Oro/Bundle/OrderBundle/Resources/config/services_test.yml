@@ -1,0 +1,7 @@
+services:
+    oro_order.provider.configuration.stub:
+        class: 'Oro\Bundle\OrderBundle\Tests\Functional\Stub\OrderConfigurationProviderStub'
+        decorates: 'oro_order.provider.configuration'
+        decoration_priority: -1000
+        parent: 'oro_order.provider.configuration'
+        public: true

@@ -8,40 +8,37 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Exception\UnexpectedTypeException;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds category information to the product view and edit pages.
+ */
 class FormViewListener
 {
     const CATEGORY_FIELD = 'category';
     const GENERAL_BLOCK = 'general';
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
+    protected DoctrineHelper $doctrineHelper;
+    protected AuthorizationCheckerInterface $authorizationChecker;
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductView(BeforeListRenderEvent $event)
+    public function onProductView(BeforeListRenderEvent $event): void
     {
+        if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
         $product = $event->getEntity();
 
         if (!$product instanceof Product) {
@@ -57,42 +54,35 @@ class FormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroCatalogBundle:Product:category_view.html.twig',
+            '@OroCatalog/Product/category_view.html.twig',
             ['entity' => $category]
         );
 
         $this->prependCategoryBlock($event->getScrollData(), $template);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductEdit(BeforeListRenderEvent $event)
+    public function onProductEdit(BeforeListRenderEvent $event): void
     {
+        if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
-            'OroCatalogBundle:Product:category_update.html.twig',
+            '@OroCatalog/Product/category_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $this->addCategoryBlock($event->getScrollData(), $template);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     * @param string $html
-     */
-    protected function addCategoryBlock(ScrollData $scrollData, $html)
+    protected function addCategoryBlock(ScrollData $scrollData, string $html): void
     {
         $blockLabel = $this->translator->trans('oro.catalog.product.section.catalog');
-        $blockId = $scrollData->addBlock($blockLabel);
+        $blockId = $scrollData->addBlock($blockLabel, 300);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }
 
-    /**
-     * @param ScrollData $scrollData
-     * @param string $template
-     */
-    private function prependCategoryBlock(ScrollData $scrollData, $template)
+    private function prependCategoryBlock(ScrollData $scrollData, string $template): void
     {
         $data = $scrollData->getData();
 

@@ -1,4 +1,4 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% extends '@OroUI/actions/view.html.twig' %}
 
 {% oro_title_set({params : {'%id%': entity.qid }}) %}
 
@@ -15,17 +15,21 @@
 {% endblock pageHeader %}
 
 {% block breadcrumbs %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {{ parent() }}
-    <div class="pull-left">
+    <span class="page-title__status">
         {% if entity.expired %}
-            <div class="badge badge-pill badge-disabled status-disabled"><i class="fa-lock"></i>{{ 'oro.sale.quote.expired.label'|trans }}</div>
+            {{ UI.badge('oro.sale.quote.expired.label'|trans, 'disabled', 'fa-lock') }}
         {% else %}
-            <div class="badge badge-pill badge-enabled status-enabled"><i class="fa-unlock"></i>{{ 'oro.sale.quote.not_expired.label'|trans }}</div>
+            {{ UI.badge('oro.sale.quote.not_expired.label'|trans, 'enabled', 'fa-unlock') }}
         {% endif %}
-    </div>
+    </span>
 {% endblock breadcrumbs %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% set quoteInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
@@ -36,7 +40,7 @@
 
     {% set quoteProducts %}
         <div class="quote-line-items-info grid-container">
-            <table class="grid table table-bordered table-condensed quote-line-items">
+            <table class="grid grid-main-container table table-bordered table-condensed quote-line-items">
                 <thead>
                     <tr>
                         <th><span>{{ 'oro.product.sku.label'|trans }}</span></th>
@@ -55,9 +59,9 @@
                             {% if loop.first %}
                                 <td rowspan="{{ numSubItems }}">
                                     {% if quoteProduct.isTypeNotAvailable %}
-                                        {{ quoteProduct.productReplacementSku }}
+                                        <bdo dir="ltr">{{ quoteProduct.productReplacementSku }}</bdo>
                                     {% else %}
-                                        {{ quoteProduct.productSku }}
+                                        <bdo dir="ltr">{{ quoteProduct.productSku }}</bdo>
                                     {% endif %}
                                 </td>
                                 <td rowspan="{{ numSubItems }}">
@@ -68,7 +72,7 @@
                                 {% if oro_is_unit_code_visible(quoteProductOffer.productUnit.code) %}
                                     {{ quoteProductOffer.quantity|oro_format_short_product_unit_value(quoteProductOffer.productUnit) }}
                                 {% else %}
-                                    {{ quoteProductOffer.quantity }}
+                                    {{ quoteProductOffer.quantity|oro_format_decimal }}
                                 {% endif %}
 
                                 {% if quoteProductOffer.allowIncrements %}{{ 'oro.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
@@ -106,12 +110,12 @@
             {{ UI.renderProperty('oro.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
             {{ UI.renderProperty('oro.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
             {{ UI.renderProperty('oro.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
-            {{ UI.renderProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode, null, null, {'dir': 'ltr'}) }}
             {{ UI.renderProperty('oro.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
         {% else %}
             <div class="items list-box list-shaped"></div>
             <div class="no-data">
-                <span>{{ "oro.sale.quoteaddress.no_exist"|trans|raw }}</span>
+                {{ "oro.sale.quoteaddress.no_exist"|trans }}
             </div>
         {% endif %}
     {% endset %}
@@ -154,8 +158,8 @@
 
     {% set data = {'dataBlocks': dataBlocks} %}
     {{ parent() }}
-    <script type="text/javascript">
-        require(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
+    <script>
+        loadModules(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
         function (_, __, mediator) {
             mediator.on('widget_success:notification-email-dialog', function () {
                 mediator.execute('refreshPage');

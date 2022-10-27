@@ -21,6 +21,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 
 // @codingStandardsIgnoreEnd
 
+/**
+ * Fedex shipping method implementation.
+ */
 class FedexShippingMethod implements
     ShippingMethodInterface,
     ShippingMethodIconAwareInterface,
@@ -54,7 +57,7 @@ class FedexShippingMethod implements
     /**
      * @var string
      */
-    private $label;
+    private string $label;
 
     /**
      * @var string|null
@@ -142,7 +145,7 @@ class FedexShippingMethod implements
     /**
      * {@inheritDoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -249,9 +252,6 @@ class FedexShippingMethod implements
         return null;
     }
 
-    /**
-     * @return array
-     */
     private function getTrackingRegexList(): array
     {
         return [
@@ -261,11 +261,6 @@ class FedexShippingMethod implements
         ];
     }
 
-    /**
-     * @param array $option
-     *
-     * @return float
-     */
     private function getSurchargeFromOptions(array $option): float
     {
         return (float)$option[static::OPTION_SURCHARGE];
@@ -316,12 +311,6 @@ class FedexShippingMethod implements
         return $prices;
     }
 
-    /**
-     * @param ShippingContextInterface $context
-     * @param ShippingServiceRule      $rule
-     *
-     * @return array
-     */
     private function getPricesForRule(ShippingContextInterface $context, ShippingServiceRule $rule): array
     {
         $request = $this->rateServiceRequestFactory->create(

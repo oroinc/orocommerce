@@ -16,7 +16,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              name="oro_pricing_price_list_uidx",
  *              columns={"product_id", "price_list_id", "quantity", "unit_code", "currency"}
  *          )
- *      }
+ *      },
+ *     indexes={
+ *         @ORM\Index(
+ *              name="oro_price_version_idx",
+ *              columns={
+ *                  "price_list_id",
+ *                  "version",
+ *                  "product_id"
+ *              }
+ *         ),
+ *     }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
  * @Config(
@@ -30,6 +40,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          },
  *          "sharding"={
  *              "discrimination_field"="priceList"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
@@ -37,22 +50,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  */
 class ProductPrice extends BaseProductPrice
 {
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="id", type="guid")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
-
     /**
      * @var PriceList
      *
@@ -62,10 +59,14 @@ class ProductPrice extends BaseProductPrice
      *      defaultValues={
      *          "importexport"={
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true,
+     *              "propagate"=true
      *          }
      *      }
      * )
-     **/
+     */
     protected $priceList;
 
     /**
@@ -73,8 +74,22 @@ class ProductPrice extends BaseProductPrice
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRule")
      * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     **/
+     */
     protected $priceRule;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="version", type="integer", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $version;
 
     /**
      * @return PriceRule
@@ -91,6 +106,25 @@ class ProductPrice extends BaseProductPrice
     public function setPriceRule($priceRule)
     {
         $this->priceRule = $priceRule;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param int $version
+     * @return ProductPrice
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
 
         return $this;
     }

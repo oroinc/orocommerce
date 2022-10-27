@@ -17,17 +17,11 @@ class SelectCouponGridListener
      */
     private $modifier;
 
-    /**
-     * @param CouponApplicabilityQueryBuilderModifier $modifier
-     */
     public function __construct(CouponApplicabilityQueryBuilderModifier $modifier)
     {
         $this->modifier = $modifier;
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $dataSource = $event->getDatagrid()->getDatasource();

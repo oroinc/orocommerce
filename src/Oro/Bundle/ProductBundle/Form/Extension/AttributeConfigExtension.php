@@ -14,22 +14,21 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Reorganizes form fields on the product attribute configuration page
+ */
 class AttributeConfigExtension extends AbstractTypeExtension
 {
     use AttributeConfigExtensionApplicableTrait;
 
     /** @var array */
-    protected static $frontendBlocks = ['attribute'];
+    protected static $frontendBlocks = ['attribute', 'frontend'];
 
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param ConfigProvider $attributeConfigProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(ConfigProvider $attributeConfigProvider, TranslatorInterface $translator)
     {
         $this->attributeConfigProvider = $attributeConfigProvider;
@@ -46,6 +45,10 @@ class AttributeConfigExtension extends AbstractTypeExtension
             $className = $configModel->getEntity()->getClassName();
             if ($className === Product::class) {
                 $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+
+                if ($builder->has('importexport') && $builder->get('importexport')->has('header')) {
+                    $builder->get('importexport')->remove('header');
+                }
             }
         }
     }
@@ -61,9 +64,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormView $view
-     */
     protected function updateBlockConfig(FormView $view)
     {
         if (!$view->children) {
@@ -74,7 +74,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
             $this->updateBlockConfig($child);
 
             if (isset($child->vars['block']) && $child->vars['block'] !== 'general') {
-                if ($child->vars['block'] === 'attribute') {
+                if (in_array($child->vars['block'], self::$frontendBlocks, true)) {
                     $child->vars['block'] = 'frontend';
                 } else {
                     $child->vars['subblock'] = $child->vars['block'];
@@ -86,9 +86,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormView $view
-     */
     private function separateBlockConfig(FormView $view)
     {
         if (!empty($view->vars['block_config'])) {
@@ -121,9 +118,6 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSetData(FormEvent $event)
     {
         $options = $event->getForm()->getConfig()->getOptions();
@@ -155,8 +149,8 @@ class AttributeConfigExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ConfigType::class;
+        return [ConfigType::class];
     }
 }

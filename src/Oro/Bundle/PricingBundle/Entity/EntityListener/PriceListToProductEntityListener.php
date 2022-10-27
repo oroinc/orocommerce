@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -17,6 +17,9 @@ use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Handles adding, updating and removing PriceListToProduct entity.
+ */
 class PriceListToProductEntityListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
@@ -24,26 +27,15 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
     const FIELD_PRICE_LIST = 'priceList';
     const FIELD_PRODUCT = 'product';
 
-    /**
-     * @var ShardManager
-     */
+    /** @var ShardManager */
     protected $shardManager;
 
-    /**
-     * @var PriceListTriggerHandler
-     */
+    /** @var PriceListTriggerHandler */
     protected $priceListTriggerHandler;
 
-    /**
-     * @var PriceRuleLexemeTriggerHandler
-     */
+    /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
@@ -54,9 +46,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     */
     public function postPersist(PriceListToProduct $priceListToProduct)
     {
         $this->schedulePriceListRecalculations(
@@ -65,18 +54,11 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         );
     }
 
-    /**
-     * @param PriceListToProductSaveAfterEvent $event
-     */
     public function onPriceListToProductSave(PriceListToProductSaveAfterEvent $event)
     {
         $this->postPersist($event->getPriceListToProduct());
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
     {
         $this->recalculateForOldValues($priceListToProduct, $event);
@@ -86,10 +68,6 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
         );
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param LifecycleEventArgs $event
-     */
     public function postRemove(PriceListToProduct $priceListToProduct, LifecycleEventArgs $event)
     {
         $this->schedulePriceListRecalculations(
@@ -106,13 +84,9 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             );
     }
 
-    /**
-     * @param AssignmentBuilderBuildEvent $event
-     */
     public function onAssignmentRuleBuilderBuild(AssignmentBuilderBuildEvent $event)
     {
         $this->schedulePriceListRecalculations($event->getPriceList(), $event->getProducts());
-        $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**
@@ -125,9 +99,12 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $lexemes = $this->priceRuleLexemeTriggerHandler
-            ->findEntityLexemes(PriceList::class, ['assignedProducts'], $priceList->getId());
-        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $products);
+        $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+            PriceList::class,
+            ['assignedProducts'],
+            $priceList->getId()
+        );
+        $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, $products);
     }
 
     /**
@@ -140,14 +117,10 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $products);
+        $this->priceListTriggerHandler->handlePriceListTopic(ResolvePriceRulesTopic::getName(), $priceList, $products);
         $this->scheduleDependentPriceListsUpdate($priceList, $products);
     }
 
-    /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param PreUpdateEventArgs $event
-     */
     protected function recalculateForOldValues(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
     {
         $oldProduct = $priceListToProduct->getProduct();

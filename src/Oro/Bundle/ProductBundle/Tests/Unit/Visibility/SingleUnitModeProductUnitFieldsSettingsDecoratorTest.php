@@ -47,7 +47,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
      */
     private $productUnitRepo;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()->getMock();
@@ -257,7 +257,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
 
     /**
      * @dataProvider productsDataProvider
-     * @param Product|null $product
      */
     public function testIsAddingAdditionalUnitsToProductAvailable(Product $product = null)
     {

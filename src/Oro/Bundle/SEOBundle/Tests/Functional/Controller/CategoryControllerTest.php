@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 class CategoryControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -17,9 +18,7 @@ class CategoryControllerTest extends WebTestCase
 
     public function testEditCategory()
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_catalog.entity.category.class')
-        );
+        $repository = $this->getContainer()->get('doctrine')->getRepository(Category::class);
 
         $category = $repository->findOneBy([]);
 
@@ -28,7 +27,7 @@ class CategoryControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+        $crfToken = $this->getCsrfToken('category')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
@@ -47,22 +46,20 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
+        static::assertStringNotContainsString('The CSRF token is invalid. Please try to resubmit the form.', $html);
 
-        $this->assertContains(LoadCategoryMetaData::META_DESCRIPTIONS, $html);
-        $this->assertContains(LoadCategoryMetaData::META_KEYWORDS, $html);
+        static::assertStringContainsString(LoadCategoryMetaData::META_DESCRIPTIONS, $html);
+        static::assertStringContainsString(LoadCategoryMetaData::META_KEYWORDS, $html);
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('SEO', $crawler->filter('.nav')->html());
-        $this->assertContains('Meta title', $crawler->html());
-        $this->assertContains('Meta description', $crawler->html());
-        $this->assertContains('Meta keywords', $crawler->html());
+        static::assertStringContainsString('SEO', $crawler->filter('.nav')->html());
+        static::assertStringContainsString('Meta title', $crawler->html());
+        static::assertStringContainsString('Meta description', $crawler->html());
+        static::assertStringContainsString('Meta keywords', $crawler->html());
     }
 }

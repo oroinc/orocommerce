@@ -8,10 +8,10 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
          * @export orotax/js/formatter/tax
          * @name   orotax.formatter.tax
          */
-        var taxFormatter = function() {
-            var formatElement = function(value, currency) {
+        const taxFormatter = function() {
+            const formatElement = function(value, currency) {
                 if (_.isUndefined(currency)) {
-                    currency = localeSettings.defaults.currency;
+                    currency = localeSettings.getCurrency();
                 }
 
                 if (_.isNaN(parseFloat(value))) {
@@ -21,7 +21,7 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                 return NumberFormatter.formatCurrency(value, currency);
             };
 
-            var formatPercent = function(value) {
+            const formatPercent = function(value) {
                 if (value.indexOf('%') > -1) {
                     return value;
                 }
@@ -32,13 +32,18 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
             return {
                 /**
                  * @param {Object} item
+                 * @param {null|string} currency
                  */
-                formatItem: function(item) {
-                    var localItem = _.extend({
+                formatItem: function(item, currency) {
+                    if (currency === undefined) {
+                        currency = localeSettings.getCurrency();
+                    }
+
+                    const localItem = _.extend({
                         includingTax: 0,
                         excludingTax: 0,
                         taxAmount: 0,
-                        currency: localeSettings.defaults.currency
+                        currency: currency
                     }, item);
 
                     return {
@@ -52,12 +57,12 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                  * @param {Object} item
                  */
                 formatTax: function(item) {
-                    var localItem = _.extend({
+                    const localItem = _.extend({
                         taxAmount: 0,
                         taxableAmount: 0,
                         rate: 0,
                         tax: '',
-                        currency: localeSettings.defaults.currency
+                        currency: localeSettings.getCurrency()
                     }, item);
 
                     return {

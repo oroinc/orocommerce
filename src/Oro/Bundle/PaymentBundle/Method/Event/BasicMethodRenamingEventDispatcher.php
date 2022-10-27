@@ -11,9 +11,6 @@ class BasicMethodRenamingEventDispatcher implements MethodRenamingEventDispatche
      */
     private $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -24,6 +21,6 @@ class BasicMethodRenamingEventDispatcher implements MethodRenamingEventDispatche
      */
     public function dispatch($oldId, $newId)
     {
-        $this->eventDispatcher->dispatch(MethodRenamingEvent::NAME, new MethodRenamingEvent($oldId, $newId));
+        $this->eventDispatcher->dispatch(new MethodRenamingEvent($oldId, $newId), MethodRenamingEvent::NAME);
     }
 }

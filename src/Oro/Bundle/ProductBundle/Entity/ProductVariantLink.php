@@ -7,6 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
+ * Entity class describe data in table oro_product_variant_link
  * @ORM\Entity
  * @ORM\Table(name="oro_product_variant_link")
  * @Config
@@ -127,6 +128,9 @@ class ProductVariantLink
     public function setParentProduct(Product $parentProduct)
     {
         $this->parentProduct = $parentProduct;
+        if ($this->id === null) {
+            $this->parentProduct->addVariantLink($this);
+        }
 
         return $this;
     }
@@ -138,6 +142,9 @@ class ProductVariantLink
     public function setProduct(Product $product)
     {
         $this->product = $product;
+        if ($this->id === null) {
+            $this->product->addParentVariantLink($this);
+        }
 
         return $this;
     }

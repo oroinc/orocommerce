@@ -18,9 +18,6 @@ class ShippingFiltrationService extends AbstractSkippableFiltrationService
      */
     private $filtrationService;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     */
     public function __construct(RuleFiltrationServiceInterface $filtrationService)
     {
         $this->filtrationService = $filtrationService;
@@ -56,8 +53,8 @@ class ShippingFiltrationService extends AbstractSkippableFiltrationService
 
     /**
      * @param PromotionDataInterface $promotion
-     * @param string $shippingMethod|null
-     * @param string $shippingMethodType|null
+     * @param string|null            $shippingMethod
+     * @param string|null            $shippingMethodType
      *
      * @return bool
      */

@@ -1,64 +1,64 @@
 <?php
 
-namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\FrontendLocalizationBundle\Layout\DataProvider\FrontendLocalizationProvider;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManagerInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\TranslationBundle\Entity\Language;
-use Oro\Component\Layout\ContextInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
+class FrontendLocalizationProviderTest extends TestCase
 {
-    /**
-     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $userLocalizationManager;
+    protected LocalizationProviderInterface|MockObject $localizationProvider;
 
-    /**
-     * @var FrontendLocalizationProvider
-     */
-    protected $dataProvider;
+    protected UserLocalizationManagerInterface|MockObject $localizationManager;
 
-    protected function setUp()
+    protected FrontendLocalizationProvider $dataProvider;
+
+    protected function setUp(): void
     {
-        $this->userLocalizationManager = $this->getMockBuilder(UserLocalizationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $this->localizationManager = $this->createMock(UserLocalizationManagerInterface::class);
 
-        $this->dataProvider = new FrontendLocalizationProvider($this->userLocalizationManager);
+        $this->dataProvider = new FrontendLocalizationProvider(
+            $this->localizationProvider,
+            $this->localizationManager
+        );
     }
 
     public function testGetEnabledLocalization()
     {
         $localizations = [new Localization(), new Localization()];
 
-        $this->userLocalizationManager->expects($this->once())
+        $this->localizationManager->expects($this->once())
             ->method('getEnabledLocalizations')
             ->willReturn($localizations);
 
         $this->assertSame($localizations, $this->dataProvider->getEnabledLocalizations());
     }
 
-    public function testGetCurrentLocalization()
+    public function testGetCurrentLocalization(): void
     {
         $localization = new Localization();
 
-        $this->userLocalizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
         $this->assertSame($localization, $this->dataProvider->getCurrentLocalization());
     }
 
-    public function testGetCurrentLanguageCode()
+    public function testGetCurrentLanguageCode(): void
     {
         $languageCode = 'de_DE';
         $expectedLanguageCode = 'de-DE';
 
         $localization = $this->getLocalizationWithLanguage($languageCode);
 
-        $this->userLocalizationManager
+        $this->localizationProvider
             ->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
@@ -66,19 +66,19 @@ class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedLanguageCode, $this->dataProvider->getCurrentLanguageCode());
     }
 
-    public function testGetCurrentLanguageCodeWhenNoCurrent()
+    public function testGetCurrentLanguageCodeWhenNoCurrent(): void
     {
         $languageCode = 'en_US';
         $expectedLanguageCode = 'en-US';
 
         $localization = $this->getLocalizationWithLanguage($languageCode);
 
-        $this->userLocalizationManager
+        $this->localizationProvider
             ->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn(null);
 
-        $this->userLocalizationManager
+        $this->localizationManager
             ->expects($this->once())
             ->method('getDefaultLocalization')
             ->willReturn($localization);
@@ -86,11 +86,6 @@ class FrontendLocalizationProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedLanguageCode, $this->dataProvider->getCurrentLanguageCode());
     }
 
-    /**
-     * @param string $languageCode
-     *
-     * @return Localization
-     */
     private function getLocalizationWithLanguage(string $languageCode): Localization
     {
         $language = new Language();

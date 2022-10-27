@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Allows to modify product queries to add related data
+ */
 class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
 {
     /**
@@ -27,9 +30,6 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     protected $productAttributes = [];
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -40,7 +40,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
      */
     public function isVirtualRelation($className, $fieldName)
     {
-        return ($className == Product::class) && $this->isProductAttributeField($fieldName);
+        return ($className === Product::class) && $this->isProductAttributeField($fieldName);
     }
 
     /**

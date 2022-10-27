@@ -8,41 +8,15 @@
     }
 }
 
-.grid-container {
-    .table-bordered {
-        tbody {
-            &.hasrs {
-                td {
-                    &:not([rowspan]) {
-                        border-left: 0;
-                    }
-                }
-            }
-        }
-
-        td {
-            &.rfp-line_item-requested_quantity-not_first,
-            &.rfp-line_item-target_price-not_first {
-                border-top: 0;
-            }
-        }
-    }
-}
-
 .rfp-lineitems {
-    .row-oro {
-        float: left;
-        width: auto;
-    }
-
     .add-list-item {
-        margin-top: 10px;
+        margin-top: $content-padding-small;
     }
 }
 
 .form-horizontal {
     .rfp-lineitem-requested-quantity {
-        > input[type="text"] {
+        > input[type='text'] {
             width: 50px;
         }
     }
@@ -57,8 +31,10 @@
 .rfp-lineitem-requested {
     .oro-item-collection {
         td {
+            white-space: normal;
+
             &.rfp-lineitem-requested-price {
-                input[type="text"] {
+                input[type='text'] {
                     width: 50px;
                 }
             }
@@ -71,8 +47,8 @@
         }
 
         .removeRow {
-            &:after {
-                color: #666;
+            &::after {
+                color: $primary-400;
             }
         }
     }
@@ -101,6 +77,27 @@ table {
         &:last-child {
             .rfp-line_item-target_price {
                 height: 100%;
+            }
+        }
+    }
+}
+
+.grid-container {
+    .table-bordered {
+        td {
+            &.rfp-line_item-requested_quantity-not_first,
+            &.rfp-line_item-target_price-not_first {
+                border-top: 0;
+            }
+        }
+
+        tbody {
+            &.hasrs {
+                td {
+                    &:not([rowspan]) {
+                        border-left: 0;
+                    }
+                }
             }
         }
     }

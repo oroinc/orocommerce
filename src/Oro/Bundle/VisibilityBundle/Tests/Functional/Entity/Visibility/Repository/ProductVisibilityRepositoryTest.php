@@ -29,7 +29,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -47,8 +47,6 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
 
     /**
      * @dataProvider setToDefaultWithoutCategoryDataProvider
-     * @param $categoryName
-     * @param array $expected
      */
     public function testSetToDefaultWithoutCategory($categoryName, array $expected)
     {
@@ -101,7 +99,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
-                        'product' => 'product-7',
+                        'product' => 'продукт-7',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
@@ -109,7 +107,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
-                        'product' => 'product-9',
+                        'product' => 'продукт-9',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                 ]

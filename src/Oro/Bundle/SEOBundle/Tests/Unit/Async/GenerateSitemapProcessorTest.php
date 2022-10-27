@@ -3,375 +3,238 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
-use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor;
-use Oro\Bundle\SEOBundle\Async\Topics;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
-use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
+use Oro\Bundle\SEOBundle\Provider\WebsiteForSitemapProviderInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\DependentJobContext;
 use Oro\Component\MessageQueue\Job\DependentJobService;
 use Oro\Component\MessageQueue\Job\JobRunner;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Website\WebsiteInterface;
+use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /**
-     * @var JobRunner|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $jobRunner;
+    private DependentJobService|\PHPUnit\Framework\MockObject\MockObject $dependentJob;
 
-    /**
-     * @var DependentJobService|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $dependentJobService;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $producer;
+    private WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject $websiteUrlProvidersService;
 
-    /**
-     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $websiteUrlProvidersService;
+    private WebsiteForSitemapProviderInterface|\PHPUnit\Framework\MockObject\MockObject $websiteProvider;
 
-    /**
-     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $websiteProvider;
+    private PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject $fileSystemAdapter;
 
-    /**
-     * @var SitemapIndexMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $indexMessageFactory;
+    private CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject $canonicalUrlGenerator;
 
-    /**
-     * @var SitemapMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private GenerateSitemapProcessor $processor;
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $canonicalUrlGenerator;
-
-    /**
-     * @var GenerateSitemapProcessor
-     */
-    private $processor;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->jobRunner = $this->getMockBuilder(JobRunner::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dependentJobService = $this->getMockBuilder(DependentJobService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jobRunner = $this->createMock(JobRunner::class);
+        $this->dependentJob = $this->createMock(DependentJobService::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->websiteUrlProvidersService = $this->createMock(WebsiteUrlProvidersServiceInterface::class);
-        $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
-        $this->messageFactory = $this->getMockBuilder(SitemapMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->indexMessageFactory = $this->getMockBuilder(SitemapIndexMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteProvider = $this->createMock(WebsiteForSitemapProviderInterface::class);
+        $this->fileSystemAdapter = $this->createMock(PublicSitemapFilesystemAdapter::class);
+        $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->canonicalUrlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->processor = new GenerateSitemapProcessor(
             $this->jobRunner,
-            $this->dependentJobService,
+            $this->dependentJob,
             $this->producer,
             $this->websiteUrlProvidersService,
             $this->websiteProvider,
-            $this->indexMessageFactory,
-            $this->messageFactory,
-            $this->logger,
-            $this->canonicalUrlGenerator
+            $this->fileSystemAdapter,
+            $this->canonicalUrlGenerator,
+            $this->logger
         );
     }
 
-    public function testProcessWhenThrowsInvalidArgumentException()
+    private function getSession(): SessionInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $messageId = 777;
-        $data = ['key' => 'value'];
-        $message = $this->getMessage($messageId, $data);
-        $website = $this->getWebsite();
-        $providerNames = $this->getWebsiteProvidersByNames($website);
-        $job = $this->getJobAndRunUnique($messageId);
-        $this->expectCreateDelayed([$website], $providerNames);
-
-        $dependentJobContext = new DependentJobContext($job);
-        $this->dependentJobService->expects($this->once())
-            ->method('createDependentJobContext')
-            ->with($job)
-            ->willReturn($dependentJobContext);
-
-        $exception = new InvalidArgumentException();
-        $this->indexMessageFactory->expects($this->once())
-            ->method('createMessage')
-            ->with($website, $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willThrowException($exception);
-        $this->dependentJobService->expects($this->never())
-            ->method('saveDependentJob');
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $this->createMock(SessionInterface::class);
     }
 
-    public function testProcessWhenThrowsException()
+    private function getMessage(string $messageId): MessageInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
+        $message = new Message();
+        $message->setMessageId($messageId);
 
-        $messageId = 777;
-        $data = ['key' => 'value'];
-        $message = $this->getMessage($messageId, $data);
-        $website = $this->getWebsite();
-        $providerNames = $this->getWebsiteProvidersByNames($website);
-        $job = $this->getJobAndRunUnique($messageId);
-        $this->expectCreateDelayed([$website], $providerNames);
-
-        $dependentJobContext = new DependentJobContext($job);
-        $this->dependentJobService->expects($this->once())
-            ->method('createDependentJobContext')
-            ->with($job)
-            ->willReturn($dependentJobContext);
-        $this->indexMessageFactory->expects($this->once())
-            ->method('createMessage')
-            ->with($website, $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willReturn(['some data']);
-
-        $exception = new \Exception();
-        $this->dependentJobService->expects($this->once())
-            ->method('saveDependentJob')
-            ->with($dependentJobContext)
-            ->willThrowException($exception);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'exception' => $exception,
-                    'topic' => Topics::GENERATE_SITEMAP,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $message;
     }
 
-    public function testProcess()
+    private function getWebsite(int $websiteId): Website
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $messageId = 777;
-        $message = $this->getMessage($messageId);
-        $websites = $this->getWebsites();
-        $providerNames = [];
-        $providerNames = array_merge($providerNames, $this->getWebsiteProvidersByNames($websites[0]));
-        $job = $this->getJobAndRunUnique($messageId);
-        $this->expectCreateDelayed($websites, $providerNames);
-
-        $dependentJobContext = new DependentJobContext($job);
-        $this->dependentJobService->expects($this->once())
-            ->method('createDependentJobContext')
-            ->with($job)
-            ->willReturn($dependentJobContext);
-        $this->indexMessageFactory->expects($this->exactly(count($websites)))
-            ->method('createMessage');
-        $this->indexMessageFactory->expects($this->at(0))
-            ->method('createMessage')
-            ->with($websites[0], $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willReturn(['some data']);
-        $this->indexMessageFactory->expects($this->at(1))
-            ->method('createMessage')
-            ->with($websites[1], $this->isType(\PHPUnit\Framework\Constraint\IsType::TYPE_INT))
-            ->willReturn(['some data']);
-        $this->dependentJobService->expects($this->once())
-            ->method('saveDependentJob')
-            ->with($dependentJobContext);
-
-        $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));
-    }
-
-    public function testGetSubscribedTopics()
-    {
-        $this->assertEquals(
-            [Topics::GENERATE_SITEMAP],
-            GenerateSitemapProcessor::getSubscribedTopics()
-        );
-    }
-
-    /**
-     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getWebsite()
-    {
-        $website = $this->createWebsiteMock(777);
-
-        $this->websiteProvider->expects($this->once())
-            ->method('getWebsites')
-            ->willReturn([$website]);
-
-        return $website;
-    }
-
-    /**
-     * @return WebsiteInterface[]|\PHPUnit\Framework\MockObject\MockObject[]
-     */
-    private function getWebsites()
-    {
-        $websites = [
-            $this->createWebsiteMock(777),
-            $this->createWebsiteMock(888),
-        ];
-        $this->websiteProvider->expects($this->once())
-            ->method('getWebsites')
-            ->willReturn($websites);
-
-        return $websites;
-    }
-
-    /**
-     * @param int $websiteId
-     * @return WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createWebsiteMock($websiteId)
-    {
-        $website = $this->createMock(WebsiteInterface::class);
-        $website->expects($this->any())
+        $website = $this->createMock(Website::class);
+        $website->expects(self::any())
             ->method('getId')
             ->willReturn($websiteId);
 
         return $website;
     }
 
-    /**
-     * @param int $messageId
-     * @return Job
-     */
-    private function getJobAndRunUnique($messageId)
+    private function getJobAndRunUnique(string $messageId): Job
     {
-        $jobRunner = $this->jobRunner;
+        $rootJob = new Job();
+        $rootJob->setId(100);
+        $job = new Job();
+        $job->setId(200);
+        $job->setRootJob($rootJob);
 
-        /** @var Job $job */
-        $job = $this->getEntity(Job::class, ['id' => 1]);
-        $childJob = $this->getEntity(Job::class, ['id' => 2, 'rootJob' => $job]);
-        $this->jobRunner->expects($this->once())
+        $this->jobRunner->expects(self::once())
             ->method('runUnique')
-            ->with(
-                $messageId,
-                Topics::GENERATE_SITEMAP
-            )
-            ->willReturnCallback(function ($jobId, $name, $callback) use ($jobRunner, $childJob) {
-                return $callback($jobRunner, $childJob);
+            ->with($messageId, GenerateSitemapTopic::getName())
+            ->willReturnCallback(function ($jobId, $name, $callback) use ($job) {
+                return $callback($this->jobRunner, $job);
             });
 
         return $job;
     }
 
-    /**
-     * @param WebsiteInterface $website
-     *
-     * @return array
-     */
-    private function getWebsiteProvidersByNames(WebsiteInterface $website)
+    public function testGetSubscribedTopics(): void
     {
-        $providerNames = [
-            'first' => '',
-            'second' => ''
-        ];
-        $this->websiteUrlProvidersService->expects(static::any())
-            ->method('getWebsiteProvidersIndexedByNames')
-            ->with($website)
-            ->willReturn($providerNames);
-
-        return array_keys($providerNames);
+        self::assertEquals(
+            [GenerateSitemapTopic::getName()],
+            GenerateSitemapProcessor::getSubscribedTopics()
+        );
     }
 
-    /**
-     * @param array|WebsiteInterface[] $websites
-     * @param array $providerNames
-     */
-    private function expectCreateDelayed(array $websites, array $providerNames)
+    public function testProcessWhenSendingSitemapGenerationMessageFailed(): void
     {
-        $this->jobRunner->expects($this->exactly(count($providerNames)*count($websites)))
-            ->method('createDelayed');
-        $this->canonicalUrlGenerator->expects($this->exactly(count($websites)))
+        $messageId = '1000';
+        $message = $this->getMessage($messageId);
+        $website = $this->getWebsite(123);
+
+        $this->fileSystemAdapter->expects(self::once())
+            ->method('clearTempStorage');
+
+        $this->websiteProvider->expects(self::once())
+            ->method('getAvailableWebsites')
+            ->willReturn([$website]);
+
+        $job = $this->getJobAndRunUnique($messageId);
+
+        $dependentJobContext = new DependentJobContext($job->getRootJob());
+        $this->dependentJob->expects(self::once())
+            ->method('createDependentJobContext')
+            ->with(self::identicalTo($job->getRootJob()))
+            ->willReturn($dependentJobContext);
+        $this->dependentJob->expects(self::once())
+            ->method('saveDependentJob')
+            ->with(self::identicalTo($dependentJobContext));
+
+        $exception = new \Exception('some error');
+        $this->canonicalUrlGenerator->expects(self::once())
             ->method('clearCache');
+        $this->websiteUrlProvidersService->expects(self::once())
+            ->method('getWebsiteProvidersIndexedByNames')
+            ->willReturn(['test_type' => $this->createMock(UrlItemsProviderInterface::class)]);
+        $this->jobRunner->expects(self::once())
+            ->method('createDelayed')
+            ->willReturnCallback(function (string $name, \Closure $callback) use ($job) {
+                return $callback($this->jobRunner, $job);
+            });
+        $this->producer->expects(self::once())
+            ->method('send')
+            ->willThrowException($exception);
 
-        $count = 0;
-        foreach ($websites as $key => $website) {
-            $this->canonicalUrlGenerator->expects($this->at($key))
-                ->method('clearCache')
-                ->with($website);
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during generating a sitemap.',
+                ['exception' => $exception]
+            );
 
-            foreach ($providerNames as $providerName) {
-                $this->jobRunner->expects($this->at($count))
-                    ->method('createDelayed')
-                    ->with(
-                        sprintf(
-                            '%s:%s:%s',
-                            Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
-                            $website->getId(),
-                            $providerName
-                        )
-                    );
-                $count++;
-            }
-        }
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
     }
 
-    /**
-     * @param int $messageId
-     * @param array $data
-     * @return MessageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getMessage($messageId, array $data = [])
+    public function testProcess(): void
     {
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-        $message->expects($this->any())
-            ->method('getMessageId')
-            ->willReturn($messageId);
-        
-        return $message;
+        $messageId = '1000';
+        $message = $this->getMessage($messageId);
+        $websites = [
+            $this->getWebsite(123),
+            $this->getWebsite(234),
+        ];
+
+        $this->fileSystemAdapter->expects(self::once())
+            ->method('clearTempStorage');
+
+        $this->websiteProvider->expects(self::once())
+            ->method('getAvailableWebsites')
+            ->willReturn($websites);
+
+        $job = $this->getJobAndRunUnique($messageId);
+
+        $dependentJobContext = new DependentJobContext($job->getRootJob());
+        $this->dependentJob->expects(self::once())
+            ->method('createDependentJobContext')
+            ->with(self::identicalTo($job->getRootJob()))
+            ->willReturn($dependentJobContext);
+        $this->dependentJob->expects(self::once())
+            ->method('saveDependentJob')
+            ->with(self::identicalTo($dependentJobContext))
+            ->willReturnCallback(function (DependentJobContext $context) use ($job) {
+                $dependentJobs = $context->getDependentJobs();
+                self::assertCount(1, $dependentJobs);
+                self::assertEquals(GenerateSitemapIndexTopic::getName(), $dependentJobs[0]['topic']);
+                self::assertEquals($job->getId(), $dependentJobs[0]['message']['jobId']);
+                self::assertGreaterThan(0, $dependentJobs[0]['message']['version']);
+                self::assertEquals([123, 234], $dependentJobs[0]['message']['websiteIds']);
+            });
+
+        $this->websiteUrlProvidersService->expects(self::exactly(2))
+            ->method('getWebsiteProvidersIndexedByNames')
+            ->willReturn([
+                'first_type' => $this->createMock(UrlItemsProviderInterface::class),
+                'second_type' => $this->createMock(UrlItemsProviderInterface::class),
+            ]);
+        $providerNames = ['first_type', 'second_type'];
+
+        $this->canonicalUrlGenerator->expects(self::exactly(count($websites)))
+            ->method('clearCache')
+            ->withConsecutive([$websites[0]], [$websites[0]]);
+        $jobNameTemplate = GenerateSitemapByWebsiteAndTypeTopic::getName() . ':%s:%s';
+        $this->jobRunner->expects(self::exactly(count($providerNames) * count($websites)))
+            ->method('createDelayed')
+            ->withConsecutive(
+                [sprintf($jobNameTemplate, $websites[0]->getId(), $providerNames[0])],
+                [sprintf($jobNameTemplate, $websites[0]->getId(), $providerNames[1])],
+                [sprintf($jobNameTemplate, $websites[1]->getId(), $providerNames[0])],
+                [sprintf($jobNameTemplate, $websites[1]->getId(), $providerNames[1])]
+            )
+            ->willReturnCallback(function (string $name, \Closure $callback) use ($job) {
+                return $callback($this->jobRunner, $job);
+            });
+        $this->producer->expects(self::exactly(count($providerNames) * count($websites)))
+            ->method('send')
+            ->with(GenerateSitemapByWebsiteAndTypeTopic::getName());
+
+        $this->logger->expects(self::never())
+            ->method(self::anything());
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
+        );
     }
 }

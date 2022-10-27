@@ -1,7 +1,7 @@
 {% block _oro_shopping_list_frontend_line_item_widget_shoppingList_widget %}
     {% set currentShoppingList = currentShoppingList is not defined ? null : currentShoppingList %}
     {% set isPost = app.request.isMethod('POST') %}
-    {% spaceless %}
+    {% apply spaceless %}
         <select {{ block('widget_attributes') }}>
             {% for group_label, choice in choices %}
                 {% set isCurrent = currentShoppingList is not null and choice.value == currentShoppingList.id %}
@@ -18,5 +18,5 @@
                 {{  empty_value|trans({},translation_domain) }}
             </option>
         </select>
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}

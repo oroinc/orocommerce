@@ -13,12 +13,12 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class TaxRuleRepositoryTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules']);
+        $this->loadFixtures([LoadTaxRules::class]);
     }
 
     public function testFindByCountryAndProductTaxCodeAndCustomerTaxCode()
@@ -81,10 +81,26 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->assertContainsId($taxRule, $result);
     }
 
-    /**
-     * @param TaxRule $expectedTaxRule
-     * @param array $result
-     */
+    public function testFindByCountryAndZipCodeAndTaxCode()
+    {
+        /** @var TaxRule $taxRule */
+        $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
+
+        /** @var TaxRule[] $result */
+        $result = $this->getRepository()->findByCountryAndZipCodeAndTaxCode(
+            TaxCodes::create(
+                [
+                    TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                ]
+            ),
+            LoadTaxJurisdictions::ZIP_CODE,
+            $taxRule->getTaxJurisdiction()->getCountry()
+        );
+
+        $this->assertContainsId($taxRule, $result);
+    }
+
     protected function assertContainsId(TaxRule $expectedTaxRule, array $result)
     {
         $ids = array_map(
@@ -102,8 +118,6 @@ class TaxRuleRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_tax.entity.tax_rule.class')
-        );
+        return $this->getContainer()->get('doctrine')->getRepository(TaxRule::class);
     }
 }

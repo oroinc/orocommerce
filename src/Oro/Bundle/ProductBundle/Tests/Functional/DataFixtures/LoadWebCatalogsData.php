@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestWebCatalog;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 

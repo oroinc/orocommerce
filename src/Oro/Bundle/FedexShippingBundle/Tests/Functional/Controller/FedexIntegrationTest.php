@@ -14,15 +14,15 @@ class FedexIntegrationTest extends WebTestCase
 {
     use FedexIntegrationTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
     }
 
     public function testCreateAction()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_integration_create'));
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -52,8 +52,8 @@ class FedexIntegrationTest extends WebTestCase
             $form->getUri(),
             $this->createFormValues($form, $settingsData)
         );
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('Integration saved', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('Integration saved', $crawler->html());
 
         $settings = $this->getFedexIntegrationSettings();
         $this->assertSettingsCorrect($settings, $settingsData);
@@ -61,8 +61,8 @@ class FedexIntegrationTest extends WebTestCase
         $serviceIds[] = $settings->getShippingServices()[0]->getId();
         $serviceIds[] = $settings->getShippingServices()[1]->getId();
 
-        static::assertTrue(in_array(1, $serviceIds, true));
-        static::assertTrue(in_array(2, $serviceIds, true));
+        self::assertContains(1, $serviceIds);
+        self::assertContains(2, $serviceIds);
     }
 
     public function testIndexAction()
@@ -71,18 +71,12 @@ class FedexIntegrationTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_integration_index'));
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('oro-integration-grid', $crawler->html());
-        static::assertContains('fedex-logo.png', $crawler->html());
-        static::assertContains('FedEx', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('oro-integration-grid', $crawler->html());
+        self::assertStringContainsString('fedex-logo.png', $crawler->html());
+        self::assertStringContainsString('FedEx', $crawler->html());
     }
 
-    /**
-     * @param Form  $form
-     * @param array $settings
-     *
-     * @return array
-     */
     private function createFormValues(Form $form, array $settings): array
     {
         $formValues = $form->getPhpValues();
@@ -94,23 +88,19 @@ class FedexIntegrationTest extends WebTestCase
         return $formValues;
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     * @param array                    $settingsData
-     */
-    private function assertSettingsCorrect(FedexIntegrationSettings $settings, array $settingsData)
+    private function assertSettingsCorrect(FedexIntegrationSettings $settings, array $settingsData): void
     {
-        static::assertSame($settingsData['key'], $settings->getKey());
-        static::assertSame(
+        self::assertSame($settingsData['key'], $settings->getKey());
+        self::assertSame(
             $settingsData['password'],
-            static::getContainer()->get('oro_security.encoder.default')->decryptData($settings->getPassword())
+            self::getContainer()->get('oro_security.encoder.default')->decryptData($settings->getPassword())
         );
-        static::assertSame($settingsData['accountNumber'], $settings->getAccountNumber());
-        static::assertSame($settingsData['meterNumber'], $settings->getMeterNumber());
-        static::assertSame($settingsData['pickupType'], $settings->getPickupType());
-        static::assertSame($settingsData['unitOfWeight'], $settings->getUnitOfWeight());
-        static::assertCount(count($settingsData['shippingServices']), $settings->getShippingServices());
-        static::assertSame(
+        self::assertSame($settingsData['accountNumber'], $settings->getAccountNumber());
+        self::assertSame($settingsData['meterNumber'], $settings->getMeterNumber());
+        self::assertSame($settingsData['pickupType'], $settings->getPickupType());
+        self::assertSame($settingsData['unitOfWeight'], $settings->getUnitOfWeight());
+        self::assertCount(count($settingsData['shippingServices']), $settings->getShippingServices());
+        self::assertSame(
             $settingsData['labels']['values']['default'],
             $settings->getLabels()[0]->getString()
         );

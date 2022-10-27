@@ -32,7 +32,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ProductUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);
@@ -96,13 +96,10 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @param array $expectedConfig
-     * @param FormConfigInterface $actualConfig
-     */
     protected function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
     {
         foreach ($expectedConfig as $key => $value) {

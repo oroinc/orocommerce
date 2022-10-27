@@ -9,15 +9,12 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroPricingExtension extends Extension
 {
-    const ALIAS = 'oro_pricing';
-
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
         $container->prependExtensionConfig($this->getAlias(), $config);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -27,17 +24,15 @@ class OroPricingExtension extends Extension
         $loader->load('importexport.yml');
         $loader->load('layout.yml');
         $loader->load('block_types.yml');
-        $loader->load('notification_message.yml');
         $loader->load('commands.yml');
+        $loader->load('controllers.yml');
+        $loader->load('mq_processors.yml');
+        $loader->load('mq_topics.yml');
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $loader->load('services_test.yml');
+        }
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

@@ -1,12 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var OrderLineItemOffers;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
 
-    OrderLineItemOffers = BaseComponent.extend({
+    const OrderLineItemOffers = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -36,10 +36,10 @@ define(function(require) {
         items: [],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function OrderLineItemOffers() {
-            OrderLineItemOffers.__super__.constructor.apply(this, arguments);
+        constructor: function OrderLineItemOffers(options) {
+            OrderLineItemOffers.__super__.constructor.call(this, options);
         },
 
         /**
@@ -49,29 +49,39 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('click', this.options.offersSelector, _.bind(this.onRadioClick, this));
+                .on('click', this.options.offersSelector, this.onRadioClick.bind(this));
 
             this.$product = $(this.options.productSelector);
             this.$product
-                .on('change', _.bind(this.onProductChange, this));
+                .on('change', this.onProductChange.bind(this));
+
+            this.objects = {};
+            // Init order with RFQ items
+            mediator.trigger('entry-point:order:trigger-delayed');
         },
 
         /**
          * @param {jQuery.Event} e
          */
         onRadioClick: function(e) {
-            var target = $(e.target);
+            const $target = $(e.target);
+            let hasChanges = false;
 
-            var quantity = target.data('quantity');
-            if (this.findObject(this.options.quantitySelector) !== quantity) {
-                this.findObject(this.options.quantitySelector).val(quantity);
-            }
+            // Disable entry point listeners and load data after all values are set.
+            // Listeners will be enabled by the entry point after AJAX request processed.
+            mediator.trigger('entry-point:listeners:off');
+            // Fill corresponding inputs with values from data attributes of offer if value differs.
+            _.each(['quantity', 'price', 'unit'], (function(field) {
+                const data = $target.data(field).toString();
+                const $el = this.findObject(this.options[field + 'Selector']);
+                if (data.length > 0 && $el.val() !== data) {
+                    $el.val(data).trigger('change');
+                    hasChanges = true;
+                }
+            }.bind(this)));
 
-            var unit = target.data('unit');
-            if (this.findObject(this.options.unitSelector) !== unit) {
-                this.findObject(this.options.unitSelector)
-                    .val(target.data('unit'))
-                    .trigger('change');
+            if (hasChanges) {
+                mediator.trigger('entry-point:order:trigger');
             }
         },
 
@@ -97,7 +107,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

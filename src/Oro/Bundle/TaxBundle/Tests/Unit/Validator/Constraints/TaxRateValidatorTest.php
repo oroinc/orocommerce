@@ -4,55 +4,32 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\TaxBundle\Validator\Constraints\TaxRate;
 use Oro\Bundle\TaxBundle\Validator\Constraints\TaxRateValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class TaxRateValidatorTest extends \PHPUnit\Framework\TestCase
+class TaxRateValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var TaxRateValidator */
-    private $validator;
-
-    /** @var TaxRate */
-    private $constraint;
-
-    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $context;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function createValidator()
     {
-        $this->validator = new TaxRateValidator();
-        $this->constraint = new TaxRate();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator->initialize($this->context);
+        return new TaxRateValidator();
     }
 
     /**
-     * @param mixed $value
-     * @param bool $expectedIsValid
-     *
      * @dataProvider validateProvider
      */
-    public function testValidate($value, $expectedIsValid)
+    public function testValidate($value, bool $expectedIsValid)
     {
-        if ($expectedIsValid) {
-            $this->context->expects(self::never())
-                ->method('addViolation');
-        } else {
-            $this->context->expects(self::once())
-                ->method('addViolation')
-                ->with($this->constraint->taxRateToManyDecimalPlaces);
-        }
+        $constraint = new TaxRate();
+        $this->validator->validate($value, $constraint);
 
-        $this->validator->validate($value, $this->constraint);
+        if ($expectedIsValid) {
+            $this->assertNoViolation();
+        } else {
+            $this->buildViolation($constraint->taxRateToManyDecimalPlaces)
+                ->assertRaised();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
         return [
             [
@@ -68,11 +45,11 @@ class TaxRateValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedIsValid' => true,
             ],
             [
-                'value' => 0.1,
+                'value' => 0.0,
                 'expectedIsValid' => true,
             ],
             [
-                'value' => 0.10,
+                'value' => 0.1,
                 'expectedIsValid' => true,
             ],
             [
@@ -92,7 +69,27 @@ class TaxRateValidatorTest extends \PHPUnit\Framework\TestCase
                 'expectedIsValid' => false,
             ],
             [
+                'value' => 0.000000001,
+                'expectedIsValid' => false,
+            ],
+            [
+                'value' => 11.0000001,
+                'expectedIsValid' => false,
+            ],
+            [
+                'value' => 11.00000001,
+                'expectedIsValid' => false,
+            ],
+            [
+                'value' => 1e-200,
+                'expectedIsValid' => false,
+            ],
+            [
                 'value' => 'ab',
+                'expectedIsValid' => true,
+            ],
+            [
+                'value' => 9.698 / 100,
                 'expectedIsValid' => true,
             ],
         ];

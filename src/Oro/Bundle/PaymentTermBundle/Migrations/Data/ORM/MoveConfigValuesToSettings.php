@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
@@ -74,9 +74,6 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         $manager->flush();
     }
 
-    /**
-     * @param Channel $channel
-     */
     protected function dispatchPaymentMethodRenamingEvent(Channel $channel)
     {
         $this->dispatcher->dispatch(

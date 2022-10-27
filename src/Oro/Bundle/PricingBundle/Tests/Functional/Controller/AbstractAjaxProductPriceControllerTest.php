@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -44,10 +44,10 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             $params['currency'] = $currency;
         }
         if ($customer) {
-            $params[PriceListRequestHandlerInterface::ACCOUNT_ID_KEY] = $this->getReference($customer)->getId();
+            $params[ProductPriceScopeCriteriaRequestHandler::CUSTOMER_ID_KEY] = $this->getReference($customer)->getId();
         }
         if ($website) {
-            $params[PriceListRequestHandlerInterface::WEBSITE_KEY] = $this->getReference($website)->getId();
+            $params[ProductPriceScopeCriteriaRequestHandler::WEBSITE_KEY] = $this->getReference($website)->getId();
         }
 
         $url = $this->getUrl($this->pricesByCustomerActionUrl, $params);
@@ -68,6 +68,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 
         $expectedByUnits = [];
         foreach ($expected as $price) {
+            $price['product_id'] = $product->getId();
             $expectedByUnits[$price['unit']][] = $price;
         }
 
@@ -75,7 +76,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
             $this->assertArrayHasKey($unit, $actualDataByUnits);
             $this->assertCount(count($prices), $actualDataByUnits[$unit]);
             foreach ($prices as $price) {
-                $this->assertContains($price, $actualDataByUnits[$unit]);
+                static::assertContainsEquals($price, $actualDataByUnits[$unit]);
             }
         }
     }
@@ -150,7 +151,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 'unit' => 'liter',
                 'currency' => 'USD',
                 'expected' => [
-                    'value' => 1.22,
+                    'value' => 12.2,
                     'currency' => 'USD'
                 ]
             ],
@@ -160,7 +161,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 'unit' => 'liter',
                 'currency' => 'USD',
                 'expected' => [
-                    'value' => 1.22,
+                    'value' => 12.2,
                     'currency' => 'USD'
                 ]
             ]

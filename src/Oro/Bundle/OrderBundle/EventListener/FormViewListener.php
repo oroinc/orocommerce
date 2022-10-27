@@ -5,11 +5,15 @@ namespace Oro\Bundle\OrderBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds grid with related orders to view pages of Customer, CustomerUser and ShoppingList entities.
+ */
 class FormViewListener
 {
     /**
@@ -27,11 +31,6 @@ class FormViewListener
      */
     protected $requestStack;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -42,33 +41,40 @@ class FormViewListener
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCustomerUserView(BeforeListRenderEvent $event)
     {
         /** @var CustomerUser $customerUser */
         $customerUser = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
         if ($customerUser) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:CustomerUser:orders_view.html.twig',
+                '@OroOrder/CustomerUser/orders_view.html.twig',
                 ['entity' => $customerUser]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCustomerView(BeforeListRenderEvent $event)
     {
         /** @var Customer $customer */
         $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
         if ($customer) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:Customer:orders_view.html.twig',
+                '@OroOrder/Customer/orders_view.html.twig',
                 ['entity' => $customer]
+            );
+            $this->addSalesOrdersBlock($event->getScrollData(), $template);
+        }
+    }
+
+    public function onShoppingListView(BeforeListRenderEvent $event)
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntityFromRequestId('OroShoppingListBundle:ShoppingList');
+        if ($shoppingList) {
+            $template = $event->getEnvironment()->render(
+                '@OroOrder/ShoppingList/orders_view.html.twig',
+                ['entity' => $shoppingList]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }

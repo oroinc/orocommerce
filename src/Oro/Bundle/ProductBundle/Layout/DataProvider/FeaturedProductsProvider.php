@@ -2,47 +2,87 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\Layout\SegmentProducts\SegmentProductsQueryProvider;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
+use Oro\Bundle\ProductBundle\Provider\ProductSegmentProvider;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
-class FeaturedProductsProvider extends AbstractSegmentProductsProvider
+/**
+ * Provides featured products.
+ */
+class FeaturedProductsProvider
 {
-    const FEATURED_PRODUCTS_CACHE_KEY = 'oro_product.layout.data_provider.featured_products_featured_products';
+    private const PRODUCT_LIST_TYPE = 'featured_products';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getCacheParts(Segment $segment)
-    {
-        $user = $this->getTokenStorage()->getToken()->getUser();
-        $userId = 0;
-        if ($user instanceof AbstractUser) {
-            $userId = $user->getId();
-        }
+    private SegmentProductsQueryProvider $segmentProductsQueryProvider;
+    private ProductSegmentProvider $productSegmentProvider;
+    private ProductListBuilder $productListBuilder;
+    private AclHelper $aclHelper;
+    private ConfigManager $configManager;
 
-        return ['featured_products', $userId, $segment->getId()];
+    /** @var array|null [product view, ...] */
+    private ?array $products = null;
+
+    public function __construct(
+        SegmentProductsQueryProvider $segmentProductsQueryProvider,
+        ProductSegmentProvider $productSegmentProvider,
+        ProductListBuilder $productListBuilder,
+        AclHelper $aclHelper,
+        ConfigManager $configManager
+    ) {
+        $this->segmentProductsQueryProvider = $segmentProductsQueryProvider;
+        $this->productSegmentProvider = $productSegmentProvider;
+        $this->productListBuilder = $productListBuilder;
+        $this->aclHelper = $aclHelper;
+        $this->configManager = $configManager;
     }
 
     /**
-     * {@inheritdoc}
+     * @return ProductView[]
      */
-    protected function getSegmentId()
+    public function getProducts(): array
     {
-        return $this->getConfigManager()
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getQueryBuilder(Segment $segment)
-    {
-        $qb = $this->getSegmentManager()->getEntityQueryBuilder($segment);
-        if ($qb) {
-            $qb = $this->getProductManager()->restrictQueryBuilder($qb, []);
+        if (null === $this->products) {
+            $this->products = $this->loadProducts();
         }
 
-        return $qb;
+        return $this->products;
+    }
+
+    private function loadProducts(): array
+    {
+        $segment = $this->getSegment();
+        if (null === $segment) {
+            return [];
+        }
+
+        $query = $this->segmentProductsQueryProvider->getQuery($segment, self::PRODUCT_LIST_TYPE);
+        if (null === $query) {
+            return [];
+        }
+
+        $this->aclHelper->apply($query);
+        $rows = $query->getArrayResult();
+        if (!$rows) {
+            return [];
+        }
+
+        return $this->productListBuilder->getProductsByIds(self::PRODUCT_LIST_TYPE, array_column($rows, 'id'));
+    }
+
+    private function getSegment(): ?Segment
+    {
+        $segmentId = $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::FEATURED_PRODUCTS_SEGMENT_ID)
+        );
+        if (!$segmentId) {
+            return null;
+        }
+
+        return $this->productSegmentProvider->getProductSegmentById($segmentId);
     }
 }

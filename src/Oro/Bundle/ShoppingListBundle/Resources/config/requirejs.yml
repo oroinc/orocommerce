@@ -1,7 +1,0 @@
-config:
-    paths:
-        'oroshoppinglist/js/app/components/add-product-component': 'bundles/oroshoppinglist/js/app/components/add-product-component.js'
-        'oroshoppinglist/js/validator/decimal-precision': 'bundles/oroshoppinglist/js/app/validator/decimal-precision.js'
-        'oroshoppinglist/js/app/modules/validator-constraints-module': 'bundles/oroshoppinglist/js/app/modules/validator-constraints-module.js'
-    appmodules:
-        - oroshoppinglist/js/app/modules/validator-constraints-module

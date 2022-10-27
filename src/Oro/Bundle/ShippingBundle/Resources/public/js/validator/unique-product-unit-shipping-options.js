@@ -5,7 +5,7 @@ define([
 ], function(_, __, $) {
     'use strict';
 
-    var defaultParam = {
+    const defaultParam = {
         message: 'All product units should be unique.'
     };
 
@@ -20,8 +20,8 @@ define([
      * @param {Element} element
      */
     function getShippingOptionValues(element) {
-        var shippingOption = $(element);
-        var unit = shippingOption.find('select[name$="[productUnit]"] option:selected');
+        const shippingOption = $(element);
+        const unit = shippingOption.find('select[name$="[productUnit]"] option:selected');
 
         return {
             unit: unit ? unit.val() : undefined
@@ -51,11 +51,11 @@ define([
          * @returns {Boolean}
          */
         function(value, element) {
-            var noDuplicationFound = true;
-            var processedShippingOptions = [];
+            let noDuplicationFound = true;
+            const processedShippingOptions = [];
 
             _.each(getRealElement(element).find('.list-item'), function(shippingOption) {
-                var data = getShippingOptionValues(shippingOption);
+                const data = getShippingOptionValues(shippingOption);
 
                 if (_.isEmpty(data.unit.trim())) {
                     return;

@@ -14,7 +14,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -29,7 +29,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
         $this->assertNotEquals($taxCode, $product->getTaxCode());
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_tax_code', [
                 'id' => $product->getId(),
@@ -43,7 +43,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
     public function testPatchActionWithNotFoundProduct()
     {
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_tax_code', [
                 'id' => 100500
@@ -61,7 +61,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
         $this->assertEquals($taxCode, $product->getTaxCode());
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_tax_code', [
                 'id' => $product->getId(),

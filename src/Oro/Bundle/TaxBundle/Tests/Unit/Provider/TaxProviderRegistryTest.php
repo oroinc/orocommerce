@@ -5,126 +5,91 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class TaxProviderRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var TaxProviderRegistry
-     */
-    protected $registry;
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider1;
 
-    public function setUp()
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $provider2;
+
+    /** @var TaxProviderRegistry */
+    private $registry;
+
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
 
-        $this->registry = new TaxProviderRegistry($this->configManager);
-    }
-
-    public function tearDown()
-    {
-        unset($this->registry);
-    }
-
-    public function testAddProvider()
-    {
-        $providerName = 'TestProvider';
-        $provider = $this->getProviderMock($providerName);
-        $provider->expects($this->once())
+        $this->provider1 = $this->createMock(TaxProviderInterface::class);
+        $this->provider1->expects($this->any())
             ->method('isApplicable')
             ->willReturn(true);
-
-        $this->registry->addProvider($provider);
-        $this->assertCount(1, $this->registry->getProviders());
-        $this->assertSame($provider, current($this->registry->getProviders()));
-    }
-
-    public function testAddProviderNotApplicable()
-    {
-        $providerName = 'TestProvider';
-        $provider = $this->getProviderMock($providerName);
-        $provider->expects($this->once())
+        $this->provider2 = $this->createMock(TaxProviderInterface::class);
+        $this->provider2->expects($this->any())
             ->method('isApplicable')
             ->willReturn(false);
 
-        $this->registry->addProvider($provider);
-        $this->assertCount(0, $this->registry->getProviders());
+        $providerContainer = TestContainerBuilder::create()
+            ->add('provider1', $this->provider1)
+            ->add('provider2', $this->provider2)
+            ->getContainer($this);
+
+        $this->registry = new TaxProviderRegistry(
+            ['provider1', 'provider2'],
+            $providerContainer,
+            $this->configManager
+        );
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Tax provider with name "TestProvider" already registered
-     */
-    public function testAddTwoProvidersWithSameName()
+    public function testGetProviders()
     {
-        $providerName = 'TestProvider';
-
-        $provider = $this->getProviderMock($providerName);
-        $provider->expects($this->once())
-            ->method('isApplicable')
-            ->willReturn(true);
-
-        $this->registry->addProvider($provider);
-        $this->registry->addProvider($this->getProviderMock($providerName));
+        $providers = $this->registry->getProviders();
+        $this->assertCount(1, $providers);
+        $this->assertArrayHasKey('provider1', $providers);
+        $this->assertSame($this->provider1, $providers['provider1']);
     }
 
-    public function testGetProvider()
+    public function testGetProviderWhenProvidersCollectionIsNotInitializedYet()
     {
-        $providerName = 'TestProvider';
-        $expectedProvider = $this->getProviderMock($providerName);
-        $expectedProvider->expects($this->once())
-            ->method('isApplicable')
-            ->willReturn(true);
-        $this->registry->addProvider($expectedProvider);
-        $actualProvider = $this->registry->getProvider($providerName);
-
-        $this->assertSame($expectedProvider, $actualProvider);
+        $this->assertSame($this->provider1, $this->registry->getProvider('provider1'));
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Tax provider with name "someProviderName" does not exist
-     */
-    public function testGetProviderWithUnknownName()
+    public function testGetProviderWhenProvidersCollectionIsAlreadyInitialized()
     {
-        $this->registry->getProvider('someProviderName');
+        // initialize providers collection
+        $this->registry->getProviders();
+
+        $this->assertSame($this->provider1, $this->registry->getProvider('provider1'));
+    }
+
+    public function testGetProviderForNotApplicableProvider()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Tax provider with name "provider2" does not exist');
+
+        $this->registry->getProvider('provider2');
+    }
+
+    public function testGetProviderForNotExistingProvider()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Tax provider with name "not_existing" does not exist');
+
+        $this->registry->getProvider('not_existing');
     }
 
     public function testGetEnabledProvider()
     {
-        $providerName = 'TestProvider';
-
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_tax.tax_provider')
-            ->willReturn($providerName);
+            ->willReturn('provider1');
 
-        $expectedProvider = $this->getProviderMock($providerName);
-        $expectedProvider->expects($this->once())
-            ->method('isApplicable')
-            ->willReturn(true);
-        $this->registry->addProvider($expectedProvider);
-        $actualProvider = $this->registry->getEnabledProvider();
-
-        $this->assertSame($expectedProvider, $actualProvider);
-    }
-
-    /**
-     * @param string $name
-     * @return TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getProviderMock($name)
-    {
-        $mock = $this->createMock('Oro\Bundle\TaxBundle\Provider\TaxProviderInterface');
-        $mock->expects($this->any())
-            ->method('getName')
-            ->willReturn($name);
-
-        return $mock;
+        $this->assertSame($this->provider1, $this->registry->getEnabledProvider());
     }
 }

@@ -16,7 +16,7 @@ class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit\Framework\Tes
     /** @var ZeroAmountAuthorizationRedirectListener */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->createMock(PayPalCreditCardConfigProviderInterface::class);
         $this->listener = new ZeroAmountAuthorizationRedirectListener($this->config);

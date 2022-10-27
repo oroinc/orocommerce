@@ -1,7 +1,14 @@
 /* @theme: custom; */
 
 .checkout-container {
-    padding-left: 235px;
+    padding-left: $page-sidebar-width;
+}
+
+.checkout-sidebar {
+    &--inner-invader {
+        float: left;
+        width: 220px;
+    }
 }
 
 .checkout {
@@ -12,8 +19,12 @@
     margin: 0;
 }
 
+.checkout-form__payment-container {
+    max-width: 400px;
+}
+
 @include breakpoint('tablet') {
     .checkout-container {
         padding-left: 0;
     }
- }
+}

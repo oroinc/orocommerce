@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Model\Data;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductUnitTransformer
@@ -12,13 +12,12 @@ class ProductUnitTransformer
 
     /** @var  ProductUnitsProvider $productUnitsProvider */
     protected $productUnitsProvider;
+    private Inflector $inflector;
 
-    /**
-     * @param ProductUnitsProvider $productUnitsProvider
-     */
-    public function __construct(ProductUnitsProvider $productUnitsProvider)
+    public function __construct(ProductUnitsProvider $productUnitsProvider, Inflector $inflector)
     {
         $this->productUnitsProvider = $productUnitsProvider;
+        $this->inflector = $inflector;
     }
 
     /**
@@ -28,7 +27,7 @@ class ProductUnitTransformer
      */
     public function transformToProductUnit($unit)
     {
-        $unit = Inflector::singularize($unit);
+        $unit = $this->inflector->singularize($unit);
 
         foreach ($this->getUnits() as $name => $code) {
             if ($unit == $name) {

@@ -1,0 +1,12 @@
+oro:
+    consent:
+        frontend:
+            dialog:
+                accept.label: "Agree"
+                cancel.label: "Cancel"
+                close.label: "Close"
+            confirm_modal:
+                title: "Data protection"
+                message: "Are you sure you want to decline the consents accepted earlier?"
+                ok: "Yes, Decline"
+                cancel: "No, Cancel"

@@ -12,15 +12,11 @@ Feature: Quote Country and region selectors should contain translated values
   Scenario: Feature Background
     Given I login as administrator
     And I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Supported Languages | [English, Zulu] |
-      | Use Default         | false           |
-      | Default Language    | Zulu            |
+      | Enabled Localizations | [English, Zulu_Loc] |
+      | Default Localization  | Zulu_Loc            |
     And I submit form
-    When I go to System / Localization / Translations
-    And I click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario: Create Quote - Country/region selector should contain translated values
     Given I go to Sales/Quotes

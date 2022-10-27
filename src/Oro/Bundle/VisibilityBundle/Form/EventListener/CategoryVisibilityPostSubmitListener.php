@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
@@ -19,19 +19,12 @@ class CategoryVisibilityPostSubmitListener
      */
     protected $registry;
 
-    /**
-     * @param VisibilityFormPostSubmitDataHandler $dataHandler
-     * @param ManagerRegistry $registry
-     */
     public function __construct(VisibilityFormPostSubmitDataHandler $dataHandler, ManagerRegistry $registry)
     {
         $this->dataHandler = $dataHandler;
         $this->registry = $registry;
     }
 
-    /**
-     * @param AfterFormProcessEvent $event
-     */
     public function onPostSubmit(AfterFormProcessEvent $event)
     {
         $form = $event->getForm();

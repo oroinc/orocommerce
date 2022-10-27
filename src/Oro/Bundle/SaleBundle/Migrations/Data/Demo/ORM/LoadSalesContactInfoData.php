@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

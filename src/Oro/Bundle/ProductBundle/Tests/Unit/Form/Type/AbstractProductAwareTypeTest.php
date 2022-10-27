@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\AbstractProductAwareTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -11,18 +11,20 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class AbstractProductAwareTypeTest extends FormIntegrationTestCase
 {
-    /** @var AbstractProductAwareTypeStub|AbstractProductAwareType */
-    protected $formType;
+    /** @var AbstractProductAwareTypeStub */
+    private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->formType = new AbstractProductAwareTypeStub();
     }
 
-    /** {@inheritdoc} */
-    protected function getExtensions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -35,11 +37,9 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $options
-     * @param mixed $expectedProduct
      * @dataProvider productOptionsDataProvider
      */
-    public function testGetProductFromOptions($expectedProduct, array $options = [])
+    public function testGetProductFromOptions(?Product $expectedProduct, array $options = [])
     {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,
@@ -51,15 +51,14 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedProduct, $this->formType->getProduct($form));
     }
 
-    /**
-     * @return array
-     */
-    public function productOptionsDataProvider()
+    public function productOptionsDataProvider(): array
     {
         $product = new Product();
-        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct->expects($this->once())->method('getProduct')->willReturn($product);
+        $productHolder = $this->createMock(ProductHolderInterface::class);
+        $productHolderWithProduct = $this->createMock(ProductHolderInterface::class);
+        $productHolderWithProduct->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
 
         return [
             'product option without product' => [null, ['product' => null]],
@@ -72,14 +71,11 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param mixed $data
-     * @param mixed $expectedProduct
-     *
      * @dataProvider parentDataProvider
      */
-    public function testGetProductFromParent($data, $expectedProduct)
+    public function testGetProductFromParent(mixed $data, mixed $expectedProduct)
     {
-        $parentForm = $this->factory->createNamed('parentForm', FormType::class);
+        $parentForm = $this->factory->createNamed('parentForm');
         $parentForm->add(AbstractProductAwareTypeStub::NAME, AbstractProductAwareTypeStub::class);
         $parentForm->add('product', FormType::class, ['data' => $data]);
 
@@ -88,15 +84,14 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedProduct, $this->formType->getProduct($child));
     }
 
-    /**
-     * @return array
-     */
-    public function parentDataProvider()
+    public function parentDataProvider(): array
     {
         $product = new Product();
-        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct->expects($this->once())->method('getProduct')->willReturn($product);
+        $productHolder = $this->createMock(ProductHolderInterface::class);
+        $productHolderWithProduct = $this->createMock(ProductHolderInterface::class);
+        $productHolderWithProduct->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($product);
 
         return [
             'empty' => [null, null],
@@ -128,13 +123,9 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $options
-     * @param Product|null $product
-     * @param bool $useParentView
-     *
      * @dataProvider getProductFromViewDataProvider
      */
-    public function testGetProductFromView(array $options, Product $product = null, $useParentView = false)
+    public function testGetProductFromView(array $options, Product $product = null, bool $useParentView = false)
     {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,
@@ -159,10 +150,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         $this->assertEquals($product, $this->formType->getProductFromView($view));
     }
 
-    /**
-     * @return array
-     */
-    public function getProductFromViewDataProvider()
+    public function getProductFromViewDataProvider(): array
     {
         $product = new Product();
 
@@ -186,10 +174,6 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param Product|null $formProduct
-     * @param Product|null $viewProduct
-     * @param Product|null $product
-     *
      * @dataProvider getProductFromFormOrViewDataProvider
      */
     public function testGetProductFromFormOrView(
@@ -210,10 +194,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         $this->assertEquals($product, $this->formType->getProductFromFormOrView($form, $view));
     }
 
-    /**
-     * @return array
-     */
-    public function getProductFromFormOrViewDataProvider()
+    public function getProductFromFormOrViewDataProvider(): array
     {
         $product = new Product();
 

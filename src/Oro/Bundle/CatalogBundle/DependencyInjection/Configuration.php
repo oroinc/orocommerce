@@ -9,24 +9,26 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = OroCatalogExtension::ALIAS;
+    const ROOT_NODE = 'oro_catalog';
     const DIRECT_URL_PREFIX = 'category_direct_url_prefix';
     const ALL_PRODUCTS_PAGE_ENABLED = 'all_products_page_enabled';
+    const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
-        $rootNode = $treeBuilder->root(self::ROOT_NODE);
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
             [
                 self::DIRECT_URL_PREFIX => ['value' => ''],
                 self::ALL_PRODUCTS_PAGE_ENABLED => ['type' => 'boolean', 'value' => false],
+                self::CATEGORY_IMAGE_PLACEHOLDER => ['value' => null],
             ]
         );
 

@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -65,22 +65,19 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(LoadProductMetaData::META_TITLES, $html);
-        $this->assertContains(LoadProductMetaData::META_DESCRIPTIONS, $html);
-        $this->assertContains(LoadProductMetaData::META_KEYWORDS, $html);
+        static::assertStringContainsString(LoadProductMetaData::META_TITLES, $html);
+        static::assertStringContainsString(LoadProductMetaData::META_DESCRIPTIONS, $html);
+        static::assertStringContainsString(LoadProductMetaData::META_KEYWORDS, $html);
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('SEO', $crawler->filter('.nav')->html());
-        $this->assertContains('Meta title', $crawler->html());
-        $this->assertContains('Meta description', $crawler->html());
-        $this->assertContains('Meta keywords', $crawler->html());
+        static::assertStringContainsString('SEO', $crawler->filter('.nav')->html());
+        static::assertStringContainsString('Meta title', $crawler->html());
+        static::assertStringContainsString('Meta description', $crawler->html());
+        static::assertStringContainsString('Meta keywords', $crawler->html());
     }
 }

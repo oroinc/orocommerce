@@ -10,20 +10,13 @@ use Symfony\Component\Form\FormView;
 class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var CategoryFormViewListener */
-    protected $listener;
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new CategoryFormViewListener($this->translator);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener);
-
-        parent::tearDown();
     }
 
     public function testOnCategoryEdit()
@@ -31,6 +24,7 @@ class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
         $env = $this->getEnvironmentForEdit();
 
         $event = new BeforeListRenderEvent($env, new ScrollData(), new \stdClass(), new FormView());
+
         $this->listener->onCategoryEdit($event);
     }
 }

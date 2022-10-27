@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -15,13 +16,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShoppingListTotalListenerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var EntityManager */
     protected $manager;
 
     /** @var ShoppingListTotalRepository */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
@@ -41,7 +44,7 @@ class ShoppingListTotalListenerTest extends WebTestCase
         $shoppingListTotal = $this->createTotal($shoppingList);
         $website = $shoppingList->getWebsite();
 
-        $groupId = $this->getContainer()->get('oro_config.global')->get('oro_customer.anonymous_customer_group');
+        $groupId = self::getConfigManager('global')->get('oro_customer.anonymous_customer_group');
 
         $event = new CustomerGroupCPLUpdateEvent([
             ['websiteId' => $website->getId(), 'customerGroups' => [100, 200, 300, $groupId]]
@@ -49,7 +52,7 @@ class ShoppingListTotalListenerTest extends WebTestCase
 
         $this->getContainer()
             ->get('event_dispatcher')
-            ->dispatch('oro_pricing.customer_group.combined_price_list.update', $event);
+            ->dispatch($event, 'oro_pricing.customer_group.combined_price_list.update');
 
         $this->manager->refresh($shoppingListTotal);
         $this->assertFalse($shoppingListTotal->isValid());
@@ -61,9 +64,15 @@ class ShoppingListTotalListenerTest extends WebTestCase
      */
     private function createTotal(ShoppingList $shoppingList)
     {
-        $subtotal = (new Subtotal())->setCurrency('USD')->setAmount(1);
+        $currency = 'USD';
+        $subtotal = (new Subtotal())->setCurrency($currency)->setAmount(1);
+        /** @var ShoppingListTotalRepository $repo */
+        $repo = $this->getContainer()->get('doctrine')->getRepository(ShoppingListTotal::class);
+        $total = $repo->findOneBy(['shoppingList' => $shoppingList, 'currency' => $currency]);
 
-        $total = new ShoppingListTotal($shoppingList, 'USD');
+        if (!$total) {
+            $total = new ShoppingListTotal($shoppingList, $currency);
+        }
         $total->setValid(true);
         $total->setSubtotal($subtotal);
 

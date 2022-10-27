@@ -4,28 +4,25 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    const TYPE = 'text';
+    private const TYPE = 'text';
 
-    /**
-     * @var IntegerExtension
-     */
-    protected $extension;
+    /** @var IntegerExtension */
+    private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new IntegerExtension();
     }
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(['type' => null]);
@@ -33,51 +30,46 @@ class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->configureOptions($resolver);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(IntegerType::class, $this->extension->getExtendedType());
+        $this->assertEquals([IntegerType::class], IntegerExtension::getExtendedTypes());
     }
 
     /**
      * @dataProvider finishViewData
-     * @param FormView $view
-     * @param array $options
      */
     public function testFinishView(FormView $view, array $options)
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
 
         $this->extension->finishView($view, $form, $options);
 
         if (!empty($view->vars['type'])) {
-            $this->assertTrue($view->vars['type'] === self::TYPE);
+            $this->assertSame($view->vars['type'], self::TYPE);
         } else {
             $this->assertArrayNotHasKey('type', $view->vars);
         }
     }
 
-    public function finishViewData()
+    public function finishViewData(): array
     {
-        return array(
-            'with type' => array(
+        return [
+            'with type' => [
                 'view'   => $this->createView(self::TYPE),
-                'option' => array('type' => self::TYPE)
-            ),
-            'without type' => array(
+                'option' => ['type' => self::TYPE]
+            ],
+            'without type' => [
                 'view'   => $this->createView(),
-                'option' => array('type' => null)
-            )
-        );
+                'option' => ['type' => null]
+            ]
+        ];
     }
 
-    protected function createView($type = null)
+    private function createView(string $type = null): FormView
     {
         $result = new FormView();
         if ($type) {
-            $result->vars = array('type' => $type);
+            $result->vars = ['type' => $type];
         }
 
         return $result;

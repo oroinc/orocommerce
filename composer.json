@@ -10,52 +10,114 @@
         }
     ],
     "require": {
-        "oro/platform": "3.1.*",
-        "oro/platform-serialised-fields": "3.1.*",
-        "oro/calendar-bundle": "3.1.*",
-        "oro/marketing": "3.1.*",
-        "oro/customer-portal": "3.1.*",
-        "box/spout": "2.7.*",
-        "myclabs/deep-copy": "1.8.*",
-        "bower-asset/jquery-creditcardvalidator": "1.0",
-        "bower-asset/elevatezoom3": "3.0.8.1",
+        "ext-xmlwriter": "*",
+        "ext-zlib": "*",
+        "oro/platform": "5.1.*",
+        "oro/platform-serialised-fields": "5.1.*",
+        "oro/calendar-bundle": "5.1.*",
+        "oro/marketing": "5.1.*",
+        "oro/customer-portal": "5.1.*",
         "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
-        "sensio/generator-bundle": "3.1.2",
-        "behat/behat": "3.2.2",
-        "behat/mink-extension": "2.2.*",
-        "behat/mink-selenium2-driver": "1.*",
-        "behat/symfony2-extension": "2.1.1",
-        "phpunit/phpunit": "5.7.*",
-        "johnkary/phpunit-speedtrap": "1.0.*",
-        "mybuilder/phpunit-accelerator": "1.2.*",
-        "squizlabs/php_codesniffer": "2.8.*",
-        "phpmd/phpmd": "2.6.*",
-        "sebastian/phpcpd": "dev-master#cff7f36c2ae89d59987de25d14fd41a72dd4a703 as 3.1.0",
-        "phpunit/phpcov": "3.1.*",
-        "symfony/phpunit-bridge": "3.4.*",
-        "friendsofphp/php-cs-fixer": "2.1.*"
+        "behat/behat": "~3.10.0",
+        "behat/gherkin": "~4.9.0",
+        "behat/mink": "~1.9.0",
+        "friends-of-behat/mink-extension": "~v2.5.0",
+        "behat/mink-selenium2-driver": "~1.5.0",
+        "friends-of-behat/symfony-extension": "~2.2.0",
+        "nelmio/alice": "~3.9.0",
+        "theofidry/alice-data-fixtures": "~1.4.0",
+        "phpunit/phpunit": "9.5.13",
+        "johnkary/phpunit-speedtrap": "~4.0.0",
+        "squizlabs/php_codesniffer": "~3.6.0",
+        "phpmd/phpmd": "~2.11.1",
+        "sebastian/phpcpd": "6.0.*",
+        "symfony/phpunit-bridge": "~5.4.0",
+        "symfony/browser-kit": "~5.4.0",
+        "symfony/css-selector": "~5.4.0",
+        "symfony/debug-bundle": "~5.4.0",
+        "symfony/dom-crawler": "~5.4.0",
+        "symfony/stopwatch": "~5.4.0",
+        "symfony/var-dumper": "~5.4.0",
+        "symfony/var-exporter": "~5.4.0",
+        "symfony/web-profiler-bundle": "~5.4.0",
+        "friendsofphp/php-cs-fixer": "~3.4.0",
+        "oro/twig-inspector": "1.0.*"
     },
     "repositories": {
         "oro": {
             "type": "composer",
             "url": "https://packagist.orocrm.com"
-        },
-        "asset-packagist": {
-            "type": "composer",
-            "url": "https://asset-packagist.orocrm.com"
         }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
+        "npm": {
+            "grapesjs": "0.19.5",
+            "grapesjs-preset-webpage": "0.1.11",
+            "grapesjs-parser-postcss": "0.1.1",
+            "@oroinc/jquery-creditcardvalidator": "1.1",
+            "@oroinc/elevatezoom": "3.0.81",
+            "html2canvas": "1.4.1"
+        },
+        "symfony": {
+            "require": "~5.4.0"
+        },
         "branch-alias": {
-            "dev-master": "3.1-dev"
+            "dev-master": "5.1-dev"
         }
     },
     "autoload": {
-        "psr-4": {"": "src/"},
+        "psr-4": {
+            "Oro\\Bridge\\CalendarCommerce\\": "src/Oro/Bridge/CalendarCommerce",
+            "Oro\\Bridge\\MarketingCommerce\\": "src/Oro/Bridge/MarketingCommerce",
+            "Oro\\Bundle\\AlternativeCheckoutBundle\\": "src/Oro/Bundle/AlternativeCheckoutBundle",
+            "Oro\\Bundle\\ApplicationBundle\\": "src/Oro/Bundle/ApplicationBundle",
+            "Oro\\Bundle\\CatalogBundle\\": "src/Oro/Bundle/CatalogBundle",
+            "Oro\\Bundle\\CheckoutBundle\\": "src/Oro/Bundle/CheckoutBundle",
+            "Oro\\Bundle\\CMSBundle\\": "src/Oro/Bundle/CMSBundle",
+            "Oro\\Bundle\\CommerceBundle\\": "src/Oro/Bundle/CommerceBundle",
+            "Oro\\Bundle\\CommerceEntityBundle\\": "src/Oro/Bundle/CommerceEntityBundle",
+            "Oro\\Bundle\\ConsentBundle\\": "src/Oro/Bundle/ConsentBundle",
+            "Oro\\Bundle\\CustomThemeBundle\\": "src/Oro/Bundle/CustomThemeBundle",
+            "Oro\\Bundle\\FallbackBundle\\": "src/Oro/Bundle/FallbackBundle",
+            "Oro\\Bundle\\FedexShippingBundle\\": "src/Oro/Bundle/FedexShippingBundle",
+            "Oro\\Bundle\\FlatRateShippingBundle\\": "src/Oro/Bundle/FlatRateShippingBundle",
+            "Oro\\Bundle\\FixedProductShippingBundle\\": "src/Oro/Bundle/FixedProductShippingBundle",
+            "Oro\\Bundle\\FrontendLocalizationBundle\\": "src/Oro/Bundle/FrontendLocalizationBundle",
+            "Oro\\Bundle\\FrontendTestFrameworkBundle\\": "src/Oro/Bundle/FrontendTestFrameworkBundle",
+            "Oro\\Bundle\\InventoryBundle\\": "src/Oro/Bundle/InventoryBundle",
+            "Oro\\Bundle\\MoneyOrderBundle\\": "src/Oro/Bundle/MoneyOrderBundle",
+            "Oro\\Bundle\\OrderBundle\\": "src/Oro/Bundle/OrderBundle",
+            "Oro\\Bundle\\PaymentBundle\\": "src/Oro/Bundle/PaymentBundle",
+            "Oro\\Bundle\\PaymentTermBundle\\": "src/Oro/Bundle/PaymentTermBundle",
+            "Oro\\Bundle\\PayPalBundle\\": "src/Oro/Bundle/PayPalBundle",
+            "Oro\\Bundle\\PricingBundle\\": "src/Oro/Bundle/PricingBundle",
+            "Oro\\Bundle\\ProductBundle\\": "src/Oro/Bundle/ProductBundle",
+            "Oro\\Bundle\\PromotionBundle\\": "src/Oro/Bundle/PromotionBundle",
+            "Oro\\Bundle\\RedirectBundle\\": "src/Oro/Bundle/RedirectBundle",
+            "Oro\\Bundle\\RFPBundle\\": "src/Oro/Bundle/RFPBundle",
+            "Oro\\Bundle\\RuleBundle\\": "src/Oro/Bundle/RuleBundle",
+            "Oro\\Bundle\\SaleBundle\\": "src/Oro/Bundle/SaleBundle",
+            "Oro\\Bundle\\SEOBundle\\": "src/Oro/Bundle/SEOBundle",
+            "Oro\\Bundle\\ShippingBundle\\": "src/Oro/Bundle/ShippingBundle",
+            "Oro\\Bundle\\ShoppingListBundle\\": "src/Oro/Bundle/ShoppingListBundle",
+            "Oro\\Bundle\\TaxBundle\\": "src/Oro/Bundle/TaxBundle",
+            "Oro\\Bundle\\UPSBundle\\": "src/Oro/Bundle/UPSBundle",
+            "Oro\\Bundle\\ValidationBundle\\": "src/Oro/Bundle/ValidationBundle",
+            "Oro\\Bundle\\VisibilityBundle\\": "src/Oro/Bundle/VisibilityBundle",
+            "Oro\\Bundle\\WebCatalogBundle\\": "src/Oro/Bundle/WebCatalogBundle",
+            "Oro\\Bundle\\WebsiteSearchBundle\\": "src/Oro/Bundle/WebsiteSearchBundle",
+            "Oro\\Component\\Checkout\\": "src/Oro/Component/Checkout",
+            "Oro\\Component\\Expression\\": "src/Oro/Component/Expression",
+            "Oro\\Component\\SEO\\": "src/Oro/Component/SEO",
+            "Oro\\Component\\Testing\\": "src/Oro/Component/Testing",
+            "Oro\\Component\\Tree\\": "src/Oro/Component/Tree",
+            "Oro\\Component\\WebCatalog\\": "src/Oro/Component/WebCatalog",
+            "Oro\\Component\\Website\\": "src/Oro/Component/Website"
+        },
         "exclude-from-classmap": ["/Tests/"]
     }
 }

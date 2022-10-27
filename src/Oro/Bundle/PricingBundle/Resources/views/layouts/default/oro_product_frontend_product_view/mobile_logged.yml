@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@remove':
+            id: product_price_listed
+        - '@setOption':
+            id: product_price_component
+            optionName: vars.showListedPrice
+            optionValue: false
+    conditions: 'context["is_mobile"] && context["is_logged_in"]'

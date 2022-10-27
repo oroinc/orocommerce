@@ -1,5 +1,6 @@
 @regression
 @fixture-OroOrderBundle:previously-purchased.yml
+@skip
 Feature: Mass Product Actions for Previously purchased products
   In order to add multiple products to a shopping list
   As a Customer User
@@ -25,13 +26,15 @@ Feature: Mass Product Actions for Previously purchased products
     Given I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage
-    When I click "Account"
+    When I follow "Account"
     And I click "Previously Purchased"
     Then page has "Previously Purchased" header
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "No Image View"
+    When I click "Catalog Switcher Toggle"
+    And I click "No Image View"
     Then I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Gallery View"
+    When I click "Catalog Switcher Toggle"
+    And I click "Gallery View"
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
       | Quantity | 10   |
@@ -39,7 +42,7 @@ Feature: Mass Product Actions for Previously purchased products
     And I fill line item with "PSKU2" in frontend product grid:
       | Quantity | 15   |
     And I scroll to top
-    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     Then should see an "Create New Shopping List popup" element
     And type "New Shopping List" in "Shopping List Name"
     When click "Create and Add"

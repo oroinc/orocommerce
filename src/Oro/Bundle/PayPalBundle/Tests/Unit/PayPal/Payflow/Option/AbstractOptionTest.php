@@ -12,20 +12,17 @@ abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
     /** @return Option\AbstractOption[] */
     abstract protected function getOptions();
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->options = $this->getOptions();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->options);
     }
 
     /**
-     * @param array $options
-     * @param array $expectedResult
-     * @param array $exceptionAndMessage
      * @dataProvider configureOptionDataProvider
      */
     public function testConfigureOption(

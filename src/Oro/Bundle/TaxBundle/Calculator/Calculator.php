@@ -4,6 +4,9 @@ namespace Oro\Bundle\TaxBundle\Calculator;
 
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Calculates the product price with/without the tax.
+ */
 class Calculator implements TaxCalculatorInterface
 {
     /** @var TaxationSettingsProvider */
@@ -15,11 +18,9 @@ class Calculator implements TaxCalculatorInterface
     /** @var TaxCalculatorInterface */
     protected $taxCalculator;
 
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param TaxCalculatorInterface $includedTaxCalculator
-     * @param TaxCalculatorInterface $taxCalculator
-     */
+    /** @var bool */
+    protected $isProductPricesIncludeTax;
+
     public function __construct(
         TaxationSettingsProvider $settingsProvider,
         TaxCalculatorInterface $includedTaxCalculator,
@@ -35,20 +36,25 @@ class Calculator implements TaxCalculatorInterface
      */
     public function calculate($amount, $taxRate)
     {
-        if ($this->settingsProvider->isProductPricesIncludeTax()) {
-            return $this->includedTaxCalculator->calculate($amount, $taxRate);
-        }
-
-        return $this->taxCalculator->calculate($amount, $taxRate);
+        return $this->isProductPricesIncludeTax()
+            ? $this->includedTaxCalculator->calculate($amount, $taxRate)
+            : $this->taxCalculator->calculate($amount, $taxRate);
     }
 
     /** {@inheritdoc} */
     public function getAmountKey()
     {
-        if ($this->settingsProvider->isProductPricesIncludeTax()) {
-            return $this->includedTaxCalculator->getAmountKey();
+        return $this->isProductPricesIncludeTax()
+            ? $this->includedTaxCalculator->getAmountKey()
+            : $this->taxCalculator->getAmountKey();
+    }
+
+    protected function isProductPricesIncludeTax(): bool
+    {
+        if (null === $this->isProductPricesIncludeTax) {
+            $this->isProductPricesIncludeTax = (bool) $this->settingsProvider->isProductPricesIncludeTax();
         }
 
-        return $this->taxCalculator->getAmountKey();
+        return $this->isProductPricesIncludeTax;
     }
 }

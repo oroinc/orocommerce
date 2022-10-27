@@ -2,22 +2,32 @@ oro:
     shoppinglist:
         entity_label: Shopping List
         entity_plural_label: Shopping Lists
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Shows content of shopping lists of the customer users.
         id.label: ID
         label:
             label: Label
-            edit.tooltip: Edit Shoppping List Label
-        notes.label: Notes
-        customer.label: Customer
-        customer_user.label: Customer User
+            description: The name of the shopping list.
+        notes:
+            label: Notes
+            description: Any additional notes made by the buyer.
+        customer:
+            label: Customer
+            description: A company that buys products using the storefront.
+        customer_user:
+            label: Customer User
+            description: A person who acts on behalf of the company to buy products using the storefront.
         organization.label: Organization
         owner.label: Owner
-        line_items.label: Line Items
+        line_items:
+            label: Line Items
+            description: The collection of shopping list items.
+        line_items_count.label: Line Items Count
         current.label: Current
         default.label: 'Shopping List'
-        items.label: 'Item|Items'
         subtotal.label: Subtotal
         total.label: Grand Total
+        totals.label: Totals
         currency.label: Currency
         website.label: Website
         contact_information.label: Contact Information
@@ -49,13 +59,32 @@ oro:
             add_to_current_shopping_list: Add to current Shopping List
             remove_from_shopping_list: Remove From {{ shoppingList }}
             add_to_new_shopping_list: Create New Shopping List
+            add_to_new_shopping_list.aria_label: Create New Shopping List. Opens a popup
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
             failed_mesage: "You can't add these products to shopping list"
             add_to_multiple: add item to multiple lists
             copied: " (copied %copyDate%)"
+            update_configurable_line_item:
+                label: Edit
+            delete_line_item:
+                label: Delete
+            add_notes:
+                label: Add Shopping List item Note
+            edit_notes:
+                label: Edit Shopping List item Note
+
+        mass_actions:
+            delete_line_items:
+                label: Delete
+                success_message: "{0} Can't delete selected items(s)|[1,Inf[%count% item(s) have been deleted successfully"
+            move_line_items:
+                label: Move to another Shopping List
+                success_message: '{0} No items were moved.|{1} One entity has been moved successfully.|]1,Inf[ %count% items have been moved successfully.'
+                no_edit_permission_message: 'You do not have permission to edit the target shopping list.'
 
         menu:
             sales_tab.label: Sales
+            shopping_lists.label: Shopping Lists
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the customer users
 
@@ -73,21 +102,43 @@ oro:
         controller:
             shopping_list.saved.message: Shopping List has been saved
 
+        feature:
+            label: Shopping Lists
+            description: Enables a shopping list management feature that allows to view customers’ shopping lists, duplicate them, adjust line item quantity, and create an order from the selected shopping list.
+            guest_shopping_list:
+                label: Guest Shopping List
+                description: Enables guest customers to create a shopping list in the storefront. Only one shopping list is available for guest customers.
+            shopping_list_create:
+                label: Shopping Lists in the Storefront
+                description: Enables access to and management of the shopping lists in the storefront.
         lineitem:
             entity_label: Shopping List Line Item
             entity_plural_label: Shopping List Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_frontend_grid_all_view_label: All %entity_plural_label%
             id.label: ID
-            notes.label: Notes
+            notes:
+                label: Notes
+                description: Additional information for the product.
             product_sku.label: SKU
             product_name.label: Product
             quantity:
                 label: Quantity
+                description: The quantity of product units to be purchased.
                 enter: Enter a QTY
                 placeholder: 'QTY #'
-            product.label: Product
-            parent_product.label: Parent Product
-            shopping_list.label: Shopping List
-            unit.label: Unit
+            product:
+                label: Product
+                description: The product to be purchased.
+            parent_product:
+                label: Parent Product
+                description: The parent product uniting multiple product variants.
+            shopping_list:
+                label: Shopping List
+                description: The shopping list that contains the line item.
+            unit:
+                label: Unit
+                description: The unit of quantity the product to be purchased in.
             organization.label: Organization
             owner.label: Owner
             customer_user.label: Customer User
@@ -117,31 +168,49 @@ oro:
                 shopping_list.title: 'Shopping List'
                 shopping_list_limit.title: 'Shopping List Limit'
                 shopping_list_options.title: 'Shopping List Options'
-                configurable_product_matrix_form_on_shopping_list.title: 'Configurable Products'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
                 default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
-                default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
+                default_guest_shopping_list_owner.tooltip: 'Select the default owner of all guest shopping lists.'
                 shopping_list_limit.tooltip: 'Set the number of shopping lists allowed per customer. The default value is zero, which means that no limit of shopping lists is applied.'
                 availability_for_guests:
-                    label: 'Enable guest shopping list'
-                    tooltip: 'Allows guests to create a shopping list'
+                    label: 'Enable Guest Shopping List'
+                    tooltip: 'Select the option to enable guest customers to create a shopping list. Only one shopping list is available for guest customers.'
                 mass_adding_on_product_listing_enabled:
                     label: 'Enable Mass Adding on Product Listing'
-                    tooltip: 'Customers will be able to select multiple products on the product listing page and add them to a shopping list at once.'
+                    tooltip: 'Select the option to enable customers to select multiple products on the product listing page and add them to a shopping list in the storefront.'
                 create_shopping_list_for_new_guest:
                     label: 'Create Guest Shopping Lists Immediately'
-                    tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled and shopping lists are created only when guest users add at least one item to their shopping list.'
+                    tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled, and shopping lists are created only when guest users add at least one item to their shopping list.'
+                shopping_lists_max_line_items_per_page:
+                    label: 'Maximum Line Items Per Page'
+                    tooltip: 'Set the maximum number of shopping list line items to be displayed per page. If the number of shopping list line items exceeds this value, then the “All” value, in the list of pagination dropdown values, is changed to the one specified in the option.'
+                show_all_in_shopping_list_widget:
+                    label: 'Show All Lists in Shopping List Widgets'
+                    tooltip: 'Select the option to enable customers to view all the shopping lists that they are allowed to access, besides their own, in the shopping list widgets.'
 
         privilege:
             category.shopping.label: 'Shopping'
         permission:
             duplicate_shopping_list.label: Duplicate
+            rename_shopping_list.label: Rename
+            set_as_default_shopping_list.label: Set as Default
         duplicate:
             success.message: 'The shopping list has been duplicated'
+            error.customer_user_is_guest: 'Unable to duplicate as only one shopping list is allowed for unregistered users'
             restricted_products.message: 'Some products are not available and cannot be added to shopping list'
             list.label: Duplicate List
-
+            action.label: Duplicate
+        delete:
+            action.label: Delete
+        set_as_default:
+            action.label: Set as Default
+        rename:
+            action.label: Rename
+        assign:
+            action.label: Reassign
+        edit:
+            action.label: Edit
         visitors.label: 'Visitors'
 
     customer:
@@ -150,6 +219,17 @@ oro:
 
     frontend:
         shoppinglist:
+            name.label: 'Name'
+            line_items_count.label: 'Items'
+            fieldset_legend: 'Set default Shopping List'
+            trigger:
+                aria_label: '{0} You do not have available Shopping Lists. Open to Create a New List|{1} You have 1 Shopping List. Open to view details|]1,Inf[ You have %count% Shopping Lists. Open to view details'
+                single_aria_label: 'You have a Shopping List. Open to view details'
+            link.aria_label: '{0} %shoppinglist% is empty. View Details|{1} %shoppinglist% contains %count% item. Total cost is %total%. Click to see all items, discounts, taxes and other applicable fees|]1,Inf[ %shoppinglist% contains %count% items. Total cost is %total%. Click to see all items, discounts, taxes and other applicable fees'
+            radio.label: 'Set the %shoppinglist% as Default'
+            radio.title: 'Set as Default'
+            grid_view:
+                my_shopping_lists: 'My Shopping Lists'
             quick_order:
                 default_label: Quick Order (%date%)
             selector:
@@ -157,41 +237,64 @@ oro:
                 last_updated.label: 'Last Updated'
                 show_more.label: 'Show More'
             view:
-                owner.label: Customer
-                view_options.label: View Options for this Shopping List
-                add_note.label: Add a Note to This Shopping List
-                add_note.placeholder: Enter your note
-
-                item.lable: Item
-                price.label: Price
+                is_default.label: 'Default'
+                assigned_to.label: 'Assigned To'
 
                 entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
+                total.label: 'Total:'
                 subtotal.label: 'Subtotal:'
 
                 item.label: 'Item #:'
                 qty.label: 'QTY #'
 
-                add_item_note.label: 'Add a Note to This Item'
-                add_item_note.placeholder: 'Enter your note'
-
+                add_item_note:
+                    label: 'Add a Note to This Item'
                 not_have_available: 'You do not have available Shopping Lists'
-                not_products_available: 'The Shopping List is empty. Please add at least one product.'
                 empty: 'Your Shopping List Is Empty'
+                empty_single: 'Your Shopping List is empty'
 
                 view_details.label: 'View Details'
+                view_details.title: 'Click to see all items, discounts, taxes and other applicable fees'
+                view_list.label: 'View List'
                 create_new_shopping_list.label: 'Create New List'
+                create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
+                choose_assign_user.label: 'Choose a User to assign "%label%"'
+                rename.label: 'Rename Shopping List'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
+                set_default_success: 'Shopping list has been successfully set as default'
+                rename_success: 'Shopping list has been successfully renamed'
+                assign_success: 'Shopping list has been successfully re-assigned'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
                 cannot_create_order_no_line_item_with_quantity: 'Cannot create order because Shopping List has no items'
-                must_be_logged: 'Please <a href="%url%">log in</a> before you start the checkout.'
+            open_modal_btn:
+                aria_label: 'Manage current product in the Shopping List'
             btn:
-                update: 'Update'
+                actions:
+                    aria_label: 'Actions of %name%'
+                assign:
+                    label: 'Reassign'
+                    aria_label: 'Reassign %name%'
+                rename:
+                    label: 'Rename'
+                    aria_label: 'Rename %name%'
+                set_as_default:
+                    aria_label: 'Set as Default %name%'
+                duplicate:
+                    aria_label: 'Duplicate %name%'
+                edit:
+                    aria_label: 'Edit %name%'
+                cancel.label: 'Cancel'
+                apply_aria_label: 'Apply changes in the Shopping List'
+                decline_aria_label: 'Decline changes in the Shopping List'
+                edit_aria_label: 'Change item quantity in the Shopping List'
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'
+                delete_aria_label: 'Delete %name%'
+                delete_item_aria_label: 'Delete this Shopping list item'
             workflow:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
@@ -202,10 +305,29 @@ oro:
                 not_available: 'N/A'
                 close: 'Close'
                 clear:
-                    text: 'Clear All'
+                    text: 'Clear All Product Variants'
                     tooltip: 'Clear all entered values in the matrix'
             lineitem:
                 product:
                     added.label: 'Product has been added to "%shoppinglist%"'
                     removed.label: 'Product has been removed from "%shoppinglist%"'
                     cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
+                sku.label: 'SKU'
+                item.label: 'Item'
+                inventory_status.label: ''
+                quantity.label: 'Qty'
+                unit.label: ''
+                price.label: 'Price'
+                subtotal.label: 'Subtotal'
+
+                filter:
+                    inventory_status.label: 'Availability'
+                    quantity.label: 'Quantity'
+                    unit.label: 'Unit'
+            note:
+                textarea:
+                    aria_label: 'Notes for %shoppinglist%'
+                add_entire_note: 'Add a note to entire Shopping List'
+                apply: 'Apply changes in the Note'
+                decline: 'Decline changes in the Note'
+                edit: 'Edit the Note'

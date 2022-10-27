@@ -3,8 +3,11 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event used to collect website search index data per entity
+ */
 class IndexEntityEvent extends Event
 {
     const NAME = 'oro_website_search.event.index_entity';
@@ -66,9 +69,9 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param int $entityId
+     * @param int|string $entityId
      * @param string $fieldName
-     * @param string|int|float|\DateTime $value
+     * @param string|int|float|\DateTime|array $value
      * @param bool $addToAllText
      * @return $this
      * @throws \InvalidArgumentException if value is array
@@ -111,10 +114,17 @@ class IndexEntityEvent extends Event
      */
     protected function validate($value)
     {
-        if (!is_scalar($value) && !$value instanceof \DateTime) {
+        if (is_array($value)) {
+            foreach ($value as $element) {
+                $this->validate($element);
+            }
+            return;
+        }
+
+        if (!is_scalar($value) && !$value instanceof \DateTime && !is_null($value)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Scalars and \DateTime are supported only, "%s" given',
+                    'Scalars, \DateTime and NULL are supported only, "%s" given',
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );
@@ -127,5 +137,23 @@ class IndexEntityEvent extends Event
     public function getEntitiesData()
     {
         return $this->entitiesData;
+    }
+
+    public function setEntitiesData(array $entitiesData): self
+    {
+        $this->entitiesData = $entitiesData;
+
+        return $this;
+    }
+
+    /**
+     * @param int|string $entityId
+     * @return $this
+     */
+    public function removeEntityData($entityId): self
+    {
+        unset($this->entitiesData[$entityId]);
+
+        return $this;
     }
 }

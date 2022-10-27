@@ -1,0 +1,51 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue1:
+        string: 'Product1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        newArrival: true
+        __calls:
+            - addName: ['@locValue1']
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+    customerUserSetting:
+        __construct: ['@website1']
+        customerUser: '@CustomerUser_AmandaRCole'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product1ItemPrice:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationRpoduct1DefaultPriceList:
+        product: '@product1'
+        priceList: '@defaultPriceList'

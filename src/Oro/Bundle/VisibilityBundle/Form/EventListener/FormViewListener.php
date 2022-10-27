@@ -7,8 +7,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds visibility information to the category edit page.
+ */
 class FormViewListener
 {
     /**
@@ -26,11 +29,6 @@ class FormViewListener
      */
     protected $requestStack;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
@@ -41,9 +39,6 @@ class FormViewListener
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -57,7 +52,7 @@ class FormViewListener
         $category = $this->doctrineHelper->getEntityReference('OroCatalogBundle:Category', $categoryId);
         if ($category) {
             $template = $event->getEnvironment()->render(
-                'OroVisibilityBundle:Category:customer_category_visibility_edit.html.twig',
+                '@OroVisibility/Category/customer_category_visibility_edit.html.twig',
                 [
                     'entity' => $category,
                     'form' => $event->getFormView(),

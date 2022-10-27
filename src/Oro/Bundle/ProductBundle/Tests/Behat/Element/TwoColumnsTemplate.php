@@ -9,20 +9,11 @@ class TwoColumnsTemplate extends ProductTemplate
 {
     const ELEMENT_PREFIX = 'Two Columns Page';
 
-    /**
-     * {@inheritdoc}
-     */
     public function assertGroupWithValue($groupName, TableNode $table)
     {
         foreach ($table->getRows() as $row) {
             list($label, $value) = $row;
-
-            self::assertContains(
-                sprintf('%s %s', $label, $value),
-                $this->getText(),
-                '',
-                true
-            );
+            static::assertStringContainsStringIgnoringCase(\sprintf('%s %s', $label, $value), $this->getText());
         }
     }
 

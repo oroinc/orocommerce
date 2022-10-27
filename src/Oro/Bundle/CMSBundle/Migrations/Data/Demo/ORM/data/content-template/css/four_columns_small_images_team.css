@@ -1,0 +1,4 @@
+.four-columns-small-images-team .grid-team-member {
+    --grid-column-count: 2;
+    --grid-template-columns: 60px 1fr;
+}

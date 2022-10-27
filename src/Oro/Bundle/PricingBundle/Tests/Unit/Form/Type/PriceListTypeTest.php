@@ -5,12 +5,15 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -20,38 +23,30 @@ class PriceListTypeTest extends FormIntegrationTestCase
 {
     use PriceRuleEditorAwareTestTrait;
 
-    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
-    const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
-
     /**
      * @return array
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface $currencyProvider */
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
-        $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
-        $currencyProvider->method('getDefaultCurrency')->willReturn('USD');
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
+        $localeSettings = $this->createMock(LocaleSettings::class);
+        $currencyNameHelper = $this->createMock(CurrencyNameHelper::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|LocaleSettings $localeSettings */
-        $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
+        $currencyProvider->expects($this->any())
+            ->method('getCurrencyList')
+            ->willReturn(['USD', 'EUR']);
+        $currencyProvider->expects($this->any())
+            ->method('getDefaultCurrency')
+            ->willReturn('USD');
 
-        /** @var CurrencyNameHelper|\PHPUnit\Framework\MockObject\MockObject $currencyNameHelper */
-        $currencyNameHelper = $this->getMockBuilder(CurrencyNameHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var TODO: Investigate $entityIdentifierType usage */
-        $entityIdentifierType = new EntityIdentifierType(
+        $entityIdentifierType = new EntityTypeStub(
             [
-                1 => $this->getEntity(self::ACCOUNT_CLASS, 1),
-                2 => $this->getEntity(self::ACCOUNT_CLASS, 2),
-                3 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3),
-                4 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4),
-                5 => $this->getEntity(self::WEBSITE_CLASS, 5),
-                6 => $this->getEntity(self::WEBSITE_CLASS, 6)
+                1 => $this->getCustomer(1),
+                2 => $this->getCustomer(2),
+                3 => $this->getCustomerGroup(3),
+                4 => $this->getCustomerGroup(4),
+                5 => $this->getWebsite(5),
+                6 => $this->getWebsite(6)
             ]
         );
 
@@ -74,6 +69,43 @@ class PriceListTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
+    private function getCustomer(int $id): Customer
+    {
+        $customer = new Customer();
+        ReflectionUtil::setId($customer, $id);
+
+        return $customer;
+    }
+
+    private function getCustomerGroup(int $id): CustomerGroup
+    {
+        $customerGroup = new CustomerGroup();
+        ReflectionUtil::setId($customerGroup, $id);
+
+        return $customerGroup;
+    }
+
+    private function assertSchedules(array $expectedData, PriceList $result): void
+    {
+        /** @var PriceListSchedule[] $actualSchedules */
+        $actualSchedules = $result->getSchedules()->toArray();
+        $expectedSchedules = $expectedData['schedules'];
+        foreach ($expectedSchedules as $i => $expected) {
+            $actual = $actualSchedules[$i];
+            $this->assertSame($result, $actual->getPriceList());
+            $this->assertEquals(new \DateTime($expected[0]), $actual->getActiveAt());
+            $this->assertEquals(new \DateTime($expected[1]), $actual->getDeactivateAt());
+        }
+    }
+
     public function testBuildForm()
     {
         $form = $this->factory->create(PriceListType::class);
@@ -93,11 +125,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
     {
         if ($defaultData) {
             $existingPriceList = new PriceList();
-            $class = new \ReflectionClass($existingPriceList);
-            $prop = $class->getProperty('id');
-            $prop->setAccessible(true);
-
-            $prop->setValue($existingPriceList, 42);
+            ReflectionUtil::setId($existingPriceList, 42);
             $existingPriceList->setName($defaultData['name']);
 
             foreach ($defaultData['currencies'] as $currency) {
@@ -118,6 +146,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PriceList $result */
         $result = $form->getData();
@@ -197,16 +226,12 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'name' => 'Test Price List 01',
                     'active' => true,
                     'currencies' => ['EUR', 'USD'],
-                    'appendCustomers' => [$this->getEntity(self::ACCOUNT_CLASS, 1)],
-                    'removeCustomers' => [$this->getEntity(self::ACCOUNT_CLASS, 2)],
-                    'appendCustomerGroups' => [
-                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3)
-                    ],
-                    'removeCustomerGroups' => [
-                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4)
-                    ],
-                    'appendWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 5)],
-                    'removeWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 6)],
+                    'appendCustomers' => [$this->getCustomer(1)],
+                    'removeCustomers' => [$this->getCustomer(2)],
+                    'appendCustomerGroups' => [$this->getCustomerGroup(3)],
+                    'removeCustomerGroups' => [$this->getCustomerGroup(4)],
+                    'appendWebsites' => [$this->getWebsite(5)],
+                    'removeWebsites' => [$this->getWebsite(6)],
                     'schedules' => [
                         ['2016-03-01T22:00:00Z', '2016-03-15T22:00:00Z'],
                         ['2016-02-01T22:00:00Z', '2016-02-15T22:00:00Z'],
@@ -214,39 +239,5 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ]
             ]
         ];
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
-    }
-
-    /**
-     * @param array $expectedData
-     * @param PriceList $result
-     */
-    protected function assertSchedules(array $expectedData, PriceList $result)
-    {
-        /** @var PriceListSchedule[] $actualSchedules */
-        $actualSchedules = $result->getSchedules()->toArray();
-        $expectedSchedules = $expectedData['schedules'];
-        foreach ($expectedSchedules as $i => $expected) {
-            $actual = $actualSchedules[$i];
-            $this->assertSame($result, $actual->getPriceList());
-            $this->assertEquals(new \DateTime($expected[0]), $actual->getActiveAt());
-            $this->assertEquals(new \DateTime($expected[1]), $actual->getDeactivateAt());
-        }
     }
 }

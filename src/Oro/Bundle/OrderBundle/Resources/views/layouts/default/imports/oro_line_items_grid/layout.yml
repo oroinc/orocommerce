@@ -7,7 +7,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroOrderBundle:layouts:default/imports/oro_line_items_grid/layout.html.twig'
+            themes: '@OroOrder/layouts/default/imports/oro_line_items_grid/layout.html.twig'
         - '@addTree':
             items:
                 __grid_container:
@@ -48,8 +48,3 @@ layout:
             optionName: grid_parameters
             optionValue:
                 order_id: '=data["order"].getId()'
-
-        - '@setOption':
-            id: __datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'datagrid-toolbar simplistic'

@@ -3,10 +3,11 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -21,6 +22,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
+ * Shopping List entity
+ *
  * @ORM\Table(
  *      name="oro_shopping_list",
  *      indexes={
@@ -39,12 +42,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-shopping-cart",
- *              "totals_mapping"={
- *                  "type"="join_collection",
- *                  "join_field"="totals",
- *                  "relation_fields"={
- *                       "currency"="currency",
- *                       "subtotal"="subtotalValue"
+ *              "contact_information"={
+ *                  "email"={
+ *                      {"fieldName"="contactInformation"}
  *                  }
  *              }
  *          },
@@ -69,6 +69,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShoppingList extends ExtendShoppingList implements
     OrganizationAwareInterface,
@@ -81,7 +82,7 @@ class ShoppingList extends ExtendShoppingList implements
     ProductLineItemsHolderInterface
 {
     use DatesAwareTrait;
-    use FrontendCustomerUserAwareTrait;
+    use AuditableFrontendCustomerUserAwareTrait;
     use UserAwareTrait;
 
     /**
@@ -137,7 +138,7 @@ class ShoppingList extends ExtendShoppingList implements
     protected $website;
 
     /**
-     * @var ArrayCollection|LineItem[]
+     * @var Collection|LineItem[]
      *
      * @ORM\OneToMany(
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\LineItem",
@@ -155,13 +156,14 @@ class ShoppingList extends ExtendShoppingList implements
     protected $current = false;
 
     /**
-     * @var ArrayCollection|ShoppingListTotal[]
+     * @var Collection|ShoppingListTotal[]
      *
      * @ORM\OneToMany(
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
+     *      orphanRemoval=true,
+     *      indexBy="currency"
      * )
      **/
     protected $totals;
@@ -278,7 +280,7 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
-     * @return ArrayCollection|LineItem[]
+     * @return Collection|LineItem[]
      */
     public function getLineItems()
     {
@@ -292,9 +294,7 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function addTotal(ShoppingListTotal $item)
     {
-        if (!$this->totals->contains($item)) {
-            $this->totals->add($item);
-        }
+        $this->totals->set($item->getCurrency(), $item);
 
         return $this;
     }
@@ -314,7 +314,7 @@ class ShoppingList extends ExtendShoppingList implements
     }
 
     /**
-     * @return ArrayCollection|ShoppingListTotal[]
+     * @return Collection|ShoppingListTotal[]
      */
     public function getTotals()
     {
@@ -414,9 +414,6 @@ class ShoppingList extends ExtendShoppingList implements
         return $this->subtotal;
     }
 
-    /**
-     * @param Subtotal $subtotal
-     */
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;
@@ -437,12 +434,21 @@ class ShoppingList extends ExtendShoppingList implements
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->getId(),
             'label' => $this->getLabel(),
             'is_current' => $this->isCurrent(),
         ];
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->lineItems = clone $this->lineItems;
+            $this->totals = clone $this->totals;
+        }
     }
 }

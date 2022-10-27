@@ -8,6 +8,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
+/**
+ *  Gets parameters needed to create PaymentContext from Order and other sources
+ */
 class OrderPaymentContextFactory
 {
     /**
@@ -20,10 +23,6 @@ class OrderPaymentContextFactory
      */
     private $paymentContextBuilderFactory;
 
-    /**
-     * @param OrderPaymentLineItemConverterInterface     $paymentLineItemConverter
-     * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
-     */
     public function __construct(
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
         PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
@@ -80,6 +79,8 @@ class OrderPaymentContextFactory
         if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
             $paymentContextBuilder->setLineItems($convertedLineItems);
         }
+
+        $paymentContextBuilder->setTotal((float)$order->getTotal());
 
         return $paymentContextBuilder->getResult();
     }

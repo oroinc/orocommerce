@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -13,6 +14,7 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\Mime\Address as SymfonyAddress;
 
 /**
  * @dbIsolationPerTest
@@ -20,28 +22,24 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class RequestControllerNotificationTest extends WebTestCase
 {
     use ProductPriceReference;
+    use ConfigManagerAwareTestTrait;
 
-    const PHONE = '2-(999)507-4625';
-    const COMPANY = 'google';
-    const ROLE = 'CEO';
-    const REQUEST = 'request body';
-    const PO_NUMBER = 'CA245566789KL';
+    private const PHONE = '2-(999)507-4625';
+    private const COMPANY = 'google';
+    private const ROLE = 'CEO';
+    private const REQUEST = 'request body';
+    private const PO_NUMBER = 'CA245566789KL';
 
-    /** @var ObjectManager */
-    protected $em;
+    private ?ObjectManager $em;
 
-    /** @var  ConfigManager */
-    protected $configManager;
+    private ConfigManager $configManager;
 
-    /**
-     * @var Website
-     */
-    protected $website;
+    private Website $website;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -58,162 +56,171 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em = $this->client->getContainer()
             ->get('doctrine')
             ->getManagerForClass(User::class);
-        $this->website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $this->website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
-        $this->configManager = $this->client->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager('global');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        $this->getContainer()->get('swiftmailer.plugin.messagelogger')->clear();
+        self::getContainer()->get('mailer.message_logger_listener')->reset();
     }
 
-    public function testNotifyOnlyUniqueUsers()
+    public function testNotifyOnlyUniqueUsers(): void
     {
+        /** @var CustomerUser $customerUser */
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $saleRep = $customerUser->getOwner();
         $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
-        $this->createRequest();
 
-        $this->assertEmailSent([$saleRep], 1);
+        $recipientEmails = [$saleRep->getEmail()];
+        $this->createRequest();
+        $this->assertEmailSent($recipientEmails, 1);
     }
 
-    public function testCreateRequestEmailNotification()
+    public function testCreateRequestEmailNotification(): void
     {
+        /** @var User $saleRep1 */
         $saleRep1 = $this->getReference(LoadUserData::USER1);
+        /** @var User $saleRep2 */
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $customerUser->addSalesRepresentative($saleRep1);
         $customerUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
-        $this->createRequest();
 
-        $this->assertEmailSent([$saleRep1, $saleRep2], 3);
+        $recipientEmails = [$saleRep1->getEmail(), $saleRep2->getEmail()];
+        $this->createRequest();
+        $this->assertEmailSent($recipientEmails, 3);
     }
 
-    public function testCreateRequestEmailNotifySalesRepsOfCustomer()
+    public function testCreateRequestEmailNotifySalesRepsOfCustomer(): void
     {
+        /** @var User $saleRep1 */
         $saleRep1 = $this->getReference(LoadUserData::USER1);
+        /** @var User $saleRep2 */
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
         $customer->addSalesRepresentative($saleRep1);
         $customer->addSalesRepresentative($saleRep2);
         $this->em->flush();
+
+        $recipientEmails = [$saleRep1->getEmail(), $saleRep2->getEmail()];
         $this->createRequest();
-        $this->assertEmailSent([$saleRep1, $saleRep2], 3);
+        $this->assertEmailSent($recipientEmails, 3);
     }
 
-    public function testCreateRequestShouldNotNotifyCustomerSalesReps()
+    public function testCreateRequestShouldNotNotifyCustomerSalesReps(): void
     {
+        /** @var User $saleRep1 */
         $saleRep1 = $this->getReference(LoadUserData::USER1);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
         $customer->addSalesRepresentative($saleRep1);
 
+        /** @var User $saleRep2 */
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $customerUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
 
-        $this->configManager->set(
-            'oro_rfp.notify_assigned_sales_reps_of_the_customer',
-            'noSaleReps',
-            $this->website
-        );
-        $this->configManager->flush($this->website);
+        $this->configManager->set('oro_rfp.notify_assigned_sales_reps_of_the_customer', 'noSaleReps');
+        $this->configManager->flush();
 
+        $recipientEmails = [$saleRep2->getEmail()];
         $this->createRequest();
-        $this->assertEmailSent([$saleRep2], 2);
+        $this->assertEmailSent($recipientEmails, 2);
     }
 
-    public function testCreateRequestShouldNotifyCustomerOwner()
+    public function testCreateRequestShouldNotifyCustomerOwner(): void
     {
+        /** @var User $owner */
         $owner = $this->getReference(LoadUserData::USER1);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
         $customer->setOwner($owner);
         $this->em->flush();
 
+        $recipientEmails = [$owner->getEmail()];
         $this->createRequest();
-        $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 1);
+        $this->assertEmailSent($recipientEmails, 1);
     }
 
-    public function testCreateRequestShouldNotNotifyCustomerOwner()
+    public function testCreateRequestShouldNotNotifyCustomerOwner(): void
     {
-        $saleRepresentative = $this->getReference(LoadUserData::USER2);
+        /** @var User $saleRep */
+        $saleRep = $this->getReference(LoadUserData::USER2);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);
-        $customer->addSalesRepresentative($saleRepresentative);
+        $customer->addSalesRepresentative($saleRep);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $customerUser->addSalesRepresentative($saleRepresentative);
+        $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
-        $this->configManager->set(
-            'oro_rfp.notify_owner_of_customer',
-            'noSaleReps',
-            $this->website
-        );
-        $this->configManager->flush($this->website);
+        $this->configManager->set('oro_rfp.notify_owner_of_customer', 'noSaleReps');
+        $this->configManager->flush();
 
+        $recipientEmails = [$saleRep->getEmail()];
         $this->createRequest();
         // should notify only sale representative, not owner
-        $this->assertEmailSent([$saleRepresentative], 2);
+        $this->assertEmailSent($recipientEmails, 2);
     }
 
-    public function testCreateRequestShouldNotifyCustomerUserOwner()
+    public function testCreateRequestShouldNotifyCustomerUserOwner(): void
     {
+        /** @var User $owner */
         $owner = $this->getReference(LoadUserData::USER1);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1);
         $customerUser->setOwner($owner);
         $this->em->flush();
 
+        $recipientEmails = [$owner->getEmail()];
         $this->createRequest();
-        $owner = $this->getReference(LoadUserData::USER1);
         // should notify owner
-        $this->assertEmailSent([$owner], 1);
+        $this->assertEmailSent($recipientEmails, 1);
     }
 
-    public function testCreateRequestShouldNotNotifyCustomerUserOwner()
+    public function testCreateRequestShouldNotNotifyCustomerUserOwner(): void
     {
+        /** @var User $owner */
         $owner = $this->getReference(LoadUserData::USER1);
+        /** @var User $saleRep */
         $saleRep = $this->getReference(LoadUserData::USER2);
         $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
         $customerUser->setOwner($owner);
         $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
-        $this->configManager->set(
-            'oro_rfp.notify_owner_of_customer_user_record',
-            'noSaleReps',
-            $this->website
-        );
-        $this->configManager->flush($this->website);
+        $this->configManager->set('oro_rfp.notify_owner_of_customer_user_record', 'noSaleReps');
+        $this->configManager->flush();
 
+        $recipientEmails = [$saleRep->getEmail()];
         $this->createRequest();
-        $this->assertEmailSent([$saleRep], 2);
+        $this->assertEmailSent($recipientEmails, 2);
     }
 
     /**
-     * @param array $usersToSendTo
+     * @param string[] $recipientEmails
      * @param int $numberOfMessagesExpected
      */
-    protected function assertEmailSent(array $usersToSendTo, $numberOfMessagesExpected)
+    protected function assertEmailSent(array $recipientEmails, int $numberOfMessagesExpected): void
     {
-        /** @var \Swift_Plugins_MessageLogger $emailLogging */
-        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
-        $emailMessages = $emailLogger->getMessages();
-        $actualUsersSentTo = [];
-        foreach ($emailMessages as $message) {
-            $actualUsersSentTo = array_merge($actualUsersSentTo, array_keys($message->getTo()));
+        $actualSentToEmails = [];
+        foreach (self::getMailerMessages() as $message) {
+            $actualSentToEmails[] = array_map(
+                static fn (SymfonyAddress $address) => $address->getAddress(),
+                $message->getTo()
+            );
         }
 
-        foreach ($usersToSendTo as $userToSendTo) {
-            $this->assertTrue(in_array($userToSendTo->getEmail(), $actualUsersSentTo));
+        $actualSentToEmails = array_merge(...$actualSentToEmails);
+        foreach ($recipientEmails as $recipientEmail) {
+            self::assertContains($recipientEmail, $actualSentToEmails);
         }
-        $this->assertCount($numberOfMessagesExpected, $emailMessages);
+
+        self::assertEmailCount($numberOfMessagesExpected);
     }
 
-    protected function createRequest()
+    protected function createRequest(): void
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
@@ -221,14 +228,14 @@ class RequestControllerNotificationTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
+        $crfToken = $this->getCsrfToken('oro_rfp_frontend_request')->getValue();
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [
             'input_action' => 'save_and_stay',
-            'oro_rfp_frontend_request' => $this->getFormData()
+            'oro_rfp_frontend_request' => $this->getFormData(),
         ];
         $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;
         $parameters['oro_rfp_frontend_request']['requestProducts'] = [
@@ -240,11 +247,11 @@ class RequestControllerNotificationTest extends WebTestCase
                         'productUnit' => $productPrice->getUnit()->getCode(),
                         'price' => [
                             'value' => $productPrice->getPrice()->getValue(),
-                            'currency' => $productPrice->getPrice()->getCurrency()
-                        ]
-                    ]
-                ]
-            ]
+                            'currency' => $productPrice->getPrice()->getCurrency(),
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->client->request($form->getMethod(), $form->getUri(), $parameters);
@@ -253,7 +260,7 @@ class RequestControllerNotificationTest extends WebTestCase
     /**
      * @return array
      */
-    protected function getFormData()
+    protected function getFormData(): array
     {
         return [
             'firstName' => LoadRequestData::FIRST_NAME,

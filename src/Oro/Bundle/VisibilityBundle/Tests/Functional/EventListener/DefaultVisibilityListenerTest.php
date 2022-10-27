@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -42,7 +42,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
      */
     protected $customerGroup;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);

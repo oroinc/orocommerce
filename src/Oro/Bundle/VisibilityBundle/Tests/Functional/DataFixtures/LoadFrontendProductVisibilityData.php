@@ -3,18 +3,16 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Bridge\Doctrine\Tests\Fixtures\ContainerAwareFixture;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadFrontendProductVisibilityData extends ContainerAwareFixture implements DependentFixtureInterface
+class LoadFrontendProductVisibilityData implements FixtureInterface, DependentFixtureInterface, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
+    use ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -33,8 +31,8 @@ class LoadFrontendProductVisibilityData extends ContainerAwareFixture implements
     {
         $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 }

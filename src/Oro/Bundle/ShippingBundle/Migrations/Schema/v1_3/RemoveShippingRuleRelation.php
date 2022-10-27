@@ -29,18 +29,12 @@ class RemoveShippingRuleRelation implements Migration, OrderedMigrationInterface
         $this->modifyOroShippingRuleMethodConfigTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function modifyOroShippingRuleDestinationTable(Schema $schema)
     {
         $table = $schema->getTable('oro_shipping_rule_destination');
         $table->removeForeignKey($this->getConstraintName($table, 'rule_id'));
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function modifyOroShippingRuleMethodConfigTable(Schema $schema)
     {
         $table = $schema->getTable('oro_shipping_rule_mthd_config');

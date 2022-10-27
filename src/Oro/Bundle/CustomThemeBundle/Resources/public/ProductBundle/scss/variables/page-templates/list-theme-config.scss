@@ -1,0 +1,6 @@
+/* @theme: custom; */
+// @productTheme: list-theme;
+
+$list-theme-product-view-line-item-form-wrap-desktop: wrap !default;
+$list-theme-product-view-line-item-form-div-flex-desktop-custom: 1 1
+    calc(50% - #{$list-theme-product-view-line-item-form-padding-top-desktop * .5});

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\Action\MassAction;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\MassAction\Action;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction;
@@ -12,14 +12,12 @@ class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit\Framework
      */
     private $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->action = new TriggerEventForSelectedProductIdsMassAction();
     }
 
     /**
-     * @param array $source
-     * @param array $expected
      * @dataProvider setOptionsDataProvider
      */
     public function testSetOptions(array $source, array $expected)

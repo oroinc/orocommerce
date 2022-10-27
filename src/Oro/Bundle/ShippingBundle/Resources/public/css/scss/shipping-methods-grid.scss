@@ -1,7 +1,9 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable no-descending-specificity */
+
 .shipping-methods-grid {
-    border: 1px solid #e4e4e4;
+    border: 1px solid $primary-800;
     border-radius: 3px;
 
     &__header {
@@ -10,11 +12,11 @@
         width: 100%;
         padding: 10px 15px;
 
-        background: #fafafa;
-        color: #7c7c7c;
+        background: $primary-860;
+        color: $primary-500;
 
         text-transform: uppercase;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 12px;
     }
 
@@ -22,26 +24,10 @@
         width: 40%;
 
         cursor: pointer;
-
-        &.expanded {
-            .fa-plus-square-o:before {
-                content: $fa-var-minus-square-o;
-            }
-        }
     }
 
     &__currency {
         margin: 5px 6px 5px 0;
-    }
-
-    [class*="fa-"] {
-        display: inline-flex;
-        align-items: center;
-
-        margin-right: 5px;
-        color: #7c7c7c;
-
-        font-size: 14px;
     }
 
     .row-oro.oro-multiselect-holder {
@@ -57,75 +43,66 @@
 
         text-decoration: none;
 
-        &:after {
-            color: #bbb;
+        &::after {
+            color: $additional-ultra-light;
             content: $fa-var-trash;
         }
+    }
+
+    .collapse-icon {
+        margin-right: 4px;
+        font-size: 14px;
     }
 }
 
 .shipping-method-config {
-    &.expanded {
-        .fa-plus-square-o:before {
-            content: $fa-var-minus-square-o;
-        }
-    }
-
     &__header {
         display: flex;
 
         width: 100%;
         padding: 15px;
-        border-top: 1px solid #e4e4e4;
+        border-top: 1px solid $primary-800;
 
         cursor: pointer;
 
-        border-bottom: 1px solid #e4e4e4;
+        border-bottom: 1px solid $primary-800;
 
         &:hover {
-            background: #f5f5f5;
-        }
-
-        .fa-plus-square-o {
-            margin-right: 9px;
+            background: $primary-860;
         }
     }
 
-    &__info {
-        transition: all .6s;
-        opacity: 1;
+    &__body {
+        padding-bottom: $content-padding-medium;
+
+        .selector.input-widget-select {
+            margin: 0;
+        }
+
+        @include selector-width(294px);
     }
 
     &.shipping-method-config-grouped &__body {
         padding: 35px;
     }
 
-    &__body {
-        .selector.input-widget-select {
-            margin: 0;
-        }
-
-        .controls {
-            input[type="text"] {
-                width: 280px;
-            }
-        }
-    }
-
     &__item {
         width: 40%;
-        font-weight: bold;
-        color: #5a5a5a;
+        font-weight: font-weight('bold');
+        color: $primary-300;
 
         img {
             max-height: 16px;
             max-width: 16px;
+            margin-right: 5px;
 
             vertical-align: text-top;
         }
     }
 
     &__info {
+        transition: all .6s;
+        opacity: 1;
         width: 55%;
         overflow: hidden;
         white-space: nowrap;
@@ -133,23 +110,16 @@
     }
 
     &__global-options {
-        margin: -10px 0 25px -36px;
+        margin: 0 0 26px -36px;
 
         input {
             width: 290px;
-        }
-
-        .tooltip-icon {
-            position: absolute;
-            margin-top: 1px;
-            left: 51px;
-            color: #6b92d0;
         }
     }
 }
 
 .shipping-method-config-grid {
-    border: 1px solid #e4e4e4;
+    border: 1px solid $primary-800;
     border-radius: 3px;
 
     &__header {
@@ -158,12 +128,12 @@
         width: 100%;
         padding: 7px 20px;
 
-        border-bottom: 1px solid #e4e4e4;
-        background: #fafafa;
-        color: #7c7c7c;
+        border-bottom: 1px solid $primary-800;
+        background: $primary-860;
+        color: $primary-500;
 
         text-transform: uppercase;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 11px;
 
         cursor: pointer;
@@ -239,12 +209,25 @@
                 width: 100%;
                 max-width: 100%;
 
-                border-bottom: 1px solid #e4e4e4;
+                border-bottom: 1px solid $primary-800;
             }
 
             .control-label.wrap {
                 text-align: left;
                 width: 40%;
+            }
+
+            &-collection_entry {
+                max-width: none;
+                padding: 0 20px;
+
+                &:first-child {
+                    margin-top: 16px;
+                }
+
+                &:last-child {
+                    margin-bottom: 16px;
+                }
             }
         }
 
@@ -265,7 +248,7 @@
 }
 
 .mobile-version {
-    .shipping-method-config-grid  {
+    .shipping-method-config-grid {
         &__header {
             padding: 10px;
         }
@@ -326,7 +309,7 @@
 
     .shipping-methods-grid {
         &__header {
-            padding: 8px 10px 6px 10px;
+            padding: 8px 10px 6px;
         }
 
         &__header-method {
@@ -340,15 +323,6 @@
     }
 
     .oro-shipping-rule-add-method-select {
-        margin-bottom: 10px;
         min-width: 242px;
-
-        .control-group-choice {
-            width: 92%;
-        }
-    }
-
-    .controls .selector select {
-        max-width: 240px;
     }
 }

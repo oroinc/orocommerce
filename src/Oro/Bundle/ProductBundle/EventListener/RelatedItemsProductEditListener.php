@@ -9,14 +9,18 @@ use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
+/**
+ * Adds related product information (tabs, grids, forms) to the product edit page.
+ */
 class RelatedItemsProductEditListener
 {
     const RELATED_ITEMS_ID = 'relatedItems';
 
     /** @var int */
-    const BLOCK_PRIORITY = 10;
+    const BLOCK_PRIORITY = 1500;
 
     /** @var TranslatorInterface */
     private $translator;
@@ -26,11 +30,7 @@ class RelatedItemsProductEditListener
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
-    /**
-     * @param TranslatorInterface               $translator
-     * @param RelatedItemConfigHelper           $relatedItemConfigHelper
-     * @param AuthorizationCheckerInterface     $authorizationChecker
-     */
+
     public function __construct(
         TranslatorInterface $translator,
         RelatedItemConfigHelper $relatedItemConfigHelper,
@@ -43,16 +43,13 @@ class RelatedItemsProductEditListener
 
     /**
      * @param string $name
-     * @return \Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
+     * @return \Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface
      */
     protected function getConfigProvider($name)
     {
         return $this->relatedItemConfigHelper->getConfigProvider($name);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $twigEnv = $event->getEnvironment();
@@ -88,9 +85,6 @@ class RelatedItemsProductEditListener
         }
     }
 
-    /**
-     * @param FormProcessEvent $event
-     */
     public function onFormDataSet(FormProcessEvent $event)
     {
         if ($this->authorizationChecker->isGranted('oro_related_products_edit')) {
@@ -169,10 +163,10 @@ class RelatedItemsProductEditListener
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param \Twig_Environment $twigEnv
+     * @param Environment $twigEnv
      * @return string
      */
-    private function getRelatedProductsEditBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    private function getRelatedProductsEditBlock(BeforeListRenderEvent $event, Environment $twigEnv)
     {
         return $twigEnv->render(
             '@OroProduct/Product/RelatedItems/relatedProducts.html.twig',
@@ -186,10 +180,10 @@ class RelatedItemsProductEditListener
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param \Twig_Environment $twigEnv
+     * @param Environment $twigEnv
      * @return string
      */
-    private function getUpsellProductsEdidBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    private function getUpsellProductsEdidBlock(BeforeListRenderEvent $event, Environment $twigEnv)
     {
         return $twigEnv->render(
             '@OroProduct/Product/RelatedItems/upsellProducts.html.twig',
@@ -202,11 +196,11 @@ class RelatedItemsProductEditListener
     }
 
     /**
-     * @param \Twig_Environment $twigEnv
+     * @param Environment $twigEnv
      * @param array $tabs
      * @return string
      */
-    private function renderTabs(\Twig_Environment $twigEnv, array $tabs)
+    private function renderTabs(Environment $twigEnv, array $tabs)
     {
         return $twigEnv->render(
             '@OroProduct/Product/RelatedItems/tabs.html.twig',

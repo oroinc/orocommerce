@@ -2,20 +2,13 @@
 
 .oro-payment-rule-collection {
     &.oro-item-collection {
-        > div {
+        .row-oro {
+            max-width: $form-container-control-group-max-width;
             position: relative;
-            padding: 15px 15px 0 0;
-            margin: 0 60% 20px 0;
-            border: 1px solid #e6e6e6;
+            padding: 24px 34px 24px 0;
+            margin-bottom: $content-padding-small;
             background: $primary-900;
             border-radius: 4px;
-            min-width: 500px;
-        }
-
-        div[data-validation-optional-group=""] {
-            .oro-multiselect-holder {
-                padding-right: 50px !important;
-            }
         }
 
         .add-list-item {
@@ -29,13 +22,9 @@
             right: 4px;
             text-decoration: none;
 
-            &:after {
-                color: #bbb;
+            &::after {
+                color: $additional-ultra-light;
             }
-        }
-
-        input[type="text"] {
-            width: 280px;
         }
 
         input.method-options-surcharge {

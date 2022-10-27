@@ -1,0 +1,9 @@
+app-modules:
+    - oroshipping/js/app/modules/validator-constraints-module
+dynamic-imports:
+    commons:
+        - oroshipping/js/validator/unique-product-unit-shipping-options
+    oroshipping:
+        - oroshipping/js/app/components/product-shipping-freight-classes-component
+        - oroshipping/js/app/views/product-shipping-options-view
+        - oroshipping/js/app/views/shipping-rule-method-view

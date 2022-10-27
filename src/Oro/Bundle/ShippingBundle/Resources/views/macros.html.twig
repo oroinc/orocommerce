@@ -2,7 +2,7 @@
     <tr>
         <td class="renderable"><div class="text-center">{{ shippingOption.productUnit|oro_format_product_unit_label }}</div></td>
         <td class="renderable"><div class="text-center">{{ shippingOption.weight.value|oro_weight_unit_format_value_short(shippingOption.weight.unit) }}</div></td>
-        <td class="renderable"><div class="text-center">{{ shippingOption.dimensions.value|oro_dimensions_unit_format_value_short(shippingOption.dimensions.unit) }}</div></td>
+        <td class="renderable"><div class="text-center" dir="ltr">{{ shippingOption.dimensions.value|oro_dimensions_unit_format_value_short(shippingOption.dimensions.unit) }}</div></td>
         <td class="renderable"><div class="text-center">{{ shippingOption.freightClass|oro_freight_class_format_label() }}</div></td>
     </tr>
 {% endmacro %}
@@ -19,12 +19,13 @@
 {% endmacro %}
 
 {% macro renderProductShippingOptions(shippingOptions) %}
+    {% import _self as shippingMacros %}
     {% if shippingOptions and shippingOptions|length > 0 %}
-        <table class="grid table table-condensed table-bordered shipping-options-result-grid">
-            {{ _self._renderItemsHead() }}
+        <table class="grid grid-main-container table table-condensed table-bordered shipping-options-result-grid">
+            {{ shippingMacros._renderItemsHead() }}
             <tbody>
                 {% for key, options in shippingOptions %}
-                    {{ _self._renderItemRow(options) }}
+                    {{ shippingMacros._renderItemRow(options) }}
                 {% endfor %}
             </tbody>
         </table>

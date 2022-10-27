@@ -21,10 +21,6 @@ class PriceListDefaultValueProvider
      */
     private $shardManager;
 
-    /**
-     * @param PriceListProvider $priceListProvider
-     * @param ShardManager      $shardManager
-     */
     public function __construct(PriceListProvider $priceListProvider, ShardManager $shardManager)
     {
         $this->priceListProvider = $priceListProvider;

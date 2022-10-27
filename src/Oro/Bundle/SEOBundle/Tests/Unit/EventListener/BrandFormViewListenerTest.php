@@ -6,24 +6,18 @@ use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\SEOBundle\EventListener\BrandFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
 
 class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var BrandFormViewListener */
-    protected $listener;
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->listener = new BrandFormViewListener($this->translator, $this->doctrineHelper);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener);
-
-        parent::tearDown();
+        $this->listener = new BrandFormViewListener($this->translator);
     }
 
     public function testOnCategoryEdit()
@@ -32,7 +26,7 @@ class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
         $scrollData = new ScrollData();
         $brand = new Brand();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, $brand);
+        $event = new BeforeListRenderEvent($env, $scrollData, $brand, new FormView());
 
         $this->listener->onBrandEdit($event);
     }

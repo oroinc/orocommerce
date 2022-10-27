@@ -29,17 +29,11 @@ class CouponApplicabilityValidationService
      */
     private $promotionProvider;
 
-
     /**
      * @var EntityCouponsProvider
      */
     private $entityCouponsProvider;
 
-    /**
-     * @param CouponValidationService $couponValidationService
-     * @param PromotionProvider $promotionProvider
-     * @param EntityCouponsProvider $entityCouponsProvider
-     */
     public function __construct(
         CouponValidationService $couponValidationService,
         PromotionProvider $promotionProvider,

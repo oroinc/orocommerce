@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
@@ -24,36 +27,25 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    use MemoryCacheProviderAwareTestTrait;
 
-    /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingRulesProvider;
+    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingRulesProvider;
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingMethodProvider;
+    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceCache;
 
-    /**
-     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceCache;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $eventDispatcher;
+    /** @var ShippingPriceProvider */
+    private $shippingPriceProvider;
 
-    /**
-     * @var ShippingPriceProvider
-     */
-    protected $shippingPriceProvider;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->shippingRulesProvider = $this->getMockBuilder(MethodsConfigsRulesByContextProviderInterface::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->shippingRulesProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
+        $this->priceCache = $this->createMock(ShippingPriceCache::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $methods = [
             'flat_rate' => $this->getEntity(ShippingMethodStub::class, [
@@ -83,34 +75,36 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ])
         ];
 
-        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
-        $this->shippingMethodProvider->expects($this->any())
+        $shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $shippingMethodProvider->expects($this->any())
             ->method('getShippingMethod')
-            ->will($this->returnCallback(function ($methodId) use ($methods) {
-                return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;
-            }));
-
-        $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $viewFactory = new ShippingMethodViewFactory($this->shippingMethodProvider);
-
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+            ->willReturnCallback(function ($methodId) use ($methods) {
+                return $methods[$methodId] ?? null;
+            });
 
         $this->shippingPriceProvider = new ShippingPriceProvider(
             $this->shippingRulesProvider,
-            $this->shippingMethodProvider,
+            $shippingMethodProvider,
             $this->priceCache,
-            $viewFactory,
+            new ShippingMethodViewFactory($shippingMethodProvider),
             $this->eventDispatcher
+        );
+    }
+
+    public function testGetApplicablePaymentMethodsWhenCache(): void
+    {
+        $methodViews = $this->createMock(ShippingMethodViewCollection::class);
+        $this->mockMemoryCacheProvider($methodViews);
+        $this->setMemoryCacheProvider($this->shippingPriceProvider);
+
+        $this->assertEquals(
+            $methodViews,
+            $this->shippingPriceProvider->getApplicableMethodsViews($this->createMock(ShippingContextInterface::class))
         );
     }
 
     /**
      * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
-     *
-     * @param array $shippingRules
-     * @param array $expectedData
      */
     public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData)
     {
@@ -131,7 +125,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ApplicableMethodsEvent::NAME);
+            ->with(self::isInstanceOf(ApplicableMethodsEvent::class), ApplicableMethodsEvent::NAME);
 
         $this->assertEquals(
             $expectedData,
@@ -142,10 +136,20 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
+     * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
      */
-    public function getApplicableShippingMethodsConfigsRulesProvider()
+    public function testGetApplicableMethodsViewsWhenMemoryCacheProvider(array $shippingRules, array $expectedData)
+    {
+        $this->mockMemoryCacheProvider();
+        $this->setMemoryCacheProvider($this->shippingPriceProvider);
+
+        $this->testGetApplicableMethodsViews($shippingRules, $expectedData);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function getApplicableShippingMethodsConfigsRulesProvider(): array
     {
         return [
             'one rule' => [
@@ -326,7 +330,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects(static::exactly(2))
+        $this->shippingRulesProvider->expects(self::exactly(2))
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
@@ -366,22 +370,14 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $this->priceCache->expects(static::at(0))
+        $this->priceCache->expects(self::exactly(2))
             ->method('hasPrice')
             ->with($context, 'flat_rate', 'primary')
-            ->willReturn(false);
-
-        $this->priceCache->expects(static::at(1))
+            ->willReturnOnConsecutiveCalls(false, true);
+        $this->priceCache->expects(self::once())
             ->method('savePrice')
-            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'))
-            ->willReturn(true);
-
-        $this->priceCache->expects(static::at(2))
-            ->method('hasPrice')
-            ->with($context, 'flat_rate', 'primary')
-            ->willReturn(true);
-
-        $this->priceCache->expects(static::at(3))
+            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'));
+        $this->priceCache->expects(self::once())
             ->method('getPrice')
             ->with($context, 'flat_rate', 'primary')
             ->willReturn(Price::create(2, 'USD'));
@@ -399,13 +395,8 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getPriceDataProvider
-     *
-     * @param string $methodId
-     * @param string $typeId
-     * @param array $shippingRules
-     * @param Price|null $expectedPrice
      */
-    public function testGetPrice($methodId, $typeId, array $shippingRules, Price $expectedPrice = null)
+    public function testGetPrice(string $methodId, string $typeId, array $shippingRules, Price $expectedPrice = null)
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -419,16 +410,16 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ->with($context)
             ->willReturn($shippingRules);
 
-        $this->priceCache->expects($this->exactly($expectedPrice ? 1 : 0))->method('savePrice');
+        $this->priceCache->expects($this->exactly($expectedPrice ? 1 : 0))
+            ->method('savePrice');
 
         $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function getPriceDataProvider()
+    public function getPriceDataProvider(): array
     {
         return [
             'no rule' => [
@@ -566,7 +557,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects(static::exactly(2))
+        $this->shippingRulesProvider->expects($this->once())
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
@@ -590,22 +581,14 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $expectedPrice = Price::create(1, 'USD');
 
-        $this->priceCache->expects(static::at(0))
+        $this->priceCache->expects(self::exactly(2))
             ->method('hasPrice')
             ->with($context, 'flat_rate', 'primary')
-            ->willReturn(false);
-
-        $this->priceCache->expects(static::at(1))
+            ->willReturnOnConsecutiveCalls(false, true);
+        $this->priceCache->expects(self::once())
             ->method('savePrice')
-            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'))
-            ->willReturn(true);
-
-        $this->priceCache->expects(static::at(2))
-            ->method('hasPrice')
-            ->with($context, 'flat_rate', 'primary')
-            ->willReturn(true);
-
-        $this->priceCache->expects(static::at(3))
+            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'));
+        $this->priceCache->expects(self::once())
             ->method('getPrice')
             ->with($context, 'flat_rate', 'primary')
             ->willReturn(Price::create(2, 'USD'));

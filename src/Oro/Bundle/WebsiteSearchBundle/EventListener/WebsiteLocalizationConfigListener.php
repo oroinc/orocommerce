@@ -6,6 +6,9 @@ use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Dispatches oro_website_search.reindexation_request event on oro_locale.default_localization setting change.
+ */
 class WebsiteLocalizationConfigListener
 {
     const CONFIG_LOCALIZATION_ENABLED = 'oro_locale.enabled_localizations';
@@ -16,9 +19,6 @@ class WebsiteLocalizationConfigListener
      */
     private $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -26,8 +26,6 @@ class WebsiteLocalizationConfigListener
 
     /**
      * Trigger full reindex if localizations were changed.
-     *
-     * @param ConfigUpdateEvent $event
      */
     public function onLocalizationSettingsChange(ConfigUpdateEvent $event)
     {
@@ -35,7 +33,7 @@ class WebsiteLocalizationConfigListener
             $event->isChanged(static::CONFIG_LOCALIZATION_ENABLED)
         ) {
             $reindexationEvent = $this->getReindexationRequestEvent($event);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
+            $this->eventDispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
         }
     }
 
@@ -47,6 +45,6 @@ class WebsiteLocalizationConfigListener
      */
     protected function getReindexationRequestEvent(ConfigUpdateEvent $event)
     {
-        return new ReindexationRequestEvent();
+        return new ReindexationRequestEvent([], [], [], true, ['main']);
     }
 }

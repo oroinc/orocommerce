@@ -48,7 +48,7 @@ abstract class AbstractAddressDiffMapperTest extends AbstractCheckoutDiffMapperT
     {
         $result = $this->mapper->getCurrentState($this->checkout);
 
-        $this->assertEquals([], $result);
+        $this->assertNull($result);
     }
 
     public function testIsStatesEqualTrue()

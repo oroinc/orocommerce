@@ -1,0 +1,80 @@
+features:
+    oro_pricing:
+        label: oro.pricing.feature.pricing.label
+        description: oro.pricing.feature.pricing.description
+        toggle: 'oro_pricing.feature_enabled'
+
+    oro_price_lists:
+        label: oro.pricing.feature.price_lists.label
+        description: oro.pricing.feature.price_lists.description
+        dependencies:
+            - 'oro_pricing'
+        routes:
+            - 'oro_pricing_price_list_view'
+            - 'oro_pricing_price_list_info'
+            - 'oro_pricing_price_list_index'
+            - 'oro_pricing_price_list_create'
+            - 'oro_pricing_price_list_update'
+            - 'oro_pricing_price_product_sidebar'
+        commands:
+            - 'oro:import:price-list:file'
+            - 'oro:price-lists:pl-storage-reorganize'
+            - 'oro:price-lists:switch-pricing-storage'
+        entities:
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceListSchedule'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceRule'
+            - 'Oro\Bundle\PricingBundle\Entity\ProductPrice'
+        api_resources:
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceListSchedule'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceRule'
+            - 'Oro\Bundle\PricingBundle\Entity\ProductPrice'
+        configuration:
+            - 'default_price_lists'
+        navigation_items:
+            - application_menu.sales_tab.pricing_price_lists_list
+
+    oro_price_lists_flat:
+        label: oro.pricing.feature.price_lists.flat.label
+        description: oro.pricing.feature.price_lists.flat.description
+        dependencies:
+            - 'oro_price_lists'
+        configuration:
+            - 'oro_pricing.default_price_list'
+
+    oro_price_lists_combined:
+        label: oro.pricing.feature.price_lists.combined.label
+        description: oro.pricing.feature.price_lists.combined.description
+        dependencies:
+            - 'oro_price_lists'
+        commands:
+            - 'oro:cron:price-lists:schedule'
+            - 'oro:price-lists:recalculate'
+        configuration:
+            - 'oro_pricing.default_price_lists'
+            - 'oro_pricing.price_calculation_precision'
+            - 'price_lists_update'
+            - 'price_strategies'
+        mq_topics:
+            - 'oro_pricing.price_lists.cpl.resolve_prices'
+            - 'oro_pricing.price_lists.cpl.resolve_currencies'
+
+    price_attributes:
+        label: oro.pricing.feature.price_attributes.label
+        description: oro.pricing.feature.price_attributes.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_pricing_price_attribute_price_list_index
+            - oro_pricing_price_attribute_price_list_view
+            - oro_pricing_price_attribute_price_list_create
+            - oro_pricing_price_attribute_price_list_update
+            - oro_pricing_price_attribute_price_list_info
+        entities:
+            - Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList
+            - Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
+        api_resources:
+            - Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList
+            - Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
+        navigation_items:
+            - application_menu.products_tab.pricing_price_attribute_price_lists_list

@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -34,7 +35,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = new DecoratedProductLineItemFactory(
             $this->createMock(VirtualFieldsProductDecoratorFactory::class)
@@ -47,14 +48,19 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider convertDataProvider
-     * @param ShippingContext $context
      */
-    public function testConvert(ShippingContext $context)
+    public function testConvert(ShippingContext $context): void
     {
+        $products = array_map(
+            static function (ProductHolderInterface $lineItem) {
+                return $lineItem->getProduct();
+            },
+            $context->getLineItems()->toArray()
+        );
+
         $expectedValues = [
-            'lineItems' => array_map(function (ShippingLineItem $lineItem) use ($context) {
-                return $this->factory
-                    ->createLineItemWithDecoratedProductByLineItem($context->getLineItems()->toArray(), $lineItem);
+            'lineItems' => array_map(function (ShippingLineItem $lineItem) use ($products) {
+                return $this->factory->createShippingLineItemWithDecoratedProduct($lineItem, $products);
             }, $context->getLineItems()->toArray()),
             'shippingOrigin' => $context->getShippingOrigin(),
             'billingAddress' => $context->getBillingAddress(),
@@ -84,7 +90,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
                     ShippingContext::FIELD_SHIPPING_ORIGIN => $this->getEntity(ShippingAddressStub::class, [
                         'region' => $this->getEntity(Region::class, [
                             'code' => 'CA',
-                        ]),
+                        ], ['US-CA']),
                     ]),
                     ShippingContext::FIELD_BILLING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
                         'country' => new Country('US'),
@@ -92,9 +98,8 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit\Framework\TestCa
                     ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
                         'country' => new Country('US'),
                         'region' => $this->getEntity(Region::class, [
-                            'combinedCode' => 'US-CA',
                             'code' => 'CA',
-                        ]),
+                        ], ['US-CA']),
                         'postalCode' => '90401',
                     ]),
                     ShippingContext::FIELD_PAYMENT_METHOD => 'integration_payment_method',

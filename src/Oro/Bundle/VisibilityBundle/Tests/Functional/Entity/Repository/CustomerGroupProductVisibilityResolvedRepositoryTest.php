@@ -16,7 +16,7 @@ class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
      */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -44,8 +44,8 @@ class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
     public function testDeleteByProduct()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $this->repository->deleteByProduct($product);
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertEmpty($visibilities, 'Deleting has failed');
@@ -53,8 +53,8 @@ class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 
     public function testInsertByProduct()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
-        /** @var $product Product */
         $this->repository->deleteByProduct($product);
         $insertExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
         $this->repository->insertByProduct($insertExecutor, $product);

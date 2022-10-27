@@ -3,7 +3,8 @@
 namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
@@ -12,6 +13,9 @@ use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEventDispatcherInterfac
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Migration rename FlatRate methods
+ */
 class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInterface
 {
     /**
@@ -48,7 +52,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
             ->get('oro_flat_rate_shipping.method.identifier_generator.method');
         $this->repository = $container->get('oro_entity.doctrine_helper')->getEntityRepository(Channel::class);
         $this->dispatcher = $container->get('oro_shipping.method.event.dispatcher.method_renaming');
-        $this->installed = $container->hasParameter('installed') && $container->getParameter('installed');
+        $this->installed = $container->get(ApplicationState::class)->isInstalled();
     }
 
     /**
@@ -74,9 +78,6 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
         return $this->repository->findByType(FlatRateChannelType::TYPE);
     }
 
-    /**
-     * @param Channel $channel
-     */
     protected function dispatchFlatRateRenamingEvent(Channel $channel)
     {
         $this->dispatcher->dispatch(

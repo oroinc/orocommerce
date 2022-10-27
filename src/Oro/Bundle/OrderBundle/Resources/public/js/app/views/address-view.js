@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var AddressView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oroorder/js/app/views/address-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.AddressView
      */
-    AddressView = BaseView.extend({
+    const AddressView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -56,32 +55,41 @@ define(function(require) {
          */
         loadingMaskView: null,
 
-        /**
-         * @inheritDoc
-         */
-        constructor: function AddressView() {
-            AddressView.__super__.constructor.apply(this, arguments);
+        listen: {
+            'customer-customer-user:change mediator': 'handleCustomerChange',
+            'order:load:related-data mediator': 'loadingStart',
+            'order:loaded:related-data mediator': 'loadedRelatedData'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function AddressView(options) {
+            AddressView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
+        },
 
-            mediator.on('order:load:related-data', this.loadingStart, this);
-            mediator.on('order:loaded:related-data', this.loadedRelatedData, this);
+        handleCustomerChange: function() {
+            // Allow default address usage on customer/customer user change
+            this._fillAddressFields({label: ''});
+            this.useDefaultAddress = true;
         },
 
         /**
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
+            const self = this;
 
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
@@ -89,11 +97,11 @@ define(function(require) {
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
-                var $field = $(this);
+                const $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;
                 }
-                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
 
@@ -108,6 +116,12 @@ define(function(require) {
             if (this.options.selectors.address) {
                 this.setAddress(this.$el.find(this.options.selectors.address));
 
+                this.$fields.each(function() {
+                    const $field = $(this);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', $field.select2('val'));
+                    }
+                });
                 this.customerAddressChange();
             } else {
                 this._setReadOnlyMode(true);
@@ -123,7 +137,7 @@ define(function(require) {
          */
         normalizeName: function(name) {
             name = name.split('_');
-            for (var i = 1, iMax = name.length; i < iMax; i++) {
+            for (let i = 1, iMax = name.length; i < iMax; i++) {
                 if (name[i]) {
                     name[i] = name[i][0].toUpperCase() + name[i].substr(1);
                 }
@@ -139,9 +153,15 @@ define(function(require) {
         setAddress: function($address) {
             this.$address = $address;
 
-            var self = this;
+            const self = this;
             this.$address.change(function(e) {
-                self.useDefaultAddress = false;
+                // Do not block default address usage if there is no default address or selected address is default
+                if (self.useDefaultAddress &&
+                    self.$address.data('default') &&
+                    self.$address.data('default') !== self.$address.val()
+                ) {
+                    self.useDefaultAddress = false;
+                }
                 self.customerAddressChange(e);
             });
         },
@@ -150,29 +170,44 @@ define(function(require) {
          * Implement customer address change logic
          */
         customerAddressChange: function(e) {
-            if (this.$address.val() !== this.options.enterManuallyValue) {
+            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this._setReadOnlyMode(true);
 
-                var address = this.$address.data('addresses')[this.$address.val()] || null;
+                const address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
-                    var self = this;
-
-                    _.each(address, function(value, name) {
-                        if (_.isObject(value)) {
-                            value = _.first(_.values(value));
-                        }
-                        var $field = self.fieldsByName[self.normalizeName(name)] || null;
-                        if ($field) {
-                            $field.val(value);
-                            if ($field.data('select2')) {
-                                $field.data('selected-data', value).change();
-                            }
-                        }
-                    });
+                    this._fillAddressFields(address, e !== undefined);
                 }
             } else {
                 this._setReadOnlyMode(false);
+                const $country = this.fieldsByName.country;
+                if ($country) {
+                    $country.trigger('redraw');
+                }
             }
+        },
+
+        /**
+         * @param {Object} address
+         * @param {Boolean} triggerChange
+         */
+        _fillAddressFields: function(address, triggerChange = true) {
+            const self = this;
+            _.each(address, function(value, name) {
+                if (_.isObject(value)) {
+                    value = _.first(_.values(value));
+                }
+                const $field = self.fieldsByName[self.normalizeName(name)] || null;
+                // set new value only in case if it is different from exising (`null` is transformed to `''`)
+                if ($field && $field.val() !== (value || '')) {
+                    $field.val(value);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', value);
+                        if (triggerChange) {
+                            $field.change();
+                        }
+                    }
+                }
+            });
         },
 
         _setReadOnlyMode: function(mode) {
@@ -201,38 +236,25 @@ define(function(require) {
          * @param {Object} response
          */
         loadedRelatedData: function(response) {
-            var address = response[this.options.type + 'Address'] || null;
+            const address = response[this.options.type + 'Address'] || null;
             if (!address) {
                 this.loadingEnd();
                 return;
             }
 
-            var $oldAddress = this.$address;
+            const $oldAddress = this.$address;
             this.setAddress($(address));
 
-            $oldAddress.parent().trigger('content:remove');
-            $oldAddress.inputWidget('dispose');
-            $oldAddress.replaceWith(this.$address);
+            $oldAddress.parent()
+                .trigger('content:remove')
+                .empty()
+                .append(this.$address);
 
-            if (this.useDefaultAddress) {
+            if (this.useDefaultAddress && this.$address.data('default')) {
                 this.$address.val(this.$address.data('default')).change();
             }
 
-            this.initLayout().done(_.bind(this.loadingEnd, this));
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('order:load:related-data', this.loadingStart, this);
-            mediator.off('order:loaded:related-data', this.loadedRelatedData, this);
-
-            AddressView.__super__.dispose.call(this);
+            this.initLayout().done(this.loadingEnd.bind(this));
         }
     });
 

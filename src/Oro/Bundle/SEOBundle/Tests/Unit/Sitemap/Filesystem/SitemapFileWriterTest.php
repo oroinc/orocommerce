@@ -2,37 +2,28 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriter;
 use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 
 class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Filesystem|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $fileSystem;
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var SitemapFileWriter
-     */
+    /** @var SitemapFileWriter */
     private $sitemapFileWriter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->fileSystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->fileManager = $this->createMock(FileManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->sitemapFileWriter = new SitemapFileWriter($this->fileSystem, $this->logger);
+        $this->sitemapFileWriter = new SitemapFileWriter($this->fileManager, $this->logger);
     }
 
     public function testSaveSitemap()
@@ -40,14 +31,12 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
         $stringData = 'some_string_data';
 
         $filePath = '/some/path/file-1.xml';
-        $this->fileSystem
-            ->expects($this->once())
-            ->method('dumpFile')
-            ->with($filePath, $stringData);
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
+            ->with($stringData, $filePath);
 
-        $this->logger
-            ->expects($this->never())
-            ->method('debug');
+        $this->logger->expects($this->never())
+            ->method($this->anything());
 
         $this->assertEquals($filePath, $this->sitemapFileWriter->saveSitemap($stringData, $filePath));
     }
@@ -56,18 +45,15 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
     {
         $filePath = '/some/path/file-1.xml';
 
-        $ioExceptionMessage = '';
-        $exception = new IOException($ioExceptionMessage);
+        $exceptionMessage = 'some error';
+        $exception = new \Exception($exceptionMessage);
 
-        $this->fileSystem
-            ->expects($this->once())
-            ->method('dumpFile')
+        $this->fileManager->expects($this->once())
+            ->method('writeToStorage')
             ->willThrowException($exception);
-
-        $this->logger
-            ->expects($this->once())
+        $this->logger->expects($this->once())
             ->method('debug')
-            ->with($ioExceptionMessage);
+            ->with($exceptionMessage);
 
         $this->expectException(SitemapFileWriterException::class);
         $this->expectExceptionMessage('An error occurred while writing sitemap to ' . $filePath);

@@ -1,36 +1,38 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroShoppingListBundle:layouts:default/page/shopping_list_widget.html.twig'
+            themes: '@OroShoppingList/layouts/default/page/shopping_list_widget.html.twig'
         - '@addTree':
             items:
                 header_row_shopping_trigger:
-                    blockType: container
+                    blockType: shopping_lists_awere_container
                     options:
-                        visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_view") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 header_row_shopping_toggle:
-                     blockType: container
+                    blockType: container
                 main_menu_shopping_lists_wrapper:
                     blockType: container
                 main_menu_shopping_lists_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 main_menu_shopping_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 main_menu_shopping_lists_dropdown_container:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                         shoppingListProducts: '=data["oro_shopping_list_products"].getLastProductsGroupedByShoppingList(shoppingLists, 3, data["frontend_localization"].getCurrentLocalization())'
+                        productsMatchedPrices: '=data["shopping_list_limit_provider"].isOnlyOneEnabled() ? data["oro_shopping_list_products"].getMatchedPrices(shoppingLists) : []'
                 main_menu_shopping_lists_dropdown_item:
                     blockType: shopping_list_dropdown_item
                 main_menu_shopping_lists_dropdown_create:
                     blockType: shopping_list_dropdown_create
                     options:
-                        visible: '=data["feature"].isFeatureEnabled("shopping_list_create")'
+                        visible: '=data["feature"].isFeatureEnabled("shopping_list_create") && data["acl"].isGranted("oro_shopping_list_frontend_create")'
 
             tree:
                 header_row_shopping:
@@ -46,4 +48,4 @@ layout:
         - '@setOption':
             id: header_row_shopping
             optionName: visible
-            optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
+            optionValue: '=data["acl"].isGranted("oro_shopping_list_frontend_view") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'

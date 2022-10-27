@@ -6,6 +6,7 @@ oro:
             entity_label:               'Request For Quote'
             entity_label_short:         'Request'
             entity_plural_label:        'Requests For Quote'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description:         The document used for negotiations on a better price, more convenient quantities of products, or additional services.
             id.label:                   'RFQ #'
             first_name:
@@ -83,6 +84,7 @@ oro:
         requestproduct:
             entity_label:               'Request Product'
             entity_plural_label:        'Request Products'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description:         The product that the RFQ is made for.
             add_label:                  'Add Line Item'
             id.label:                   'ID'
@@ -106,6 +108,7 @@ oro:
             item:                       '{units}, {price} per {unit}'
             entity_label:               'Request Product Line'
             entity_plural_label:        'Request Product Lines'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description:         The product line item added to the request for quote. That is, price per unit for a specific quantity of a selected product.
             add_label:                  'Add Request Item'
             id.label:                   'ID'
@@ -126,10 +129,12 @@ oro:
             currency:
                 label:                  'Price Currency'
                 description:            The currency in which the suggested price for the selected product in the RFQ is defined.
+            note.label:                 'Note'
 
         requestadditionalnote:
             entity_label: 'Request Additional Note'
             entity_plural_label: 'Request Additional Notes'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_description: 'Notes added to the RFQ by the sales person as a Request More Information note or by the buyer as a Provide More Information note.'
             id.label: 'ID'
             request:
@@ -152,6 +157,9 @@ oro:
             created_at.label: 'Created At'
             updated_at.label: 'Updated At'
 
+            datagrid:
+                entity_hint: 'Additional Notes'
+
         menu:
             request_list.description:   'List of Requests'
             shortcut_request_list.description: 'Shows list of existing Requests'
@@ -170,6 +178,7 @@ oro:
                 notifications.title: 'Notifications'
                 guest_rfp.title: 'Guest RFQ'
                 guest_rfp_owner.title: 'Guest RFQ Owner Settings'
+                general.title: 'General'
             fields:
                 feature_enabled.label: 'Enable RFQ'
                 frontend_feature_enabled.label: 'Enable RFQ (Store Front)'
@@ -190,10 +199,10 @@ oro:
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
                 guest_rfp:
                     title: 'Enable Guest RFQ'
-                    tooltip: 'Enable Guest RFQ'
+                    tooltip: 'Select the option to enable guest users to request quotes on the items they are interested in from the storefront.'
                 default_guest_rfp_owner:
                     title: 'Default guest RFQ owner'
-                    tooltip: 'Default guest RFQ owner'
+                    tooltip: 'Select the default owner of all guest RFQs.'
         message:
             requestproductitem.unit.removed: '{title} - removed'
 
@@ -210,6 +219,8 @@ oro:
             request:
                 updated.message: 'Your Request For Quote has been successfully updated'
                 resubmitted.message: 'Your Request For Quote has been successfully resubmitted'
+                view.aria_label: "View #%id% request"
+                edit.aria_label: "Edit #%id% request"
 
         btn:
             delete: 'Delete'
@@ -238,13 +249,16 @@ oro:
                     qty: 'QTY'
 
         feature:
-            label: 'Request For Quote'
-            description: 'Request For Quote allows users to place Requests for chosen products'
+            label: Back-Office Requests for Quotes
+            description: Enables back-office users to work with submitted requests for quotes, process them and convert them into quotes.
+            guest_rfp:
+                label: Guest RFQ
+                description: Enables the Guest RFQ configuration feature that controls whether to allow guest users to request quotes on the items they are interested in from the storefront.
+            frontend_rfp:
+                label: Storefront Requests for Quotes
+                description: Enables customer users to submit requests for quotes through the storefront.
 
     frontend:
-        feature:
-            label: 'Request For Quote (Store Front)'
-            description: 'Request For Quote allows users to place Requests for chosen products'
         product:
             view:
                 request_a_quote: 'Request a Quote'
@@ -255,6 +269,7 @@ oro:
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
+                entity_grid_all_view_label: 'All %entity_plural_label%'
                 create_title.label: 'Request A Quote'
                 edit_title.label: 'Request For Quote #%id%'
                 id.label: 'RFQ #'
@@ -297,6 +312,9 @@ oro:
             requestproduct:
                 product_sku.label: 'Item #:'
                 comment.label: 'Notes'
+                action:
+                    edit: 'Edit'
+                    delete: 'Delete'
             action:
                 request.edit: 'Edit'
             data_storage:

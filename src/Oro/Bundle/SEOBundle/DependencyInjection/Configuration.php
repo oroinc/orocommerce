@@ -25,8 +25,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('oro_seo');
+        $treeBuilder = new TreeBuilder('oro_seo');
+        $rootNode    = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
@@ -38,6 +38,8 @@ class Configuration implements ConfigurationInterface
                 'sitemap_changefreq_cms_page' => ['value' => self::CHANGEFREQ_DAILY],
                 'sitemap_priority_cms_page' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_cron_definition' => ['value' => self::DEFAULT_CRON_DEFINITION],
+                'sitemap_exclude_landing_pages' => ['value' => true],
+                'sitemap_include_landing_pages_not_in_web_catalog' => ['value' => false],
             ]
         );
 

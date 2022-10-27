@@ -19,7 +19,7 @@ class WebCatalogRepositoryTest extends WebTestCase
      */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures(
@@ -38,13 +38,10 @@ class WebCatalogRepositoryTest extends WebTestCase
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
         /** @var Scope $scope1 */
         $scope1 = $this->getReference(LoadWebCatalogScopes::SCOPE1);
-        /** @var Scope $scope2 */
-        $scope2 = $this->getReference(LoadWebCatalogScopes::SCOPE2);
 
         $usedScopes = $this->repository->getUsedScopes($webCatalog);
-        $this->assertCount(2, $usedScopes);
+        $this->assertCount(1, $usedScopes);
         $this->assertContains($scope1, $usedScopes);
-        $this->assertContains($scope2, $usedScopes);
     }
 
     public function testGetMatchingScopes()
@@ -69,5 +66,18 @@ class WebCatalogRepositoryTest extends WebTestCase
         $this->assertCount(2, $scopes);
         $this->assertEquals($scope2->getId(), $scopes[0]->getId());
         $this->assertEquals($scope1->getId(), $scopes[1]->getId());
+    }
+
+    public function testGetUsedScopesIds()
+    {
+        /** @var WebCatalog $webCatalog */
+        $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
+        /** @var Scope $scope1 */
+        $scope1 = $this->getReference(LoadWebCatalogScopes::SCOPE1);
+        /** @var Scope $scope2 */
+        $scope2 = $this->getReference(LoadWebCatalogScopes::SCOPE2);
+
+        $usedScopesIds = $this->repository->getUsedScopesIds($webCatalog);
+        self::assertEqualsCanonicalizing([$scope2->getId(), $scope1->getId()], $usedScopesIds);
     }
 }

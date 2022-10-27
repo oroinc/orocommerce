@@ -13,79 +13,47 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $router;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
 
-    /**
-     * @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $storage;
+    /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
+    private $storage;
 
-    /**
-     * @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $authorizationChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    /**
-     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $tokenAccessor;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    /**
-     * @var Session|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $session;
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
-    /**
-     * @var RequestDataStorageExtension|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestDataStorageExtension;
+    /** @var RequestDataStorageExtension|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestDataStorageExtension;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $featureChecker;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    /**
-     * @var DataStorageComponentProcessor
-     */
-    protected $processor;
+    /** @var DataStorageComponentProcessor */
+    private $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(UrlGeneratorInterface::class);
-
-        $this->storage = $this->getMockBuilder(ProductDataStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->storage = $this->createMock(ProductDataStorage::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-
-        $this->session = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->session = $this->createMock(Session::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-
-        $this->requestDataStorageExtension = $this->getMockBuilder(RequestDataStorageExtension::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestDataStorageExtension = $this->createMock(RequestDataStorageExtension::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->processor = new DataStorageComponentProcessor(
             $this->router,
@@ -99,39 +67,23 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown()
-    {
-        unset(
-            $this->router,
-            $this->storage,
-            $this->authorizationChecker,
-            $this->tokenAccessor,
-            $this->session,
-            $this->translator,
-            $this->requestDataStorageExtension,
-            $this->processor,
-            $this->featureChecker
-        );
-    }
-
     public function testProcessNotAllowedRFP()
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
 
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request **/
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
-        /** @var FlashBag|\PHPUnit\Framework\MockObject\MockObject $flashBag **/
-        $flashBag = $this->getMockBuilder(FlashBag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $flashBag = $this->createMock(FlashBag::class);
 
-        $flashBag->expects($this->once())->method('add');
+        $flashBag->expects($this->once())
+            ->method('add');
 
-        $this->requestDataStorageExtension->expects($this->once())->method('isAllowedRFP')->willReturn(false);
-        $this->session->expects($this->once())->method('getFlashBag')->willReturn($flashBag);
+        $this->requestDataStorageExtension->expects($this->once())
+            ->method('isAllowedRFP')
+            ->willReturn(false);
+        $this->session->expects($this->once())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
 
         $this->assertNull($this->processor->process($data, $request));
     }
@@ -140,12 +92,11 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [['productSku' => 'sku01']]];
 
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request **/
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
-        $this->requestDataStorageExtension->expects($this->once())->method('isAllowedRFP')->willReturn(true);
+        $this->requestDataStorageExtension->expects($this->once())
+            ->method('isAllowedRFP')
+            ->willReturn(true);
 
         $this->assertNull($this->processor->process($data, $request));
     }
@@ -165,12 +116,12 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->tokenAccessor->expects($this->once())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('guest_rfp')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertEquals(true, $this->processor->isAllowedForGuest());
     }

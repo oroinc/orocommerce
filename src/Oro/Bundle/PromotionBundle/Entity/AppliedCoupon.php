@@ -6,13 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\PromotionBundle\Model\ExtendAppliedCoupon;
 
 /**
  * @Config()
  * @ORM\Table(name="oro_promotion_applied_coupon")
  * @ORM\Entity
+ *
+ * Store Applied Coupon in a database
  */
 class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterface
 {

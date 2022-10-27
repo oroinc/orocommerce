@@ -10,17 +10,20 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class TaxTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\Tax';
+    /** @var TaxType */
+    private $formType;
+
+    protected function setUp(): void
+    {
+        $this->formType = new TaxType();
+        $this->formType->setDataClass(Tax::class);
+        parent::setUp();
+    }
 
     /**
-     * @var TaxType
+     * {@inheritDoc}
      */
-    protected $formType;
-
-    /**
-     * @return array
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -31,26 +34,6 @@ class TaxTypeTest extends FormIntegrationTestCase
                 []
             )
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        $this->formType = new TaxType();
-        $this->formType->setDataClass(static::DATA_CLASS);
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testBuildForm()
@@ -68,29 +51,25 @@ class TaxTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param bool   $isValid
-     * @param mixed  $defaultData
-     * @param mixed  $viewData
-     * @param array  $submittedData
-     * @param array  $expectedData
      */
     public function testSubmit(
-        $isValid,
-        $defaultData,
-        $viewData,
+        bool $isValid,
+        mixed $defaultData,
+        mixed $viewData,
         array $submittedData,
-        $expectedData
+        array $expectedData
     ) {
         $form = $this->factory->create(TaxType::class, $defaultData);
 
         $formConfig = $form->getConfig();
-        $this->assertEquals(static::DATA_CLASS, $formConfig->getOption('data_class'));
+        $this->assertEquals(Tax::class, $formConfig->getOption('data_class'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
 
         $form->submit($submittedData);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         foreach ($expectedData as $field => $data) {
             $this->assertTrue($form->has($field));
@@ -99,10 +78,7 @@ class TaxTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $tax = new Tax();
         $tax->setCode('SomeCodeUnique1')

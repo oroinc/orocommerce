@@ -4,7 +4,6 @@ namespace Oro\Bundle\OrderBundle\Tests\Behat\Element;
 
 use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\LineItemInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class BackendOrder extends Order
 {
@@ -36,8 +35,6 @@ class BackendOrder extends Order
         /** @var Table $lineItemsTable */
         $lineItemsTable = $this->getElement('BackendOrderLineItemsTable');
 
-        return array_map(function (TableRow $element) use ($lineItemElement) {
-            return $this->elementFactory->wrapElement($lineItemElement, $element);
-        }, $lineItemsTable->getRows());
+        return $lineItemsTable->getRowElements($lineItemElement);
     }
 }

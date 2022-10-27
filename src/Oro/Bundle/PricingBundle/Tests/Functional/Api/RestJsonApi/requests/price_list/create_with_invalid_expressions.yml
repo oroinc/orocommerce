@@ -1,0 +1,34 @@
+data:
+    type: 'pricelists'
+    id: '111'
+    attributes:
+        default: false
+        active: true
+        productAssignmentRule: 'product.category.id == 1'
+        name: 'New'
+        priceListCurrencies: ['USD', 'RUB']
+    relationships:
+        schedules:
+            data:
+                -
+                    type: 'pricelistschedules'
+                    id: '<toString(@schedule.5->id)>'
+included:
+    -
+        type: 'pricerules'
+        id: "price_rule"
+        attributes:
+            currency: 'EUR'
+            currencyExpression: null
+            quantity: 1
+            quantityExpression: null
+            productUnitExpression: 'product.test.unit'
+            ruleCondition: 'product.category.id == 1'
+            rule: 'pricelist[1].prices.value * 0.8'
+            priority: '10'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '111'
+

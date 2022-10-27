@@ -1,0 +1,45 @@
+layout:
+    imports:
+        -
+            id: oro_consent_items
+            namespace: checkout
+            root: checkout_consent_container
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/consents.html.twig'
+
+        - '@setOption':
+            id: checkout_consent_wrapper
+            optionName: appliedConsents
+            optionValue: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+
+        - '@add':
+            id: checkout_consent_container
+            blockType: container
+            parentId: checkout_form
+            prepend: true
+
+        - '@add':
+            id: checkout_consent_message
+            blockType: consent_acceptance_choice
+            parentId: checkout_consent_container
+            options:
+                appliedConsents: '=data["workflowItem"].getData().get("customerConsents") ? data["workflowItem"].getData().get("customerConsents").toArray() : []'
+
+        - '@setOption':
+            id: checkout_button_continue
+            optionName: visible
+            optionValue: '=context["is_logged_in"] || !data["checkout"].getRegisteredCustomerUser() || data["feature"].isFeatureEnabled("allow_checkout_without_email_confirmation_feature")'
+
+        - '@add':
+            id: checkout_button_cap
+            blockType: checkout_transition_continue
+            parentId: checkout_form_buttons
+            options:
+                transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
+                componentOptions:
+                    flashMessageOnSubmit: '=data["translator"].getTrans("oro.checkout.confirm_email_flash_message")'
+                visible: '=!context["is_logged_in"] && data["checkout"].getRegisteredCustomerUser() && !data["feature"].isFeatureEnabled("allow_checkout_without_email_confirmation_feature")'
+
+    conditions: 'context["workflowStepName"]=="customer_consents" && !context["widget_container"]'

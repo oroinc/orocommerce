@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\SEOBundle\Async;
 
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Console scheduler to generate sitemap
+ */
 class SitemapGenerationScheduler
 {
-    /**
-     * @var MessageProducerInterface
-     */
-    protected $messageProducer;
+    protected MessageProducerInterface $messageProducer;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
     public function __construct(MessageProducerInterface $messageProducer)
     {
         $this->messageProducer = $messageProducer;
@@ -21,6 +19,6 @@ class SitemapGenerationScheduler
 
     public function scheduleSend()
     {
-        $this->messageProducer->send(Topics::GENERATE_SITEMAP, '');
+        $this->messageProducer->send(GenerateSitemapTopic::getName(), []);
     }
 }

@@ -9,9 +9,6 @@ class ContextEventDispatcher
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -25,7 +22,7 @@ class ContextEventDispatcher
     {
         $event = new ContextEvent($object);
 
-        $this->eventDispatcher->dispatch(ContextEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ContextEvent::NAME);
 
         return $event->getContext();
     }

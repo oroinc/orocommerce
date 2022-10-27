@@ -1,0 +1,18 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node1->id)>'
+    relationships:
+        content:
+            data:
+                type: productcollection
+                id: '<toString(@catalog1_node1->contentVariants->first()->id)>'
+included:
+    -
+        type: productcollection
+        id: '<toString(@catalog1_node1->contentVariants->first()->id)>'
+        relationships:
+            products:
+                data:
+                    -
+                        type: productsearch
+                        id: '<toString(@product1->id)>'

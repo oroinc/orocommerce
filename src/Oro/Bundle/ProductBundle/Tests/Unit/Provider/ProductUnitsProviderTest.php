@@ -2,106 +2,73 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ProductUnitsProvider
-     */
-    protected $productUnitsProvider;
+    private const UNITS = [
+        ['code' => 'each', 'precision' => 1],
+        ['code' => 'kg', 'precision' => 3],
+        ['code' => 'hour', 'precision' => 0],
+        ['code' => 'item', 'precision' => 0],
+        ['code' => 'set', 'precision' => 2],
+        ['code' => 'piece', 'precision' => 1],
+    ];
 
-    /**
-     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $formatter;
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $formatter;
 
-    public function setUp()
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cache;
+
+    /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
+
+    /** @var ProductUnitsProvider */
+    private $productUnitsProvider;
+
+    protected function setUp(): void
     {
-        $units = [
-            [
-                'code' => 'each',
-                'precision' => 1,
-            ],
-            [
-                'code' => 'kg',
-                'precision' => 3,
-            ],
-            [
-                'code' => 'hour',
-                'precision' => 0,
-            ],
-            [
-                'code' => 'item',
-                'precision' => 0,
-            ],
-            [
-                'code' => 'set',
-                'precision' => 2,
-            ],
-            [
-                'code' => 'piece',
-                'precision' => 1,
-            ],
-        ];
-        $productUnits = [];
-
-        foreach ($units as $unit) {
-            $productUnits[] = $this->getEntity(
-                ProductUnit::class,
-                [
-                    'code' => $unit['code'],
-                    'defaultPrecision' => $unit['precision']
-                ]
-            );
-        }
-
-        $productUnitRepository = $this
-            ->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productUnitRepository->expects($this->once())
-            ->method('getAllUnits')
-            ->will($this->returnValue($productUnits));
+        $this->repository = $this->createMock(ProductUnitRepository::class);
+        $this->cache = $this->createMock(CacheInterface::class);
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with(ProductUnit::class)
-            ->willReturn($productUnitRepository);
 
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(ProductUnit::class)
             ->willReturn($manager);
 
-        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
-
-        $this->productUnitsProvider = new ProductUnitsProvider($managerRegistry, $this->formatter);
+        $this->productUnitsProvider = new ProductUnitsProvider(
+            $doctrine,
+            $this->formatter,
+            $this->cache
+        );
     }
 
     public function testGetAvailableProductUnits()
     {
         $this->formatter->expects($this->exactly(6))
             ->method('format')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['each', false, false, 'oro.product_unit.each.label.full'],
                 ['kg', false, false, 'oro.product_unit.kg.label.full'],
                 ['hour', false, false, 'oro.product_unit.hour.label.full'],
                 ['item', false, false, 'oro.product_unit.item.label.full'],
                 ['set', false, false, 'oro.product_unit.set.label.full'],
                 ['piece', false, false, 'oro.product_unit.piece.label.full'],
-            ]));
+            ]);
 
         $expected = [
             'oro.product_unit.each.label.full' => 'each',
@@ -111,6 +78,10 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
             'oro.product_unit.set.label.full' => 'set',
             'oro.product_unit.piece.label.full' => 'piece',
         ];
+        $this->cache->expects(self::once())
+            ->method('get')
+            ->with('codes')
+            ->willReturn($expected);
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnits());
     }
@@ -125,6 +96,10 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
             'set' => 2,
             'piece' => 1,
         ];
+        $this->cache->expects(self::once())
+            ->method('get')
+            ->with('codes_with_precision')
+            ->willReturn($expected);
 
         $this->assertEquals($expected, $this->productUnitsProvider->getAvailableProductUnitsWithPrecision());
     }

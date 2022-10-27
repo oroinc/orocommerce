@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
@@ -13,10 +12,10 @@ use Symfony\Component\DomCrawler\Form;
 
 class QuickAddControllerTest extends WebTestCase
 {
-    const VALIDATION_RESULT_SELECTOR        = 'div.validation-info table tbody tr';
-    const VALIDATION_ERRORS_SELECTOR        = 'div.import-errors ol li';
+    private const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
+    private const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -44,7 +43,7 @@ class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $this->assertContains('Import Excel .CSV File', $response->getContent());
+        static::assertStringContainsString('Import Excel .CSV File', $response->getContent());
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -61,7 +60,7 @@ class QuickAddControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         if ($formErrorMessage) {
-            $this->assertContains(htmlentities($formErrorMessage), $crawler->html());
+            static::assertStringContainsString(htmlentities($formErrorMessage), $crawler->html());
         } else {
             $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
         }
@@ -140,12 +139,8 @@ class QuickAddControllerTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @param Form $form
-     */
     protected function updateFormActionToDialog(Form $form)
     {
-        /** TODO Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
             $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'

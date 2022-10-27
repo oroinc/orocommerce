@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Mapper;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
@@ -31,10 +31,6 @@ class AppliedPromotionMapper
      */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param NormalizerInterface $normalizer
-     */
     public function __construct(ManagerRegistry $registry, NormalizerInterface $normalizer)
     {
         $this->registry = $registry;
@@ -60,10 +56,6 @@ class AppliedPromotionMapper
         $appliedPromotion->setAppliedCoupon($this->getAppliedCoupon($order->getAppliedCoupons(), $promotion));
     }
 
-    /**
-     * @param AppliedPromotion $appliedPromotion
-     * @return PromotionDataInterface
-     */
     public function mapAppliedPromotionToPromotionData(AppliedPromotion $appliedPromotion): PromotionDataInterface
     {
         /** @var AppliedPromotionData $appliedPromotionData */

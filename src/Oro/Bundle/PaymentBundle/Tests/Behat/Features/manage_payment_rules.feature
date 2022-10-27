@@ -1,4 +1,6 @@
 @ticket-BB-12309
+@ticket-BB-11878
+@waf-skip
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPaymentBundle:PaymentMethodsConfigsRule_BB12309.yml
 
@@ -32,6 +34,16 @@ Feature: Manage Payment Rules
       | Sort Order              | 5                         |
       | Expression              | expression                |
       | Destination1PostalCodes | <script>alert(2)</script> |
+
+  Scenario: Verify validation rule on Sort Order form field
+    When I fill "Payment Rule Form" with:
+      | Sort Order | 21474836478 |
+    Then I should see validation errors:
+      | Sort Order | This value should be between -2,147,483,648 and 2,147,483,647. |
+    When I fill "Payment Rule Form" with:
+      | Sort Order | 5 |
+    Then I should not see validation errors:
+      | Sort Order | This value should be between -2,147,483,648 and 2,147,483,647. |
 
   Scenario: Verify payment rule edit form after save
     When I fill "Payment Rule Form" with:

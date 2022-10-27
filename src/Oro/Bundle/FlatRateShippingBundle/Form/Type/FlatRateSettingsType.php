@@ -3,13 +3,15 @@
 namespace Oro\Bundle\FlatRateShippingBundle\Form\Type;
 
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
-use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Form type for flat rate integration settings.
+ */
 class FlatRateSettingsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_flat_rate_settings';
@@ -28,7 +30,6 @@ class FlatRateSettingsType extends AbstractType
                     'required' => true,
                     'entry_options'  => [
                         'constraints' => [new NotBlank()],
-                        StripTagsExtension::OPTION_NAME => true,
                     ],
                 ]
             );

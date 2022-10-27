@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -13,6 +13,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLD
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -66,12 +67,10 @@ class LoadCheckoutACLData extends AbstractFixture implements
 
     /**
      * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
-        /* @var $workflowManager WorkflowManager */
+        /* @var WorkflowManager $workflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
 
         foreach (self::$checkouts as $name => $checkout) {
@@ -107,6 +106,7 @@ class LoadCheckoutACLData extends AbstractFixture implements
         $checkout
             ->setSource($source)
             ->setWebsite($website)
+            ->setCurrency('USD')
             ->setOrganization($customerUser->getOrganization())
             ->setCustomer($customerUser->getCustomer())
             ->setCustomerUser($customerUser);

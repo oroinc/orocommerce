@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -33,12 +33,6 @@ class PromotionProvider
      */
     private $promotionMapper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param RuleFiltrationServiceInterface $ruleFiltrationService
-     * @param ContextDataConverterInterface $contextDataConverter
-     * @param AppliedPromotionMapper $promotionMapper
-     */
     public function __construct(
         ManagerRegistry $registry,
         RuleFiltrationServiceInterface $ruleFiltrationService,

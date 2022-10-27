@@ -15,14 +15,13 @@ class ProductQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCas
      */
     protected $productFormExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productFormExtension = new ProductQuantityToOrderFormExtension();
     }
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
         $product = new ProductStub();
         $builder->expects($this->once())

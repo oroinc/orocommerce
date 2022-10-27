@@ -8,9 +8,6 @@ use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider;
 
 class RestrictSitemapProductByStatusListener
 {
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
     {
         $event

@@ -16,32 +16,22 @@ use Psr\Log\LoggerInterface;
 
 class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UpsConnectionValidatorRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpsConnectionValidatorRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $requestFactory;
 
-    /**
-     * @var UpsClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpsClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $clientFactory;
 
-    /**
-     * @var UpsConnectionValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpsConnectionValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $resultFactory;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var UpsConnectionValidator
-     */
+    /** @var UpsConnectionValidator */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestFactory = $this->createMock(UpsConnectionValidatorRequestFactoryInterface::class);
         $this->clientFactory = $this->createMock(UpsClientFactoryInterface::class);
@@ -65,51 +55,57 @@ class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
         $response = $this->createMock(RestResponseInterface::class);
         $result = $this->createMock(UpsConnectionValidatorResultInterface::class);
 
-        $this->requestFactory->expects(static::once())
+        $this->requestFactory->expects(self::once())
             ->method('createByTransport')
             ->with($transport)
             ->willReturn($request);
 
-        $this->clientFactory->expects(static::once())
+        $this->clientFactory->expects(self::once())
             ->method('createUpsClient')
             ->willReturn($client);
 
-        $client->expects(static::once())
+        $client->expects(self::once())
             ->method('post')
             ->willReturn($response);
 
-        $this->resultFactory->expects(static::once())
+        $this->resultFactory->expects(self::once())
             ->method('createResultByUpsClientResponse')
             ->willReturn($result);
 
-        static::assertSame($result, $this->validator->validateConnectionByUpsSettings($transport));
+        self::assertSame($result, $this->validator->validateConnectionByUpsSettings($transport));
     }
 
     public function testValidateConnectionByUpsSettingsServerError()
     {
-        $transport= new UPSTransport();
+        $exception = new RestException();
+
+        $transport = new UPSTransport();
 
         $request = $this->createMock(UpsClientRequestInterface::class);
         $client = $this->createMock(RestClientInterface::class);
         $result = $this->createMock(UpsConnectionValidatorResultInterface::class);
 
-        $this->requestFactory->expects(static::once())
+        $this->requestFactory->expects(self::once())
             ->method('createByTransport')
             ->with($transport)
             ->willReturn($request);
 
-        $this->clientFactory->expects(static::once())
+        $this->clientFactory->expects(self::once())
             ->method('createUpsClient')
             ->willReturn($client);
 
-        $client->expects(static::once())
+        $client->expects(self::once())
             ->method('post')
-            ->willThrowException(new RestException);
+            ->willThrowException($exception);
 
-        $this->resultFactory->expects(static::once())
+        $this->resultFactory->expects(self::once())
             ->method('createExceptionResult')
             ->willReturn($result);
 
-        static::assertSame($result, $this->validator->validateConnectionByUpsSettings($transport));
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with($exception->getMessage());
+
+        self::assertSame($result, $this->validator->validateConnectionByUpsSettings($transport));
     }
 }

@@ -31,7 +31,7 @@ class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
                 [
                     'class' => Category::class,
                     'tree_key' => 'commerce-category',
-                    'tree_data' => [$this->treeHandler, 'createTree']
+                    'tree_data' => [$this->treeHandler, 'createTreeByMasterCatalogRoot']
                 ]
             );
 
@@ -43,7 +43,7 @@ class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(EntityTreeSelectType::class, $this->type->getParent());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->treeHandler = $this->getMockBuilder(AbstractTreeHandler::class)
             ->disableOriginalConstructor()

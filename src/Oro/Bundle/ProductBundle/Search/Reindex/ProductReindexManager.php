@@ -7,76 +7,60 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * This service help to prepare and make event dispatching to make reindex of products data in search engine.
+ * Helps to reindex of products in search engine.
  */
 class ProductReindexManager
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
-    /**
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param Product  $product
-     * @param int|null $websiteId
-     * @param bool     $isScheduled
-     */
-    public function reindexProduct(Product $product, $websiteId = null, $isScheduled = true)
-    {
-        $productId = $product->getId();
-        $this->reindexProducts([$productId], $websiteId, $isScheduled);
+    public function reindexProduct(
+        Product $product,
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
+        $this->reindexProducts([$product->getId()], $websiteId, $isScheduled, $fieldGroups);
     }
 
-    /**
-     * @param array    $productIds
-     * @param int|null $websiteId
-     * @param bool     $isScheduled
-     */
-    public function reindexProducts(array $productIds, $websiteId = null, $isScheduled = true)
-    {
+    public function reindexProducts(
+        array $productIds,
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
         if ($productIds) {
-            $this->doReindexProducts($productIds, $websiteId, $isScheduled);
+            $this->doReindexProducts($productIds, $websiteId, $isScheduled, $fieldGroups);
         }
     }
 
-    /**
-     * @param null $websiteId
-     * @param bool $isScheduled
-     */
-    public function reindexAllProducts($websiteId = null, $isScheduled = true)
-    {
-        $this->doReindexProducts([], $websiteId, $isScheduled);
+    public function reindexAllProducts(
+        int $websiteId = null,
+        bool $isScheduled = true,
+        array $fieldGroups = null
+    ): void {
+        $this->doReindexProducts([], $websiteId, $isScheduled, $fieldGroups);
     }
 
-    /**
-     * @param array    $productIds
-     * @param int|null $websiteId
-     * @param bool     $isScheduled
-     *
-     * @return ReindexationRequestEvent
-     */
-    protected function getReindexationRequestEvent(array $productIds, $websiteId, $isScheduled)
-    {
-        $websiteId = is_null($websiteId) ? [] : [$websiteId];
-        return new ReindexationRequestEvent([Product::class], $websiteId, $productIds, $isScheduled);
-    }
-
-    /**
-     * @param array    $productIds
-     * @param int|null $websiteId
-     * @param bool     $isScheduled
-     */
-    protected function doReindexProducts(array $productIds, $websiteId, $isScheduled)
-    {
-        $event = $this->getReindexationRequestEvent($productIds, $websiteId, $isScheduled);
-        $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+    private function doReindexProducts(
+        array $productIds,
+        ?int $websiteId,
+        bool $isScheduled,
+        array $fieldGroups = null
+    ): void {
+        $this->dispatcher->dispatch(
+            new ReindexationRequestEvent(
+                [Product::class],
+                null !== $websiteId ? [$websiteId] : [],
+                $productIds,
+                $isScheduled,
+                $fieldGroups
+            ),
+            ReindexationRequestEvent::EVENT_NAME
+        );
     }
 }

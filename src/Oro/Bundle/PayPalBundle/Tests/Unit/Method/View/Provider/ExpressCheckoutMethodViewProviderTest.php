@@ -10,7 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvid
 
 class ExpressCheckoutMethodViewProviderTest extends AbstractMethodViewProviderTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $this->factory = $this->createMock(PayPalExpressCheckoutPaymentMethodViewFactoryInterface::class);
         $this->configProvider = $this->createMock(PayPalExpressCheckoutConfigProviderInterface::class);

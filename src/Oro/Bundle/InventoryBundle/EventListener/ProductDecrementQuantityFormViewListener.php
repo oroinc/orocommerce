@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds decrement quantity information to the product view and edit pages.
+ */
 class ProductDecrementQuantityFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $this->getEntityFromRequest(Product::class);
@@ -20,20 +20,17 @@ class ProductDecrementQuantityFormViewListener extends AbstractFallbackFieldsFor
 
         $this->addBlockToEntityView(
             $event,
-            'OroInventoryBundle:Product:decrementQuantity.html.twig',
+            '@OroInventory/Product/decrementQuantity.html.twig',
             $product,
             'oro.product.sections.inventory'
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Product:decrementQuantityFormWidget.html.twig',
+            '@OroInventory/Product/decrementQuantityFormWidget.html.twig',
             'oro.product.sections.inventory'
         );
     }

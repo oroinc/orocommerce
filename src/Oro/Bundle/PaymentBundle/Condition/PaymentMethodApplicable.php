@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -28,16 +27,10 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
     /** @var string */
     protected $paymentMethod;
 
-    /** @var CheckoutPaymentContextFactory */
-    protected $checkoutPaymentContextFactory;
-
-    /** @var PaymentMethodProvider */
+    /** @var ApplicablePaymentMethodsProvider */
     protected $paymentMethodProvider;
 
-    /**
-     * @param PaymentMethodProvider $methodProvider
-     */
-    public function __construct(PaymentMethodProvider $methodProvider)
+    public function __construct(ApplicablePaymentMethodsProvider $methodProvider)
     {
         $this->paymentMethodProvider = $methodProvider;
     }

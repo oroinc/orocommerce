@@ -1,0 +1,47 @@
+/* @theme: default; */
+
+//Totals group variables
+$product-totals-display: inline-flex !default;
+$product-totals-align-items: center !default;
+$product-totals-justify-content: flex-end !default;
+$product-totals-width: 100% !default;
+$product-totals-min-width: 140px !default;
+$product-totals-font-family: $font-family-base !default;
+$product-totals-text-align: right !default;
+$product-totals-btn-offset-inner: 3px 15px 2px 15px !default;
+
+$product-totals-nested-offset-inner: 0 16px !default;
+
+$product-totals-wrapper-display: inline-flex !default;
+$product-totals-wrapper-background: get-color('additional', 'base') !default;
+$product-totals-wrapper-offset-inner: 14px !default;
+$product-totals-wrapper-border-radius: 6px !default;
+$product-totals-wrapper-offset: 0 12px 0 8px !default;
+
+$product-totals-wrapper-transparent-background: transparent !default;
+$product-totals-wrapper-transparent-offset-inner: 8px !default;
+$product-totals-wrapper-narrow-offset-inner: 11px 14px !default;
+
+$product-totals-total-items-display: flex !default;
+$product-totals-total-items-justify-content: space-between !default;
+
+$product-totals-total-separator-color: get-color('additional', 'middle') !default;
+$product-totals-total-separator-offset: 0 10px !default;
+
+$product-totals-label-display: inline-flex !default;
+$product-totals-label-min-width: 50px !default;
+$product-totals-label-offset-inner: 0 $offset-x-s 0 0 !default;
+
+//Mobile landscape variables
+$product-totals-mobile-landscape-flex-direction: column !default;
+
+$product-totals-wrapper-mobile-landscape-justify-content: center !default;
+$product-totals-wrapper-mobile-landscape-width: 100% !default;
+$product-totals-wrapper-mobile-landscape-offset: 12px 0 !default;
+
+//Line item
+$product-totals-line-item-font-size: $base-font-size--s !default;
+$product-totals-line-item-wrapper-width: 100% !default;
+$product-totals-line-item-wrapper-offset: 0 !default;
+$product-totals-line-item-wrapper-offset-inner: 12px 14px 11px 14px !default;
+$product-totals-line-item-total-width: 50% !default;

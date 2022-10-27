@@ -9,13 +9,25 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
+/**
+ * Adds following category information to Product documents at search index
+ * - category ID (category_id)
+ * - full materialized path (category_path)
+ * - parts of materialized path for all parent categories (category_paths.CATEGORY_PATH)
+ * - category title (category_title_LOCALIZATION_ID)
+ * - category short description (all_text_LOCALIZATION_ID)
+ * - category long description (all_text_LOCALIZATION_ID)
+ */
 class WebsiteSearchCategoryIndexerListener
 {
+    use ContextTrait;
+
     const CATEGORY_TITLE_L10N_FIELD = 'category_title_LOCALIZATION_ID';
 
     /**
@@ -38,11 +50,6 @@ class WebsiteSearchCategoryIndexerListener
      */
     private $websiteContextManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param WebsiteContextManager $websiteContextManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -53,11 +60,12 @@ class WebsiteSearchCategoryIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
@@ -70,7 +78,7 @@ class WebsiteSearchCategoryIndexerListener
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
-        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
+        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
 
         foreach ($products as $product) {
             /** @var Category $category */
@@ -113,11 +121,6 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     * @param Product $product
-     * @param Category $category
-     */
     protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category)
     {
         $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
@@ -132,7 +135,7 @@ class WebsiteSearchCategoryIndexerListener
 
             $event->addPlaceholderField(
                 $product->getId(),
-                'category_path_CATEGORY_PATH',
+                'category_paths.CATEGORY_PATH',
                 1,
                 [CategoryPathPlaceholder::NAME => $lastPart],
                 false

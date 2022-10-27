@@ -8,16 +8,29 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Table(name="oro_redirect_slug", indexes={
- *     @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
- *     @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
- *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
- *     @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
- * })
+ * Slug entity class.
+ *
+ * @ORM\Table(
+ *     name="oro_redirect_slug",
+ *     indexes={
+ *         @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
+ *         @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
+ *         @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
+ *         @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
+ *     },
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(
+ *             name="oro_redirect_slug_uidx",
+ *             columns={"organization_id","url_hash","scopes_hash"}
+ *         )
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
  *      defaultValues={
@@ -27,14 +40,21 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Slug
+class Slug implements OrganizationAwareInterface
 {
-    const DELIMITER = '/';
+    use OrganizationAwareTrait;
+
+    public const DELIMITER = '/';
 
     /**
      * @var integer
@@ -97,6 +117,13 @@ class Slug
     protected $scopes;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="scopes_hash", type="string", length=32)
+     */
+    protected $scopesHash;
+
+    /**
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect",
      *     mappedBy="slug"
@@ -121,7 +148,6 @@ class Slug
      */
     protected $localization;
 
-
     /**
      * @var string
      *
@@ -133,6 +159,7 @@ class Slug
     {
         $this->redirects = new ArrayCollection();
         $this->scopes = new ArrayCollection();
+        $this->fillScopesHash();
     }
 
     /**
@@ -214,12 +241,12 @@ class Slug
     /**
      * @param Scope $scope
      * @return $this
-     *
      */
     public function addScope(Scope $scope)
     {
         if (!$this->scopes->contains($scope)) {
             $this->scopes->add($scope);
+            $this->fillScopesHash();
         }
 
         return $this;
@@ -234,6 +261,7 @@ class Slug
     {
         if ($this->scopes->contains($scope)) {
             $this->scopes->removeElement($scope);
+            $this->fillScopesHash();
         }
 
         return $this;
@@ -245,7 +273,8 @@ class Slug
     public function resetScopes()
     {
         $this->scopes->clear();
-        
+        $this->fillScopesHash();
+
         return $this;
     }
 
@@ -309,6 +338,7 @@ class Slug
     public function setLocalization(Localization $localization = null)
     {
         $this->localization = $localization;
+        $this->fillScopesHash();
 
         return $this;
     }
@@ -338,5 +368,28 @@ class Slug
     public function getParametersHash()
     {
         return $this->parametersHash;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScopesHash()
+    {
+        return $this->scopesHash;
+    }
+
+    public function fillScopesHash(): void
+    {
+        $scopeIds = [];
+        foreach ($this->scopes as $scope) {
+            $scopeIds[] = $scope->getId();
+        }
+
+        sort($scopeIds);
+        $this->scopesHash = md5(sprintf(
+            '%s:%s',
+            implode(',', $scopeIds),
+            $this->localization ? $this->localization->getId() : ''
+        ));
     }
 }

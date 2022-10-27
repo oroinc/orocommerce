@@ -2,9 +2,14 @@ oro:
     webcatalog:
         entity_label: Web Catalog
         entity_plural_label: Web Catalogs
-        description.label: Description
+        entity_grid_all_view_label: All %entity_plural_label%
+        description:
+            label: Description
+            description: Short meaningful description of the web catalog record.
         id.label: Id
-        name.label: Name
+        name:
+            label: Name
+            description: Name of a web catalog record
         organization.label: Organization
         owner.label: Owner
         entity_description: Represents web content information
@@ -12,6 +17,7 @@ oro:
         contentnode:
             entity_label: Content Node
             entity_plural_label: Content Nodes
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             left.label: Tree left index
             level.label: Tree level
@@ -35,6 +41,7 @@ oro:
         contentvariant:
             entity_label: Content Variant
             entity_plural_label: Content Variants
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             type.label: Type
             system_page_route.label: System Page Route
@@ -42,9 +49,11 @@ oro:
             scopes.label: Restrictions
             slugs.label: Slugs
             default.label: Default Variant
+            override_variant_configuration.label: Override Product Variant Configuration
 
             variant_type:
                 system_page.label: System Page
+            options.label: Options
         sections:
             general: 'General'
             use_for: 'Restrictions'
@@ -67,7 +76,19 @@ oro:
                 web_catalog_list:
                     label: 'Web Catalogs'
                     description: 'Show list of existing web catalogs'
-
+        feature:
+            web_catalog:
+                label: Web Catalog
+                description: Select the web catalog to populate the storefront product catalog menu. If a web catalog is not selected, the menu uses the product structure of the master catalog.
+            manage:
+                label: Web Catalog Management
+                description: Enables the web catalog feature with content nodes that help customize and personalize the OroCommerce storefront menu versions.
+            navigation_root_system_configuration:
+                label: Navigation Root
+                description: Enables building a navigation tree in the storefront by selecting a root content node.
+            web_catalog_canonical_url:
+                label: Self-Contained Web Catalog Canonical URLs
+                description: When disabled, canonical URLs point to the direct URLs of the underlying content types, if available.
         form:
             choose: 'Choose a Web Catalog...'
             add_variant.label: 'Add %variantName%'
@@ -76,7 +97,13 @@ oro:
             fields:
                 web_catalog:
                     label: Web Catalog
-                    tooltip: Assign a web catalog to the storefront
+                    tooltip: Select a web catalog for the storefront.
+                navigation_root:
+                    label: Navigation Root
+                    tooltip: Select a root content node for the storefront. Only the sub-menu nodes that belong to the selected parent node will be visible in the storefront.
+                enable_web_catalog_canonical_url:
+                    label: Prefer Self-Contained Web Catalog Canonical URLs
+                    tooltip: Disable the option for the canonical URLs to point to the direct URLs of the underlying content types if they are available.
 
     scope:
         web_catalog.label: Web Catalog

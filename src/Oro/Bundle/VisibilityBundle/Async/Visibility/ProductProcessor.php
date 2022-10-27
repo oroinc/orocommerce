@@ -2,137 +2,103 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
+use Doctrine\DBAL\Exception\RetryableException;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
- * Resolves visibility by Product entity
+ * Resolves visibility for a product when its category is changed.
  */
-class ProductProcessor implements MessageProcessorInterface
+class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    use LoggerAwareTrait;
 
-    /**
-     * @var ProductMessageFactory
-     */
-    protected $messageFactory;
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @var CacheBuilderInterface
-     */
-    protected $cacheBuilder;
+    private ProductCaseCacheBuilderInterface $cacheBuilder;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
-     * @var string
-     */
-    protected $resolvedVisibilityClassName = '';
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ProductMessageFactory $messageFactory
-     * @param LoggerInterface $logger
-     * @param CacheBuilderInterface $cacheBuilder
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        ProductMessageFactory $messageFactory,
-        LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder,
-        DatabaseExceptionHelper $databaseExceptionHelper
-    ) {
-        $this->registry = $registry;
-        $this->logger = $logger;
-        $this->messageFactory = $messageFactory;
+    public function __construct(ManagerRegistry $managerRegistry, ProductCaseCacheBuilderInterface $cacheBuilder)
+    {
+        $this->managerRegistry = $managerRegistry;
         $this->cacheBuilder = $cacheBuilder;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public static function getSubscribedTopics(): array
     {
-        $em = $this->getEntityManager();
-        $em->beginTransaction();
+        return [VisibilityOnChangeProductCategoryTopic::getName()];
+    }
 
+    public function process(MessageInterface $message, SessionInterface $session): string
+    {
+        $messageBody = $message->getBody();
+        $entityManager = $this->managerRegistry->getManagerForClass(ProductVisibilityResolved::class);
+        $entityManager->beginTransaction();
         try {
-            $messageData = JSON::decode($message->getBody());
-            $visibilityEntity = $this->messageFactory->getProductFromMessage($messageData);
-
-            $this->resolveVisibilityByEntity($visibilityEntity);
-            $em->commit();
-        } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
-
-            return self::REJECT;
+            $productIds = array_unique((array)$messageBody['id']);
+            $products = $this->getProducts($productIds);
+            foreach ($products as $product) {
+                $this->cacheBuilder->productCategoryChanged($product, $messageBody['scheduleReindex']);
+            }
+            $entityManager->commit();
         } catch (\Exception $e) {
-            $em->rollback();
+            $entityManager->rollback();
             $this->logger->error(
-                'Unexpected exception occurred during Product Visibility resolve by Product',
+                'Unexpected exception occurred during Product Visibility resolve by Product.',
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;
     }
 
     /**
-     * @param string $className
+     * @param int[] $productIds
+     *
+     * @return Product[]
+     *
+     * @throws EntityNotFoundException If all products have not been found
      */
-    public function setResolvedVisibilityClassName($className)
+    private function getProducts(array $productIds): array
     {
-        $this->resolvedVisibilityClassName = $className;
-    }
+        $products = $this->managerRegistry
+            ->getRepository(Product::class)
+            ->findBy(['id' => $productIds]);
+        if (count($productIds) !== count($products)) {
+            $foundIds = array_map(static fn (Product $product) => $product->getId(), $products);
+            $notFoundProductsIds = array_diff($productIds, $foundIds);
+            $this->logger->warning(
+                'The following products have not been not found when trying to resolve visibility',
+                $notFoundProductsIds
+            );
 
-    /**
-     * All resolved product visibility entities should be stored together, so entity manager should be the same too
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->registry->getManagerForClass($this->resolvedVisibilityClassName);
-    }
-
-    /**
-     * @param object|Product $entity
-     */
-    protected function resolveVisibilityByEntity($entity)
-    {
-        if ($this->cacheBuilder instanceof ProductCaseCacheBuilderInterface) {
-            $this->cacheBuilder->productCategoryChanged($entity);
+            if (!$products) {
+                throw new EntityNotFoundException(
+                    sprintf(
+                        'Products have not been found when trying to resolve visibility: %s',
+                        implode(', ', $notFoundProductsIds)
+                    )
+                );
+            }
         }
+
+        return $products;
     }
 }

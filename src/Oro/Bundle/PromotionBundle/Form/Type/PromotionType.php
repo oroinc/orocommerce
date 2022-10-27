@@ -16,6 +16,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Count;
 
+/**
+ * Provides functionality to create or edit a Promotion entity
+ */
 class PromotionType extends AbstractType
 {
     const NAME = 'oro_promotion';
@@ -35,6 +38,7 @@ class PromotionType extends AbstractType
                 ChoiceType::class,
                 [
                     'label' => 'oro.promotion.use_coupons.label',
+                    'tooltip' => 'oro.promotion.use_coupons.tooltip',
                     'required' => false,
                     'choices' => [
                         'oro.promotion.use_coupons.no' => 0,
@@ -93,7 +97,7 @@ class PromotionType extends AbstractType
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
-                            'statusbar' => true,
+                            'elementpath' => true,
                             'resize' => true,
                         ],
                     ],

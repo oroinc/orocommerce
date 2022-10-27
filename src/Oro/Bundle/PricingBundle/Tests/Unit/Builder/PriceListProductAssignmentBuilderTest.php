@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
@@ -49,7 +49,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceListProductAssignmentBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)
@@ -118,7 +118,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
         $event = new AssignmentBuilderBuildEvent($priceList);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(AssignmentBuilderBuildEvent::NAME, $event);
+            ->with($event, AssignmentBuilderBuildEvent::NAME);
 
         $this->priceListProductAssignmentBuilder->buildByPriceList($priceList);
     }
@@ -160,14 +160,11 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit\Framework\TestCase
         $event = new AssignmentBuilderBuildEvent($priceList, [$productId]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(AssignmentBuilderBuildEvent::NAME, $event);
+            ->with($event, AssignmentBuilderBuildEvent::NAME);
 
         $this->priceListProductAssignmentBuilder->buildByPriceList($priceList, [$productId]);
     }
 
-    /**
-     * @param PriceList $priceList
-     */
     protected function assertClearGeneratedPricesCall(PriceList $priceList)
     {
         $priceListToProductRepository = $this->getMockBuilder(PriceListToProductRepository::class)

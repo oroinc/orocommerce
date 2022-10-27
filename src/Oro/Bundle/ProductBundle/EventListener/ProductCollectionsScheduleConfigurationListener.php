@@ -20,27 +20,21 @@ class ProductCollectionsScheduleConfigurationListener
      */
     private $deferredScheduler;
 
-    /**
-     * @param DeferredScheduler $deferredScheduler
-     */
     public function __construct(DeferredScheduler $deferredScheduler)
     {
         $this->deferredScheduler = $deferredScheduler;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(self::CONFIG_FIELD)) {
             $this->deferredScheduler->removeSchedule(
-                ProductCollectionsIndexCronCommand::NAME,
+                ProductCollectionsIndexCronCommand::getDefaultName(),
                 [],
                 $event->getOldValue(self::CONFIG_FIELD)
             );
             $this->deferredScheduler->addSchedule(
-                ProductCollectionsIndexCronCommand::NAME,
+                ProductCollectionsIndexCronCommand::getDefaultName(),
                 [],
                 $event->getNewValue(self::CONFIG_FIELD)
             );

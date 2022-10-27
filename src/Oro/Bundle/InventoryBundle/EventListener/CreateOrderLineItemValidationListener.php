@@ -14,8 +14,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Adds validation errors to LineItemValidateEvent.
+ */
 class CreateOrderLineItemValidationListener
 {
     /**
@@ -41,14 +44,8 @@ class CreateOrderLineItemValidationListener
     /**
      * @var array
      */
-    protected static $allowedValidationSteps = ['order_review', 'checkout'];
+    protected static $allowedValidationSteps = ['order_review', 'checkout', 'request_approval', 'approve_request'];
 
-    /**
-     * @param InventoryQuantityManager $inventoryQuantityManager
-     * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     */
     public function __construct(
         InventoryQuantityManager $inventoryQuantityManager,
         DoctrineHelper $doctrineHelper,
@@ -62,7 +59,6 @@ class CreateOrderLineItemValidationListener
     }
 
     /**
-     * @param LineItemValidateEvent $event
      * @throws InventoryLevelNotFoundException
      */
     public function onLineItemValidate(LineItemValidateEvent $event)
@@ -84,8 +80,9 @@ class CreateOrderLineItemValidationListener
             }
 
             if (!$this->inventoryQuantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
-                $event->addError(
+                $event->addErrorByUnit(
                     $lineItem->getProductSku(),
+                    $lineItem->getProductUnitCode(),
                     $this->translator->trans('oro.inventory.decrement_inventory.product.not_allowed')
                 );
             }

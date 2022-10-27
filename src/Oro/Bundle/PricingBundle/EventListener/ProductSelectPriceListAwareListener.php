@@ -2,84 +2,44 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 /**
- * Remove product prices by unit on ProductUnitPrecision delete.
+ * If respective feature is enabled and conditions acceptable
+ * - calls frontend product list modifier on query given in event
  */
 class ProductSelectPriceListAwareListener
 {
-    const DEFAULT_ACCOUNT_USER = 'default_customer_user';
+    public const DEFAULT_ACCOUNT_USER = 'default_customer_user';
 
-    /**
-     * @var ProductDBQueryRestrictionEvent
-     */
-    protected $event;
+    private FrontendProductListModifier $modifier;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var FrontendProductListModifier
-     */
-    protected $modifier;
-
-    /**
-     * @var Registry
-     */
-    protected $registry;
-
-    /**
-     * @param FrontendProductListModifier $modifier
-     * @param Registry $registry
-     */
-    public function __construct(FrontendProductListModifier $modifier, Registry $registry)
+    public function __construct(FrontendProductListModifier $modifier, ManagerRegistry $doctrine)
     {
         $this->modifier = $modifier;
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
-    public function onDBQuery(ProductDBQueryRestrictionEvent $event)
+    public function onDBQuery(ProductDBQueryRestrictionEvent $event): void
     {
-        $this->event = $event;
-
-        if (!$this->isConditionsAcceptable()) {
+        if (!$event->getDataParameters()->has('price_list')) {
             return;
         }
 
-        $priceList = $this->getPriceListParam() !== self::DEFAULT_ACCOUNT_USER
-            ? $this->getPriceListById($this->getPriceListParam())
+        $priceListParam = $event->getDataParameters()->get('price_list');
+        $priceList = self::DEFAULT_ACCOUNT_USER !== $priceListParam
+            ? $this->getPriceListById($priceListParam)
             : null;
-        
-        $this->modifier->applyPriceListLimitations($this->event->getQueryBuilder(), null, $priceList);
+
+        $this->modifier->applyPriceListLimitations($event->getQueryBuilder(), null, $priceList);
     }
 
-    /**
-     * @return bool
-     */
-    protected function isConditionsAcceptable()
+    private function getPriceListById(int $priceListId): ?PriceList
     {
-        return $this->event->getDataParameters()->has('price_list');
-    }
-
-    /**
-     * @return int|string
-     */
-    protected function getPriceListParam()
-    {
-        return $this->event->getDataParameters()->get('price_list');
-    }
-
-    /**
-     * @param int $priceListId
-     * @return \Oro\Bundle\PricingBundle\Entity\PriceList
-     */
-    protected function getPriceListById($priceListId)
-    {
-        return $this->registry->getManagerForClass('OroPricingBundle:PriceList')
-            ->getRepository('OroPricingBundle:PriceList')
-            ->find($priceListId);
+        return $this->doctrine->getRepository(PriceList::class)->find($priceListId);
     }
 }

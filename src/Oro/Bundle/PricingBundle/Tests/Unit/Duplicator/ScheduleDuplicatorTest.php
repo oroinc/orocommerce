@@ -13,7 +13,7 @@ class ScheduleDuplicatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $scheduleDuplicator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->scheduleDuplicator = new ScheduleDuplicator();
     }

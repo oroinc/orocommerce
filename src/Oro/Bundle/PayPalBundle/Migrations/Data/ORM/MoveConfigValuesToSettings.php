@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\AbstractMoveConfigValuesToSettings;
@@ -86,10 +86,6 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         $manager->flush();
     }
 
-    /**
-     * @param Channel $paymentsProChannel
-     * @param Channel $payflowGatewayChannel
-     */
     protected function getDispatchPaymentMethodRenamingEvent(
         Channel $paymentsProChannel,
         Channel $payflowGatewayChannel

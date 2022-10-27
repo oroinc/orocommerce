@@ -11,9 +11,6 @@ class UrlItemsProviderRegistry implements UrlItemsProviderRegistryInterface
      */
     private $providers = [];
 
-    /**
-     * @param array $providers
-     */
     public function __construct(array $providers)
     {
         $this->providers = $providers;

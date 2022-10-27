@@ -10,6 +10,9 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Handles logic for fetching totals based on order
+ */
 class TotalProvider
 {
     /** @var DefaultCurrencyProviderInterface  */
@@ -43,12 +46,13 @@ class TotalProvider
     public function getTotalWithSubtotalsWithBaseCurrencyValues(Order $order, $isStatic = true)
     {
         $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
-        $total = $this->pricingTotal->getTotal($order);
+        $subtotals = $this->pricingTotal->getSubtotals($order);
+        $total = $this->pricingTotal->getTotalForSubtotals($order, $subtotals);
         if ($total->getCurrency() !== $defaultCurrency) {
             $baseAmount = $isStatic ? $order->getBaseTotalValue() : null;
             $this->addSubtotalBaseCurrencyConversion($total, $defaultCurrency, $baseAmount);
         }
-        $subtotals = $this->pricingTotal->getSubtotals($order);
+
         foreach ($subtotals as $item) {
             if ($item->getType() == LineItemSubtotalProvider::TYPE
                 && $item->getCurrency() !== $defaultCurrency

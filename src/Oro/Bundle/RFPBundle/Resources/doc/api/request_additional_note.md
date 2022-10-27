@@ -19,7 +19,7 @@ Retrieve a collection of request additional note records.
 ### requestAdditionalNoteType
 
 {@inheritdoc}
-Can be "seller_note" for a Request More Information note from the sales person or "customer_note" for a Provide More Information note from the buyer.
+Can be `seller_note` for a Request More Information note from the sales person or `customer_note` for a Provide More Information note from the buyer.
 
 ## SUBRESOURCES
 

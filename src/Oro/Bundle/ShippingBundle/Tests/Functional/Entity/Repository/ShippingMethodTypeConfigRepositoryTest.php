@@ -13,20 +13,17 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 {
     use FlatRateIntegrationTrait;
 
-    /**
-     * @var ShippingMethodTypeConfigRepository
-     */
-    protected $repository;
+    private ShippingMethodTypeConfigRepository $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([
             LoadShippingMethodsConfigsRulesWithConfigs::class
         ]);
 
-        $this->repository = static::getContainer()->get('doctrine')
-            ->getRepository('OroShippingBundle:ShippingMethodTypeConfig');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(ShippingMethodTypeConfig::class);
     }
 
     public function testFindShippingMethodTypeConfigConfigsByMethodAndType()
@@ -36,15 +33,11 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
             $this->getFlatRatePrimaryIdentifier()
         );
 
-        static::assertContains($this->getFirstTypeId('shipping_rule.1'), $ids);
-        static::assertContains($this->getFirstTypeId('shipping_rule.2'), $ids);
+        self::assertContains($this->getFirstTypeId('shipping_rule.1'), $ids);
+        self::assertContains($this->getFirstTypeId('shipping_rule.2'), $ids);
     }
 
-    /**
-     * @param string $ruleReference
-     * @return int
-     */
-    private function getFirstTypeId($ruleReference)
+    private function getFirstTypeId(string $ruleReference): int
     {
         /** @var ShippingMethodConfig $methodConfig */
         $methodConfig = $this->getReference($ruleReference)->getMethodConfigs()->first();
@@ -58,11 +51,11 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
             $this->getFirstTypeId('shipping_rule.2'),
         ];
 
-        static::assertCount(2, $this->repository->findBy(['id' => $ids]));
+        self::assertCount(2, $this->repository->findBy(['id' => $ids]));
 
         $this->repository->deleteByIds($ids);
 
-        static::assertEmpty($this->repository->findBy(['id' => $ids]));
+        self::assertEmpty($this->repository->findBy(['id' => $ids]));
     }
 
     public function testFindEnabledByMethodIdentifier()
@@ -71,22 +64,18 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 
         $actual = $this->repository->findEnabledByMethodIdentifier($method);
 
-        static::assertContains($this->getFirstType('shipping_rule.4'), $actual);
-        static::assertContains($this->getFirstType('shipping_rule.9'), $actual);
-        static::assertNotContains($this->getFirstType('shipping_rule_without_type_configs'), $actual);
-        static::assertNotContains($this->getFirstType('shipping_rule_with_disabled_type_configs'), $actual);
+        self::assertContains($this->getFirstType('shipping_rule.4'), $actual);
+        self::assertContains($this->getFirstType('shipping_rule.9'), $actual);
+        self::assertNotContains($this->getFirstType('shipping_rule_without_type_configs'), $actual);
+        self::assertNotContains($this->getFirstType('shipping_rule_with_disabled_type_configs'), $actual);
     }
 
-    /**
-     * @param string $ruleReference
-     *
-     * @return ShippingMethodTypeConfig
-     */
-    private function getFirstType($ruleReference)
+    private function getFirstType(string $ruleReference): ?ShippingMethodTypeConfig
     {
         /** @var ShippingMethodConfig $methodConfig */
         $methodConfig = $this->getReference($ruleReference)->getMethodConfigs()->first();
+        $typeConfig = $methodConfig->getTypeConfigs()->first();
 
-        return $methodConfig->getTypeConfigs()->first();
+        return false !== $typeConfig ? $typeConfig : null;
     }
 }

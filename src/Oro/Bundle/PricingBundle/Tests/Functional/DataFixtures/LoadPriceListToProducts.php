@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -58,7 +58,7 @@ class LoadPriceListToProducts extends AbstractFixture implements DependentFixtur
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository('OroPricingBundle:PriceList')->getDefault();
+                $priceList = $manager->getRepository(PriceList::class)->getDefault();
             } else {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($data['priceList']);

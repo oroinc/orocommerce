@@ -37,7 +37,7 @@ class MatchingItemsFiltrationServiceTest extends AbstractSkippableFiltrationServ
      */
     private $matchingItemsFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->matchingProductsProvider = $this->createMock(MatchingProductsProvider::class);

@@ -20,5 +20,6 @@ class OroUPSExtension extends Extension
         $loader->load('connection.yml');
         $loader->load('time_in_transit.yml');
         $loader->load('validators.yml');
+        $loader->load('controllers.yml');
     }
 }

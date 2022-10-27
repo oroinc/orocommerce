@@ -13,29 +13,17 @@ class MatchingPriceEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var MatchingPriceEventListener */
-    protected $listener;
-
     /** @var PriceMatcher|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceMatcher;
+    private $priceMatcher;
 
-    /** @var FormInterface */
-    protected $form;
+    /** @var MatchingPriceEventListener */
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
-
-        $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceMatcher = $this->createMock(PriceMatcher::class);
 
         $this->listener = new MatchingPriceEventListener($this->priceMatcher);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener, $this->priceMatcher, $this->form);
     }
 
     public function testOnOrderEvent()
@@ -43,13 +31,12 @@ class MatchingPriceEventListenerTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
 
         $matchedPrices = ['matched', 'prices'];
-        $this->priceMatcher
-            ->expects($this->once())
+        $this->priceMatcher->expects($this->once())
             ->method('getMatchingPrices')
             ->with($order)
             ->willReturn($matchedPrices);
 
-        $event = new OrderEvent($this->form, $order);
+        $event = new OrderEvent($this->createMock(FormInterface::class), $order);
         $this->listener->onOrderEvent($event);
 
         $actualResult = $event->getData()->getArrayCopy();

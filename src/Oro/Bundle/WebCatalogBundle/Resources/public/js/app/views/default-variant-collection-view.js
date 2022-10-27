@@ -1,13 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var DefaultVariantCollectionView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
 
-    DefaultVariantCollectionView = BaseView.extend({
+    const DefaultVariantCollectionView = BaseView.extend({
         $collection: null,
 
         options: {
@@ -17,14 +15,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function DefaultVariantCollectionView() {
-            DefaultVariantCollectionView.__super__.constructor.apply(this, arguments);
+        constructor: function DefaultVariantCollectionView(options) {
+            DefaultVariantCollectionView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -32,12 +30,9 @@ define(function(require) {
             this.$el.on(
                 'click',
                 this.options.defaultSelector,
-                _.bind(
-                    function(e) {
-                        this.onDefaultChange($(e.target));
-                    },
-                    this
-                )
+                e => {
+                    this.onDefaultChange($(e.target));
+                }
             );
             mediator.on('webcatalog:content-variant-collection:add', this.handleAdd, this);
             mediator.on('webcatalog:content-variant-collection:remove', this.handleRemove, this);
@@ -61,7 +56,7 @@ define(function(require) {
         },
 
         checkDefaultVariant: function() {
-            var $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
+            const $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
             $default.prop('checked', true).trigger('change');
 
             this.onDefaultChange($default);

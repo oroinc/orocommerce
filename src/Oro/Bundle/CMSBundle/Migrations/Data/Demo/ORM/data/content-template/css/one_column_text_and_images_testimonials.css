@@ -1,0 +1,3 @@
+.one-column-text-and-images-testimonials .images-grid {
+    --grid-template-columns: repeat(auto-fit, minmax(100px, max-content));
+}

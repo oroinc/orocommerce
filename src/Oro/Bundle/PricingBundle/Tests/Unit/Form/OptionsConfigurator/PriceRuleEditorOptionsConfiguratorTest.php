@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +25,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
     private $formFactory;
 
     /**
-     * @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject
+     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
      */
     private $twig;
 
@@ -38,11 +39,11 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
      */
     private $configurator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProviderInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->twig = $this->getMockBuilder(\Twig_Environment::class)
+        $this->twig = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->entityAliasResolver = $this->createMock(EntityAliasResolver::class);
@@ -65,7 +66,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
 
         $this->twig->expects($this->never())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig');
+            ->with('@OroPricing/Form/form_widget.html.twig');
 
         $this->entityAliasResolver->expects($this->never())
             ->method('getAlias');
@@ -88,7 +89,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $selectHtml = '<select/>';
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig')
+            ->with('@OroPricing/Form/form_widget.html.twig')
             ->willReturn($selectHtml);
 
         $this->entityAliasResolver->expects($this->once())
@@ -133,7 +134,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $selectHtml = '<select/>';
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig')
+            ->with('@OroPricing/Form/form_widget.html.twig')
             ->willReturn($selectHtml);
 
         $this->entityAliasResolver->expects($this->once())
@@ -180,7 +181,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $this->assertFormCalled();
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('OroPricingBundle:Form:form_widget.html.twig')
+            ->with('@OroPricing/Form/form_widget.html.twig')
             ->willThrowException(new \Exception('test'));
 
         $this->entityAliasResolver->expects($this->once())

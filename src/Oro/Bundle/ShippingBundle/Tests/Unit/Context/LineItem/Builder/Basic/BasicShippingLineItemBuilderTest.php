@@ -8,7 +8,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
 
 class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->productHolderMock

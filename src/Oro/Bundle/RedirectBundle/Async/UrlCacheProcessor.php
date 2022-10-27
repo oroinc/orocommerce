@@ -2,90 +2,49 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheTopic;
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
+use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+/**
+ * Fill Slug URL caches with data received for a given set of entities.
+ */
+class UrlCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var SluggableUrlDumper
-     */
-    private $dumper;
+    use LoggerAwareTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private MessageFactoryInterface $messageFactory;
 
-    /**
-     * @param SluggableUrlDumper $dumper
-     * @param LoggerInterface $logger
-     */
-    public function __construct(
-        SluggableUrlDumper $dumper,
-        LoggerInterface $logger
-    ) {
+    private SluggableUrlDumper $dumper;
+
+    public function __construct(MessageFactoryInterface $messageFactory, SluggableUrlDumper $dumper)
+    {
+        $this->messageFactory = $messageFactory;
         $this->dumper = $dumper;
-        $this->logger = $logger;
+
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        try {
-            $data = $this->getResolvedMessageData(JSON::decode($message->getBody()));
-            $this->dumper->dump($data['route_name'], $data['entity_ids']);
-
-            return self::ACK;
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
-        } catch (\Exception $e) {
-            $this->logger->error(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'topic' => Topics::PROCESS_CALCULATE_URL_CACHE,
-                    'exception' => $e
-                ]
-            );
-
-            return self::REJECT;
+        $messageData = $message->getBody();
+        $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
+        foreach ($entities as $entity) {
+            $this->dumper->dump($entity);
         }
+
+        return self::ACK;
     }
 
-    /**
-     * @param array $message
-     * @return array
-     */
-    private function getResolvedMessageData(array $message)
+    public static function getSubscribedTopics(): array
     {
-        $optionsResolver = new OptionsResolver();
-        $optionsResolver->setRequired(['route_name', 'entity_ids']);
-
-        $optionsResolver->setAllowedTypes('route_name', 'string');
-        $optionsResolver->setAllowedTypes('entity_ids', 'array');
-
-        return $optionsResolver->resolve($message);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
-    {
-        return [Topics::PROCESS_CALCULATE_URL_CACHE];
+        return [CalculateSlugCacheTopic::getName()];
     }
 }

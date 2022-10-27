@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -32,7 +32,7 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->quoteDemandRepository = $this->createMock(QuoteDemandRepository::class);
@@ -44,8 +44,6 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider quoteDemandDataProvider
-     *
-     * @param QuoteDemand|null $quoteDemand
      */
     public function testGetCheckoutByQuote(QuoteDemand $quoteDemand = null)
     {
@@ -68,7 +66,7 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->checkoutRepository
             ->expects($this->exactly($quoteDemand ? 1 : 0))
-            ->method('findCheckoutByCustomerUserAndSourceCriteria')
+            ->method('findCheckoutByCustomerUserAndSourceCriteriaWithCurrency')
             ->with($customerUser, ['quoteDemand' => $quoteDemand], $workflowName);
 
         $this->entityManager

@@ -6,18 +6,19 @@
              'shippingServicesClosestParentSelector': '.control-group',
              'shippingServiceByCountryRoute': 'oro_ups_country_shipping_services'
          }|json_encode }}"
+         class="control-group-container"
     >
         {{ form_widget(form) }}
     </div>
 
-    <div class="control-group control-group-text">
+    <div class="control-group control-group-button">
         <div class="controls">
             <button type="button"
                     class="btn btn-primary"
                     data-page-component-module="orointegration/js/app/components/integration-connection-checker-component"
                     data-page-component-options="{{ {
                         'formSelector': '[name="oro_integration_channel_form"]',
-                        'backendUrl': path('oro_ups_validate_connection', {'channelId': form.vars.value.id|default(0) })
+                        'backendUrl': path('oro_ups_validate_connection', {'channelId': form.vars.value.channel.id|default(0) })
                     }|json_encode }}"
             >
                 {{ 'oro.ups.connection_validation.button.text'|trans }}
@@ -27,7 +28,6 @@
 {% endblock %}
 
 {% block oro_ups_shipping_method_config_options_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.tooltip('oro.ups.form.shipping_method_config_options.surcharge.tooltip', {}, 'right') }}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {{ form_widget(form) }}
 {% endblock %}

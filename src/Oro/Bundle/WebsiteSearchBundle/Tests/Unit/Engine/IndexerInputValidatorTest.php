@@ -2,80 +2,112 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
+use Doctrine\Common\Proxy\Proxy;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
 {
     use ContextTrait;
 
-    const WEBSITE_ID = 1;
+    private const WEBSITE_ID = 1;
 
-    /**
-     * @var WebsiteSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $mappingProvider;
+    private IndexerInputValidator $indexerInputValidator;
 
-    /**
-     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $websiteProvider;
+    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
 
-    /**
-     * @var IndexerInputValidator
-     */
-    private $testable;
-
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
+        $mappingProvider = $this->createMock(SearchMappingProvider::class);
 
-        $this->mappingProvider->method('isClassSupported')
-            ->willReturn(true);
+        $mappingProvider
+            ->expects(self::any())
+            ->method('isClassSupported')
+            ->willReturnCallback(fn ($class) => class_exists($class, true));
+        $mappingProvider
+            ->expects(self::any())
+            ->method('getEntityClasses')
+            ->willReturn([TestActivity::class]);
 
-        $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
-        $this->websiteProvider->expects($this->any())
+        $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        $websiteProvider
+            ->expects(self::any())
             ->method('getWebsiteIds')
-            ->willReturn([self::WEBSITE_ID]);
+            ->willReturn([101, 102]);
 
-        $this->testable = new IndexerInputValidator(
-            $this->websiteProvider,
-            $this->mappingProvider
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $managerRegistry
+            ->expects(self::any())
+            ->method('getManagerForClass')
+            ->willReturn($this->entityManager);
+
+        $this->indexerInputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider, $managerRegistry);
+    }
+
+    public function testIncoherentEntityInput(): void
+    {
+        $this->expectException(\LogicException::class);
+        $context = [];
+        $context = $this->setContextEntityIds($context, [1, 2, 3]);
+        $this->indexerInputValidator->validateRequestParameters(['class1', 'class2'], $context);
+    }
+
+    public function testConfigureEntityOptions(): void
+    {
+        $reference = $this->createMock(Proxy::class);
+        $this->entityManager
+            ->expects(self::any())
+            ->method('getReference')
+            ->willReturn($reference);
+
+        $optionsResolver = new OptionsResolver();
+        $this->indexerInputValidator->configureEntityOptions($optionsResolver);
+
+        self::assertEquals(
+            ['entity' => [$reference]],
+            $optionsResolver->resolve(['entity' => [['class' => Product::class, 'id' => 42]]])
         );
     }
 
     /**
-     * @expectedException \LogicException
+     * @dataProvider invalidOptionsDataProvider
      */
-    public function testIncoherentEntityInput()
+    public function testConfigureEntityOptionsWhenInvalid(array $options, string $error): void
     {
-        $context = [];
-        $context = $this->setContextEntityIds($context, [1,2,3]);
-        $this->testable->validateRequestParameters(['class1','class2'], $context);
+        $optionsResolver = new OptionsResolver();
+        $this->indexerInputValidator->configureEntityOptions($optionsResolver);
+
+        $this->expectExceptionMessageMatches($error);
+
+        $optionsResolver->resolve($options);
     }
 
-    /**
-     * @expectedException \LogicException
-     */
-    public function testEmptyEntitiesInput()
+    public function invalidOptionsDataProvider(): array
     {
-        $this->testable->validateRequestParameters([], []);
-    }
-
-    public function testValidation()
-    {
-        $context = [];
-        $context = $this->setContextEntityIds($context, [1,2,3]);
-        $result = $this->testable->validateRequestParameters(['class1'], $context);
-
-        $this->assertEquals(
-            $result,
+        return [
+            ['options' => ['invalid'], 'error' => '/The option "0" does not exist. Defined options are: "entity"./'],
+            ['options' => ['entity' => []], 'error' => '/Option "entity" was not expected to be empty/'],
             [
-                ['class1'],
-                [self::WEBSITE_ID]
-            ]
-        );
+                'options' => ['entity' => ['class' => Product::class]],
+                'error' => '/The value of the option "entity" is expected to be of type array of array, '
+                    . 'but is of type array of "string"./',
+            ],
+            [
+                'options' => ['entity' => [['class' => Product::class]]],
+                'error' => '/The required option "entity\[0\]\[id\]" is missing./',
+            ],
+            [
+                'options' => ['entity' => [['id' => 42]]],
+                'error' => '/The required option "entity\[0\]\[class\]" is missing./',
+            ],
+        ];
     }
 }

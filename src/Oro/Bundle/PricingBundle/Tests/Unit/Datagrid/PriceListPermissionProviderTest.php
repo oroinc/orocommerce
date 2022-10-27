@@ -13,21 +13,17 @@ class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = new PriceListPermissionProvider();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->provider);
     }
 
     /**
-     * @param ResultRecordInterface $record
-     * @param array $actions
-     * @param array $expected
-     *
      * @dataProvider permissionsDataProvider
      */
     public function testGetPermissions(ResultRecordInterface $record, array $actions, array $expected)

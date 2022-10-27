@@ -18,14 +18,14 @@ class RedirectRepositoryTest extends WebTestCase
      */
     private $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             LoadRedirects::class
         ]);
 
-        $this->repository = $this->getContainer()->get('oro_redirect.repository.redirect');
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(Redirect::class);
     }
 
     public function testFindByUrlSuccessful()

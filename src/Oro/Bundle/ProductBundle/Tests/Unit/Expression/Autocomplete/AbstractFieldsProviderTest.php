@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression\Autocomplete;
 
 use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
 use Oro\Component\Expression\ExpressionParser;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +29,7 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()

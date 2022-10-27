@@ -19,7 +19,7 @@ Feature: Shopping list limit
     And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I should see "1 Shopping List"
     When I open shopping list widget
@@ -30,8 +30,9 @@ Feature: Shopping list limit
   Scenario: Remove one shopping list
     Given I open shopping list widget
     When I click "View Details"
+    And I click "Shopping List Actions"
     And I click "Delete"
-    And I click "Yes, Delete"
+    And I click "Yes, delete" in modal window
     Then I should see "Shopping List deleted" flash message
     And I should see "1 Shopping List"
 
@@ -65,6 +66,7 @@ Feature: Shopping list limit
     When go to System/ Websites
     And click "Set default" on row "NewSite" in grid
     And click "Configuration" on row "Default" in grid
+    And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with fictional website
     And submit form
     Then I should see "Configuration saved" flash message
@@ -72,12 +74,12 @@ Feature: Shopping list limit
   Scenario: Check new site is not affected by limit
     Given I operate as the Buyer
     And reload the page
-    When I hover on "Shopping Cart"
+    And I open shopping list widget
     Then I should see "Create New List"
     When click "Create New List"
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     Then should see "New Front Shopping List"
-    When I hover on "Shopping Cart"
+    And I open shopping list widget
     Then should see "New Front Shopping List"
 

@@ -48,7 +48,7 @@ Feature: Rule Editor with Autocomplete in Price List
     Then Product Assignment Rule field should has pricelist[1].active  value
     When I save and close form
     Then I should see validation errors:
-      | Rule | Invalid logical expression |
+      | Rule | Invalid expression; Invalid logical expression |
     When type "pricelist[1].active == true" in "Product Assignment Rule"
     And I save and close form
     Then I should see "Price List has been saved" flash message
@@ -135,16 +135,16 @@ Feature: Rule Editor with Autocomplete in Price List
     And I click "Price Calculation Unit Expression Button"
     And I click "Price Calculation Currency Expression Button"
     And I fill form with:
-      | Product Unit | pricelist[1].     |
-      | Currency     | pricelist[12].    |
-      | Calculate As | pricelist[1].pri  |
-      | Condition    | pricelist[12].pri |
+      | Product Unit | pricelist[1].         |
+      | Currency     | pricelist[12].        |
+      | Calculate As | pricelist[1].prices.  |
+      | Condition    | pricelist[12].prices. |
     And I save form
-    Then I should see "Unexpected end of expression around position 14."
-    And I should not see "Unexpected end of expression around position 14.; Unexpected end of expression around position 14."
-    And I should see "Unexpected end of expression around position 15."
-    And I should not see "Unexpected end of expression around position 15.; Unexpected end of expression around position 15."
-    And I should see "Unexpected end of expression around position 21."
-    And I should not see "Unexpected end of expression around position 21.; Unexpected end of expression around position 21."
-    And I should see "Unexpected end of expression around position 22."
-    And I should not see "Unexpected end of expression around position 22.; Unexpected end of expression around position 22."
+    Then I should see "Unexpected end of expression around position 14 for expression `pricelist[1].`."
+    And I should not see "Unexpected end of expression around position 14 for expression `pricelist[1].`.; Unexpected end of expression around position 14 for expression `pricelist[1].`."
+    And I should see "Unexpected end of expression around position 15 for expression `pricelist[12].`."
+    And I should not see "Unexpected end of expression around position 15 for expression `pricelist[12].`.; Unexpected end of expression around position 15 for expression `pricelist[12].`."
+    And I should see "Unexpected end of expression around position 21 for expression `pricelist[1].prices.`."
+    And I should not see "Unexpected end of expression around position 21 for expression `pricelist[1].prices.`.; Unexpected end of expression around position 21 for expression `pricelist[1].prices.`."
+    And I should see "Unexpected end of expression around position 22 for expression `pricelist[12].prices.`."
+    And I should not see "Unexpected end of expression around position 22 for expression `pricelist[12].prices.`.; Unexpected end of expression around position 22 for expression `pricelist[12].prices.`."

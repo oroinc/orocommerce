@@ -1,0 +1,73 @@
+data:
+    type: products
+    id: '<toString(@product-1->id)>'
+    attributes:
+        sku: product-1
+        status: enabled
+        variantFields: {  }
+        productType: simple
+        newArrival: false
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '1'
+        organization:
+            data:
+                type: organizations
+                id: '1'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.liter->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        names:
+            data:
+                -
+                    type: productnames
+                    id: '<toString(@product-1.names.default->id)>'
+                -
+                    type: productnames
+                    id: '<toString(@product-1.names.en_CA->id)>'
+        descriptions:
+            data:
+                -
+                    type: productdescriptions
+                    id: '<toString(@product-1.descriptions.default->id)>'
+                -
+                    type: productdescriptions
+                    id: '<toString(@product-1.descriptions.en_CA->id)>'
+        shortDescriptions:
+            data:
+                -
+                    type: productshortdescriptions
+                    id: '<toString(@product-1.shortDescriptions.default->id)>'
+                -
+                    type: productshortdescriptions
+                    id: '<toString(@product-1.shortDescriptions.en_CA->id)>'
+        slugPrototypes:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.default->id)>'
+                -
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.en_CA->id)>'
+        manageInventory:
+            data:
+                type: entityfieldfallbackvalues
+                id: '<toString(@product-1.manageInventory->id)>'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: in_stock

@@ -12,9 +12,6 @@ class WebsiteUrlProvidersServiceIndex implements WebsiteUrlProvidersServiceInter
      */
     private $urlIndexProviderRegistry;
 
-    /**
-     * @param UrlItemsProviderRegistryInterface $urlIndexProviderRegistry
-     */
     public function __construct(
         UrlItemsProviderRegistryInterface $urlIndexProviderRegistry
     ) {

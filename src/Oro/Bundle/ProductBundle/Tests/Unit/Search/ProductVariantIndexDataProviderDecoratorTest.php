@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\ProductBundle\Search\ProductVariantIndexDataProviderDecorator;
@@ -18,29 +20,30 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var ProductIndexDataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $originalProvider;
 
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
+    private $doctrine;
+
     /** @var ProductVariantIndexDataProviderDecorator */
     private $productVariantProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->originalProvider = $this->createMock(ProductIndexDataProviderInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->productVariantProvider = new ProductVariantIndexDataProviderDecorator($this->originalProvider);
+        $this->productVariantProvider = new ProductVariantIndexDataProviderDecorator(
+            $this->originalProvider,
+            $this->doctrine
+        );
     }
 
     /**
-     * @param FieldConfigModel $attribute
-     * @param array $firstVariantData
-     * @param array $secondVariantDate
-     * @param array $configurableData
-     * @param array $expectedConfigurableData
-     *
      * @dataProvider getIndexDataDataProvider
      */
     public function testGetIndexData(
         FieldConfigModel $attribute,
         array $firstVariantData,
-        array $secondVariantDate,
+        array $secondVariantData,
         array $configurableData,
         array $expectedConfigurableData
     ) {
@@ -54,30 +57,35 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
 
         /** @var Product $configurableProduct */
         $configurableProduct = $this->getEntity(Product::class, ['id' => 3, 'type' => Product::TYPE_CONFIGURABLE]);
-        $configurableProduct
-            ->addVariantLink($firstVariantLink)
-            ->addVariantLink($secondVariantLink);
+        $variantLinks = function () use ($firstVariantLink, $secondVariantLink) {
+            yield $firstVariantLink->getProduct();
+            yield $secondVariantLink->getProduct();
+        };
+
+        $repository = $this->createMock(ProductRepository::class);
+        $repository->expects($this->once())
+            ->method('getVariantsLinksProducts')
+            ->willReturn($variantLinks());
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($repository);
 
         $this->originalProvider->expects($this->any())
             ->method('getIndexData')
             ->willReturnMap([
-                [$firstSimpleProduct, $attribute, [], $firstVariantData],
-                [$secondSimpleProduct, $attribute, [], $secondVariantDate],
-                [$configurableProduct, $attribute, [], $configurableData],
+                [$firstSimpleProduct, $attribute, [], new \ArrayIterator($firstVariantData)],
+                [$secondSimpleProduct, $attribute, [], new \ArrayIterator($secondVariantData)],
+                [$configurableProduct, $attribute, [], new \ArrayIterator($configurableData)],
             ]);
 
-        $this->assertEquals(
-            $expectedConfigurableData,
-            $this->productVariantProvider->getIndexData($configurableProduct, $attribute, [])
-        );
+        $data = $this->productVariantProvider->getIndexData($configurableProduct, $attribute, []);
+        $this->assertEquals($expectedConfigurableData, array_values($data->getArrayCopy()));
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function getIndexDataDataProvider()
+    public function getIndexDataDataProvider(): array
     {
         return [
             'all text not localized' => [
@@ -87,21 +95,21 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                 ),
                 'first simple product data' => [
                     new ProductIndexDataModel('sku', 'FIRST', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'FIRST', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'FIRST', [], false, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('sku', 'SECOND', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'SECOND', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'SECOND', [], false, true),
                 ],
                 'configurable product data' => [
                     new ProductIndexDataModel('sku', 'CONFIG', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'CONFIG', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'CONFIG', [], false, true),
                 ],
                 'expected configurable product data' => [
                     new ProductIndexDataModel('sku', 'CONFIG', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'CONFIG', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'FIRST', [], false, true),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'SECOND', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'CONFIG', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'FIRST', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'SECOND', [], false, true),
                 ],
             ],
             'all text localized' => [
@@ -136,16 +144,19 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                 'first simple product data' => [
                     new ProductIndexDataModel('color_red', 1, [], false, false),
                     new ProductIndexDataModel('color_priority', 10, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Red', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Red', [], true, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('color_green', 1, [], false, false),
                     new ProductIndexDataModel('color_priority', 20, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Green', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Green', [], true, true),
                 ],
                 'configurable product data' => [
                     new ProductIndexDataModel('color_blue', 1, [], false, false),
                     new ProductIndexDataModel('color_priority', 30, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Blue', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Blue', [], true, true),
                 ],
                 'expected configurable product data' => [
@@ -155,6 +166,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                     new ProductIndexDataModel('color_red', 1, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Red', [], true, true),
                     new ProductIndexDataModel('color_green', 1, [], false, false),
+                    new ProductIndexDataModel('color_searchable', 'Blue Red Green', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Green', [], true, true),
                 ],
             ],
@@ -166,14 +178,17 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                 'first simple product data' => [
                     new ProductIndexDataModel('options_pocket', 1, [], false, false),
                     new ProductIndexDataModel('options_collar', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Pocket Collar', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket Collar', [], true, true),
                 ],
                 'second simple product data' => [
                     new ProductIndexDataModel('options_seams', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Seams', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Seams', [], true, true),
                 ],
                 'configurable product data' => [
                     new ProductIndexDataModel('options_pocket', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Pocket', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket', [], true, true),
                 ],
                 'expected configurable product data' => [
@@ -182,6 +197,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
                     new ProductIndexDataModel('options_collar', 1, [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Pocket Collar', [], true, true),
                     new ProductIndexDataModel('options_seams', 1, [], false, false),
+                    new ProductIndexDataModel('options_searchable', 'Pocket Collar Seams', [], false, false),
                     new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'Seams', [], true, true),
                 ],
             ],

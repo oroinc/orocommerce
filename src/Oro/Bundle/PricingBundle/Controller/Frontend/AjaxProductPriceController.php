@@ -3,16 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Adds actions to get prices by customer or matching prices via AJAX
+ */
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-customer", name="oro_pricing_frontend_price_by_customer")
-     * @Method({"GET"})
+     * @Route("/get-product-prices-by-customer", name="oro_pricing_frontend_price_by_customer", methods={"GET"})
      *
      * {@inheritdoc}
      */
@@ -22,40 +27,24 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="oro_pricing_frontend_matching_price")
-     * @Method({"GET"})
+     * @Route("/get-matching-price", name="oro_pricing_frontend_matching_price", methods={"GET"})
      *
      * {@inheritdoc}
      */
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
+        $matchedPrices = $this->get(MatchingPriceProvider::class)->getMatchingPrices(
             $lineItems,
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
+            $this->get(ProductPriceScopeCriteriaRequestHandler::class)->getPriceScopeCriteria()
         );
 
         return new JsonResponse($matchedPrices);
     }
 
     /**
-     * @Route("/get-product-units-by-currency", name="oro_pricing_frontend_units_by_pricelist")
-     * @Method({"GET"})
-     *
-     * {@inheritdoc}
-     */
-    public function getProductUnitsByCurrencyAction(Request $request)
-    {
-        return $this->getProductUnitsByCurrency(
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer(),
-            $request,
-            $this->getParameter('oro_pricing.entity.combined_product_price.class')
-        );
-    }
-
-    /**
-     * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency")
-     * @Method({"POST"})
+     * @Route("/set-current-currency", name="oro_pricing_frontend_set_current_currency", methods={"POST"})
+     * @CsrfProtection()
      *
      * {@inheritdoc}
      */
@@ -63,12 +52,26 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $currency = $request->get('currency');
         $result = false;
-        $userCurrencyManager = $this->get('oro_pricing.user_currency_manager');
+        $userCurrencyManager = $this->get(UserCurrencyManager::class);
         if (in_array($currency, $userCurrencyManager->getAvailableCurrencies(), true)) {
             $userCurrencyManager->saveSelectedCurrency($currency);
             $result = true;
         }
 
         return new JsonResponse(['success' => $result]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                MatchingPriceProvider::class,
+                UserCurrencyManager::class,
+            ]
+        );
     }
 }

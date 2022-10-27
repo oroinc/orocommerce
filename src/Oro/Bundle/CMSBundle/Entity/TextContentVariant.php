@@ -6,10 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Entity
+ * Represents Content Variant entity
+ *
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\TextContentVariantRepository")
  * @ORM\Table(name="oro_cms_text_content_variant")
  * @Config
  */
@@ -55,9 +58,37 @@ class TextContentVariant
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="wysiwyg", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          }
+     *      }
+     * )
      */
     protected $content;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="wysiwyg_style", name="content_style", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "attachment"={
+     *              "acl_protected"=false,
+     *          }
+     *      }
+     * )
+     */
+    protected $contentStyle;
+
+    /**
+     * @var mixed
+     *
+     * @ORM\Column(type="wysiwyg_properties", name="content_properties", nullable=true)
+     */
+    protected $contentProperties;
 
     /**
      * @var boolean
@@ -162,6 +193,46 @@ class TextContentVariant
     public function setContent($content)
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentStyle()
+    {
+        return $this->contentStyle;
+    }
+
+    /**
+     * @param string $contentStyle
+     *
+     * @return $this
+     */
+    public function setContentStyle($contentStyle)
+    {
+        $this->contentStyle = $contentStyle;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContentProperties()
+    {
+        return $this->contentProperties;
+    }
+
+    /**
+     * @param mixed $contentProperties
+     *
+     * @return $this
+     */
+    public function setContentProperties($contentProperties)
+    {
+        $this->contentProperties = $contentProperties;
 
         return $this;
     }

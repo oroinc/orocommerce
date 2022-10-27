@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoData

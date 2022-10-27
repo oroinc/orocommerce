@@ -11,7 +11,6 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderForListenerWillProcessOnlyLocalizationChanges
-     * @param ConfigUpdateEvent $eventWithLocalizationChange
      */
     public function testListenerWillProcessOnlyLocalizationChanges(ConfigUpdateEvent $eventWithLocalizationChange)
     {
@@ -20,11 +19,11 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                $this->callback(function ($reindexationEvent) {
-                    /** @var ReindexationRequestEvent $reindexationEvent */
-                    return count($reindexationEvent->getWebsitesIds()) === 0;
-                })
+                $this->callback(function (ReindexationRequestEvent $reindexationEvent) {
+                    return count($reindexationEvent->getWebsitesIds()) === 0
+                        && $reindexationEvent->getFieldGroups() === ['main'];
+                }),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
         $listener = new WebsiteLocalizationConfigListener($eventDispatcher);
@@ -33,7 +32,6 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForListenerWillNotProcessOnOtherConfigChanges
-     * @param ConfigUpdateEvent $eventWithConfigChange
      */
     public function testListenerWillNotProcessOnOtherConfigChanges(ConfigUpdateEvent $eventWithConfigChange)
     {

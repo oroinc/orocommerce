@@ -3,16 +3,18 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 {
     /** @var UPSShippingMethodOptionsType */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService */
         $roundingService = $this->getMockForAbstractClass(RoundingServiceInterface::class);
@@ -37,7 +39,9 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
                 [
                     UPSShippingMethodOptionsType::class => $this->formType
                 ],
-                []
+                [
+                    NumberType::class => [new TooltipFormExtensionStub($this)],
+                ]
             ),
             $this->getValidatorExtension(true),
         ];
@@ -63,6 +67,7 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($expectedData, $form->getData());
     }
 

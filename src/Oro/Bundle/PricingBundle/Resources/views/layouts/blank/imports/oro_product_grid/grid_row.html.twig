@@ -1,9 +1,0 @@
-{% block __oro_product_grid__product_price_container_widget %}
-    {% if not is_configurable_product_type(product.type) %}
-        {% do block|merge_context({
-            productPrices: product.prices,
-        }) %}
-
-        {{ block_widget(block) }}
-    {% endif %}
-{% endblock %}

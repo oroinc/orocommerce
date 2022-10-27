@@ -21,10 +21,6 @@ class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
      */
     protected $factory;
 
-    /**
-     * @param PayPalExpressCheckoutConfigProviderInterface $configProvider
-     * @param PayPalExpressCheckoutPaymentMethodFactoryInterface $factory
-     */
     public function __construct(
         PayPalExpressCheckoutConfigProviderInterface $configProvider,
         PayPalExpressCheckoutPaymentMethodFactoryInterface $factory
@@ -42,9 +38,6 @@ class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
         }
     }
 
-    /**
-     * @param PayPalExpressCheckoutConfigInterface $config
-     */
     protected function addCreditCardMethod(PayPalExpressCheckoutConfigInterface $config)
     {
         $this->addMethod(

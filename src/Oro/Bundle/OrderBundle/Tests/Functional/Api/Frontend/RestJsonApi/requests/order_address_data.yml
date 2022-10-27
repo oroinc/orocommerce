@@ -1,0 +1,25 @@
+type: orderaddresses
+id: billing1
+attributes:
+    phone: 123-456
+    label: 'Address 1'
+    street: 'Street 1'
+    street2: 'Street 2'
+    city: 'Los Angeles'
+    postalCode: '90001'
+    organization: Acme
+    customRegion: null
+    namePrefix: Mr.
+    firstName: John
+    middleName: Edgar
+    lastName: Doo
+    nameSuffix: M.D.
+relationships:
+    country:
+        data:
+            type: countries
+            id: '<toString(@country_usa->iso2Code)>'
+    region:
+        data:
+            type: regions
+            id: '<toString(@region_usa_california->combinedCode)>'

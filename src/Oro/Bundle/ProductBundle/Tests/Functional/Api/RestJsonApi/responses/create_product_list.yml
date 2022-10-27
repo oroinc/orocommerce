@@ -1,0 +1,171 @@
+data:
+    -
+        type: products
+        id: new
+        attributes:
+            sku: test-api-01
+            status: enabled
+            productType: simple
+            featured: false
+            newArrival: false
+        relationships:
+            unitPrecisions:
+                data:
+                    -   type: productunitprecisions
+                        id: new
+                    -   type: productunitprecisions
+                        id: new
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: new
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: new
+                    -
+                        type: productnames
+                        id: new
+                    -
+                        type: productnames
+                        id: new
+                    -
+                        type: productnames
+                        id: new
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: new
+                    -
+                        type: productdescriptions
+                        id: new
+                    -
+                        type: productdescriptions
+                        id: new
+                    -
+                        type: productdescriptions
+                        id: new
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: new
+                    -
+                        type: productshortdescriptions
+                        id: new
+                    -
+                        type: productshortdescriptions
+                        id: new
+                    -
+                        type: productshortdescriptions
+                        id: new
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_family->id)>'
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: out_of_stock
+    -
+        type: products
+        id: new
+        attributes:
+            sku: test-api-02
+            status: enabled
+            productType: simple
+            featured: false
+            newArrival: false
+        relationships:
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: new
+                    -
+                        type: productunitprecisions
+                        id: new
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: new
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: new
+                    -
+                        type: productnames
+                        id: new
+                    -
+                        type: productnames
+                        id: new
+                    -
+                        type: productnames
+                        id: new
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: new
+                    -
+                        type: productdescriptions
+                        id: new
+                    -
+                        type: productdescriptions
+                        id: new
+                    -
+                        type: productdescriptions
+                        id: new
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: new
+                    -
+                        type: productshortdescriptions
+                        id: new
+                    -
+                        type: productshortdescriptions
+                        id: new
+                    -
+                        type: productshortdescriptions
+                        id: new
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_family->id)>'
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+                    -
+                        type: localizedfallbackvalues
+                        id: new
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: out_of_stock

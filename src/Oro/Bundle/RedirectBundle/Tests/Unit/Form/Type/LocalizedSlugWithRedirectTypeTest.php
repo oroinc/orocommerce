@@ -26,7 +26,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -53,7 +53,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
                     LocalizedSlugType::class,
                     [
                         'required' => false,
-                        'entry_options' => ['constraints' => [new UrlSafe()]],
+                        'entry_options' => ['constraints' => [new UrlSafe(['allowSlashes' => true])]],
                         'label' => false,
                         'source_field' => 'field',
                         'slug_suggestion_enabled' => true,
@@ -72,7 +72,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
         $this->formType->buildForm(
             $builder,
-            ['source_field' => 'field', 'slug_suggestion_enabled' => true]
+            ['source_field' => 'field', 'slug_suggestion_enabled' => true, 'allow_slashes' => true]
         );
     }
 

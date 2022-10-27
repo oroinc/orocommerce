@@ -1,7 +1,3 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery.validate';
 
-    var $ = require('jquery.validate');
-
-    $.validator.loadMethod('orosale/js/validator/quote-product-offer-quantity');
-});
+$.validator.loadMethod('orosale/js/validator/quote-product-offer-quantity');

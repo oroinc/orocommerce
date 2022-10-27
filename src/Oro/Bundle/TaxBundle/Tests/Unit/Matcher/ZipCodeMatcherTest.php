@@ -14,52 +14,42 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class ZipCodeMatcherTest extends AbstractMatcherTest
 {
-    const POSTAL_CODE = '02097';
+    private const POSTAL_CODE = '02097';
 
-    /**
-     * @var RegionMatcher|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $regionMatcher;
+    /** @var RegionMatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $regionMatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->matcher = new ZipCodeMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
+        $this->regionMatcher = $this->createMock(RegionMatcher::class);
 
-        $this->regionMatcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\RegionMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->matcher = new ZipCodeMatcher($this->doctrineHelper, TaxRule::class);
         $this->matcher->setRegionMatcher($this->regionMatcher);
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        unset($this->regionMatcher);
     }
 
     /**
      * @dataProvider matchProvider
-     * @param string $productTaxCode
-     * @param string $customerTaxCode
-     * @param Country $country
-     * @param Region $region
-     * @param string $regionText
-     * @param TaxRule[] $regionMatcherRules
-     * @param TaxRule[] $zipCodeMatcherTaxRules
-     * @param TaxRule[] $expected
+     *
+     * @param string|null  $productTaxCode
+     * @param string|null  $customerTaxCode
+     * @param Country|null $country
+     * @param Region|null  $region
+     * @param string       $regionText
+     * @param TaxRule[]    $regionMatcherRules
+     * @param TaxRule[]    $zipCodeMatcherTaxRules
+     * @param TaxRule[]    $expected
      */
     public function testMatch(
-        $productTaxCode,
-        $customerTaxCode,
-        $country,
-        $region,
-        $regionText,
-        $regionMatcherRules,
-        $zipCodeMatcherTaxRules,
-        $expected
+        ?string $productTaxCode,
+        ?string $customerTaxCode,
+        ?Country $country,
+        ?Region $region,
+        string $regionText,
+        array $regionMatcherRules,
+        array $zipCodeMatcherTaxRules,
+        array $expected
     ) {
         $address = (new Address())
             ->setPostalCode(self::POSTAL_CODE)
@@ -67,8 +57,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ->setRegion($region)
             ->setRegionText($regionText);
 
-        $this->regionMatcher
-            ->expects($this->atLeastOnce())
+        $this->regionMatcher->expects($this->atLeastOnce())
             ->method('match')
             ->with($address)
             ->willReturn($regionMatcherRules);
@@ -84,16 +73,9 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
         $taxCodes = TaxCodes::create($taxCodes);
         $isCallFindByCountryAndTaxCode = $country && ($region || $regionText) && $taxCodes->isFullFilledTaxCode();
 
-        $this->taxRuleRepository
-            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
+        $this->taxRuleRepository->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByZipCodeAndTaxCode')
-            ->with(
-                $taxCodes,
-                self::POSTAL_CODE,
-                $country,
-                $region,
-                $regionText
-            )
+            ->with($taxCodes, self::POSTAL_CODE, $country, $region, $regionText)
             ->willReturn($zipCodeMatcherTaxRules);
 
         $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
@@ -102,10 +84,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
         $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
-    /**
-     * @return array
-     */
-    public function matchProvider()
+    public function matchProvider(): array
     {
         $country = new Country('US');
         $region = new Region('US-NY');

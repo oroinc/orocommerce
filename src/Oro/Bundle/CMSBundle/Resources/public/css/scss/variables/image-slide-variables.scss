@@ -1,0 +1,7 @@
+/* @theme: admin.oro; */
+
+$image-slide-item-padding-right: $content-padding-small + $btn-icon-width !default;
+$image-slide-item-padding-bottom: $content-padding - $content-padding-medium !default;
+$image-slide-item-padding: $content-padding $image-slide-item-padding-right
+  $image-slide-item-padding-bottom $content-padding !default;
+$image-slide-remove-button-offset: $content-padding-small * .5 !default;

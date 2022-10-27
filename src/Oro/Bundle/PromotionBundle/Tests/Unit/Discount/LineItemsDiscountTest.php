@@ -20,7 +20,7 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
      */
     protected $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = new LineItemsDiscount();
     }
@@ -88,8 +88,6 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
     public function calculateDataProvider(): array
     {

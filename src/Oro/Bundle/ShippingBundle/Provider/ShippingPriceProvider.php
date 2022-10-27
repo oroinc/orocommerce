@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -15,8 +16,13 @@ use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigs
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provides shipping methods based on configuration
+ */
 class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
+    use MemoryCacheProviderAwareTrait;
+
     /**
      * @var MethodsConfigsRulesByContextProviderInterface
      */
@@ -42,13 +48,6 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
      */
     private $eventDispatcher;
 
-    /**
-     * @param MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider
-     * @param ShippingMethodProviderInterface              $shippingMethodProvider
-     * @param ShippingPriceCache                           $priceCache
-     * @param ShippingMethodViewFactory                    $shippingMethodViewFactory
-     * @param EventDispatcherInterface                     $eventDispatcher
-     */
     public function __construct(
         MethodsConfigsRulesByContextProviderInterface $shippingRulesProvider,
         ShippingMethodProviderInterface $shippingMethodProvider,
@@ -67,6 +66,21 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
      * {@inheritdoc}
      */
     public function getApplicableMethodsViews(ShippingContextInterface $context)
+    {
+        return $this->getMemoryCacheProvider()->get(
+            ['shipping_context' => $context],
+            function () use ($context) {
+                return $this->getActualApplicableMethodsViews($context);
+            }
+        );
+    }
+
+    /**
+     * @param ShippingContextInterface $context
+     *
+     * @return ShippingMethodViewCollection
+     */
+    protected function getActualApplicableMethodsViews(ShippingContextInterface $context)
     {
         $methodCollection = new ShippingMethodViewCollection();
 
@@ -100,7 +114,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         }
 
         $event = new ApplicableMethodsEvent($methodCollection, $context->getSourceEntity());
-        $this->eventDispatcher->dispatch(ApplicableMethodsEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ApplicableMethodsEvent::NAME);
 
         return $event->getMethodCollection();
     }
@@ -120,6 +134,10 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
             return null;
         }
 
+        if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
+            return $this->priceCache->getPrice($context, $methodId, $typeId);
+        }
+
         $rules = $this->shippingRulesProvider->getShippingMethodsConfigsRules($context);
         foreach ($rules as $rule) {
             foreach ($rule->getMethodConfigs() as $methodConfig) {
@@ -129,9 +147,6 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
 
                 $typesOptions = $this->getEnabledTypesOptions($methodConfig->getTypeConfigs()->toArray());
                 if (array_key_exists($typeId, $typesOptions)) {
-                    if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
-                        return $this->priceCache->getPrice($context, $methodId, $typeId);
-                    }
                     $price = $type->calculatePrice(
                         $context,
                         $methodConfig->getOptions(),

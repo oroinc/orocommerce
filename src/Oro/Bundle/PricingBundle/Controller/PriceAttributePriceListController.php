@@ -2,28 +2,31 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PriceAttributePriceListController extends Controller
+/**
+ * CRUD for price attributes.
+ */
+class PriceAttributePriceListController extends AbstractController
 {
     /**
      * @Route("/", name="oro_pricing_price_attribute_price_list_index")
      * @Template
      * @AclAncestor("oro_pricing_price_attribute_price_list_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_pricing.entity.price_attribute_price_list.class')
+            'entity_class' => PriceAttributePriceList::class
         ];
     }
 
@@ -36,11 +39,8 @@ class PriceAttributePriceListController extends Controller
      *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="VIEW"
      * )
-     *
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array
      */
-    public function viewAction(PriceAttributePriceList $priceAttribute)
+    public function viewAction(PriceAttributePriceList $priceAttribute): array
     {
         return [
             'entity' => $priceAttribute,
@@ -49,17 +49,15 @@ class PriceAttributePriceListController extends Controller
 
     /**
      * @Route("/create", name="oro_pricing_price_attribute_price_list_create")
-     * @Template("OroPricingBundle:PriceAttributePriceList:update.html.twig")
+     * @Template("@OroPricing/PriceAttributePriceList/update.html.twig")
      * @Acl(
      *      id="oro_pricing_price_attribute_price_list_create",
      *      type="entity",
      *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new PriceAttributePriceList());
     }
@@ -73,51 +71,46 @@ class PriceAttributePriceListController extends Controller
      *      class="OroPricingBundle:PriceAttributePriceList",
      *      permission="EDIT"
      * )
-     *
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array
      */
-    public function updateAction(PriceAttributePriceList $priceAttribute)
+    public function updateAction(PriceAttributePriceList $priceAttribute): array|RedirectResponse
     {
         return $this->update($priceAttribute);
     }
 
-    /**
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array|RedirectResponse
-     */
-    protected function update(PriceAttributePriceList $priceAttribute)
+    protected function update(PriceAttributePriceList $priceAttribute): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $priceAttribute,
             $this->createForm(PriceAttributePriceListType::class, $priceAttribute),
-            function (PriceAttributePriceList $priceAttribute) {
-                return [
-                    'route' => 'oro_pricing_price_attribute_price_list_update',
-                    'parameters' => ['id' => $priceAttribute->getId()],
-                ];
-            },
-            function (PriceAttributePriceList $priceAttribute) {
-                return [
-                    'route' => 'oro_pricing_price_attribute_price_list_view',
-                    'parameters' => ['id' => $priceAttribute->getId()],
-                ];
-            },
-            $this->get('translator')->trans('oro.pricing.controller.price_attribute_price_list.saved.message')
+            $this->get(TranslatorInterface::class)->trans(
+                'oro.pricing.controller.price_attribute_price_list.saved.message'
+            )
         );
     }
 
     /**
      * @Route("/info/{id}", name="oro_pricing_price_attribute_price_list_info", requirements={"id"="\d+"})
-     * @Template("OroPricingBundle:PriceAttributePriceList/widget:info.html.twig")
+     * @Template("@OroPricing/PriceAttributePriceList/widget/info.html.twig")
      * @AclAncestor("oro_pricing_price_attribute_price_list_view")
-     * @param PriceAttributePriceList $priceAttribute
-     * @return array
      */
-    public function infoAction(PriceAttributePriceList $priceAttribute)
+    public function infoAction(PriceAttributePriceList $priceAttribute): array
     {
         return [
             'entity' => $priceAttribute
         ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
+        );
     }
 }

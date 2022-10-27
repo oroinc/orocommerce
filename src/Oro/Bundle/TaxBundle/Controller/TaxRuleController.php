@@ -2,28 +2,31 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaxRuleController extends Controller
+/**
+ * CRUD for tax rules.
+ */
+class TaxRuleController extends AbstractController
 {
     /**
      * @Route("/", name="oro_tax_rule_index")
      * @Template
      * @AclAncestor("oro_tax_rule_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.tax_rule.class')
+            'entity_class' => TaxRule::class
         ];
     }
 
@@ -36,11 +39,8 @@ class TaxRuleController extends Controller
      *      class="OroTaxBundle:TaxRule",
      *      permission="VIEW"
      * )
-     *
-     * @param TaxRule $taxRule
-     * @return array
      */
-    public function viewAction(TaxRule $taxRule)
+    public function viewAction(TaxRule $taxRule): array
     {
         return [
             'entity' => $taxRule
@@ -49,17 +49,15 @@ class TaxRuleController extends Controller
 
     /**
      * @Route("/create", name="oro_tax_rule_create")
-     * @Template("OroTaxBundle:TaxRule:update.html.twig")
+     * @Template("@OroTax/TaxRule/update.html.twig")
      * @Acl(
      *      id="oro_tax_rule_create",
      *      type="entity",
      *      class="OroTaxBundle:TaxRule",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new TaxRule());
     }
@@ -73,37 +71,32 @@ class TaxRuleController extends Controller
      *      class="OroTaxBundle:TaxRule",
      *      permission="EDIT"
      * )
-     *
-     * @param TaxRule $taxRule
-     * @return array
      */
-    public function updateAction(TaxRule $taxRule)
+    public function updateAction(TaxRule $taxRule): array|RedirectResponse
     {
         return $this->update($taxRule);
     }
 
-    /**
-     * @param TaxRule $taxRule
-     * @return array|RedirectResponse
-     */
-    protected function update(TaxRule $taxRule)
+    protected function update(TaxRule $taxRule): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $taxRule,
             $this->createForm(TaxRuleType::class, $taxRule),
-            function (TaxRule $taxRule) {
-                return [
-                    'route' => 'oro_tax_rule_update',
-                    'parameters' => ['id' => $taxRule->getId()]
-                ];
-            },
-            function (TaxRule $taxRule) {
-                return [
-                    'route' => 'oro_tax_rule_view',
-                    'parameters' => ['id' => $taxRule->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.tax.controller.taxrule.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.taxrule.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
         );
     }
 }

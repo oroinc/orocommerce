@@ -3,29 +3,33 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AbstractLineItemController extends Controller
+/**
+ * Base methods for line item controllers
+ */
+abstract class AbstractLineItemController extends AbstractController
 {
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string $translationKey
-     * @return string
-     */
-    protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
+    protected function getSuccessMessage(ShoppingList $shoppingList, string $translationKey): string
     {
-        if ($this->get('oro_shopping_list.manager.shopping_list_limit')->isOnlyOneEnabled()) {
-            $link = $this->get('router')->generate('oro_shopping_list_frontend_view');
-        } else {
-            $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
-        }
-
-        $translator = $this->get('translator');
+        $link = $this->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
         $label = htmlspecialchars($shoppingList->getLabel());
 
-        return $translator->trans(
+        return $this->get(TranslatorInterface::class)->trans(
             $translationKey,
             ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
         );
+    }
+
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            ShoppingListUrlProvider::class,
+            RouterInterface::class,
+            TranslatorInterface::class,
+        ]);
     }
 }

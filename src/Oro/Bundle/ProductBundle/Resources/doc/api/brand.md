@@ -32,7 +32,7 @@ Example:
     "attributes": {
       "status": "enabled"
     },
-    "relationships": {     
+    "relationships": { 
       "names": {
         "data": [
           {
@@ -78,11 +78,11 @@ Example:
 {
   "data": {
     "type": "brands",
-    "id":"3",    
+    "id": "3",    
     "attributes": {
       "status": "enabled"
     },
-    "relationships": {     
+    "relationships": { 
       "names": {
         "data": [
           {
@@ -126,15 +126,13 @@ Delete a collection of brand records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### names
 
@@ -142,19 +140,13 @@ Delete a collection of brand records.
 
 {@inheritdoc}
 
-**The required field**
-
-*The value is set in included section*
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
-
-*The value is set in included section*
+**This field must not be empty, if it is passed.**
 
 ## SUBRESOURCES
 

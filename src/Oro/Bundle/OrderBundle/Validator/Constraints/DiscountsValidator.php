@@ -6,29 +6,28 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that the sum of all order discounts does not exceed the order grand total amount.
+ */
 class DiscountsValidator extends ConstraintValidator
 {
     /**
-     * @param Order|object $value
-     * @param Discounts    $constraint
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$constraint instanceof Discounts) {
+            throw new UnexpectedTypeException($constraint, Discounts::class);
+        }
+
         if (null === $value) {
             return;
         }
 
         if (!$value instanceof Order) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Value must be instance of "%s", "%s" given',
-                    'Oro\Bundle\OrderBundle\Entity\Order',
-                    is_object($value) ? get_class($value) : gettype($value)
-                )
-            );
+            throw new UnexpectedTypeException($value, Order::class);
         }
 
         if ($value->getTotalDiscounts()
@@ -39,10 +38,7 @@ class DiscountsValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param Constraint $constraint
-     */
-    private function addSingleViolation(Constraint $constraint)
+    private function addSingleViolation(Discounts $constraint): void
     {
         $exists = false;
         /** @var ConstraintViolation $violation */

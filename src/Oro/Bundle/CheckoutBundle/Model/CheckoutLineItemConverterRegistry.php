@@ -5,19 +5,24 @@ namespace Oro\Bundle\CheckoutBundle\Model;
 use Oro\Bundle\CheckoutBundle\Exception\CheckoutLineItemConverterNotFoundException;
 use Psr\Log\LoggerInterface;
 
+/**
+ * The registry of checkout line item converters.
+ */
 class CheckoutLineItemConverterRegistry
 {
-    /** @var array|CheckoutLineItemConverterInterface[] */
-    protected $converters = [];
+    /** @var iterable|CheckoutLineItemConverterInterface[] */
+    private $converters;
 
     /** @var LoggerInterface */
-    protected $logger;
+    private $logger;
 
     /**
-     * @param LoggerInterface $logger
+     * @param iterable|CheckoutLineItemConverterInterface[] $converters
+     * @param LoggerInterface                               $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(iterable $converters, LoggerInterface $logger)
     {
+        $this->converters = $converters;
         $this->logger = $logger;
     }
 
@@ -41,18 +46,5 @@ class CheckoutLineItemConverterRegistry
         $this->logger->critical($exception->getMessage(), ['source_instance' => $source]);
 
         throw $exception;
-    }
-
-    /**
-     * @param CheckoutLineItemConverterInterface $converter
-     * @param string $alias
-     *
-     * @return $this
-     */
-    public function addConverter(CheckoutLineItemConverterInterface $converter, $alias)
-    {
-        $this->converters[$alias] = $converter;
-
-        return $this;
     }
 }

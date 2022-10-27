@@ -1,0 +1,81 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    page1_title:
+        string: 'Page 1'
+    page1_es_title:
+        string: 'Page 1 Spanish Title'
+        localization: '@es'
+    page1_meta_title:
+        string: 'Page 1 Meta Title'
+    page1_es_meta_title:
+        string: 'Page 1 Spanish Meta Title'
+        localization: '@es'
+    page1_meta_description:
+        string: 'Page 1 Meta Description'
+    page1_es_meta_description:
+        string: 'Page 1 Spanish Meta Description'
+        localization: '@es'
+    page1_meta_keywords:
+        string: 'Page 1 Meta Keywords'
+    page1_es_meta_keywords:
+        string: 'Page 1 Spanish Meta Keywords'
+        localization: '@es'
+    page2_title:
+        string: 'Page 2'
+    page3_title:
+        string: 'Page 3'
+    page4_title:
+        string: 'Page 4'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    page1_slug_default:
+        routeName: "oro_cms_frontend_page_view"
+        parametersHash: "93540a68aeff18ecd864cb808c4e171b"
+        url: '/page1_slug_default'
+    page1_slug_en_CA:
+        routeName: "oro_cms_frontend_page_view"
+        parametersHash: "93540a68aeff18ecd864cb808c4e171b"
+        url: '/page1_slug_en_CA'
+        localization: '@en_CA'
+    page1_slug_es:
+        routeName: "oro_cms_frontend_page_view"
+        parametersHash: "93540a68aeff18ecd864cb808c4e171b"
+        url: '/page1_slug_es'
+        localization: '@es'
+    page2_slug_default:
+        routeName: "oro_cms_frontend_page_view"
+        parametersHash: "93540a68aeff18ecd864cb808c4e171b"
+        url: '/page2_slug_default'
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    page1:
+        content: 'Page 1 content. Twig Expr: "{{ " test "|trim }}".'
+        contentStyle: '.test {color: {{ " red "|trim }}}'
+        metaTitles: ['@page1_meta_title', '@page1_es_meta_title']
+        metaDescriptions: ['@page1_meta_description', '@page1_es_meta_description']
+        metaKeywords: ['@page1_meta_keywords', '@page1_es_meta_keywords']
+        slugs: ['@page1_slug_default', '@page1_slug_en_CA', '@page1_slug_es']
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@page1_title']
+            - addTitle: ['@page1_es_title']
+    page2:
+        content: 'Page 2 content'
+        slugs: ['@page2_slug_default']
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@page2_title']
+    page3:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@page3_title']
+    page4:
+        content: ''
+        contentStyle: ''
+        contentProperties: []
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@page4_title']

@@ -3,19 +3,25 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\DoctrineUtils\ORM\UnionQueryBuilder;
 
 /**
  * Entity repository for ProductPrice entity
@@ -61,20 +67,11 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $this->_em->getConnection()->executeQuery($sql, $parameters, $types);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param PriceList $priceList
-     */
     public function deleteInvalidPrices(ShardManager $shardManager, PriceList $priceList)
     {
         $this->deleteInvalidPricesByProducts($shardManager, $priceList);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param PriceList $priceList
-     * @param array $products
-     */
     public function deleteInvalidPricesByProducts(
         ShardManager $shardManager,
         PriceList $priceList,
@@ -103,8 +100,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $query = $qb->getQuery();
 
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         $iterator = new BufferedQueryResultIterator($query);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
@@ -152,11 +148,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return $qb;
     }
 
-    /**
-     * @param BasePriceList $sourcePriceList
-     * @param BasePriceList $targetPriceList
-     * @param ShardQueryExecutorInterface $insertQueryExecutor
-     */
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
@@ -190,7 +181,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $qb = $this->createQueryBuilder('price');
 
         // ensure all skus are strings to avoid postgres's "No operator matches the given name and argument type(s)."
-        array_walk($productSkus, function (& $sku) {
+        array_walk($productSkus, function (&$sku) {
             $sku = (string)$sku;
         });
 
@@ -206,12 +197,11 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ])
             ->getQuery();
 
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         return $query->getResult();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -227,13 +217,9 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->getQuery()
             ->getScalarResult();
 
-        return array_map('current', $result);
+        return array_map(fn ($value) => (int) current($value), $result);
     }
 
-    /**
-     * @param ShardManager $shardManager
-     * @param BaseProductPrice $price
-     */
     public function remove(ShardManager $shardManager, BaseProductPrice $price)
     {
         $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
@@ -263,6 +249,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             'quantity' => ':quantity',
             'value' => ':value',
             'currency' => ':currency',
+            'version' => ':version'
         ];
         if ($price->getId()) {
             $qb->update($tableName, 'price');
@@ -280,14 +267,15 @@ class ProductPriceRepository extends BaseProductPriceRepository
             $price->setId($id);
         }
         $qb
-            ->setParameter('price_rule_id', $price->getPriceRule() ? $price->getPriceRule()->getId(): null)
+            ->setParameter('price_rule_id', $price->getPriceRule() ? $price->getPriceRule()->getId() : null)
             ->setParameter('unit_code', $price->getProductUnitCode())
             ->setParameter('product_id', $price->getProduct()->getId())
             ->setParameter('price_list_id', $price->getPriceList()->getId())
             ->setParameter('product_sku', $price->getProductSku())
             ->setParameter('quantity', $price->getQuantity())
             ->setParameter('value', $price->getPrice()->getValue())
-            ->setParameter('currency', $price->getPrice()->getCurrency());
+            ->setParameter('currency', $price->getPrice()->getCurrency())
+            ->setParameter('version', $price->getVersion());
         $qb->execute();
     }
 
@@ -324,6 +312,50 @@ class ProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
+     * @param ShardManager $shardManager
+     * @param int $priceList
+     * @param int $version
+     * @param int $batchSize
+     * @return \Generator
+     */
+    public function getProductsByPriceListAndVersion(
+        ShardManager $shardManager,
+        int $priceList,
+        int $version,
+        int $batchSize = self::BUFFER_SIZE
+    ) {
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceList]);
+        $connection = $this->_em->getConnection();
+        $qb = $connection->createQueryBuilder();
+
+        $qb->select('DISTINCT pp.product_id')
+            ->from($tableName, 'pp')
+            ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
+            ->andWhere($qb->expr()->eq('pp.version', ':version'))
+            ->setParameter('priceListId', $priceList)
+            ->setParameter('version', $version);
+
+        $stmt = $qb->execute();
+
+        $batch = [];
+        $count = 0;
+        while ($productId = $stmt->fetchColumn()) {
+            $batch[] = $productId;
+            $count++;
+            if ($batchSize === $count) {
+                yield $batch;
+
+                $batch = [];
+                $count = 0;
+            }
+        }
+
+        if ($count) {
+            yield $batch;
+        }
+    }
+
+    /**
      * @return UuidGenerator
      */
     protected function getGenerator()
@@ -351,5 +383,184 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->getScalarResult();
 
         return array_map('current', $result);
+    }
+
+    /**
+     * @param Website $website
+     * @param Product[] $products
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return array
+     */
+    public function findMinByWebsiteForFilter(
+        Website $website,
+        array $products,
+        ?PriceList $basePriceList,
+        string $accuracy
+    ) {
+        $qb = $this->getQbForMinimalPrices($website, $products, $basePriceList, $accuracy);
+        $qb->select(
+            'IDENTITY(mp.product) as product_id',
+            'MIN(mp.value) as value',
+            'mp.currency',
+            'IDENTITY(mp.priceList) as price_list_id',
+            'IDENTITY(mp.unit) as unit'
+        );
+        $qb->groupBy('mp.priceList, mp.product, mp.currency, mp.unit');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param Website $website
+     * @param Product[] $products
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return array
+     */
+    public function findMinByWebsiteForSort(
+        Website $website,
+        array $products,
+        ?PriceList $basePriceList,
+        string $accuracy
+    ) {
+        $qb = $this->getQbForMinimalPrices($website, $products, $basePriceList, $accuracy);
+        $qb->select(
+            'IDENTITY(mp.product) as product_id',
+            'MIN(mp.value) as value',
+            'mp.currency',
+            'IDENTITY(mp.priceList) as price_list_id'
+        );
+        $qb->groupBy('mp.priceList, mp.product, mp.currency');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function getMinimalPriceIdsQueryBuilder(array $priceLists): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('pp');
+
+        $qb
+            ->select('MIN(CAST(mp.id as text)) as id')
+            ->innerJoin(
+                ProductPrice::class,
+                'mp',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('mp.product', 'pp.product'),
+                    $qb->expr()->eq('mp.unit', 'pp.unit'),
+                    $qb->expr()->eq('mp.quantity', 'pp.quantity'),
+                    $qb->expr()->eq('mp.currency', 'pp.currency')
+                )
+            )
+            ->where($qb->expr()->in('pp.priceList', ':priceLists'))
+            ->andWhere($qb->expr()->in('mp.priceList', ':priceLists'))
+            ->groupBy('pp.product', 'pp.unit', 'pp.quantity', 'pp.currency', 'mp.value')
+            ->having($qb->expr()->eq('mp.value', 'MIN(pp.value)'))
+            ->setParameter('priceLists', $priceLists);
+
+        return $qb;
+    }
+
+    /**
+     * @param Website $website
+     * @param array $products
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return QueryBuilder
+     * @throws \Doctrine\DBAL\Query\QueryException
+     */
+    protected function getQbForMinimalPrices(
+        Website $website,
+        array $products,
+        ?PriceList $basePriceList,
+        string $accuracy
+    ) {
+        $qb = $this->createQueryBuilder('mp');
+
+        return $qb
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->in('mp.priceList', ':priceListIds'),
+                    $qb->expr()->in('mp.product', ':products')
+                )
+            )
+            ->setParameter('priceListIds', $this->getPriceListIdsForWebsite($website, $basePriceList, $accuracy))
+            ->setParameter(
+                'products',
+                array_map(
+                    static function ($product) {
+                        return (int)($product instanceof Product ? $product->getId() : $product);
+                    },
+                    $products
+                )
+            );
+    }
+
+    /**
+     * @param Website $website
+     * @param PriceList|null $basePriceList
+     * @param string $accuracy
+     * @return array|int[]
+     * @throws \Doctrine\DBAL\Query\QueryException
+     */
+    private function getPriceListIdsForWebsite(Website $website, ?PriceList $basePriceList, string $accuracy)
+    {
+        if ($accuracy === 'website' && $basePriceList) {
+            return [$basePriceList->getId()];
+        }
+
+        $em = $this->getEntityManager();
+
+        $qb = new UnionQueryBuilder($em, false);
+        $qb->addSelect('priceListId', 'id', Types::INTEGER)
+            ->addOrderBy('id');
+
+        if ($basePriceList) {
+            $subQb = $em->getRepository(PriceList::class)->createQueryBuilder('pl');
+            $subQb->select('pl.id AS priceListId')
+                ->where(
+                    $subQb->expr()->eq('pl.id', ':basePriceList')
+                )
+                ->setParameter('basePriceList', $basePriceList)
+                ->setMaxResults(1);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        $relations = [
+            PriceListToCustomerGroup::class
+        ];
+        if ($accuracy === 'customer') {
+            $relations[] = PriceListToCustomer::class;
+        }
+
+        foreach ($relations as $entityClass) {
+            $subQb = $em->getRepository($entityClass)->createQueryBuilder('relation');
+            $subQb->select('IDENTITY(relation.priceList) AS priceListId')
+                ->where(
+                    $subQb->expr()->eq('relation.website', ':website')
+                )
+                ->setParameter('website', $website);
+
+            $qb->addSubQuery($subQb->getQuery());
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'id');
+    }
+
+    public function hasPrices(ShardManager $shardManager, PriceList $priceList): bool
+    {
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $priceList]);
+        $connection = $this->_em->getConnection();
+        $qb = $connection->createQueryBuilder();
+        $qb
+            ->select('pp.id')
+            ->from($tableName, 'pp')
+            ->where($qb->expr()->eq('pp.price_list_id', ':priceListId'))
+            ->setMaxResults(1)
+            ->setParameter('priceListId', $priceList->getId());
+
+        return (bool)$qb->execute()->fetchOne();
     }
 }

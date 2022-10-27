@@ -1,0 +1,16 @@
+features:
+    manage_payment_rules:
+        label: oro.payment.paymentmethodsconfigsrule.feature.manage.label
+        description: oro.payment.paymentmethodsconfigsrule.feature.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_payment_methods_configs_rule_index
+            - oro_payment_methods_configs_rule_create
+            - oro_payment_methods_configs_rule_view
+            - oro_payment_methods_configs_rule_update
+            - oro_payment_methods_configs_massaction
+            - oro_api_enable_paymentmethodsconfigsrules
+            - oro_api_disable_paymentmethodsconfigsrules
+        navigation_items:
+            - application_menu.system_tab.payment_methods_configs_rule
+            - shortcuts.shortcut_payment_methods_configs_rule

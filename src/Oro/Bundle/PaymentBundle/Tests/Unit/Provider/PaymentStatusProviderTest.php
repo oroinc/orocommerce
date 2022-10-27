@@ -12,25 +12,18 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTransactionProvider;
-
-    /** @var PaymentStatusProvider */
-    protected $provider;
+    private $paymentTransactionProvider;
 
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $totalProcessorProvider;
+    private $totalProcessorProvider;
 
-    protected function setUp()
+    /** @var PaymentStatusProvider */
+    private $provider;
+
+    protected function setUp(): void
     {
-        $this->paymentTransactionProvider = $this
-            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->totalProcessorProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
 
         $this->provider = new PaymentStatusProvider(
             $this->paymentTransactionProvider,
@@ -39,17 +32,13 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $transactions
-     * @param float $amount
-     * @param string $expectedStatus
      * @dataProvider statusDataProvider
      */
-    public function testStatus(array $transactions, $amount, $expectedStatus)
+    public function testStatus(array $transactions, float $amount, string $expectedStatus)
     {
         $object = new \stdClass();
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects($this->once())
             ->method('getPaymentTransactions')
             ->with($object)
             ->willReturn($transactions);
@@ -57,8 +46,7 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
         $total = new Subtotal();
         $total->setAmount($amount);
 
-        $this->totalProcessorProvider
-            ->expects($this->once())
+        $this->totalProcessorProvider->expects($this->any())
             ->method('getTotal')
             ->with($object)
             ->willReturn($total);
@@ -67,10 +55,9 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function statusDataProvider()
+    public function statusDataProvider(): array
     {
         $sourceReference = 'source_reference';
         $sourceTransaction = (new PaymentTransaction())
@@ -431,6 +418,43 @@ class PaymentStatusProviderTest extends \PHPUnit\Framework\TestCase
                 100,
                 PaymentStatusProvider::PENDING,
             ],
+            'partially refunded amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CAPTURE)
+                        ->setAmount(50),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(10),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(30),
+                ],
+                100,
+                PaymentStatusProvider::CANCELED_PARTIALLY
+            ],
+            'partially canceled/refunded amount' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(50),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(false)
+                        ->setAction(PaymentMethodInterface::CANCEL)
+                        ->setAmount(50)
+                ],
+                50,
+                PaymentStatusProvider::CANCELED
+            ]
         ];
     }
 }

@@ -9,7 +9,6 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAddType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
@@ -33,7 +32,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->formType = new CouponAddType($this->doctrineHelper);
@@ -59,7 +58,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
                         ['coupon1' => $coupon1],
                         CouponAutocompleteType::NAME
                     ),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub([1 => $coupon1, 2 => $coupon2]),
+                    EntityIdentifierType::class => new EntityType([1 => $coupon1, 2 => $coupon2]),
                 ],
                 []
             ),
@@ -82,9 +81,6 @@ class CouponAddTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(array $submittedData, array $expectedData)
     {
@@ -92,6 +88,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(CouponAddType::class, null, ['entity' => $entity]);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -105,7 +102,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
             'empty data' => [
                 'submittedData' => [
                     'coupon' => 'coupon1',
-                    'addedCoupons' => '',
+                    'addedCoupons' => [],
                 ],
                 'expectedData' => [],
             ],

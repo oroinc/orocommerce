@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Event;
 
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ResolveTaxEvent extends Event
 {
@@ -14,9 +14,6 @@ class ResolveTaxEvent extends Event
     /** @var Taxable */
     protected $taxable;
 
-    /**
-     * @param Taxable $taxable
-     */
     public function __construct(Taxable $taxable)
     {
         $this->taxable = $taxable;

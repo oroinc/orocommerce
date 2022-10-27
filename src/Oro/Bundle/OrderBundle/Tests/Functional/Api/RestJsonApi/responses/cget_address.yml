@@ -1,0 +1,117 @@
+data:
+    -
+        type: orderaddresses
+        id: '<toString(@order_address.office->id)>'
+        attributes:
+            fromExternalSource: '@order_address.office->fromExternalSource'
+            phone: '@order_address.office->phone'
+            label: '@order_address.office->label'
+            street: '@order_address.office->street'
+            street2: '@order_address.office->street2'
+            city: '@order_address.office->city'
+            postalCode: '@order_address.office->postalCode'
+            organization: '@order_address.office->organization'
+            namePrefix: '@order_address.office->namePrefix'
+            firstName: '@order_address.office->firstName'
+            middleName: '@order_address.office->middleName'
+            lastName: '@order_address.office->lastName'
+            nameSuffix: '@order_address.office->nameSuffix'
+            createdAt: '@order_address.office->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order_address.office->updated->format("Y-m-d\TH:i:s\Z")'
+            customRegion: null
+        relationships:
+            country:
+                data:
+                    type: 'countries'
+                    id: '<toString(@order_address.office->country->iso2Code)>'
+            region:
+                data:
+                    type: 'regions'
+                    id: '<toString(@order_address.office->region->combinedCode)>'
+    -
+        type: orderaddresses
+        id: '<toString(@order_address.warehouse->id)>'
+        attributes:
+            fromExternalSource: '@order_address.warehouse->fromExternalSource'
+            phone: '@order_address.warehouse->phone'
+            label: '@order_address.warehouse->label'
+            street: '@order_address.warehouse->street'
+            street2: '@order_address.warehouse->street2'
+            city: '@order_address.warehouse->city'
+            postalCode: '@order_address.warehouse->postalCode'
+            organization: '@order_address.warehouse->organization'
+            namePrefix: '@order_address.warehouse->namePrefix'
+            firstName: '@order_address.warehouse->firstName'
+            middleName: '@order_address.warehouse->middleName'
+            lastName: '@order_address.warehouse->lastName'
+            nameSuffix: '@order_address.warehouse->nameSuffix'
+            createdAt: '@order_address.warehouse->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order_address.warehouse->updated->format("Y-m-d\TH:i:s\Z")'
+            customRegion: null
+        relationships:
+            country:
+                data:
+                    type: 'countries'
+                    id: '<toString(@order_address.warehouse->country->iso2Code)>'
+            region:
+                data:
+                    type: 'regions'
+                    id: '<toString(@order_address.warehouse->region->combinedCode)>'
+    -
+        type: orderaddresses
+        id: '<toString(@order_address.order2.billing->id)>'
+        attributes:
+            fromExternalSource: '@order_address.order2.billing->fromExternalSource'
+            phone: '@order_address.order2.billing->phone'
+            label: '@order_address.order2.billing->label'
+            street: '@order_address.order2.billing->street'
+            street2: '@order_address.order2.billing->street2'
+            city: '@order_address.order2.billing->city'
+            postalCode: '@order_address.order2.billing->postalCode'
+            organization: '@order_address.order2.billing->organization'
+            namePrefix: '@order_address.order2.billing->namePrefix'
+            firstName: '@order_address.order2.billing->firstName'
+            middleName: '@order_address.order2.billing->middleName'
+            lastName: '@order_address.order2.billing->lastName'
+            nameSuffix: '@order_address.order2.billing->nameSuffix'
+            createdAt: '@order_address.order2.billing->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order_address.order2.billing->updated->format("Y-m-d\TH:i:s\Z")'
+            customRegion: null
+        relationships:
+            country:
+                data:
+                    type: 'countries'
+                    id: '<toString(@order_address.order2.billing->country->iso2Code)>'
+            region:
+                data:
+                    type: 'regions'
+                    id: '<toString(@order_address.order2.billing->region->combinedCode)>'
+    -
+        type: orderaddresses
+        id: '<toString(@order_address.order2.shipping->id)>'
+        attributes:
+            fromExternalSource: '@order_address.order2.shipping->fromExternalSource'
+            phone: '@order_address.order2.shipping->phone'
+            label: '@order_address.order2.shipping->label'
+            street: '@order_address.order2.shipping->street'
+            street2: '@order_address.order2.shipping->street2'
+            city: '@order_address.order2.shipping->city'
+            postalCode: '@order_address.order2.shipping->postalCode'
+            organization: '@order_address.order2.shipping->organization'
+            namePrefix: '@order_address.order2.shipping->namePrefix'
+            firstName: '@order_address.order2.shipping->firstName'
+            middleName: '@order_address.order2.shipping->middleName'
+            lastName: '@order_address.order2.shipping->lastName'
+            nameSuffix: '@order_address.order2.shipping->nameSuffix'
+            createdAt: '@order_address.order2.shipping->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@order_address.order2.shipping->updated->format("Y-m-d\TH:i:s\Z")'
+            customRegion: null
+        relationships:
+            country:
+                data:
+                    type: 'countries'
+                    id: '<toString(@order_address.order2.shipping->country->iso2Code)>'
+            region:
+                data:
+                    type: 'regions'
+                    id: '<toString(@order_address.order2.shipping->region->combinedCode)>'

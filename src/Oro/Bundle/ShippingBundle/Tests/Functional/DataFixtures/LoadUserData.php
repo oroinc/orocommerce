@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
@@ -21,7 +23,16 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
     protected $roles = [
         self::ROLE_VIEW => [
             [
-                'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
+                'class' => ShippingMethodsConfigsRule::class,
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
+            ],
+            [
+                'class' => Channel::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -32,7 +43,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
         ],
         self::ROLE_EDIT => [
             [
-                'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
+                'class' => ShippingMethodsConfigsRule::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'EDIT',
@@ -43,7 +54,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
         ],
         self::ROLE_CREATE => [
             [
-                'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
+                'class' => ShippingMethodsConfigsRule::class,
                 'acls'  => [
                     [
                         AbstractLoadMultipleUserData::ACL_PERMISSION => 'CREATE',
@@ -64,7 +75,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_VIEWER,
             'firstname' => 'ShippingUser1FN',
             'lastname'  => 'ShippingUser1LN',
-            'roles'     => [self::ROLE_VIEW],
+            'userRoles'     => [self::ROLE_VIEW],
         ],
         [
             'email'     => 'shipping-user-editor@example.com',
@@ -72,7 +83,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_EDITOR,
             'firstname' => 'ShippingUser2FN',
             'lastname'  => 'ShippingUser2LN',
-            'roles'     => [self::ROLE_EDIT],
+            'userRoles'     => [self::ROLE_VIEW, self::ROLE_EDIT],
         ],
         [
             'email'     => 'shipping-user-viewer-creator@example.com',
@@ -80,7 +91,7 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
             'password'  => self::USER_VIEWER_CREATOR,
             'firstname' => 'ShippingUser2FN',
             'lastname'  => 'ShippingUser2LN',
-            'roles'     => [self::ROLE_VIEW, self::ROLE_CREATE],
+            'userRoles'     => [self::ROLE_VIEW, self::ROLE_CREATE],
         ]
     ];
 

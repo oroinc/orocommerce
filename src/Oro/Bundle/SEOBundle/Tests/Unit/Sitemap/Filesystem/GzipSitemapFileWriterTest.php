@@ -17,7 +17,7 @@ class GzipSitemapFileWriterTest extends \PHPUnit\Framework\TestCase
      */
     private $sitemapFileWriter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->innerSitemapFileWriter = $this->createMock(SitemapFileWriterInterface::class);
 
@@ -31,7 +31,7 @@ class GzipSitemapFileWriterTest extends \PHPUnit\Framework\TestCase
         }
 
         $content = '<?xml ?>';
-        $path = '/some/path/sitemap.xml';
+        $path = '/some/path/sitemap-index-1.xml';
         $expectedPath = sprintf('%s.gz', $path);
 
         $this->innerSitemapFileWriter
@@ -39,6 +39,20 @@ class GzipSitemapFileWriterTest extends \PHPUnit\Framework\TestCase
             ->method('saveSitemap')
             ->with($this->anything(), $expectedPath);
 
+        $this->sitemapFileWriter->saveSitemap($content, $path);
+    }
+
+    public function testSaveSitemapSkippedCompression()
+    {
+        $content = '<?xml ?>';
+        $path = '/some/path/sitemap-index-1.xml';
+
+        $this->innerSitemapFileWriter
+            ->expects($this->once())
+            ->method('saveSitemap')
+            ->with($this->anything(), $path);
+
+        $this->sitemapFileWriter->skipCompressionForProviderTypes(['index']);
         $this->sitemapFileWriter->saveSitemap($content, $path);
     }
 }

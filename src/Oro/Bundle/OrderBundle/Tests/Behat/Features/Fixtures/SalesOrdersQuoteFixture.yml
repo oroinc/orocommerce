@@ -1,0 +1,25 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    firstOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'FirstOrder'
+        website: '@website1'
+        currency: USD
+        sourceEntityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
+        sourceEntityId: '@firstQuote->id'
+        sourceEntityIdentifier: 'Quote'
+        poNumber: 'ORD1'
+    secondOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'SecondOrder'
+        website: '@website1'
+        currency: USD
+        sourceEntityClass: 'Oro\Bundle\SaleBundle\Entity\Quote'
+        sourceEntityId: '@secondQuote->id'
+        sourceEntityIdentifier: 'Quote'
+        poNumber: 'ORD2'

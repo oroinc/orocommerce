@@ -3,23 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class ProductVisibilityQueryBuilderModifier
 {
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param array $productStatuses
-     */
     public function modifyByStatus(QueryBuilder $queryBuilder, array $productStatuses)
     {
         $this->addWhereInExpr($queryBuilder, 'status', $productStatuses);
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param array $productInventoryStatuses
-     */
     public function modifyByInventoryStatus(QueryBuilder $queryBuilder, array $productInventoryStatuses)
     {
         $this->addWhereInExpr($queryBuilder, 'inventory_status', $productInventoryStatuses);

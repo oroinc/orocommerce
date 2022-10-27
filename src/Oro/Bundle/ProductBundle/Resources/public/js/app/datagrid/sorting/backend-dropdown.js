@@ -1,15 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var BackendSortingDropdown;
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var viewportManager = require('oroui/js/viewport-manager');
-    var SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown');
-    var Select2View = require('oroform/js/app/views/select2-view');
-    var FullscreenSorting = require('oroproduct/js/app/datagrid/sorting/fullscreen-sorting');
+    const mediator = require('oroui/js/mediator');
+    const viewportManager = require('oroui/js/viewport-manager');
+    const SortingDropdown = require('orodatagrid/js/datagrid/sorting/dropdown');
+    const Select2View = require('oroform/js/app/views/select2-view');
+    const FullscreenSorting = require('oroproduct/js/app/datagrid/sorting/fullscreen-sorting');
 
-    BackendSortingDropdown = SortingDropdown.extend({
+    const BackendSortingDropdown = SortingDropdown.extend({
         optionNames: SortingDropdown.prototype.optionNames.concat([
             'fullscreenMode'
         ]),
@@ -24,7 +22,7 @@ define(function(require) {
         className: '',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         attributes: {
             'data-grid-sorting': ''
@@ -42,20 +40,19 @@ define(function(require) {
         /**
          * Viewports for switch to FullScreen mode
          */
-        fullscreenMode: [
-            'mobile-landscape',
-            'mobile'
-        ],
-
-        /**
-         * @inheritDoc
-         */
-        constructor: function BackendSortingDropdown() {
-            BackendSortingDropdown.__super__.constructor.apply(this, arguments);
+        fullscreenMode: {
+            maxScreenType: 'tablet'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function BackendSortingDropdown(options) {
+            BackendSortingDropdown.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
             BackendSortingDropdown.__super__.initialize.call(this, options);
@@ -63,10 +60,10 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         onChangeSorting: function() {
-            var obj = {};
+            const obj = {};
             this.collection.trigger('backgrid:checkUnSavedData', obj);
 
             if (obj.live) {
@@ -82,12 +79,10 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initSubview: function(vp) {
-            var viewport = vp || viewportManager.getViewport().type;
-
-            if (_.contains(this.fullscreenMode, viewport)) {
+            if (viewportManager.isApplicable(this.fullscreenMode)) {
                 this.subview('sortingView', new FullscreenSorting({
                     el: this.$('select')
                 }));

@@ -2,28 +2,28 @@
 
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
-use Doctrine\ORM\EntityManager;
+use Brick\Math\BigDecimal;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for line items without prices. SUM(ROUND(price*qty))
+ */
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'oro.pricing.subtotals.not_priced_subtotal';
     const LABEL = 'oro.pricing.subtotals.not_priced_subtotal.label';
 
     /** @var TranslatorInterface */
@@ -32,11 +32,8 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /** @var ProductPriceProvider */
+    /** @var ProductPriceProviderInterface */
     protected $productPriceProvider;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
 
     /** @var string */
     protected $productClass;
@@ -44,40 +41,22 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /** @var string */
     protected $productUnitClass;
 
-    /** @var PriceListTreeHandler */
-    protected $priceListTreeHandler;
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    protected $priceScopeCriteriaFactory;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param ProductPriceProvider $productPriceProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListTreeHandler $priceListTreeHandler ,
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        ProductPriceProvider $productPriceProvider,
-        DoctrineHelper $doctrineHelper,
-        PriceListTreeHandler $priceListTreeHandler,
-        SubtotalProviderConstructorArguments $arguments
+        ProductPriceProviderInterface $productPriceProvider,
+        SubtotalProviderConstructorArguments $arguments,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         parent::__construct($arguments);
 
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->productPriceProvider = $productPriceProvider;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->priceListTreeHandler = $priceListTreeHandler;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
@@ -110,22 +89,25 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         if (!$entity instanceof LineItemsNotPricedAwareInterface) {
             return null;
         }
-        $subtotalAmount = 0.0;
+
+        $subtotalAmount = BigDecimal::of(0);
         $subtotal = $this->createSubtotal();
 
-        $productsPriceCriterias = $this->prepareProductsPriceCriterias($entity, $currency);
-        if ($productsPriceCriterias) {
-            $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
-            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
+        $productsPriceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
+        if ($productsPriceCriteria) {
+            $searchScope = $this->priceScopeCriteriaFactory->createByContext($entity);
+            $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $searchScope);
             foreach ($prices as $identifier => $price) {
-                if ($price) {
-                    $priceValue = $price->getValue();
-                    $subtotalAmount += (float) $priceValue * $productsPriceCriterias[$identifier]->getQuantity();
+                if ($price instanceof Price) {
+                    /** @var BigDecimal $priceValue */
+                    $priceValue = BigDecimal::of($price->getValue());
+                    $rowTotal = $priceValue->multipliedBy($productsPriceCriteria[$identifier]->getQuantity());
+                    $subtotalAmount = $subtotalAmount->plus($this->rounding->round($rowTotal->toFloat()));
                     $subtotal->setVisible(true);
                 }
             }
         }
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
+        $subtotal->setAmount($subtotalAmount->toFloat());
         $subtotal->setCurrency($currency);
 
         return $subtotal;
@@ -136,64 +118,30 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      * @param string $currency
      * @return ProductPriceCriteria[]
      */
-    protected function prepareProductsPriceCriterias($entity, $currency)
+    protected function prepareProductsPriceCriteria($entity, $currency)
     {
-        $productsPriceCriterias = [];
+        $productsPriceCriteria = [];
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof ProductHolderInterface
                 && $lineItem instanceof ProductUnitHolderInterface
                 && $lineItem instanceof QuantityAwareInterface
             ) {
-                $productId = $lineItem->getProduct()->getId();
-                $productUnitCode = $lineItem->getProductUnit()->getCode();
-                if ($productId && $productUnitCode) {
-                    /** @var Product $product */
-                    $product = $this->getEntityReference($this->productClass, $productId);
-                    /** @var ProductUnit $unit */
-                    $unit = $this->getEntityReference($this->productUnitClass, $productUnitCode);
+                $hasProduct = $lineItem->getProduct() && $lineItem->getProduct()->getId();
+                $hasProductUnitCode = $lineItem->getProductUnit() && $lineItem->getProductUnit()->getCode();
+                if ($hasProduct && $hasProductUnitCode) {
                     $quantity = (float)$lineItem->getQuantity();
-                    $criteria = new ProductPriceCriteria($product, $unit, $quantity, $currency);
-                    $productsPriceCriterias[$criteria->getIdentifier()] = $criteria;
+                    $criteria = new ProductPriceCriteria(
+                        $lineItem->getProduct(),
+                        $lineItem->getProductUnit(),
+                        $quantity,
+                        $currency
+                    );
+                    $productsPriceCriteria[$criteria->getIdentifier()] = $criteria;
                 }
             }
         }
 
-        return $productsPriceCriterias;
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
-    }
-
-    /**
-     * @param string $class
-     * @param mixed $id
-     * @return object
-     */
-    protected function getEntityReference($class, $id)
-    {
-        return $this->getManagerForClass($class)->getReference($class, $id);
-    }
-
-    /**
-     * @param string $class
-     * @return EntityManager
-     */
-    protected function getManagerForClass($class)
-    {
-        return $this->doctrineHelper->getEntityManagerForClass($class);
+        return $productsPriceCriteria;
     }
 
     /**

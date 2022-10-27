@@ -1,0 +1,33 @@
+data:
+    type: orderlineitems
+    id: '<toString(@order_line_item.1->id)>'
+    attributes:
+        productSku: product-1
+        productName: product-3.names.default
+        productVariantFields: {  }
+        freeFormProduct: null
+        quantity: 5
+        productUnitCode: bottle
+        value: '15.7000'
+        currency: USD
+        priceType: 10
+        shipBy: null
+        fromExternalSource: false
+        comment: null
+    relationships:
+        order:
+            data:
+                type: orders
+                id: '<toString(@simple_order->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        parentProduct:
+            data:
+                type: products
+                id: '<toString(@product-3->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.bottle->code)>'

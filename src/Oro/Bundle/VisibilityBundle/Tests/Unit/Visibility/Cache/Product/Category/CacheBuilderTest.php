@@ -9,15 +9,10 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
 
 class CacheBuilderTest extends AbstractCacheBuilderTest
 {
-    /**
-     * @var CacheBuilder
-     */
+    /** @var CacheBuilder */
     protected $cacheBuilder;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,9 +27,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
     {
         $category = new Category();
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryCaseCacheBuilderInterface $customBuilder */
-        $customBuilder
-            = $this->createMock('Oro\Bundle\VisibilityBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+        $customBuilder = $this->createMock(CategoryCaseCacheBuilderInterface::class);
         $customBuilder->expects($this->once())
             ->method('categoryPositionChanged')
             ->with($category);

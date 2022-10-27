@@ -2,14 +2,14 @@
 namespace Oro\Component\Expression;
 
 /**
- * Defines the interface for FieldsProvider functionality
+ * Provides information about entity fields.
  */
 interface FieldsProviderInterface
 {
     /**
      * @param string $className
-     * @param bool|false $numericOnly
-     * @param bool|false $withRelations
+     * @param bool $numericOnly
+     * @param bool $withRelations
      * @return array
      * @throws \Exception
      */

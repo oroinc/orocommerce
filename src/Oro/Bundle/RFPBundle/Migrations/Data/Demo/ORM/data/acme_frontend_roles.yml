@@ -1,0 +1,11 @@
+ACME_BUYER:
+    permissions:
+        entity|Oro\Bundle\RFPBundle\Entity\Request: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC]
+
+ACME_ADMINISTRATOR:
+    permissions:
+        entity|Oro\Bundle\RFPBundle\Entity\Request: [VIEW_DEEP, CREATE_DEEP, EDIT_DEEP, ASSIGN_DEEP]
+
+ACME_ANONYMOUS:
+    permissions:
+        entity|Oro\Bundle\RFPBundle\Entity\Request: [CREATE_BASIC]

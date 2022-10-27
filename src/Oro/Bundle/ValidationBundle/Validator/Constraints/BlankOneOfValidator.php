@@ -6,11 +6,14 @@ use Symfony\Component\PropertyAccess\Exception\AccessException;
 use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates that one of fields should be blank.
+ */
 class BlankOneOfValidator extends ConstraintValidator
 {
     /**
@@ -23,10 +26,6 @@ class BlankOneOfValidator extends ConstraintValidator
      */
     private $propertyAccessor;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param PropertyAccessor    $propertyAccessor
-     */
     public function __construct(TranslatorInterface $translator, PropertyAccessor $propertyAccessor)
     {
         $this->translator = $translator;
@@ -73,14 +72,10 @@ class BlankOneOfValidator extends ConstraintValidator
         return false;
     }
 
-    /**
-     * @param array      $fieldGroup
-     * @param Constraint $constraint
-     */
     private function addViolation(array $fieldGroup, Constraint $constraint)
     {
         $fieldsTranslation = implode(', ', array_map(function ($value) {
-            return $this->translator->trans($value);
+            return $this->translator->trans((string) $value);
         }, $fieldGroup));
 
         $fieldNames = array_keys($fieldGroup);

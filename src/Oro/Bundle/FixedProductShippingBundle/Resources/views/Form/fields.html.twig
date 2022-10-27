@@ -1,0 +1,14 @@
+{% block oro_fixed_product_options_type_widget %}
+    {% set updateFlag = constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingMethodsConfigsRuleHandler::UPDATE_FLAG') %}
+    <div data-page-component-view="orofixedproductshipping/js/app/views/fixed-product-shipping-options-view"
+         data-page-component-options="{{ {
+             updateFlag: updateFlag
+         }|json_encode }}"
+    >
+        {{ form_row(form.surcharge_type) }}
+        {% if form.surcharge_on is defined %}
+            {{ form_row(form.surcharge_on) }}
+        {% endif %}
+        {{ form_row(form.surcharge_amount) }}
+    </div>
+{% endblock %}

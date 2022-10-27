@@ -1,0 +1,44 @@
+{% block product_sticker_widget %}
+    {% if
+        stickers is defined and
+        stickers|length
+    %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-sticker'
+        }) %}
+
+        {% if mode == 'icon' %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-sticker--icon',
+                'role': 'img'
+            }) %}
+        {% elseif mode == 'text' %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-sticker--text'
+            }) %}
+        {% endif %}
+
+        {% set def_attr = attr %}
+
+        {% for sticker in stickers %}
+            {% set attr = def_attr %}
+
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-sticker--' ~ mode ~ '-' ~ sticker.type
+            }) %}
+
+            {% if mode == 'icon' %}
+                {% set attr = layout_attr_defaults(attr, {
+                    '~class': ' product-sticker--' ~ position,
+                    'aria-label': ('oro.product.sticker.' ~ sticker.type)|trans
+                }) %}
+            {% endif %}
+
+            <div {{ block('block_attributes') }}>
+                {%- if mode == 'text' -%}
+                    {{- ('oro.product.sticker.' ~ sticker.type)|trans -}}
+                {%- endif -%}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

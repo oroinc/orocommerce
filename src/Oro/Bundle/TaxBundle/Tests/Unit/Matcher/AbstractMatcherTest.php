@@ -12,53 +12,28 @@ abstract class AbstractMatcherTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const TAX_RULE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxRule';
-
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var AbstractMatcher
-     */
+    /** @var AbstractMatcher */
     protected $matcher;
 
-    /**
-     * @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
     protected $taxRuleRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->taxRuleRepository = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $this->doctrineHelper = $this
-            ->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepositoryForClass')
-            ->with(self::TAX_RULE_CLASS)
+            ->with(TaxRule::class)
             ->willReturn($this->taxRuleRepository);
     }
 
-    protected function tearDown()
+    protected function getTaxRule(int $id): TaxRule
     {
-        unset($this->matcher, $this->doctrineHelper, $this->taxRuleRepository);
-    }
-
-    /**
-     * @param int $id
-     * @return TaxRule
-     */
-    protected function getTaxRule($id)
-    {
-        return $this->getEntity('Oro\Bundle\TaxBundle\Entity\TaxRule', ['id' => $id]);
+        return $this->getEntity(TaxRule::class, ['id' => $id]);
     }
 }

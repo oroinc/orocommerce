@@ -1,0 +1,39 @@
+<% if (!obj.isConfigurable) { %>
+<div class="line-item-price mobile-row label-in-mobile-start label-bold-in-mobile"
+     data-name="prices-hint"
+     data-label="<%- _metadata.label %>:"
+     data-page-component-init-on="click"
+     data-page-component-module="oropricing/js/app/components/list-item-product-prices-component"
+     data-page-component-options="<%- JSON.stringify({
+        showValuePrice: false,
+        showListedPrice: false,
+        doUpdateQtyForUnit: false,
+        productId: variantId ? variantId : productId,
+        elements: {
+            pricesHint: '[data-prices-hint-trigger]'
+        }
+    }) %>"
+>
+    <div class="price-value-container" data-name="price-value">
+        <% if (typeof price !== 'undefined' && price) { %>
+        <%- price %>
+        <% } else if (obj._blankContent) { %>
+        <span data-name="price-not-found"
+              data-label="<%- _metadata.label %>:"
+              data-blank-content="<%- _blankContent %>"></span>
+        <% } %>
+        <% if (obj.productId) { %>
+        <button type="button"
+                data-prices-hint-trigger
+                data-trigger="manual"
+                data-placement="<%- _.isMobile() ? 'right' : 'bottom' %>"
+                data-boundary="viewport"
+                class="btn btn--link btn--size-xs prices-hint-toggler"
+                title="<%- _.__('oro.pricing.view_all_prices') %>"
+                aria-label="<%- _.__('oro.pricing.view_all_prices_extended', { product_attrs: name }) %>">
+            <span class="fa-info-circle fa--no-offset fa--loader-icon" aria-hidden="true"></span>
+        </button>
+        <% } %>
+    </div>
+</div>
+<% } %>

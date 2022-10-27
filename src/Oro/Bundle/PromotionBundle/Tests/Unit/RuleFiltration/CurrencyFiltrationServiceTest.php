@@ -21,7 +21,7 @@ class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
      */
     protected $currencyFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
 
@@ -32,10 +32,6 @@ class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     /**
      * @dataProvider getFilteredRuleOwnersDataProvider
-     *
-     * @param array $context
-     * @param array $ruleOwners
-     * @param array $expected
      */
     public function testGetFilteredRuleOwners(array $context, array $ruleOwners, array $expected)
     {
@@ -47,9 +43,6 @@ class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
         $this->currencyFiltrationService->getFilteredRuleOwners($ruleOwners, $context);
     }
 
-    /**
-     * @return array
-     */
     public function getFilteredRuleOwnersDataProvider(): array
     {
         $promotion = $this->createMock(PromotionDataInterface::class);

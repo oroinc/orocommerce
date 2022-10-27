@@ -7,79 +7,71 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 abstract class AbstractMethodViewProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const IDENTIFIER1 = 'test1';
-    const IDENTIFIER2 = 'test2';
-    const WRONG_IDENTIFIER = 'wrong';
+    private const IDENTIFIER1 = 'test1';
+    private const IDENTIFIER2 = 'test2';
+    private const WRONG_IDENTIFIER = 'wrong';
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $factory;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $configProvider;
 
-    /**
-     * @var PaymentMethodViewProviderInterface
-     */
+    /** @var PaymentMethodViewProviderInterface */
     protected $provider;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $paymentConfigClass;
 
     public function testHasPaymentMethodViewForCorrectIdentifier()
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 
-        $this->configProvider->expects(static::once())
+        $this->configProvider->expects(self::once())
             ->method('getPaymentConfigs')
             ->willReturn([$config]);
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::once())
+        $this->factory->expects(self::once())
             ->method('create')
             ->with($config)
             ->willReturn($view);
 
-        static::assertTrue($this->provider->hasPaymentMethodView(self::IDENTIFIER1));
+        self::assertTrue($this->provider->hasPaymentMethodView(self::IDENTIFIER1));
     }
 
     public function testHasPaymentMethodViewForWrongIdentifier()
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 
-        $this->configProvider->expects(static::once())
+        $this->configProvider->expects(self::once())
             ->method('getPaymentConfigs')
             ->willReturn([$config]);
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::once())
+        $this->factory->expects(self::once())
             ->method('create')
             ->with($config)
             ->willReturn($view);
 
-        static::assertFalse($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
+        self::assertFalse($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
     }
 
     public function testGetPaymentMethodViewReturnsCorrectObject()
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 
-        $this->configProvider->expects(static::once())
+        $this->configProvider->expects(self::once())
             ->method('getPaymentConfigs')
             ->willReturn([$config]);
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::once())
+        $this->factory->expects(self::once())
             ->method('create')
             ->with($config)
             ->willReturn($view);
 
-        static::assertEquals(
+        self::assertEquals(
             $view,
             $this->provider->getPaymentMethodView(self::IDENTIFIER1)
         );
@@ -89,17 +81,17 @@ abstract class AbstractMethodViewProviderTest extends \PHPUnit\Framework\TestCas
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 
-        $this->configProvider->expects(static::once())
+        $this->configProvider->expects(self::once())
             ->method('getPaymentConfigs')
             ->willReturn([$config]);
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::once())
+        $this->factory->expects(self::once())
             ->method('create')
             ->with($config)
             ->willReturn($view);
 
-        static::assertNull($this->provider->getPaymentMethodView(self::WRONG_IDENTIFIER));
+        self::assertNull($this->provider->getPaymentMethodView(self::WRONG_IDENTIFIER));
     }
 
     public function testGetPaymentMethodViewsReturnsCorrectObjects()
@@ -107,23 +99,18 @@ abstract class AbstractMethodViewProviderTest extends \PHPUnit\Framework\TestCas
         $config1 = $this->buildPaymentConfig(self::IDENTIFIER1);
         $config2 = $this->buildPaymentConfig(self::IDENTIFIER2);
 
-        $this->configProvider->expects(static::once())
+        $this->configProvider->expects(self::once())
             ->method('getPaymentConfigs')
             ->willReturn([$config1, $config2]);
 
         $view1 = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::at(0))
-            ->method('create')
-            ->with($config1)
-            ->willReturn($view1);
-
         $view2 = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::at(1))
+        $this->factory->expects(self::exactly(2))
             ->method('create')
-            ->with($config2)
-            ->willReturn($view2);
+            ->withConsecutive([$config1], [$config2])
+            ->willReturnOnConsecutiveCalls($view1, $view2);
 
-        static::assertEquals(
+        self::assertEquals(
             [$view1, $view2],
             $this->provider->getPaymentMethodViews([self::IDENTIFIER1, self::IDENTIFIER2])
         );
@@ -133,28 +120,26 @@ abstract class AbstractMethodViewProviderTest extends \PHPUnit\Framework\TestCas
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 
-        $this->configProvider->expects(static::once())
+        $this->configProvider->expects(self::once())
             ->method('getPaymentConfigs')
             ->willReturn([$config]);
 
         $view = $this->createMock(PaymentMethodViewInterface::class);
-        $this->factory->expects(static::once())
+        $this->factory->expects(self::once())
             ->method('create')
             ->with($config)
             ->willReturn($view);
 
-        static::assertEmpty($this->provider->getPaymentMethodViews([self::WRONG_IDENTIFIER]));
+        self::assertEmpty($this->provider->getPaymentMethodViews([self::WRONG_IDENTIFIER]));
     }
 
     /**
-     * @param string $identifier
-     *
      * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    protected function buildPaymentConfig($identifier)
+    protected function buildPaymentConfig(string $identifier)
     {
         $config = $this->createMock($this->paymentConfigClass);
-        $config->expects(static::any())
+        $config->expects(self::any())
             ->method('getPaymentMethodIdentifier')
             ->willReturn($identifier);
 

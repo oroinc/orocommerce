@@ -5,6 +5,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -39,7 +40,7 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
     public function up(Schema $schema, QueryBag $queries)
     {
         // update system configuration for installed instances
-        if ($this->container->hasParameter('installed') && $this->container->getParameter('installed')) {
+        if ($this->container->get(ApplicationState::class)->isInstalled()) {
             $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_money_order', 'oro_money_order'));
         }
 
@@ -51,9 +52,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $this->addOroMoneyOrderShortLabelForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroMoneyOrderTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_money_order_trans_label');
@@ -67,8 +65,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroMoneyOrderTransportLabelForeignKeys(Schema $schema)
@@ -90,8 +86,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
     }
 
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function updateOroIntegrationTransportTable(Schema $schema)
@@ -102,9 +96,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $table->addColumn('money_order_send_to', 'text', ['notnull' => false]);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroMoneyOrderShortLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_money_order_short_label');
@@ -117,8 +108,6 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_short_label_localized_value_id', []);
     }
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroMoneyOrderShortLabelForeignKeys(Schema $schema)

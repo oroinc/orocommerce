@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener;
@@ -11,7 +11,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\Test
     /**
      * @internal
      */
-    const TEMPLATE = 'FooBundle::bar.html.twig';
+    const TEMPLATE = '@Foo/bar.html.twig';
 
     /**
      * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -23,7 +23,7 @@ class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit\Framework\Test
      */
     private $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->createMock(ShippingMethodProviderInterface::class);
 

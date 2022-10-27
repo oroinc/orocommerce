@@ -1,0 +1,30 @@
+/* @theme: admin.oro; */
+
+.oro-image-slide-collection {
+    .oro-multiselect-holder {
+        display: block;
+
+        padding-right: $content-padding;
+
+        .image-slide-text {
+            width: 100%;
+        }
+    }
+}
+
+.responsive-medium .oro-image-slide-collection {
+    .oro-multiselect-holder {
+        padding-left: $content-padding;
+        padding-right: $content-padding;
+    }
+
+    .responsive-block {
+        &:first-of-type {
+            padding-right: $content-padding * .5;
+        }
+
+        &:last-of-type {
+            padding-left: $content-padding * .5;
+        }
+    }
+}

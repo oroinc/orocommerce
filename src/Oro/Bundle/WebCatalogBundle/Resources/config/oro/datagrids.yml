@@ -1,9 +1,9 @@
 datagrids:
     web-catalog-select-grid:
         acl_resource: oro_web_catalog_view
-        extended_entity_name: '%oro_web_catalog.entity.web_catalog.class%'
+        extended_entity_name: 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog'
         options:
-            entityHint: 'web catalogs'
+            entityHint: oro.webcatalog.entity_plural_label
         source:
             type: orm
             query:
@@ -13,7 +13,7 @@ datagrids:
                     - web_catalog.createdAt
                     - web_catalog.updatedAt
                 from:
-                    - { table: '%oro_web_catalog.entity.web_catalog.class%', alias: web_catalog }
+                    - { table: 'Oro\Bundle\WebCatalogBundle\Entity\WebCatalog', alias: web_catalog }
         columns:
             id:
                 label: oro.webcatalog.id.label
@@ -61,9 +61,9 @@ datagrids:
         extends: web-catalog-select-grid
         options:
             entity_pagination: true
-            mass_actions:
-                delete:
-                    enabled: false
+        mass_actions:
+            delete:
+                disabled: true
         actions:
             view:
                 type:          navigate

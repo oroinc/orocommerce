@@ -1,0 +1,3 @@
+{% if value is not empty %}
+    {{ value|content_widget_layout_label(record.getValue('widgetType')) }}
+{% endif %}

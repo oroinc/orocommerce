@@ -1,0 +1,79 @@
+{% block _oro_action_operation_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <div class="grid" {{ UI.attributes(form.vars.attr) }}>
+        {% if form.visitor_email is defined and form.visitor_email %}
+            <fieldset class="grid-col-6 grid-col-mobile-landscape-12">
+                {{ form_row(form.visitor_email, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.email'|trans}}) }}
+            </fieldset>
+        {% endif %}
+
+        <fieldset class="grid grid-col-12" {{ UI.attributes(form.address.vars.attr) }}>
+            {{ form_row(form.address) }}
+
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
+                {{ form_row(form.save_address) }}
+            </div>
+
+            <div class="hidden">
+                {{ form_widget(form._token) }}
+            </div>
+        </fieldset>
+    </div>
+{% endblock %}
+
+{% block _oro_action_operation_address_row %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
+    </div>
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.prefix'|trans}}) }}
+    </div>
+
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+    </div>
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.middle_name'|trans}}) }}
+    </div>
+
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
+    </div>
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.sufix'|trans}}) }}
+    </div>
+
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.organization, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.organization'|trans}}) }}
+    </div>
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}}) }}
+    </div>
+
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.street, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street'|trans}}) }}
+    </div>
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.street2, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street2'|trans}}) }}
+    </div>
+
+    <div class="grid-col-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
+    </div>
+    <div class="grid-col-2 grid-col-tablet-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.country) }}
+    </div>
+    <div class="grid-col-2 grid-col-tablet-6 grid-col-mobile-landscape-12">
+        {{ form_row(form.region) }}
+    </div>
+    <div class="grid-col-2 grid-col-tablet-6 grid-col-mobile-landscape-12 col-zip-error">
+        {{ form_row(form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
+    </div>
+
+    <div class="hidden">
+        {{ form_widget(form.id) }}
+        {{ form_widget(form.region_text) }}
+    </div>
+{% endblock %}

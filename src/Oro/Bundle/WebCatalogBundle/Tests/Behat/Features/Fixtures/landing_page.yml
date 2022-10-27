@@ -1,0 +1,32 @@
+Oro\Bundle\CMSBundle\Entity\Page:
+    landing_page:
+        __calls:
+            - addTitle: ['@localValueAbout']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueDefaultWebCatalog:
+        string: 'Default Web Catalog'
+
+    localValueProducts:
+        string: 'Products'
+
+    localValueProductsSlug:
+        string: 'products'
+
+    localValueNewArrivals:
+        string: 'New Arrivals'
+
+    localValueNewArrivalsSlug:
+        string: 'new-arrivals'
+
+    localValueClearance:
+        string: 'Clearance'
+
+    localValueClearanceSlug:
+        string: 'clearance'
+
+    localValueByBrand:
+        string: 'By Brand'
+
+    localValueByBrandSlug:
+        string: 'by-brand'

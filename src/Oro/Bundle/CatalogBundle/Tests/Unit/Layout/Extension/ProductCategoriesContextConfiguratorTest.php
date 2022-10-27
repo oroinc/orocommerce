@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
@@ -36,7 +36,7 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
     /** @var ProductCategoriesContextConfigurator */
     private $configurator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -75,13 +75,12 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
             ->method('getResolver')
             ->willReturn($this->createMock(OptionsResolver::class));
 
-        $context->expects($this->at(2))
+        $context->expects($this->exactly(2))
             ->method('set')
-            ->with(ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, [2, 1]);
-
-        $context->expects($this->at(3))
-            ->method('set')
-            ->with(ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, 2);
+            ->withConsecutive(
+                [ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, [2, 1]],
+                [ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, 2]
+            );
 
         $this->configurator->configureContext($context);
     }
@@ -94,7 +93,7 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
 
         $this->currentRequest->attributes->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($param) {
+            ->willReturnCallback(function ($param) {
                 switch ($param) {
                     case '_route':
                         return ProductCategoriesContextConfigurator::PRODUCT_VIEW_ROUTE;
@@ -103,7 +102,7 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
                     default:
                         return null;
                 }
-            }));
+            });
 
         $parentCategory = $this->getEntity(Category::class, ['id' => 1]);
         $category = $this->getEntity(Category::class, ['id' => 2, 'parentCategory' => $parentCategory]);
@@ -122,14 +121,12 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
             ->willReturn($category);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->at(0))
+        $em->expects($this->exactly(2))
             ->method('getRepository')
-            ->with(Product::class)
-            ->willReturn($productRepository);
-        $em->expects($this->at(1))
-            ->method('getRepository')
-            ->with(Category::class)
-            ->willReturn($categoryRepository);
+            ->willReturnMap([
+                [Product::class, $productRepository],
+                [Category::class, $categoryRepository]
+            ]);
 
         $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
@@ -140,13 +137,61 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
             ->method('getResolver')
             ->willReturn($this->createMock(OptionsResolver::class));
 
-        $context->expects($this->at(2))
+        $context->expects($this->exactly(2))
             ->method('set')
-            ->with(ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, [2, 1]);
+            ->withConsecutive(
+                [ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, [2, 1]],
+                [ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, 2]
+            );
 
-        $context->expects($this->at(3))
-            ->method('set')
-            ->with(ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, 2);
+        $this->configurator->configureContext($context);
+    }
+
+    public function testConfigureForNotFoundProductView()
+    {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->currentRequest);
+
+        $this->currentRequest->attributes->expects($this->any())
+            ->method('get')
+            ->willReturnCallback(function ($param) {
+                switch ($param) {
+                    case '_route':
+                        return ProductCategoriesContextConfigurator::PRODUCT_VIEW_ROUTE;
+                    case '_route_params':
+                        return ['id' => 1];
+                    default:
+                        return null;
+                }
+            });
+
+        $productRepository = $this->createMock(ProductRepository::class);
+        $productRepository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn(null);
+
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+        $categoryRepository->expects($this->never())
+            ->method('findOneByProduct');
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($productRepository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $context = $this->createMock(ContextInterface::class);
+        $context->expects($this->never())
+            ->method('getResolver');
+
+        $context->expects($this->never())
+            ->method('set');
 
         $this->configurator->configureContext($context);
     }
@@ -182,13 +227,12 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
             ->method('getResolver')
             ->willReturn($this->createMock(OptionsResolver::class));
 
-        $context->expects($this->at(2))
+        $context->expects($this->exactly(2))
             ->method('set')
-            ->with(ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, []);
-
-        $context->expects($this->at(3))
-            ->method('set')
-            ->with(ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, null);
+            ->withConsecutive(
+                [ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, []],
+                [ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, $this->isNull()]
+            );
 
         $this->configurator->configureContext($context);
     }
@@ -205,7 +249,8 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit\Framework\TestCa
             ->willReturn('not_allowed_route');
 
         $context = $this->createMock(ContextInterface::class);
-        $context->expects($this->never())->method('getResolver');
+        $context->expects($this->never())
+            ->method('getResolver');
 
         $this->configurator->configureContext($context);
     }

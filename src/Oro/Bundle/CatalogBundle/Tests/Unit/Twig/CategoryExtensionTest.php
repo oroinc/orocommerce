@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
@@ -13,27 +13,20 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CategoryTreeHandler */
-    protected $categoryTreeHandler;
+    private $categoryTreeHandler;
 
     /** @var CategoryExtension */
-    protected $extension;
+    private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->categoryTreeHandler = $this->getMockBuilder(CategoryTreeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryTreeHandler = $this->createMock(CategoryTreeHandler::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_catalog.category_tree_handler', $this->categoryTreeHandler)
+            ->add(CategoryTreeHandler::class, $this->categoryTreeHandler)
             ->getContainer($this);
 
         $this->extension = new CategoryExtension($container);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CategoryExtension::NAME, $this->extension->getName());
     }
 
     public function testGetCategoryList()
@@ -51,6 +44,7 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->categoryTreeHandler->expects($this->once())
             ->method('createTree')
+            ->with(null)
             ->willReturn($tree);
 
         $this->assertEquals(
@@ -74,7 +68,8 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->categoryTreeHandler->expects($this->once())
             ->method('createTree')
-            ->will($this->returnValue($tree));
+            ->with(null)
+            ->willReturn($tree);
 
         $this->assertEquals(
             $tree,
@@ -86,54 +81,89 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetCategoryListWithRoot()
+    {
+        $tree = [
+            [
+                'id' => 1,
+                'parent' => '#',
+                'text' => 'oro.catalog.frontend.category.master_category.label',
+                'state' => [
+                    'opened' => true,
+                ],
+            ],
+        ];
+
+        $rootId = 1;
+        $this->categoryTreeHandler->expects($this->once())
+            ->method('createTree')
+            ->with($rootId)
+            ->willReturn($tree);
+
+        $this->assertEquals(
+            $tree,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_category_list',
+                ['oro.catalog.frontend.category.master_category.label', $rootId]
+            )
+        );
+    }
+
     public function testGetProductCategoryWithTwoCategories()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some string'));
+        $category->addTitle((new CategoryTitle())->setString('some string'));
 
         $parent = new Category();
-        $parent->addTitle((new LocalizedFallbackValue())->setString('parent category title'));
+        $parent->addTitle((new CategoryTitle())->setString('parent category title'));
         $category->setParentCategory($parent);
 
         $this->assertEquals(
             'parent category title / some string',
-            $this->extension->getProductCategoryPath($category)
+            self::callTwigFunction($this->extension, 'oro_product_category_full_path', [$category])
         );
         $this->assertEquals(
             'parent category title / some string',
-            $this->extension->getProductCategoryTitle($category)
+            self::callTwigFunction($this->extension, 'oro_product_category_title', [$category])
         );
     }
 
     public function testGetProductCategoryWithOneCategory()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some string'));
+        $category->addTitle((new CategoryTitle())->setString('some string'));
 
-        $this->assertEquals('some string', $this->extension->getProductCategoryPath($category));
-        $this->assertEquals('some string', $this->extension->getProductCategoryTitle($category));
+        $this->assertEquals(
+            'some string',
+            self::callTwigFunction($this->extension, 'oro_product_category_full_path', [$category])
+        );
+        $this->assertEquals(
+            'some string',
+            self::callTwigFunction($this->extension, 'oro_product_category_title', [$category])
+        );
     }
 
     public function testGetProductCategoryWithMoreThanTwoCategories()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some string'));
+        $category->addTitle((new CategoryTitle())->setString('some string'));
 
         $parent = new Category();
-        $parent->addTitle((new LocalizedFallbackValue())->setString('parent category title'));
+        $parent->addTitle((new CategoryTitle())->setString('parent category title'));
         $category->setParentCategory($parent);
 
         $rootCategory = new Category();
-        $rootCategory->addTitle((new LocalizedFallbackValue())->setString('root category title'));
+        $rootCategory->addTitle((new CategoryTitle())->setString('root category title'));
         $parent->setParentCategory($rootCategory);
 
         $this->assertEquals(
             'root category title /.../ some string',
-            $this->extension->getProductCategoryTitle($category)
+            self::callTwigFunction($this->extension, 'oro_product_category_title', [$category])
         );
         $this->assertEquals(
             'root category title / parent category title / some string',
-            $this->extension->getProductCategoryPath($category)
+            self::callTwigFunction($this->extension, 'oro_product_category_full_path', [$category])
         );
     }
 
@@ -141,7 +171,13 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $category = new Category();
 
-        $this->assertEquals('', $this->extension->getProductCategoryPath($category));
-        $this->assertEquals('', $this->extension->getProductCategoryTitle($category));
+        $this->assertSame(
+            '',
+            self::callTwigFunction($this->extension, 'oro_product_category_full_path', [$category])
+        );
+        $this->assertSame(
+            '',
+            self::callTwigFunction($this->extension, 'oro_product_category_title', [$category])
+        );
     }
 }

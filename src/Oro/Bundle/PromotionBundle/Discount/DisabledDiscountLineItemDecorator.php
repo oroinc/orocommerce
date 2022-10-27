@@ -16,9 +16,6 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
      */
     private $lineItem;
 
-    /**
-     * @param DiscountLineItem $lineItem
-     */
     public function __construct(DiscountLineItem $lineItem)
     {
         $this->lineItem = $lineItem;
@@ -33,7 +30,9 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Price $price
+     *
+     * @return $this
      */
     public function setPrice(Price $price)
     {
@@ -146,6 +145,24 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     public function setSubtotal($subtotal)
     {
         $this->lineItem->setSubtotal($subtotal);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubtotalAfterDiscounts(): float
+    {
+        return $this->lineItem->getSubtotalAfterDiscounts();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self
+    {
+        $this->lineItem->setSubtotalAfterDiscounts($subtotal);
 
         return $this;
     }

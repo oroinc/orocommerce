@@ -1,0 +1,12 @@
+data:
+    type: shoppinglists
+    id: new
+    attributes:
+        name: 'New Shopping List'
+        notes: null
+        currency: USD
+        total: '0'
+        subTotal: '0'
+    relationships:
+        items:
+            data: []

@@ -38,7 +38,7 @@ class ProductsChangeRelationListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $onFlushEvent;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->em = $this
             ->getMockBuilder(EntityManagerInterface::class)
@@ -76,7 +76,7 @@ class ProductsChangeRelationListenerTest extends \PHPUnit\Framework\TestCase
         $event = new ProductsChangeRelationEvent([$product1]);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ProductsChangeRelationEvent::NAME, $event);
+            ->with($event, ProductsChangeRelationEvent::NAME);
 
         $this->listener->onFlush($this->onFlushEvent);
     }

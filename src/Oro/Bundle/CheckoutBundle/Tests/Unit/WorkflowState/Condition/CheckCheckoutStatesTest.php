@@ -13,7 +13,7 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
     /** @var CheckCheckoutStates */
     protected $condition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->diffManager = $this->getMockBuilder(CheckoutStateDiffManager::class)
             ->disableOriginalConstructor()
@@ -22,7 +22,7 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         $this->condition = new CheckCheckoutStates($this->diffManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->diffManager, $this->condition);
     }
@@ -41,12 +41,11 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "state1" option
-     */
     public function testInitializeWithoutState1()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "state1" option');
+
         $options = [
             'entity' => new \stdClass(),
         ];
@@ -54,12 +53,11 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "state2" option
-     */
     public function testInitializeWithoutState2()
     {
+        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing "state2" option');
+
         $options = [
             'entity' => new \stdClass(),
             'state1' => ['state1'],
@@ -127,11 +125,11 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
 
         $key = '@' . CheckCheckoutStates::NAME;
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertInternalType('array', $resultSection);
+        $this->assertIsArray($resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
         $this->assertContains($options['entity'], $resultSection['parameters']);
         $this->assertContains($options['state1'], $resultSection['parameters']);

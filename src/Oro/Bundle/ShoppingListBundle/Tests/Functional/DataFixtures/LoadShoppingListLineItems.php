@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
@@ -92,8 +93,8 @@ class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
+            LoadProductUnitPrecisions::class,
+            LoadShoppingLists::class
         ];
     }
 }

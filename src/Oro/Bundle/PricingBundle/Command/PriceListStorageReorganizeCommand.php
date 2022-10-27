@@ -1,64 +1,89 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PriceListStorageReorganizeCommand extends ContainerAwareCommand
+/**
+ * Reorganizes price list database tables to use or forgo sharding.
+ */
+class PriceListStorageReorganizeCommand extends Command
 {
-    const NAME = 'oro:price-lists:pl-storage-reorganize';
-    const STRATEGY = 'strategy';
-    const ENTITY_ALIAS = 'entity-alias';
+    /** @var string */
+    protected static $defaultName = 'oro:price-lists:pl-storage-reorganize';
 
-    /**
-     * {@inheritdoc}
-     */
+    private ShardManager $shardManager;
+
+    public function __construct(ShardManager $shardManager)
+    {
+        $this->shardManager = $shardManager;
+
+        parent::__construct();
+    }
+
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->setName(self::NAME)
-            ->addArgument(
-                self::ENTITY_ALIAS
+            ->addArgument('entity-alias')
+            ->addOption('strategy', null, InputOption::VALUE_REQUIRED, 'Can be "base" or "sharding"')
+            ->setDescription('Reorganizes price list database tables to use or forgo sharding.')
+            ->setHelp(
+// @codingStandardsIgnoreStart
+                <<<'HELP'
+The <info>%command.name%</info> command reorganizes price list database tables
+to use or forgo sharding. After running this command make sure to modify
+the <comment>enable_price_sharding</comment> option in <comment>config/parameters.yml</comment> to a matching value.
+
+Use <info>--strategy=sharding</info> to reorganize database tables using sharding for prices:
+
+  <info>php %command.full_name% --strategy=sharding prices</info>
+
+Use <info>--strategy=base</info> to reorganize database tables without sharding for prices:
+
+  <info>php %command.full_name% --strategy=base prices</info>
+
+Run the command without arguments to see the list of all supported entities:
+
+  <info>php %command.full_name%</info>
+
+HELP
+// @codingStandardsIgnoreEnd
             )
-            ->addOption(
-                self::STRATEGY,
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Strategy can be "base" or "sharding"'
-            )
-            ->setDescription('Change storage strategy for class');
+            ->addUsage('--strategy=sharding prices')
+            ->addUsage('--strategy=base prices')
+            ->addUsage('--strategy=sharding <entity-alias>')
+            ->addUsage('--strategy=base <entity-alias>')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $alias = $input->getArgument(self::ENTITY_ALIAS);
+        $alias = $input->getArgument('entity-alias');
 
-        $shardManager = $this->getContainer()->get("oro_pricing.shard_manager");
-        $shardList = $shardManager->getShardList();
+        $shardList = $this->shardManager->getShardList();
 
         if (!$alias || !array_key_exists($alias, $shardList)) {
-            $output->writeln("<error>Entity alias requeired. Select one from the list:</error>");
+            $output->writeln("<error>Entity alias required. Select one from the list:</error>");
             foreach ($shardList as $alias => $className) {
                 $output->writeln('<info>' . $alias . ' : ' . $className . '</info>');
             }
-            return 1;
+            return self::FAILURE;
         }
 
-        $strategy = $input->getOption(self::STRATEGY);
-        $shardManager = $this->getContainer()->get("oro_pricing.shard_manager");
+        $strategy = $input->getOption('strategy');
 
         $className = $shardList[$alias];
         if ($strategy === "base") {
-            $shardManager->moveDataFromShardsToBaseTable($className);
+            $this->shardManager->moveDataFromShardsToBaseTable($className);
         } elseif ($strategy === "sharding") {
-            $shardManager->moveDataFromBaseTableToShard($className);
+            $this->shardManager->moveDataFromBaseTableToShard($className);
         } else {
             if (null === $strategy) {
                 $output->writeln("<error>Missing strategy option. Strategy can be \"base\" or \"sharding\"</error>");
@@ -66,7 +91,7 @@ class PriceListStorageReorganizeCommand extends ContainerAwareCommand
                 $output->writeln(sprintf("<error>Strategy '%s' not supported</error>", $strategy));
             }
 
-            return 1;
+            return self::FAILURE;
         }
 
         $output->writeln(
@@ -78,6 +103,6 @@ class PriceListStorageReorganizeCommand extends ContainerAwareCommand
             $output->writeln('Do not forget change config/parameters.yml enable_price_sharding: true');
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 }

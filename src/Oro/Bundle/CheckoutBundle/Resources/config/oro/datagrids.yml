@@ -4,6 +4,7 @@ datagrids:
         update: false
         delete: false
         options:
+            entityHint: oro.checkout.open_order.plural_label
             frontend: true
         source:
             type: orm
@@ -11,6 +12,7 @@ datagrids:
                 select:
                     - checkout.id
                     - checkout.createdAt
+                    - checkout.currency as currentCurrency
                     - checkout.updatedAt
                     - CONCAT(customer_user.firstName, ' ', customer_user.lastName) as customerUserName
                     - checkout.paymentMethod
@@ -26,7 +28,7 @@ datagrids:
                     - checkout_subtotals.currency as currency
                     - (checkout_subtotals.value + COALESCE(checkout.shippingEstimateAmount, 0)) AS total
                 from:
-                    - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
+                    - { table: 'Oro\Bundle\CheckoutBundle\Entity\Checkout', alias: checkout }
                 join:
                     left:
                         - { join: checkout.customerUser, alias: customer_user }
@@ -43,22 +45,25 @@ datagrids:
                 label: oro.checkout.started_from.label
                 type: twig
                 frontend_type: html
-                template: OroCheckoutBundle:Checkout:Datagrid/startedFrom.html.twig
+                template: '@OroCheckout/Checkout/Datagrid/startedFrom.html.twig'
                 order: 10
             itemsCount:
                 label: oro.checkout.line_items_count.label
                 order: 20
+            currentCurrency:
+                label: oro.checkout.currency.label
+                order: 25
             subtotal:
                 label: oro.checkout.grid.subtotal.label
                 type: twig
                 frontend_type: html
-                template: OroPricingBundle:Datagrid:Column/subtotal.html.twig
+                template: '@OroPricing/Datagrid/Column/subtotal.html.twig'
                 order: 25
             total:
                 label: oro.checkout.grid.total.label
                 type: twig
                 frontend_type: html
-                template: OroPricingBundle:Datagrid:Column/total.html.twig
+                template: '@OroPricing/Datagrid/Column/total.html.twig'
                 order: 85
                 renderable: false
             createdAt:
@@ -73,7 +78,7 @@ datagrids:
                 label: oro.checkout.payment_method.label
                 type: twig
                 frontend_type: html
-                template: OroCheckoutBundle:Checkout:Datagrid/paymentMethod.html.twig
+                template: '@OroCheckout/Checkout/Datagrid/paymentMethod.html.twig'
                 order: 50
             poNumber:
                 label: oro.checkout.po_number.label
@@ -88,7 +93,7 @@ datagrids:
                 label: oro.checkout.shipping_cost.label
                 type: twig
                 frontend_type: html
-                template: OroCheckoutBundle:Checkout:Datagrid/shippingCost.html.twig
+                template: '@OroCheckout/Checkout/Datagrid/shippingCost.html.twig'
                 renderable: false
                 order: 80
             customerNotes:
@@ -99,7 +104,7 @@ datagrids:
                 label:         oro.order.shipping_method.label
                 type:          twig
                 frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                template:      '@OroOrder/Order/Datagrid/frontendShippingMethodFull.html.twig'
                 order: 100
         sorters:
             columns:
@@ -151,15 +156,187 @@ datagrids:
             id: ~
             view_link:
                 type: url
-                route: oro_checkout_frontend_checkout
+                route: oro_order_frontend_to_checkout
                 params:
                     - id
+            view_aria_label:
+                type:   translatable
+                key:    oro.checkout.frontend.checkout.action.view.aria_label
+                params: [startedFromLabel]
+            delete_aria_label:
+                type:   translatable
+                key:    oro.checkout.frontend.checkout.action.delete.aria_label
+                params: [startedFromLabel]
         actions:
             view:
                 type: navigate
                 label: oro.checkout.grid.checkout_link.label
+                ariaLabel: view_aria_label
                 link: view_link
                 icon: shopping-cart
                 acl_resource: oro_checkout_frontend_checkout
                 rowAction: true
         action_configuration: ['@oro_checkout.datagrid.action_permission_provider', "getPermissions"]
+
+    frontend-checkout-line-items-grid:
+        acl_resource: oro_checkout_frontend_view
+        extended_entity_name: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem'
+        options:
+            entityHint: oro.checkout.order_summary.items
+            frontend: true
+            jsmodules:
+                - orodatagrid/js/datagrid/builder/html-templates-preloader
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-flat-data-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+                    items:
+                        - 10
+                        - 25
+                        - 50
+                        - 100
+                placement:
+                    bottom: true
+        source:
+            type: orm
+            query:
+                select:
+                    - >
+                        (
+                            CASE WHEN parentProduct.id IS NOT NULL
+                            THEN
+                                true
+                            ELSE
+                                CASE WHEN product.type = 'configurable' THEN true ELSE false END
+                            END
+                        ) as isConfigurable
+                    - COALESCE(parentProduct.id, product.id) as mainProductId
+                    - COALESCE(parentProduct.sku, product.sku) as sku
+                    - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
+                    - MAX(lineItem.id) as sortId
+                from:
+                    - { table: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem', alias: lineItem }
+                join:
+                    left:
+                        - { join: lineItem.product, alias: product }
+                        - { join: lineItem.parentProduct, alias: parentProduct }
+                        - { join: lineItem.productUnit, alias: unit}
+                where:
+                    and:
+                        - IDENTITY(lineItem.checkout) = :checkout_id
+                        - lineItem.id NOT IN (:unacceptable_ids)
+                groupBy: mainProductId, unit.code
+            bind_parameters:
+                - checkout_id
+                -
+                    name: unacceptable_ids
+                    default: [0]
+        columns:
+            id:
+                renderable: false
+            sku:
+                label:         oro.checkout.order_summary.sku
+                frontend_type: shoppinglist-string
+            item:
+                label:         oro.checkout.order_summary.item
+                frontend_type: shoppinglist-item
+                notMarkAsBlank: true
+                frontend_template:
+                    default: tpl-loader!orocheckout/templates/datagrid/cell/item.html
+                    message: tpl-loader!orocheckout/templates/datagrid/cell/item-message.html
+                image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
+                inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
+            inventoryStatus:
+                label:         oro.checkout.order_summary.inventory_status
+                frontend_type: shoppinglist-html-template
+                frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/inventory_status.html
+                inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
+            quantity:
+                label:         oro.checkout.order_summary.quantity_short
+                frontend_type: html-template
+                frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/quantity.html
+            unit:
+                label:         oro.checkout.order_summary.unit
+                frontend_type: html-template
+                frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/unit.html
+            price:
+                label:         oro.checkout.order_summary.price
+                frontend_type: shoppinglist-html-template
+                frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/price.html
+            subtotal:
+                label:         oro.checkout.order_summary.subtotal
+                frontend_type: shoppinglist-html-template
+                frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/subtotal.html
+        sorters:
+            columns:
+                id:
+                    data_name: sortId
+                sku:
+                    data_name: sku
+            default:
+                id: ASC
+        filters:
+            columns:
+                sku:
+                    type:             string
+                    data_name:        COALESCE(product.skuUppercase, UPPER(lineItem.productSku))
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
+                inventoryStatus:
+                    type:             choice
+                    data_name:        product.inventory_status
+                    options:
+                        field_options:
+                            choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                            multiple: true
+                    label:            oro.checkout.frontend.checkout.lineitem.filter.inventory_status.label
+                quantity:
+                    type:             number
+                    data_name:        lineItem.quantity
+                    label:            oro.checkout.frontend.checkout.lineitem.filter.quantity.label
+                unit:
+                    type:             choice
+                    data_name:        lineItem.productUnit
+                    label:            oro.checkout.frontend.checkout.lineitem.filter.unit.label
+                    options:
+                        field_options:
+                            multiple: true
+                        field_type:   Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+        properties:
+            productId: ~
+            variantId: ~
+            name: ~
+            image: ~
+            imageWebp: ~
+            notes: ~
+            initialSubtotal: ~
+            discount: ~
+            isConfigurable:
+                frontend_type: boolean
+            isUpcoming:
+                frontend_type: boolean
+            isLowInventory:
+                frontend_type: boolean
+            availabilityDate:
+                frontend_type: datetime
+            inventoryStatus: ~
+            productConfiguration:
+                frontend_type: row_array
+            subData:
+                frontend_type: row_array
+            errors:
+                frontend_type: row_array
+            warnings:
+                frontend_type: row_array
+            units:
+                frontend_type: row_array
+
+    frontend-single-page-checkout-line-items-grid:
+        extends: frontend-checkout-line-items-grid
+        columns:
+            sku:
+                renderable: false
+            inventoryStatus:
+                renderable: false

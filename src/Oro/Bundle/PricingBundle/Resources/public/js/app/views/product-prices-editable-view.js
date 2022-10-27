@@ -1,18 +1,19 @@
 define(function(require) {
     'use strict';
 
-    var ProductPricesEditableView;
-    var pricesHint = require('tpl!oropricing/templates/product/prices-tier-button.html');
-    var pricesHintContent = require('tpl!oropricing/templates/product/prices-tier-table.html');
-    var priceOverridden = require('tpl!oropricing/templates/product/prices-price-overridden.html');
-    var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var Popover = require('bootstrap-popover');
-    var layout = require('oroui/js/layout');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const pricesHint = require('tpl-loader!oropricing/templates/product/prices-tier-button.html');
+    const pricesHintContent = require('tpl-loader!oropricing/templates/product/prices-tier-table.html');
+    const priceOverridden = require('tpl-loader!oropricing/templates/product/prices-price-overridden.html');
+    const BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const Popover = require('bootstrap-popover');
+    const layout = require('oroui/js/layout');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const pricesHelper = require('oropricing/js/app/prices-helper');
 
-    ProductPricesEditableView = BaseProductPricesView.extend({
+    const ProductPricesEditableView = BaseProductPricesView.extend({
         elements: _.extend({}, BaseProductPricesView.prototype.elements, {
             pricesHint: null,
             pricesHintContent: null,
@@ -35,7 +36,8 @@ define(function(require) {
         options: {
             matchedPriceEnabled: true,
             precision: 4,
-            editable: true
+            editable: true,
+            ariaControlsId: null
         },
 
         templates: {
@@ -45,21 +47,24 @@ define(function(require) {
         },
 
         events: function() {
-            var events = {};
+            const events = {};
 
-            var eventNamespace = this.eventNamespace();
-            var onShow = function(clickHandler, event) {
-                var popover = $(event.target).data(Popover.DATA_KEY);
-                $(popover.getTipElement()).on('click' + eventNamespace, 'a', function() {
-                    popover.hide();
-                    clickHandler(this);
-                });
+            const eventNamespace = this.eventNamespace();
+            const onShow = function(clickHandler, event) {
+                const popover = $(event.target).data(Popover.DATA_KEY);
+                $(popover.getTipElement())
+                    .off(eventNamespace)
+                    .on('click' + eventNamespace, 'a', function(e) {
+                        e.preventDefault();
+                        popover.hide();
+                        clickHandler(this);
+                    });
             };
 
             events[Popover.Event.SHOWN + ' .product-price-overridden'] = _.wrap(this.useFoundPrice.bind(this), onShow);
             events[Popover.Event.SHOWN + ' .product-tier-prices'] = _.wrap(this.setPriceFromHint.bind(this), onShow);
             events[Popover.Event.HIDDEN + ' [data-toggle=popover]'] = function(e) {
-                var tip = $(e.target).data(Popover.DATA_KEY).getTipElement();
+                const tip = $(e.target).data(Popover.DATA_KEY).getTipElement();
                 $(tip).off(eventNamespace);
             };
 
@@ -67,49 +72,49 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductPricesEditableView() {
-            ProductPricesEditableView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductPricesEditableView(options) {
+            ProductPricesEditableView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
 
-            ProductPricesEditableView.__super__.initialize.apply(this, arguments);
+            ProductPricesEditableView.__super__.initialize.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         deferredInitialize: function(options) {
-            ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
+            ProductPricesEditableView.__super__.deferredInitialize.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function(options) {
             delete this.templates;
-            ProductPricesEditableView.__super__.dispose.apply(this, arguments);
+            ProductPricesEditableView.__super__.dispose.call(this);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        findPrice: function() {
-            var price = ProductPricesEditableView.__super__.findPrice.apply(this, arguments);
+        findPrice: function(...args) {
+            const price = ProductPricesEditableView.__super__.findPrice.apply(this, args);
             this.model.set('found_price', price);
             this.getElement('priceValue').data('found_price', price);
             return price;
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         setFoundPrice: function() {
             this.findPrice();
@@ -122,6 +127,7 @@ define(function(require) {
 
         setPriceValue: function(price) {
             this.model.set('price', this.calcTotalPrice(price));
+            this.getElement('priceValue').trigger('change');
         },
 
         updateUI: function() {
@@ -135,20 +141,20 @@ define(function(require) {
                 return;
             }
 
-            var priceValueSetByUser = this.getElement('priceValue').val();
+            const priceValueSetByUser = this.getElement('priceValue').val();
 
             // Do not show default price if user did not set price. 0 (zero) price is considered as set price
             if (!priceValueSetByUser && !this.getElement('priceValue').data('match-price-on-null')) {
                 return;
             }
 
-            var $priceOverridden = this.createElementByTemplate('priceOverridden');
+            const $priceOverridden = this.createElementByTemplate('priceOverridden');
 
             layout.initPopover($priceOverridden);
-            $priceOverridden.insertBefore(this.getElement('priceValue'));
+            $priceOverridden.insertAfter(this.getElement('priceValue'));
 
             if (_.isEmpty(this.getElement('priceValue').val()) && this.options.matchedPriceEnabled) {
-                this.getElement('priceValue').addClass('matched-price');
+                this.unlockPrice();
             }
         },
 
@@ -159,8 +165,19 @@ define(function(require) {
                 this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').html());
             }
 
-            var $pricesHint = this.createElementByTemplate('pricesHint');
+            const $pricesHint = this.createElementByTemplate('pricesHint');
+            const sku = this.model.get('sku');
+            const updateAriaLabel = value => {
+                $pricesHint.attr('aria-label', _.__('oro.pricing.view_all_prices_extended', {
+                    product_attrs: value
+                }));
+            };
 
+            if (sku) {
+                updateAriaLabel(sku);
+            }
+
+            this.model.on('change:sku', (model, newValue) => updateAriaLabel(newValue));
             this.getElement('priceValue').after($pricesHint);
         },
 
@@ -170,11 +187,12 @@ define(function(require) {
             }
 
             return this.templates.pricesHintContent({
-                model: this.model.attributes,
-                prices: this.prices,
+                model: this.model.toJSON(),
+                prices: pricesHelper.sortUnitPricesByLowQuantity(this.prices),
                 matchedPrice: this.findPrice(),
                 clickable: this.options.editable,
-                formatter: NumberFormatter
+                formatter: NumberFormatter,
+                ariaControlsId: this.options.ariaControlsId
             });
         },
 
@@ -182,18 +200,18 @@ define(function(require) {
             if (!this.hintInitialized) {
                 this.initHint();
             }
-            return ProductPricesEditableView.__super__.renderHint.apply(this, arguments);
+            return ProductPricesEditableView.__super__.renderHint.call(this);
         },
 
         onPriceSetManually: function(e, options) {
             if (options.manually && this.options.matchedPriceEnabled) {
-                this.getElement('priceValue').removeClass('matched-price');
+                this.lockPrice();
             }
         },
 
         setPriceFromHint: function(elem) {
-            this.getElement('priceValue').removeClass('matched-price');
-            var $elem = $(elem);
+            this.lockPrice();
+            const $elem = $(elem);
             this.model.set('unit', $elem.data('unit'));
             this.setPriceValue($elem.data('price'));
         },
@@ -207,15 +225,15 @@ define(function(require) {
                 this.initPriceOverridden();
             }
 
-            var priceValue = this.getElement('priceValue').val();
-            var price = this.findPriceValue();
+            const priceValue = NumberFormatter.unformatStrict(this.model.get('price'));
+            const price = this.findPriceValue();
 
-            if (price !== null &&
-                this.calcTotalPrice(price) !== parseFloat(priceValue)
-            ) {
+            if (price !== null && this.calcTotalPrice(price) !== this.calcTotalPrice(priceValue)) {
                 this.getElement('priceOverridden').show();
+                this.getElement('priceValue').addClass('overridden-price');
             } else {
                 this.getElement('priceOverridden').hide();
+                this.getElement('priceValue').removeClass('overridden-price');
             }
         },
 
@@ -223,8 +241,8 @@ define(function(require) {
             if (price === null) {
                 return price;
             }
-            var quantity = 1;
-            return +(price * quantity).toFixed(this.options.precision);
+
+            return NumberFormatter.formatMonetary(price);
         },
 
         useFoundPrice: function() {
@@ -232,7 +250,17 @@ define(function(require) {
                 return;
             }
             this.setPriceValue(this.findPriceValue());
+            this.unlockPrice();
+        },
+
+        lockPrice: function() {
+            this.getElement('priceValue').removeClass('matched-price');
+            mediator.trigger('pricing:product-price:lock', this.getElement('priceValue'));
+        },
+
+        unlockPrice: function() {
             this.getElement('priceValue').addClass('matched-price');
+            mediator.trigger('pricing:product-price:unlock', this.getElement('priceValue'));
         }
     });
 

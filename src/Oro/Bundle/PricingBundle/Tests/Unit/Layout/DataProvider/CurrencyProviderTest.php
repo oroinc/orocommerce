@@ -17,7 +17,7 @@ class CurrencyProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $userCurrencyManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->provider = new CurrencyProvider($this->userCurrencyManager);

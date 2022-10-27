@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -24,7 +24,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->provider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()->getMock();
@@ -82,7 +82,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
                     'paymentTerm' => [
                         'type' => 'twig',
                         'frontend_type' => 'html',
-                        'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
+                        'template' => '@OroPaymentTerm/PaymentTerm/column.html.twig',
                     ],
                 ],
                 'extended_entity_name' => \stdClass::class,

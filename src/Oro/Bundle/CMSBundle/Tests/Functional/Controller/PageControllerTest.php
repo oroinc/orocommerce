@@ -2,39 +2,35 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class PageControllerTest extends WebTestCase
 {
-    const DEFAULT_PAGE_TITLE                = 'Page Title';
-    const DEFAULT_PAGE_SLUG_TEXT            = 'page-title';
-    const DEFAULT_PAGE_SLUG_URL             = '/page-title';
-    const UPDATED_DEFAULT_PAGE_TITLE        = 'Updated Page Title';
-    const UPDATED_DEFAULT_PAGE_SLUG_TEXT    = 'updated-page-title';
-    const UPDATED_DEFAULT_PAGE_SLUG_URL     = '/updated-page-title';
+    private const DEFAULT_PAGE_TITLE = 'Page Title';
+    private const DEFAULT_PAGE_SLUG_TEXT = 'page-title';
+    private const DEFAULT_PAGE_SLUG_URL = '/page-title';
+    private const UPDATED_DEFAULT_PAGE_TITLE = 'Updated Page Title';
+    private const UPDATED_DEFAULT_PAGE_SLUG_TEXT = 'updated-page-title';
+    private const UPDATED_DEFAULT_PAGE_SLUG_URL = '/updated-page-title';
 
-    const SLUG_MODE_NEW      = 'new';
-    const SLUG_MODE_OLD      = 'old';
-    const SLUG_MODE_REDIRECT = 'redirect';
+    private const SLUG_MODE_NEW = 'new';
+    private const SLUG_MODE_OLD = 'old';
+    private const SLUG_MODE_REDIRECT = 'redirect';
 
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
+    private EntityManagerInterface $entityManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page');
+        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Page::class);
     }
 
     public function testGetChangedUrlsWhenSlugChanged()
@@ -75,11 +71,14 @@ class PageControllerTest extends WebTestCase
 
         $expectedData = [
             'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
-            'English' => ['before' => '/old-english-slug', 'after' => '/english-slug']
+            'English (United States)' => ['before' => '/old-english-slug', 'after' => '/english-slug']
         ];
 
         $response = $this->client->getResponse();
-        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($expectedData, JSON_THROW_ON_ERROR),
+            $response->getContent()
+        );
     }
 
     public function testGetChangedUrlsWhenNoSlugChanged()
@@ -108,17 +107,14 @@ class PageControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals("Landing Pages", $crawler->filter('h1.oro-subtitle')->html());
-        $this->assertContains(
-            "Please select a page on the left or create new one.",
+        $this->assertEquals('Landing Pages', $crawler->filter('h1.oro-subtitle')->html());
+        self::assertStringContainsString(
+            'Please select a page on the left or create new one.',
             $crawler->filter('.content .text-center')->html()
         );
     }
 
-    /**
-     * @return int
-     */
-    public function testCreatePage()
+    public function testCreatePage(): int
     {
         $this->markTestSkipped('Due to BB-7566');
         return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG_TEXT);
@@ -126,12 +122,10 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @depends testCreatePage
-     * @param int $id
-     * @return int
      */
-    public function testEditPageWithNewSlug($id)
+    public function testEditPageWithNewSlug(int $id): int
     {
-        $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(), $id);
+        $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, [], $id);
 
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
@@ -146,12 +140,10 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @depends testEditPageWithNewSlug
-     * @param int $id
-     * @return int
      */
-    public function testEditPageWithOldSlug($id)
+    public function testEditPageWithOldSlug(int $id): int
     {
-        $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
+        $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, [], $id);
 
         return $this->assertEdit(
             self::UPDATED_DEFAULT_PAGE_TITLE,
@@ -166,12 +158,10 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @depends testEditPageWithOldSlug
-     * @param int $id
-     * @return int
      */
-    public function testEditPageWithNewSlugAndRedirect($id)
+    public function testEditPageWithNewSlugAndRedirect(int $id): int
     {
-        $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
+        $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, [], $id);
 
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
@@ -186,20 +176,19 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @depends testEditPageWithNewSlugAndRedirect
-     * @param int $id
      */
-    public function testDelete($id)
+    public function testDelete(int $id)
     {
-        $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
+        $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, [self::UPDATED_DEFAULT_PAGE_SLUG_URL], $id);
 
         $this->client->request(
-            'GET',
+            'POST',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('oro_cms.entity.page.class'),
+                    'entityClass' => Page::class,
                 ]
             ),
             [],
@@ -214,7 +203,7 @@ class PageControllerTest extends WebTestCase
                 'messages' => [],
                 'redirectUrl' => $this->getUrl('oro_cms_page_index')
             ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            self::jsonToArray($this->client->getResponse()->getContent())
         );
 
         $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $id]));
@@ -249,49 +238,40 @@ class PageControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $title
-     * @param string $slug
-     * @return int
-     */
-    protected function assertCreate($title, $slug)
+    private function assertCreate(string $title, string $slug): int
     {
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_cms_page_create')
         );
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['oro_cms_page[title]']      = $title;
-        $form['oro_cms_page[content]']    = sprintf('<p>Content for page:<strong>%s</strong></p>', $title);
+        $form['oro_cms_page[title]'] = $title;
+        $form['oro_cms_page[content]'] = sprintf('<p>Content for page:<strong>%s</strong></p>', $title);
         $form['oro_cms_page[slug][mode]'] = 'new';
         $form['oro_cms_page[slug][slug]'] = $slug;
 
-        $form->setValues(['input_action' => 'save_and_stay']);
+        $form->setValues(['input_action' => '{"route":"oro_cms_page_update","params":{"id":"$id"}}']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Page has been saved", $crawler->html());
+        self::assertStringContainsString('Page has been saved', $crawler->html());
 
         return $this->getPageIdByUri($this->client->getRequest()->getRequestUri());
     }
 
-    /**
-     * @param string $title
-     * @param string $url
-     * @param string $newTitle
-     * @param string $newSlug
-     * @param string $newUrl
-     * @param string $slugMode
-     * @param int $id
-     * @return int
-     */
-    protected function assertEdit($title, $url, $newTitle, $newSlug, $newUrl, $slugMode, $id)
-    {
+    private function assertEdit(
+        string $title,
+        string $url,
+        string $newTitle,
+        string $newSlug,
+        string $newUrl,
+        string $slugMode,
+        int $id
+    ): int {
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
@@ -301,13 +281,13 @@ class PageControllerTest extends WebTestCase
             $formValues['oro_cms_page[content]']
         );
 
-        $this->assertContains(
-            "Redirect visitors from " . $url,
+        self::assertStringContainsString(
+            'Redirect visitors from ' . $url,
             $crawler->filter('.sub-item')->html()
         );
 
-        $form['oro_cms_page[title]']      = $newTitle;
-        $form['oro_cms_page[content]']    = sprintf('<p>Content for page:<strong>%s</strong></p>', $newTitle);
+        $form['oro_cms_page[title]'] = $newTitle;
+        $form['oro_cms_page[content]'] = sprintf('<p>Content for page:<strong>%s</strong></p>', $newTitle);
 
         switch ($slugMode) {
             case self::SLUG_MODE_NEW:
@@ -318,20 +298,20 @@ class PageControllerTest extends WebTestCase
                 $form['oro_cms_page[slug][slug]'] = $newSlug;
                 break;
             case self::SLUG_MODE_REDIRECT:
-                $form['oro_cms_page[slug][mode]']     = self::SLUG_MODE_NEW;
-                $form['oro_cms_page[slug][slug]']     = $newSlug;
+                $form['oro_cms_page[slug][mode]'] = self::SLUG_MODE_NEW;
+                $form['oro_cms_page[slug][slug]'] = $newSlug;
                 $form['oro_cms_page[slug][redirect]'] = 1;
                 break;
         }
 
-        $form->setValues(['input_action' => 'save_and_stay']);
+        $form->setValues(['input_action' => '{"route":"oro_cms_page_update","params":{"id":"$id"}}']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Page has been saved", $crawler->html());
+        self::assertStringContainsString('Page has been saved', $crawler->html());
 
         $formValues = $form->getValues();
         $this->assertEquals($newTitle, $formValues['oro_cms_page[title]']);
@@ -340,43 +320,30 @@ class PageControllerTest extends WebTestCase
             $formValues['oro_cms_page[content]']
         );
 
-        $this->assertContains(
-            "Redirect visitors from " . $newUrl,
+        self::assertStringContainsString(
+            'Redirect visitors from ' . $newUrl,
             $crawler->filter('.sub-item')->html()
         );
 
         return $id;
     }
 
-    /**
-     * @param string $expectedCurrentSlug
-     * @param string[] $expectedRelatedSlugs
-     * @param int $id
-     * @return int
-     */
-    protected function assertSlugs($expectedCurrentSlug, array $expectedRelatedSlugs, $id)
+    private function assertSlugs(string $expectedCurrentSlug, array $expectedRelatedSlugs, int $id): void
     {
         /** @var Page $page */
-        $page = $this->entityManager->find('OroCMSBundle:Page', $id);
+        $page = $this->entityManager->find(Page::class, $id);
 
         $this->assertEquals($expectedCurrentSlug, $page->getCurrentSlug()->getUrl());
 
         $relatedSlugs = [];
-
         foreach ($page->getRelatedSlugs() as $slug) {
             $relatedSlugs[] = $slug->getUrl();
         }
 
         $this->assertEquals($expectedRelatedSlugs, $relatedSlugs);
-
-        return $id;
     }
 
-    /**
-     * @param string $uri
-     * @return int
-     */
-    protected function getPageIdByUri($uri)
+    private function getPageIdByUri(string $uri): int
     {
         $router = $this->getContainer()->get('router');
         $parameters = $router->match($uri);

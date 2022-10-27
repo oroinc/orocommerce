@@ -1,0 +1,21 @@
+{% extends '@OroAction/Operation/form.html.twig' %}
+
+{% form_theme form with ['@OroFrontend/layouts/default/form_theme.html.twig', '@OroCheckout/Action/fields.html.twig'] %}
+
+{% block form_inner %}
+    {{ block('form_widget') }}
+    {{ block('form_actions') }}
+
+    {% set formRest = form_rest(form) %}
+{% endblock %}
+
+{% block form_actions %}
+    <div class="widget-actions form-actions">
+        {% block form_actions_inner %}
+            {% if isMobileVersion() %}
+                <button class="btn" type="reset">{{ 'Close'|trans }}</button>
+            {%  endif %}
+            <button class="btn btn-success btn--info" type="submit">{{ 'Continue'|trans }}</button>
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,7 +1,6 @@
 @regression
 @fixture-OroProductBundle:quick_order_product.yml
 Feature: After creating new product attribute products grid get 500 error
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create product attribute
     Given I login as administrator
@@ -20,7 +19,6 @@ Feature: After creating new product attribute products grid get 500 error
       |Related entity detailed   |Id           |
       |Searchable                |Yes          |
       |Filterable                |Yes          |
-      |Enabled                   |Yes          |
     When save and close form
     Then I should see "Attribute was successfully saved" flash message
     And I click update schema

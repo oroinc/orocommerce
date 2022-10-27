@@ -20,10 +20,6 @@ class NavigationListener
     /** @var FeatureChecker */
     private $featureChecker;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param FeatureChecker                $featureChecker
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         FeatureChecker $featureChecker
@@ -32,9 +28,6 @@ class NavigationListener
         $this->featureChecker = $featureChecker;
     }
 
-    /**
-     * @param ConfigureMenuEvent $event
-     */
     public function onNavigationConfigure(ConfigureMenuEvent $event)
     {
         $rfpItem = MenuUpdateUtils::findMenuItem($event->getMenu(), self::MENU_ITEM_ID);

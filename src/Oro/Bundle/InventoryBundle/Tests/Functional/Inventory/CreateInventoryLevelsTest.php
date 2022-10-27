@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Tests\Inventory;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Inventory;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\Controller\ProductHelperTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
@@ -14,10 +14,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
  */
 class CreateInventoryLevelsTest extends ProductHelperTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -59,7 +56,7 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
     /**
      * check if inventory levels are created after updating/creating product
      */
-    protected function assertInventoryLevelsCreated()
+    private function assertInventoryLevelsCreated()
     {
         $product = $this->getContainer()
             ->get('oro_entity.doctrine_helper')
@@ -71,16 +68,16 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
             ->getEntityManagerForClass(InventoryLevel::class)
             ->getRepository(InventoryLevel::class)
             ->findBy(['product' => $product]);
-        $this->assertEquals($product->getUnitPrecisions()->count(), count($inventoryLevels));
+        $this->assertCount($product->getUnitPrecisions()->count(), $inventoryLevels);
     }
 
     /**
-     * @return Localization
+     * {@inheritDoc}
      */
-    protected function getLocalization()
+    protected function getLocalization(): Localization
     {
-        $localization = $this->getContainer()->get('doctrine')->getManagerForClass('OroLocaleBundle:Localization')
-            ->getRepository('OroLocaleBundle:Localization')
+        $localization = $this->getContainer()->get('doctrine')
+            ->getRepository(Localization::class)
             ->findOneBy([]);
 
         if (!$localization) {
@@ -91,11 +88,9 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
     }
 
     /**
-     * @param Product $product
-     * @param Localization $localization
-     * @return LocalizedFallbackValue
+     * {@inheritDoc}
      */
-    protected function getLocalizedName(Product $product, Localization $localization)
+    protected function getLocalizedName(Product $product, Localization $localization): AbstractLocalizedFallbackValue
     {
         $localizedName = null;
         foreach ($product->getNames() as $name) {

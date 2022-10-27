@@ -22,7 +22,7 @@ Feature: Default Checkout From Quote Quantity Errors
     Given There is USD currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click view PO1 in grid
 
@@ -33,7 +33,4 @@ Feature: Default Checkout From Quote Quantity Errors
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then I should see "There is not enough quantity for this product"
-
-    When I click "Submit Order"
-    Then I should see "There was an error while processing the order"
-    And I should see "There is not enough quantity for this product"
+    And I should see "Submit Order" button disabled

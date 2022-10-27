@@ -17,7 +17,7 @@ class ProductImageTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $productImageType;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->productImageType = new ProductImageType(self::MAIN_TYPE);
     }

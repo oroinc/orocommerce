@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -13,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Order LineItem type.
+ */
 class OrderLineItemType extends AbstractOrderLineItemType
 {
     const NAME = 'oro_order_line_item';
@@ -22,9 +24,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
      */
     protected $productUnitsProvider;
 
-    /**
-     * @param ProductUnitsProvider $productUnitsProvider
-     */
     public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
         $this->productUnitsProvider = $productUnitsProvider;
@@ -85,13 +84,13 @@ class OrderLineItemType extends AbstractOrderLineItemType
             )
             ->add(
                 'price',
-                PriceType::class,
+                OrderPriceType::class,
                 [
                     'error_bubbling' => false,
                     'required' => true,
                     'label' => 'oro.order.orderlineitem.price.label',
                     'hide_currency' => true,
-                    'default_currency' => $options['currency'],
+                    'default_currency' => $options['currency']
                 ]
             )
             ->add('priceType', HiddenType::class, [

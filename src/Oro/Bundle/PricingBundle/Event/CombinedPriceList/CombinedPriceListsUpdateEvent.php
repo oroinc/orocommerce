@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Event\CombinedPriceList;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class CombinedPriceListsUpdateEvent extends Event
 {
@@ -13,9 +13,6 @@ class CombinedPriceListsUpdateEvent extends Event
      */
     protected $combinedPriceListIds;
 
-    /**
-     * @param array $cplIds
-     */
     public function __construct(array $cplIds)
     {
         $this->combinedPriceListIds = $cplIds;

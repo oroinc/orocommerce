@@ -5,11 +5,10 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 
 class QuoteNotificationTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->markTestSkipped('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
 
@@ -44,7 +43,6 @@ class QuoteNotificationTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        /* @var $form Form */
         $form = $crawler->selectButton('Send')->form();
 
         $this->client->followRedirects(true);
@@ -52,6 +50,6 @@ class QuoteNotificationTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('The email was sent', $crawler->html());
+        static::assertStringContainsString('The email was sent', $crawler->html());
     }
 }

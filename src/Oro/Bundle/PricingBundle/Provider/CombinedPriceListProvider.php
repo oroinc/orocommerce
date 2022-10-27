@@ -2,92 +2,137 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provide and actualize combined price list by given price list sequence members.
+ */
 class CombinedPriceListProvider
 {
-    const GLUE = '_';
+    const GLUE = CombinedPriceListIdentifierProviderInterface::GLUE;
     const MERGE_NOT_ALLOWED_FLAG = 'f';
     const MERGE_ALLOWED_FLAG = 't';
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    protected ManagerRegistry $registry;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected StrategyRegister $strategyRegister;
+    protected ShardManager $shardManager;
+    private array $cpls = [];
 
-    /**
-     * @var string
-     */
-    protected $className;
-
-    /**
-     * @var CombinedPriceListActivationPlanBuilder
-     */
-    protected $activationPlanBuilder;
-
-    /**
-     * @var EntityManager
-     */
-    protected $manager;
-
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        EventDispatcherInterface $eventDispatcher,
+        StrategyRegister $strategyRegister,
+        ShardManager $shardManager
+    ) {
         $this->registry = $registry;
-    }
-
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
-    {
-        $this->className = $className;
-    }
-
-    /**
-     * @param CombinedPriceListActivationPlanBuilder $activationPlanBuilder
-     */
-    public function setActivationPlanBuilder(CombinedPriceListActivationPlanBuilder $activationPlanBuilder)
-    {
-        $this->activationPlanBuilder = $activationPlanBuilder;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->strategyRegister = $strategyRegister;
+        $this->shardManager = $shardManager;
     }
 
     /**
      * @param PriceListSequenceMember[] $priceListsRelations
+     * @param array $eventOptions
+     *
      * @return CombinedPriceList
      */
-    public function getCombinedPriceList(array $priceListsRelations)
+    public function getCombinedPriceList(array $priceListsRelations, array $eventOptions = []): CombinedPriceList
     {
         $normalizedCollection = $this->normalizeCollection($priceListsRelations);
         $identifier = $this->getCombinedPriceListIdentifier($normalizedCollection);
-        $combinedPriceList = $this->getRepository()->findOneBy(['name' => $identifier]);
+
+        if (!array_key_exists($identifier, $this->cpls)) {
+            $combinedPriceList = $this->getCombinedPriceListRepository()->findOneBy(['name' => $identifier]);
+        } else {
+            return $this->cpls[$identifier];
+        }
 
         if (!$combinedPriceList) {
             $combinedPriceList = $this->createCombinedPriceList($identifier);
             $this->updateCombinedPriceList($combinedPriceList, $normalizedCollection);
-            $this->activationPlanBuilder->buildByCombinedPriceList($combinedPriceList);
+
+            $this->eventDispatcher->dispatch(
+                new CombinedPriceListCreateEvent($combinedPriceList, $eventOptions),
+                CombinedPriceListCreateEvent::NAME
+            );
         }
+        $this->cpls[$identifier] = $combinedPriceList;
 
         return $combinedPriceList;
     }
 
-    /**
-     * @param PriceListSequenceMember[] $priceListsRelations
-     * @return string
-     */
-    protected function getCombinedPriceListIdentifier(array $priceListsRelations)
+    public function actualizeCurrencies(CombinedPriceList $combinedPriceList, array $priceListsRelations): void
+    {
+        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
+    }
+
+    public function getCollectionInformation(array $priceListsRelations): array
+    {
+        $collectionElements = array_map(static function (PriceListSequenceMember $member) {
+            return ['p' => $member->getPriceList()->getId(), 'm' => $member->isMergeAllowed()];
+        }, $priceListsRelations);
+
+        return [
+            'identifier' => $this->getCombinedPriceListIdentifier($priceListsRelations),
+            'elements' => $collectionElements
+        ];
+    }
+
+    public function getCombinedPriceListById(int $id): ?CombinedPriceList
+    {
+        return $this->getCombinedPriceListRepository()->find($id);
+    }
+
+    public function getCombinedPriceListByCollectionInformation(array $collectionInfo): CombinedPriceList
+    {
+        $repo = $this->registry->getRepository(PriceList::class);
+        $sequenceMembers = [];
+
+        if (count($collectionInfo)) {
+            $priceLists = [];
+            foreach ($repo->findBy(['id' => array_column($collectionInfo, 'p')]) as $priceList) {
+                $priceLists[$priceList->getId()] = $priceList;
+            }
+
+            $sequenceMembers = array_map(static function (array $member) use ($priceLists) {
+                $id = $member['p'];
+                if (!array_key_exists($id, $priceLists)) {
+                    throw EntityNotFoundException::fromClassNameAndIdentifier(PriceList::class, ['id' => $id]);
+                }
+
+                return new PriceListSequenceMember(
+                    $priceLists[$id],
+                    (bool)$member['m']
+                );
+            }, $collectionInfo);
+        }
+
+        return $this->getCombinedPriceList($sequenceMembers);
+    }
+
+    private function getCombinedPriceListIdentifier(array $priceListsRelations): string
+    {
+        $strategy = $this->strategyRegister->getCurrentStrategy();
+        if ($strategy instanceof CombinedPriceListIdentifierProviderInterface) {
+            return $strategy->getCombinedPriceListIdentifier($priceListsRelations);
+        }
+
+        return $this->getDefaultCombinedPriceListIdentifier($priceListsRelations);
+    }
+
+    private function getDefaultCombinedPriceListIdentifier(array $priceListsRelations): string
     {
         $key = [];
         foreach ($priceListsRelations as $priceListSequenceMember) {
@@ -101,11 +146,7 @@ class CombinedPriceListProvider
         return md5(implode(self::GLUE, $key));
     }
 
-    /**
-     * @param PriceListSequenceMember[] $priceListsRelations
-     * @return array PriceListSequenceMember[]
-     */
-    protected function normalizeCollection(array $priceListsRelations)
+    private function normalizeCollection(array $priceListsRelations): array
     {
         $normalizedCollection = [];
         $usedPriceMap = [];
@@ -122,34 +163,50 @@ class CombinedPriceListProvider
             $usedPriceMap[$priceListId][$isMergeAllowed] = true;
         }
 
-        return $normalizedCollection;
+        return $this->filterPriceListRelations($normalizedCollection);
     }
 
-    /**
-     * @param string $identifier
-     * @return CombinedPriceList
-     */
-    protected function createCombinedPriceList($identifier)
+    private function filterPriceListRelations(array $relations): array
+    {
+        $filteredRelations = array_filter($relations, function ($relation) {
+            /** @var PriceList $priceList */
+            $priceList = $relation->getPriceList();
+
+            return
+                $priceList->isActive()
+                && $this->getProductPriceRepository()->hasPrices($this->shardManager, $priceList);
+        });
+
+        // At least one combined price list must be in the application for all available products.
+        if (count($filteredRelations) === 0) {
+            $filteredRelations = array_filter($relations, fn ($relation) => $relation->getPriceList()->isDefault());
+        }
+
+        return $filteredRelations;
+    }
+
+    private function createCombinedPriceList($identifier): CombinedPriceList
     {
         $combinedPriceList = new CombinedPriceList();
         $combinedPriceList->setName($identifier);
         $combinedPriceList->setEnabled(true);
 
-        $manager = $this->getManager();
+        $manager = $this->registry->getManagerForClass(CombinedPriceList::class);
         $manager->persist($combinedPriceList);
 
         return $combinedPriceList;
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @param PriceListSequenceMember[] $priceListsRelations
-     */
-    protected function updateCombinedPriceList(CombinedPriceList $combinedPriceList, array $priceListsRelations)
+    private function updateCombinedPriceList(CombinedPriceList $combinedPriceList, array $priceListsRelations): void
     {
-        $manager = $this->getManager();
-        $combinedPriceList->setCurrencies($this->getCombinedCurrenciesList($priceListsRelations));
+        $manager = $this->registry->getManagerForClass(CombinedPriceList::class);
+        $this->actualizeCurrencies($combinedPriceList, $priceListsRelations);
         $i = 0;
+
+        $entities = [];
+        if (!$combinedPriceList->getId()) {
+            $entities[] = $combinedPriceList;
+        }
         foreach ($priceListsRelations as $priceListsRelation) {
             $priceListToCombined = new CombinedPriceListToPriceList();
             $priceListToCombined->setMergeAllowed($priceListsRelation->isMergeAllowed());
@@ -157,46 +214,32 @@ class CombinedPriceListProvider
             $priceListToCombined->setPriceList($priceListsRelation->getPriceList());
             $priceListToCombined->setSortOrder($i++);
             $manager->persist($priceListToCombined);
+            $entities[] = $priceListToCombined;
         }
-        $manager->flush();
+        $manager->flush($entities);
     }
 
-    /**
-     * @param PriceListSequenceMember[] $priceListsRelations
-     * @return array
-     */
-    protected function getCombinedCurrenciesList($priceListsRelations)
+    private function getCombinedCurrenciesList(array $priceListsRelations): array
     {
         $currencies = [];
         foreach ($priceListsRelations as $priceListsRelation) {
-            $currencies = array_merge($currencies, $priceListsRelation->getPriceList()->getCurrencies());
+            $currencies[] = $priceListsRelation->getPriceList()->getCurrencies();
         }
-        $currencies = array_unique($currencies);
 
-        return $currencies;
+        if ($currencies) {
+            $currencies = array_merge(...$currencies);
+        }
+
+        return array_unique($currencies);
     }
 
-    /**
-     * @return EntityManager
-     */
-    protected function getManager()
+    private function getCombinedPriceListRepository(): CombinedPriceListRepository
     {
-        if (!$this->manager) {
-            $this->manager = $this->registry->getManagerForClass($this->className);
-        }
-
-        return $this->manager;
+        return $this->registry->getRepository(CombinedPriceList::class);
     }
 
-    /**
-     * @return EntityRepository
-     */
-    protected function getRepository()
+    private function getProductPriceRepository(): ProductPriceRepository
     {
-        if (!$this->repository) {
-            $this->repository = $this->getManager()->getRepository($this->className);
-        }
-
-        return $this->repository;
+        return $this->registry->getRepository(ProductPrice::class);
     }
 }

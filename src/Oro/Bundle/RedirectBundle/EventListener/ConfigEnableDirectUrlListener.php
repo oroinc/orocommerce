@@ -3,11 +3,11 @@
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\RegenerateDirectUrlForEntityTypeTopic;
+use Oro\Bundle\RedirectBundle\Async\Topic\RemoveDirectUrlForEntityTypeTopic;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 /**
  * Run Direct URLs regeneration when Direct URLs are enabled and removal when disabled
@@ -31,11 +31,6 @@ class ConfigEnableDirectUrlListener
      */
     private $messageFactory;
 
-    /**
-     * @param MessageProducerInterface $messageProducer
-     * @param RoutingInformationProvider $provider
-     * @param MessageFactoryInterface $messageFactory
-     */
     public function __construct(
         MessageProducerInterface $messageProducer,
         RoutingInformationProvider $provider,
@@ -46,23 +41,17 @@ class ConfigEnableDirectUrlListener
         $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     */
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(self::ORO_REDIRECT_ENABLE_DIRECT_URL)) {
             if ($event->getNewValue(self::ORO_REDIRECT_ENABLE_DIRECT_URL)) {
                 foreach ($this->provider->getEntityClasses() as $entityClass) {
                     $message = $this->messageFactory->createMassMessage($entityClass, [], false);
-                    $this->messageProducer->send(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $message);
+                    $this->messageProducer->send(RegenerateDirectUrlForEntityTypeTopic::getName(), $message);
                 }
             } else {
                 foreach ($this->provider->getEntityClasses() as $entityClass) {
-                    $this->messageProducer->send(
-                        Topics::REMOVE_DIRECT_URL_FOR_ENTITY_TYPE,
-                        JSON::encode($entityClass)
-                    );
+                    $this->messageProducer->send(RemoveDirectUrlForEntityTypeTopic::getName(), $entityClass);
                 }
             }
         }

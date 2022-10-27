@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\RFPBundle\EventListener\CustomerViewListener;
 
@@ -10,7 +11,10 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
-    protected function setUp()
+    /** @var CustomerViewListener */
+    protected $customerViewListener;
+
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -74,7 +78,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroRFPBundle:Customer:rfp_view.html.twig';
+        return '@OroRFP/Customer/rfp_view.html.twig';
     }
 
     /**
@@ -90,7 +94,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroRFPBundle:CustomerUser:rfp_view.html.twig';
+        return '@OroRFP/CustomerUser/rfp_view.html.twig';
     }
 
     /**

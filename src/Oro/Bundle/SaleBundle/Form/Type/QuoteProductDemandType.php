@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -16,6 +17,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Quote product quote demand type which represents all data related to quote demand
+ */
 class QuoteProductDemandType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product_demand';
@@ -36,7 +40,7 @@ class QuoteProductDemandType extends AbstractType
             ]
         );
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -55,11 +59,12 @@ class QuoteProductDemandType extends AbstractType
         $builder
             ->add(
                 self::FIELD_QUANTITY,
-                NumberType::class,
+                QuantityType::class,
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
                     'required' => true,
-                    'attr' => $attr
+                    'attr' => $attr,
+                    'useInputTypeNumberValueFormat' => true
                 ]
             )->add(
                 self::FIELD_QUOTE_PRODUCT_OFFER,
@@ -109,11 +114,18 @@ class QuoteProductDemandType extends AbstractType
         $quoteProductDemand = $options['data'];
         $view->vars['quoteProduct'] = $quoteProductDemand->getQuoteProductOffer()->getQuoteProduct();
 
+        $view->vars['unitPrecisions'] = [];
+        if ($quoteProductDemand->getQuoteProductOffer()->getQuoteProduct()->getProduct()) {
+            $view->vars['unitPrecisions'] = $this->getUnitPrecisions(
+                $quoteProductDemand->getQuoteProductOffer()->getQuoteProduct()->getProduct()
+            );
+        }
+
         /** @var FormView $quantityView */
         $quantityView = $view->children[self::FIELD_QUANTITY];
         $quantityView->vars['attr']['data-validation'] = json_encode(
             array_merge(
-                ['AllowedQuoteDemandQuantity' => []],
+                ['AllowedQuoteDemandQuantity' => [['message' => null ]] ],
                 json_decode($quantityView->vars['attr']['data-validation'], true)
             )
         );
@@ -133,5 +145,22 @@ class QuoteProductDemandType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * Returns list of units with precisions
+     * [ "<unitCode>" => <unitPrecision>, ... ]
+     *
+     * @param Product $product
+     * @return array
+     */
+    protected function getUnitPrecisions(Product $product)
+    {
+        $data = [];
+        foreach ($product->getUnitPrecisions() as $precision) {
+            $data[$precision->getProductUnitCode()] = $precision->getPrecision();
+        }
+
+        return $data;
     }
 }

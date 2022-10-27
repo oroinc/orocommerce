@@ -17,40 +17,6 @@
     }
 }
 
-.product-shipping-options-collection {
-    width: 850px;
-
-    .shipping-dimensions td.separator {
-        padding-top: 5px;
-    }
-
-    input[type="text"].value,
-    input[type="text"].length,
-    input[type="text"].width,
-    input[type="text"].height {
-        width: 50px;
-        margin-bottom: 0;
-    }
-
-    select {
-        width: 140px;
-    }
-
-    table {
-        table {
-            td {
-                border: 0;
-                padding: 0 5px 0 5px;
-                vertical-align: middle;
-
-                &:first-child {
-                    height: auto;
-                }
-            }
-        }
-    }
-}
-
 table.shipping-options-result-grid {
     width: auto;
 }
@@ -59,6 +25,7 @@ table.shipping-options-result-grid {
     .other-scroll-container & {
         border: 1px solid $general-border-color;
 
+        /* stylelint-disable declaration-no-important */
         thead {
             position: inherit !important;
             display: table-header-group !important;
@@ -67,6 +34,7 @@ table.shipping-options-result-grid {
         tr {
             display: table-row !important;
         }
+        /* stylelint-enable declaration-no-important */
 
         td {
             border: 0;
@@ -80,18 +48,19 @@ table.shipping-options-result-grid {
 }
 
 .oro-shipping-rule-collection.oro-item-collection {
-    & > div {
+    > div {
         position: relative;
         padding: 15px 15px 0 0;
         margin: 0 60% 20px 0;
-        border: 1px solid #e6e6e6;
-        background: #f8f8f8;
+        border: 1px solid $primary-800;
+        background: $primary-900;
         border-radius: 4px;
         min-width: 500px;
     }
 
-    div[data-validation-optional-group=""] {
+    div[data-validation-optional-group=''] {
         .oro-multiselect-holder {
+            // stylelint-disable-next-line declaration-no-important
             padding-right: 50px !important;
         }
     }
@@ -107,13 +76,9 @@ table.shipping-options-result-grid {
         right: 4px;
         text-decoration: none;
 
-        &:after {
-            color: #bbb;
+        &::after {
+            color: $additional-ultra-light;
         }
-    }
-
-    input[type="text"] {
-        width: 280px;
     }
 
     input.method-options-surcharge {
@@ -128,6 +93,19 @@ table.shipping-options-result-grid {
 
     .selector.input-widget-select {
         margin-left: 0;
+    }
+}
+
+.oro-shipping-rule-add-method-line {
+    display: flex;
+
+    &:not(:last-of-type) {
+        margin-bottom: $content-padding-medium;
+    }
+
+    .add-method,
+    .add-all-methods {
+        margin-left: $content-padding-small;
     }
 }
 

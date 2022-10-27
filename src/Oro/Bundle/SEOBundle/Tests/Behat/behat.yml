@@ -2,12 +2,27 @@ oro_behat_extension:
     suites:
         OroSEOBundle:
             contexts:
-                - OroApplicationBundle::CommerceMainContext
-                - OroProductBundle::FeatureContext
-                - OroConfigBundle::FeatureContext
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroWebCatalogBundle::FeatureContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
             paths:
                 - '@OroSEOBundle/Tests/Behat/Features'
+    elements:
+        Product With Meta Fields Form:
+            selector: 'form[name="oro_product"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    SKU: 'oro_product[sku]'
+                    Name: 'oro_product[names][values][default]'
+                    Meta Title: 'oro_product[metaTitles][values][default]'
+                    Meta Description: 'oro_product[metaDescriptions][values][default]'
+                    Meta Keywords: 'oro_product[metaKeywords][values][default]'

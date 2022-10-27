@@ -25,4 +25,12 @@ class ProductDataStorageExtensionStub extends AbstractProductDataStorageExtensio
     {
         return $this->addItemCalled;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getExtendedTypes(): iterable
+    {
+        return [];
+    }
 }

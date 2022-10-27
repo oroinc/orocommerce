@@ -3,21 +3,23 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxEntityTotalsControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                LoadShoppingListLineItems::class,
+                LoadCombinedProductPrices::class
             ]
         );
     }
@@ -41,11 +43,11 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
 
         $this->assertArrayHasKey('total', $data);
-        $this->assertEquals(303.265, $data['total']['amount']);
+        $this->assertEquals(303.27, $data['total']['amount']);
         $this->assertEquals('USD', $data['total']['currency']);
 
         $this->assertArrayHasKey('subtotals', $data);
-        $this->assertEquals(303.265, $data['subtotals'][0]['amount']);
+        $this->assertEquals(303.27, $data['subtotals'][0]['amount']);
         $this->assertEquals('USD', $data['subtotals'][0]['currency']);
     }
 

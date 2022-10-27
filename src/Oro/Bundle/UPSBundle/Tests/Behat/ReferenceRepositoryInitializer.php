@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityRepository;
-use Nelmio\Alice\Instances\Collection as AliceCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
-use Oro\Bundle\UPSBundle\Entity\ShippingService as UPSShippingService;
+use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
@@ -15,11 +14,10 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, AliceCollection $referenceRepository)
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
-        /** @var EntityRepository $repository */
-        $repository = $doctrine->getManager()->getRepository('OroUPSBundle:ShippingService');
-        /** @var UPSShippingService $classicDpdShippingService */
+        $repository = $doctrine->getManager()->getRepository(ShippingService::class);
+        /** @var ShippingService $classicDpdShippingService */
         $ups2ndDayAirShippingService = $repository->findOneBy(['description' => self::UPS_2ND_DAY_AIR_DESCRIPTION]);
         $referenceRepository->set('UPS2ndDayAirShippingService', $ups2ndDayAirShippingService);
     }

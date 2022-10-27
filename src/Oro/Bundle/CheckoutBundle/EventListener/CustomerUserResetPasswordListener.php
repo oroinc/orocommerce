@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -13,15 +12,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class CustomerUserResetPasswordListener
 {
     const CHECKOUT_RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'checkout_customer_user_reset_password';
-    
+
     /**
      * @var RequestStack
      */
     private $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
@@ -31,16 +27,13 @@ class CustomerUserResetPasswordListener
      * @param string $name
      * @return mixed
      */
-    private function getFromRequest($name)
+    private function getFromRequest(string $name)
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
         return $request->request->get($name);
     }
 
-    /**
-     * @param CustomerUserEmailSendEvent $event
-     */
     public function onCustomerUserEmailSend(CustomerUserEmailSendEvent $event)
     {
         $checkoutId = $this->getFromRequest('_checkout_id');

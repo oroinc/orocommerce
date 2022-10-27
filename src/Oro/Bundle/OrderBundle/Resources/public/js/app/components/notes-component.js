@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var NotesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
      * @export oroorder/js/app/components/notes-component
      * @extends oroui.app.components.base.Component
      * @class oroorder.app.components.NotesComponent
      */
-    NotesComponent = BaseComponent.extend({
+    const NotesComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -67,14 +66,14 @@ define(function(require) {
         $removeBtn: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function NotesComponent() {
-            NotesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function NotesComponent(options) {
+            NotesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -96,15 +95,15 @@ define(function(require) {
 
             this.$edit.prepend(this.$notes);
 
-            this.$notes.change(_.bind(this.change, this));
-            this.$notes.blur(_.bind(this.change, this));
-            this.$preview.click(_.bind(this.addNotes, this));
-            this.$addBtn.click(_.bind(this.addNotes, this))
-                .mousedown(_.bind(this.addNotes, this));
-            this.$editBtn.click(_.bind(this.addNotes, this))
-                .mousedown(_.bind(this.addNotes, this));
-            this.$removeBtn.click(_.bind(this.removeNotes, this))
-                .mousedown(_.bind(this.removeNotes, this));
+            this.$notes.change(this.change.bind(this));
+            this.$notes.blur(this.change.bind(this));
+            this.$preview.click(this.addNotes.bind(this));
+            this.$addBtn.click(this.addNotes.bind(this))
+                .mousedown(this.addNotes.bind(this));
+            this.$editBtn.click(this.addNotes.bind(this))
+                .mousedown(this.addNotes.bind(this));
+            this.$removeBtn.click(this.removeNotes.bind(this))
+                .mousedown(this.removeNotes.bind(this));
 
             this.changed();
             this.$el.show();

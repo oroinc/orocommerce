@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
@@ -18,9 +17,6 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
      */
     private $extendExtension;
 
-    /**
-     * @param ExtendExtension $extendExtension
-     */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
@@ -71,7 +67,7 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
     {
         $this->logQuery($logger, $query, $params);
         if (!$dryRun) {
-            $this->connection->executeUpdate($query, $params);
+            $this->connection->executeStatement($query, $params);
         }
     }
 

@@ -8,6 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -15,39 +16,36 @@ use Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class ProductStrategyTest extends WebTestCase
 {
-    use EntityTrait;
+    private ProductStrategy $strategy;
 
-    /**
-     * @var ProductStrategy
-     * */
-    protected $strategy;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductData::class]);
+        $this->loadFixtures([LoadProductData::class, LoadOrganization::class, LoadBusinessUnit::class]);
         $container = $this->getContainer();
 
         $container->get('oro_importexport.field.database_helper')->onClear();
         $this->strategy = new ProductStrategy(
             $container->get('event_dispatcher'),
-            $container->get('oro_importexport.strategy.import.helper'),
+            $container->get('oro_importexport.strategy.configurable_import_strategy_helper'),
             $container->get('oro_entity.helper.field_helper'),
             $container->get('oro_importexport.field.database_helper'),
             $container->get('oro_entity.entity_class_name_provider'),
             $container->get('translator'),
             $container->get('oro_importexport.strategy.new_entities_helper'),
             $container->get('oro_entity.doctrine_helper'),
-            $container->get('oro_security.owner.checker')
+            $container->get('oro_importexport.field.related_entity_state_helper')
         );
         $this->strategy->setEntityName(Product::class);
         $this->strategy->setVariantLinkClass(ProductVariantLink::class);
         $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
         $this->strategy->setTokenAccessor($container->get('oro_security.token_accessor'));
+        $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
     }
 
     /**
@@ -66,8 +64,7 @@ class ProductStrategyTest extends WebTestCase
 
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
         $newProductSku = 'PR-V1';
 
         // Prepare new product that is imported in same batch and will be used later as variant link
@@ -116,11 +113,15 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
         $newProductSku = 'PR-V1';
         // Prepare new product that is imported in same batch and will be used later as variant link
-        $newProduct = $this->createProduct($newProductSku, $attributeFamily, $unit, $this->getInventoryStatus());
+        $newProduct = $this->createProduct(
+            $newProductSku,
+            $attributeFamily,
+            $unit,
+            $this->getInventoryStatus()
+        );
         //Add invalid ProductUnitPrecision without unit
         $newProduct->getUnitPrecisions()->add((new ProductUnitPrecision()));
         /** @var Product $processedNewProduct */
@@ -132,6 +133,7 @@ class ProductStrategyTest extends WebTestCase
     public function testProcessWithDuplicateUnitPrecisionCode()
     {
         $context = new Context([]);
+        $context->setValue('read_offset', 1);
         $context->setValue('itemData', [
             'additionalUnitPrecisions' => [
                 [
@@ -147,45 +149,83 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         /** @var ProductUnit $unit */
         $unit = $this->getReference(LoadProductUnits::BOX);
-        /** @var AttributeFamily $attributeFamily */
-        $attributeFamily = $this->getEntity(AttributeFamily::class, ['code' => 'default_family']);
+        $attributeFamily = $this->createAttributeFamily('default_family');
         $newProductSku = 'PR-V1';
         // Prepare new product that is imported in same batch and will be used later as variant link
-        $newProduct = $this->createProduct($newProductSku, $attributeFamily, $unit, $this->getInventoryStatus());
+        $newProduct = $this->createProduct(
+            $newProductSku,
+            $attributeFamily,
+            $unit,
+            $this->getInventoryStatus()
+        );
         /** @var Product $processedNewProduct */
         $this->strategy->process($newProduct);
-        $this->assertEquals(['Error in row #. Each product unit code should be unique'], $context->getErrors());
+        $this->assertEquals(['Error in row #1. Each product unit code should be unique'], $context->getErrors());
     }
 
-    /**
-     * @return AbstractEnumValue
-     */
-    private function getInventoryStatus()
+    public function testProcessNotEmptyConfigurableAttributes(): void
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository($inventoryStatusClassName)
-            ->find('in_stock');
+        $context = new Context(['incremented_read' => true]);
+        $context->setValue('read_offset', 1);
+        $context->setValue('itemData', []);
 
-        return $inventoryStatus;
+        $this->strategy->setImportExportContext($context);
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference(LoadProductUnits::BOX);
+
+        $attributeFamily = $this->createAttributeFamily('default_family');
+
+        // Prepare new product that is imported in same batch and will be used later as variant link
+        $newProduct = $this->createProduct('PR-V2', $attributeFamily, $unit, $this->getInventoryStatus());
+        $newProduct->setType(Product::TYPE_CONFIGURABLE);
+
+        /** @var Product $processedNewProduct */
+        $this->strategy->process($newProduct);
+        $this->assertEquals(
+            [
+                'Error in row #1. Configurable product requires at least one filterable attribute ' .
+                'of the Select or Boolean type to enable product variants. ' .
+                'The provided product family does not fit for configurable products.'
+            ],
+            $context->getErrors()
+        );
     }
 
-    /**
-     * @param string $sku
-     * @param AttributeFamily $attributeFamily
-     * @param ProductUnit $unit
-     * @param AbstractEnumValue $inventoryStatus
-     * @return Product
-     */
-    protected function createProduct(
-        $sku,
+    public function testProcessWhenProductHasNoTitle()
+    {
+        $context = new Context([]);
+        $context->setValue('itemData', []);
+        $this->strategy->setImportExportContext($context);
+
+        $product = $this->strategy->process(new Product());
+
+        $this->assertNull($product);
+        $this->assertContains(
+            'Error in row #0. Name Localization Name: Product default name is blank',
+            $context->getErrors()
+        );
+    }
+
+    private function getInventoryStatus(): AbstractEnumValue
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
+            ->find('in_stock');
+    }
+
+    private function createProduct(
+        string $sku,
         AttributeFamily $attributeFamily,
         ProductUnit $unit,
         AbstractEnumValue $inventoryStatus
-    ) {
+    ): Product {
         $newProduct = new Product();
+        $productName = new ProductName();
+        $productName->setString($sku);
+        $newProduct->addName($productName);
+
         $newProduct->setSku($sku);
         $newProduct->setAttributeFamily($attributeFamily);
         $newProduct->setInventoryStatus($inventoryStatus);
@@ -193,7 +233,17 @@ class ProductStrategyTest extends WebTestCase
             (new ProductUnitPrecision())->setUnit($unit)
                 ->setPrecision(0)
         );
+        $newProduct->setOwner($this->getReference('business_unit'));
+        $newProduct->setOrganization($this->getReference('organization'));
 
         return $newProduct;
+    }
+
+    private function createAttributeFamily(string $code): AttributeFamily
+    {
+        $family = new AttributeFamily();
+        $family->setCode($code);
+
+        return $family;
     }
 }

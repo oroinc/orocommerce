@@ -8,31 +8,24 @@ use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransf
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var Product
-     */
-    protected $product;
+    /** @var Product */
+    private $product;
 
-    /**
-     * @var WarehouseInventoryLevelGridDataTransformer
-     */
-    protected $transformer;
+    /** @var InventoryLevelGridDataTransformer */
+    private $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->product = new Product();
 
         $this->transformer = new InventoryLevelGridDataTransformer(
@@ -48,15 +41,11 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
     }
 
     /**
-     * @param $value
-     * @param $expected
-     * @param DoctrineHelper|null $doctrineHelper
-     * @param Product|null $product
      * @dataProvider reverseTransformDataProvider
      */
     public function testReverseTransform(
-        $value,
-        $expected,
+        ArrayCollection|array|null $value,
+        ArrayCollection $expected,
         DoctrineHelper $doctrineHelper = null,
         Product $product = null
     ) {
@@ -67,19 +56,12 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
         $this->assertEquals($expected, $transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
-        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        /** @var ProductUnitPrecision $firstPrecision */
-        $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
-        /** @var ProductUnitPrecision $secondPrecision */
-        $secondPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
+        $firstPrecision = $this->getEntity(ProductUnitPrecision::class, ['id' => 11]);
+        $secondPrecision = $this->getEntity(ProductUnitPrecision::class, ['id' => 12]);
 
         $product = new Product();
         $product->addUnitPrecision($firstPrecision)
@@ -115,12 +97,11 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "array", "string" given
-     */
     public function testReverseTransformException()
     {
+        $this->expectException(UnexpectedTypeException::class);
+        $this->expectExceptionMessage('Expected argument of type "array", "string" given');
+
         $this->transformer->reverseTransform('test');
     }
 }

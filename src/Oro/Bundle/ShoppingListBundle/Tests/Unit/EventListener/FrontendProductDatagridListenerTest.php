@@ -2,66 +2,62 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ProductShoppingListsDataProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductShoppingListsDataProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $productShoppingListsDataProvider;
 
-    /**
-     * @var FrontendProductDatagridListener
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
+
+    /** @var FrontendProductDatagridListener */
     private $listener;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
-
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->productShoppingListsDataProvider = $this->getMockBuilder(ProductShoppingListsDataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
+        $this->productShoppingListsDataProvider = $this->createMock(ProductShoppingListsDataProvider::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->listener = new FrontendProductDatagridListener(
             $this->productShoppingListsDataProvider,
-            $this->doctrineHelper
+            $this->doctrine
         );
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
     }
 
     public function testOnPreBuild()
     {
         $config = DatagridConfiguration::createNamed('grid-name', []);
-        $event  = new PreBuild($config, new ParameterBag());
 
-        $this->listener->onPreBuild($event);
+        $this->listener->onPreBuild(new PreBuild($config, new ParameterBag()));
 
         $this->assertEquals(
             [
                 'name'       => 'grid-name',
                 'properties' => [
-                    FrontendProductDatagridListener::COLUMN_LINE_ITEMS => [
+                    'shopping_lists' => [
                         'type'          => 'field',
                         'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
                     ]
@@ -73,98 +69,82 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnResultAfterNoShoppingList()
     {
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $record = new ResultRecord(['id' => 777]);
-        $product = $this->getEntity(Product::class, ['id' => 777]);
+        $product = $this->getProduct(777);
 
-        $entityManager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManagerForClass')
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
             ->with(Product::class)
-            ->willReturn($entityManager);
+            ->willReturn($em);
 
-        $entityManager->expects($this->once())
+        $em->expects($this->once())
             ->method('getReference')
             ->with(Product::class, 777)
             ->willReturn($product);
 
-        $this->productShoppingListsDataProvider
-            ->expects($this->once())
+        $this->productShoppingListsDataProvider->expects($this->once())
             ->method('getProductsUnitsQuantity')
             ->with([$product])
             ->willReturn([]);
 
-        /** @var SearchQueryInterface $query */
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = new SearchResultAfter($datagrid, $query, [$record]);
-
-        $this->listener->onResultAfter($event);
+        $this->listener->onResultAfter(new SearchResultAfter($datagrid, $query, [$record]));
 
         $this->assertNull($record->getValue('shopping_lists'));
     }
 
     public function testOnResultAfterNoRecords()
     {
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
-        $this->productShoppingListsDataProvider
-            ->expects($this->once())
+        $this->productShoppingListsDataProvider->expects($this->once())
             ->method('getProductsUnitsQuantity')
             ->with([])
             ->willReturn([]);
-        /** @var SearchQueryInterface $query */
+
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = new SearchResultAfter($datagrid, $query, []);
-
-        $this->listener->onResultAfter($event);
+        $this->listener->onResultAfter(new SearchResultAfter($datagrid, $query, []));
     }
 
     public function testOnResultAfter()
     {
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
 
         $record1 = new ResultRecord(['id' => 777]);
         $record2 = new ResultRecord(['id' => 555]);
         $record3 = new ResultRecord(['id' => 444]);
 
-        $product777 = $this->getEntity(Product::class, ['id' => 777]);
-        $product555 = $this->getEntity(Product::class, ['id' => 555]);
-        $product444 = $this->getEntity(Product::class, ['id' => 444]);
+        $product777 = $this->getProduct(777);
+        $product555 = $this->getProduct(555);
+        $product444 = $this->getProduct(444);
 
-        $entityManager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManagerForClass')
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
             ->with(Product::class)
-            ->willReturn($entityManager);
+            ->willReturn($em);
 
-        $entityManager->expects($this->any())
+        $em->expects($this->any())
             ->method('getReference')
             ->withConsecutive([Product::class, 777], [Product::class, 555], [Product::class, 444])
             ->willReturnOnConsecutiveCalls($product777, $product555, $product444);
 
-        $this->productShoppingListsDataProvider
-            ->expects($this->once())
+        $this->productShoppingListsDataProvider->expects($this->once())
             ->method('getProductsUnitsQuantity')
             ->with([$product777, $product555, $product444])
             ->willReturn([
                 777 => ['Some data'],
                 555 => ['Some data2'],
             ]);
-        /** @var SearchQueryInterface $query */
+
         $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = new SearchResultAfter($datagrid, $query, [$record1, $record2, $record3]);
-
-        $this->listener->onResultAfter($event);
+        $this->listener->onResultAfter(new SearchResultAfter($datagrid, $query, [$record1, $record2, $record3]));
 
         $this->assertEquals(['Some data'], $record1->getValue('shopping_lists'));
         $this->assertEquals(['Some data2'], $record2->getValue('shopping_lists'));

@@ -16,13 +16,13 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderExpressionVisitor */
     private $visitor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->placeholder = $this->createMock(PlaceholderInterface::class);
         $this->visitor = new PlaceholderExpressionVisitor($this->placeholder);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->visitor, $this->placeholder);
     }

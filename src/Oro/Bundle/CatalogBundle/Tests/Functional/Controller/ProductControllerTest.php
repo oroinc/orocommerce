@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,6 +17,8 @@ use Symfony\Component\DomCrawler\Form;
 
 class ProductControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
 
     /**
@@ -23,7 +26,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -74,7 +77,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         foreach ($result['data'] as $data) {
-            $this->assertContains($data['sku'], LoadProductData::PRODUCT_9);
+            static::assertStringContainsString($data['sku'], LoadProductData::PRODUCT_9);
         }
     }
 
@@ -123,7 +126,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testSidebarAction()
     {
-        $categoryId = 2;
+        $categoryId = 1;
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
@@ -140,7 +143,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
     }
-    
+
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      *
@@ -150,7 +153,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testDefaultProductUnitPrecision($singleUnitMode, $category, $expected)
     {
-        $configManager = $this->client->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_product.single_unit_mode', $singleUnitMode);
         $configManager->flush();
         $systemDefaultUnit = $configManager->get('oro_product.default_unit');
@@ -162,7 +165,7 @@ class ProductControllerTest extends WebTestCase
             'unit' => $systemDefaultUnit,
             'precision' => $systemDefaultPrecision
         ];
-        
+
         /** @var CategoryUnitPrecision $unitPrecision */
         $unitPrecision = $this->getReference(LoadCategoryData::SECOND_LEVEL1)
             ->getDefaultProductOptions()
@@ -171,7 +174,7 @@ class ProductControllerTest extends WebTestCase
             'unit' => $unitPrecision->getUnit()->getCode(),
             'precision' => $unitPrecision->getPrecision()
         ];
-        
+
         $expectedUnitPrecisions = [
             'systemPrecision' => $systemPrecision,
             'categoryPrecision' => $categoryPrecision,

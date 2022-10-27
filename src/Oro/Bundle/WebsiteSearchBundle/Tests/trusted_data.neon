@@ -1,0 +1,16 @@
+# Configuration for https://github.com/oroinc/phpstan-rules/
+trusted_data:
+    safe_methods:
+        Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor:
+            dispatch: true
+    check_methods:
+        Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery:
+            setCriteria: true
+            select: true
+            addSelect: [0]
+            andWhere: [0, 2]
+            orWhere: [0, 2]
+            where: [1, 3]
+            setOrderBy: [0, 1]
+            addAggregate: [1]
+            addToSelect: [0]

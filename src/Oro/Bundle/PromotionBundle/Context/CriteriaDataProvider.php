@@ -23,10 +23,6 @@ class CriteriaDataProvider
      */
     private $websiteManager;
 
-    /**
-     * @param CustomerUserRelationsProvider $relationsProvider
-     * @param WebsiteManager $websiteManager
-     */
     public function __construct(
         CustomerUserRelationsProvider $relationsProvider,
         WebsiteManager $websiteManager

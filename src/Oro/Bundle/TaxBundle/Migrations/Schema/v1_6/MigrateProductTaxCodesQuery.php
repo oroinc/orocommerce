@@ -8,7 +8,6 @@ use Psr\Log\LoggerInterface;
 
 class MigrateProductTaxCodesQuery extends ParametrizedMigrationQuery
 {
-
     /**
      * {@inheritdoc}
      */
@@ -43,7 +42,7 @@ SQL;
         foreach ($taxCodes as $taxCode) {
             $this->logQuery($logger, $sql);
             if (!$dryRun) {
-                $this->connection->executeUpdate($sql, ['code' => $taxCode['id']]);
+                $this->connection->executeStatement($sql, ['code' => $taxCode['id']]);
             }
         }
     }

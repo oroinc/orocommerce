@@ -3,8 +3,8 @@ define([
 ], function(_, regexConstraint, localeSettings) {
     'use strict';
 
-    var options = localeSettings.getNumberFormats('decimal');
-    var groupingSeparator = options.grouping_separator_symbol;
+    const options = localeSettings.getNumberFormats('decimal');
+    const groupingSeparator = options.grouping_separator_symbol;
 
     return [
         'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Integer',

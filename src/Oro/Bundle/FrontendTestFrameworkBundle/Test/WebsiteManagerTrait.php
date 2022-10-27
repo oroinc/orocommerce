@@ -3,23 +3,24 @@
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
 use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
+use Psr\Container\ContainerInterface;
 
 /**
  * Provides methods to change the website in functional tests.
  * It is expected that this trait will be used in classes
- * derived from Oro\Bundle\TestFrameworkBundle\Test\WebTestCase.
+ * derived from {@see \Oro\Bundle\TestFrameworkBundle\Test\WebTestCase}.
  * IMPORTANT: you must add the following method in the class that include this trait:
  * <code>
  *    /**
- *     * @after
+ *     * @beforeResetClient
  *     *\/
- *    public function afterFrontendTest()
+ *    public static function afterFrontendTest()
  *    {
- *        if (null !== $this->client) {
- *           $this->getWebsiteManagerStub()->disableStub();
- *       }
+ *        $this->getWebsiteManagerStub()->disableStub();
  *    }
  * </code>
+ *
+ * @method static ContainerInterface getContainer()
  */
 trait WebsiteManagerTrait
 {
@@ -28,15 +29,16 @@ trait WebsiteManagerTrait
      */
     protected function setCurrentWebsite($websiteReference = null)
     {
-        $websiteManagerStub = $this->getWebsiteManagerStub();
-        $websiteManagerStub->resetStub();
+        $websiteManagerStub = self::getWebsiteManagerStub();
+
+        $websiteManagerStub->disableStub();
         $defaultWebsite = $websiteManagerStub->getDefaultWebsite();
         if (!$websiteReference || $websiteReference === 'default') {
             $website = $defaultWebsite;
         } else {
             if (!$this->hasReference($websiteReference)) {
                 throw new \RuntimeException(
-                    sprintf('WebsiteScope scope reference "%s" was not found', $websiteReference)
+                    sprintf('The website reference "%s" was not found.', $websiteReference)
                 );
             }
             $website = $this->getReference($websiteReference);
@@ -47,20 +49,14 @@ trait WebsiteManagerTrait
         $websiteManagerStub->setDefaultWebsiteStub($defaultWebsite);
     }
 
-    /**
-     * @return int
-     */
-    protected function getDefaultWebsiteId()
+    protected static function getDefaultWebsiteId(): int
     {
-        return $this->getWebsiteManagerStub()->getDefaultWebsite()->getId();
+        return self::getWebsiteManagerStub()->getDefaultWebsite()->getId();
     }
 
-    /**
-     * @return WebsiteManagerStub
-     */
-    private function getWebsiteManagerStub()
+    private static function getWebsiteManagerStub(): WebsiteManagerStub
     {
-        $manager = $this->client->getContainer()->get('oro_website.manager');
+        $manager = self::getContainer()->get('oro_website.manager');
         if (!$manager instanceof WebsiteManagerStub) {
             throw new \LogicException(sprintf(
                 'The service "oro_website.manager" should be instance of "%s", given "%s".',

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Handler;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
@@ -16,63 +15,69 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ShoppingListLineItemHandler */
-    protected $handler;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingListManager */
-    protected $shoppingListManager;
+    private $shoppingListManager;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
+    private $currentShoppingListManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    protected $managerRegistry;
+    private $managerRegistry;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|FeatureChecker */
-    protected $featureChecker;
+    private $featureChecker;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductManager */
-    protected $productManager;
+    private $productManager;
 
-    protected function setUp()
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AclHelper */
+    private $aclHelper;
+
+    /** @var ShoppingListLineItemHandler */
+    private $handler;
+
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-
-        $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
+        $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->productManager = $this->createMock(ProductManager::class);
-
+        $this->aclHelper = $this->createMock(AclHelper::class);
         $this->managerRegistry = $this->getManagerRegistry();
-
-        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->handler = new ShoppingListLineItemHandler(
             $this->managerRegistry,
             $this->shoppingListManager,
+            $this->currentShoppingListManager,
             $this->authorizationChecker,
             $this->tokenAccessor,
             $this->featureChecker,
-            $this->productManager
+            $this->productManager,
+            $this->aclHelper
         );
         $this->handler->setProductClass(Product::class);
         $this->handler->setShoppingListClass(ShoppingList::class);
@@ -81,28 +86,25 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider idDataProvider
-     * @param mixed $id
      */
-    public function testGetShoppingList($id)
+    public function testGetShoppingList(?int $id)
     {
         $shoppingList = new ShoppingList();
-        $this->shoppingListManager->expects($this->once())->method('getForCurrentUser')->willReturn($shoppingList);
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('getForCurrentUser')
+            ->willReturn($shoppingList);
         $this->assertSame($shoppingList, $this->handler->getShoppingList($id));
     }
 
-    /**
-     * @return array
-     */
-    public function idDataProvider()
+    public function idDataProvider(): array
     {
         return [[1], [null]];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testCreateForShoppingListWithoutPermission()
     {
+        $this->expectException(AccessDeniedException::class);
+
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(true);
@@ -114,11 +116,10 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->createForShoppingList(new ShoppingList());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testCreateForShoppingListWithoutUser()
     {
+        $this->expectException(AccessDeniedException::class);
+
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(false);
@@ -135,12 +136,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->tokenAccessor->expects($this->once())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('guest_shopping_list')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
@@ -152,36 +153,33 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $isGrantedAdd
-     * @param bool $expected
-     * @param bool $isGrantedEdit
-     * @param ShoppingList|null $shoppingList
-     *
      * @dataProvider isAllowedDataProvider
      */
-    public function testIsAllowed($isGrantedAdd, $expected, ShoppingList $shoppingList = null, $isGrantedEdit = false)
-    {
+    public function testIsAllowed(
+        bool $isGrantedAdd,
+        bool $expected,
+        ShoppingList $shoppingList = null,
+        bool $isGrantedEdit = false
+    ) {
         $this->tokenAccessor->expects($this->once())
             ->method('hasUser')
             ->willReturn(true);
 
-        $this->authorizationChecker->expects($this->at(0))
-            ->method('isGranted')
-            ->with('oro_shopping_list_frontend_update')
-            ->willReturn($isGrantedAdd);
-
+        $isGrantedExpectations = [['oro_shopping_list_frontend_update']];
+        $isGrantedResults = [$isGrantedAdd];
         if ($shoppingList && $isGrantedAdd) {
-            $this->authorizationChecker->expects($this->at(1))
-                ->method('isGranted')
-                ->with('EDIT', $shoppingList)
-                ->willReturn($isGrantedEdit);
+            $isGrantedExpectations[] = ['EDIT', $shoppingList];
+            $isGrantedResults[] = $isGrantedEdit;
         }
+        $this->authorizationChecker->expects($this->exactly(count($isGrantedExpectations)))
+            ->method('isGranted')
+            ->withConsecutive(...$isGrantedExpectations)
+            ->willReturnOnConsecutiveCalls(...$isGrantedResults);
 
         $this->assertEquals($expected, $this->handler->isAllowed($shoppingList));
     }
 
-    /** @return array */
-    public function isAllowedDataProvider()
+    public function isAllowedDataProvider(): array
     {
         return [
             [false, false],
@@ -194,10 +192,6 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $productIds
-     * @param array $productUnitsWithQuantities
-     * @param array $expectedLineItems
-     *
      * @dataProvider itemDataProvider
      */
     public function testCreateForShoppingList(
@@ -206,7 +200,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit\Framework\MockObject\MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->createMock(ShoppingList::class);
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
@@ -228,15 +222,15 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isGranted')
             ->willReturn(true);
 
-        $this->productManager
-            ->expects($this->once())
+        $this->productManager->expects($this->once())
             ->method('restrictQueryBuilder')
             ->with($this->isInstanceOf(QueryBuilder::class), [])
             ->willReturnArgument(0);
 
-        $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
-            $this->callback(
-                function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
+        $this->shoppingListManager->expects($this->once())
+            ->method('bulkAddLineItems')
+            ->with(
+                $this->callback(function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
                     /** @var LineItem $lineItem */
                     foreach ($lineItems as $key => $lineItem) {
                         /** @var LineItem $expectedLineItem */
@@ -245,27 +239,20 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
                         $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
                         $this->assertEquals($customerUser, $lineItem->getCustomerUser());
                         $this->assertEquals($organization, $lineItem->getOrganization());
-                        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
-                        $this->assertInstanceOf(
-                            'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                            $lineItem->getUnit()
-                        );
+                        $this->assertInstanceOf(Product::class, $lineItem->getProduct());
+                        $this->assertInstanceOf(ProductUnit::class, $lineItem->getUnit());
                     }
 
                     return true;
-                }
-            ),
-            $shoppingList,
-            $this->isType('integer')
-        );
+                }),
+                $shoppingList,
+                $this->isType('integer')
+            );
 
         $this->handler->createForShoppingList($shoppingList, $productIds, $productUnitsWithQuantities);
     }
 
-    /**
-     * @return array
-     */
-    public function itemDataProvider()
+    public function itemDataProvider(): array
     {
         return [
             'default quantity 1 is set for product with SKU2 as no info in productUnitsWithQuantities provided' => [
@@ -275,7 +262,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ],
             'lower case sku is acceptable in productUnitsWithQuantities too' => [
                 'productIds' => [1, 2],
-                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'sku2' => ['item' => 3]],
+                'productUnitsWithQuantities' => ['SKU1' => ['item' => 5], 'sku2абв' => ['item' => 3]],
                 'expectedLineItems' => [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(3)]
             ]
         ];
@@ -292,7 +279,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         /** @var Product $product */
         $product = $this->createMock(Product::class);
 
-        $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
+        $this->currentShoppingListManager->expects($this->once())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
 
         $item = $this->handler->prepareLineItemWithProduct($user, $product);
         $this->assertSame($user, $item->getCustomerUser());
@@ -300,29 +289,23 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($product, $item->getProduct());
     }
 
-    /**
-     * @return Registry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getManagerRegistry()
+    private function getManagerRegistry(): ManagerRegistry
     {
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $em = $this->createMock(EntityManager::class);
 
-        /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject $query */
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['iterate'])
-            ->getMockForAbstractClass();
+        $query = $this->createMock(AbstractQuery::class);
 
         $product1 = $this->getEntity(Product::class, [
             'id' => 1,
             'sku' => 'sku1',
+            'skuUppercase' => 'SKU1',
             'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
         ]);
 
         $product2 = $this->getEntity(Product::class, [
             'id' => 2,
-            'sku' => 'sku2',
+            'sku' => 'sku2абв',
+            'skuUppercase' => 'SKU2АБВ',
             'primaryUnitPrecision' => (new ProductUnitPrecision())->setUnit(new ProductUnit())
         ]);
 
@@ -331,35 +314,20 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('iterate')
             ->willReturn($iterableResult);
 
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
-        $queryBuilder->expects($this->any())
-            ->method('getQuery')
-            ->willReturn($query);
-
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository */
-        $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->setMethods(['getProductsQueryBuilder', 'findOneBy'])
-            ->getMock();
-
+        $productRepository = $this->createMock(ProductRepository::class);
         $productRepository->expects($this->any())
             ->method('getProductsQueryBuilder')
             ->willReturn($queryBuilder);
 
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $shoppingListRepository */
-        $shoppingListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->aclHelper->expects($this->any())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
 
-        /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject $productUnitRepository */
-        $productUnitRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
+        $shoppingListRepository = $this->createMock(EntityRepository::class);
+        $productUnitRepository = $this->createMock(EntityRepository::class);
 
         $productUnitRepository->expects($this->any())
             ->method('findOneBy')
@@ -369,29 +337,19 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
 
         $em->expects($this->any())
             ->method('getRepository')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListRepository],
-                        ['Oro\Bundle\ProductBundle\Entity\Product', $productRepository],
-                        ['Oro\Bundle\ProductBundle\Entity\ProductUnit', $productUnitRepository],
-                    ]
-                )
-            );
+            ->willReturnMap([
+                [ShoppingList::class, $shoppingListRepository],
+                [Product::class, $productRepository],
+                [ProductUnit::class, $productUnitRepository],
+            ]);
 
-        $em->expects($this->any())->method('getReference')->will(
-            $this->returnCallback(
-                function ($className, $id) {
-                    return $this->getEntity($className, ['id' => $id]);
-                }
-            )
-        );
+        $em->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function ($className, $id) {
+                return $this->getEntity($className, ['id' => $id]);
+            });
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Registry $managerRegistry */
-        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);

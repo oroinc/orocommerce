@@ -1,0 +1,38 @@
+{% block _no_shopping_lists_widget %}
+    <div class="cart-list-empty">
+        <span class="cart-list-empty__icon" aria-hidden="true"><span class="fa-shopping-cart"></span></span>
+        <span>{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_widget %}
+    {% set collapseId = 'collapse-'|uniqid %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'shopping-list-notes'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <p class="shopping-list-notes__title">{{ 'oro.shoppinglist.notes.label'|trans }}:</p>
+        <div id="{{ collapseId }}" class="shopping-list-notes__content shopping-list-notes__content--limited collapse collapse-overflow no-transition"
+             data-toggle="false"
+             data-trigger-icon-show-class="fa-angle-up"
+             data-trigger-icon-hide-class="fa-angle-down"
+             data-collapsed-text="{{ 'oro.ui.collapse.more'|trans }}"
+             data-expanded-text="{{ 'oro.ui.collapse.less'|trans }}"
+             data-check-overflow="true"
+        >{{ block_widget(block) }}</div>
+        <button class="btn btn--link btn--no-x-offset btn--no-y-offset collapse-toggle"
+                data-toggle="collapse"
+                data-target="{{ '#' ~ collapseId }}"
+                aria-expanded="false"
+                aria-controls="{{ collapseId }}"
+        >
+            <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
+            <span class="fa-angle-down fa--offset-l" data-icon aria-hidden="true"></span>
+        </button>
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_text_widget %}
+    {{ block_widget(block)|nl2br }}
+{% endblock %}

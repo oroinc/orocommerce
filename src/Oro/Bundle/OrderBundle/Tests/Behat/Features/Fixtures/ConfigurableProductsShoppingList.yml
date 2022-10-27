@@ -1,0 +1,29 @@
+include:
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+    - '@OroProductBundle:configurable_products.yml'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    configurable_1:
+        label: 'Configurable products list 1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1_1:
+        product: '@product_A_1'
+        parentProduct: '@configurable_product_A'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@configurable_1'
+        organization: '@organization'
+    lineitem1_2:
+        product: '@product_A_2'
+        parentProduct: '@configurable_product_A'
+        quantity: '2'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@configurable_1'
+        organization: '@organization'

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,18 +23,16 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
+    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ProductVisibilityQueryBuilderModifier */
+    private $modifier;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /**
      * @dataProvider modifyDataProvider
@@ -58,17 +57,15 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
-        $this->configManager->expects($this->at(0))
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH)
-            ->willReturn($configValue);
-        $this->configManager->expects($this->at(1))
-            ->method('get')
-            ->with(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH)
-            ->willReturn($configValue);
+            ->willReturnMap([
+                [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH, false, false, null, $configValue],
+                [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH, false, false, null, $configValue]
+            ]);
 
-        $this->modifier->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->modifier->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
         $this->modifier->modify($queryBuilder);
 
@@ -90,8 +87,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-1',
                     'product-5',
                     'product-6',
-                    'product-7',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'config hidden' => [
@@ -99,7 +96,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'user' => LoadCustomerUserData::EMAIL,
                 'expectedData' => [
                     'product-1',
-                    'product-7',
+                    'продукт-7',
                 ]
             ],
             'anonymous config visible' => [
@@ -110,9 +107,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-3',
                     'product-5',
                     'product-6',
-                    'product-7',
                     'product-8',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'anonymous config hidden' => [
@@ -130,9 +127,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-1',
                     'product-3',
                     'product-6',
-                    'product-7',
                     'product-8',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'customer without group and config visible' => [
@@ -145,9 +142,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-4',
                     'product-5',
                     'product-6',
-                    'product-7',
                     'product-8',
-                    'product-9',
+                    'продукт-7',
+                    'продукт-9',
                 ]
             ],
             'customer without group and config hidden' => [
@@ -170,7 +167,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->select('p.sku')->orderBy('p.sku');
 
         $message = sprintf('%s::productConfigPath not configured', get_class($this->modifier));
-        $this->expectException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage($message);
         $this->modifier->modify($queryBuilder);
     }
@@ -183,7 +180,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->select('p.sku')->orderBy('p.sku');
 
         $message = sprintf('%s::categoryConfigPath not configured', get_class($this->modifier));
-        $this->expectException('\LogicException');
+        $this->expectException(\LogicException::class);
         $this->expectExceptionMessage($message);
         $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->modifier->modify($queryBuilder);
@@ -250,10 +247,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         }
     }
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getProductRepository()
+    private function getProductRepository(): ProductRepository
     {
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass(Product::class)
@@ -275,8 +269,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
@@ -288,13 +281,13 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     private function prepareModifierForAnonymousRestrictionTests()
     {
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
-            $this->getContainer()->get('oro_config.manager'),
+            self::getConfigManager(null),
             $this->getContainer()->get('oro_scope.scope_manager'),
             $this->getContainer()->get('oro_entity.doctrine_helper')
         );
 
-        $this->modifier->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
-        $this->modifier->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setCategoryVisibilitySystemConfigurationPath(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
         $this->modifier->setVisibilityScopeProvider(
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );

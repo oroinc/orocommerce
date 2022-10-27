@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingList\Tests\Unit\Entity\EntityListener\LineItem;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\EntityListener\LineItem;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;

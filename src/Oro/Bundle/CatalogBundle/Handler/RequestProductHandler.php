@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\CatalogBundle\Handler;
 
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Request product handler class
+ */
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
@@ -15,28 +19,32 @@ class RequestProductHandler
     /** @var RequestStack */
     protected $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return bool|integer
-     */
-    public function getCategoryId()
+    public function getCategoryId(): int
+    {
+        return $this->resolveValue(self::CATEGORY_ID_KEY);
+    }
+
+    public function getCategoryContentVariantId(): int
+    {
+        return $this->resolveValue(CategoryPageContentVariantType::CATEGORY_CONTENT_VARIANT_ID_KEY);
+    }
+
+    private function resolveValue(string $name): int
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
-            return false;
+            return 0;
         }
 
-        $value = $request->get(self::CATEGORY_ID_KEY);
+        $value = $request->get($name);
 
         if (is_bool($value)) {
-            return false;
+            return 0;
         }
 
         $value = filter_var($value, FILTER_VALIDATE_INT);
@@ -44,14 +52,26 @@ class RequestProductHandler
             return $value;
         }
 
-        return false;
+        return 0;
     }
 
     /**
-     * @param bool|null $defaultValue
      * @return bool
      */
-    public function getIncludeSubcategoriesChoice($defaultValue = null)
+    public function getOverrideVariantConfiguration()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return false;
+        }
+
+        return filter_var(
+            $request->get(CategoryPageContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY),
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
     {
         if ($defaultValue === null) {
             $defaultValue = self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
@@ -60,10 +80,7 @@ class RequestProductHandler
         return $this->getChoice(self::INCLUDE_SUBCATEGORIES_KEY, $defaultValue);
     }
 
-    /**
-     * @return bool
-     */
-    public function getIncludeNotCategorizedProductsChoice()
+    public function getIncludeNotCategorizedProductsChoice(): bool
     {
         return $this->getChoice(
             self::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY,
@@ -71,12 +88,7 @@ class RequestProductHandler
         );
     }
 
-    /**
-     * @param string $key
-     * @param bool $defaultValue
-     * @return bool
-     */
-    protected function getChoice($key, $defaultValue)
+    protected function getChoice(string $key, bool $defaultValue): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
@@ -89,10 +101,6 @@ class RequestProductHandler
             FILTER_NULL_ON_FAILURE
         );
 
-        if (null === $value) {
-            return $defaultValue;
-        }
-
-        return $value;
+        return $value ?? $defaultValue;
     }
 }

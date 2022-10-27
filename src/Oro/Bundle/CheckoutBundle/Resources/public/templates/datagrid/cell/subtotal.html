@@ -1,0 +1,15 @@
+<% if (typeof subtotal !== 'undefined' && subtotal !== null) { %>
+    <% if (typeof discount !== 'undefined' && discount !== null) { %>
+    <div class="mobile-row label-in-mobile-start label-bold-in-mobile" data-name="price-value" data-label="<%- _.__('oro.frontend.shoppinglist.initial_subtotal.label') %>:"><s><%- initialSubtotal %></s></div>
+    <div class="mobile-row label-in-mobile-start label-bold-in-mobile" data-name="price-value" data-label="<%- _.__('oro.frontend.shoppinglist.discount.label') %>:">-<%- discount %></div>
+    <% } %>
+<div class="bold mobile-row label-in-mobile-start" data-name="price-value" data-label="<%- _metadata.label %>:"><%- subtotal %></div>
+<% } else { %>
+<div class="mobile-row"
+     data-name="price-not-found"
+    <% if (obj._blankContent) { %>
+        data-blank-content="<%- obj_blankContent %>"
+    <% } %>
+    ><span class="bold label-in-mobile-start" data-label="<%- _metadata.label %>:"></span>
+</div>
+<% } %>

@@ -1,0 +1,13 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    test_value_with_wysiwyg:
+        text: 'Test Value'
+        wysiwyg: 'Content. Twig Expr: "{{ " test "|trim }}".'
+        wysiwyg_style: '.test {color: {{ " red "|trim }}}'
+        wysiwyg_properties: { param: value }
+    test_value_with_empty_wysiwyg:
+        text: 'Test Value'
+        wysiwyg: ''
+        wysiwyg_style: ''
+        wysiwyg_properties: []
+    test_value_without_wysiwyg:
+        text: 'Test Value'

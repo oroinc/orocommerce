@@ -48,7 +48,7 @@ workflows:
                 step_to: sent_to_customer
                 acl_resource: oro_quote_review_and_approve
                 transition_definition: send_to_customer_transition_definition
-                dialog_template: 'OroSaleBundle:Workflow:emailNotification.html.twig'
+                dialog_template: '@OroSale/Workflow/emailNotification.html.twig'
                 frontend_options:
                     icon: 'fa-envelope'
                     dialog:

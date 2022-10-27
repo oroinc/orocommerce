@@ -2,53 +2,33 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
-/**
- * @method \PHPUnit\Framework\MockObject\MockBuilder getMock($className)
- * @method \PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount any()
- */
 trait QuantityTypeTrait
 {
-    /**
-     * @var string
-     */
-    public static $name = QuantityType::NAME;
+    private ?NumberFormatter $formatterService = null;
 
-    /**
-     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $roundingService;
-
-    /**
-     * @return RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    public function getRoundingService()
+    private function getFormatterService(): NumberFormatter
     {
-        if (!$this->roundingService) {
-            $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        if (!$this->formatterService) {
+            $this->formatterService = $this->createMock(NumberFormatter::class);
+            $this->formatterService->expects(self::any())
+                ->method('parseFormattedDecimal')
+                ->willReturnCallback(function ($value) {
+                    return (float)$value;
+                });
+            $this->formatterService->expects(self::any())
+                ->method('formatDecimal')
+                ->willReturnArgument(0);
         }
 
-        return $this->roundingService;
+        return $this->formatterService;
     }
 
-    /**
-     * @return RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    public function getQuantityType()
+    private function getQuantityType(): QuantityType
     {
-        return new QuantityType($this->getRoundingService(), 'Oro\Bundle\ProductBundle\Entity\Product');
-    }
-
-    public function addRoundingServiceExpect()
-    {
-        $this->roundingService->expects($this->any())
-            ->method('round')
-            ->willReturnCallback(
-                function ($value, $precision) {
-                    return round($value, $precision);
-                }
-            );
+        return new QuantityType($this->getFormatterService(), Product::class);
     }
 }

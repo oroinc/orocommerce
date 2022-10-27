@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Layout\Block\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
@@ -14,6 +15,9 @@ use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Util\BlockUtils;
 
+/**
+ * Product price layout block type.
+ */
 class ProductPricesType extends AbstractContainerType
 {
     const NAME = 'product_prices';
@@ -27,10 +31,6 @@ class ProductPricesType extends AbstractContainerType
     /** @var array */
     private $fetchedAttributes = [];
 
-    /**
-     * @param AttributeRenderRegistry $attributeRenderRegistry
-     * @param AttributeManager $attributeManager
-     */
     public function __construct(AttributeRenderRegistry $attributeRenderRegistry, AttributeManager $attributeManager)
     {
         $this->attributeRenderRegistry = $attributeRenderRegistry;
@@ -39,7 +39,7 @@ class ProductPricesType extends AbstractContainerType
 
     /**
      * @param AttributeFamily $attributeFamily
-     * @return mixed
+     * @return FieldConfigModel|null
      */
     private function getAttribute(AttributeFamily $attributeFamily)
     {
@@ -67,14 +67,12 @@ class ProductPricesType extends AbstractContainerType
         $attributeFamily = $options['attributeFamily'];
 
         $attribute = $this->getAttribute($attributeFamily);
-
         if (!$attribute) {
             return;
         }
 
-        $attributeOptions = $attribute->toArray('attribute');
-        $visibility = isset($attributeOptions['visible']) ? $attributeOptions['visible'] : true;
-        $options->setMultiple(['visible' => $visibility]);
+        $attributeOptions = $attribute->toArray('frontend');
+        $options->setMultiple(['visible' => $attributeOptions['is_displayable'] ?? true]);
 
         $this->attributeRenderRegistry->setAttributeRendered($attributeFamily, $attribute->getFieldName());
     }

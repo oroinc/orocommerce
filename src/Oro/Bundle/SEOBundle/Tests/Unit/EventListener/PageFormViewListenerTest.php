@@ -6,24 +6,18 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\SEOBundle\EventListener\PageFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
 
 class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var PageFormViewListener */
-    protected $listener;
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new PageFormViewListener($this->translator);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener);
-
-        parent::tearDown();
     }
 
     public function testOnLandingPageView()
@@ -45,7 +39,7 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
         $env = $this->getEnvironmentForEdit();
         $scrollData = new ScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, $page);
+        $event = new BeforeListRenderEvent($env, $scrollData, $page, new FormView());
 
         $this->listener->onPageEdit($event);
     }

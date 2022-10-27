@@ -52,6 +52,8 @@ class DiscountLineItem implements DiscountLineItemInterface
      */
     protected $subtotal = 0.0;
 
+    protected ?float $subtotalAfterDiscounts = null;
+
     /**
      * @var array|DiscountInterface[]
      */
@@ -76,7 +78,9 @@ class DiscountLineItem implements DiscountLineItemInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Price $price
+     *
+     * @return $this
      */
     public function setPrice(Price $price)
     {
@@ -100,16 +104,10 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
-        if ($product) {
-            $this->setProductSku($product->getSku());
-        }
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getProductSku(): string
     {
         if ($this->getProduct()) {
@@ -145,16 +143,10 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
-        if ($productUnit) {
-            $this->setProductUnitCode($productUnit->getCode());
-        }
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getProductUnitCode(): string
     {
         if ($this->productUnit) {
@@ -194,9 +186,6 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getSubtotal(): float
     {
         return $this->subtotal;
@@ -209,6 +198,24 @@ class DiscountLineItem implements DiscountLineItemInterface
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubtotalAfterDiscounts(): float
+    {
+        return $this->subtotalAfterDiscounts ?? $this->getSubtotal();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self
+    {
+        $this->subtotalAfterDiscounts = $subtotal;
 
         return $this;
     }
@@ -270,9 +277,6 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this->discountsInformation;
     }
 
-    /**
-     * @return float
-     */
     public function getDiscountTotal(): float
     {
         $value = 0.0;
@@ -300,5 +304,29 @@ class DiscountLineItem implements DiscountLineItemInterface
         $this->sourceLineItem = $sourceLineItem;
 
         return $this;
+    }
+
+    /**
+     * Clones (creates new instances) certain fields which can be modified in cloned context
+     * to avoid modification of original one
+     * Other properties remains the same (ref links for objects)
+     */
+    public function __clone()
+    {
+        $this->price = \is_object($this->price) ? clone $this->price : null;
+        $this->productUnit = \is_object($this->productUnit) ? clone $this->productUnit : null;
+        $this->discounts = \array_map(
+            function ($o) {
+                return clone $o;
+            },
+            $this->discounts
+        );
+        $this->discountsInformation = \array_map(
+            function ($o) {
+                return clone $o;
+            },
+            $this->discountsInformation
+        );
+        $this->sourceLineItem = \is_object($this->sourceLineItem) ? clone $this->sourceLineItem : null;
     }
 }

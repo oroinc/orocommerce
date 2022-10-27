@@ -1,19 +1,19 @@
 .product {
-  &__select {
+    &__select {
+        &_choose {
+            max-width: 360px;
+        }
 
-    &_choose {
-      max-width: 360px;
+        &_piece {
+            max-width: 100px;
+        }
     }
-
-    &_piece {
-      max-width: 100px;
-    }
-  }
 }
 
 .product_view_request_quote {
-  padding-bottom: 1.3rem;
+    padding-bottom: 1.3rem;
 }
+
 .product_view_request_quote_for_unit {
-  margin: 0 1rem;
+    margin: 0 1rem;
 }

@@ -1,0 +1,10 @@
+services:
+    oro_behat_extension.isolation.pricing_storage:
+        class: 'Oro\Bundle\PricingBundle\Tests\Behat\Isolation\PricingStorageIsolator'
+        arguments:
+            - '@fob_symfony.kernel'
+        tags:
+            - { name: 'oro_behat.isolator', priority: 500 }
+
+    Oro\Bundle\PricingBundle\Tests\Behat\ReferenceRepositoryInitializer:
+        tags: [ oro_behat.reference_repository_initializer ]

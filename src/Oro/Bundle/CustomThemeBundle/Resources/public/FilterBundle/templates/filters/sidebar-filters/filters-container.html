@@ -1,0 +1,113 @@
+<% if (!_.isEmpty(filters)) { %>
+    <% if (renderMode === 'toggle-mode') { %>
+        <div class="filter-box <%- renderMode %>">
+            <div class="filter-container">
+                <div class="filter-container-header">
+                    <div class="filter-container-title">
+                        <h2><%- _.__('oro.product.sidebar_filters.title') %></h2>
+                    </div>
+
+                    <div class="filter-container-manager">
+                        <div class="filter-actions" data-role="filter-actions">
+                            <% if (obj.enableMultiselectWidget) { %>
+                            <div data-role="filter-container-manager">
+                                <select data-action="add-filter-select" data-skip-input-widgets multiple>
+                                    <% _.each(filters, function (filter, name) { %>
+                                        <% if (filter.visible) { %>
+                                            <option class="<%- filter.visible ? '' : 'hidden' %>"
+                                                    title="<%- filter.label %>"
+                                                    value="<%- name %>"
+                                                <% if (filter.renderable) { %>selected<% } %>
+                                            ><%- filter.label %></option>
+                                        <% } %>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div data-filters-items>
+                    <div class="filter-items"></div>
+                </div>
+            </div>
+        </div>
+    <% } else if (renderMode == 'collapse-mode') { %>
+        <% var collapseContainerId = _.uniqueId('criteria-container-');  %>
+        <div class="filter-box collapse-mode" <%= attributes %> >
+            <div class="filters-box-collapse">
+                <div class="filters-box-collapse__header">
+                    <button class="filters-box-collapse__trigger btn btn--default btn--size-s btn--full"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#<%- collapseContainerId %>"
+                            aria-controls="<%- collapseContainerId %>"
+                            aria-expanded="false"
+                    ><%- _.__('oro.product.product_filters.collapse.label')  %>
+                        <span class="filters-box-collapse__icon fa-plus fa--no-offset" aria-hidden="true" data-icon></span>
+                    </button>
+                </div>
+                <div id="<%- collapseContainerId %>" class="filters-box-collapse__container collapse"
+                    data-trigger-icon-show-class="fa-minus"
+                    data-trigger-icon-hide-class="fa-plus"
+                >
+                    <div class="filter-container dropdown-mode">
+                        <% if (obj.enableMultiselectWidget) { %>
+                        <select data-action="add-filter-select"
+                                data-skip-input-widgets
+                                multiple
+                        >
+                            <% _.each(filters, function (filter, name) { %>
+                                <% if (filter.visible) { %>
+                                    <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.renderable) { %>selected<% } %>>
+                                        <%- filter.label %>
+                                    </option>
+                                <% } %>
+                            <% }); %>
+                        </select>
+                        <% } %>
+                        <div class="filter-items"></div>
+                    </div>
+                    <div class="filter-items-hint">
+                        <button type="button"
+                                class="btn btn--size-s btn--link reset-filter-button"
+                        >
+                            <span class="fa-close" aria-hidden="true"></span>
+                            <%- _.__('oro.filter.reset.label') %>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="filter-box dropdown-mode" <%= attributes %> >
+            <div class="filter-container">
+                <div class="filter-items"></div>
+                <div class="filter-actions" data-role="filter-actions">
+                    <% if (obj.enableMultiselectWidget) { %>
+                    <select data-action="add-filter-select"
+                            data-skip-input-widgets
+                            multiple
+                    >
+                        <% _.each(filters, function (filter, name) { %>
+                            <% if (filter.visible) { %>
+                                <option title="<%- filter.label %>" value="<%- name %>" <% if (filter.renderable) { %>selected<% } %>>
+                                    <%- filter.label %>
+                                </option>
+                            <% } %>
+                        <% }); %>
+                    </select>
+                    <% } %>
+                </div>
+                <div class="filter-items-hint">
+                    <button type="button"
+                            class="btn btn--link btn--size-s reset-filter-button"
+                    >
+                        <span class="fa-close" aria-hidden="true"></span>
+                        <%- _.__('oro.filter.reset.label') %>
+                    </button>
+                </div>
+            </div>
+        </div>
+    <% } %>
+<% } %>

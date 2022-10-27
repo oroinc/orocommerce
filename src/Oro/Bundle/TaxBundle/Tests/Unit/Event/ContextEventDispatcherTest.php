@@ -10,16 +10,13 @@ class ContextEventDispatcherTest extends \PHPUnit\Framework\TestCase
 {
     public function testDispatch()
     {
-        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
-        $eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $taxDispatcher = new ContextEventDispatcher($eventDispatcher);
 
-        $eventDispatcher->expects($this->once())->method('dispatch')
-            ->with(
-                ContextEvent::NAME,
-                $this->isInstanceOf('Oro\Bundle\TaxBundle\Event\ContextEvent')
-            );
+        $eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(ContextEvent::class), ContextEvent::NAME);
 
         $taxDispatcher->dispatch(new \stdClass());
     }

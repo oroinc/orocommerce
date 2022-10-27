@@ -42,7 +42,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $criteria = array_map(
             function (Category $category) {
-                return Criteria::expr()->exists('integer.category_path_'. $category->getMaterializedPath());
+                return Criteria::expr()->exists('integer.category_paths.'. $category->getMaterializedPath());
             },
             $categories
         );
@@ -104,13 +104,13 @@ class ProductRepository extends WebsiteSearchRepository
         $counts = array_filter(
             $counts,
             function ($path) use ($rootCategoryPath) {
-                return strpos($path, $rootCategoryPath) === 0;
+                return str_starts_with($path, $rootCategoryPath);
             },
             ARRAY_FILTER_USE_KEY
         );
 
         foreach ($counts as $path => $count) {
-            $path = str_replace($rootCategoryPath, '', $path);
+            $path = preg_replace("/^$rootCategoryPath/", '', $path);
             $pathParts = explode('_', $path);
             $mainCategoryId = reset($pathParts);
 

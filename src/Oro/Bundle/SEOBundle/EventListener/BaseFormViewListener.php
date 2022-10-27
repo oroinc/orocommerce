@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * The base listener which should be extended by class which will manipulate SEO scroll data blocks.
+ */
 abstract class BaseFormViewListener
 {
     const SEO_BLOCK_ID = 'seo';
@@ -17,9 +18,6 @@ abstract class BaseFormViewListener
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -37,15 +35,15 @@ abstract class BaseFormViewListener
         }
 
         $twigEnv = $event->getEnvironment();
-        $titleTemplate = $twigEnv->render('OroSEOBundle:SEO:title_view.html.twig', [
+        $titleTemplate = $twigEnv->render('@OroSEO/SEO/title_view.html.twig', [
             'entity' => $object,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
-        $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
+        $descriptionTemplate = $twigEnv->render('@OroSEO/SEO/description_view.html.twig', [
             'entity' => $object,
             'labelPrefix' => $this->getMetaFieldLabelPrefix(),
         ]);
-        $keywordsTemplate = $twigEnv->render('OroSEOBundle:SEO:keywords_view.html.twig', [
+        $keywordsTemplate = $twigEnv->render('@OroSEO/SEO/keywords_view.html.twig', [
             'entity' => $object,
             'labelPrefix' => $this->getMetaFieldLabelPrefix(),
         ]);
@@ -62,15 +60,15 @@ abstract class BaseFormViewListener
         $twigEnv = $event->getEnvironment();
         $formView = $event->getFormView();
         $titleTemplate = $twigEnv->render(
-            'OroSEOBundle:SEO:title_update.html.twig',
+            '@OroSEO/SEO/title_update.html.twig',
             ['form' => $formView]
         );
         $descriptionTemplate = $twigEnv->render(
-            'OroSEOBundle:SEO:description_update.html.twig',
+            '@OroSEO/SEO/description_update.html.twig',
             ['form' => $formView]
         );
         $keywordsTemplate = $twigEnv->render(
-            'OroSEOBundle:SEO:keywords_update.html.twig',
+            '@OroSEO/SEO/keywords_update.html.twig',
             ['form' => $formView]
         );
 

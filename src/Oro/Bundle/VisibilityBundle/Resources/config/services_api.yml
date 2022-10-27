@@ -1,0 +1,113 @@
+services:
+    oro_visibility.api.product_visibility_query_modifier:
+        class: Oro\Bundle\VisibilityBundle\Api\ProductVisibilityQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_visibility.model.product_visibility_query_builder_modifier'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_visibility.api.category_visibility_query_modifier:
+        class: Oro\Bundle\VisibilityBundle\Api\CategoryVisibilityQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_visibility.visibility.provider.category_visibility_provider'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_visibility.api.visibility_id_helper:
+        class: Oro\Bundle\VisibilityBundle\Api\VisibilityIdHelper
+
+    oro_visibility.api.filter_factory.visibility_id:
+        class: Oro\Bundle\VisibilityBundle\Api\Filter\VisibilityIdFilterFactory
+        arguments:
+            - '@oro_visibility.api.visibility_id_helper'
+
+    oro_visibility.api.compute_visibility_id:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\ComputeVisibilityId
+        arguments:
+            - '@oro_visibility.api.visibility_id_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
+
+    oro_visibility.api.load_product_visibility:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\LoadProductVisibility
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@oro_website.manager'
+            - '@oro_visibility.api.visibility_id_helper'
+            - '@oro_visibility.provider.visibility_scope_provider'
+        tags:
+            - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+            - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+            - { name: oro.api.processor, action: get, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+
+    oro_visibility.api.load_customer_product_visibility:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\LoadCustomerProductVisibility
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@oro_website.manager'
+            - '@oro_visibility.api.visibility_id_helper'
+            - '@oro_visibility.provider.visibility_scope_provider'
+        tags:
+            - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+            - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+            - { name: oro.api.processor, action: get, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+
+    oro_visibility.api.load_customer_group_product_visibility:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\LoadCustomerGroupProductVisibility
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@oro_website.manager'
+            - '@oro_visibility.api.visibility_id_helper'
+            - '@oro_visibility.provider.visibility_scope_provider'
+        tags:
+            - { name: oro.api.processor, action: delete, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
+            - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
+            - { name: oro.api.processor, action: get, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
+
+    oro_visibility.api.set_product_visibility_scope:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\SetProductVisibilityScope
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_website.manager'
+            - '@translator'
+            - '@oro_visibility.provider.visibility_scope_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+
+    oro_visibility.api.set_customer_product_visibility_scope:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\SetCustomerProductVisibilityScope
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_website.manager'
+            - '@translator'
+            - '@oro_visibility.provider.visibility_scope_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+
+    oro_visibility.api.set_customer_group_product_visibility_scope:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\SetCustomerGroupProductVisibilityScope
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_website.manager'
+            - '@translator'
+            - '@oro_visibility.provider.visibility_scope_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }
+
+    oro_visibility.api.disable_includes_for_visibility_entities:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\DisableIncludesForVisibilityEntities
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, requestType: '!frontend&json_api', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility, priority: -43 }
+            - { name: oro.api.processor, action: update, group: normalize_input, requestType: '!frontend&json_api', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility, priority: -43 }
+            - { name: oro.api.processor, action: create, group: normalize_input, requestType: '!frontend&json_api', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility, priority: -43 }
+            - { name: oro.api.processor, action: update, group: normalize_input, requestType: '!frontend&json_api', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility, priority: -43 }
+            - { name: oro.api.processor, action: create, group: normalize_input, requestType: '!frontend&json_api', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility, priority: -43 }
+            - { name: oro.api.processor, action: update, group: normalize_input, requestType: '!frontend&json_api', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility, priority: -43 }

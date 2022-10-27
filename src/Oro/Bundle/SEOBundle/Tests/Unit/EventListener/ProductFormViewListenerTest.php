@@ -6,24 +6,19 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
+use Twig\Environment;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {
     /** @var ProductFormViewListener */
-    protected $listener;
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->listener = new ProductFormViewListener($this->translator);
-    }
-
-    protected function terDown()
-    {
-        unset($this->listener);
-
-        parent::tearDown();
     }
 
     public function testOnProductView()
@@ -45,35 +40,29 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
         $env = $this->getEnvironmentForEdit();
         $scrollData = new ScrollData();
 
-        $event = new BeforeListRenderEvent($env, $scrollData, $product);
+        $event = new BeforeListRenderEvent($env, $scrollData, $product, new FormView());
 
         $this->listener->onProductEdit($event);
     }
 
     /**
-     * @param object $entityObject
-     * @param string $labelPrefix
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment
+     * {@inheritDoc}
      */
-    protected function getEnvironmentForView($entityObject, $labelPrefix)
+    protected function getEnvironmentForView(object $entityObject, string $labelPrefix): Environment
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder(\Twig_Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $env = $this->createMock(Environment::class);
         $env->expects($this->exactly(4))
             ->method('render')
             ->willReturnMap([
                 [
-                    'OroSEOBundle:SEO:title_view.html.twig',
+                    '@OroSEO/SEO/title_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix,
                     ],
                     '',
                 ],                [
-                    'OroSEOBundle:SEO:description_view.html.twig',
+                    '@OroSEO/SEO/description_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix,
@@ -81,7 +70,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
                     '',
                 ],
                 [
-                    'OroSEOBundle:SEO:keywords_view.html.twig',
+                    '@OroSEO/SEO/keywords_view.html.twig',
                     [
                         'entity' => $entityObject,
                         'labelPrefix' => $labelPrefix,
@@ -89,7 +78,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
                     '',
                 ],
                 [
-                    'OroRedirectBundle::entitySlugs.html.twig',
+                    '@OroRedirect/entitySlugs.html.twig',
                     [
                         'entitySlugs' => $entityObject->getSlugs(),
                     ],

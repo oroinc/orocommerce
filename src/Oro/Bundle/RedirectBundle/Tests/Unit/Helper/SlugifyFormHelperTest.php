@@ -12,11 +12,11 @@ class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
      */
     private $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new SlugifyFormHelper();
     }
-    
+
     public function testAddSlugifyOptionsLocalized()
     {
         $viewParent = new FormView();
@@ -44,7 +44,7 @@ class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
             $view->vars['slugify_component_options']['slugify_route']
         );
     }
-    
+
     public function testAddSlugifyOptions()
     {
         $viewParent = new FormView();

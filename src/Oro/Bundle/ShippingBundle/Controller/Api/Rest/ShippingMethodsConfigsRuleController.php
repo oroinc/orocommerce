@@ -2,11 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -15,10 +10,9 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("shippingrules")
- * @NamePrefix("oro_api_")
+ * REST API Shipping Methods Configs Rule Controller
  */
-class ShippingMethodsConfigsRuleController extends RestController implements ClassResourceInterface
+class ShippingMethodsConfigsRuleController extends RestController
 {
     /**
      * Enable shipping rule
@@ -26,11 +20,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * Returns
      * - HTTP_OK (200)
      *
-     * @Get(
-     *      "/shippingrules/{id}/enable",
-     *      requirements={"version"="latest|v1"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
@@ -38,7 +27,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @return Response
      */
-    public function enableAction($id)
+    public function enableAction(int $id)
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
@@ -57,11 +46,11 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
                     'message' => $this->get('translator')->trans('oro.shipping.notification.channel.enabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->handleView(
@@ -75,11 +64,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * Returns
      * - HTTP_OK (200)
      *
-     * @Get(
-     *      "/shippingrules/{id}/disable",
-     *      requirements={"version"="latest|v1"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
@@ -87,7 +71,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *
      * @return Response
      */
-    public function disableAction($id)
+    public function disableAction(int $id)
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
@@ -106,11 +90,11 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
                     'message' => $this->get('translator')->trans('oro.shipping.notification.channel.disabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->handleView(
@@ -156,7 +140,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
                     'message' => $errors->get(0)->getMessage(),
                     'successful' => false,
                 ],
-                Codes::HTTP_BAD_REQUEST
+                Response::HTTP_BAD_REQUEST
             );
 
             return $this->handleView(

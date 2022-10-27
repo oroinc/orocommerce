@@ -9,12 +9,16 @@ services:
             - '%oro_money_order.method.identifier_prefix.money_order%'
 
     oro_money_order.repository.money_settings:
-        class: 'Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository'
+        alias: Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository
+
+    Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
 
     oro_money_order.event_listener.money_order_options:
         class: 'Oro\Bundle\MoneyOrderBundle\EventListener\MoneyOrderOptionsListener'

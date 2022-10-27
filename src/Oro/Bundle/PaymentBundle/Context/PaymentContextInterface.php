@@ -8,6 +8,9 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Provides an interface for payment context
+ */
 interface PaymentContextInterface extends CustomerOwnerAwareInterface
 {
     /**
@@ -59,4 +62,9 @@ interface PaymentContextInterface extends CustomerOwnerAwareInterface
      * @return Website|null
      */
     public function getWebsite();
+
+    /**
+     * @return float
+     */
+    public function getTotal();
 }

@@ -62,7 +62,7 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->address = new AddressStub();
         $this->pickupDate = new \DateTime();

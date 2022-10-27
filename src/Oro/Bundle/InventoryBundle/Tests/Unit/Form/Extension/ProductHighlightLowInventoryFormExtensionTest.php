@@ -11,7 +11,7 @@ class ProductHighlightLowInventoryFormExtensionTest extends ProductInventoryTest
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productFormExtension = new ProductHighlightLowInventoryFormExtension();
     }

@@ -1,34 +1,264 @@
 services:
+    oro_order.api.order_address_query_modifier:
+        class: Oro\Bundle\OrderBundle\Api\OrderAddressQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
 
-    oro_order.api.form_listener.discount:
-        class: 'Oro\Bundle\OrderBundle\Api\Form\EventListener\DiscountListener'
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - ['customer', 'customerUser', 'lineItems', 'billingAddress', 'shippingAddress']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order_line_item:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
+            - ['order']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.guest_checkout_association_access_exclusion_provider_for_order_address:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+            - ['customerAddress', 'customerUserAddress']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_order.api.update_price_by_value_and_currency:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_order.api.update_order_line_item_product:
+        class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderLineItemProduct
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_order.api.fill_order_address:
+        class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderAddress
+        arguments:
+            - '@oro_order.manager.order_address'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress }
+
+    oro_order.api.add_discount_to_order:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddDiscountToOrder
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderDiscount }
+
+    oro_order.api.add_line_item_to_order:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddLineItemToOrder
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem }
+
+    oro_order.api.set_default_website_to_order:
+        class: Oro\Bundle\WebsiteBundle\Api\Processor\SetDefaultWebsite
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 20 }
+
+    oro_order.api.compute_order_payment_status:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderPaymentStatus
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_payment.formatter.payment_status_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\Order }
+
+    oro_order.api.compute_order_payment_method:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderPaymentMethod
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_payment.formatter.payment_method_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\OrderBundle\Entity\Order }
+
+    oro_order.api.compute_order_shipping:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShipping
+        arguments:
+            - '@?oro_shipping.translator.shipping_method_label'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
+
+    oro_order.api.set_order_default_discount_type:
+        class: Oro\Bundle\OrderBundle\Api\Processor\SetOrderDefaultDiscountType
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
+
+    oro_order.api.disable_order_address_creation:
+        class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderAddressCreation
+        tags:
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, priority: 250 }
+
+    oro_order.api.disable_order_line_item_creation:
+        class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderLineItemCreation
+        tags:
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 250 }
+
+    oro_order.api.handle_order_line_item_empty_price:
+        class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderLineItemEmptyPrice
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 10 }
+
+    oro_order.api.remember_order_line_item_price:
+        class: Oro\Bundle\OrderBundle\Api\Processor\RememberOrderLineItemPrice
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 200 }
+
+    oro_order.api.set_website_to_order:
+        class: Oro\Bundle\WebsiteBundle\Api\Processor\SetWebsite
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 20 }
+
+    oro_order.api.set_currency_to_order:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\SetCurrency
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_locale.settings'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 15 }
+
+    oro_order.api.set_currency_to_order_line_item:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\SetCurrency
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_locale.settings'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 15 }
+
+    oro_order.api.set_customer_to_order:
+        class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomer
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 10 }
+
+    oro_order.api.set_customer_user_to_order:
+        class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomerUser
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 10 }
+
+    oro_order.api.fill_order_line_item_price:
+        class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderLineItemPrice
+        arguments:
+            - '@oro_pricing.provider.matching_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -20 }
+
+    oro_order.api.add_order_to_update_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddOrderToUpdateTotals
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -25 }
+
+    oro_order.api.add_associated_order_to_update_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddAssociatedOrderToUpdateTotals
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -25 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderDiscount, priority: -25 }
+
+    oro_order.api.add_shipping_address_order_to_update_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\AddShippingAddressOrderToUpdateTotals
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', parentAction: update, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, priority: -25 }
+
+    oro_order.api.move_orders_require_totals_update_to_context:
+        class: Oro\Bundle\OrderBundle\Api\Processor\MoveOrdersRequireTotalsUpdateToContext
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, priority: -28 }
+
+    oro_order.api.update_order_totals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderTotals
         arguments:
             - '@oro_order.order.total.total_helper'
-
-    oro_order.api.product_provider.sku_cached:
-        class: 'Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider'
-        public: false
-        arguments:
-            - '@oro_product.repository.product'
-
-    oro_order.api.handle_order_included_data:
-        class: 'Oro\Bundle\OrderBundle\Api\Processor\HandleOrderIncludedData'
-        arguments:
-            - '@oro_order.api.product_provider.sku_cached'
+            - '@oro_api.form_validation_handler'
         tags:
-            - { name: oro.api.processor, action: create, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
-            - { name: oro.api.processor, action: update, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, orders_to_update_totals: exists, priority: -30 }
 
-    oro_order.api.set_price_by_value_and_currency:
-        class: 'Oro\Bundle\CurrencyBundle\Api\Processor\SetPriceByValueAndCurrency'
-        tags:
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
-            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
-
-    oro_order.api.update_request_data_for_order_line_item:
-        class: 'Oro\Bundle\OrderBundle\Api\Processor\UpdateRequestDataForOrderLineItem'
+    oro_order.api.fill_payment_method.payment_term:
+        class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderPaymentMethod
         arguments:
-            - '@oro_order.api.product_provider.sku_cached'
+            - '@oro_order.factory.payment_context'
+            - '@oro_payment.method.provider.applicable_methods_provider'
+            - 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm'
         tags:
-            - { name: oro.api.processor, action: create, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
-            - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -90 }
+
+    oro_order.api.validate_payment_method_exists:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ValidatePaymentMethodExists
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -100 }
+
+    oro_order.api.update_order_discount_value:
+        class: Oro\Bundle\OrderBundle\Api\Processor\UpdateOrderDiscountValue
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderDiscount }
+
+    oro_order.api.place_order:
+        class: Oro\Bundle\OrderBundle\Api\Processor\PlaceOrder
+        arguments:
+            - '@oro_api.action_group_executor'
+            - '@oro_api.doctrine_helper'
+            - 'api_order_purchase_by_payment_term'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
+
+    oro_order.api.disable_guest_checkout_security_check:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DisableGuestCheckoutSecurityCheck
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 150 }
+            - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 150 }
+            - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, priority: 150 }
+
+    oro_order.api.configure_guest_checkout_owner_access:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutOwnerAccess
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - '@oro_customer.owner.frontend_ownership_metadata_provider'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, targetAction: create, priority: -250 }
+
+    oro_order.api.configure_guest_checkout_readonly_fields_for_order:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutReadonlyFields
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - ['customer']
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, targetAction: create, priority: -250 }
+
+    oro_order.api.validate_guest_checkout_order_customer_user:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ValidateGuestCheckoutCustomerUser
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 100 }

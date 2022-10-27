@@ -8,7 +8,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class CheckoutLineItemsConverterTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,23 +19,21 @@ class CheckoutLineItemsConverterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->checkoutLineItemsConverter = new CheckoutLineItemsConverter(PropertyAccess::createPropertyAccessor());
+        $this->checkoutLineItemsConverter = new CheckoutLineItemsConverter();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->checkoutLineItemsConverter);
     }
 
     /**
      * @dataProvider convertDataProvider
-     * @param array $data
-     * @param ArrayCollection $expected
      */
     public function testConvert(array $data, ArrayCollection $expected)
     {

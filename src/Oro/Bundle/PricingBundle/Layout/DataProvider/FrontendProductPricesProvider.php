@@ -2,135 +2,96 @@
 
 namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
 /**
  * Provides methods to get prices with currencies, units and quantities
- * for regular products, configurable products and product variants
+ * for regular products, configurable products and product variants.
  */
 class FrontendProductPricesProvider
 {
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
+    private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
+    private ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
+    private UserCurrencyManager $userCurrencyManager;
+    private ProductPriceFormatter $productPriceFormatter;
+    private ProductPriceProviderInterface $productPriceProvider;
+    private FrontendProductUnitsProvider $productUnitsProvider;
 
-    /**
-     * @var array
-     */
-    protected $productPrices = [];
+    /** @var array [product id => [formatted price (array), ...], ...] */
+    private array $productPrices = [];
 
-    /**
-     * @var array
-     */
-    protected $variantsPrices = [];
+    /** @var array [configurable product id => [simple product id => [formatted price (array), ...], ...], ...] */
+    private array $variantsPrices = [];
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var PriceListRequestHandler
-     */
-    protected $priceListRequestHandler;
-
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
-    protected $productVariantAvailabilityProvider;
-
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $userCurrencyManager;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param PriceListRequestHandler $priceListRequestHandler
-     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
-     * @param UserCurrencyManager $userCurrencyManager
-     * @param ProductPriceFormatter $productPriceFormatter
-     * @param ShardManager $shardManager
-     */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        PriceListRequestHandler $priceListRequestHandler,
+        ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         UserCurrencyManager $userCurrencyManager,
         ProductPriceFormatter $productPriceFormatter,
-        ShardManager $shardManager
+        ProductPriceProviderInterface $productPriceProvider,
+        FrontendProductUnitsProvider $productUnitsProvider
     ) {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
-        $this->shardManager = $shardManager;
-        $this->priceListRequestHandler = $priceListRequestHandler;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->productPriceFormatter = $productPriceFormatter;
+        $this->productPriceProvider = $productPriceProvider;
+        $this->productUnitsProvider = $productUnitsProvider;
+    }
+
+    /**
+     * @param Product|ProductView $product
+     *
+     * @return array [formatted price (array), ...]
+     */
+    public function getByProduct(Product|ProductView $product): array
+    {
+        $productId = $product->getId();
+        $this->prepareAndSetPricesForProduct($productId);
+
+        return $this->getProductPrices($productId);
     }
 
     /**
      * @param Product $product
      *
-     * @return ProductPrice[]
+     * @return array [simple product id => [formatted price (array), ...], ...]
      */
-    public function getByProduct(Product $product)
+    public function getVariantsPricesByProduct(Product $product): array
     {
-        $this->prepareAndSetProductsPrices([$product]);
+        $productId = $product->getId();
+        $this->prepareAndSetPricesForProduct($productId);
 
-        return $this->getProductPrices($product->getId());
+        return $this->variantsPrices[$productId] ?? [];
     }
 
     /**
-     * @param Product $product
+     * @param ProductView[] $products
      *
-     * @return ProductPrice[]
+     * @return array [product id => [formatted price (array), ...], ...]
      */
-    public function getVariantsPricesByProduct(Product $product)
+    public function getByProducts(array $products): array
     {
-        $this->prepareAndSetProductsPrices([$product]);
-
-        return $this->getVariantsPrices($product->getId());
-    }
-
-    /**
-     * @param Product[] $products
-     *
-     * @return array
-     */
-    public function getVariantsPricesByProducts($products)
-    {
-        $this->prepareAndSetProductsPrices($products);
-        $productPrices = [];
-
+        $productIds = [];
         foreach ($products as $product) {
-            if ($product->getType() === Product::TYPE_CONFIGURABLE) {
-                $productId = $product->getId();
-                $productPrices[$productId] = $this->getVariantsPrices($productId);
+            $productId = $product->getId();
+            if (!\array_key_exists($productId, $this->productPrices)) {
+                $productIds[] = $productId;
             }
         }
+        if ($productIds) {
+            $this->setProductsAndVariantsPrices($productIds);
+        }
 
-        return $productPrices;
-    }
-
-    /**
-     * @param Product[] $products
-     *
-     * @return array
-     */
-    public function getByProducts($products)
-    {
-        $this->prepareAndSetProductsPrices($products);
         $productPrices = [];
-
         foreach ($products as $product) {
             $productId = $product->getId();
             if ($this->productPrices[$productId]) {
@@ -141,143 +102,110 @@ class FrontendProductPricesProvider
         return $productPrices;
     }
 
-    /**
-     * @param int $productId
-     *
-     * @return array
-     */
-    protected function getProductPrices(int $productId)
+    public function isShowProductPriceContainer(Product $product): bool
     {
-        return array_key_exists($productId, $this->productPrices) ? $this->productPrices[$productId] : [];
+        return
+            $product->getType() !== Product::TYPE_CONFIGURABLE
+            || $this->isProductHasPrices($product->getId());
     }
 
     /**
      * @param int $productId
      *
-     * @return array
+     * @return array [formatted price (array), ...]
      */
-    protected function getVariantsPrices(int $productId)
+    private function getProductPrices(int $productId): array
     {
-        return array_key_exists($productId, $this->variantsPrices) ? $this->variantsPrices[$productId] : [];
+        return $this->productPrices[$productId] ?? [];
+    }
+
+    private function prepareAndSetPricesForProduct(int $productId): void
+    {
+        if (!\array_key_exists($productId, $this->productPrices)) {
+            $this->setProductsAndVariantsPrices([$productId]);
+        }
     }
 
     /**
-     * @param Product[] $products
+     * @param int[] $productIds
      */
-    protected function prepareAndSetProductsPrices($products)
+    private function setProductsAndVariantsPrices(array $productIds): void
     {
-        $products = array_filter($products, function (Product $product) {
-            return !array_key_exists($product->getId(), $this->productPrices);
-        });
-
-        if (!$products) {
-            return;
+        $simpleProductIdsMap = $this->productVariantAvailabilityProvider
+            ->getSimpleProductIdsGroupedByConfigurable($productIds);
+        if ($simpleProductIdsMap) {
+            $productIds = array_values(array_unique(array_merge(
+                $productIds,
+                array_merge(...array_values($simpleProductIdsMap))
+            )));
         }
 
-        $configurableProducts = [];
-        foreach ($products as $product) {
-            if ($product->isConfigurable()) {
-                $configurableProducts[$product->getId()] = $this->productVariantAvailabilityProvider
-                    ->getSimpleProductsByVariantFields($product);
-                $products = array_merge($products, $configurableProducts[$product->getId()]);
+        $prices = $this->productPriceProvider->getPricesByScopeCriteriaAndProducts(
+            $this->scopeCriteriaRequestHandler->getPriceScopeCriteria(),
+            $productIds,
+            [$this->userCurrencyManager->getUserCurrency()]
+        );
+        $this->setProductsPrices($productIds, $prices);
+        $this->setVariantsPrices($simpleProductIdsMap);
+    }
+
+    /**
+     * @param int[] $productIds
+     * @param array $prices [product id => [ProductPriceInterface, ...], ...]
+     */
+    private function setProductsPrices(array $productIds, array $prices): void
+    {
+        $productUnits = $this->productUnitsProvider->getUnitsForProducts($productIds);
+        $formattedProductsPricesByUnit = $this->formatProductPrices($prices);
+        foreach ($productIds as $productId) {
+            $productPrices = [];
+            $units = $productUnits[$productId] ?? [];
+            $formattedProductPrices = $formattedProductsPricesByUnit[$productId] ?? [];
+            foreach ($formattedProductPrices as $formattedProductPrice) {
+                if (\in_array($formattedProductPrice['unit'], $units, true)) {
+                    $productPrices[] = $formattedProductPrice;
+                }
             }
+            $this->productPrices[$productId] = $productPrices;
         }
+    }
 
-        // Can't use array_unique here, because it uses __toString() for comparison which uses LocalizedFallbackValue
-        // And array_unique with SORT_REGULAR option leads to nesting level error on complex objects
-        $uniqueProducts = [];
-        foreach ($products as $product) {
-            $uniqueProducts[$product->getId()] = $product;
-        }
-        $products = array_values($uniqueProducts);
-
-        $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
-        $productsIds = array_map(
-            function (Product $product) {
-                return $product->getId();
-            },
-            $products
-        );
-
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');
-        $prices = $priceRepository->findByPriceListIdAndProductIds(
-            $this->shardManager,
-            $priceList->getId(),
-            $productsIds,
-            true,
-            $this->userCurrencyManager->getUserCurrency(),
-            null,
-            [
-                'unit' => 'ASC',
-                'currency' => 'DESC',
-                'quantity' => 'ASC',
-            ]
-        );
-
-        $this->setProductsPrices($products, $prices);
-
-        foreach ($configurableProducts as $configurableId => $simpleProducts) {
-            foreach ($simpleProducts as $product) {
-                if ($this->productPrices[$product->getId()]) {
-                    $this->variantsPrices[$configurableId][$product->getId()] = $this->productPrices[$product->getId()];
+    /**
+     * @param array $simpleProductIdsMap [configurable product id => [simple product id, ...], ...]
+     */
+    private function setVariantsPrices(array $simpleProductIdsMap): void
+    {
+        foreach ($simpleProductIdsMap as $configurableId => $simpleProductIds) {
+            foreach ($simpleProductIds as $simpleProductId) {
+                if ($this->productPrices[$simpleProductId]) {
+                    $this->variantsPrices[$configurableId][$simpleProductId] = $this->productPrices[$simpleProductId];
                 }
             }
         }
     }
 
     /**
-     * @param Product[] $products
-     * @param ProductPrice[] $prices
+     * @param array $prices [product id => [ProductPriceInterface, ...], ...]
+     *
+     * @return array [product id => ['{unit}_{quantity}' => formatted price (array), ...], ...]
      */
-    protected function setProductsPrices($products, $prices)
+    private function formatProductPrices(array $prices): array
     {
-        $productsPrices = [];
-        foreach ($prices as $price) {
-            $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [
-                'quantity' => $price->getQuantity(),
-                'price' => $price->getPrice()->getValue(),
-                'currency' => $price->getPrice()->getCurrency(),
-                'unit'  => $price->getUnit()->getCode(),
-            ];
-        }
-        $productsPrices = $this->productPriceFormatter->formatProducts($productsPrices);
-
-        foreach ($products as $product) {
-            $unitPrecisions = $product->getUnitPrecisions();
-            $unitsToSell = [];
-            foreach ($unitPrecisions as $unitPrecision) {
-                $unitsToSell[$unitPrecision->getUnit()->getCode()] = $unitPrecision->isSell();
+        $productsPricesByUnit = [];
+        foreach ($prices as $productId => $productPrices) {
+            /** @var ProductPriceInterface $price */
+            foreach ($productPrices as $price) {
+                $productsPricesByUnit[$productId][$price->getUnit()->getCode()][] = $price;
             }
-
-            $this->productPrices[$product->getId()] = array_filter(
-                isset($productsPrices[$product->getId()]) ? $productsPrices[$product->getId()] : [],
-                function ($price) use ($unitsToSell) {
-                    return !empty($unitsToSell[$price['unit']]);
-                }
-            );
         }
+
+        return $this->productPriceFormatter->formatProducts($productsPricesByUnit);
     }
 
-    /**
-     * @param Product $product
-     *
-     * @return bool
-     */
-    protected function isProductHasPrices(Product $product)
+    private function isProductHasPrices(int $productId): bool
     {
-        $this->prepareAndSetProductsPrices([$product]);
+        $this->prepareAndSetPricesForProduct($productId);
 
-        return !empty($this->productPrices[$product->getId()]);
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return bool
-     */
-    public function isShowProductPriceContainer(Product $product)
-    {
-        return $product->getType() !== Product::TYPE_CONFIGURABLE || $this->isProductHasPrices($product);
+        return !empty($this->productPrices[$productId]);
     }
 }

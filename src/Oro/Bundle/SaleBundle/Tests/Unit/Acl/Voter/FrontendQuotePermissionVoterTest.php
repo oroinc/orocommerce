@@ -2,66 +2,60 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Acl\Voter;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $token;
+    private $token;
 
-    /** @var CurrentApplicationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $applicationProvider;
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendHelper;
 
     /** @var FrontendQuotePermissionVoter */
-    protected $voter;
+    private $voter;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->token = $this->createMock(TokenInterface::class);
-        $this->applicationProvider = $this->createMock(CurrentApplicationProviderInterface::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
-        $this->voter = new FrontendQuotePermissionVoter($this->applicationProvider);
+        $this->voter = new FrontendQuotePermissionVoter($this->frontendHelper);
     }
 
     public function testVoteWithUnsupportedObject()
     {
         $this->assertEquals(
-            FrontendQuotePermissionVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new \stdClass(), [])
         );
     }
 
-    public function testVoteWithUnsupportedApplication()
+    public function testVoteForBackend()
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ApplicationProvider::DEFAULT_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
 
         $this->assertEquals(
-            FrontendQuotePermissionVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($this->token, new Quote(), ['ATTR'])
         );
     }
 
     /**
-     * @param string $internalStatus
-     * @param int $expectedResult
-     *
      * @dataProvider voteProvider
      */
     public function testVote(string $internalStatus, int $expectedResult)
     {
-        $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')
-            ->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
 
         $quote = $this->getQuoteWithInternalStatus($internalStatus);
 
@@ -71,79 +65,72 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function voteProvider() : array
     {
         return [
             [
                 'status' => 'unknown',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'status' => 'draft',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'status' => 'template',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'open',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'sent_to_customer',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'expired',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'accepted',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'declined',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'deleted',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'status' => 'cancelled',
-                'result' => FrontendQuotePermissionVoter::ACCESS_GRANTED,
+                'result' => VoterInterface::ACCESS_GRANTED,
             ],
             [
                 'status' => 'submitted_for_review',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'status' => 'under_review',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'status' => 'reviewed',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
             [
                 'status' => 'not_approved',
-                'result' => FrontendQuotePermissionVoter::ACCESS_DENIED,
+                'result' => VoterInterface::ACCESS_DENIED,
             ],
         ];
     }
 
-    /**
-     * @param string $status
-     * @return Quote
-     */
-    protected function getQuoteWithInternalStatus(string $status) : Quote
+    private function getQuoteWithInternalStatus(string $status): Quote
     {
         $quote = new Quote();
-        $quote->setInternalStatus(new StubEnumValue($status, $status));
+        $quote->setInternalStatus(new TestEnumValue($status, $status));
 
         return $quote;
     }

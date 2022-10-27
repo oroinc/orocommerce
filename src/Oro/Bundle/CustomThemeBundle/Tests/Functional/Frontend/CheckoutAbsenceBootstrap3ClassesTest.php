@@ -112,9 +112,9 @@ class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        $config = $this->getContainer()->get('oro_config.global');
+        $config = self::getConfigManager('global');
         $config->reset('oro_frontend.frontend_theme');
     }
 
@@ -125,7 +125,7 @@ class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
      */
     private function setCustomerAddress($addressId, Form $form, $addressType)
     {
-        $addressId = $addressId == 0 ?: 'a_' . $addressId;
+        $addressId = $addressId === 0 ? '0' : 'a_' . $addressId;
 
         $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);

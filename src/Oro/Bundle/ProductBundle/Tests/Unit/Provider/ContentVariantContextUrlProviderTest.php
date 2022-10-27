@@ -2,51 +2,41 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class ContentVariantContextUrlProviderTest extends \PHPUnit\Framework\TestCase
+class ContentVariantContextUrlProviderTest extends TestCase
 {
     use EntityTrait;
 
     const DATA = 'someData';
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $requestStack;
+    private RequestStack|MockObject $requestStack;
 
-    /**
-     * @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $cache;
+    private UrlCacheInterface|MockObject $cache;
 
-    /**
-     * @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface|MockObject $localizationProvider;
 
-    /**
-     * @var ContentVariantContextUrlProvider
-     */
-    private $provider;
+    private ContentVariantContextUrlProvider $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->cache = $this->createMock(UrlCacheInterface::class);
-        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
         $this->provider = new ContentVariantContextUrlProvider(
             $this->requestStack,
             $this->cache,
-            $this->userLocalizationManager
+            $this->localizationProvider
         );
     }
 
@@ -58,7 +48,7 @@ class ContentVariantContextUrlProviderTest extends \PHPUnit\Framework\TestCase
         $url = 'URL';
         $localizationId = 1;
         $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
-        $this->userLocalizationManager->expects($this->once())
+        $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
         $this->cache->expects($this->once())

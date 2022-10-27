@@ -13,7 +13,7 @@ Feature: Javascript validation on "Default" Checkout workflow
     Given There is EUR currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I open page with shopping list List 1
+    When Buyer is on "List 1" shopping list
     And I click "Create Order (Custom)"
     And I fill "Checkout Order Review Form" with:
       | PO Number | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus viverra ante, sit amet fringilla ipsum fringilla eu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec vitae felis ac neque posuere egestas. |
@@ -23,7 +23,7 @@ Feature: Javascript validation on "Default" Checkout workflow
       | Notes     | This value should not be blank.                                 |
 
   Scenario: Check validation without error
-    Given I open page with shopping list List 1
+    Given Buyer is on "List 1" shopping list
     And I click "Create Order (Custom)"
     And I fill "Checkout Order Review Form" with:
       | Notes | Customer test note |

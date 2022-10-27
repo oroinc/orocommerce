@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\DependencyInjection;
 
@@ -11,7 +12,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = OroProductExtension::ALIAS;
+    const ROOT_NODE = 'oro_product';
     const RELATED_PRODUCTS_ENABLED = 'related_products_enabled';
     const RELATED_PRODUCTS_BIDIRECTIONAL = 'related_products_bidirectional';
     const MAX_NUMBER_OF_RELATED_PRODUCTS = 'max_number_of_related_products';
@@ -37,12 +38,14 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_IMAGE_WATERMARK_FILE = 'product_image_watermark_file';
     const PRODUCT_IMAGE_WATERMARK_SIZE = 'product_image_watermark_size';
     const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';
+    const PRODUCT_IMAGE_PLACEHOLDER = 'product_image_placeholder';
     const FEATURED_PRODUCTS_SEGMENT_ID = 'featured_products_segment_id';
     const ENABLE_QUICK_ORDER_FORM = 'enable_quick_order_form';
     const GUEST_QUICK_ORDER_FORM = 'guest_quick_order_form';
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
     const BRAND_DIRECT_URL_PREFIX = 'brand_direct_url_prefix';
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
+    const PRODUCT_COLLECTIONS_INDEXATION_PARTIAL = 'product_collections_indexation_partial';
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
     const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
     const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
@@ -53,7 +56,6 @@ class Configuration implements ConfigurationInterface
     const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
     const POPUP_GALLERY_ON_PRODUCT_VIEW = 'popup_gallery_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_VIEW = 'matrix_form_on_product_view';
-    const MATRIX_FORM_ON_SHOPPING_LIST = 'matrix_form_on_shopping_list';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
     const MATRIX_FORM_NONE = 'none';
     const MATRIX_FORM_INLINE = 'inline';
@@ -62,16 +64,34 @@ class Configuration implements ConfigurationInterface
     const DISPLAY_SIMPLE_VARIATIONS = 'display_simple_variations';
     const DISPLAY_SIMPLE_VARIATIONS_EVERYWHERE = 'everywhere';
     const DISPLAY_SIMPLE_VARIATIONS_HIDE_COMPLETELY = 'hide_completely';
+    const DISPLAY_SIMPLE_VARIATIONS_HIDE_CATALOG = 'hide_catalog';
     const LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING = 'limit_filters_sorters_on_product_listing';
+    const DISABLE_FILTERS_ON_PRODUCT_LISTING = 'disable_filters_on_product_listing';
+    const FILTERS_DISPLAY_SETTINGS_STATE = 'filters_display_settings_state';
+    const FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED = 'collapsed';
+    const FILTERS_DISPLAY_SETTINGS_STATE_EXPANDED = 'expanded';
+    const ORIGINAL_FILE_NAMES_ENABLED = 'original_file_names_enabled';
+    const SEARCH_AUTOCOMPLETE_MAX_PRODUCTS = 'search_autocomplete_max_products';
+    const FILTERS_POSITION = 'filters_position';
+    const FILTERS_POSITION_TOP = 'top';
+    const FILTERS_POSITION_SIDEBAR = 'sidebar';
+    const ALLOW_PARTIAL_PRODUCT_SEARCH = 'allow_partial_product_search';
+    const PRODUCT_DATA_EXPORT_ENABLED = 'product_data_export_enabled';
+    const PRODUCT_PRICES_EXPORT_ENABLED = 'product_prices_export_enabled';
+    const PRODUCT_PRICE_TIERS_ENABLED = 'product_price_tiers_export_enabled';
+    const MICRODATA_WITHOUT_PRICES_DISABLED = 'microdata_without_prices_disabled';
+    const SCHEMA_ORG_DESCRIPTION_FIELD = 'schema_org_description_field';
+    const SCHEMA_ORG_DEFAULT_DESCRIPTION = 'oro_product_full_description';
 
     /**
      * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder(static::ROOT_NODE);
 
-        $rootNode = $treeBuilder->root(static::ROOT_NODE);
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
@@ -115,12 +135,14 @@ class Configuration implements ConfigurationInterface
                 static::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
                 static::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
                 static::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
+                static::PRODUCT_IMAGE_PLACEHOLDER => ['value' => null],
                 static::FEATURED_PRODUCTS_SEGMENT_ID => [
                     'value' => '@oro_product.provider.default_value.featured_products'
                 ],
                 static::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 static::DIRECT_URL_PREFIX => ['value' => ''],
                 static::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => static::DEFAULT_CRON_SCHEDULE],
+                static::PRODUCT_COLLECTIONS_INDEXATION_PARTIAL => ['value' => true, 'type' => 'boolean'],
                 static::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
                 static::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
                 static::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
@@ -134,10 +156,6 @@ class Configuration implements ConfigurationInterface
                 static::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
                 static::GUEST_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => false],
                 static::MATRIX_FORM_ON_PRODUCT_VIEW => [
-                    'type' => 'string',
-                    'value' => static::MATRIX_FORM_INLINE
-                ],
-                self::MATRIX_FORM_ON_SHOPPING_LIST => [
                     'type' => 'string',
                     'value' => static::MATRIX_FORM_INLINE
                 ],
@@ -157,18 +175,51 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => true,
                 ],
+                static::DISABLE_FILTERS_ON_PRODUCT_LISTING => ['type' => 'boolean', 'value' => true],
+                static::FILTERS_DISPLAY_SETTINGS_STATE => [
+                    'type' => 'string',
+                    'value' => static::FILTERS_DISPLAY_SETTINGS_STATE_COLLAPSED
+                ],
+                static::ORIGINAL_FILE_NAMES_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::SEARCH_AUTOCOMPLETE_MAX_PRODUCTS => [
+                    'type' => 'integer',
+                    'value' => 4
+                ],
+                static::FILTERS_POSITION => [
+                    'type' => 'string',
+                    'value' => static::FILTERS_POSITION_TOP
+                ],
+                static::ALLOW_PARTIAL_PRODUCT_SEARCH => ['value' => false, 'type' => 'boolean'],
+                static::PRODUCT_DATA_EXPORT_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::PRODUCT_PRICES_EXPORT_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::PRODUCT_PRICE_TIERS_ENABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::MICRODATA_WITHOUT_PRICES_DISABLED => [
+                    'type' => 'boolean',
+                    'value' => true
+                ],
+                static::SCHEMA_ORG_DESCRIPTION_FIELD => [
+                    'type' => 'string',
+                    'value' => static::SCHEMA_ORG_DEFAULT_DESCRIPTION
+                ]
             ]
         );
 
         return $treeBuilder;
     }
 
-
-    /**
-     * @param string $key
-     * @return string
-     */
-    public static function getConfigKeyByName($key)
+    public static function getConfigKeyByName(string $key): string
     {
         return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [static::ROOT_NODE, $key]);
     }

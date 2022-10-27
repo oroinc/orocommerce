@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -15,65 +18,42 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
+use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductPriceCPLEntityListener implements OptionalListenerInterface
+/**
+ * Handles product price changes.
+ */
+class ProductPriceCPLEntityListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use OptionalListenerTrait;
+    use OptionalListenerTrait, FeatureCheckerHolderTrait;
 
-    /**
-     * @var ExtraActionEntityStorageInterface
-     */
-    protected $extraActionsStorage;
+    protected ExtraActionEntityStorageInterface $extraActionsStorage;
+    protected ManagerRegistry $registry;
+    protected PriceListTriggerHandler $priceListTriggerHandler;
+    protected ShardManager $shardManager;
+    protected EventDispatcherInterface $eventDispatcher;
+    protected CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler;
 
-    /**
-     * @var RegistryInterface
-     */
-    protected $registry;
-
-    /**
-     * @var PriceListTriggerHandler
-     */
-    protected $priceListTriggerHandler;
-
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @param ExtraActionEntityStorageInterface $extraActionsStorage
-     * @param RegistryInterface $registry
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param ShardManager $shardManager
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         PriceListTriggerHandler $priceListTriggerHandler,
         ShardManager $shardManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler
     ) {
         $this->extraActionsStorage = $extraActionsStorage;
         $this->registry = $registry;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->shardManager = $shardManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->combinedPriceListBuildTriggerHandler = $combinedPriceListBuildTriggerHandler;
     }
 
-    /**
-     * @param ProductPriceSaveAfterEvent $event
-     */
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
         /** @var ProductPrice $productPrice */
@@ -82,9 +62,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
         $this->handleChanges($productPrice);
     }
 
-    /**
-     * @param ProductPriceRemove $event
-     */
     public function onRemove(ProductPriceRemove $event)
     {
         $productPrice = $event->getPrice();
@@ -92,25 +69,28 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
         $this->handleChanges($productPrice);
     }
 
-    /**
-     * @param ProductPrice $productPrice
-     */
     protected function handleChanges(ProductPrice $productPrice)
     {
         if (!$this->enabled || !$this->isProductPriceValid($productPrice)) {
             return;
         }
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(
-            Topics::RESOLVE_COMBINED_PRICES,
+        // Since there is already a price list check after adding the price, it does not make sense to
+        // recalculate the combined price list, as this combined price list may be incomplete.
+        if ($this->combinedPriceListBuildTriggerHandler->isSupported($productPrice->getPriceList())) {
+            return;
+        }
+
+        $this->priceListTriggerHandler->handlePriceListTopic(
+            ResolveCombinedPriceByPriceListTopic::getName(),
             $productPrice->getPriceList(),
             [$productPrice->getProduct()]
         );
     }
 
-    /**
-     * @param ProductPrice $productPrice
-     */
     protected function addPriceListToProductRelation(ProductPrice $productPrice)
     {
         if (!$this->isProductPriceValid($productPrice)) {
@@ -130,15 +110,12 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
         $relation = $this->findRelation($product, $priceList);
         if ($isCreated && $relation) {
             $this->eventDispatcher->dispatch(
-                PriceListToProductSaveAfterEvent::NAME,
-                new PriceListToProductSaveAfterEvent($relation)
+                new PriceListToProductSaveAfterEvent($relation),
+                PriceListToProductSaveAfterEvent::NAME
             );
         }
     }
 
-    /**
-     * @param ProductPrice $productPrice
-     */
     protected function removePriceListToProductRelation(ProductPrice $productPrice)
     {
         if (!$this->isProductPriceValid($productPrice)) {
@@ -187,10 +164,6 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface
         return $priceList && $product && $priceList->getId() && $product->getId();
     }
 
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
     protected function getRepository(string $className): ObjectRepository
     {
         return $this->registry->getManagerForClass($className)->getRepository($className);

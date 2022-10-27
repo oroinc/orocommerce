@@ -9,14 +9,14 @@ class ShoppingListLineItem extends Element implements LineItemInterface
     /**
      * {@inheritdoc}
      */
-    public function getProductSKU()
+    public function getProductSKU(): string
     {
         return $this->getElement('ShoppingListLineItemProductSku')->getText();
     }
 
     public function delete()
     {
-        $deleteButton = $this->find('css', 'i.fa-trash-o');
+        $deleteButton = $this->find('css', 'span.fa-trash-o');
         $deleteButton->click();
     }
 }

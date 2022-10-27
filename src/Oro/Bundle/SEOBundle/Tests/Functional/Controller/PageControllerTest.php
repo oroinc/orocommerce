@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -10,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class PageControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -31,10 +30,10 @@ class PageControllerTest extends WebTestCase
 
         $this->checkSeoSectionExistence($crawler);
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
+        $crfToken = $this->getCsrfToken('cms_page')->getValue();
         $parameters = [
             'input_action' => 'save_and_stay',
-            'oro_catalog_category' => ['_token' => $crfToken],
+            'oro_cms_page' => ['_token' => $crfToken],
         ];
         $parameters['oro_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
         $parameters['oro_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
@@ -48,10 +47,11 @@ class PageControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
+        static::assertStringNotContainsString('The CSRF token is invalid. Please try to resubmit the form.', $html);
 
-        $this->assertContains(LoadPageMetaData::META_TITLES, $html);
-        $this->assertContains(LoadPageMetaData::META_DESCRIPTIONS, $html);
-        $this->assertContains(LoadPageMetaData::META_KEYWORDS, $html);
+        static::assertStringContainsString(LoadPageMetaData::META_TITLES, $html);
+        static::assertStringContainsString(LoadPageMetaData::META_DESCRIPTIONS, $html);
+        static::assertStringContainsString(LoadPageMetaData::META_KEYWORDS, $html);
     }
 
     /**
@@ -62,17 +62,14 @@ class PageControllerTest extends WebTestCase
         return $this->getReference(LoadPageData::PAGE_1)->getId();
     }
 
-    /**
-     * @param Crawler $crawler
-     */
     public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('SEO', $crawler->filter('.nav')->html());
-        $this->assertContains('Meta title', $crawler->html());
-        $this->assertContains('Meta description', $crawler->html());
-        $this->assertContains('Meta keywords', $crawler->html());
+        static::assertStringContainsString('SEO', $crawler->filter('.nav')->html());
+        static::assertStringContainsString('Meta title', $crawler->html());
+        static::assertStringContainsString('Meta description', $crawler->html());
+        static::assertStringContainsString('Meta keywords', $crawler->html());
     }
 }

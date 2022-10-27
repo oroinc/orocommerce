@@ -23,7 +23,7 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $orderMapperDecorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderMapper = $this->createMock(MapperInterface::class);
         $this->orderMapperDecorator = new OrderMapperDecorator($this->orderMapper);

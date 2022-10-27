@@ -1,0 +1,37 @@
+services:
+    _instanceof:
+        Oro\Component\MessageQueue\Topic\TopicInterface:
+            tags:
+                - { name: oro_message_queue.topic }
+
+    oro_redirect.async.topic.direct_url_topic_helper:
+        class: Oro\Bundle\RedirectBundle\Async\Topic\DirectUrlTopicHelper
+        arguments:
+            - '@oro_config.manager'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic:
+        arguments:
+            - '@oro_redirect.async.topic.direct_url_topic_helper'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesJobAwareTopic:
+        arguments:
+            - '@Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\RegenerateDirectUrlForEntityTypeTopic:
+        arguments:
+            - '@oro_redirect.async.topic.direct_url_topic_helper'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic:
+        arguments:
+            - '@oro_redirect.async.topic.direct_url_topic_helper'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheTopic:
+        arguments:
+            - '@oro_redirect.async.topic.direct_url_topic_helper'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheJobAwareTopic:
+        arguments:
+            - '@Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheTopic'
+
+    Oro\Bundle\RedirectBundle\Async\Topic\RemoveDirectUrlForEntityTypeTopic: ~
+    Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic: ~

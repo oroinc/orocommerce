@@ -10,6 +10,9 @@ use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineI
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 
+/**
+ * Creates shipping context based on a quote entity.
+ */
 class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterface
 {
     /**
@@ -32,12 +35,6 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
      */
     private $calculableQuoteFactory;
 
-    /**
-     * @param ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
-     * @param QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter
-     * @param TotalProcessorProvider $totalProcessorProvider
-     * @param CalculableQuoteFactoryInterface $calculableQuoteFactory
-     */
     public function __construct(
         ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory,
         QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter,
@@ -74,6 +71,14 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
             ->setSubTotal($subtotal)
             ->setCurrency($quote->getCurrency())
             ->setLineItems($convertedLineItems);
+
+        if ($quote->getCustomer()) {
+            $shippingContextBuilder->setCustomer($quote->getCustomer());
+        }
+
+        if ($quote->getCustomerUser()) {
+            $shippingContextBuilder->setCustomerUser($quote->getCustomerUser());
+        }
 
         if (null !== $quote->getWebsite()) {
             $shippingContextBuilder

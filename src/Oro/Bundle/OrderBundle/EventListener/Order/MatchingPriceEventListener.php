@@ -12,17 +12,11 @@ class MatchingPriceEventListener
     /** @var PriceMatcher */
     protected $priceMatcher;
 
-    /**
-     * @param PriceMatcher $priceMatcher
-     */
     public function __construct(PriceMatcher $priceMatcher)
     {
         $this->priceMatcher = $priceMatcher;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         $order = $event->getOrder();

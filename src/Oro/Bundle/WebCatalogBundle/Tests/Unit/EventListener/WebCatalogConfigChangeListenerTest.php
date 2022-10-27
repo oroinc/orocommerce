@@ -19,7 +19,7 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $webCatalogConfigChangeListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->webCatalogConfigChangeListener = new WebCatalogConfigChangeListener($this->dispatcher);
@@ -31,7 +31,7 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->getMockBuilder(ConfigUpdateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
+
         $event->method('isChanged')
             ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
             ->willReturn(true);
@@ -39,8 +39,8 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
         $this->dispatcher
             ->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationRequestEvent::EVENT_NAME, new ReindexationRequestEvent());
-        
+            ->with(new ReindexationRequestEvent([], [], [], true, ['main']), ReindexationRequestEvent::EVENT_NAME);
+
         $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);
     }
 

@@ -1,39 +1,78 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Command;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ResizeAllProductImagesCommand extends ContainerAwareCommand
+/**
+ * Schedules the (re)build of resized versions of all product images.
+ */
+class ResizeAllProductImagesCommand extends Command
 {
-    const COMMAND_NAME = 'product:image:resize-all';
-    const OPTION_FORCE = 'force';
-    const BATCH_SIZE = 1000;
+    private const BATCH_SIZE = 1000;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var string */
+    protected static $defaultName = 'product:image:resize-all';
+
+    private DoctrineHelper $doctrineHelper;
+    private EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
+    }
+
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
         $this
-            ->setName(self::COMMAND_NAME)
-            ->addOption(self::OPTION_FORCE, null, null, 'Overwrite existing images')
-            ->setDescription(
-                <<<DESC
-Resize All Product Images (the command only adds jobs to a queue, ensure the oro:message-queue:consume command 
-is running to get images resized)
-DESC
-            );
+            ->addOption('force', null, null, 'Overwrite existing images')
+            ->addOption(
+                'dimension',
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Resize to given dimension(s)',
+                []
+            )
+            ->setDescription('Schedules the (re)build of resized versions of all product images.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command schedules the (re)build of resized versions of all product images.
+
+This command only schedules the job by adding a message to the message queue, so ensure
+that the message consumer processes (<info>oro:message-queue:consume</info>) are running
+to get the images actually resized.
+
+  <info>php %command.full_name%</info>
+
+The <info>--force</info> option can be used to overwrite existing images:
+
+  <info>php %command.full_name% --force</info>
+  
+The list of target dimensions can be provided using the <info>--dimension</info> option:
+
+  <info>php %command.full_name% --dimension=<dimension1> --dimension=<dimension2> --dimension=<dimensionN></info>
+
+HELP
+            )
+            ->addUsage('--force')
+            ->addUsage('--dimension=<dimension1> --dimension=<dimension2> --dimension=<dimensionN>')
+        ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $iterator = $this->getProductImagesIterator();
@@ -42,36 +81,28 @@ DESC
 
         foreach ($iterator as $productImage) {
             $this->getEventDispatcher()->dispatch(
-                ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage['id'], $forceOption)
+                new ProductImageResizeEvent($productImage['id'], $forceOption, $this->getDimensionsOption($input)),
+                ProductImageResizeEvent::NAME
             );
             $entitiesProcessed++;
         }
 
         $output->writeln(sprintf('%d product image(s) queued for resize.', $entitiesProcessed));
+
+        return 0;
     }
 
-    /**
-     * @return EventDispatcherInterface
-     */
-    protected function getEventDispatcher()
+    protected function getEventDispatcher(): EventDispatcherInterface
     {
-        return $this->getContainer()->get('event_dispatcher');
+        return $this->eventDispatcher;
     }
 
-    /**
-     * @return BufferedIdentityQueryResultIterator
-     */
-    protected function getProductImagesIterator()
+    protected function getProductImagesIterator(): BufferedIdentityQueryResultIterator
     {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $className = $this->getContainer()->getParameter('oro_product.entity.product_image.class');
-        $queryBuilder =  $doctrineHelper
-            ->getEntityRepositoryForClass($className)
-            ->createQueryBuilder('productImage');
-
-        $identifierName = $doctrineHelper->getSingleEntityIdentifierFieldName($className);
-        $queryBuilder->select("productImage.$identifierName as id");
+        $queryBuilder = $this->doctrineHelper
+            ->getEntityRepositoryForClass(ProductImage::class)
+            ->createQueryBuilder('productImage')
+            ->select('productImage.id');
 
         $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
         $iterator->setBufferSize(self::BATCH_SIZE);
@@ -79,12 +110,16 @@ DESC
         return $iterator;
     }
 
-    /**
-     * @param InputInterface $input
-     * @return bool
-     */
-    protected function getForceOption(InputInterface $input)
+    protected function getForceOption(InputInterface $input): bool
     {
-        return (bool) $input->getOption(self::OPTION_FORCE);
+        return (bool)$input->getOption('force');
+    }
+
+    /**
+     * @return string[]|null
+     */
+    protected function getDimensionsOption(InputInterface $input): ?array
+    {
+        return $input->getOption('dimension');
     }
 }

@@ -1,0 +1,75 @@
+data:
+    -
+        type: shoppinglists
+        id: '<toString(@shopping_list1->id)>'
+        attributes:
+            name: 'Shopping List 1'
+            currency: USD
+            total: '29.55'
+            subTotal: '29.55'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item1->id)>'
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item2->id)>'
+    -
+        type: shoppinglists
+        id: '<toString(@shopping_list2->id)>'
+        attributes:
+            name: 'Shopping List 2'
+            currency: USD
+            total: '20.2'
+            subTotal: '20.2'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item3->id)>'
+    -
+        type: shoppinglists
+        id: '<toString(@shopping_list5->id)>'
+        attributes:
+            name: 'Shopping List 5'
+            currency: USD
+            total: '1.23'
+            subTotal: '1.23'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: '<toString(@line_item6->id)>'
+included:
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item1->id)>'
+        attributes:
+            quantity: 5
+            currency: USD
+            value: '1.23'
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item2->id)>'
+        attributes:
+            quantity: 10
+            currency: USD
+            value: '2.34'
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item3->id)>'
+        attributes:
+            quantity: 20
+            currency: USD
+            value: '1.01'
+    -
+        type: shoppinglistitems
+        id: '<toString(@line_item6->id)>'
+        attributes:
+            quantity: 1
+            currency: USD
+            value: '1.23'

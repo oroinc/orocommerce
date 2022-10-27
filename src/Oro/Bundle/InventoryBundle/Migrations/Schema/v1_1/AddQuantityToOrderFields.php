@@ -18,27 +18,17 @@ class AddQuantityToOrderFields implements Migration, ExtendExtensionAwareInterfa
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /**
-     * @param ExtendExtension $extendExtension
-     */
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addQuantityToOrderFieldsToProduct($schema);
         $this->addQuantityToOrderFieldsToCategory($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuantityToOrderFieldsToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -68,9 +58,6 @@ class AddQuantityToOrderFields implements Migration, ExtendExtensionAwareInterfa
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuantityToOrderFieldsToCategory(Schema $schema)
     {
         $this->addFallbackRelation(

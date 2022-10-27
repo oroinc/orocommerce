@@ -1,35 +1,46 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\VisibilityBundle\Command;
 
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class VisibilityCacheBuildCommand extends ContainerAwareCommand
+/**
+ * Rebuilds the product visibility cache.
+ */
+class VisibilityCacheBuildCommand extends Command
 {
-    const NAME = 'product:visibility:cache:build';
+    /** @var string */
+    protected static $defaultName = 'product:visibility:cache:build';
 
-    /**
-     * {@inheritdoc}
-     */
+    private CacheBuilderInterface $cacheBuilder;
+
+    public function __construct(CacheBuilderInterface $cacheBuilder)
+    {
+        $this->cacheBuilder = $cacheBuilder;
+
+        parent::__construct();
+    }
+
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Calculate product visibility cache.');
+        $this->setDescription('Rebuilds the product visibility cache.');
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var CacheBuilder $cacheBuilder */
-        $cacheBuilder = $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder');
         $output->writeln('<info>Start the process of building the cache</info>');
-        $cacheBuilder->buildCache();
+        $this->cacheBuilder->buildCache();
         $output->writeln('<info>The cache is updated successfully</info>');
+
+        return 0;
     }
 }

@@ -6,8 +6,8 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType;
 use Oro\Bundle\InventoryBundle\Form\Extension\CheckoutShipUntilFormExtension;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ProductUpcomingProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $provider;
 
@@ -25,7 +25,7 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
     protected $checkoutLineItemsManager;
 
     /**
-     * @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject
+     * @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $dateTimeFormatter;
 
@@ -34,11 +34,11 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->provider = $this->createMock(ProductUpcomingProvider::class);
+        $this->provider = $this->createMock(UpcomingProductProvider::class);
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
-        $this->dateTimeFormatter = $this->createMock(DateTimeFormatter::class);
+        $this->dateTimeFormatter = $this->createMock(DateTimeFormatterInterface::class);
 
         $this->extension = new CheckoutShipUntilFormExtension(
             $this->provider,
@@ -47,9 +47,9 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertSame(CheckoutShipUntilType::class, $this->extension->getExtendedType());
+        $this->assertSame([CheckoutShipUntilType::class], CheckoutShipUntilFormExtension::getExtendedTypes());
     }
 
     public function testConfigureOptionsDisabled()
@@ -126,7 +126,7 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
             (new OrderLineItem())->setProduct(new Product()),
             (new OrderLineItem())->setProduct(new Product()),
         ];
-        $this->checkoutLineItemsManager->expects($this->atLeastOnce())
+        $this->checkoutLineItemsManager->expects($this->atMost(1))
             ->method('getData')
             ->with($checkout)
             ->willReturn($lineItems);

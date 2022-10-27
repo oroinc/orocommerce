@@ -2,24 +2,29 @@
 
 namespace Oro\Bundle\InventoryBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
 use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
 use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * CRUD controller for InventoryLevel entity
  */
-class InventoryLevelController extends Controller
+class InventoryLevelController extends AbstractController
 {
     /**
      * @Route("/", name="oro_inventory_level_index")
@@ -30,14 +35,11 @@ class InventoryLevelController extends Controller
      *      class="OroInventoryBundle:InventoryLevel",
      *      permission="VIEW"
      * )
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
-        $entityName = $this->container->getParameter('oro_inventory.entity.inventory_level.class');
-
         return [
-            'entity_class' => $entityName,
+            'entity_class' => InventoryLevel::class,
             'exportProcessors' => array_keys(InventoryLevelExportTypeExtension::getProcessorAliases()),
             'exportTemplateProcessors' => array_keys(
                 InventoryLevelExportTemplateTypeExtension::getProcessorAliases()
@@ -56,12 +58,8 @@ class InventoryLevelController extends Controller
      *      class="OroInventoryBundle:InventoryLevel",
      *      permission="EDIT"
      * )
-     *
-     * @param Product $product
-     * @param Request $request
-     * @return array|RedirectResponse
      */
-    public function updateAction(Product $product, Request $request)
+    public function updateAction(Product $product, Request $request): array|RedirectResponse
     {
         if (!$this->isGranted('EDIT', $product)) {
             throw new AccessDeniedException();
@@ -74,18 +72,16 @@ class InventoryLevelController extends Controller
         );
 
         $handler = new InventoryLevelHandler(
-            $form,
-            $this->getDoctrine()->getManagerForClass('OroInventoryBundle:InventoryLevel'),
-            $request,
-            $this->get('oro_product.service.quantity_rounding')
+            $this->getDoctrine()->getManagerForClass(InventoryLevel::class),
+            $this->get(QuantityRoundingService::class),
+            $this->get(InventoryManager::class)
         );
 
-        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
+        $result = $this->get(UpdateHandlerFacade::class)->update(
             $product,
             $form,
-            null,
-            null,
-            null,
+            '',
+            $request,
             $handler
         );
 
@@ -96,11 +92,7 @@ class InventoryLevelController extends Controller
         return array_merge($result, $this->widgetNoDataReasonsCheck($product));
     }
 
-    /**
-     * @param Product $product
-     * @return array
-     */
-    private function widgetNoDataReasonsCheck(Product $product)
+    private function widgetNoDataReasonsCheck(Product $product): array
     {
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
@@ -108,7 +100,23 @@ class InventoryLevelController extends Controller
         }
 
         return $noDataReason
-            ? ['noDataReason' => $this->get('translator')->trans($noDataReason)]
+            ? ['noDataReason' => $this->get(TranslatorInterface::class)->trans($noDataReason)]
             : [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                QuantityRoundingService::class,
+                InventoryManager::class,
+                UpdateHandlerFacade::class
+            ]
+        );
     }
 }

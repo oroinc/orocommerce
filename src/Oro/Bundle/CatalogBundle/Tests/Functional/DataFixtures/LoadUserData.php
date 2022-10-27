@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\UserBundle\Tests\Functional\API\DataFixtures\AbstractLoadUserData;
+use Oro\Bundle\UserBundle\Tests\Functional\Api\DataFixtures\AbstractLoadUserData;
 
 class LoadUserData extends AbstractLoadUserData
 {

@@ -31,7 +31,7 @@ Feature: Product collection individual products with segment filter
     And I click "Add Button"
     Then I should see "Add Products"
     And I check PSKU12 record in "Add Products Popup" grid
-    And I click "Add" in modal window
+    And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
       | PSKU12 | Product 12 |
@@ -81,6 +81,7 @@ Feature: Product collection individual products with segment filter
 
   Scenario: Save collection and check All Added products are valid
     When I save form
+    And I click on "First Content Variant Expand Button"
     And I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
@@ -124,4 +125,4 @@ Feature: Product collection individual products with segment filter
     When I click on "Remove Filter Button"
     And I click on "Remove Filter Button"
     And I click on "Preview Results"
-    Then I should see "No records found"
+    Then I should see "There are no products"

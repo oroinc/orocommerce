@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Context;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -21,6 +23,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -59,12 +62,18 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
      * @var EntityCouponsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $entityCouponsProvider;
+
+    /**
+     * @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $paymentMethodsProvider;
+
     /**
      * @var OrderContextDataConverter
      */
     private $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->criteriaDataProvider = $this->createMock(CriteriaDataProvider::class);
         $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);
@@ -72,6 +81,7 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
         $this->lineItemSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
         $this->couponValidationService = $this->createMock(CouponValidationService::class);
         $this->entityCouponsProvider = $this->createMock(EntityCouponsProviderInterface::class);
+        $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
 
         $this->converter = new OrderContextDataConverter(
             $this->criteriaDataProvider,
@@ -79,7 +89,8 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             $this->scopeManager,
             $this->lineItemSubtotalProvider,
             $this->couponValidationService,
-            $this->entityCouponsProvider
+            $this->entityCouponsProvider,
+            $this->paymentMethodsProvider
         );
     }
 
@@ -97,6 +108,13 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
     public function testSupports()
     {
         $this->assertTrue($this->converter->supports(new Order()));
+    }
+
+    public function testSupportsWhenOrderWithQuote()
+    {
+        $order = new Order();
+        $order->setSourceEntityClass(Quote::class);
+        $this->assertFalse($this->converter->supports($order));
     }
 
     public function testGetContextDataWhenThrowsException()
@@ -166,6 +184,11 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn(new ArrayCollection([$coupon1, $coupon2]));
 
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('getPaymentMethods')
+            ->with($entity)
+            ->willReturn(['pm1', 'pm2']);
+
         $discountLineItems = $this->getDiscountLineItems($entity);
         $scopeCriteria = $this->getScopeCriteria($customer, $customerGroup, $website);
         $subtotalAmount = $this->getSubtotalAmount($entity);
@@ -184,6 +207,8 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             ContextDataConverterInterface::SHIPPING_METHOD => $shippingMethod,
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
             ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$coupon1]),
+            ContextDataConverterInterface::PAYMENT_METHODS => ['pm1', 'pm2'],
+            ContextDataConverterInterface::PAYMENT_METHOD => 'pm1'
         ], $this->converter->getContextData($entity));
     }
 
@@ -204,12 +229,6 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
         return $discountLineItems;
     }
 
-    /**
-     * @param Customer $customer
-     * @param CustomerGroup $customerGroup
-     * @param Website $website
-     * @return ScopeCriteria
-     */
     private function getScopeCriteria(Customer $customer, CustomerGroup $customerGroup, Website $website): ScopeCriteria
     {
         $scopeContext = [
@@ -217,7 +236,7 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
             'customerGroup' => $customerGroup,
             'website' => $website
         ];
-        $scopeCriteria = new ScopeCriteria([], []);
+        $scopeCriteria = new ScopeCriteria([], $this->createMock(ClassMetadataFactory::class));
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
             ->with('promotion', $scopeContext)

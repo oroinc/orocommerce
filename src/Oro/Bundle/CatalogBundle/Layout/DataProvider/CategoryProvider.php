@@ -3,60 +3,54 @@
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Provides Category data for layouts
  */
 class CategoryProvider
 {
-    use DataProviderCacheTrait;
+    private $categories = [];
+    private $tree = [];
+    private ManagerRegistry $registry;
+    private RequestProductHandler $requestProductHandler;
+    private CategoryTreeProvider $categoryTreeProvider;
+    private TokenAccessorInterface $tokenAccessor;
+    private LocalizationHelper $localizationHelper;
+    private CacheInterface $cache;
+    private int $cacheLifeTime;
+    private MasterCatalogRootProviderInterface $masterCatalogRootProvider;
 
-    /** @var Category[] */
-    protected $categories = [];
-
-    /** @var array */
-    protected $tree = [];
-
-    /** @var CategoryRepository */
-    protected $categoryRepository;
-
-    /** @var RequestProductHandler */
-    protected $requestProductHandler;
-
-    /** @var CategoryTreeProvider */
-    protected $categoryTreeProvider;
-
-    /** @var LocalizationHelper */
-    protected $localizationHelper;
-
-    /**
-     * @param RequestProductHandler $requestProductHandler
-     * @param CategoryRepository $categoryRepository
-     * @param CategoryTreeProvider $categoryTreeProvider
-     */
     public function __construct(
         RequestProductHandler $requestProductHandler,
-        CategoryRepository $categoryRepository,
-        CategoryTreeProvider $categoryTreeProvider
+        ManagerRegistry $registry,
+        CategoryTreeProvider $categoryTreeProvider,
+        TokenAccessorInterface $tokenAccessor,
+        LocalizationHelper $localizationHelper,
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider
     ) {
         $this->requestProductHandler = $requestProductHandler;
-        $this->categoryRepository = $categoryRepository;
+        $this->registry = $registry;
         $this->categoryTreeProvider = $categoryTreeProvider;
+        $this->tokenAccessor = $tokenAccessor;
+        $this->localizationHelper = $localizationHelper;
+        $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
-    /**
-     * @param LocalizationHelper $localizationHelper
-     */
-    public function setLocalizationHelper(LocalizationHelper $localizationHelper)
+    public function setCache(CacheInterface $cache, int $lifeTime = 0) : void
     {
-        $this->localizationHelper = $localizationHelper;
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
     }
 
     /**
@@ -64,7 +58,7 @@ class CategoryProvider
      */
     public function getCurrentCategory()
     {
-        return $this->loadCategory((int)$this->requestProductHandler->getCategoryId());
+        return $this->loadCategory($this->requestProductHandler->getCategoryId());
     }
 
     /**
@@ -75,36 +69,14 @@ class CategoryProvider
         return $this->loadCategory();
     }
 
-    /**
-     * @param CustomerUser|null $user
-     *
-     * @return array
-     */
-    public function getCategoryTreeArray(CustomerUser $user = null)
+    public function getCategoryTreeArray(CustomerUser $user = null) : array
     {
-        $this->initCache([
-            'category',
-            $user ? $user->getId() : 0,
-            $this->getCurrentLocalization()
-        ]);
+        $cacheKey = $this->getCacheKey($user);
 
-        $useCache = $this->isCacheUsed();
-
-        if (true === $useCache) {
-            $result = $this->getFromCache();
-            if ($result) {
-                return $result;
-            }
-        }
-
-        $result = $this->categoryTreeToArray(
-            $this->getCategoryTree($user)
-        );
-
-        if (true === $useCache) {
-            $this->saveToCache($result);
-        }
-        return $result;
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($user) {
+            $item->expiresAfter($this->cacheLifeTime);
+            return $this->categoryTreeToArray($this->getCategoryTree($user));
+        });
     }
 
     /**
@@ -124,11 +96,14 @@ class CategoryProvider
                 $categoryDTOs = [];
                 $categoryDTOs[$rootCategory->getMaterializedPath()] = new DTO\Category($rootCategory);
                 $categories = $this->categoryTreeProvider->getCategories($user, $rootCategory, false);
+                $categoryIds = array_map(static fn (Category $category) => $category->getId(), $categories);
+                $categoryIds[] = $rootCategory->getId();
                 foreach ($categories as $category) {
                     $dto = new DTO\Category($category);
                     $categoryDTOs[$category->getMaterializedPath()] = $dto;
-                    if ($category->getParentCategory()) {
-                        $categoryDTOs[$category->getParentCategory()->getMaterializedPath()]
+                    $parentCategory = $this->getParentCategoryRecursive($category, $categoryIds);
+                    if ($parentCategory) {
+                        $categoryDTOs[$parentCategory->getMaterializedPath()]
                             ->addChildCategory($dto);
                     }
                 }
@@ -141,11 +116,7 @@ class CategoryProvider
         return $this->tree[$userId];
     }
 
-    /**
-     * @param null|bool $defaultValue
-     * @return bool
-     */
-    public function getIncludeSubcategoriesChoice($defaultValue = null)
+    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
     {
         return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }
@@ -159,11 +130,20 @@ class CategoryProvider
         $parent = $this->getCurrentCategory()->getParentCategory();
 
         if ($parent !== null) {
-            $parents = $this->categoryRepository->getPath($parent);
+            $parents = $this->getCategoryRepository()->getPath($parent);
+
             return is_array($parents) ? $parents : [];
-        } else {
-            return [];
         }
+
+        return [];
+    }
+
+    /**
+     * @return Category[]
+     */
+    public function getCategoryPath(): array
+    {
+        return $this->categoryTreeProvider->getParentCategories($this->getCustomerUser(), $this->getCurrentCategory());
     }
 
     /**
@@ -201,9 +181,9 @@ class CategoryProvider
     {
         if (!array_key_exists($categoryId, $this->categories)) {
             if ($categoryId) {
-                $this->categories[$categoryId] = $this->categoryRepository->find($categoryId);
+                $this->categories[$categoryId] = $this->getCategoryRepository()->find($categoryId);
             } else {
-                $this->categories[$categoryId] = $this->categoryRepository->getMasterCatalogRoot();
+                $this->categories[$categoryId] = $this->masterCatalogRootProvider->getMasterCatalogRoot();
             }
         }
 
@@ -215,9 +195,51 @@ class CategoryProvider
      */
     protected function getCurrentLocalization()
     {
-        $localization_id = ($this->localizationHelper && $this->localizationHelper->getCurrentLocalization()) ?
-            $this->localizationHelper->getCurrentLocalization()->getId() : 0;
+        $localization = $this->localizationHelper->getCurrentLocalization();
 
-        return $localization_id;
+        return $localization ? $localization->getId() : 0;
+    }
+
+    protected function getCacheKey(?CustomerUser $user): string
+    {
+        $customer = $user ? $user->getCustomer() : null;
+        $customerGroup = $customer ? $customer->getGroup() : null;
+        $currentOrganization = $this->tokenAccessor->getOrganization();
+
+        return sprintf(
+            'category_%s_%s_%s_%s_%s',
+            $user ? $user->getId() : 0,
+            $this->getCurrentLocalization(),
+            $customer ? $customer->getId() : 0,
+            $customerGroup ? $customerGroup->getId() : 0,
+            $currentOrganization ? $currentOrganization->getId() : 0
+        );
+    }
+
+    private function getCategoryRepository(): CategoryRepository
+    {
+        return $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);
+    }
+
+
+    private function getCustomerUser(): ?CustomerUser
+    {
+        $token = $this->tokenAccessor->getToken();
+
+        return $token?->getUser() instanceof CustomerUser ? $token->getUser() : null;
+    }
+
+    private function getParentCategoryRecursive(Category $category, array $availableCategoryIds): ?Category
+    {
+        $parentCategory = $category->getParentCategory();
+        if (!$parentCategory) {
+            return null;
+        }
+
+        if (in_array($parentCategory->getId(), $availableCategoryIds, true)) {
+            return $parentCategory;
+        }
+
+        return $this->getParentCategoryRecursive($parentCategory, $availableCategoryIds);
     }
 }

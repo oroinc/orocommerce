@@ -11,6 +11,9 @@ use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
+/**
+ * UPS shipping method type implementation.
+ */
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
     const REQUEST_OPTION = 'Rate';
@@ -37,8 +40,8 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     private $identifier;
 
     /** @var string */
-    private $label;
-    
+    private string $label;
+
     /**
      * @param string $identifier
      * @param string $label
@@ -60,7 +63,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         ShippingPriceCache $cache
     ) {
         $this->identifier = $identifier;
-        $this->label = $label;
+        $this->label = (string) $label;
         $this->methodId = $methodId;
         $this->shippingService = $shippingService;
         $this->transport = $transport;
@@ -68,7 +71,6 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         $this->priceRequestFactory = $priceRequestFactory;
         $this->cache = $cache;
     }
-
 
     /**
      * {@inheritdoc}
@@ -81,7 +83,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }

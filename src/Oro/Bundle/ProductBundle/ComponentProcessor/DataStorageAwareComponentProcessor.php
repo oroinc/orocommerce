@@ -9,8 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles logic related to quick order process
+ */
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
     /** @var UrlGeneratorInterface */
@@ -49,14 +52,6 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param UrlGeneratorInterface $router
-     * @param ProductDataStorage $storage
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param Session $session
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
@@ -207,16 +202,12 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     {
         return array_map(
             function ($entityItem) {
-                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY];
+                return $entityItem[ProductDataStorage::PRODUCT_SKU_KEY] ?? null;
             },
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
         );
     }
 
-    /**
-     * @param array $inputProductSkus
-     * @param array $allowedProductSkus
-     */
     protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
@@ -226,17 +217,13 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         }
     }
 
-    /**
-     * @param array $skus
-     */
     protected function addFlashMessage(array $skus)
     {
         $skus = array_unique($skus);
 
-        $message = $this->translator->transChoice(
+        $message = $this->translator->trans(
             'oro.product.frontend.quick_add.messages.not_added_products',
-            count($skus),
-            ['%sku%' => implode(', ', $skus)]
+            ['%count%' => count($skus),'%sku%' => implode(', ', $skus)]
         );
         $this->session->getFlashBag()->add('warning', $message);
     }

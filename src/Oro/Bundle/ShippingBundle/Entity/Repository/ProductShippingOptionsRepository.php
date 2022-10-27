@@ -2,52 +2,63 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Repository class of ProductShippingOptions entity.
  */
-class ProductShippingOptionsRepository extends EntityRepository
+class ProductShippingOptionsRepository extends ServiceEntityRepository
 {
-    /**
-     * @param array $unitsByProductIds
-     *
-     * @return ProductShippingOptions[]
-     */
-    public function findByProductsAndUnits(array $unitsByProductIds): array
+    public function findIndexedByProductsAndUnits(array $unitsByProductIds): array
     {
-        if (empty($unitsByProductIds)) {
-            return [];
+        $result = [];
+        if (!$unitsByProductIds) {
+            return $result;
         }
-
-        $qb = $this->createQueryBuilder('options');
-        $qb
-            ->join('options.product', 'product');
-
-        $expr = $qb->expr();
-
-        $expressions = [];
 
         foreach ($unitsByProductIds as $productId => $unit) {
             QueryBuilderUtil::checkIdentifier($productId);
-            $productIdParamName = 'product_id_'.$productId;
 
-            $productExpr = $expr->eq('product.id', ':'.$productIdParamName);
+            $expressions = [];
+            $params = [];
+            foreach ($unit as $unitArr) {
+                $productParam = 'product_' . $productId;
+                $unitParam = QueryBuilderUtil::generateParameterName('unit_');
 
-            $qb->setParameter($productIdParamName, $productId);
+                $expressions[] = sprintf('(o.product = :%s AND o.productUnit = :%s)', $productParam, $unitParam);
+                $params[] = [$productParam => $productId, $unitParam => $unitArr];
+            }
 
-            $unitParamName = 'unit_'.$productId;
+            $query = sprintf(
+                <<<DQL
+                SELECT
+                    o.dimensionsHeight,
+                    o.dimensionsLength,
+                    o.dimensionsWidth,
+                    IDENTITY(o.dimensionsUnit) AS dimensionsUnit,
+                    IDENTITY(o.weightUnit) AS weightUnit,
+                    o.weightValue,
+                    u.code
+                FROM %s o
+                INNER JOIN o.productUnit u INDEX BY u.code
+                WHERE %s
+            DQL,
+                ProductShippingOptions::class,
+                implode(' OR ', $expressions)
+            );
 
-            $unitExpr = $expr->eq('options.productUnit', ':'.$unitParamName);
-            $qb->setParameter($unitParamName, $unit);
+            $unitsByCode = $this->getEntityManager()
+                ->createQuery($query)
+                ->execute(array_merge(...$params), AbstractQuery::HYDRATE_ARRAY);
 
-            $expressions[] = $expr->andX($productExpr, $unitExpr);
+            if ($unitsByCode) {
+                $result[$productId] = $unitsByCode;
+            }
         }
 
-        $qb->andWhere($qb->expr()->orX(...$expressions));
-
-        return $qb->getQuery()->getResult();
+        return $result;
     }
 }
