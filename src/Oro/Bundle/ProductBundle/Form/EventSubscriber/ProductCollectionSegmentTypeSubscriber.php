@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * ProductCollectionSegmentType form event subscriber.
+ */
 class ProductCollectionSegmentTypeSubscriber implements EventSubscriberInterface
 {
     public function __construct(

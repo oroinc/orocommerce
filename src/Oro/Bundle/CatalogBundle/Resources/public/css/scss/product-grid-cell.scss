@@ -3,7 +3,7 @@
 .layout-content {
     .category-data {
         .grid-body-cell-categorySortOrder {
-            &[data-blank-content]:after {
+            &[data-blank-content]::after {
                 content: none;
             }
 

@@ -145,7 +145,8 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
             [
                 'add_sort_order' => true,
                 'results_grid' => 'product-collection-content-variant-grid'
-            ]);
+            ]
+        );
 
         $this->assertTrue($form->has('sortOrder'));
         $this->assertEquals(

@@ -32,10 +32,12 @@ class ProductCollectionContentVariantDatagridListenerTest extends WebTestCase
                 function ($key, $content) {
                     if ($content === LoadProductCollectionWithSortOrderData::SEGMENT) {
                         if (str_starts_with($key, 'si_')) {
-                            $content = $this->getReference(LoadProductCollectionWithSortOrderData::SEGMENT)->getId();
+                            $content = $this->getReference(LoadProductCollectionWithSortOrderData::SEGMENT)
+                                ->getId();
                         }
                         if (str_starts_with($key, 'sd_')) {
-                            $content = $this->getReference(LoadProductCollectionWithSortOrderData::SEGMENT)->getDefinition();
+                            $content = $this->getReference(LoadProductCollectionWithSortOrderData::SEGMENT)
+                                ->getDefinition();
                         }
                     }
                     return $content;
