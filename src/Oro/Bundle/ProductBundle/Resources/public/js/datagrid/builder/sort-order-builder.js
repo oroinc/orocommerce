@@ -132,18 +132,18 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
         _applyValidationToCell: function(cell) {
             const editorInput = cell.$el.find(':input').first();
 
-            if (!cell.model.has(this.options.inCategoryColumnName)
-                || cell.model.get(this.options.inCategoryColumnName)) {
+            if (!cell.model.has(this.options.inCategoryColumnName) ||
+                cell.model.get(this.options.inCategoryColumnName)) {
                 editorInput.show();
                 editorInput.siblings().show();
-                editorInput.prop( "disabled", false );
+                editorInput.prop('disabled', false);
                 editorInput.parent().addClass('controls').removeClass('editable');
                 editorInput.attr('name', 'sortOrder_' + cell.model.cid);
                 this._validateInput(cell);
             } else {
                 editorInput.hide();
                 editorInput.siblings().hide();
-                editorInput.prop( "disabled", true );
+                editorInput.prop('disabled', true);
                 editorInput.parent().addClass('controls').removeClass('editable');
                 editorInput.attr('name', 'disabledSortOrder_' + cell.model.cid);
             }
