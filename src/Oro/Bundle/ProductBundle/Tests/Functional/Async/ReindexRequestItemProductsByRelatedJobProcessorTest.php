@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Async;
 
 use Monolog\Handler\TestHandler;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductWebsiteReindexRequestItems;
@@ -21,7 +20,6 @@ use Symfony\Component\Yaml\Yaml;
 class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
 {
     use MessageQueueExtension;
-    use MessageQueueAssertTrait;
 
     private ReindexRequestItemProductsByRelatedJobProcessor $processor;
 
@@ -30,7 +28,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $this->initClient();
         $this->setUpMessageCollector();
         $this->loadFixtures([
-            LoadProductWebsiteReindexRequestItems::class
+            LoadProductWebsiteReindexRequestItems::class,
         ]);
         $this->processor = self::getContainer()->get(
             'oro_product.async.reindex_request_item_products_by_related_job_processor'
@@ -43,7 +41,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $message = $this->createMessage(
             [
                 'relatedJobId' => 999,
-                'indexationFieldsGroups' => null
+                'indexationFieldsGroups' => null,
             ]
         );
 
@@ -71,7 +69,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         $message = $this->createMessage(
             [
                 'relatedJobId' => $relatedJobId,
-                'indexationFieldsGroups' => $fieldGroups
+                'indexationFieldsGroups' => $fieldGroups,
             ]
         );
 
@@ -104,15 +102,15 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         return [
             'Test process products in different websites' => [
                 'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES,
-                'indexationFieldsGroups' => null
+                'indexationFieldsGroups' => null,
             ],
             'Test process products in different websites group main' => [
                 'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_DIFFERENT_WEBSITES,
-                'indexationFieldsGroups' => ['main']
+                'indexationFieldsGroups' => ['main'],
             ],
             'Test process products in same websites' => [
                 'relatedJobId' => LoadProductWebsiteReindexRequestItems::JOB_ID_W_PRODUCT_IN_SAME_WEBSITES,
-                'indexationFieldsGroups' => null
+                'indexationFieldsGroups' => null,
             ],
         ];
     }

@@ -14,33 +14,36 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * MQ Processor that dispatches search reindexation event for all records that found by given relatedJobId.
  */
 class ReindexRequestItemProductsByRelatedJobProcessor implements
     MessageProcessorInterface,
-    TopicSubscriberInterface
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private const BATCH_SIZE = 100;
 
     private ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage;
     private JobRunner $jobRunner;
     private MessageProducerInterface $producer;
-    private LoggerInterface $logger;
     private int $batchSize = self::BATCH_SIZE;
 
     public function __construct(
         ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage,
         JobRunner $jobRunner,
         MessageProducerInterface $producer,
-        LoggerInterface $logger
     ) {
         $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
         $this->jobRunner = $jobRunner;
         $this->producer = $producer;
-        $this->logger = $logger;
+        $this->logger = new NullLogger();
     }
 
     public function setBatchSize(int $batchSize): void
@@ -79,7 +82,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => ReindexRequestItemProductsByRelatedJobIdTopic::NAME
+                    'topic' => ReindexRequestItemProductsByRelatedJobIdTopic::getName()
                 ]
             );
 
@@ -130,6 +133,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      * @param int $websiteId
      * @param array $productIds
      * @param int $batchId
+     * @param array|null $fieldGroups
      * @return void
      */
     protected function sendToReindex(
@@ -162,17 +166,15 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      */
     private function getUniqueJobName(int $relatedJobId): string
     {
-        $jobKey = sprintf(
+        return sprintf(
             '%s:%s',
-            ReindexRequestItemProductsByRelatedJobIdTopic::NAME,
+            ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
             $relatedJobId
         );
-
-        return $jobKey;
     }
 
     public static function getSubscribedTopics()
     {
-        return [ReindexRequestItemProductsByRelatedJobIdTopic::NAME];
+        return [ReindexRequestItemProductsByRelatedJobIdTopic::getName()];
     }
 }

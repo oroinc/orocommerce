@@ -3,62 +3,60 @@
 namespace Oro\Bundle\ProductBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Trigger update of search index for products with specified attribute
  */
-class ReindexProductsByAttributesProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ReindexProductsByAttributesProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
-    /** @var JobRunner */
-    private $jobRunner;
+    use LoggerAwareTrait;
 
-    /** @var ManagerRegistry */
-    private $registry;
+    private JobRunner $jobRunner;
 
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
+    private ManagerRegistry $registry;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
         JobRunner $jobRunner,
         ManagerRegistry $registry,
-        EventDispatcherInterface $dispatcher,
-        LoggerInterface $logger
+        EventDispatcherInterface $dispatcher
     ) {
-        $this->jobRunner  = $jobRunner;
-        $this->registry   = $registry;
+        $this->jobRunner = $jobRunner;
+        $this->registry = $registry;
         $this->dispatcher = $dispatcher;
-        $this->logger     = $logger;
+        $this->logger = new NullLogger();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {
-            $body = JSON::decode($message->getBody());
-            if (!isset($body['attributeIds'])) {
-                throw new InvalidArgumentException();
-            }
+            $body = $message->getBody();
+
             $attributeIds = $body['attributeIds'];
+
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
-                Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES,
+                ReindexProductsByAttributesTopic::getName(),
                 function () use ($attributeIds) {
                     return $this->triggerReindex($attributeIds);
                 }
@@ -70,7 +68,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
+                    'topic' => ReindexProductsByAttributesTopic::getName(),
                 ]
             );
 
@@ -81,9 +79,9 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES];
+        return [ReindexProductsByAttributesTopic::getName()];
     }
 
     /**
@@ -92,11 +90,13 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
      * @param array $attributeIds
      * @return bool
      */
-    private function triggerReindex(array $attributeIds)
+    private function triggerReindex(array $attributeIds): bool
     {
         try {
             /** @var ProductRepository $repository */
-            $repository = $this->registry->getManagerForClass(Product::class)->getRepository(Product::class);
+            $repository = $this->registry
+                ->getManagerForClass(Product::class)
+                ?->getRepository(Product::class);
 
             $productIds = $repository->getProductIdsByAttributesId($attributeIds);
             if ($productIds) {
@@ -112,7 +112,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
                 'Unexpected exception occurred during triggering update of search index ',
                 [
                     'exception' => $e,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
+                    'topic' => ReindexProductsByAttributesTopic::getName(),
                 ]
             );
 

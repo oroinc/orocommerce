@@ -14,39 +14,47 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * MQ Processor that collects information about added or removed products from product collection
  * to intermediate Product Website Reindex Request storage that will be processed later in dependent job,
  * to prevent duplicate requests on reindex.
  */
-class ReindexProductCollectionProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ReindexProductCollectionProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private JobRunner $jobRunner;
-    private LoggerInterface $logger;
+
     private SegmentMessageFactory $messageFactory;
+
     private SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider;
+
     private ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage;
 
     public function __construct(
         JobRunner $jobRunner,
-        LoggerInterface $logger,
         SegmentMessageFactory $messageFactory,
         SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider,
         ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage
     ) {
         $this->jobRunner = $jobRunner;
-        $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->segmentSnapshotDeltaProvider = $segmentSnapshotDeltaProvider;
         $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
+        $this->logger = new NullLogger();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): ?string
     {
         try {
             $body = $message->getBody();
@@ -77,7 +85,7 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             $this->logger->error(
                 'Unexpected exception occurred during segment product collection reindexation',
                 [
-                    'topic' => ReindexProductCollectionBySegmentTopic::NAME,
+                    'topic' => ReindexProductCollectionBySegmentTopic::getName(),
                     'exception' => $e
                 ]
             );
@@ -89,9 +97,9 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [ReindexProductCollectionBySegmentTopic::NAME];
+        return [ReindexProductCollectionBySegmentTopic::getName()];
     }
 
     private function doJob(
