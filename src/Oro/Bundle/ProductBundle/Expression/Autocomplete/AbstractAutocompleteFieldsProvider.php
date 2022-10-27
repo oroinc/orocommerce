@@ -162,8 +162,8 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         foreach ($data as &$fields) {
             $fields = array_map(
                 function (array $item) {
-                    if (!empty($item['label'])) {
-                        $item['label'] = isset($item['label']) ? $this->translator->trans((string) $item['label']) : '';
+                    if (isset($item['label'])) {
+                        $item['label'] = $this->translator->trans((string) $item['label']);
                     }
 
                     return $item;

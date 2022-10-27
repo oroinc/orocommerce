@@ -45,42 +45,6 @@ class ProductExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new ProductExtension($container);
     }
 
-    public function testGetAutocompleteData(): void
-    {
-        $numericalOnly = true;
-        $withRelations = false;
-        $data = ['key' => 'value'];
-
-        $this->autocompleteFieldsProvider->expects($this->once())
-            ->method('getAutocompleteData')
-            ->with($numericalOnly, $withRelations)
-            ->willReturn($data);
-
-        $this->assertEquals(
-            $data,
-            $this->callTwigFunction(
-                $this->extension,
-                'oro_product_expression_autocomplete_data',
-                [$numericalOnly, $withRelations]
-            )
-        );
-    }
-
-    public function testGetAutocompleteDataWithDefaultArguments(): void
-    {
-        $data = ['key' => 'value'];
-
-        $this->autocompleteFieldsProvider->expects($this->once())
-            ->method('getAutocompleteData')
-            ->with($this->isFalse(), $this->isTrue())
-            ->willReturn($data);
-
-        $this->assertEquals(
-            $data,
-            $this->callTwigFunction($this->extension, 'oro_product_expression_autocomplete_data', [])
-        );
-    }
-
     public function testIsConfigurableSimple(): void
     {
         $this->assertFalse(

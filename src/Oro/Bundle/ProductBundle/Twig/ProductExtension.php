@@ -13,7 +13,6 @@ use Twig\TwigFunction;
 
 /**
  * Provides Twig functions related to products:
- *   - oro_product_expression_autocomplete_data
  *   - is_configurable_product_type
  *   - get_upsell_products_ids
  *   - get_related_products_ids
@@ -34,7 +33,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     public function getFunctions()
     {
         return [
-            new TwigFunction('oro_product_expression_autocomplete_data', [$this, 'getAutocompleteData']),
             new TwigFunction('is_configurable_product_type', [$this, 'isConfigurableType']),
             new TwigFunction('get_upsell_products_ids', [$this, 'getUpsellProductsIds']),
             new TwigFunction('get_related_products_ids', [$this, 'getRelatedProductsIds']),
