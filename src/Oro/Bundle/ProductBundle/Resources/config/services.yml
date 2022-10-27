@@ -1772,16 +1772,6 @@ services:
         tags:
             - { name: oro_action.action, alias: remove_restricted_products }
 
-    oro_product.async.reindex_products_by_attribute_processor:
-        class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributeProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@doctrine'
-            - '@event_dispatcher'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attribute' }
-
     oro_product.async.reindex_products_by_attributes_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor
         arguments:
@@ -1790,7 +1780,9 @@ services:
             - '@event_dispatcher'
             - '@logger'
         tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attributes' }
+            -
+              name: 'oro_message_queue.client.message_processor'
+              topicName: !php/const Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic::NAME
 
     oro_product.async.reindex_request_item_products_by_related_job_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor
@@ -1800,7 +1792,9 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@logger'
         tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_request_item_products_by_related_job' }
+            -
+              name: 'oro_message_queue.client.message_processor'
+              topicName: !php/const Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic::NAME
 
     oro_product.config.event_listener.display_simple_variations_listener:
         class: Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener

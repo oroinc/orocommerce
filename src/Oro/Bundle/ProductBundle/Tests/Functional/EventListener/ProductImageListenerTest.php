@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\DataAuditBundle\Async\Topic\AuditChangedEntitiesTopic;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\ProductBundle\Async\Topics as ProductTopics;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -96,9 +96,9 @@ class ProductImageListenerTest extends WebTestCase
         $this->em->persist($productImage);
         $this->em->flush();
 
-        self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 1);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 1);
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage)
         );
     }
@@ -128,19 +128,19 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 3);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 3);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage3)
         );
 
@@ -168,7 +168,7 @@ class ProductImageListenerTest extends WebTestCase
         $this->em->flush();
 
         /* nothing sent if product image have no types */
-        self::assertEmptyMessages(ProductTopics::PRODUCT_IMAGE_RESIZE);
+        self::assertEmptyMessages(ResizeProductImageTopic::getName());
         self::assertEmptyMessages(WebsiteSearchReindexTopic::getName());
 
         /* message sent if product image has been updated */
@@ -182,15 +182,15 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
 
@@ -223,15 +223,15 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
 
@@ -268,15 +268,15 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
 
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage1)
         );
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImage2)
         );
 
@@ -303,18 +303,18 @@ class ProductImageListenerTest extends WebTestCase
         /** @var ProductImage $productImageCopy2 */
         $productImageCopy2 = $productCopy8->getImages()->first();
 
-        self::assertMessagesCount(ProductTopics::PRODUCT_IMAGE_RESIZE, 2);
+        self::assertMessagesCount(ResizeProductImageTopic::getName(), 2);
         self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 2);
         self::assertMessagesCount(IndexEntitiesByIdTopic::getName(), 2);
         self::assertMessagesCount(GenerateDirectUrlForEntitiesTopic::getName(), 2);
         self::assertMessagesCount(AuditChangedEntitiesTopic::getName(), 4);
 
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImageCopy1)
         );
         self::assertMessageSent(
-            ProductTopics::PRODUCT_IMAGE_RESIZE,
+            ResizeProductImageTopic::getName(),
             $this->prepareProductImageResizeMessage($productImageCopy2)
         );
 

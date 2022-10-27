@@ -3,9 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Async;
 
 use Oro\Bundle\ProductBundle\Async\ReindexProductCollectionProcessor;
-use Oro\Bundle\ProductBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Provider\SegmentSnapshotDeltaProvider;
@@ -25,26 +24,19 @@ use Psr\Log\LoggerInterface;
 
 class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
-    private $jobRunner;
+    private JobRunner|\PHPUnit\Framework\MockObject\MockObject $jobRunner;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /** @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject */
-    private $reindexMessageGranularizer;
+    private ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject $reindexMessageGranularizer;
 
-    /** @var SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject */
-    private $messageFactory;
+    private SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
-    /** @var SegmentSnapshotDeltaProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productCollectionDeltaProvider;
+    private SegmentSnapshotDeltaProvider|\PHPUnit\Framework\MockObject\MockObject $productCollectionDeltaProvider;
 
-    /** @var ReindexProductCollectionProcessor */
-    private $processor;
+    private ReindexProductCollectionProcessor $processor;
 
     protected function setUp(): void
     {
@@ -65,89 +57,73 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testProcessWhenMessageIsInvalid()
+    public function testProcessWhenUnexpectedExceptionOccurred(): void
     {
-        $messageBody = ['some body item'];
-        $message = $this->getMessage($messageBody);
-
-        $exceptionMessage = 'Some exception message.';
-        $exception = new InvalidArgumentException($exceptionMessage);
-        $this->messageFactory->expects($this->once())
-            ->method('getSegmentFromMessage')
-            ->with($messageBody)
-            ->willThrowException($exception);
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception
-                ]
-            );
-
-        $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
-        $this->assertEquals(MessageProcessorInterface::REJECT, $result);
-    }
-
-    public function testProcessWhenUnexpectedExceptionOccurred()
-    {
-        $messageBody = ['some body item'];
+        $messageBody = [
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ID => PHP_INT_MAX,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS => [PHP_INT_MAX],
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL => false,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS => [],
+        ];
         $message = $this->getMessage($messageBody);
 
         $exceptionMessage = 'Some exception message.';
         $exception = new \Exception($exceptionMessage);
-        $this->messageFactory->expects($this->once())
-            ->method('getSegmentFromMessage')
+        $this->messageFactory->expects(self::once())
+            ->method('getSegment')
+            ->with($messageBody)
             ->willThrowException($exception);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during segment product collection reindexation',
                 [
-                    'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                    'topic' => ReindexProductCollectionBySegmentTopic::getName(),
                     'exception' => $exception,
                 ]
             );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
-        $this->assertEquals(MessageProcessorInterface::REJECT, $result);
+        self::assertEquals(MessageProcessorInterface::REJECT, $result);
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
-        $messageBody = ['some body item'];
-        $isFull = false;
-        $this->messageFactory->expects($this->once())
-            ->method('getIsFull')
-            ->with($messageBody)
-            ->willReturn($isFull);
-
-        $segment = $this->getSegment(2);
-        $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
-        $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
+        $id = 2;
+        $messageBody = [
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ID => $id,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS => $websiteIds,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL => false,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS => [],
+        ];
+
+        $message = $this->getMessage($messageBody);
+        $segment = $this->getSegment($id);
+
+        $this->expectedMessageFactory($messageBody, $segment);
 
         $addedProductsId = [2, 3];
-        $this->productCollectionDeltaProvider->expects($this->once())
+        $this->productCollectionDeltaProvider->expects(self::once())
             ->method('getAddedEntityIds')
             ->with($segment)
             ->willReturn($this->createGenerator($addedProductsId));
         $removedProductIds = [7];
-        $this->productCollectionDeltaProvider->expects($this->once())
+        $this->productCollectionDeltaProvider->expects(self::once())
             ->method('getRemovedEntityIds')
             ->with($segment)
             ->willReturn($this->createGenerator($removedProductIds));
 
         $messageOne = [
-            'class'   => [Product::class],
-            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $addedProductsId]
+            'class' => [Product::class],
+            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $addedProductsId],
         ];
         $messageTwo = [
-            'class'   => [Product::class],
-            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $removedProductIds]
+            'class' => [Product::class],
+            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $removedProductIds],
         ];
-        $this->reindexMessageGranularizer->expects($this->exactly(2))
+        $this->reindexMessageGranularizer->expects(self::exactly(2))
             ->method('process')
             ->withConsecutive(
                 [[Product::class], $websiteIds, [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $addedProductsId]],
@@ -162,7 +138,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectedRunUnique($expectedJobName);
 
         $i = 5;
-        $this->jobRunner->expects($this->exactly(2))
+        $this->jobRunner->expects(self::exactly(2))
             ->method('createDelayed')
             ->withConsecutive(
                 [$expectedJobName . ':reindex:1'],
@@ -172,67 +148,65 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 $delayedJob = $this->getJob(++$i);
                 return $callback($this->jobRunner, $delayedJob);
             });
-        $this->producer->expects($this->exactly(2))
+        $this->producer->expects(self::exactly(2))
             ->method('send')
             ->withConsecutive(
                 [
                     AsyncIndexer::TOPIC_REINDEX,
-                    new Message(array_merge($messageOne, ['jobId' => 6]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                    new Message(array_merge($messageOne, ['jobId' => 6]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX),
                 ],
                 [
                     AsyncIndexer::TOPIC_REINDEX,
-                    new Message(array_merge($messageTwo, ['jobId' => 7]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                    new Message(array_merge($messageTwo, ['jobId' => 7]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX),
                 ]
             );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
-        $this->assertEquals(MessageProcessorInterface::ACK, $result);
+
+        self::assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
-    public function testProcessWithWithManuallyAdded()
+    public function testProcessWithWithManuallyAdded(): void
     {
-        $messageBody = ['some body item'];
-        $isFull = false;
-        $this->messageFactory->expects($this->once())
-            ->method('getIsFull')
-            ->with($messageBody)
-            ->willReturn($isFull);
-
-        $segment = $this->getSegment(2, 'some definition');
-        $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
-        $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
+        $id = 2;
+        $additionalProductIds = [3, 4];
+        $messageBody = [
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ID => $id,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS => $websiteIds,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL => false,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS => $additionalProductIds,
+        ];
+
+        $message = $this->getMessage($messageBody);
+        $segment = $this->getSegment(2, 'some definition');
+
+        $this->expectedMessageFactory($messageBody, $segment);
 
         $addedProductsId = [2, 3];
-        $this->productCollectionDeltaProvider->expects($this->once())
+        $this->productCollectionDeltaProvider->expects(self::once())
             ->method('getAddedEntityIds')
             ->with($segment)
             ->willReturn($this->createGenerator($addedProductsId));
         $removedProductIds = [7];
-        $this->productCollectionDeltaProvider->expects($this->once())
+        $this->productCollectionDeltaProvider->expects(self::once())
             ->method('getRemovedEntityIds')
             ->with($segment)
             ->willReturn($this->createGenerator($removedProductIds));
 
-        $additionalProductIds = [3, 4];
-        $this->messageFactory->expects($this->once())
-            ->method('getAdditionalProductsFromMessage')
-            ->with($messageBody)
-            ->willReturn($additionalProductIds);
-
         $messageOne = [
-            'class'   => [Product::class],
-            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $addedProductsId]
+            'class' => [Product::class],
+            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $addedProductsId],
         ];
         $messageTwo = [
-            'class'   => [Product::class],
-            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $removedProductIds]
+            'class' => [Product::class],
+            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $removedProductIds],
         ];
         $messageThree = [
-            'class'   => [Product::class],
-            'context' => ['websiteIds' => $websiteIds, 'entityIds' => [1 => 4]]
+            'class' => [Product::class],
+            'context' => ['websiteIds' => $websiteIds, 'entityIds' => [1 => 4]],
         ];
-        $this->reindexMessageGranularizer->expects($this->exactly(3))
+        $this->reindexMessageGranularizer->expects(self::exactly(3))
             ->method('process')
             ->withConsecutive(
                 [[Product::class], $websiteIds, [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $addedProductsId]],
@@ -240,7 +214,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
                 [
                     [Product::class],
                     $websiteIds,
-                    [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1 => 4]]
+                    [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1 => 4]],
                 ]
             )
             ->willReturnOnConsecutiveCalls(
@@ -253,7 +227,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectedRunUnique($expectedJobName);
 
         $i = 5;
-        $this->jobRunner->expects($this->exactly(3))
+        $this->jobRunner->expects(self::exactly(3))
             ->method('createDelayed')
             ->withConsecutive(
                 [$expectedJobName . ':reindex:1'],
@@ -262,112 +236,118 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnCallback(function ($name, $callback) use (&$i) {
                 $delayedJob = $this->getJob(++$i);
+
                 return $callback($this->jobRunner, $delayedJob);
             });
-        $this->producer->expects($this->exactly(3))
+        $this->producer->expects(self::exactly(3))
             ->method('send')
             ->withConsecutive(
                 [
                     AsyncIndexer::TOPIC_REINDEX,
-                    new Message(array_merge($messageOne, ['jobId' => 6]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                    new Message(array_merge($messageOne, ['jobId' => 6]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX),
                 ],
                 [
                     AsyncIndexer::TOPIC_REINDEX,
-                    new Message(array_merge($messageTwo, ['jobId' => 7]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                    new Message(array_merge($messageTwo, ['jobId' => 7]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX),
                 ],
                 [
                     AsyncIndexer::TOPIC_REINDEX,
-                    new Message(array_merge($messageThree, ['jobId' => 8]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX)
+                    new Message(array_merge($messageThree, ['jobId' => 8]), AsyncIndexer::DEFAULT_PRIORITY_REINDEX),
                 ]
             );
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
-        $this->assertEquals(MessageProcessorInterface::ACK, $result);
+
+        self::assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
-    public function testProcessWhenNoSegmentId()
+    public function testProcessWhenNoSegmentId(): void
     {
-        $messageBody = ['some body item'];
-        $isFull = false;
-        $this->messageFactory->expects($this->once())
-            ->method('getIsFull')
-            ->with($messageBody)
-            ->willReturn($isFull);
-
-        $segment = $this->getSegment();
-        $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
-        $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
+        $definition = 'definition';
+        $messageBody = [
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ID => null,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS => $websiteIds,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL => false,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS => [],
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_DEFINITION => $definition,
+        ];
+
+        $message = $this->getMessage($messageBody);
+        $segment = $this->getSegment(null, $definition);
+
+        $this->expectedMessageFactory($messageBody, $segment);
 
         $addedProductsId = [2, 3];
-        $this->productCollectionDeltaProvider->expects($this->once())
+        $this->productCollectionDeltaProvider->expects(self::once())
             ->method('getAddedEntityIds')
             ->with($segment)
             ->willReturn($this->createGenerator($addedProductsId));
-        $this->productCollectionDeltaProvider->expects($this->never())
+        $this->productCollectionDeltaProvider->expects(self::never())
             ->method('getRemovedEntityIds');
 
         $expectedJobName = $this->getExpectedJobName($segment);
         $this->expectedSendForOneBatch($expectedJobName, $websiteIds, $addedProductsId);
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
-        $this->assertEquals(MessageProcessorInterface::ACK, $result);
+
+        self::assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
-    public function testProcessWhenNoSegmentIdAndIsFullTrue()
+    public function testProcessWhenNoSegmentIdAndIsFullTrue(): void
     {
-        $messageBody = ['some body item'];
-        $isFull = true;
-        $this->messageFactory->expects($this->once())
-            ->method('getIsFull')
-            ->with($messageBody)
-            ->willReturn($isFull);
-
-        $segment = $this->getSegment();
-        $message = $this->getMessage($messageBody);
         $websiteIds = [777, 1];
-        $this->expectedMessageFactory($messageBody, $segment, $websiteIds);
+        $definition = 'definition';
+        $messageBody = [
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ID => null,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS => $websiteIds,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL => true,
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS => [],
+            ReindexProductCollectionBySegmentTopic::OPTION_NAME_DEFINITION => $definition,
+        ];
+
+        $message = $this->getMessage($messageBody);
+        $segment = $this->getSegment(null, $definition);
+
+        $this->expectedMessageFactory($messageBody, $segment);
 
         $addedProductsId = [2, 3, 4];
-        $this->productCollectionDeltaProvider->expects($this->once())
+        $this->productCollectionDeltaProvider->expects(self::once())
             ->method('getAllEntityIds')
             ->with($segment)
             ->willReturn($this->createGenerator($addedProductsId));
-        $this->productCollectionDeltaProvider->expects($this->never())
+        $this->productCollectionDeltaProvider->expects(self::never())
             ->method('getAddedEntityIds');
-        $this->productCollectionDeltaProvider->expects($this->never())
+        $this->productCollectionDeltaProvider->expects(self::never())
             ->method('getRemovedEntityIds');
 
         $expectedJobName = $this->getExpectedJobName($segment);
         $this->expectedSendForOneBatch($expectedJobName, $websiteIds, $addedProductsId);
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
-        $this->assertEquals(MessageProcessorInterface::ACK, $result);
+
+        self::assertEquals(MessageProcessorInterface::ACK, $result);
     }
 
-    public function testGetSubscribedTopics()
+    public function testGetSubscribedTopics(): void
     {
-        $this->assertEquals(
-            [Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT],
+        self::assertEquals(
+            [ReindexProductCollectionBySegmentTopic::getName()],
             ReindexProductCollectionProcessor::getSubscribedTopics()
         );
     }
 
-    private function expectedMessageFactory(array $messageBody, Segment $segment, array $websiteIds): void
+    private function expectedMessageFactory(array $messageBody, Segment $segment): void
     {
-        $this->messageFactory->expects($this->once())
-            ->method('getSegmentFromMessage')
+        $this->messageFactory->expects(self::once())
+            ->method('getSegment')
             ->with($messageBody)
             ->willReturn($segment);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteIdsFromMessage')
-            ->with($messageBody)
-            ->willReturn($websiteIds);
     }
 
     private function getExpectedJobName(Segment $segment): string
     {
-        return Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT
+        return ReindexProductCollectionBySegmentTopic::getName()
             . ':' . md5($segment->getDefinition()) . ':' . md5(implode([1, 777]));
     }
 
@@ -381,7 +361,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         $childJob->setRootJob($job);
         $childJob->setName($expectedJobName);
 
-        $this->jobRunner->expects($this->once())
+        $this->jobRunner->expects(self::once())
             ->method('runUnique')
             ->with('msg-001', $expectedJobName)
             ->willReturnCallback(function ($jobId, $name, $callback) use ($childJob) {
@@ -392,10 +372,10 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     private function expectedSendForOneBatch(string $expectedJobName, array $websiteIds, array $productIds): void
     {
         $messageOne = [
-            'class'   => [Product::class],
-            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $productIds]
+            'class' => [Product::class],
+            'context' => ['websiteIds' => $websiteIds, 'entityIds' => $productIds],
         ];
-        $this->reindexMessageGranularizer->expects($this->once())
+        $this->reindexMessageGranularizer->expects(self::once())
             ->method('process')
             ->with([Product::class], $websiteIds, [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $productIds])
             ->willReturn([$messageOne]);
@@ -403,14 +383,14 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectedRunUnique($expectedJobName);
 
         $i = 5;
-        $this->jobRunner->expects($this->once())
+        $this->jobRunner->expects(self::once())
             ->method('createDelayed')
             ->with($expectedJobName . ':reindex:1')
             ->willReturnCallback(function ($name, $callback) use (&$i) {
                 $delayedJob = $this->getJob(++$i);
                 return $callback($this->jobRunner, $delayedJob);
             });
-        $this->producer->expects($this->once())
+        $this->producer->expects(self::once())
             ->method('send')
             ->with(
                 AsyncIndexer::TOPIC_REINDEX,

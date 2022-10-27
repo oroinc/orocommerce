@@ -72,8 +72,11 @@ class SegmentMessageFactory
      */
     public function getSegmentFromMessage($data)
     {
-        $data = $this->getResolvedData($data);
+        return $this->getSegment($this->getResolvedData($data));
+    }
 
+    public function getSegment(array $data): Segment
+    {
         if (!empty($data[self::ID])) {
             $segment = $this->getSegmentRepository()->find($data[self::ID]);
             if (!$segment) {

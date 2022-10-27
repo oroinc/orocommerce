@@ -32,7 +32,7 @@ class AccumulateReindexProductCollectionProcessorTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testProcessProvider
+     * @dataProvider getProcessProvider
      *
      * @param bool $isFull
      * @param array $expectedProductRefs
@@ -91,7 +91,7 @@ class AccumulateReindexProductCollectionProcessorTest extends WebTestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    public function testProcessProvider(): array
+    public function getProcessProvider(): array
     {
         return [
             'Full process' => [

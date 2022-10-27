@@ -3,16 +3,15 @@
 namespace Oro\Bundle\ProductBundle\Async;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -51,14 +50,13 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
-            $body = JSON::decode($message->getBody());
-            if (!isset($body['attributeIds'])) {
-                throw new InvalidArgumentException();
-            }
+            $body = $message->getBody();
+
             $attributeIds = $body['attributeIds'];
+
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
-                Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES,
+                ReindexProductsByAttributesTopic::getName(),
                 function () use ($attributeIds) {
                     return $this->triggerReindex($attributeIds);
                 }
@@ -70,7 +68,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
+                    'topic' => ReindexProductsByAttributesTopic::getName(),
                 ]
             );
 
@@ -83,7 +81,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES];
+        return [ReindexProductsByAttributesTopic::getName()];
     }
 
     /**
@@ -92,7 +90,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
      * @param array $attributeIds
      * @return bool
      */
-    private function triggerReindex(array $attributeIds)
+    private function triggerReindex(array $attributeIds): bool
     {
         try {
             /** @var ProductRepository $repository */
@@ -112,7 +110,7 @@ class ReindexProductsByAttributesProcessor implements MessageProcessorInterface,
                 'Unexpected exception occurred during triggering update of search index ',
                 [
                     'exception' => $e,
-                    'topic' => Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES
+                    'topic' => ReindexProductsByAttributesTopic::getName(),
                 ]
             );
 
