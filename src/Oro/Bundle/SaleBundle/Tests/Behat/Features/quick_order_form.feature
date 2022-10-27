@@ -29,3 +29,13 @@ Feature: Quick order form
       | QTY1      | 1                |
       | UNIT1     | each             |
       | SUBTOTAL1 | $10.00           |
+
+  Scenario: Delete row button appears when row inputs have some value entered
+    When I click "Quick Order Form"
+    Then I should not see an "Quick Order Form > DeleteRow1" element
+    And I should not see an "Quick Order Form > DeleteRow2" element
+    When I fill "QuickAddForm" with:
+      | SKU1 | Foo |
+      | QTY2 | 7   |
+    Then I should see an "Quick Order Form > DeleteRow1" element
+    And I should see an "Quick Order Form > DeleteRow2" element

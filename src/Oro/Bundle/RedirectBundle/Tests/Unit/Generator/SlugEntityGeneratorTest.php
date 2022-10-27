@@ -13,6 +13,7 @@ use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
+use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolverInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityWithOrganizationStub;
@@ -26,7 +27,7 @@ class SlugEntityGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $routingInformationProvider;
 
-    /** @var UniqueSlugResolver|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UniqueSlugResolverInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $slugResolver;
 
     /** @var RedirectGenerator|\PHPUnit\Framework\MockObject\MockObject */

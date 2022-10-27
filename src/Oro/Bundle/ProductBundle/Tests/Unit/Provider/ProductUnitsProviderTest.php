@@ -13,37 +13,16 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private const UNITS = [
-        [
-            'code' => 'each',
-            'precision' => 1,
-        ],
-        [
-            'code' => 'kg',
-            'precision' => 3,
-        ],
-        [
-            'code' => 'hour',
-            'precision' => 0,
-        ],
-        [
-            'code' => 'item',
-            'precision' => 0,
-        ],
-        [
-            'code' => 'set',
-            'precision' => 2,
-        ],
-        [
-            'code' => 'piece',
-            'precision' => 1,
-        ],
-    ];
-
     use EntityTrait;
 
-    /** @var ProductUnitsProvider */
-    private $productUnitsProvider;
+    private const UNITS = [
+        ['code' => 'each', 'precision' => 1],
+        ['code' => 'kg', 'precision' => 3],
+        ['code' => 'hour', 'precision' => 0],
+        ['code' => 'item', 'precision' => 0],
+        ['code' => 'set', 'precision' => 2],
+        ['code' => 'piece', 'precision' => 1],
+    ];
 
     /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
@@ -54,24 +33,25 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
+    /** @var ProductUnitsProvider */
+    private $productUnitsProvider;
+
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductUnitRepository::class);
         $this->cache = $this->createMock(CacheInterface::class);
+        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         $manager = $this->createMock(ObjectManager::class);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $managerRegistry */
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(ProductUnit::class)
             ->willReturn($manager);
 
-        $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
-
         $this->productUnitsProvider = new ProductUnitsProvider(
-            $managerRegistry,
+            $doctrine,
             $this->formatter,
             $this->cache
         );
@@ -81,14 +61,14 @@ class ProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->formatter->expects($this->exactly(6))
             ->method('format')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['each', false, false, 'oro.product_unit.each.label.full'],
                 ['kg', false, false, 'oro.product_unit.kg.label.full'],
                 ['hour', false, false, 'oro.product_unit.hour.label.full'],
                 ['item', false, false, 'oro.product_unit.item.label.full'],
                 ['set', false, false, 'oro.product_unit.set.label.full'],
                 ['piece', false, false, 'oro.product_unit.piece.label.full'],
-            ]));
+            ]);
 
         $expected = [
             'oro.product_unit.each.label.full' => 'each',

@@ -19,20 +19,14 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 {
     use EntityTrait;
 
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $filtrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtrationService;
 
-    /**
-     * @var ScopeFiltrationService
-     */
-    protected $scopeFiltrationService;
-
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $scopeManager;
+
+    /** @var ScopeFiltrationService */
+    private $scopeFiltrationService;
 
     protected function setUp(): void
     {
@@ -61,7 +55,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 
         $this->scopeManager->expects($this->any())
             ->method('isScopeMatchCriteria')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
@@ -73,7 +67,6 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
 
     public function testMatchedAllowed()
     {
-        /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
 
         $promotion = $this->createMock(PromotionDataInterface::class);
@@ -81,9 +74,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
             ->method('getScopes')
             ->willReturn(new ArrayCollection([$scope]));
 
-        /** @var Scope $scope2 */
         $scope2 = $this->getEntity(Scope::class, ['id' => 5]);
-        /** @var Scope $scope3 */
         $scope3 = $this->getEntity(Scope::class, ['id' => 2]);
 
         $promotion2 = $this->createMock(PromotionDataInterface::class);
@@ -126,8 +117,7 @@ class ScopeFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
             $this->createMock(ClassMetadataFactory::class)
         );
 
-        $this->scopeManager
-            ->expects($this->never())
+        $this->scopeManager->expects($this->never())
             ->method('isScopeMatchCriteria');
 
         $expected = [$promotion];

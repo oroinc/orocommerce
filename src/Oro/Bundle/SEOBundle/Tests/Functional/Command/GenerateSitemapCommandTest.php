@@ -6,16 +6,16 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CronBundle\Entity\Schedule;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
 use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
 use Oro\Bundle\SEOBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class GenerateSitemapCommandTest extends WebTestCase
 {
-    use MessageQueueExtension,
-        ConfigManagerAwareTestTrait;
+    use MessageQueueExtension;
+    use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {

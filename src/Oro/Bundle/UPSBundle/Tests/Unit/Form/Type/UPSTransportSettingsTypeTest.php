@@ -30,39 +30,28 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\UPSBundle\Entity\UPSTransport';
+    private const DATA_CLASS = UPSTransport::class;
 
-    /**
-     * @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $transport;
+    /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $transport;
 
-    /**
-     * @var ShippingOriginProvider |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingOriginProvider;
+    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingOriginProvider;
 
-    /**
-     * @var UPSTransportSettingsType
-     */
-    protected $formType;
+    /** @var UPSTransportSettingsType */
+    private $formType;
 
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $crypter;
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $crypter;
 
     protected function setUp(): void
     {
-        /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject $shippingOriginProvider */
-        $this->shippingOriginProvider = $this->getMockBuilder(ShippingOriginProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
 
         $this->transport = $this->createMock(TransportInterface::class);
-        $this->transport->expects(static::any())
+        $this->transport->expects(self::any())
             ->method('getSettingsEntityFQCN')
-            ->willReturn(static::DATA_CLASS);
+            ->willReturn(self::DATA_CLASS);
 
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
 
@@ -75,9 +64,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $country = new Country('US');
         $countryType = new EntityTypeStub(['US' => $country], 'oro_country');
@@ -85,7 +74,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $entityType = new EntityTypeStub(
             [
                 1 => $this->getEntity(
-                    'Oro\Bundle\UPSBundle\Entity\ShippingService',
+                    ShippingService::class,
                     [
                         'id' => 1,
                         'code' => '01',
@@ -94,7 +83,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     ]
                 ),
                 2 => $this->getEntity(
-                    'Oro\Bundle\UPSBundle\Entity\ShippingService',
+                    ShippingService::class,
                     [
                         'id' => 2,
                         'code' => '03',
@@ -106,9 +95,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             'entity'
         );
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
-        $localizedFallbackValue = new LocalizedFallbackValueCollectionType($registry);
+        $localizedFallbackValue = new LocalizedFallbackValueCollectionType(
+            $this->createMock(ManagerRegistry::class)
+        );
 
         return [
             new PreloadedExtension(
@@ -127,21 +116,16 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param UPSTransport $defaultData
-     * @param array|UPSTransport $submittedData
-     * @param bool $isValid
-     * @param UPSTransport $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
         UPSTransport $defaultData,
         array $submittedData,
-        $isValid,
+        bool $isValid,
         UPSTransport $expectedData
     ) {
         if (count($submittedData) > 0) {
-            $this->crypter
-                ->expects($this->once())
+            $this->crypter->expects($this->once())
                 ->method('encryptData')
                 ->with($submittedData['upsApiPassword'])
                 ->willReturn($submittedData['upsApiPassword']);
@@ -159,30 +143,25 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $this->shippingOriginProvider
-            ->expects(static::once())
+        $this->shippingOriginProvider->expects(self::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
         $form = $this->factory->create(UPSTransportSettingsType::class, $defaultData, []);
 
-        static::assertEquals($defaultData, $form->getData());
+        self::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
 
-        static::assertEquals($isValid, $form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($expectedData, $form->getData());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
-        /** @var ShippingService $expectedShippingService */
         $expectedShippingService = $this->getEntity(
-            'Oro\Bundle\UPSBundle\Entity\ShippingService',
+            ShippingService::class,
             [
                 'id' => 1,
                 'code' => '01',
@@ -234,19 +213,16 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects(static::once())
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => $this->transport->getSettingsEntityFQCN()
-            ]);
+            ->with(['data_class' => $this->transport->getSettingsEntityFQCN()]);
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testGetBlockPrefix()
     {
-        static::assertEquals(UPSTransportSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        self::assertEquals(UPSTransportSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 }

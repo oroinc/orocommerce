@@ -12,6 +12,10 @@ layout:
                     blockType: form_start
                     options:
                         form: '=data["oro_product_form"].getQuickAddCopyPasteFormView()'
+                quick_add_copy_paste_form_grid:
+                    blockType: container
+                quick_add_copy_paste_form_grid_col:
+                    blockType: container
                 quick_add_copy_paste_form_fields:
                     blockType: form_fields
                     options:
@@ -45,8 +49,10 @@ layout:
                     quick_add_copy_paste_form:
                         quick_add_copy_paste_title: ~
                         quick_add_copy_paste_form_start: ~
-                        quick_add_copy_paste_description: ~
-                        quick_add_copy_paste_form_fields: ~
-                        quick_add_copy_paste_form_buttons:
-                            quick_add_copy_paste_form_submit: ~
+                        quick_add_copy_paste_form_grid:
+                            quick_add_copy_paste_form_grid_col:
+                                quick_add_copy_paste_description: ~
+                                quick_add_copy_paste_form_fields: ~
+                            quick_add_copy_paste_form_buttons:
+                                quick_add_copy_paste_form_submit: ~
                         quick_add_copy_paste_form_end: ~

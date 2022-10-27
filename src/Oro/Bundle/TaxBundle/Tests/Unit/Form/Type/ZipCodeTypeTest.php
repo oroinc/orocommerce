@@ -17,15 +17,13 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
-    private const DATA_CLASS = ZipCode::class;
-
     /** @var ZipCodeType */
     private $formType;
 
     protected function setUp(): void
     {
         $this->formType = new ZipCodeType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(ZipCode::class);
         parent::setUp();
     }
 

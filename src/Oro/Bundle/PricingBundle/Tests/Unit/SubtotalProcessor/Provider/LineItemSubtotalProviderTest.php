@@ -17,30 +17,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $currencyManager;
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
 
-    /**
-     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $websiteCurrencyProvider;
+    /** @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteCurrencyProvider;
 
-    /**
-     * @var LineItemSubtotalProvider
-     */
-    protected $provider;
+    /** @var LineItemSubtotalProvider */
+    private $provider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected $translator;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    private $translator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface
-     */
-    protected $roundingService;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface */
+    private $roundingService;
 
     protected function setUp(): void
     {
@@ -56,34 +46,21 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->translator, $this->provider);
-    }
-
     /**
      * @dataProvider lineItemsDataProvider
-     *
-     * @param array $lineItemsData
-     * @param float $expectedValue
-     * @param int $precision
      */
     public function testGetSubtotal(
         array $lineItemsData,
-        $expectedValue,
-        $precision
+        float $expectedValue,
+        int $precision
     ) {
         $currency = 'USD';
 
         $this->roundingService->expects($this->any())
             ->method('round')
-            ->will(
-                $this->returnCallback(
-                    function ($value) use ($precision) {
-                        return round($value, $precision, PHP_ROUND_HALF_UP);
-                    }
-                )
-            );
+            ->willReturnCallback(function ($value) use ($precision) {
+                return round($value, $precision, PHP_ROUND_HALF_UP);
+            });
         $this->translator->expects($this->once())
             ->method('trans')
             ->with(LineItemSubtotalProvider::LABEL)
@@ -112,10 +89,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $subtotal->getAmount());
     }
 
-    /**
-     * @return array
-     */
-    public function lineItemsDataProvider()
+    public function lineItemsDataProvider(): array
     {
         return [
             'price with precision 2, system precision 2' => [
@@ -191,26 +165,22 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
             ->with(LineItemSubtotalProvider::LABEL)
             ->willReturn('test');
 
-        /** @var SubtotalEntityStub|\PHPUnit\Framework\MockObject\MockObject $entityMock */
-        $entityMock = $this->createMock(SubtotalEntityStub::class);
-
-        $entityMock->expects($this->once())
+        $entity = $this->createMock(SubtotalEntityStub::class);
+        $entity->expects($this->once())
             ->method('getSubtotal')
             ->willReturn(123456.0);
-
-        $entityMock->expects($this->any())
+        $entity->expects($this->any())
             ->method('getCurrency')
             ->willReturn('USD');
-
-        $entityMock->expects($this->never())
+        $entity->expects($this->never())
             ->method('getLineItems');
 
-        $subtotal = $this->provider->getCachedSubtotal($entityMock);
+        $subtotal = $this->provider->getCachedSubtotal($entity);
 
         $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
         $this->assertEquals('test', $subtotal->getLabel());
-        $this->assertEquals($entityMock->getCurrency(), $subtotal->getCurrency());
+        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertIsFloat($subtotal->getAmount());
         $this->assertEquals(123456.0, $subtotal->getAmount());
     }

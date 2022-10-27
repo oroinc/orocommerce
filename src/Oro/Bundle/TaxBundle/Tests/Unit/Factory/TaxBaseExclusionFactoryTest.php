@@ -11,39 +11,25 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusionFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TaxBaseExclusionFactory
-     */
-    protected $factory;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var TaxBaseExclusionFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->factory = new TaxBaseExclusionFactory($this->doctrineHelper);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->factory, $this->doctrineHelper);
-    }
-
     /**
      * @dataProvider createProvider
-     * @param array $value
-     * @param TaxBaseExclusion $expected
      */
-    public function testCreate($value, $expected)
+    public function testCreate(array $value, TaxBaseExclusion $expected)
     {
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->willReturnCallback(function ($entityClass, $id) {
                 if (str_contains($entityClass, 'Country')) {
@@ -60,10 +46,7 @@ class TaxBaseExclusionFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->factory->create($value));
     }
 
-    /**
-     * @return array
-     */
-    public function createProvider()
+    public function createProvider(): array
     {
         return [
             'country, region and option' => [

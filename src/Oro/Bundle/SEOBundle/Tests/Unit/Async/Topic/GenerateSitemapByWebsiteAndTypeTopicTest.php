@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async\Topic;
 
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Component\MessageQueue\Test\AbstractTopicTestCase;
 use Oro\Component\MessageQueue\Topic\TopicInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -37,8 +37,8 @@ class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
                     'version' => 1,
                     'websiteId' => 1,
                     'type' => 'type',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -69,7 +69,7 @@ class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
                     'type' => 'type',
                 ],
                 'exceptionClass' => InvalidOptionsException::class,
-                'exceptionMessage' => '/The option "version" with value "qwe" '.
+                'exceptionMessage' => '/The option "version" with value "qwe" ' .
                     'is expected to be of type "int", but is of type "string"./',
             ],
             'WithWrongWebsiteIdParameterType' => [
@@ -80,7 +80,7 @@ class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
                     'type' => 'type',
                 ],
                 'exceptionClass' => InvalidOptionsException::class,
-                'exceptionMessage' => '/The option "websiteId" with value "qwe" '.
+                'exceptionMessage' => '/The option "websiteId" with value "qwe" ' .
                     'is expected to be of type "int", but is of type "string"./',
             ],
             'WithWrongTypeParameterType' => [

@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\CheckoutBundle\EventListener\CheckoutSubtotalListener;
@@ -27,23 +27,17 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
 
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutRepository;
+    private ObjectRepository|\PHPUnit\Framework\MockObject\MockObject $checkoutRepository;
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
+    private ObjectManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
 
-    /** @var CheckoutSubtotalRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutSubtotalRepository;
+    private CheckoutSubtotalRepository|\PHPUnit\Framework\MockObject\MockObject $checkoutSubtotalRepository;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $messageProducer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /** @var CheckoutSubtotalListener */
-    protected $listener;
+    private CheckoutSubtotalListener $listener;
 
     protected function setUp(): void
     {
@@ -52,7 +46,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->entityManager = $this->createMock(ObjectManager::class);
 
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $this->registry->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($this->entityManager);
 
@@ -61,23 +55,23 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new CheckoutSubtotalListener($this->registry, $this->messageProducer);
     }
 
-    public function testOnPriceListUpdate()
+    public function testOnPriceListUpdate(): void
     {
         $ids = [1, 3];
         $event = $this->createMock(CombinedPriceListsUpdateEvent::class);
 
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getCombinedPriceListIds')
             ->willReturn($ids);
 
         $this->entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->with(CheckoutSubtotal::class)
             ->willReturn($this->checkoutSubtotalRepository);
 
         $this->checkoutSubtotalRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('invalidateByCombinedPriceList')
             ->with($ids);
 
@@ -86,7 +80,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onPriceListUpdate($event);
     }
 
-    public function testOnCustomerPriceListUpdate()
+    public function testOnCustomerPriceListUpdate(): void
     {
         $customersData = [
             ['customers' => [1, 2], 'websiteId' => 3],
@@ -94,18 +88,18 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         ];
         $event = $this->createMock(CustomerCPLUpdateEvent::class);
 
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getCustomersData')
             ->willReturn($customersData);
 
         $this->entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->with(CheckoutSubtotal::class)
             ->willReturn($this->checkoutSubtotalRepository);
 
         $this->checkoutSubtotalRepository
-            ->expects($this->exactly(count($customersData)))
+            ->expects(self::exactly(count($customersData)))
             ->method('invalidateByCustomers');
 
         $this->assertMessageSent();
@@ -113,7 +107,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onCustomerPriceListUpdate($event);
     }
 
-    public function testOnCustomerGroupPriceListUpdate()
+    public function testOnCustomerGroupPriceListUpdate(): void
     {
         $customerGroupsData = [
             ['customerGroups' => ['test'], 'websiteId' => 3],
@@ -127,26 +121,26 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(CustomerGroupCPLUpdateEvent::class);
 
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getCustomerGroupsData')
             ->willReturn($customerGroupsData);
 
         $fallbackRepository = $this->createMock(PriceListCustomerFallbackRepository::class);
 
         $this->entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap([
                 [PriceListCustomerFallback::class, $fallbackRepository],
                 [CheckoutSubtotal::class, $this->checkoutSubtotalRepository],
             ]);
 
-        $fallbackRepository->expects($this->exactly(count($customerGroupsData)))
+        $fallbackRepository->expects(self::exactly(count($customerGroupsData)))
             ->method('getCustomerIdentityByGroup')
             ->willReturn(new \ArrayIterator($customersData));
 
         $this->checkoutSubtotalRepository
-            ->expects($this->exactly(count($customersData)))
+            ->expects(self::exactly(count($customersData)))
             ->method('invalidateByCustomers');
 
         $this->assertMessageSent();
@@ -154,7 +148,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onCustomerGroupPriceListUpdate($event);
     }
 
-    public function testOnWebsitePriceListUpdate()
+    public function testOnWebsitePriceListUpdate(): void
     {
         $websiteIds = [1, 3, 5];
 
@@ -165,25 +159,25 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(WebsiteCPLUpdateEvent::class);
 
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getWebsiteIds')
             ->willReturn($websiteIds);
 
         $fallbackRepository = $this->createMock(PriceListCustomerGroupFallbackRepository::class);
 
         $this->entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap([
                 [PriceListCustomerGroupFallback::class, $fallbackRepository],
                 [CheckoutSubtotal::class, $this->checkoutSubtotalRepository],
             ]);
-        $fallbackRepository->expects($this->exactly(count($websiteIds)))
+        $fallbackRepository->expects(self::exactly(count($websiteIds)))
             ->method('getCustomerIdentityByWebsite')
             ->willReturn(new \ArrayIterator($customersData));
 
         $this->checkoutSubtotalRepository
-            ->expects($this->exactly(count($websiteIds)))
+            ->expects(self::exactly(count($websiteIds)))
             ->method('invalidateByCustomers');
 
         $this->assertMessageSent();
@@ -191,7 +185,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onWebsitePriceListUpdate($event);
     }
 
-    public function testOnConfigPriceListUpdate()
+    public function testOnConfigPriceListUpdate(): void
     {
         $websitesData = [
             ['id' => 1],
@@ -209,7 +203,7 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $fallbackRepository = $this->createMock(PriceListCustomerGroupFallbackRepository::class);
 
         $this->entityManager
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getRepository')
             ->willReturnMap([
                 [PriceListWebsiteFallback::class, $fallbackWebsiteRepository],
@@ -217,16 +211,16 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
                 [CheckoutSubtotal::class, $this->checkoutSubtotalRepository],
             ]);
 
-        $fallbackWebsiteRepository->expects($this->once())
+        $fallbackWebsiteRepository->expects(self::once())
             ->method('getWebsiteIdByDefaultFallback')
             ->willReturn($websitesData);
 
-        $fallbackRepository->expects($this->exactly(count($websitesData)))
+        $fallbackRepository->expects(self::exactly(count($websitesData)))
             ->method('getCustomerIdentityByWebsite')
             ->willReturn(new \ArrayIterator($customersData));
 
         $this->checkoutSubtotalRepository
-            ->expects($this->exactly(count($websitesData)))
+            ->expects(self::exactly(count($websitesData)))
             ->method('invalidateByCustomers');
 
         $this->assertMessageSent();
@@ -234,11 +228,11 @@ class CheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onConfigPriceListUpdate($event);
     }
 
-    protected function assertMessageSent()
+    protected function assertMessageSent(): void
     {
         $this->messageProducer
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('send')
-            ->with(Topics::RECALCULATE_CHECKOUT_SUBTOTALS);
+            ->with(RecalculateCheckoutSubtotalsTopic::getName());
     }
 }

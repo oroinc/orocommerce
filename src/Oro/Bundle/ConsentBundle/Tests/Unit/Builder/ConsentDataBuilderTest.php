@@ -18,39 +18,25 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $consentAcceptanceProvider;
 
-    /**
-     * @var CmsPageDataBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CmsPageDataBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $cmsPageDataBuilder;
 
-    /**
-     * @var ConsentDataBuilder
-     */
+    /** @var ConsentDataBuilder */
     private $consentDataBuilder;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);
 
-        /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject $localizationHelper */
         $localizationHelper = $this->createMock(LocalizationHelper::class);
         $localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
-            ->will(
-                $this->returnCallback(
-                    function (Collection $collection) {
-                        return $collection->first()->getString();
-                    }
-                )
-            );
+            ->willReturnCallback(function (Collection $collection) {
+                return $collection->first()->getString();
+            });
 
         $this->cmsPageDataBuilder = $this->createMock(CmsPageDataBuilder::class);
         $this->consentDataBuilder = new ConsentDataBuilder(
@@ -61,34 +47,20 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->consentAcceptanceProvider,
-            $this->cmsPageDataBuilder,
-            $this->consentDataBuilder
-        );
-    }
-
-    /**
      * @dataProvider buildProvider
      */
     public function testBuild(
         Consent $consent,
-        ConsentAcceptance $consentAcceptance = null,
-        CmsPageData $cmsPageData = null,
+        ?ConsentAcceptance $consentAcceptance,
+        ?CmsPageData $cmsPageData,
         array $expectedConsentJsonData
     ) {
-        $this->consentAcceptanceProvider
-            ->expects($this->once())
+        $this->consentAcceptanceProvider->expects($this->once())
             ->method('getCustomerConsentAcceptanceByConsentId')
             ->with($consent->getId())
             ->willReturn($consentAcceptance);
 
-        $this->cmsPageDataBuilder
-            ->expects($this->once())
+        $this->cmsPageDataBuilder->expects($this->once())
             ->method('build')
             ->with($consent, $consentAcceptance)
             ->willReturn($cmsPageData);
@@ -97,10 +69,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedConsentJsonData, $consentData->jsonSerialize());
     }
 
-    /**
-     * @return array
-     */
-    public function buildProvider()
+    public function buildProvider(): array
     {
         $fallbackValue = new LocalizedFallbackValue();
         $fallbackValue->setString('consent_1');
@@ -110,7 +79,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
         $cmsPageDataObj->setUrl('/cms-page-url');
 
         return [
-            "ConsentAcceptance found" => [
+            'ConsentAcceptance found' => [
                 'consent' => $this->getEntity(
                     Consent::class,
                     [
@@ -128,7 +97,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
                     'accepted' => true,
                 ]
             ],
-            "ConsentAcceptance not found" => [
+            'ConsentAcceptance not found' => [
                 'consent' => $this->getEntity(
                     Consent::class,
                     [
@@ -146,7 +115,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
                     'accepted' => false
                 ]
             ],
-            "CmsPageData successfully built" => [
+            'CmsPageData successfully built' => [
                 'consent' => $this->getEntity(
                     Consent::class,
                     [

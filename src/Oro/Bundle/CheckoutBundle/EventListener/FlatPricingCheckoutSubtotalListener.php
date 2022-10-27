@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\PricingBundle\Event\PricingStorage\CustomerGroupRelationUpdateEvent;
@@ -18,15 +18,9 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class FlatPricingCheckoutSubtotalListener
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ManagerRegistry $registry;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $messageProducer;
+    private MessageProducerInterface $messageProducer;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -36,14 +30,14 @@ class FlatPricingCheckoutSubtotalListener
         $this->messageProducer = $messageProducer;
     }
 
-    public function onPriceListUpdate(MassStorageUpdateEvent $event)
+    public function onPriceListUpdate(MassStorageUpdateEvent $event): void
     {
         $this->getRepository()->invalidateByPriceList($event->getPriceListIds());
 
         $this->recalculateSubtotals();
     }
 
-    public function onCustomerPriceListUpdate(CustomerRelationUpdateEvent $event)
+    public function onCustomerPriceListUpdate(CustomerRelationUpdateEvent $event): void
     {
         $customersData = $event->getCustomersData();
         $repository = $this->getRepository();
@@ -55,7 +49,7 @@ class FlatPricingCheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    public function onCustomerGroupPriceListUpdate(CustomerGroupRelationUpdateEvent $event)
+    public function onCustomerGroupPriceListUpdate(CustomerGroupRelationUpdateEvent $event): void
     {
         $customerGroupsData = $event->getCustomerGroupsData();
         $repository = $this->getRepository();
@@ -67,7 +61,7 @@ class FlatPricingCheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    public function onWebsitePriceListUpdate(WebsiteRelationUpdateEvent $event)
+    public function onWebsitePriceListUpdate(WebsiteRelationUpdateEvent $event): void
     {
         $websiteIds = $event->getWebsiteIds();
         $this->getRepository()->invalidateByWebsites($websiteIds);
@@ -75,19 +69,16 @@ class FlatPricingCheckoutSubtotalListener
         $this->recalculateSubtotals();
     }
 
-    /**
-     * @return CheckoutSubtotalRepository
-     */
-    private function getRepository()
+    private function getRepository(): CheckoutSubtotalRepository
     {
         return $this->registry
             ->getManagerForClass(CheckoutSubtotal::class)
             ->getRepository(CheckoutSubtotal::class);
     }
 
-    private function recalculateSubtotals()
+    private function recalculateSubtotals(): void
     {
         $message = new Message();
-        $this->messageProducer->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, $message);
+        $this->messageProducer->send(RecalculateCheckoutSubtotalsTopic::getName(), $message);
     }
 }

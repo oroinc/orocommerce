@@ -1,10 +1,7 @@
 /* @theme: default; */
 
 .quick-order-import {
-    float: $quick-order-import-float;
-    clear: $quick-order-import-clear;
-
-    width: $quick-order-import-width;
+    grid-area: import;
 
     &__title {
         margin: $quick-order-import-title-margin;
@@ -16,8 +13,6 @@
 
     &__container {
         position: relative;
-
-        margin: $quick-order-import-container-margin;
         padding: $quick-order-import-container-padding;
 
         text-align: center;
@@ -44,14 +39,6 @@
 
     .filename {
         display: none;
-    }
-
-    .mobile-version & {
-        @include breakpoint('mobile-big') {
-            width: 100%;
-            float: none;
-            clear: none;
-        }
     }
 }
 

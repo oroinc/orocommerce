@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -15,8 +14,7 @@ class ProductImageResizeListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /** @var MessageProducerInterface */
-    private $producer;
+    private MessageProducerInterface $producer;
 
     public function __construct(MessageProducerInterface $producer)
     {
@@ -29,6 +27,6 @@ class ProductImageResizeListener implements OptionalListenerInterface
             return;
         }
 
-        $this->producer->send(Topics::PRODUCT_IMAGE_RESIZE, $event->getData());
+        $this->producer->send($event->getTopicName(), $event->getData());
     }
 }

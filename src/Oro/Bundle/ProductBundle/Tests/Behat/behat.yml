@@ -538,6 +538,12 @@ oro_behat_extension:
             type: 'css'
             locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
 
+    Quick Order Form > DeleteRow1:
+      selector: '[data-content="oro_product_quick_add[products][0]"] button[data-role="row-remove"]'
+
+    Quick Order Form > DeleteRow2:
+      selector: '[data-content="oro_product_quick_add[products][1]"] button[data-role="row-remove"]'
+
     Quick Order Form > QTY1:
       selector:
         type: 'css'
@@ -561,7 +567,7 @@ oro_behat_extension:
     Quick Add Form Validation:
       selector:
         type: 'xpath'
-        locator: "//form[@name='oro_product_quick_add']/span[@class='validation-failed']/span[2]"
+        locator: "//form[@name='oro_product_quick_add']//span[@class='validation-failed']//span[2]"
 
     Quick Add Copy Paste Form:
       selector: "form[name='oro_product_quick_add_copy_paste']"
@@ -603,7 +609,7 @@ oro_behat_extension:
       selector: 'div[id*="grid-product-collection-grid-"]'
 
     AdvancedFilter:
-      selector: '.collapse-view__trigger.btn .fa-filter'
+      selector: '.btn .fa-filter'
 
     Enable Related Products:
       selector: '[name="related_items[oro_product___related_products_enabled][value]"]'
@@ -1458,7 +1464,7 @@ oro_behat_extension:
         locator: '//img[contains(@alt,"cat2_wysiwyg_image")]'
 
     More Link:
-      selector: 'a.toggle-more'
+      selector: 'a.collapse-toggle'
 
     Filters In Sidebar:
       selector: '.page-sidebar .product-filters-sidebar .filter-box'

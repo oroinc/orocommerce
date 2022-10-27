@@ -9,6 +9,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener;
 use Oro\Component\Testing\ReflectionUtil;
@@ -18,31 +19,23 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
 {
     use EntityTrait;
 
-    const PRODUCT_SHIPPING_OPTIONS_CLASS = 'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions';
+    private const PRODUCT_SHIPPING_OPTIONS_CLASS = ProductShippingOptions::class;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var DatagridConfiguration */
-    protected $config;
+    private $config;
 
     /** @var ProductShippingOptionsDatagridListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
         $this->config = DatagridConfiguration::create([]);
-
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->listener = new ProductShippingOptionsDatagridListener($this->doctrineHelper);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->doctrineHelper, $this->listener, $this->config);
     }
 
     public function testSetProductShippingOptionsClass()
@@ -58,11 +51,9 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
 
     public function testOnBuildBefore()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
 
-        $this->listener->setProductShippingOptionsClass(static::PRODUCT_SHIPPING_OPTIONS_CLASS);
-
+        $this->listener->setProductShippingOptionsClass(self::PRODUCT_SHIPPING_OPTIONS_CLASS);
         $this->listener->onBuildBefore(new BuildBefore($datagrid, $this->config));
 
         $this->assertEquals(
@@ -86,8 +77,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
      */
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
-        $repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('findBy')
             ->with(['product' => [42, 100]], ['productUnit' => 'ASC'])
@@ -106,8 +96,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
             ->with(self::PRODUCT_SHIPPING_OPTIONS_CLASS)
             ->willReturn($repository);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $event = new OrmResultAfter($datagrid, $sourceResults);
 
@@ -117,10 +106,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
         $this->assertEquals($expectedResults, $event->getRecords());
     }
 
-    /**
-     * @return array
-     */
-    public function onResultAfterDataProvider()
+    public function onResultAfterDataProvider(): array
     {
         return [
             [
@@ -156,30 +142,20 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
         ];
     }
 
-    /**
-     * @param int $id
-     * @param int $productId
-     * @return ProductShippingOptions
-     */
-    protected function createShippingOptions($id, $productId)
+    private function createShippingOptions(int $id, int $productId): ProductShippingOptions
     {
         return $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions',
+            ProductShippingOptions::class,
             [
                 'id' => $id,
-                'product' => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $productId])
+                'product' => $this->getEntity(Product::class, ['id' => $productId])
             ]
         );
     }
 
-    /**
-     * @param array $data
-     * @return ResultRecord
-     */
-    protected function getResultRecord(array $data = [])
+    private function getResultRecord(array $data = []): ResultRecord
     {
         $resultRecord = new ResultRecord([]);
-
         foreach ($data as $value) {
             $resultRecord->addData($value);
         }

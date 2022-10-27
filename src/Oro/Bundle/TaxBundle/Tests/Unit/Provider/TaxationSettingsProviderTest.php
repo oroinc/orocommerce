@@ -19,39 +19,26 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /**
-     * @var TaxBaseExclusionFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $taxBaseExclusionFactory;
+    /** @var TaxBaseExclusionFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxBaseExclusionFactory;
 
-    /**
-     * @var AddressModelFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $addressModelFactory;
+    /** @var AddressModelFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $addressModelFactory;
 
-    /**
-     * @var TaxationSettingsProvider
-     */
-    protected $provider;
-
-    /**
-     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
+
+    /** @var TaxationSettingsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
-
         $this->taxBaseExclusionFactory = $this->createMock(TaxBaseExclusionFactory::class);
-
         $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
-
         $this->cacheProvider = $this->createMock(CacheInterface::class);
 
         $this->provider = new TaxationSettingsProvider(
@@ -62,27 +49,13 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
+    private function configureGetCachedExpectations(string $optionKey, mixed $optionValue, string$methodName): void
     {
-        unset($this->configManager, $this->taxBaseExclusionFactory, $this->addressModelFactory, $this->provider);
-    }
-
-    /**
-     * @param string $optionKey
-     * @param mixed $optionValue
-     * @param string $methodName
-     */
-    private function configureGetCachedExpectations(
-        $optionKey,
-        $optionValue,
-        $methodName
-    ) {
         $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
             TaxationSettingsProvider::class . '::' . $methodName
         );
 
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with($optionKey)
             ->willReturn($optionValue);
@@ -112,10 +85,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isStartCalculationWithUnitPriceProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsStartCalculationWithUnitPrice($configValue, $expected)
+    public function testIsStartCalculationWithUnitPrice(string $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.start_calculation_with',
@@ -126,10 +97,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isStartCalculationWithUnitPrice());
     }
 
-    /**
-     * @return array
-     */
-    public function isStartCalculationWithUnitPriceProvider()
+    public function isStartCalculationWithUnitPriceProvider(): array
     {
         return [
             [
@@ -159,13 +127,10 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isStartCalculationOnUnitPriceProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsStartCalculationOnUnitPrice($configValue, $expected)
+    public function testIsStartCalculationOnUnitPrice(string $configValue, bool $expected)
     {
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_tax.start_calculation_on')
             ->willReturn($configValue);
@@ -181,10 +146,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(!$expected, $this->provider->isStartCalculationOnItem());
     }
 
-    /**
-     * @return array
-     */
-    public function isStartCalculationOnUnitPriceProvider()
+    public function isStartCalculationOnUnitPriceProvider(): array
     {
         return [
             [
@@ -200,10 +162,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isStartCalculationWithRowTotalProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsStartCalculationWithRowTotal($configValue, $expected)
+    public function testIsStartCalculationWithRowTotal(string $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.start_calculation_with',
@@ -214,10 +174,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isStartCalculationWithRowTotal());
     }
 
-    /**
-     * @return array
-     */
-    public function isStartCalculationWithRowTotalProvider()
+    public function isStartCalculationWithRowTotalProvider(): array
     {
         return [
             [
@@ -233,10 +190,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isProductPricesIncludeTaxProvider
-     * @param bool $configValue
-     * @param bool $expected
      */
-    public function testIsProductPricesIncludeTax($configValue, $expected)
+    public function testIsProductPricesIncludeTax(bool $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.product_prices_include_tax',
@@ -247,10 +202,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isProductPricesIncludeTax());
     }
 
-    /**
-     * @return array
-     */
-    public function isProductPricesIncludeTaxProvider()
+    public function isProductPricesIncludeTaxProvider(): array
     {
         return [
             [
@@ -305,10 +257,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isBillingAddressDestinationProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsBillingAddressDestination($configValue, $expected)
+    public function testIsBillingAddressDestination(string $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.destination',
@@ -319,10 +269,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isBillingAddressDestination());
     }
 
-    /**
-     * @return array
-     */
-    public function isBillingAddressDestinationProvider()
+    public function isBillingAddressDestinationProvider(): array
     {
         return [
             [
@@ -338,10 +285,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isShippingAddressDestinationProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsShippingAddressDestination($configValue, $expected)
+    public function testIsShippingAddressDestination(string $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.destination',
@@ -352,10 +297,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isShippingAddressDestination());
     }
 
-    /**
-     * @return array
-     */
-    public function isShippingAddressDestinationProvider()
+    public function isShippingAddressDestinationProvider(): array
     {
         return [
             [
@@ -384,10 +326,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isOriginBaseByDefaultAddressTypeProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsOriginBaseByDefaultAddressType($configValue, $expected)
+    public function testIsOriginBaseByDefaultAddressType(string $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.use_as_base_by_default',
@@ -398,10 +338,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isOriginBaseByDefaultAddressType());
     }
 
-    /**
-     * @return array
-     */
-    public function isOriginBaseByDefaultAddressTypeProvider()
+    public function isOriginBaseByDefaultAddressTypeProvider(): array
     {
         return [
             [
@@ -417,10 +354,8 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isDestinationBaseByDefaultAddressTypeProvider
-     * @param string $configValue
-     * @param bool $expected
      */
-    public function testIsDestinationBaseByDefaultAddressType($configValue, $expected)
+    public function testIsDestinationBaseByDefaultAddressType(string $configValue, bool $expected)
     {
         $this->configureGetCachedExpectations(
             'oro_tax.use_as_base_by_default',
@@ -431,10 +366,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->isDestinationBaseByDefaultAddressType());
     }
 
-    /**
-     * @return array
-     */
-    public function isDestinationBaseByDefaultAddressTypeProvider()
+    public function isDestinationBaseByDefaultAddressTypeProvider(): array
     {
         return [
             [
@@ -455,14 +387,12 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
             ['data'],
         ];
 
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_tax.use_as_base_exclusions')
             ->willReturn($exclusionData);
 
-        $this->taxBaseExclusionFactory
-            ->expects($this->exactly(count($exclusionData)))
+        $this->taxBaseExclusionFactory->expects($this->exactly(count($exclusionData)))
             ->method('create')
             ->willReturn(new TaxBaseExclusion());
 
@@ -480,8 +410,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         $address = new Address();
-        $this->addressModelFactory
-            ->expects($this->once())
+        $this->addressModelFactory->expects($this->once())
             ->method('create')
             ->with($addressData)
             ->willReturn($address);
@@ -491,11 +420,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsEnabled(): void
     {
-        $this->mockSettingsCache(
-            TaxationSettingsProvider::class . '::isEnabled',
-            'oro_tax.tax_enable',
-            true
-        );
+        $this->mockSettingsCache(TaxationSettingsProvider::class . '::isEnabled', true);
 
         self::assertTrue($this->provider->isEnabled());
         self::assertFalse($this->provider->isDisabled());
@@ -505,8 +430,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $value = ['AAAA', 'BBBB'];
 
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_tax.shipping_tax_code')
             ->willReturn($value);
@@ -516,8 +440,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsShippingRatesIncludeTax()
     {
-        $this->configManager
-            ->expects($this->once())
+        $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_tax.shipping_rates_include_tax')
             ->willReturn(true);
@@ -530,11 +453,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsCalculateAfterPromotionsEnabled(bool $isEnabled, bool $expected): void
     {
-        $this->mockSettingsCache(
-            TaxationSettingsProvider::class . '::isCalculateAfterPromotionsEnabled',
-            'oro_tax.calculate_taxes_after_promotions',
-            $isEnabled
-        );
+        $this->mockSettingsCache(TaxationSettingsProvider::class . '::isCalculateAfterPromotionsEnabled', $isEnabled);
 
         self::assertEquals($expected, $this->provider->isCalculateAfterPromotionsEnabled());
         // check cache
@@ -549,12 +468,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $cacheKey
-     * @param string $settingKey
-     * @param mixed $value
-     */
-    private function mockSettingsCache(string $cacheKey, string $settingKey, $value): void
+    private function mockSettingsCache(string $cacheKey, mixed $value): void
     {
         $this->cacheProvider->expects(self::exactly(2))
             ->method('get')

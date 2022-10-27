@@ -9,22 +9,21 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $requestStack = $this->createMock(RequestStack::class);
+        $this->request = $this->createMock(Request::class);
 
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
         $this->entity = new Order();
         $this->extension = new OrderDataStorageExtension(
             $requestStack,
@@ -33,7 +32,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             $this->aclHelper,
             $this->productClass
         );
-        $this->extension->setDataClass('Oro\Bundle\OrderBundle\Entity\Order');
+        $this->extension->setDataClass(Order::class);
         $this->setUpLoggerMock($this->extension);
     }
 
@@ -61,7 +60,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -95,7 +94,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertEmpty($order->getLineItems());
     }
@@ -122,7 +121,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->entity->getLineItems()->first();

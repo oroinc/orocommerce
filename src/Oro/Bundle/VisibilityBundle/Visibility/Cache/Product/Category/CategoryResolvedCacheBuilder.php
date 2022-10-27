@@ -2,44 +2,52 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
 
-class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
+/**
+ * The category visibility cache builder.
+ */
+class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder implements
+    CategoryCaseCacheBuilderInterface
 {
-    /** @var VisibilityChangeCategorySubtreeCacheBuilder */
-    protected $visibilityChangeCategorySubtreeCacheBuilder;
+    private ScopeManager $scopeManager;
+    private InsertFromSelectQueryExecutor $insertExecutor;
+    private VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder;
+    private PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder;
 
-    /** @var PositionChangeCategorySubtreeCacheBuilder */
-    protected $positionChangeCategorySubtreeCacheBuilder;
-
-    public function setVisibilityChangeCategorySubtreeCacheBuilder(
-        VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder
-    ) {
-        $this->visibilityChangeCategorySubtreeCacheBuilder = $visibilityChangeCategorySubtreeCacheBuilder;
-    }
-
-    public function setPositionChangeCategorySubtreeCacheBuilder(
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ProductIndexScheduler $indexScheduler,
+        ScopeManager $scopeManager,
+        InsertFromSelectQueryExecutor $insertExecutor,
+        VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder,
         PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder
     ) {
+        parent::__construct($doctrine, $indexScheduler);
+        $this->scopeManager = $scopeManager;
+        $this->insertExecutor = $insertExecutor;
+        $this->visibilityChangeCategorySubtreeCacheBuilder = $visibilityChangeCategorySubtreeCacheBuilder;
         $this->positionChangeCategorySubtreeCacheBuilder = $positionChangeCategorySubtreeCacheBuilder;
     }
 
     /**
-     * @param VisibilityInterface|CategoryVisibility $visibilitySettings
+     * {@inheritdoc}
      */
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
+        /** @var CategoryVisibility $visibilitySettings */
         $category = $visibilitySettings->getCategory();
         $scope = $visibilitySettings->getScope();
 
@@ -51,7 +59,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         $update = [];
         $where = ['category' => $category];
 
-        $repository = $this->getRepository();
+        $repository = $this->getCategoryRepository();
 
         $hasCategoryVisibilityResolved = $repository->hasEntity($where);
 
@@ -59,7 +67,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
             $insert = true;
         }
 
-        if (in_array($selectedVisibility, [CategoryVisibility::HIDDEN, CategoryVisibility::VISIBLE])) {
+        if (\in_array($selectedVisibility, [CategoryVisibility::HIDDEN, CategoryVisibility::VISIBLE], true)) {
             $visibility = $this->convertStaticVisibility($selectedVisibility);
             $update = [
                 'visibility' => $visibility,
@@ -75,7 +83,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
 
             $visibility = CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         } elseif ($selectedVisibility === CategoryVisibility::PARENT_CATEGORY) {
-            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category);
+            [$visibility, $source] = $this->getParentCategoryVisibilityAndSource($category);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
@@ -115,11 +123,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
      */
     public function buildCache(Scope $scope = null)
     {
-        /** @var CategoryVisibilityRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
-        /** @var CategoryRepository $resolvedRepository */
-        $resolvedRepository = $this->getRepository();
+        $resolvedRepository = $this->getCategoryRepository();
 
         // clear table
         $resolvedRepository->clearTable();
@@ -132,7 +136,10 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         $resolvedRepository->insertStaticValues($this->insertExecutor, $scope);
 
         // resolved parent category values
-        $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities(), 'category_id');
+        $categoryVisibilities = $this->indexVisibilities(
+            $this->doctrine->getRepository(CategoryVisibility::class)->getCategoriesVisibilities(),
+            'category_id'
+        );
         $categoryIds = [
             CategoryVisibilityResolved::VISIBILITY_VISIBLE => [],
             CategoryVisibilityResolved::VISIBILITY_HIDDEN => [],
@@ -156,15 +163,10 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         }
     }
 
-    /**
-     * @param array $categoryVisibilities
-     * @param array $currentCategory
-     * @return int
-     */
-    protected function resolveVisibility(array &$categoryVisibilities, array $currentCategory)
+    private function resolveVisibility(array &$categoryVisibilities, array $currentCategory): int
     {
         // visibility already resolved
-        if (array_key_exists('resolved_visibility', $currentCategory)) {
+        if (\array_key_exists('resolved_visibility', $currentCategory)) {
             return $currentCategory['resolved_visibility'];
         }
 
@@ -198,40 +200,24 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         return $resolvedVisibility;
     }
 
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
-    }
-
-    /**
-     * @return CategoryRepository
-     */
-    protected function getRepository()
-    {
-        return $this->repository;
-    }
-
-    /**
-     * @param Category $category
-     * @return array
-     */
-    protected function getParentCategoryVisibilityAndSource(Category $category)
+    private function getParentCategoryVisibilityAndSource(Category $category): array
     {
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
             return [
-                $this->getRepository()->getFallbackToAllVisibility($parentCategory),
+                $this->getCategoryRepository()->getFallbackToAllVisibility($parentCategory),
                 CategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
             ];
-        } else {
-            return [
-                CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-                CategoryVisibilityResolved::SOURCE_STATIC
-            ];
         }
+
+        return [
+            CategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            CategoryVisibilityResolved::SOURCE_STATIC
+        ];
+    }
+
+    private function getCategoryRepository(): CategoryRepository
+    {
+        return $this->doctrine->getRepository(CategoryVisibilityResolved::class);
     }
 }

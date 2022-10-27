@@ -60,7 +60,7 @@ trait ContextTrait
     }
 
     /**
-     * @param array $context [ 'website_id' => int, ...]
+     * @param array $context [ 'currentWebsiteId' => int, ...]
      * @return int|null
      */
     private function getContextCurrentWebsiteId(array $context): ?int

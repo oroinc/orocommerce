@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\RequestHandler;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -14,48 +16,39 @@ class OrderRequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Request
-     */
-    protected $request;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Request */
+    private $request;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager
-     */
-    protected $objectManager;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager */
+    private $objectManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    protected $registry;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
+    private $registry;
 
-    /**
-     * @var OrderRequestHandler
-     */
-    protected $handler;
+    /** @var string */
+    private $customerClass = Customer::class;
 
-    /**
-     * @var string
-     */
-    protected $customerClass = 'Oro\Bundle\CustomerBundle\Entity\Customer';
+    /** @var string */
+    private $customerUserClass = CustomerUser::class;
 
-    /**
-     * @var string
-     */
-    protected $customerUserClass = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
+    /** @var OrderRequestHandler */
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock(ObjectManager::class);
 
-        $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
-        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->objectManager);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->objectManager);
 
-        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = $this->createMock(Request::class);
 
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
 
         $this->handler = new OrderRequestHandler(
             $this->registry,
@@ -65,45 +58,36 @@ class OrderRequestHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->handler, $this->objectManager, $this->request, $this->customerClass, $this->customerUserClass);
-    }
-
     /**
      * @dataProvider getCustomerDataProvider
-     *
-     * @param string $method
      */
-    public function testGetWithoutRequest($method)
+    public function testGetWithoutRequest(string $method)
     {
-        $this->registry->expects($this->never())->method('getManagerForClass');
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
         $this->assertNull($this->handler->$method());
     }
 
     /**
      * @dataProvider getCustomerDataProvider
-     *
-     * @param string $method
      */
-    public function testGetWithoutParam($method)
+    public function testGetWithoutParam(string $method)
     {
-        $this->registry->expects($this->never())->method('getManagerForClass');
+        $this->registry->expects($this->never())
+            ->method('getManagerForClass');
         $this->assertNull($this->handler->$method());
     }
 
     /**
      * @dataProvider getCustomerDataProvider
-     *
-     * @param string $method
-     * @param string $class
-     * @param string $param
      */
-    public function testGetNotFound($method, $class, $param)
+    public function testGetNotFound(string $method, string $class, string $param)
     {
         $entity = $this->getEntity($class, ['id' => 42]);
 
-        $this->request->expects($this->once())->method('get')->with(OrderType::NAME)
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(OrderType::NAME)
             ->willReturn([$param => $entity->getId()]);
 
         $this->objectManager->expects($this->once())
@@ -116,16 +100,14 @@ class OrderRequestHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCustomerDataProvider
-     *
-     * @param string $method
-     * @param string $class
-     * @param string $param
      */
-    public function testGetCustomer($method, $class, $param)
+    public function testGetCustomer(string $method, string $class, string $param)
     {
         $entity = $this->getEntity($class, ['id' => 42]);
 
-        $this->request->expects($this->once())->method('get')->with(OrderType::NAME)
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(OrderType::NAME)
             ->willReturn([$param => $entity->getId()]);
 
         $this->objectManager->expects($this->once())
@@ -136,10 +118,7 @@ class OrderRequestHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($entity, $this->handler->$method());
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerDataProvider()
+    public function getCustomerDataProvider(): array
     {
         return [
             ['getCustomer', $this->customerClass, 'customer'],

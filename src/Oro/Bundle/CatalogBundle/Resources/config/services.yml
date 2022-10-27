@@ -133,7 +133,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler'
         public: false
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_product.search.product_reindex_manager'
 
     oro_catalog.event_listener.orm.category_listener:
@@ -323,7 +323,7 @@ services:
     oro_catalog.access_rule.frontend_organization_for_category:
         class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
         arguments:
-            - '@oro_security.token_accessor'
+            - '@oro_organization.organization_restriction_provider'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\CatalogBundle\Entity\Category, frontend: true }
 

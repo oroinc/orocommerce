@@ -3,77 +3,52 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CustomerGroupCategoryResolvedCacheBuilder;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
 
-class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
+class CustomerGroupCategoryResolvedCacheBuilderTest extends WebTestCase
 {
-    use ConfigManagerAwareTestTrait;
+    use CatalogTrait;
 
-    /** @var Category */
-    private $category;
+    private const ROOT = 'root';
 
-    /** @var CustomerGroupCategoryResolvedCacheBuilder */
-    private $builder;
-
-    /** @var Scope */
-    protected $scope;
+    private ManagerRegistry $doctrine;
+    private Category $category;
+    private Scope $scope;
+    private CustomerGroupCategoryResolvedCacheBuilder $builder;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->initClient();
+        $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadOrganization::class, LoadCategoryVisibilityData::class]);
+        self::getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+
+        $this->doctrine = self::getContainer()->get('doctrine');
 
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
-        $productReindexManager = new ProductReindexManager(
-            self::getContainer()->get('event_dispatcher')
-        );
-
-        $indexScheduler = new ProductIndexScheduler(
-            self::getContainer()->get('oro_entity.doctrine_helper'),
-            $productReindexManager
-        );
-
-        $scopeManager = self::getContainer()->get('oro_scope.scope_manager');
-        $this->scope = $scopeManager->findOrCreate(
+        $this->scope = self::getContainer()->get('oro_scope.scope_manager')->findOrCreate(
             CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
             ['customerGroup' => $this->getReference('customer_group.group3')]
         );
-        $this->builder = new CustomerGroupCategoryResolvedCacheBuilder(
-            $this->doctrine,
-            $scopeManager,
-            $indexScheduler,
-            self::getContainer()->get('oro_entity.orm.insert_from_select_query_executor'),
-            $productReindexManager
-        );
-        $this->builder->setCacheClass(CustomerGroupCategoryVisibilityResolved::class);
-        $this->builder->setRepository(
-            self::getContainer()->get('oro_visibility.category_repository')
-        );
-        $this->builder->setCustomerGroupCategoryVisibilityRepository(
-            self::getContainer()->get('oro_visibility.customer_group_category_repository')
-        );
 
-        $subtreeBuilder = new VisibilityChangeGroupSubtreeCacheBuilder(
-            $this->doctrine,
-            self::getContainer()->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
-            self::getConfigManager(null),
-            self::getContainer()->get('oro_scope.scope_manager')
+        $this->builder = self::getContainer()->get(
+            'oro_visibility.visibility.cache.product.category.customer_group_category_resolved_cache_builder'
         );
-
-        $this->builder->setVisibilityChangeCustomerSubtreeCacheBuilder($subtreeBuilder);
     }
 
     public function testChangeCustomerGroupCategoryVisibilityToHidden()

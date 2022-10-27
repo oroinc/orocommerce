@@ -12,28 +12,32 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryMatcherTest extends AbstractMatcherTest
 {
-    /**
-     * @var CountryMatcher
-     */
+    /** @var CountryMatcher */
     protected $matcher;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->matcher = new CountryMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
+        $this->matcher = new CountryMatcher($this->doctrineHelper, TaxRule::class);
     }
 
     /**
      * @dataProvider matchProvider
-     * @param TaxRule[] $expected
-     * @param Country $country
-     * @param string $productTaxCode
-     * @param string $customerTaxCode
-     * @param TaxRule[] $taxRules
+     *
+     * @param TaxRule[]    $expected
+     * @param Country|null $country
+     * @param string|null  $productTaxCode
+     * @param string|null  $customerTaxCode
+     * @param TaxRule[]    $taxRules
      */
-    public function testMatch($expected, $country, $productTaxCode, $customerTaxCode, $taxRules)
-    {
+    public function testMatch(
+        array $expected,
+        ?Country $country,
+        ?string $productTaxCode,
+        ?string $customerTaxCode,
+        array $taxRules
+    ) {
         $address = (new Address())
             ->setCountry($country);
 
@@ -49,8 +53,7 @@ class CountryMatcherTest extends AbstractMatcherTest
 
         $isCallFindByCountryAndTaxCode = $country && $taxCodes->isFullFilledTaxCode();
 
-        $this->taxRuleRepository
-            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
+        $this->taxRuleRepository->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByCountryAndTaxCode')
             ->with($taxCodes, $country)
             ->willReturn($taxRules);
@@ -61,10 +64,7 @@ class CountryMatcherTest extends AbstractMatcherTest
         $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
-    /**
-     * @return array
-     */
-    public function matchProvider()
+    public function matchProvider(): array
     {
         $taxRules = [
             new TaxRule(),

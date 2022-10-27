@@ -18,7 +18,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\ImapBundle\Connector\Search\SearchQuery;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -40,44 +39,32 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
     private const CATEGORY_ID = 42;
 
     /** @var RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private RequestProductHandler $requestProductHandler;
-
-    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private CategoryRepository $repository;
+    private $requestProductHandler;
 
     /** @var SubcategoryProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private SubcategoryProvider $categoryProvider;
+    private $categoryProvider;
 
-    private DatagridConfiguration $config;
+    /** @var DatagridConfiguration */
+    private $config;
 
-    private ?Category $category = null;
+    /** @var Category|null */
+    private $category;
 
-    private ?Category $subcategory1 = null;
-
-    private ?Category $subcategory2 = null;
-
-    private SearchCategoryFilteringEventListener $listener;
+    /** @var SearchCategoryFilteringEventListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
 
-        $this->repository = $this->createMock(CategoryRepository::class);
-
         $this->category = $this->createCategory(self::CATEGORY_ID, '1_42');
-        $this->subcategory1 = $this->createCategory(1001, '1_42_1001');
-        $this->subcategory2 = $this->createCategory(2002, '1_42_2002');
 
-        $this->repository
-            ->expects($this->any())
-            ->method('find')
-            ->willReturnMap([[self::CATEGORY_ID, null, null, $this->category]]);
-
-        $this->categoryProvider = $this->createMock(SubcategoryProvider::class);
-        $this->categoryProvider
-            ->expects($this->any())
+        $categoryProvider = $this->createMock(SubcategoryProvider::class);
+        $categoryProvider->expects($this->any())
             ->method('getAvailableSubcategories')
-            ->willReturnMap([[$this->category, [$this->subcategory1, $this->subcategory2]]]);
+            ->willReturnMap([
+                [$this->category, [$this->createCategory(1001, '1_42_1001'), $this->createCategory(2002, '1_42_2002')]]
+            ]);
 
         $this->config = DatagridConfiguration::create(
             [
@@ -92,11 +79,16 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
             ]
         );
 
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
+        $repository = $this->createMock(CategoryRepository::class);
+        $repository->expects($this->any())
+            ->method('find')
+            ->willReturnMap([[self::CATEGORY_ID, null, null, $this->category]]);
+
+        $categoryEntityManager = $this->createMock(ObjectManager::class);
+        $categoryEntityManager->expects($this->any())
             ->method('getRepository')
             ->with(Category::class)
-            ->willReturn($this->repository);
+            ->willReturn($repository);
 
         $contentVariantEntityManager = $this->createMock(EntityManagerInterface::class);
         $contentVariant = (new ContentVariantStub())
@@ -108,27 +100,23 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $contentVariantEntityManager
             ->expects($this->any())
             ->method('find')
-            ->willReturnMap(
-                [
-                    [ContentVariant::class, self::CONTENT_VARIANT_ID, $contentVariant],
-                    [ContentVariant::class, self::CONTENT_VARIANT_OTHER_TYPE_ID, $contentVariantOfOtherType],
-                ]
-            );
+            ->willReturnMap([
+                [ContentVariant::class, self::CONTENT_VARIANT_ID, $contentVariant],
+                [ContentVariant::class, self::CONTENT_VARIANT_OTHER_TYPE_ID, $contentVariantOfOtherType],
+            ]);
 
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturnMap(
-                [
-                    [Category::class, $manager],
-                    [ContentVariant::class, $contentVariantEntityManager],
-                ]
-            );
+            ->willReturnMap([
+                [Category::class, $categoryEntityManager],
+                [ContentVariant::class, $contentVariantEntityManager],
+            ]);
 
         $this->listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $registry,
-            $this->categoryProvider
+            $doctrine,
+            $categoryProvider
         );
     }
 
@@ -137,13 +125,10 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $this->requestProductHandler->expects($this->once())
             ->method('getCategoryId')
             ->willReturn(0);
-
         $this->requestProductHandler->expects($this->never())
             ->method('getIncludeSubcategoriesChoice');
-
         $this->requestProductHandler->expects($this->never())
             ->method('getCategoryContentVariantId');
-
         $this->requestProductHandler->expects($this->never())
             ->method('getOverrideVariantConfiguration');
 
@@ -162,18 +147,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         array $expectedParameters,
         array $expectedConfig
     ): void {
-        $this->requestProductHandler
-            ->expects($this->any())
+        $this->requestProductHandler->expects($this->any())
             ->method('getCategoryContentVariantId')
             ->willReturn(0);
-
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getCategoryId')
             ->willReturn(0);
-
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getIncludeSubcategoriesChoice')
             ->with($parameters['includeSubcategories'])
             ->willReturn($parameters['includeSubcategories']);
@@ -277,18 +257,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         array $expectedParameters,
         array $expectedConfig
     ): void {
-        $this->requestProductHandler
-            ->expects($this->any())
+        $this->requestProductHandler->expects($this->any())
             ->method('getCategoryContentVariantId')
             ->willReturn(0);
-
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getCategoryId')
             ->willReturn($categoryId);
-
-        $this->requestProductHandler
-            ->expects($this->any())
+        $this->requestProductHandler->expects($this->any())
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn($includeSubcategories);
 
@@ -431,18 +406,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         array $expectedParameters,
         array $expectedConfig
     ): void {
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getCategoryContentVariantId')
             ->willReturn(0);
-
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getCategoryId')
             ->willReturn(0);
-
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getIncludeSubcategoriesChoice')
             ->with($parameters['includeSubcategories'])
             ->willReturn($parameters['includeSubcategories']);
@@ -569,18 +539,13 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         array $expectedParameters,
         array $expectedConfig
     ): void {
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getCategoryId')
             ->willReturn(self::CATEGORY_ID);
-
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getCategoryContentVariantId')
             ->willReturn($contentVariantId);
-
-        $this->requestProductHandler
-            ->expects($this->any())
+        $this->requestProductHandler->expects($this->any())
             ->method('getOverrideVariantConfiguration')
             ->willReturn($overrideVariantConfiguration);
 
@@ -707,21 +672,17 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
 
     public function testOnBuildAfterWithSingleCategory()
     {
-        $this->requestProductHandler
+        $this->requestProductHandler->expects($this->any())
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(false);
 
-        /** @var SearchDatasource|\PHPUnit\Framework\MockObject\MockObject $searchDataSource */
         $datasource = $this->createMock(SearchDatasource::class);
-
-        /** @var SearchQuery|\PHPUnit\Framework\MockObject\MockObject $searchQuery */
         $query = $this->createMock(Query::class);
-
-        /** @var WebsiteSearchQuery|\PHPUnit\Framework\MockObject\MockObject $websiteSearchQuery */
         $websiteSearchQuery = $this->createMock(WebsiteSearchQuery::class);
 
-        $websiteSearchQuery->method('getQuery')
-            ->will($this->returnValue($query));
+        $websiteSearchQuery->expects($this->any())
+            ->method('getQuery')
+            ->willReturn($query);
 
         $expr = Criteria::expr()->eq('text.category_path', $this->category->getMaterializedPath());
 
@@ -734,7 +695,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $dataGrid = new Datagrid('test', $this->config, $parameters);
         $dataGrid->setDatasource($datasource);
 
-        $datasource->method('getSearchQuery')
+        $datasource->expects($this->any())
+            ->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
 
         $event = new BuildAfter($dataGrid);
@@ -763,8 +725,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $websiteSearchQuery->expects($this->never())
             ->method($this->anything());
 
-        $this->requestProductHandler
-            ->expects($this->once())
+        $this->requestProductHandler->expects($this->once())
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(true);
 
@@ -772,7 +733,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit\Framework\TestCa
         $dataGrid = new Datagrid('test', $this->config, $parameters);
         $dataGrid->setDatasource($datasource);
 
-        $datasource->method('getSearchQuery')
+        $datasource->expects($this->any())
+            ->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
 
         $event = new BuildAfter($dataGrid);

@@ -1,19 +1,5 @@
 /* @theme: default; */
 
-.coupon-trigger {
-    @include fa-icon($fa-var-plus-square-o, before, true) {
-        margin-right: $coupon-trigger-inner-icon-offset;
-
-        vertical-align: middle;
-    }
-
-    padding: $coupon-trigger-inner-offset;
-
-    .expanded & {
-        @include fa-icon($fa-var-minus-square-o);
-    }
-}
-
 .coupon-container {
     width: $coupon-container-width;
     float: $coupon-container-float;
@@ -21,9 +7,7 @@
     padding: $coupon-container-padding;
 
     &__content {
-        .coupon-trigger ~ .collapse-view__container & {
-            padding: $coupon-container-content-inner-offset;
-        }
+        padding: $coupon-container-content-inner-offset;
     }
 
     &__input-wrap {

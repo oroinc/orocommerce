@@ -13,9 +13,6 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
     /** @var FreightClassesProvider */
     protected $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,7 +29,9 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
      */
     public function testGetFreightClasses(array $inputData, array $expectedData)
     {
-        $this->repository->expects($this->once())->method('findAll')->willReturn($inputData['units']);
+        $this->repository->expects($this->once())
+            ->method('findAll')
+            ->willReturn($inputData['units']);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -46,10 +45,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
         $this->assertEquals($expectedData, array_values($this->provider->getFreightClasses($inputData['options'])));
     }
 
-    /**
-     * @return array
-     */
-    public function getFreightClassesProvider()
+    public function getFreightClassesProvider(): array
     {
         return [
             'no providers' => [
@@ -92,27 +88,19 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
         ];
     }
 
-    /**
-     * @param array $classes
-     * @return FreightClassesExtensionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getClassesExtension(array $classes)
+    private function getClassesExtension(array $classes): FreightClassesExtensionInterface
     {
-        $extension = $this->createMock('Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface');
+        $extension = $this->createMock(FreightClassesExtensionInterface::class);
         $extension->expects($this->any())
             ->method('isApplicable')
-            ->willReturnCallback(function (FreightClass $class, ProductShippingOptions $options) use ($classes) {
+            ->willReturnCallback(function (FreightClass $class) use ($classes) {
                 return in_array($class->getCode(), $classes, true);
             });
 
         return $extension;
     }
 
-    /**
-     * @param string $code
-     * @return FreightClass
-     */
-    protected function getFreightClass($code)
+    private function getFreightClass(string $code): FreightClass
     {
         $class = new FreightClass();
         $class->setCode($code);

@@ -8,10 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var InventoryLevelExportTemplateTypeExtension
-     */
-    protected $inventoryLevelExportTemplateTypeExtension;
+    /** @var InventoryLevelExportTemplateTypeExtension */
+    private $inventoryLevelExportTemplateTypeExtension;
 
     protected function setUp(): void
     {
@@ -20,7 +18,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\T
 
     public function testBuildFormShouldRemoveDefaultChild()
     {
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
 
         $builder->expects($this->once())
             ->method('remove')
@@ -39,12 +37,12 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\T
             'oro_inventory.detailed_inventory_levels_template'
         ];
 
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $phpunitTestCase = $this;
 
         $builder->expects($this->once())
             ->method('add')
-            ->will($this->returnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
+            ->willReturnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
                 $choices = $options['choices'];
                 $phpunitTestCase->assertContains(
                     $processorAliases[0],
@@ -54,19 +52,11 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\T
                     $processorAliases[1],
                     $choices
                 );
-            }));
+            });
 
         $this->inventoryLevelExportTemplateTypeExtension->buildForm(
             $builder,
             ['entityName' => InventoryLevel::class]
         );
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormBuilderInterface
-     */
-    protected function getBuilderMock()
-    {
-        return $this->getMockBuilder(FormBuilderInterface::class)->getMock();
     }
 }

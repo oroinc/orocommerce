@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
@@ -16,7 +17,6 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheDumper;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -25,40 +25,31 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Holds common methods for loading WebCatalog demo data
+ * The base class to load web catalog demo data.
  */
 abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     use UserUtilityTrait;
 
-    const DEFAULT_WEB_CATALOG_NAME = 'Default Web Catalog';
-    const DEFAULT_WEB_CATALOG_DESC= 'Default Web Catalog description';
+    protected const DEFAULT_WEB_CATALOG_NAME = 'Default Web Catalog';
+    protected const DEFAULT_WEB_CATALOG_DESC = 'Default Web Catalog description';
+
+    protected ContainerInterface $container;
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param WebCatalog $webCatalog
-     * @param array $nodes
-     * @param ContentNode $parent
-     */
     protected function loadContentNodes(
         ObjectManager $manager,
         WebCatalog $webCatalog,
         array $nodes,
         ContentNode $parent = null
-    ) {
+    ): void {
         foreach ($nodes as $name => $contentNode) {
             $node = new ContentNode();
             $node->setWebCatalog($webCatalog);
@@ -103,12 +94,24 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
             }
 
             if (isset($contentNode['isNavigationRoot'])) {
-                $configManager = $this->container->get('oro_config.global');
-                $configManager->set(Configuration::ROOT_NODE . '.navigation_root', $node->getId());
-
-                $configManager->flush();
+                $this->setNavigationRoot($node);
             }
         }
+    }
+
+    protected function setNavigationRoot(ContentNode $node): void
+    {
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_config.global');
+        $configManager->set('oro_web_catalog.navigation_root', $node->getId());
+        $configManager->flush();
+    }
+
+    protected function enableWebCatalog(WebCatalog $webCatalog): void
+    {
+        $configManager = $this->container->get('oro_config.global');
+        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
+        $configManager->flush();
     }
 
     protected function generateSlugs(ContentNode $contentNode)

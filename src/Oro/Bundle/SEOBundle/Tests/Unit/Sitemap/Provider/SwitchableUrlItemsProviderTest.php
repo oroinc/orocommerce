@@ -13,24 +13,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SwitchableUrlItemsProviderTest extends TestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
     protected function setUp(): void
@@ -43,18 +35,15 @@ class SwitchableUrlItemsProviderTest extends TestCase
 
     public function testExcludeProvider()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $providerConfig = $this->createMock(CmsPageSitemapRestrictionProvider::class);
         $version = '1';
 
-        $providerConfig
-            ->expects($this->once())
+        $providerConfig->expects($this->once())
             ->method('isUrlItemsExcluded')
             ->willReturn(true);
 
-        $this->eventDispatcher
-            ->expects($this->never())
+        $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $urlItemsProvider = new SwitchableUrlItemsProvider(
@@ -72,23 +61,20 @@ class SwitchableUrlItemsProviderTest extends TestCase
 
     public function testExcludeProviderWebsiteLevel()
     {
-        /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
-        /** @var WebsiteInterface $website2 */
         $website2 = $this->createMock(WebsiteInterface::class);
         $version = '1';
 
         $provider = $this->createMock(CmsPageSitemapRestrictionProvider::class);
-        $provider
+        $provider->expects(self::any())
             ->method('isUrlItemsExcluded')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [null, true],
                 [$website, true],
                 [$website2, true]
-            ]));
+            ]);
 
-        $this->eventDispatcher
-            ->expects($this->never())
+        $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $urlItemsProvider = new SwitchableUrlItemsProvider(

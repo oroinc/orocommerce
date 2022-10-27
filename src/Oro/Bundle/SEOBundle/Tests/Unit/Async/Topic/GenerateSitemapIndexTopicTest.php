@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async\Topic;
 
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapIndexTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
 use Oro\Component\MessageQueue\Test\AbstractTopicTestCase;
 use Oro\Component\MessageQueue\Topic\TopicInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -22,14 +22,14 @@ class GenerateSitemapIndexTopicTest extends AbstractTopicTestCase
                 'body' => [
                     'jobId' => 1,
                     'version' => 1,
-                    'websiteIds' => [1,2,3],
+                    'websiteIds' => [1, 2, 3],
                 ],
                 'expectedBody' => [
                     'jobId' => 1,
                     'version' => 1,
-                    'websiteIds' => [1,2,3],
-                ]
-            ]
+                    'websiteIds' => [1, 2, 3],
+                ],
+            ],
         ];
     }
 

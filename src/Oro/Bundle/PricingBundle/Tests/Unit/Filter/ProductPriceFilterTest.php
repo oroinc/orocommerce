@@ -14,9 +14,6 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $formFactory;
-
     /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
@@ -31,17 +28,17 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->form = $this->createMock(FormInterface::class);
-        $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->formFactory->expects($this->any())
-            ->method('create')
-            ->will($this->returnValue($this->form));
-
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
         $this->requestHandler = $this->createMock(PriceListRequestHandler::class);
+        $this->form = $this->createMock(FormInterface::class);
+
+        $formFactory = $this->createMock(FormFactoryInterface::class);
+        $formFactory->expects($this->any())
+            ->method('create')
+            ->willReturn($this->form);
 
         $this->filter = new ProductPriceFilter(
-            $this->formFactory,
+            $formFactory,
             new FilterUtility(),
             $this->formatter,
             $this->requestHandler
@@ -50,18 +47,13 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider parseDataDataProvider
-     * @param array $data
-     * @param array $expected
      */
-    public function testParseData($data, $expected)
+    public function testParseData(array $data, array|bool $expected)
     {
         $this->assertEquals($expected, ReflectionUtil::callMethod($this->filter, 'parseData', [$data]));
     }
 
-    /**
-     * @return array
-     */
-    public function parseDataDataProvider()
+    public function parseDataDataProvider(): array
     {
         return [
             'correct' => [

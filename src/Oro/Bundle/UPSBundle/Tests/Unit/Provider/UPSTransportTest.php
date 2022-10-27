@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
@@ -17,44 +18,29 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const PRODUCTION_URL = 'prod.example.org';
-    const TEST_URL = 'test.example.org';
+    private const PRODUCTION_URL = 'prod.example.org';
+    private const TEST_URL = 'test.example.org';
 
-    /**
-     * @var RestClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $clientFactory;
+    /** @var RestClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $clientFactory;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $client;
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    private $client;
 
-    /**
-     * @var UPSTransport
-     */
-    protected $transport;
-
-    /**
-     * @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $upsClientUrlProviderMock;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $logger;
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var UPSTransport */
+    private $transport;
 
     protected function setUp(): void
     {
-        $this->client = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface');
-
-        $this->clientFactory = $this->createMock(
-            'Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface'
-        );
-
+        $this->client = $this->createMock(RestClientInterface::class);
+        $this->clientFactory = $this->createMock(RestClientFactoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-
         $this->upsClientUrlProviderMock = $this->createMock(UpsClientUrlProviderInterface::class);
 
         $this->transport = new UPSTransport($this->upsClientUrlProviderMock, $this->logger);
@@ -63,17 +49,17 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLabel()
     {
-        static::assertEquals('oro.ups.transport.label', $this->transport->getLabel());
+        self::assertEquals('oro.ups.transport.label', $this->transport->getLabel());
     }
 
     public function testGetSettingsFormType()
     {
-        static::assertEquals(UPSTransportSettingsType::class, $this->transport->getSettingsFormType());
+        self::assertEquals(UPSTransportSettingsType::class, $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()
     {
-        static::assertEquals('Oro\Bundle\UPSBundle\Entity\UPSTransport', $this->transport->getSettingsEntityFQCN());
+        self::assertEquals(UPSSettings::class, $this->transport->getSettingsEntityFQCN());
     }
 
     public function testGetPrices()
@@ -84,11 +70,11 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
         $transportEntity = new UPSSettings();
         $integration->setTransport($transportEntity);
 
-        $this->clientFactory->expects(static::once())
+        $this->clientFactory->expects(self::once())
             ->method('createRestClient')
             ->willReturn($this->client);
 
-        $restResponse = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
+        $restResponse = $this->createMock(RestResponseInterface::class);
 
         $json = '{
                    "RateResponse":{
@@ -104,11 +90,11 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
                    }
                 }';
 
-        $restResponse->expects(static::once())
+        $restResponse->expects(self::once())
             ->method('json')
             ->willReturn($json);
 
-        $this->client->expects(static::once())
+        $this->client->expects(self::once())
             ->method('post')
             ->willReturn($restResponse);
 
@@ -123,11 +109,11 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
         $transportEntity = $this->getEntity(UPSSettings::class, ['id' => '123']);
         $integration->setTransport($transportEntity);
 
-        $this->clientFactory->expects(static::once())
+        $this->clientFactory->expects(self::once())
             ->method('createRestClient')
             ->willReturn($this->client);
 
-        $restResponse = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
+        $restResponse = $this->createMock(RestResponseInterface::class);
 
         $json = '{
             "Fault":{
@@ -147,41 +133,34 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
             }
         }';
 
-        $jsonArr = json_decode($json, true);
+        $jsonArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
 
-        $restResponse->expects(static::once())
+        $restResponse->expects(self::once())
             ->method('json')
-            ->willReturn($jsonArr)
-        ;
+            ->willReturn($jsonArr);
 
-        $this->client->expects(static::once())
+        $this->client->expects(self::once())
             ->method('post')
-            ->willReturn($restResponse)
-        ;
+            ->willReturn($restResponse);
 
-        $this->logger->expects(static::once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 sprintf(
                     'Price request failed for transport #%s. %s',
                     $transportEntity->getId(),
-                    json_encode($jsonArr['Fault'])
+                    json_encode($jsonArr['Fault'], JSON_THROW_ON_ERROR)
                 )
-            )
-        ;
+            );
 
         $this->transport->getPriceResponse($rateRequest, $transportEntity);
     }
 
     /**
      * @dataProvider clientBaseOptionDataProvider
-     *
-     * @param bool   $testMode
-     * @param string $expectedUrl
      */
-    public function testClientBaseUrl($testMode, $expectedUrl)
+    public function testClientBaseUrl(bool $testMode, string $expectedUrl)
     {
-        /** @var UPSSettings $transportEntity */
         $transportEntity = $this->getEntity(
             UPSSettings::class,
             [
@@ -193,42 +172,28 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
         $integration = new Channel();
         $integration->setTransport($transportEntity);
 
-        $this->client->expects(static::once())
+        $this->client->expects(self::once())
             ->method('post')
-            ->willReturn(
-                $this->createMock(RestResponseInterface::class)
-            );
+            ->willReturn($this->createMock(RestResponseInterface::class));
 
-        $this->upsClientUrlProviderMock
-            ->expects($this->once())
+        $this->upsClientUrlProviderMock->expects($this->once())
             ->method('getUpsUrl')
             ->with($testMode)
             ->willReturn($expectedUrl);
 
-        $this->clientFactory->expects(static::once())
+        $this->clientFactory->expects(self::once())
             ->method('createRestClient')
             ->with($expectedUrl)
             ->willReturn($this->client);
 
-        $this->transport->getPriceResponse($this->createRateRequestMock(), $transportEntity);
+        $this->transport->getPriceResponse($this->createMock(PriceRequest::class), $transportEntity);
     }
 
-    /**
-     * @return array
-     */
-    public function clientBaseOptionDataProvider()
+    public function clientBaseOptionDataProvider(): array
     {
         return [
             ['testMode' => false, 'expectedUrl' => self::PRODUCTION_URL],
             ['testMode' => true, 'expectedUrl' => self::TEST_URL],
         ];
-    }
-
-    /**
-     * @return PriceRequest|\PHPUnit\Framework\MockObject\MockObject $rateRequest
-     */
-    private function createRateRequestMock()
-    {
-        return $this->createMock(PriceRequest::class);
     }
 }

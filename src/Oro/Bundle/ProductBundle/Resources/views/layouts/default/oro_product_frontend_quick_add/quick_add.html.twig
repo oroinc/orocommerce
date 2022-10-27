@@ -36,11 +36,26 @@
         '~data-page-component-options': pageComponentOptions
     }) %}
     {{ block('form_start_widget') }}
+    {% set errors = form_errors(form) %}
+    {% if errors|trim|length %}
+        <div class="grid-col-12">
+            {{ errors|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _quick_add_form_grid_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _quick_add_form_fields_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' quick-order-add__content row-oro'
+        '~class': ' grid-col-12 grid quick-order-add__fields row-oro'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ form_widget(form.products) }}
@@ -48,12 +63,11 @@
     {{ form_row(form.component) }}
     {{ form_row(form.additional) }}
     {{ form_row(form.transition) }}
-    {{ form_errors(form) }}
 {% endblock %}
 
 {% block _quick_add_form_buttons_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' quick-order-add__buttons-wrapper',
+        '~class': ' grid-col-12 quick-order-add__buttons-wrapper',
         'data-role': 'quick-order-add-buttons'
     }) %}
     <div {{ block('block_attributes') }}>

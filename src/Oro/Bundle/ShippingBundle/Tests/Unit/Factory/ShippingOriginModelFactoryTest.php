@@ -11,35 +11,24 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 class ShippingOriginModelFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var ShippingOriginModelFactory */
-    protected $factory;
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->factory = new ShippingOriginModelFactory($this->doctrineHelper);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->factory, $this->doctrineHelper);
-    }
-
     /**
      * @dataProvider createProvider
-     *
-     * @param array          $values
-     * @param ShippingOrigin $expected
      */
-    public function testCreate($values, $expected)
+    public function testCreate(array $values, ShippingOrigin $expected)
     {
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->willReturnCallback(function ($classAlias, $id) {
                 if (str_contains($classAlias, 'Country')) {
@@ -54,10 +43,7 @@ class ShippingOriginModelFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->factory->create($values));
     }
 
-    /**
-     * @return array
-     */
-    public function createProvider()
+    public function createProvider(): array
     {
         return [
             'all' => [

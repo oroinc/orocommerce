@@ -8,19 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TaxSelectType
-     */
-    protected $type;
+    /** @var TaxSelectType */
+    private $type;
 
     protected function setUp(): void
     {
         $this->type = new TaxSelectType();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->type);
     }
 
     public function testGetParent()

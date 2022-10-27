@@ -15,18 +15,15 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 
-    /** @var TotalResolver */
-    protected $resolver;
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $settingsProvider;
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $settingsProvider;
+    /** @var TotalResolver */
+    private $resolver;
 
     protected function setUp(): void
     {
-        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()->getMock();
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->resolver = new TotalResolver($this->settingsProvider, new RoundingResolver());
     }
@@ -37,8 +34,8 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $taxable->getResult());
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
+        $this->assertInstanceOf(Result::class, $taxable->getResult());
+        $this->assertInstanceOf(ResultElement::class, $taxable->getResult()->getTotal());
         $this->compareResult([], $taxable->getResult());
     }
 
@@ -55,23 +52,17 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $items
-     * @param ResultElement $shippingResult
-     * @param ResultElement $expectedTotalResult
-     * @param array $expectedTaxes
-     * @param bool $startOnItem
-     * @param bool $priceInclTax
      * @dataProvider resolveDataProvider
      */
     public function testResolve(
         array $items,
-        ResultElement $shippingResult = null,
+        ?ResultElement $shippingResult,
         ResultElement $expectedTotalResult,
         array $expectedTaxes,
-        $startOnItem = false,
-        $priceInclTax = false
+        bool $startOnItem = false
     ) {
-        $this->settingsProvider->expects($this->any())->method('isStartCalculationOnItem')
+        $this->settingsProvider->expects($this->any())
+            ->method('isStartCalculationOnItem')
             ->willReturn($startOnItem);
 
         $taxable = new Taxable();
@@ -86,18 +77,16 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Result', $taxable->getResult());
-        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\ResultElement', $taxable->getResult()->getTotal());
+        $this->assertInstanceOf(Result::class, $taxable->getResult());
+        $this->assertInstanceOf(ResultElement::class, $taxable->getResult()->getTotal());
         $this->assertEquals($expectedTotalResult, $taxable->getResult()->getTotal());
         $this->assertEquals($expectedTaxes, $taxable->getResult()->getTaxes());
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function resolveDataProvider()
+    public function resolveDataProvider(): array
     {
         return [
             'plain' => [
@@ -369,7 +358,6 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
                     TaxResultElement::create('4', '0.09', '22.7630', '2.0490'),
                 ],
                 'startOnItem' => true,
-                'priceInclTax' => true,
             ],
             'failed' => [
                 'items' => [

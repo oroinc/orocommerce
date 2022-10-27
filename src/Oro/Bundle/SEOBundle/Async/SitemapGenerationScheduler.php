@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Async;
 
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**

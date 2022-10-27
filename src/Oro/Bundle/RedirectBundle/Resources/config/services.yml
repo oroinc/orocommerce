@@ -57,16 +57,6 @@ services:
         arguments:
             - '@.inner'
 
-
-    oro_redirect.access_rule.frontend_organization_for_slug:
-        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
-        arguments:
-            - '@oro_security.token_accessor'
-        calls:
-            - [setOrganizationOptional, [ true ]]
-        tags:
-            - { name: oro_security.access_rule, entityClass: Oro\Bundle\RedirectBundle\Entity\Slug, frontend: true }
-
     oro_redirect.migration.extension.slug:
         class: Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension
         tags:
@@ -154,11 +144,8 @@ services:
 
     oro_redirect.generator.unique_slug_resolver:
         class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
-        public: false
         arguments:
             - '@doctrine'
-            - '@oro_redirect.helper.slug_query_restriction_helper'
-            - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -244,7 +231,7 @@ services:
     oro_redirect.slug_entity_finder:
         class: Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder
         arguments:
-            - '@oro_redirect.repository.slug'
+            - '@doctrine'
             - '@oro_scope.scope_manager'
 
     oro_redirect.sluggable_entity_finder:
@@ -396,21 +383,18 @@ services:
             - '@doctrine'
         public: false
 
-    oro_redirect.helper.slug_query_restriction_helper:
-        class: Oro\Bundle\RedirectBundle\Helper\DefaultSlugQueryQueryRestrictionHelper
+    oro_redirect.slug_query_builder_modifier:
+        class: Oro\Bundle\RedirectBundle\Model\SlugQueryBuilderModifier
 
     Oro\Bundle\RedirectBundle\EntityConfig\SlugEntityConfiguration:
         tags:
             - oro_entity_config.validation.entity_config
-
-    oro_redirect.repository.slug:
-        alias: Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository
 
     Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\RedirectBundle\Entity\Slug'
         calls:
-            - ['setSlugQueryRestrictionHelper', ['@oro_redirect.helper.slug_query_restriction_helper']]
+            - ['setSlugQueryBuilderModifier', ['@oro_redirect.slug_query_builder_modifier']]
         tags:
             - { name: doctrine.repository_service }

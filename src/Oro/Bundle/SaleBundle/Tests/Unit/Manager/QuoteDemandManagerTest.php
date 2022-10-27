@@ -10,31 +10,19 @@ use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 
 class QuoteDemandManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalProvider;
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalProvider;
 
-    /**
-     * @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $subtotalProvider;
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $subtotalProvider;
 
-    /**
-     * @var QuoteDemandManager
-     */
-    protected $manager;
+    /** @var QuoteDemandManager */
+    private $manager;
 
     protected function setUp(): void
     {
-        $this->totalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subtotalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->subtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
         $this->manager = new QuoteDemandManager(
             $this->totalProvider,

@@ -29,18 +29,15 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
-    /** @var CmsPageDataBuilder */
-    private $builder;
-
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
     /** @var RoutingInformationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $routingInformationProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var CmsPageDataBuilder */
+    private $builder;
+
     protected function setUp(): void
     {
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);
@@ -65,8 +62,7 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->with($consent, null)
             ->willReturn(null);
 
-        $this->router
-            ->expects($this->never())
+        $this->router->expects($this->never())
             ->method('generate');
 
         $this->assertNull($this->builder->build($consent));
@@ -94,8 +90,7 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->with($consent, $consentAcceptance)
             ->willReturn($cmsPage);
 
-        $this->router
-            ->expects($this->once())
+        $this->router->expects($this->once())
             ->method('generate')
             ->with('oro_cms_frontend_page_view', ['id' => $expectedResult->getId()])
             ->willReturn($routerUrl);
@@ -108,9 +103,9 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $this->localizationHelper->expects($this->once())
             ->method('getLocalizedValue')
-            ->will($this->returnCallback(function (Collection $collection) {
+            ->willReturnCallback(function (Collection $collection) {
                 return $collection->first();
-            }));
+            });
 
         $consent = $this->getConsent();
         $consentAcceptanceCmsPageId = 15;

@@ -201,18 +201,6 @@
         }
     }
 
-    .collapse-view {
-        .filter {
-            display: none;
-        }
-
-        &.expanded {
-            .filter {
-                display: block;
-            }
-        }
-    }
-
     .tab-content {
         border: none;
     }
@@ -285,17 +273,6 @@
             .controls {
                 margin-left: 0;
             }
-        }
-    }
-}
-
-.collapse-view {
-    &.expanded {
-        .collapse-view__trigger {
-            background-image: none;
-            background-color: $primary-800;
-            outline: 0;
-            box-shadow: $collapse-view-expanded-trigger-shadow;
         }
     }
 }

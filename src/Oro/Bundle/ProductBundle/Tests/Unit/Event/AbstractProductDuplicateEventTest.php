@@ -15,8 +15,7 @@ class AbstractProductDuplicateEventTest extends \PHPUnit\Framework\TestCase
         $sourceProduct = new Product();
         $sourceProduct->setSku('SKU-2');
 
-        /** @var AbstractProductDuplicateEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\AbstractProductDuplicateEvent')
+        $event = $this->getMockBuilder(AbstractProductDuplicateEvent::class)
             ->setConstructorArgs([$product, $sourceProduct])
             ->getMockForAbstractClass();
 

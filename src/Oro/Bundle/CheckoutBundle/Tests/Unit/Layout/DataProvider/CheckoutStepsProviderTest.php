@@ -4,8 +4,11 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Step;
+use Oro\Bundle\WorkflowBundle\Model\StepManager;
+use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -13,19 +16,12 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CheckoutStepsProvider
-     */
-    protected $provider;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|WorkflowManager */
+    private $workflowManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|WorkflowManager
-     */
-    protected $workflowManager;
+    /** @var CheckoutStepsProvider */
+    private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
@@ -35,37 +31,27 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getStepsDataProvider
-     *
-     * @param bool $displayOrdered
-     * @param array $excludedStepNames
-     * @param array $steps
-     * @param array $expectedSteps
      */
-    public function testGetSteps($displayOrdered, $excludedStepNames, $steps, $expectedSteps)
-    {
-        /** @var WorkflowItem|\PHPUnit\Framework\MockObject\MockObject $workflowItem */
-        $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
-            ->disableOriginalConstructor()
-            ->getMock();
+    public function testGetSteps(
+        bool $displayOrdered,
+        array $excludedStepNames,
+        ArrayCollection $steps,
+        ArrayCollection $expectedSteps
+    ) {
+        $workflowItem = $this->createMock(WorkflowItem::class);
 
-        $workflowDefinition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $workflowDefinition = $this->createMock(WorkflowDefinition::class);
         $workflowDefinition->expects($this->once())
             ->method('isStepsDisplayOrdered')
             ->willReturn($displayOrdered);
 
-        $workflow = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Workflow')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $workflow = $this->createMock(Workflow::class);
         $workflow->expects($this->once())
             ->method('getDefinition')
             ->willReturn($workflowDefinition);
 
         if ($displayOrdered) {
-            $stepManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\StepManager')
-                ->disableOriginalConstructor()
-                ->getMock();
+            $stepManager = $this->createMock(StepManager::class);
             $stepManager->expects($this->once())
                 ->method('getOrderedSteps')
                 ->willReturn($steps);
@@ -90,45 +76,29 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getStepsDataProvider
-     *
-     * @param bool $displayOrdered
-     * @param array $excludedStepNames
-     * @param array $steps
-     * @param array $expectedSteps
-     * @param string $currentStepName
-     * @param int $expectedStepOrder
      */
     public function testGetStepOrder(
-        $displayOrdered,
-        $excludedStepNames,
-        $steps,
-        $expectedSteps,
-        $currentStepName,
-        $expectedStepOrder
+        bool $displayOrdered,
+        array $excludedStepNames,
+        ArrayCollection $steps,
+        ArrayCollection $expectedSteps,
+        string $currentStepName,
+        int $expectedStepOrder
     ) {
-        /** @var WorkflowItem|\PHPUnit\Framework\MockObject\MockObject $workflowItem */
-        $workflowItem  = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowItem')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $workflowItem  = $this->createMock(WorkflowItem::class);
 
-        $workflowDefinition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $workflowDefinition = $this->createMock(WorkflowDefinition::class);
         $workflowDefinition->expects($this->once())
             ->method('isStepsDisplayOrdered')
             ->willReturn($displayOrdered);
 
-        $workflow = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Workflow')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $workflow = $this->createMock(Workflow::class);
         $workflow->expects($this->once())
             ->method('getDefinition')
             ->willReturn($workflowDefinition);
 
         if ($displayOrdered) {
-            $stepManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\StepManager')
-                ->disableOriginalConstructor()
-                ->getMock();
+            $stepManager = $this->createMock(StepManager::class);
             $stepManager->expects($this->once())
                 ->method('getOrderedSteps')
                 ->willReturn($steps);
@@ -153,10 +123,7 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getStepsDataProvider()
+    public function getStepsDataProvider(): array
     {
         $step1 = (new Step())->setOrder(100)->setName('first_step');
         $step2 = (new Step())->setOrder(100)->setName('second_step');

@@ -11,6 +11,7 @@ app-modules:
     - oroui/js/app/modules/init-layout
     - oroui/js/app/modules/layout-module
     - oroui/js/app/modules/messenger-module
+    - oroui/js/app/modules/swipeable-module
     - oroui/js/app/modules/viewport-module
     - orouser/js/app/modules/validator-constraints-module
     - orovalidation/default/js/app/modules/validator-constraints-module
@@ -39,7 +40,6 @@ dynamic-imports:
         - oroui/js/app/views/layout-subtree-view
         - oroui/js/app/views/page/content-view
         - oroui/js/app/views/page/messages-view
-        - oroui/js/app/views/swipeable-view
         - oroui/js/mediator
         - orowindows/js/dialog/state/model
         - routing
@@ -86,7 +86,6 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/product-shopping-lists-view
         - oroshoppinglist/js/app/views/shopping-list-quick-search
         - oroshoppinglist/js/shopping-list-item-errors-handler
-        - oroui/js/widget/collapse-widget
         - orouser/js/validator/password-complexity
         - orovalidation/js/validator/alphanumeric
         - orovalidation/js/validator/alphanumeric-dash

@@ -14,48 +14,42 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
 class CountryZipCodeMatcherTest extends AbstractMatcherTest
 {
-    /**
-     * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $countryMatcher;
+    /** @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $countryMatcher;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->matcher = new CountryZipCodeMatcher($this->doctrineHelper, self::TAX_RULE_CLASS);
-
         $this->countryMatcher = $this->createMock(CountryMatcher::class);
-        $this->matcher->setCountryMatcher($this->countryMatcher);
-    }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        unset($this->countryMatcher);
+        $this->matcher = new CountryZipCodeMatcher($this->doctrineHelper, TaxRule::class);
+        $this->matcher->setCountryMatcher($this->countryMatcher);
     }
 
     /**
      * @dataProvider matchProvider
-     * @param string $productTaxCode
-     * @param string $customerTaxCode
-     * @param Country $country
-     * @param Region $region
-     * @param string $regionText
-     * @param TaxRule[] $countryMatcherTaxRules
-     * @param TaxRule[] $zipCodeMatcherTaxRules
-     * @param TaxRule[] $expected
+     *
+     * @param string|null  $productTaxCode
+     * @param string|null  $customerTaxCode
+     * @param Country|null $country
+     * @param Region|null  $region
+     * @param string       $regionText
+     * @param string|null  $zipCode
+     * @param TaxRule[]    $countryMatcherTaxRules
+     * @param TaxRule[]    $zipCodeMatcherTaxRules
+     * @param TaxRule[]    $expected
      */
     public function testMatch(
-        $productTaxCode,
-        $customerTaxCode,
-        $country,
-        $region,
-        $regionText,
-        $zipCode,
-        $countryMatcherTaxRules,
-        $zipCodeMatcherTaxRules,
-        $expected
+        ?string $productTaxCode,
+        ?string $customerTaxCode,
+        ?Country $country,
+        ?Region $region,
+        string $regionText,
+        ?string $zipCode,
+        array $countryMatcherTaxRules,
+        array $zipCodeMatcherTaxRules,
+        array $expected
     ) {
         $address = (new Address())
             ->setPostalCode($zipCode)
@@ -63,8 +57,7 @@ class CountryZipCodeMatcherTest extends AbstractMatcherTest
             ->setRegion($region)
             ->setRegionText($regionText);
 
-        $this->countryMatcher
-            ->expects($this->atLeastOnce())
+        $this->countryMatcher->expects($this->atLeastOnce())
             ->method('match')
             ->with($address)
             ->willReturn($countryMatcherTaxRules);
@@ -80,14 +73,9 @@ class CountryZipCodeMatcherTest extends AbstractMatcherTest
         $taxCodes = TaxCodes::create($taxCodes);
         $isCallFindByCountryAndTaxCode = $country && $zipCode && $taxCodes->isFullFilledTaxCode();
 
-        $this->taxRuleRepository
-            ->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
+        $this->taxRuleRepository->expects($isCallFindByCountryAndTaxCode ? $this->once() : $this->never())
             ->method('findByCountryAndZipCodeAndTaxCode')
-            ->with(
-                $taxCodes,
-                $zipCode,
-                $country
-            )
+            ->with($taxCodes, $zipCode, $country)
             ->willReturn($zipCodeMatcherTaxRules);
 
         $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
@@ -96,10 +84,7 @@ class CountryZipCodeMatcherTest extends AbstractMatcherTest
         $this->assertEquals($expected, $this->matcher->match($address, $taxCodes));
     }
 
-    /**
-     * @return array
-     */
-    public function matchProvider()
+    public function matchProvider(): array
     {
         $country = new Country('US');
         $region = new Region('US-NY');

@@ -16,30 +16,19 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestC
 {
     use EntityTrait;
 
-    /**
-     * @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $taxationSettingsProvider;
 
-    /**
-     * @var TaxValueManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TaxValueManager|\PHPUnit\Framework\MockObject\MockObject */
     private $taxValueManager;
 
-    /**
-     * @var OrderLineItemsCollectionTypeExtension
-     */
+    /** @var OrderLineItemsCollectionTypeExtension */
     private $extension;
 
     protected function setUp(): void
     {
-        $this->taxValueManager = $this->getMockBuilder(TaxValueManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->taxationSettingsProvider = $this->getMockBuilder(TaxationSettingsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->taxValueManager = $this->createMock(TaxValueManager::class);
+        $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->extension = new OrderLineItemsCollectionTypeExtension(
             $this->taxationSettingsProvider,
@@ -57,24 +46,20 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestC
 
     public function testBuildViewWhenTaxationIsDisabled()
     {
-        $this->taxationSettingsProvider
-            ->expects($this->once())
+        $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(false);
 
-        $this->taxValueManager
-            ->expects($this->never())
+        $this->taxValueManager->expects($this->never())
             ->method('preloadTaxValues');
 
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
         $this->extension->buildView(new FormView(), $form, []);
     }
 
     public function testBuildViewWhenTaxationIsEnabled()
     {
-        $this->taxationSettingsProvider
-            ->expects($this->once())
+        $this->taxationSettingsProvider->expects($this->once())
             ->method('isEnabled')
             ->willReturn(true);
 
@@ -86,15 +71,12 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestC
         ];
         $expectedIds = [7, 5, null, 10];
 
-        $this->taxValueManager
-            ->expects($this->once())
+        $this->taxValueManager->expects($this->once())
             ->method('preloadTaxValues')
             ->with(OrderLineItem::class, $expectedIds);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects($this->once())
+        $form->expects($this->once())
             ->method('getData')
             ->willReturn(new ArrayCollection($lineItems));
 

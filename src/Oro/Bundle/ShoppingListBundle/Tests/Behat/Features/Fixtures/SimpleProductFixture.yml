@@ -13,6 +13,7 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 
 Oro\Bundle\CatalogBundle\Entity\Category:
   category:
+    organization: '@organization'
     __calls:
       - addTitle: ['@categoryName']
       - setParentCategory: ['@root_category']

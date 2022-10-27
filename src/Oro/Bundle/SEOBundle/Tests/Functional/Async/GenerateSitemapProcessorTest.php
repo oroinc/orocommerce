@@ -5,12 +5,11 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\Async;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor;
-use Oro\Bundle\SEOBundle\Topic\GenerateSitemapByWebsiteAndTypeTopic;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapByWebsiteAndTypeTopic;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 class GenerateSitemapProcessorTest extends WebTestCase
 {
@@ -37,7 +36,7 @@ class GenerateSitemapProcessorTest extends WebTestCase
 
         $message = new Message();
         $message->setMessageId(UUIDGenerator::v4());
-        $message->setBody(JSON::encode([]));
+        $message->setBody([]);
 
         $result = $this->processor->process($message, $this->createMock(SessionInterface::class));
 

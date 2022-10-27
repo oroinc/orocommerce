@@ -9,41 +9,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UserSelectType
-     */
-    protected $formType;
+    /** @var UserSelectType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formType = new UserSelectType($registry);
+        $this->formType = new UserSelectType($this->createMock(ManagerRegistry::class));
     }
 
-    /**
-     * Test getParent
-     */
     public function testGetParent()
     {
         $this->assertEquals(BaseUserSelectType::class, $this->formType->getParent());
     }
 
-    /**
-     * Test configureOptions
-     */
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects($this->once())
             ->method('setDefaults');

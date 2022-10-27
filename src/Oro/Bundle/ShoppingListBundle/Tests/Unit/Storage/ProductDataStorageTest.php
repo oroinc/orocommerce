@@ -18,23 +18,16 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|Storage */
-    protected $storage;
+    private $storage;
 
     /** @var ProductDataStorage */
-    protected $productDataStorage;
+    private $productDataStorage;
 
     protected function setUp(): void
     {
-        $this->storage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\ProductDataStorage')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storage = $this->createMock(Storage::class);
 
         $this->productDataStorage = new ProductDataStorage($this->storage);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->storage, $this->productDataStorage);
     }
 
     public function testSaveToStorage()
@@ -47,11 +40,8 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
         $unitCode = 'kg';
         $note = 'Note';
 
-        /** @var Customer $customer */
-        $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $customerId]);
-
-        /** @var CustomerUser $customerUser */
-        $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $customerUserId]);
+        $customer = $this->getEntity(Customer::class, ['id' => $customerId]);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => $customerUserId]);
 
         $product = new Product();
         $product->setSku($productSku);
@@ -66,7 +56,6 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
             ->setProduct($product)
             ->setUnit($productUnit);
 
-        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, [
             'id' => 1,
             'customer' => $customer,

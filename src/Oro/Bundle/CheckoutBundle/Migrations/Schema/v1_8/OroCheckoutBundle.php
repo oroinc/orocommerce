@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_8;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -38,18 +38,18 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
                 [
                     'isValid' => false,
                     'deleted' => false,
-                    'completed' => false
+                    'completed' => false,
                 ],
                 [
                     'isValid' => Types::BOOLEAN,
                     'deleted' => Types::BOOLEAN,
-                    'completed' => Types::BOOLEAN
+                    'completed' => Types::BOOLEAN,
                 ]
             )
         );
 
         $this->container->get('oro_message_queue.client.message_producer')
-            ->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, new Message());
+            ->send(RecalculateCheckoutSubtotalsTopic::getName(), new Message());
     }
 
     /**

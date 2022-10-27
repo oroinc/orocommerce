@@ -8,9 +8,7 @@ use Twig\Environment;
 
 abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     protected function setUp(): void
@@ -18,23 +16,14 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $id . '.trans';
+            });
     }
 
-    /**
-     * @param object $entityObject
-     * @param string $labelPrefix
-     * @return \PHPUnit\Framework\MockObject\MockObject|Environment
-     */
-    protected function getEnvironmentForView($entityObject, $labelPrefix)
+    protected function getEnvironmentForView(object $entityObject, string $labelPrefix): Environment
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $env */
         $env = $this->createMock(Environment::class);
-
         $env->expects($this->exactly(3))
             ->method('render')
             ->withConsecutive(
@@ -89,14 +78,9 @@ abstract class BaseFormViewListenerTestCase extends \PHPUnit\Framework\TestCase
         return $env;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|Environment
-     */
-    protected function getEnvironmentForEdit()
+    protected function getEnvironmentForEdit(): Environment
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Environment $env */
         $env = $this->createMock(Environment::class);
-
         $env->expects($this->exactly(3))
             ->method('render')
             ->withConsecutive(

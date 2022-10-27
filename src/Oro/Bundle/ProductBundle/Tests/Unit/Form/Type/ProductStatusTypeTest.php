@@ -12,20 +12,17 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductStatusTypeTest extends FormIntegrationTestCase
 {
-    /** @var ProductStatusType */
-    protected $productStatusType;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductStatusProvider */
-    protected $productStatusProvider;
+    private $productStatusProvider;
+
+    /** @var ProductStatusType */
+    private $productStatusType;
 
     protected function setUp(): void
     {
-        $this->productStatusProvider =
-            $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ProductStatusProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->productStatusProvider = $this->createMock(ProductStatusProvider::class);
 
-        $this->productStatusProvider
+        $this->productStatusProvider->expects(self::any())
             ->method('getAvailableProductStatuses')
             ->willReturn([
                 'Disabled' => Product::STATUS_DISABLED,
@@ -37,9 +34,9 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->productStatusType], [])
@@ -55,8 +52,8 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(ProductStatusType::class);
         $availableProductStatuses = $this->productStatusProvider->getAvailableProductStatuses();
-        $choices = [];
 
+        $choices = [];
         foreach ($availableProductStatuses as $label => $value) {
             $choices[] = new ChoiceView($value, $value, $label);
         }

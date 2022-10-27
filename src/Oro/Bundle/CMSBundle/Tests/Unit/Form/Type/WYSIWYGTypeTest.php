@@ -23,31 +23,32 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WYSIWYGTypeTest extends FormIntegrationTestCase
 {
-    private HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider;
+    /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $htmlTagProvider;
 
-    private HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject $purifierScopeProvider;
+    /** @var HTMLPurifierScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $purifierScopeProvider;
 
-    private EventSubscriberInterface $eventSubscriber;
+    /** @var EventSubscriberInterface */
+    private $eventSubscriber;
 
-    private AssetHelper|\PHPUnit\Framework\MockObject\MockObject $assetHelper;
+    /** @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $assetHelper;
 
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $this->purifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);
         $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
-        $digitalAssetTwigTagsConverter
-            ->expects(self::any())
+        $digitalAssetTwigTagsConverter->expects(self::any())
             ->method('convertToUrls')
             ->willReturnArgument(0);
-        $digitalAssetTwigTagsConverter
-            ->expects(self::any())
+        $digitalAssetTwigTagsConverter->expects(self::any())
             ->method('convertToTwigTags')
             ->willReturnArgument(0);
         $this->eventSubscriber = new DigitalAssetTwigTagsEventSubscriber($digitalAssetTwigTagsConverter);
         $this->assetHelper = $this->createMock(AssetHelper::class);
-        $this->assetHelper
-            ->expects(self::any())
+        $this->assetHelper->expects(self::any())
             ->method('getUrl')
             ->willReturnArgument(0);
 
@@ -89,7 +90,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'entity_class' => null,
                 'disable_isolation' => false,
             ])
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $type = new WYSIWYGType(
             $this->htmlTagProvider,
@@ -287,6 +288,9 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions(): array
     {
         return [
@@ -306,7 +310,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getValidators(): array
     {

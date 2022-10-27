@@ -21,25 +21,17 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutToOrderConverter;
+    /** @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutToOrderConverter;
 
-    /**
-     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalsProvider;
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalsProvider;
 
-    /**
-     * @var CheckoutTotalsProvider
-     */
-    protected $provider;
+    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutShippingMethodsProvider;
 
-    /**
-     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutShippingMethodsProvider;
+    /** @var CheckoutTotalsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -67,7 +59,6 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
 
         $checkout = new Checkout();
 
-        /** @var Order $order */
         $order = $this->getEntity(
             Order::class,
             [
@@ -82,20 +73,17 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->checkoutShippingMethodsProvider
-            ->expects(static::once())
+        $this->checkoutShippingMethodsProvider->expects(self::once())
             ->method('getPrice')
             ->with($checkout)
             ->willReturn($price);
 
-        $this->checkoutToOrderConverter
-            ->expects(static::once())
+        $this->checkoutToOrderConverter->expects(self::once())
             ->method('getOrder')
             ->with($checkout)
             ->willReturn($order);
 
-        $this->totalsProvider
-            ->expects(static::once())
+        $this->totalsProvider->expects(self::once())
             ->method('enableRecalculation');
 
         $totals = [
@@ -118,32 +106,29 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
-        $this->totalsProvider
-            ->expects(static::once())
+        $this->totalsProvider->expects(self::once())
             ->method('getTotalWithSubtotalsAsArray')
             ->with($order)
-            ->will(
-                $this->returnCallback(
-                    function (Order $order) use (
-                        $lineItems,
-                        $price,
-                        $address,
-                        $customer,
-                        $website,
-                        $organization,
-                        $totals
-                    ) {
-                        static::assertEquals($lineItems, $order->getLineItems());
-                        static::assertEquals($price, $order->getShippingCost());
-                        static::assertSame($address, $order->getBillingAddress());
-                        static::assertSame($address, $order->getShippingAddress());
-                        static::assertSame($customer, $order->getCustomer());
-                        static::assertSame($website, $order->getWebsite());
-                        static::assertSame($organization, $order->getOrganization());
+            ->willReturnCallback(
+                function (Order $order) use (
+                    $lineItems,
+                    $price,
+                    $address,
+                    $customer,
+                    $website,
+                    $organization,
+                    $totals
+                ) {
+                    self::assertEquals($lineItems, $order->getLineItems());
+                    self::assertEquals($price, $order->getShippingCost());
+                    self::assertSame($address, $order->getBillingAddress());
+                    self::assertSame($address, $order->getShippingAddress());
+                    self::assertSame($customer, $order->getCustomer());
+                    self::assertSame($website, $order->getWebsite());
+                    self::assertSame($organization, $order->getOrganization());
 
-                        return $totals;
-                    }
-                )
+                    return $totals;
+                }
             );
 
         $this->assertSame($totals, $this->provider->getTotalsArray($checkout));

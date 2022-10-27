@@ -16,11 +16,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class ConfigureGuestShoppingListAccess implements ProcessorInterface
 {
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var string */
-    private $associationName;
+    private TokenStorageInterface $tokenStorage;
+    private string $associationName;
 
     public function __construct(TokenStorageInterface $tokenStorage, string $associationName)
     {
@@ -29,9 +26,9 @@ class ConfigureGuestShoppingListAccess implements ProcessorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function process(ContextInterface $context)
+    public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */
 
@@ -40,11 +37,7 @@ class ConfigureGuestShoppingListAccess implements ProcessorInterface
         }
 
         $definition = $context->getResult();
-        $definition->setAclResource();
-
-        $field = $definition->findField($this->associationName, true);
-        if (null !== $field) {
-            $field->removeFormConstraint(AccessGranted::class);
-        }
+        $definition->setAclResource(null);
+        $definition->findField($this->associationName, true)?->removeFormConstraint(AccessGranted::class);
     }
 }

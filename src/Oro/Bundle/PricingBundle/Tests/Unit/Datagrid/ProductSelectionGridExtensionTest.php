@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -16,30 +17,27 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenStorage;
+    private $tokenStorage;
 
     /** @var FrontendProductListModifier|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productListModifier;
-
-    /** @var ProductSelectionGridExtension */
-    protected $extension;
+    private $productListModifier;
 
     /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
-    protected $request;
+    private $request;
+
+    /** @var ProductSelectionGridExtension */
+    private $extension;
 
     protected function setUp(): void
     {
-        $this->tokenStorage = $this
-            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $this->productListModifier = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\FrontendProductListModifier')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->productListModifier = $this->createMock(FrontendProductListModifier::class);
 
-        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
-        /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->request = $this->createMock(Request::class);
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
 
         $this->extension = new ProductSelectionGridExtension(
             $requestStack,
@@ -51,61 +49,46 @@ class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider applicableDataProvider
-     * @param string $gridName
-     * @param object|null $token
-     * @param bool $expected
      */
-    public function testIsApplicable($gridName, $token, $expected)
+    public function testIsApplicable(string $gridName, ?object $token, bool $expected)
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridConfiguration $config */
-        $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $config = $this->createMock(DatagridConfiguration::class);
         $config->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue($gridName));
+            ->willReturn($gridName);
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
 
         $this->assertEquals($expected, $this->extension->isApplicable($config));
     }
 
-    /**
-     * @return array
-     */
-    public function applicableDataProvider()
+    public function applicableDataProvider(): array
     {
         return [
             ['test', null, false],
-            ['products-select-grid-frontend', $this->getTockenMock(), false],
-            ['test', $this->getTockenMock(true), false],
-            ['products-select-grid-frontend', $this->getTockenMock(true), true],
+            ['products-select-grid-frontend', $this->getToken(false), false],
+            ['test', $this->getToken(true), false],
+            ['products-select-grid-frontend', $this->getToken(true), true],
         ];
     }
 
-    /**
-     * @param bool $getUser
-     * @return \PHPUnit\Framework\MockObject\MockObject|TokenInterface
-     */
-    protected function getTockenMock($getUser = false)
+    private function getToken(bool $getUser): TokenInterface
     {
-        $tokenMock = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-
+        $token = $this->createMock(TokenInterface::class);
         if ($getUser) {
-            $tokenMock->expects($this->any())
+            $token->expects($this->any())
                 ->method('getUser')
-                ->will($this->returnValue(new CustomerUser()));
+                ->willReturn(new CustomerUser());
         }
 
-        return $tokenMock;
+        return $token;
     }
 
     /**
      * @dataProvider visitDatasourceDataProvider
-     * @param string $currency
      */
-    public function testVisitDatasource($currency)
+    public function testVisitDatasource(?string $currency)
     {
         if ($currency) {
             $this->request->expects($this->once())
@@ -116,32 +99,24 @@ class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
 
         $gridName = 'products-select-grid-frontend';
 
-        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->any())
             ->method('getUser')
-            ->will($this->returnValue(new CustomerUser()));
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridConfiguration $config */
-        $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn(new CustomerUser());
+        $config = $this->createMock(DatagridConfiguration::class);
         $config->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue($gridName));
+            ->willReturn($gridName);
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OrmDatasource $dataSource */
-        $dataSource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dataSource = $this->createMock(OrmDatasource::class);
         $dataSource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
         $this->productListModifier->expects($this->once())
             ->method('applyPriceListLimitations')
@@ -153,10 +128,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->visitDatasource($config, $dataSource);
     }
 
-    /**
-     * @return array
-     */
-    public function visitDatasourceDataProvider()
+    public function visitDatasourceDataProvider(): array
     {
         return [
             'with currency' => [

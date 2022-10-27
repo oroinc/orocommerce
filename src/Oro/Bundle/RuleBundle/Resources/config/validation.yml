@@ -6,3 +6,6 @@ Oro\Bundle\RuleBundle\Entity\Rule:
             - Type:
                 type: integer
             - NotBlank: ~
+            - Range:
+                min: -2147483648
+                max: 2147483647

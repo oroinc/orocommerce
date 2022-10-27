@@ -128,8 +128,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '@oro_security.token_accessor'
-            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
+            - '@oro_security.acl_helper'
             - 'digital_products_eu'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
@@ -139,8 +138,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '@oro_security.token_accessor'
-            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
+            - '@oro_security.acl_helper'
             - 'digital_products_us'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
@@ -150,8 +148,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '@oro_security.token_accessor'
-            - 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode'
+            - '@oro_security.acl_helper'
             - 'shipping_tax_code'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
@@ -287,7 +284,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
         public: true
         arguments:
-            - '@oro_config.global'
+            - '@oro_config.manager'
             - '@oro_tax.factory.tax_base_exclusion'
             - '@oro_tax.factory.address_model_factory'
             - '@oro_tax.taxation_provider.cache'

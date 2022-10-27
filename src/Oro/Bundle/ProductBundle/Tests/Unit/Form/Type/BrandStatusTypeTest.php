@@ -7,24 +7,22 @@ use Oro\Bundle\ProductBundle\Form\Type\BrandStatusType;
 use Oro\Bundle\ProductBundle\Provider\BrandStatusProvider;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class BrandStatusTypeTest extends FormIntegrationTestCase
 {
-    /** @var BrandStatusType */
-    protected $brandStatusType;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|BrandStatusProvider */
-    protected $brandStatusProvider;
+    private $brandStatusProvider;
+
+    /** @var BrandStatusType */
+    private $brandStatusType;
 
     protected function setUp(): void
     {
-        $this->brandStatusProvider =
-            $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\BrandStatusProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->brandStatusProvider = $this->createMock(BrandStatusProvider::class);
 
-        $this->brandStatusProvider
+        $this->brandStatusProvider->expects(self::any())
             ->method('getAvailableBrandStatuses')
             ->willReturn([
                 'Disabled' => Brand::STATUS_DISABLED,
@@ -36,9 +34,9 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->brandStatusType], [])
@@ -47,18 +45,15 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(
-            \Symfony\Component\Form\Extension\Core\Type\ChoiceType::class,
-            $this->brandStatusType->getParent()
-        );
+        $this->assertEquals(ChoiceType::class, $this->brandStatusType->getParent());
     }
 
     public function testChoices()
     {
         $form = $this->factory->create(BrandStatusType::class);
         $availableBrandStatuses = $this->brandStatusProvider->getAvailableBrandStatuses();
-        $choices = [];
 
+        $choices = [];
         foreach ($availableBrandStatuses as $label => $value) {
             $choices[] = new ChoiceView($value, $value, $label);
         }

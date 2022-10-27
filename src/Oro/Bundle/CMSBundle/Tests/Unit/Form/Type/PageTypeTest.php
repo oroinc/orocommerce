@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
@@ -20,11 +22,11 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -38,27 +40,20 @@ class PageTypeTest extends FormIntegrationTestCase
     use EntityTrait;
     use WysiwygAwareTestTrait;
 
-    const PAGE_ID = 7;
+    private const PAGE_ID = 7;
 
-    /**
-     * @var UrlGeneratorInterface|MockObject
-     */
+    /** @var UrlGeneratorInterface|MockObject */
     private $urlGenerator;
 
-    /**
-     * @var PageType
-     */
+    /** @var PageType */
     private $type;
 
     protected function setUp(): void
     {
-        /**
-         * @var ValidatorInterface|MockObject $validator
-         */
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->any())
             ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
+            ->willReturn(new ConstraintViolationList());
 
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
@@ -71,41 +66,29 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $metaData = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $metaData = $this->createMock(ClassMetadata::class);
         $metaData->expects($this->any())
             ->method('getSingleIdentifierFieldName')
-            ->will($this->returnValue('id'));
+            ->willReturn('id');
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(EntityManager::class);
 
-        /**
-         * @var ManagerRegistry|MockObject $registry
-         */
-        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
-
+        $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->will($this->returnValue($em));
+            ->willReturn($em);
 
         $em->expects($this->any())
             ->method('getClassMetadata')
-            ->will($this->returnValue($metaData));
+            ->willReturn($metaData);
 
         $entityIdentifierType = new EntityIdentifierType($registry);
 
-        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
-        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
 
         return [
             new PreloadedExtension(
@@ -116,8 +99,9 @@ class PageTypeTest extends FormIntegrationTestCase
                     WYSIWYGType::class => $this->createWysiwygType(),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::class
-                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    LocalizedSlugWithRedirectType::class => new LocalizedSlugWithRedirectType(
+                        $confirmSlugChangeFormHelper
+                    ),
                 ],
                 []
             )
@@ -134,17 +118,10 @@ class PageTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'data_class' => Page::class,
-                    'csrf_token_id' => 'cms_page',
-                ]
-            );
+            ->with(['data_class' => Page::class, 'csrf_token_id' => 'cms_page']);
 
         $this->type->configureOptions($resolver);
     }
@@ -155,11 +132,9 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProviderNew
      */
-    public function testSubmitNew($submittedData, $expectedData)
+    public function testSubmitNew(mixed $submittedData, mixed $expectedData)
     {
         $defaultData = new Page();
 
@@ -175,10 +150,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProviderNew()
+    public function submitDataProviderNew(): array
     {
         $page = new Page();
         $page->addTitle((new LocalizedFallbackValue())->setString('First test page'));
@@ -216,12 +188,9 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param mixed $defaultData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProviderUpdate
      */
-    public function testSubmitUpdate($defaultData, $submittedData, $expectedData)
+    public function testSubmitUpdate(mixed $defaultData, mixed $submittedData, mixed $expectedData)
     {
         $existingPage = new Page();
         $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles']));
@@ -242,10 +211,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProviderUpdate()
+    public function submitDataProviderUpdate(): array
     {
         $page = new Page();
         $page->addTitle((new LocalizedFallbackValue())->setString('Updated first test page'));
@@ -319,21 +285,17 @@ class PageTypeTest extends FormIntegrationTestCase
     public function testGenerateChangedSlugsUrlOnPresetData()
     {
         $generatedUrl = '/some/url';
-        $this->urlGenerator
-            ->expects($this->once())
+        $this->urlGenerator->expects($this->once())
             ->method('generate')
             ->with('oro_cms_page_get_changed_urls', ['id' => 1])
             ->willReturn($generatedUrl);
 
-        /** @var Page $existingData */
         $existingData = $this->getEntity(Page::class, [
             'id' => 1,
             'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)])
         ]);
 
-        /** @var Form $form */
         $form = $this->factory->create(PageType::class, $existingData);
-
         $formView = $form->createView();
 
         $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
@@ -347,30 +309,24 @@ class PageTypeTest extends FormIntegrationTestCase
     public function testPreSetDataListener(): void
     {
         $event = $this->createMock(FormEvent::class);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getData')
             ->willReturn($page = $this->createMock(Page::class));
 
-        $page
-            ->expects($this->atLeastOnce())
+        $page->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($pageId = 1);
 
-        $this->urlGenerator
-            ->expects($this->once())
+        $this->urlGenerator->expects($this->once())
             ->method('generate')
             ->with('oro_cms_page_get_changed_urls', ['id' => $pageId])
             ->willReturn($url = '/sample/url');
 
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getForm')
             ->willReturn($form = $this->createMock(FormInterface::class));
 
-        $form
-            ->expects($this->once())
+        $form->expects($this->once())
             ->method('add')
             ->with(
                 'slugPrototypesWithRedirect',
@@ -389,14 +345,10 @@ class PageTypeTest extends FormIntegrationTestCase
     public function testPreSetDataListenerWhenNoData(): void
     {
         $event = $this->createMock(FormEvent::class);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getData')
             ->willReturn(null);
-
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('getForm');
 
         $this->type->preSetDataListener($event);
@@ -405,19 +357,15 @@ class PageTypeTest extends FormIntegrationTestCase
     public function testPreSetDataListenerWhenNoPageId(): void
     {
         $event = $this->createMock(FormEvent::class);
-
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getData')
             ->willReturn($page = $this->createMock(Page::class));
 
-        $page
-            ->expects($this->once())
+        $page->expects($this->once())
             ->method('getId')
             ->willReturn(null);
 
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('getForm');
 
         $this->type->preSetDataListener($event);

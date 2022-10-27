@@ -190,19 +190,23 @@
 {% block oro_shipping_method_config_widget %}
     {% import '@OroShipping/ShippingMethodsConfigsRule/macros.html.twig' as ShipRuleMacro %}
 
-    {% set collapseView = {
-        group: 'shipping-method',
-        open: true
-    } %}
-
-    <div class="shipping-method-config shipping-method-config-{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }} collapse-view"
-         data-page-component-collapse="{{ collapseView|json_encode }}"
+    {% set collapseId = 'collapse-'|uniqid %}
+    {% if form.parent is not null  %}
+        {% set collapseId = 'shipping-methods-collection' ~ form.parent.vars.id %}
+    {% endif %}
+    <div class="shipping-method-config shipping-method-config-{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }}"
          data-role="method-view">
         {% if form.method.vars.value %}
+            {% set collapseId = collapseId~ form.method.vars.value %}
             <div class="shipping-method-config__header"
-                 data-collapse-trigger>
+                 role="button"
+                 data-toggle="collapse"
+                 data-target="{{ '#' ~ collapseId }}"
+                 aria-expanded="false"
+                 aria-controls="{{ collapseId }}"
+            >
                 <div class="shipping-method-config__item">
-                    <i class="fa-plus-square-o"></i>
+                    <span class="collapse-icon fa-minus-square-o" aria-hidden="true" data-icon></span>
                     {% set icon = methods_icons[form.method.vars.value]|default('') %}
                     {% set label = methods_labels[form.method.vars.value]|trans %}
                     {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}">{% endif %}
@@ -213,8 +217,10 @@
             </div>
         {% endif %}
 
-        <div class="shipping-method-config__body"
-             data-collapse-container>
+        <div id="{{ collapseId }}" class="shipping-method-config__body collapse show"
+            data-trigger-icon-show-class="fa-minus-square-o"
+            data-trigger-icon-hide-class="fa-plus-square-o"
+        >
             <div class="shipping-method-config__global-options">
                 {{ form_widget(form.options) }}
             </div>
@@ -301,18 +307,18 @@
     {{ form_rest(form) }}
 {% endblock %}
 
-{% block oro_shipping_method_config_collection_widget %}
-    {% if form|length != 0 %}
+{%- block oro_shipping_method_config_collection_widget -%}
+    {%- if form|length != 0 -%}
         <div class="shipping-methods-grid">
             <div class="shipping-methods-grid__header">
-                {% set collapseView = {
-                    widgetModule: 'oroui/js/widget/collapse-group-widget',
-                    group: 'shipping-method'
-                } %}
                 <div class="shipping-methods-grid__header-method"
-                     data-page-component-jquery="{{ collapseView|json_encode }}">
-                    <i class="fa-plus-square-o"></i>
+                     data-toggle="collapse"
+                     data-target="[id^='shipping-methods-collection{{ form.vars.id }}']"
+                >
+                {% apply spaceless %}
+                    <span class="collapse-icon fa-minus-square-o" aria-hidden="true" data-icon></span>
                     {{- 'oro.shipping.shipping_methods_table.method.label'|trans -}}
+                {% endapply %}
                 </div>
                 <div>{{ 'oro.shipping.shipping_methods_table.options.label'|trans }}</div>
             </div>
@@ -321,5 +327,5 @@
                 {{ form_errors(form) }}
             </div>
         </div>
-    {% endif %}
-{% endblock %}
+    {%- endif -%}
+{%- endblock -%}

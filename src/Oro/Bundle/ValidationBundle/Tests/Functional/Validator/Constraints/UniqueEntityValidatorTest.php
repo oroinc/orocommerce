@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ValidationBundle\Tests\Functional\Validator\Constraints;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -21,43 +20,29 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class UniqueEntityValidatorTest extends WebTestCase
 {
-    /**
-     * @var UniqueEntityValidator
-     */
+    /** @var UniqueEntityValidator */
     private $validator;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var ObjectManager
-     */
+    /** @var ObjectManager */
     private $em;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->em = $this->registry->getManager();
+        $doctrine = $this->getContainer()->get('doctrine');
+        $this->em = $doctrine->getManager();
 
-        $this->validator = new UniqueEntityValidator($this->registry);
+        $this->validator = new UniqueEntityValidator($doctrine);
     }
 
-    /**
-     * @param Constraint $constraint
-     * @return ExecutionContext
-     */
-    protected function createContext(Constraint $constraint)
+    private function createContext(Constraint $constraint): ExecutionContext
     {
         $translator = $this->createMock(TranslatorInterface::class);
         $validator = $this->createMock(ValidatorInterface::class);
         $contextualValidator = $this->createMock(ContextualValidatorInterface::class);
 
-        $translator
-            ->expects(self::any())
+        $translator->expects(self::any())
             ->method('trans')
             ->willReturnArgument(0);
 
@@ -74,31 +59,20 @@ class UniqueEntityValidatorTest extends WebTestCase
         $validator->expects($this->any())
             ->method('inContext')
             ->with($context)
-            ->will($this->returnValue($contextualValidator));
+            ->willReturn($contextualValidator);
 
         return $context;
     }
 
-    /**
-     * @param $message
-     * @param $root
-     * @param $propertyPath
-     * @param $invalidValue
-     * @param $code
-     * @param $constraint
-     * @param array $parameters
-     *
-     * @return ConstraintViolation
-     */
     private function createViolation(
-        $message,
-        $root,
-        $propertyPath,
-        $invalidValue,
-        $code,
-        $constraint,
-        $parameters = []
-    ) {
+        string $message,
+        string $root,
+        string $propertyPath,
+        string $invalidValue,
+        string $code,
+        UniqueEntity $constraint,
+        array $parameters = []
+    ): ConstraintViolation {
         return new ConstraintViolation(
             $message,
             $message,
@@ -113,7 +87,7 @@ class UniqueEntityValidatorTest extends WebTestCase
         );
     }
 
-    protected function validate(Constraint $constraint, ExecutionContextInterface $context)
+    private function validate(Constraint $constraint, ExecutionContextInterface $context): void
     {
         $entity1 = new Product();
         $entity1->setName('Foo');

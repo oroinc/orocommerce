@@ -137,6 +137,9 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
             - NotBlank: ~
             - Type:
                 type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
 
 Oro\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
@@ -152,6 +155,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
     properties:
         sortOrder:
             - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
         website:
@@ -173,6 +181,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
     properties:
         sortOrder:
             - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
         website:
@@ -202,6 +215,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     properties:
         sortOrder:
             - NotBlank: ~
+            - Type:
+                type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
         website:
@@ -273,6 +291,9 @@ Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig:
             - NotBlank: ~
             - Type:
                 type: integer
+            - Range:
+                min: -2147483648
+                max: 2147483647
         priceList:
             - NotBlank: ~
 

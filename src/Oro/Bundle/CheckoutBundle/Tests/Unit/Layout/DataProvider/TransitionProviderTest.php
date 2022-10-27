@@ -15,13 +15,13 @@ use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 class TransitionProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject|WorkflowManager */
-    protected $workflowManager;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionProvider */
-    protected $provider;
+    private $workflowManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionOptionsResolver */
-    protected $optionsResolver;
+    private $optionsResolver;
+
+    /** @var TransitionProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -35,7 +35,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Transition $backTransition */
         /** @var WorkflowItem $workflowItem */
-        list($workflowItem, $backTransition) = $this->prepareTestEntities();
+        [$workflowItem, $backTransition] = $this->prepareTestEntities();
 
         $stepName = $backTransition->getStepTo()->getName();
         $expected = [$stepName => new TransitionData($backTransition, true, new ArrayCollection())];
@@ -67,7 +67,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
         $this->workflowManager->expects($this->once())
             ->method('getTransitionsByWorkflowItem')
             ->with($workflowItem)
-            ->will($this->returnValue($transitions));
+            ->willReturn($transitions);
 
         $expected = new TransitionData($continueTransition, true, new ArrayCollection());
         $this->assertEquals($expected, $this->provider->getContinueTransition($workflowItem));
@@ -125,7 +125,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Transition $backTransition */
         /** @var WorkflowItem $workflowItem */
-        list($workflowItem, $backTransition) = $this->prepareTestEntities();
+        [$workflowItem, $backTransition] = $this->prepareTestEntities();
 
         $expected = new TransitionData($backTransition, true, new ArrayCollection());
         $this->assertEquals($expected, $this->provider->getBackTransition($workflowItem));
@@ -145,10 +145,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->provider->getBackTransition($workflowItem));
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareTestEntities()
+    private function prepareTestEntities(): array
     {
         $this->workflowManager->expects($this->any())
             ->method('isTransitionAvailable')
@@ -172,20 +169,16 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
         $this->workflowManager->expects($this->once())
             ->method('getTransitionsByWorkflowItem')
             ->with($workflowItem)
-            ->will($this->returnValue($transitions));
+            ->willReturn($transitions);
 
         return [$workflowItem, $backTransition];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Transition
-     */
-    protected function createTransition($name)
+    private function createTransition(string $name): Transition
     {
         $transition = new Transition($this->optionsResolver);
+        $transition->setName($name);
 
-        return $transition->setName($name);
+        return $transition;
     }
 }

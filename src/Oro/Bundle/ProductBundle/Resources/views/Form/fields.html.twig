@@ -398,47 +398,49 @@
                                  role="tabpanel"
                                  aria-labelledby="{{ 'filtered_products' ~ uniqueId ~ scope ~ '-tab' }}"
                             >
-                                <div class="collapse-view"
-                                     data-page-component-collapse="{{ {
-                                         openClass: 'expanded',
-                                         open: hasFilters
-                                     }|json_encode() }}"
-                                >
-                                    <div class="product-collection-segment-action-buttons clearfix-oro">
-                                        <div class="pull-right">
-                                            {% if not isMobileVersion() %}
-                                            <div data-collapse-trigger class="btn-group icons-holder">
-                                                <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
-                                            </div>
-                                            {% endif %}
-                                            {{ ProductCollection.popupButton(
-                                                oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
-                                                includedProductsElementId,
-                                                'oro.product.content_variant.ui.hint.add_to_included'|trans
-                                            ) }}
-                                        </div>
-                                    </div>
-                                    <div data-collapse-container class="filter control-group fields-row">
-                                        {{ block('oro_segment_filter_builder_row') }}
-                                        {# --Apply Query button start--#}
+                                {% set collapseId = 'collapse-'|uniqid %}
+                                <div class="product-collection-segment-action-buttons clearfix-oro">
+                                    <div class="pull-right">
                                         {% if not isMobileVersion() %}
-                                        <div class="btn-container clearfix">
-                                            <div class="pull-right">
-                                                <a href="#" class="btn btn-primary filter-apply">
-                                                    {{ 'oro.product.content_variant.ui.apply_query'|trans }}
-                                                </a>
+                                            <div class="btn-group icons-holder">
+                                                <button type="button"
+                                                        class="btn{% if hasFilters %} active{% endif %}"
+                                                        data-toggle="collapse"
+                                                        data-target="{{ '#' ~ collapseId }}"
+                                                        aria-expanded="false"
+                                                        aria-controls="{{ collapseId }}"
+                                                >
+                                                    <span class="fa-filter" aria-hidden="true"></span> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}
+                                                </button>
                                             </div>
-                                        </div>
                                         {% endif %}
-                                        {# --Apply Query button end-- #}
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                            includedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                        ) }}
                                     </div>
-                                    {{ oro_widget_render({
-                                        'widgetType': 'block',
-                                        'url': path('oro_datagrid_widget', widgetRouteParameters),
-                                        'title': '',
-                                        'alias': gridWidgetAlias
-                                    }) }}
                                 </div>
+                                <div id="{{ collapseId }}" class="filter fields-row collapse no-transition{% if hasFilters %} show{% endif %}" data-trigger-show-class="active">
+                                    {{ block('oro_segment_filter_builder_row') }}
+                                    {# --Apply Query button start--#}
+                                    {% if not isMobileVersion() %}
+                                    <div class="btn-container clearfix">
+                                        <div class="pull-right">
+                                            <a href="#" class="btn btn-primary filter-apply">
+                                                {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {# --Apply Query button end-- #}
+                                </div>
+                                {{ oro_widget_render({
+                                    'widgetType': 'block',
+                                    'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                    'title': '',
+                                    'alias': gridWidgetAlias
+                                }) }}
                             </div>
 
                             <div class="tab-pane"

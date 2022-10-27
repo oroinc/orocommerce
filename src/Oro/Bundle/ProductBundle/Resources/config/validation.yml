@@ -45,6 +45,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         variantLinks:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkCollection: ~
         images:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~

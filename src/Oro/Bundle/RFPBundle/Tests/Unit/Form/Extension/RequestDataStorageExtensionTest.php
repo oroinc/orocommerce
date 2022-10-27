@@ -137,7 +137,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertCount(1, $this->entity->getRequestProducts());
         /** @var RequestProduct $requestProduct */
@@ -191,7 +191,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertEmpty($this->entity->getRequestProducts());
     }
@@ -232,7 +232,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertEmpty($this->entity->getRequestProducts());
     }
@@ -271,7 +271,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertEmpty($this->entity->getRequestProducts());
     }
@@ -297,7 +297,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        $this->extension->buildForm($this->getFormBuilder(true), []);
 
         $this->assertEmpty($this->entity->getRequestProducts());
     }
@@ -309,13 +309,12 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     /**
      * @dataProvider isAllowedRFPDataProvider
-     *
-     * @param string|InventoryStatus $inventoryStatus
-     * @param string $status
-     * @param bool $expectedResult
      */
-    public function testIsAllowedRFP($inventoryStatus, string $status, bool $expectedResult): void
-    {
+    public function testIsAllowedRFP(
+        string|InventoryStatus $inventoryStatus,
+        string $status,
+        bool $expectedResult
+    ): void {
         $sku = 'sku42';
         $product = new ProductStub(42);
         $product->setStatus($status);
@@ -384,13 +383,12 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
     /**
      * @dataProvider isAllowedRFPDataProvider
-     *
-     * @param string|InventoryStatus $inventoryStatus
-     * @param string $status
-     * @param bool $expectedResult
      */
-    public function testIsAllowedRFPByProductsIds($inventoryStatus, string $status, bool $expectedResult): void
-    {
+    public function testIsAllowedRFPByProductsIds(
+        string|InventoryStatus $inventoryStatus,
+        string $status,
+        bool $expectedResult
+    ): void {
         $productId = 42;
         $product = new ProductStub($productId);
         $product->setStatus($status);

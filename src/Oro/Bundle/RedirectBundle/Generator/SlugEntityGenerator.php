@@ -21,13 +21,13 @@ use Oro\Component\Routing\RouteData;
 class SlugEntityGenerator
 {
     private RoutingInformationProviderInterface $routingInformationProvider;
-    private UniqueSlugResolver $slugResolver;
+    private UniqueSlugResolverInterface $slugResolver;
     private RedirectGenerator $redirectGenerator;
     private SluggableUrlDumper $urlCacheDumper;
 
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
-        UniqueSlugResolver $slugResolver,
+        UniqueSlugResolverInterface $slugResolver,
         RedirectGenerator $redirectGenerator,
         SluggableUrlDumper $urlCacheDumper
     ) {

@@ -8,37 +8,19 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM\LoadPageDemoData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Web catalog demo data
+ * Loads web catalog demo data.
  */
 class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements DependentFixtureInterface
 {
     use UserUtilityTrait;
 
-    const DEFAULT_WEB_CATALOG_NAME = 'Default Web Catalog';
-    const DEFAULT_WEB_CATALOG_DESC= 'Default Web Catalog description';
-
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCategoryDemoData::class,
@@ -47,44 +29,23 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
         ];
     }
 
-    public function load(ObjectManager $manager)
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
-        $webCatalog = $this->loadWebCatalogData($manager);
+        $webCatalog = $this->createCatalog($manager);
+        $contentNodes = $this->getWebCatalogData(
+            '@OroWebCatalogBundle/Migrations/Data/Demo/ORM/data/web_catalog_data.yml'
+        );
+        $this->loadContentNodes($manager, $webCatalog, $contentNodes);
+        $manager->flush();
+
         $this->enableWebCatalog($webCatalog);
         $this->generateCache($webCatalog);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return WebCatalog
-     */
-    protected function loadWebCatalogData(ObjectManager $manager)
-    {
-        $webCatalog = $this->createCatalog($manager);
-
-        $contentNodes =
-            $this->getWebCatalogData('@OroWebCatalogBundle/Migrations/Data/Demo/ORM/data/web_catalog_data.yml');
-
-        $this->loadContentNodes($manager, $webCatalog, $contentNodes);
-
-        $manager->flush();
-
-        return $webCatalog;
-    }
-
-    protected function enableWebCatalog(WebCatalog $webCatalog)
-    {
-        $configManager = $this->container->get('oro_config.global');
-        $configManager->set(Configuration::ROOT_NODE . '.web_catalog', $webCatalog->getId());
-
-        $configManager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return WebCatalog
-     */
-    protected function createCatalog(ObjectManager $manager)
+    private function createCatalog(ObjectManager $manager): WebCatalog
     {
         /** @var EntityManager $manager */
         $user = $this->getFirstUser($manager);

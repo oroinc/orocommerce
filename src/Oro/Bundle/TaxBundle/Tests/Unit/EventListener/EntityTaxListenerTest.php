@@ -28,15 +28,12 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new EntityTaxListener($taxProviderRegistry, Order::class);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->taxManager);
-    }
-
     public function testPreRemove()
     {
         $order = new Order();
-        $this->taxProvider->expects($this->once())->method('removeTax')->with($order);
+        $this->taxProvider->expects($this->once())
+            ->method('removeTax')
+            ->with($order);
 
         $this->listener->preRemove($order);
     }
