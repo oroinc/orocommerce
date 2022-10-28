@@ -38,4 +38,17 @@ class Item extends AbstractItem
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getAllFields()
+    {
+        return [
+            SearchQuery::TYPE_TEXT => $this->textFields,
+            SearchQuery::TYPE_INTEGER => $this->integerFields,
+            SearchQuery::TYPE_DATETIME => $this->datetimeFields,
+            SearchQuery::TYPE_DECIMAL => $this->decimalFields,
+        ];
+    }
 }
