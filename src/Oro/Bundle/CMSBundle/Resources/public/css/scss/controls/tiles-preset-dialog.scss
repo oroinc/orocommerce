@@ -1,0 +1,53 @@
+/* @theme: admin.oro; */
+
+.tiles-presets {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.tiles-preset {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    height: 100%;
+    max-width: 100px;
+
+    &__label {
+        text-align: center;
+        margin-top: auto;
+    }
+
+    &-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+
+        &__item {
+            background-color: $info-lighten;
+            border: 2px dashed $info-light;
+            color: $info;
+            height: 30px;
+            flex-shrink: 0;
+            flex-grow: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width:
+                calc(
+                    100% / var(--preview-col-count) - 4px * (var(--preview-col-count) - 1) / var(--preview-col-count)
+                );
+        }
+
+        &:hover {
+            .tiles-preset-preview__item {
+                border-color: $info;
+                border-style: solid;
+            }
+        }
+    }
+}

@@ -26,6 +26,11 @@ import PictureTypeBuilder from 'orocms/js/app/grapesjs/type-builders/picture-typ
 import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
 import TextWrapperTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-wrapper-type-builder';
 import CustomCodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/custom-code-type-builder';
+import ColumnsTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns/columns-type-builder';
+import ColumnsItemTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns/columns-item-type-builder';
+import ContainerTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns/container-type-builder';
+import TilesTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tiles/tiles-type-builder';
+import TilesItemTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tiles/tiles-item-type-builder';
 
 ComponentManager.registerComponentTypes({
     'wrapper': {
@@ -110,5 +115,20 @@ ComponentManager.registerComponentTypes({
     },
     'custom-code': {
         Constructor: CustomCodeTypeBuilder
+    },
+    'columns': {
+        Constructor: ColumnsTypeBuilder
+    },
+    'columns-item': {
+        Constructor: ColumnsItemTypeBuilder
+    },
+    'div-block': {
+        Constructor: ContainerTypeBuilder
+    },
+    'tiles': {
+        Constructor: TilesTypeBuilder
+    },
+    'tiles-item': {
+        Constructor: TilesItemTypeBuilder
     }
 });

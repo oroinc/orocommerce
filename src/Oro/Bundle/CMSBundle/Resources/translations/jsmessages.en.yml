@@ -106,6 +106,20 @@ oro.cms:
                 confirmation:
                     title: 'Merge custom code into content'
                     desc: 'Custom code will be parsed and merged with the rest of the content'
+            columns:
+                label: 'Columns'
+                sub_columns_label: 'Sub Columns'
+                resizer_span: '{{ spans }} Span'
+                dialog_title: 'Columns'
+            columns_item:
+                label: 'Columns Item'
+            container:
+                label: 'Div Block'
+            tiles:
+                label: 'Tiles'
+                dialog_title: 'Tiles'
+            tiles_item:
+                label: 'Tile'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
@@ -149,6 +163,8 @@ oro.cms:
             categories:
                 basic: 'Basic'
                 forms: 'Forms'
+                layout: 'Layout'
+                legacy: 'Legacy'
         selector_manager:
             label: 'Classes'
             selected: 'Selected'
@@ -175,6 +191,10 @@ oro.cms:
                 extra: 'Extra'
                 flex: 'Flex'
                 dimension: 'Dimension'
+                columns_settings: 'Columns Settings'
+                columns_item_settings: 'Columns Item Settings'
+                sub_columns_settings: 'Sub Columns Settings'
+                tiles_settings: 'Tiles Settings'
             properties:
                 float:
                     name: 'Alignment'
@@ -380,6 +400,46 @@ oro.cms:
                     name: 'Align'
                 justify_content:
                     name: 'Justify'
+                columns_count:
+                    name: 'Columns Count'
+                gaps:
+                    name: 'Gaps'
+                row_gaps:
+                    name: 'Row Gap'
+                column_gaps:
+                    name: 'Column Gap'
+                place_content:
+                    name: 'Place Content'
+                align_content:
+                    name: 'Align Content'
+                grid_justify_content:
+                    name: 'Justify Content'
+                place_items:
+                    name: 'Place Items'
+                align_items:
+                    name: 'Align Items'
+                justify_items:
+                    name: 'Justify Items'
+                column_span:
+                    name: 'Column Span'
+                place_self:
+                    name: 'Place Self'
+                align_self:
+                    name: 'Align Self'
+                justify_self:
+                    name: 'Justify Self'
+                grid_start:
+                    name: 'Start'
+                grid_center:
+                    name: 'Center'
+                grid_end:
+                    name: 'End'
+                tiles_count:
+                    name: 'Tiles Count'
+                tiles_row_gaps:
+                    name: 'Row Gap'
+                tiles_column_gaps:
+                    name: 'Column Gap'
         trait_manager:
             empty: 'Select an element before using Trait Manager'
             label: 'Component settings'

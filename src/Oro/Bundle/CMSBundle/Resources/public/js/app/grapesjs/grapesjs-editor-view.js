@@ -12,6 +12,7 @@ import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
 import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
+import 'orocms/js/app/grapesjs/plugins/components/sorter-hints';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import 'orocms/js/app/grapesjs/plugins/import/import';
@@ -197,7 +198,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     styleManager: {
-        clearProperties: false,
+        clearProperties: true,
         sectors: []
     },
 
@@ -319,6 +320,7 @@ const GrapesjsEditorView = BaseView.extend({
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
         },
+        'sorter-hints': {},
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
@@ -739,6 +741,7 @@ const GrapesjsEditorView = BaseView.extend({
         });
 
         model.trigger('model:deselected', model);
+        this.togglePrivateClasses(model, false);
     },
 
     componentSelected(model) {
@@ -791,6 +794,7 @@ const GrapesjsEditorView = BaseView.extend({
             });
 
         this.toggleSelectorManager(model);
+        this.togglePrivateClasses(model, true);
     },
 
     /**
@@ -816,6 +820,13 @@ const GrapesjsEditorView = BaseView.extend({
                 delete SelectorManager.selectorTags.messageContainer;
             }
         }
+    },
+
+    togglePrivateClasses(model, state) {
+        const selectors = this.builder.Selectors.getSelected();
+        const privateClasses = model.get('privateClasses') || [];
+
+        selectors.forEach(selector => privateClasses.includes(selector.get('name')) && selector.set('private', state));
     },
 
     /**
