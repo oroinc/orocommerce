@@ -1318,10 +1318,11 @@ services:
         class: Oro\Bundle\ProductBundle\Async\ReindexProductCollectionProcessor
         arguments:
             - '@oro_message_queue.job.runner'
-            - '@logger'
             - '@oro_product.model.segment_message_factory'
             - '@oro_segment.provider.segment_snapshot_delta_provider'
             - '@oro_product.storage.product_website_reindex_request_data_storage'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -1727,25 +1728,18 @@ services:
         tags:
             - { name: oro_action.action, alias: remove_restricted_products }
 
-    oro_product.async.reindex_products_by_attribute_processor:
-        class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributeProcessor
-        arguments:
-            - '@oro_message_queue.job.runner'
-            - '@doctrine'
-            - '@event_dispatcher'
-            - '@logger'
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attribute' }
-
     oro_product.async.reindex_products_by_attributes_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexProductsByAttributesProcessor
         arguments:
             - '@oro_message_queue.job.runner'
             - '@doctrine'
             - '@event_dispatcher'
-            - '@logger'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_products_by_attributes' }
+            -
+              name: 'oro_message_queue.client.message_processor'
+              topicName: !php/const Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic::NAME
 
     oro_product.async.reindex_request_item_products_by_related_job_processor:
         class: Oro\Bundle\ProductBundle\Async\ReindexRequestItemProductsByRelatedJobProcessor
@@ -1753,9 +1747,12 @@ services:
             - '@oro_product.storage.product_website_reindex_request_data_storage'
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.client.message_producer'
-            - '@logger'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_product.reindex_request_item_products_by_related_job' }
+            -
+              name: 'oro_message_queue.client.message_processor'
+              topicName: !php/const Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic::NAME
 
     oro_product.config.event_listener.display_simple_variations_listener:
         class: Oro\Bundle\ProductBundle\EventListener\Config\DisplaySimpleVariationsListener
