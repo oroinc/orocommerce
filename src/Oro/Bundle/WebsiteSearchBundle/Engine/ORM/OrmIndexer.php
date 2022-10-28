@@ -82,19 +82,7 @@ class OrmIndexer extends AbstractIndexer
 
         // Build items for search index
         foreach ($entitiesData as $entityId => $indexData) {
-            $item = $this->getDriver()->createItem();
-
-            if (isset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
-                $item->setWeight($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
-                unset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
-            }
-
-            $item->setEntity($entityClass)
-                ->setRecordId($entityId)
-                ->setAlias($entityAliasTemp)
-                ->setChanged(false)
-                ->saveItemData($indexData);
-            $this->getDriver()->writeItem($item);
+            $this->createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $indexData);
         }
 
         // Remove old data to prevent possible conflicts with unique indexes
@@ -142,15 +130,17 @@ class OrmIndexer extends AbstractIndexer
         }
     }
 
-    protected function savePartialIndexData($entityClass, array $entitiesData, $entityAliasTemp, array $context)
-    {
+    protected function savePartialIndexData(
+        $entityClass,
+        array $entitiesData,
+        $entityAliasTemp,
+        array $context
+    ) {
         $realAlias = $this->getEntityAlias($entityClass, $context);
 
         if (null === $realAlias) {
             return [];
         }
-
-        [$newFields, $newRegexps, $fieldTypes] = $this->collectFieldNamesAndRegexps($context, $entityClass);
 
         // need to get data from index to index full document later
         $items = $this->loadItems($entityClass, array_keys($entitiesData), $context);
@@ -173,66 +163,41 @@ class OrmIndexer extends AbstractIndexer
                 continue;
             }
 
-            $item = $existingDocuments[$entityId];
-            $item->setAlias($entityAliasTemp);
-            foreach ($fieldTypes as $fieldType) {
-                $this->processFieldsCollection($item, $newFields, $newRegexps, $entityData, $fieldType);
-            }
-            $item->saveItemData($entityData);
-            $this->getDriver()->writeItem($item);
+            $this->processFieldsCollection($existingDocuments[$entityId], $entityData);
+
+            $this->createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $entityData);
         }
+        // Remove old data to prevent possible conflicts with unique indexes
+        $this->deleteEntities($entityClass, $entityIds, $context);
+
+        // Insert data to the database
         $this->getDriver()->flushWrites();
 
         return $entityIds;
     }
 
-    private function processFieldsCollection(
-        Item $item,
-        array $newFields,
-        array $newRegexps,
-        array &$entityData,
-        string $fieldType
-    ): void {
-        $method = 'get' . ucfirst($fieldType) . 'Fields';
-        /** @var Collection|ItemFieldInterface[] $collection */
-        $collection = $item->{$method}();
-        $removedItems = [];
-        foreach ($collection as $fieldItem) {
-            $name = $fieldItem->getField();
-
-            // Skip update of fields if data is already in the index
-            if (isset($entityData[$fieldType][$name]) && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
-                continue;
-            }
-            if ($this->shouldBeRemoved($name, $newRegexps, $newRegexps)) {
-                $removedItems[] = $fieldItem;
-                continue;
-            }
-
-            // Add fields from other groups back to $entityData to prevent their removal
-            if (isset($entityData[$fieldType]) && !array_key_exists($name, $entityData[$fieldType])) {
-                $entityData[$fieldType][$name] = $fieldItem->getValue();
-            }
-        }
-
-        foreach ($removedItems as $removedItem) {
-            $collection->removeElement($removedItem);
-        }
-    }
-
-    private function shouldBeRemoved(string $fieldName, array $newFields, array $newRegexps): bool
+    private function processFieldsCollection(Item $item, array &$entityData): void
     {
-        if (in_array($fieldName, $newFields, true)) {
-            return true;
-        }
+        /** @var Collection|ItemFieldInterface[] $collection */
+        foreach ($item->getAllFields() as $fieldType => $collection) {
+            foreach ($collection as $fieldItem) {
+                $name = $fieldItem->getField();
 
-        foreach ($newRegexps as $regexp) {
-            if (preg_match("~^$regexp$~", $fieldName)) {
-                return true;
+                // Skip update of fields if data is already in the index
+                if (isset($entityData[$fieldType][$name])
+                    && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
+                    continue;
+                }
+
+                // Add fields from other groups back to $entityData to prevent their removal
+                if (!array_key_exists($fieldType, $entityData)) {
+                    $entityData[$fieldType] = [];
+                }
+                if (!array_key_exists($name, $entityData[$fieldType])) {
+                    $entityData[$fieldType][$name] = $fieldItem->getValue();
+                }
             }
         }
-
-        return false;
     }
 
     protected function getIndexedEntities($entityClass, array $entities, array $context)
@@ -283,33 +248,21 @@ class OrmIndexer extends AbstractIndexer
         return $qb;
     }
 
-    private function collectFieldNamesAndRegexps(array $context, string $entityClass): array
+    private function createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $data)
     {
-        $fields = $this->getFieldsForGroup($entityClass, $context);
+        $item = $this->getDriver()->createItem();
 
-        $newFields = [];
-        $newRegexps = [];
-        $fieldTypes = [];
-
-        foreach ($fields as $field) {
-            $fieldTypes[$field['type']] = $field['type'];
-            $fieldName = $field['name'];
-            // Flattened fields contain dot and should be all replaced (visible_for_customer.CUSTOMER_ID)
-            if (str_contains($fieldName, '.')) {
-                $newRegexps[] = explode('.', $fieldName)[0] . '\.\w+';
-                continue;
-            }
-
-            $replacedField = $this->regexPlaceholder->replaceDefault($fieldName);
-            if ($replacedField === $fieldName) {
-                // Replace field if it is present in returned data (is_visible)
-                $newFields[] = $replacedField;
-            } else {
-                // Replace all fields containing placeholders by regexp (minimal_price_PRICE_LIST_ID)
-                $newRegexps[] = $replacedField;
-            }
+        if (isset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
+            $item->setWeight($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+            unset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
         }
 
-        return [array_unique($newFields), array_unique($newRegexps), $fieldTypes];
+        $item->setEntity($entityClass)
+            ->setRecordId($entityId)
+            ->setAlias($entityAliasTemp)
+            ->setChanged(false)
+            ->saveItemData($data);
+
+        $this->getDriver()->writeItem($item);
     }
 }
