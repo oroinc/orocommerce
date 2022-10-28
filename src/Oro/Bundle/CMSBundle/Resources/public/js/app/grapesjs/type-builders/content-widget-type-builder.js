@@ -111,7 +111,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
 
     viewMixin: {
         events: {
-            dblclick: 'onDoubleClick'
+            dblclick: 'onActive'
         },
 
         onRender() {
@@ -134,7 +134,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         },
 
         onDoubleClick(event) {
-            this.em.get('Commands').run(this.model.getSettingsCommandName());
+            this.em.get('Commands').run(this.model.getSettingsCommandName(), this.model);
 
             event && event.stopPropagation();
         },

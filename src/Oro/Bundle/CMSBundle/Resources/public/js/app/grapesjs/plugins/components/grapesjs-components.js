@@ -5,8 +5,27 @@ import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/componen
 import traitManagerExtends from 'orocms/js/app/grapesjs/plugins/components/trait-manager-extends';
 import {unescapeTwigExpression} from '../../utils';
 import fullscreenCommand from '../../commands/fullscreen';
+import clearCanvasCommand from '../../commands/clear-canvas';
 
 export default GrapesJS.plugins.add('grapesjs-components', function(editor, options) {
+    const superCategoryDefaults = editor.Blocks.Category.prototype.defaults;
+    editor.Blocks.Category.prototype.defaults = () => {
+        return {
+            ...superCategoryDefaults(),
+            order: 100
+        };
+    };
+
+    editor.Blocks.Categories = editor.Blocks.Categories.extend({
+        comparator: 'order',
+
+        add(...args) {
+            const res = this.__super__.add.apply(this, args);
+            this.sort();
+            return res;
+        }
+    });
+
     // Overwrite default addType method
     // Check and update manually componentTypes array
     // Check functionality at next version GrapesJS, if need delete wrap function
@@ -35,6 +54,7 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
     });
 
     editor.Commands.add('fullscreen', fullscreenCommand);
+    editor.Commands.add('core:canvas-clear', clearCanvasCommand);
 
     traitManagerExtends(editor);
 
