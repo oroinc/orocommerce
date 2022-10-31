@@ -156,11 +156,6 @@ const QuickAddCollection = BaseCollection.extend({
         }
 
         items.forEach(item => {
-            if (!item.quantity) {
-                zeroQuantityItems.push(item);
-                return;
-            }
-
             const productUnits = item.units || {};
             let unitLabel;
             if (item.unit_label !== undefined) {

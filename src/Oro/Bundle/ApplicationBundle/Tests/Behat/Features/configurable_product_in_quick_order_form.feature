@@ -98,14 +98,14 @@ Feature: Configurable product in quick order form
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | Shirt_Sku 1 |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
+    Then I should see text matching "Item number cannot be found."
     When I click "Quick Order Form"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | EmptyShirt_Sku 1 |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
+    Then I should see text matching "Item number cannot be found."
     When I click "Quick Order Form"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | White_Shirt_L_sku 1 |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
+    Then I should see text matching "Item number cannot be found."

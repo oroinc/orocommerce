@@ -288,10 +288,6 @@ oro_behat_extension:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
 
-    Quick Order Import Validation:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: 'table.quick_add_validation_items'
-
     Quick Order Add Form:
       selector: 'form[name="oro_product_quick_add"]'
 
@@ -392,6 +388,9 @@ oro_behat_extension:
 
     Checkout Line Item Product Link:
       selector: 'h3.grid-line-items__title a[title]'
+
+    After Validation Buttons Controls Group:
+      selector: '.quick-order-add__buttons-wrapper:nth-child(6)'
   pages:
     Checkout:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage

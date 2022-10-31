@@ -74,11 +74,7 @@ class QuickAddRowInputParser
 
     public function createFromCopyPasteTextLine(array $product, int $lineNumber): QuickAddRow
     {
-        $sku = trim($product[0]);
-        $quantity = isset($product[1]) ? (float)$product[1] : null;
-        $unit = isset($product[2]) ? trim($product[2]) : null;
-
-        return new QuickAddRow($lineNumber, $sku, $quantity, $this->resolveUnit($sku, $unit));
+        return $this->createFromFileLine($product, $lineNumber);
     }
 
     private function resolveUnit(string $sku, ?string $unitName = null): ?string

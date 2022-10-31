@@ -124,7 +124,7 @@ class QuickAddRowCollectionBuilder
             /** @var Row $row */
             foreach ($sheet->getRowIterator() as $row) {
                 $row = $row->toArray();
-                if (0 === $lineNumber || empty($row[0])) {
+                if (0 === $lineNumber) {
                     $lineNumber++;
                     continue;
                 }
@@ -155,8 +155,13 @@ class QuickAddRowCollectionBuilder
 
         $text = trim($text);
         if ($text) {
+            $delimiter = null;
             foreach (explode(PHP_EOL, $text) as $line) {
-                $data = preg_split('/(\t|\,|\ )+/', $line);
+                $line = trim($line);
+                if ($delimiter === null) {
+                    $delimiter = $this->detectDelimiter($line);
+                }
+                $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line);
                 $collection->add(
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
@@ -170,6 +175,18 @@ class QuickAddRowCollectionBuilder
         $this->mapProducts($collection);
 
         return $collection;
+    }
+
+    private function detectDelimiter(string $line): string
+    {
+        foreach (["\t", ';', ' ',  ','] as $delimiter) {
+            $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line, 2);
+            if ($data[0] !== $line) {
+                break;
+            }
+        }
+
+        return $delimiter;
     }
 
     /**

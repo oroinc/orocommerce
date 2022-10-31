@@ -74,7 +74,7 @@ define(function(require) {
             _.each(this.productsCollection.models, model => {
                 if (model.get('sku')) {
                     const {sku, unit, quantity} = model.attributes;
-                    quickAddRows.push({
+                    quickAddRows.unshift({
                         productSku: sku,
                         productUnit: unit,
                         productQuantity: quantity
@@ -101,6 +101,10 @@ define(function(require) {
                     if (_.has(response, 'redirectUrl')) {
                         mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
                         return;
+                    }
+
+                    if (response.success) {
+                        mediator.trigger('shopping-list:refresh');
                     }
 
                     if (response.messages) {

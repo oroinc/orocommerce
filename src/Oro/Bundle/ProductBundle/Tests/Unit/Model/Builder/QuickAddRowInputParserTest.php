@@ -179,16 +179,26 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider exampleRow
+     * @dataProvider exampleRowFile
      */
     public function testCreateFromPasteTextLine($input, $expected): void
     {
-        $this->numberFormatter->expects(self::never())
-            ->method('parseFormattedDecimal');
+        $this->numberFormatter->expects(self::once())
+            ->method('parseFormattedDecimal')
+            ->willReturnCallback(function ($value) {
+                if (str_contains($value, ',')) {
+                    return (float)str_replace(',', '.', $value);
+                }
+
+                if (str_contains($value, '.')) {
+                    return false;
+                }
+
+                return $value;
+            });
 
         $index = 0;
         $input = array_values($input);
-
         if (!array_key_exists(2, $input)) {
             $this->assertProductRepository();
         }
@@ -202,9 +212,6 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
         self::assertEquals(1, $index);
     }
 
-    /**
-     * @return array
-     */
     public function exampleRow(): array
     {
         return [
