@@ -61,8 +61,8 @@ oro:
                 invalid_format: Invalid format
                 validation:
                     empty_file: 'We have not been able to identify any product references in the uploaded file.'
-                    not_found: 'Item number {{ value }} not found.'
-                    product_not_found: 'Item number {{ sku }} not found.'
+                    not_found: 'Item number cannot be found.'
+                    product_not_found: 'Item number cannot be found.'
                     invalid_precision: 'Invalid precision for unit ''{{ unit }}''.'
                     unit_not_blank: 'Unit cannot be blank.'
                     invalid_unit: 'Unit ''{{ unit }}'' doesn''t exist for product {{ sku }}.'

@@ -16,5 +16,9 @@ layout:
             optionValue: 'oro.product.frontend.quick_add.title'
         - '@add':
             id: quick_add_container
-            parentId: page_content
             blockType: container
+            parentId: page_content
+            options:
+                vars:
+                    form: '=data["oro_product_form"].getQuickAddFormView()'
+

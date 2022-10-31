@@ -212,9 +212,6 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
             path: 'quantity'
             groups: [QuantityUnitPrecision]
     properties:
-        sku:
-            - NotBlank:
-                message: oro.product.frontend.quick_add.validation.not_found
         product:
             - NotNull:
                 message: oro.product.frontend.quick_add.validation.product_not_found

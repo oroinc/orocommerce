@@ -110,9 +110,10 @@ class QuickAddProcessHandler
                         'redirectUrl' => $response->getTargetUrl(),
                     ];
                 } else {
+                    $flashBag = $request->getSession()->getFlashBag();
                     $responseData = [
-                        'success' => false,
-                        'messages' => $request->getSession()->getFlashBag()->all(),
+                        'success' => !$flashBag->has('error'),
+                        'messages' => $flashBag->all(),
                     ];
                 }
             } else {

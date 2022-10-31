@@ -102,7 +102,7 @@
         "quantity": 10.0112,
         "errors": [
           {
-            "message": "Item number SKU1 not found.",
+            "message": "Item number cannot be found.",
             "propertyPath": "product"
           },
           {
@@ -119,7 +119,7 @@
         "quantity": 0,
         "errors": [
           {
-            "message": "Item number SKU2 not found.",
+            "message": "Item number cannot be found.",
             "propertyPath": "product"
           },
           {
@@ -140,7 +140,7 @@
         "quantity": 0,
         "errors": [
           {
-            "message": "Item number SKU3 not found.",
+            "message": "Item number cannot be found.",
             "propertyPath": "product"
           },
           {

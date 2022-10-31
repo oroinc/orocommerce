@@ -391,6 +391,13 @@ oro_behat_extension:
 
     Checkout Line Item Product Link:
       selector: 'h3.grid-line-items__title a[title]'
+
+    After Validation Buttons Controls Group Optimized:
+      selector: '.quick-order-add__buttons-wrapper:nth-child(6)'
+
+    After Validation Buttons Controls Group:
+      selector: '.quick-order-add__buttons-wrapper:nth-child(7)'
+
   pages:
     Checkout:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage

@@ -8,6 +8,9 @@
         '~class': ' quick-order',
         'data-focusable': true,
         'data-page-component-view': 'oroproduct/js/app/views/quick-order-form-view',
+        'data-page-component-options': {
+            'isOptimized': form.vars.is_optimized
+        },
         'data-layout': 'separate',
     }) %}
     <div {{ block('block_attributes') }}>

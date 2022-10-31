@@ -28,7 +28,8 @@ const QuickOrderFromView = BaseView.extend({
      */
     options: {
         rowsCountThreshold: 20,
-        rowsBatchSize: 50
+        rowsBatchSize: 50,
+        isOptimized: false
     },
 
     listen: {
@@ -55,7 +56,7 @@ const QuickOrderFromView = BaseView.extend({
             ajaxOptions: {
                 global: false // ignore global loading bar
             }
-        }, _.pick(this.options, 'productBySkuRoute'));
+        }, _.pick(this.options, ['productBySkuRoute', 'isOptimized']));
         this.collection = new QuickAddCollection([], collectionOptions);
 
         this.createTopButtonCache();

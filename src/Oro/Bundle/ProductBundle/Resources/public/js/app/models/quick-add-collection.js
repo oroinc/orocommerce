@@ -19,8 +19,13 @@ const QuickAddCollection = BaseCollection.extend({
 
     ajaxOptions: {},
 
+    isOptimized: false,
+
     constructor: function QuickAddCollection(data, options) {
-        Object.assign(this, _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize', 'ajaxOptions'));
+        Object.assign(
+            this,
+            _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize', 'ajaxOptions', 'isOptimized')
+        );
 
         this._index = {_: []};
 
@@ -156,7 +161,7 @@ const QuickAddCollection = BaseCollection.extend({
         }
 
         items.forEach(item => {
-            if (!item.quantity) {
+            if (!this.isOptimized && !item.quantity) {
                 zeroQuantityItems.push(item);
                 return;
             }
