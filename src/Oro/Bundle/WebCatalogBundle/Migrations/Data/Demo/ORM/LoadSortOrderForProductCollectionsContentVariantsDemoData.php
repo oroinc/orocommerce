@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
+/**
+ * Loads sort order demo data for ProductCollection ContentVariants in WebCatalog
+ */
 class LoadSortOrderForProductCollectionsContentVariantsDemoData extends AbstractFixture implements
     DependentFixtureInterface
 {

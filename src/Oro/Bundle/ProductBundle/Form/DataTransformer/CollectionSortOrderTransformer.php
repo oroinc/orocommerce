@@ -5,10 +5,14 @@ namespace Oro\Bundle\ProductBundle\Form\DataTransformer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
+/**
+ * Transforms SortOrder field array data into CollectionSortOrder entities
+ */
 class CollectionSortOrderTransformer implements DataTransformerInterface
 {
     public function __construct(
@@ -58,29 +62,41 @@ class CollectionSortOrderTransformer implements DataTransformerInterface
                 continue;
             }
 
-            $collection = null;
-            if (!is_null($this->segment)) {
-                $collection = $this->doctrineHelper
-                    ->getEntityRepository(CollectionSortOrder::class)
-                    ->findOneBy([
-                        'product' => $productId,
-                        'segment' => $this->segment->getId()
-                    ]);
-            }
-            if (is_null($collection)) {
-                $collection = new CollectionSortOrder();
-                $collection->setProduct($product);
-                if (!is_null($this->segment)) {
-                    $collection->setSegment($this->segment);
-                }
-            }
             $newValue = $changeSetRow['data']['categorySortOrder'];
+
+            $collection = $this->buildCollection($productId, $product);
             $collection->setSortOrder(is_null($newValue) ? null : (float)$newValue);
 
             $value[$productId]['data'] = $collection;
         }
 
         return $value;
+    }
+
+    /**
+     * @param int $productId
+     * @param Product $product
+     * @return CollectionSortOrder
+     */
+    private function buildCollection(int $productId, Product $product): CollectionSortOrder
+    {
+        $collection = null;
+        if (!is_null($this->segment)) {
+            $collection = $this->doctrineHelper
+                ->getEntityRepository(CollectionSortOrder::class)
+                ->findOneBy([
+                    'product' => $productId,
+                    'segment' => $this->segment->getId()
+                ]);
+        }
+        if (is_null($collection)) {
+            $collection = new CollectionSortOrder();
+            $collection->setProduct($product);
+            if (!is_null($this->segment)) {
+                $collection->setSegment($this->segment);
+            }
+        }
+        return $collection;
     }
 
     /**

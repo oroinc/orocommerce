@@ -132,6 +132,24 @@ class WebCatalogEntityIndexerListener
             return;
         }
 
+        $this->processInformationAndAddToIndex($event, $websiteId, $relations, $nodes);
+    }
+
+    /**
+     * Rules which information to add to index depending on context (partial indexation group)
+     *
+     * @param IndexEntityEvent $event
+     * @param int $websiteId
+     * @param array $relations
+     * @param array $nodes
+     * @return void
+     */
+    protected function processInformationAndAddToIndex(
+        IndexEntityEvent $event,
+        int $websiteId,
+        array $relations,
+        array $nodes
+    ): void {
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
         if ($this->hasContextFieldGroup($event->getContext(), 'main') &&
