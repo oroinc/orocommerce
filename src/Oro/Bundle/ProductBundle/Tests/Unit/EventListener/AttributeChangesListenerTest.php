@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Layout\DataProvider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\ProductBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\AttributeChangesListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -27,19 +27,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const FIELD_NAME = 'test_field';
+    private const FIELD_NAME = 'test_field';
 
-    /** @var RequestStack */
-    private $requestStack;
+    private RequestStack $requestStack;
 
-    /** @var AttributeChangesListener */
-    private $listener;
+    private AttributeChangesListener $listener;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
     protected function setUp(): void
     {
@@ -52,7 +48,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostFlushUnsupportedModel()
     {
-        $this->producer->expects($this->never())->method($this->anything());
+        $this->producer->expects(self::never())->method(self::anything());
 
         $model = new \stdClass();
 
@@ -60,12 +56,12 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         $attributeChangeSet = ['searchable' => [false, false]];
 
-        $this->assertTrue(isset($attributeChangeSet['searchable'][1]));
+        self::assertTrue(isset($attributeChangeSet['searchable'][1]));
     }
 
     public function testPostFlushUnsupportedModelEntityClass()
     {
-        $this->producer->expects($this->never())->method($this->anything());
+        $this->producer->expects(self::never())->method(self::anything());
 
         $model = $this->getFieldConfigModel(\stdClass::class);
 
@@ -74,7 +70,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostFlushWithoutRequest()
     {
-        $this->producer->expects($this->never())
+        $this->producer->expects(self::never())
             ->method('send');
 
         $this->listener->postFlush(new PostFlushConfigEvent([new FieldConfigModel()], $this->configManager));
@@ -83,12 +79,12 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreFlushAfterImportAttribute()
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects($this->once())->method('getFieldName')->willReturn('fieldName');
-        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(Product::class);
+        $fieldConfig->expects(self::once())->method('getFieldName')->willReturn('fieldName');
+        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(Product::class);
 
         $config = $this->createMock(ConfigInterface::class);
         $config->method('getId')->willReturn($fieldConfig);
-        $config->expects($this->once())
+        $config->expects(self::once())
             ->method('get')
             ->with('request_search_indexation')
             ->willReturn(true);
@@ -104,7 +100,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         $config = $this->createMock(ConfigInterface::class);
         $config->method('getId')->willReturn($fieldConfig);
-        $config->expects($this->never())
+        $config->expects(self::never())
             ->method('get');
 
         $configs = ['attribute' => $config];
@@ -115,12 +111,12 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreFlushAfterImportAttributeNotProduct()
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(\stdClass::class);
-        $fieldConfig->expects($this->never())->method('getFieldName');
+        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(\stdClass::class);
+        $fieldConfig->expects(self::never())->method('getFieldName');
 
         $config = $this->createMock(ConfigInterface::class);
         $config->method('getId')->willReturn($fieldConfig);
-        $config->expects($this->never())
+        $config->expects(self::never())
             ->method('get');
 
         $configs = ['attribute' => $config];
@@ -131,12 +127,12 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreFlushAfterImportAttributeWithoutAttributeMarker()
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(Product::class);
-        $fieldConfig->expects($this->never())->method('getFieldName');
+        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(Product::class);
+        $fieldConfig->expects(self::never())->method('getFieldName');
 
         $config = $this->createMock(ConfigInterface::class);
         $config->method('getId')->willReturn($fieldConfig);
-        $config->expects($this->once())
+        $config->expects(self::once())
             ->method('get')
             ->with('request_search_indexation')
             ->willReturn(false);
@@ -173,7 +169,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->producer->expects($expected)
             ->method('send')
-            ->with(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => [1]]);
+            ->with(ReindexProductsByAttributesTopic::getName(), ['attributeIds' => [1]]);
 
         $this->listener->postFlush(new PostFlushConfigEvent([$model], $this->configManager));
     }
@@ -191,12 +187,12 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $frontendChangeSet = []
     ): void {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects($this->once())->method('getFieldName')->willReturn('test_field');
-        $fieldConfig->expects($this->once())->method('getClassName')->willReturn(Product::class);
+        $fieldConfig->expects(self::once())->method('getFieldName')->willReturn('test_field');
+        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(Product::class);
 
         $config = $this->createMock(ConfigInterface::class);
         $config->method('getId')->willReturn($fieldConfig);
-        $config->expects($this->once())
+        $config->expects(self::once())
             ->method('get')
             ->with('request_search_indexation')
             ->willReturn(true);
@@ -218,7 +214,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->producer->expects($expected)
             ->method('send')
-            ->with(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => [1]]);
+            ->with(ReindexProductsByAttributesTopic::getName(), ['attributeIds' => [1]]);
 
         $this->listener->postFlush(new PostFlushConfigEvent([$model], $this->configManager));
     }
@@ -231,25 +227,25 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function postFlushDataProvider()
     {
         yield 'state not active and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_NEW]
         ];
 
         yield 'state changed from not active to not active' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_DELETE]]
         ];
         //searchable
         yield 'state changed from active to not active, searchable and not changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['searchable' => true]
         ];
 
         yield 'state changed from active to not active, searchable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['searchable' => true],
@@ -257,14 +253,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to not active, not searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['searchable' => false]
         ];
 
         yield 'state changed from active to not active, not searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['searchable' => false],
@@ -272,14 +268,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from not active to active, searchable and not changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['searchable' => true]
         ];
 
         yield 'state changed from not active to active, searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['searchable' => true],
@@ -287,14 +283,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from not active to active, not searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['searchable' => false]
         ];
 
         yield 'state changed from not active to active, not searchable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['searchable' => false],
@@ -302,14 +298,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state active and not changed, searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true]
         ];
 
         yield 'state active and not changed, searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true],
@@ -317,14 +313,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state active and not changed, not searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false]
         ];
 
         yield 'state active and not changed, not searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false],
@@ -332,14 +328,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state update and not changed, searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true]
         ];
 
         yield 'state update and not changed, searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true],
@@ -347,14 +343,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state update and not changed, not searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false]
         ];
 
         yield 'state update and not changed, not searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false],
@@ -362,14 +358,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from active to update, searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true]
         ];
 
         yield 'state changed from active to update, searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true],
@@ -377,14 +373,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to update, not searchable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false]
         ];
 
         yield 'state changed from active to update, not searchable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false],
@@ -392,82 +388,82 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         //search_boost
         yield 'state active and not changed, searchable, boost not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true]
         ];
         yield 'state active and not changed, searchable, boost changed from null' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [null, 1.0]]
         ];
         yield 'state active and not changed, searchable, boost changed from 0' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0, 1.0]]
         ];
         yield 'state active and not changed, searchable, boost changed from not empty value' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
         ];
         yield 'state active and not changed, searchable, boost changed to null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => null],
             'attributeChangeSet' => ['search_boost' => [1.0, null]]
         ];
         yield 'state active and not changed, searchable, boost changed to 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 0],
             'attributeChangeSet' => ['search_boost' => [1.0, 0]]
         ];
         yield 'state active and not changed, not searchable, boost not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false]
         ];
         yield 'state active and not changed, not searchable, boost changed from null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [null, 1.0]]
         ];
         yield 'state active and not changed, not searchable, boost changed from 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0, 1.0]]
         ];
         yield 'state active and not changed, not searchable, boost changed from not empty value' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
         ];
         yield 'state active and not changed, not searchable, boost changed to null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => null],
             'attributeChangeSet' => ['search_boost' => [1.0, null]]
         ];
         yield 'state active and not changed, not searchable, boost changed to 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 0],
@@ -475,82 +471,82 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state update and not changed, searchable, boost not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true]
         ];
         yield 'state update and not changed, searchable, boost changed from null' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [null, 1.0]]
         ];
         yield 'state update and not changed, searchable, boost changed from 0' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0, 1.0]]
         ];
         yield 'state update and not changed, searchable, boost changed from not empty value' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
         ];
         yield 'state update and not changed, searchable, boost changed to null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => null],
             'attributeChangeSet' => ['search_boost' => [1.0, null]]
         ];
         yield 'state update and not changed, searchable, boost changed to 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 0],
             'attributeChangeSet' => ['search_boost' => [1.0, 0]]
         ];
         yield 'state update and not changed, not searchable, boost not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false]
         ];
         yield 'state update and not changed, not searchable, boost changed from null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [null, 1.0]]
         ];
         yield 'state update and not changed, not searchable, boost changed from 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0, 1.0]]
         ];
         yield 'state update and not changed, not searchable, boost changed from not empty value' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
         ];
         yield 'state update and not changed, not searchable, boost changed to null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => null],
             'attributeChangeSet' => ['search_boost' => [1.0, null]]
         ];
         yield 'state update and not changed, not searchable, boost changed to 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 0],
@@ -558,82 +554,82 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from active to update, searchable, boost not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true]
         ];
         yield 'state changed from active to update, searchable, boost changed from null' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [null, 1.0]]
         ];
         yield 'state changed from active to update, searchable, boost changed from 0' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0, 1.0]]
         ];
         yield 'state changed from active to update, searchable, boost changed from not empty value' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
         ];
         yield 'state changed from active to update, searchable, boost changed to null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => null],
             'attributeChangeSet' => ['search_boost' => [1.0, null]]
         ];
         yield 'state changed from active to update, searchable, boost changed to 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => true, 'search_boost' => 0],
             'attributeChangeSet' => ['search_boost' => [1.0, 0]]
         ];
         yield 'state changed from active to update, not searchable, boost not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false]
         ];
         yield 'state changed from active to update, not searchable, boost changed from null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [null, 1.0]]
         ];
         yield 'state changed from active to update, not searchable, boost changed from 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0, 1.0]]
         ];
         yield 'state changed from active to update, not searchable, boost changed from not empty value' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 1.0],
             'attributeChangeSet' => ['search_boost' => [0.1, 1.0]]
         ];
         yield 'state changed from active to update, not searchable, boost changed to null' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => null],
             'attributeChangeSet' => ['search_boost' => [1.0, null]]
         ];
         yield 'state changed from active to update, not searchable, boost changed to 0' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['searchable' => false, 'search_boost' => 0],
@@ -641,14 +637,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         //filterable
         yield 'state changed from active to not active, filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['filterable' => true]
         ];
 
         yield 'state changed from active to not active, filterable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['filterable' => true],
@@ -656,14 +652,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to not active, not filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['filterable' => false]
         ];
 
         yield 'state changed from active to not active, not filterable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['filterable' => false],
@@ -671,14 +667,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from not active to active, filterable and not changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['filterable' => true]
         ];
 
         yield 'state changed from not active to active, filterable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['filterable' => true],
@@ -686,14 +682,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from not active to active, not filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['filterable' => false]
         ];
 
         yield 'state changed from not active to active, not filterable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['filterable' => false],
@@ -701,14 +697,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state active and not changed, filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => true]
         ];
 
         yield 'state active and not changed, filterable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => true],
@@ -716,14 +712,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state active and not changed, not filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => false]
         ];
 
         yield 'state active and not changed, not filterable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => false],
@@ -731,14 +727,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state update and not changed, filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => true]
         ];
 
         yield 'state update and not changed, filterable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => true],
@@ -746,14 +742,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state update and not changed, not filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => false]
         ];
 
         yield 'state update and not changed, not filterable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['filterable' => false],
@@ -761,14 +757,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from active to update, filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['filterable' => true]
         ];
 
         yield 'state changed from active to update, filterable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['filterable' => true],
@@ -776,14 +772,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to update, not filterable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['filterable' => false]
         ];
 
         yield 'state changed from active to update, not filterable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['filterable' => false],
@@ -791,14 +787,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         //sortable
         yield 'state changed from active to not active, sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['sortable' => true]
         ];
 
         yield 'state changed from active to not active, sortable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['sortable' => true],
@@ -806,14 +802,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to not active, not sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['sortable' => false]
         ];
 
         yield 'state changed from active to not active, not sortable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => ['sortable' => false],
@@ -821,14 +817,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from not active to active, sortable and not changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['sortable' => true]
         ];
 
         yield 'state changed from not active to active, sortable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['sortable' => true],
@@ -836,14 +832,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from not active to active, not sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['sortable' => false]
         ];
 
         yield 'state changed from not active to active, not sortable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => ['sortable' => false],
@@ -851,14 +847,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state active and not changed, sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => true]
         ];
 
         yield 'state active and not changed, sortable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => true],
@@ -866,14 +862,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state active and not changed, not sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => false]
         ];
 
         yield 'state active and not changed, not sortable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => false],
@@ -881,14 +877,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state update and not changed, sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => true]
         ];
 
         yield 'state update and not changed, sortable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => true],
@@ -896,14 +892,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state update and not changed, not sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => false]
         ];
 
         yield 'state update and not changed, not sortable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => ['sortable' => false],
@@ -911,14 +907,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from active to update, sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['sortable' => true]
         ];
 
         yield 'state changed from active to update, sortable and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['sortable' => true],
@@ -926,14 +922,14 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to update, not sortable and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['sortable' => false]
         ];
 
         yield 'state changed from active to update, not sortable and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => ['sortable' => false],
@@ -941,7 +937,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         //visible
         yield 'state changed from active to not active, visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => [],
@@ -950,7 +946,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to not active, visible and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => [],
@@ -960,7 +956,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to not active, not visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => [],
@@ -969,7 +965,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to not active, not visible and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_DELETE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_DELETE]],
             'attributeConfigValues' => [],
@@ -979,7 +975,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from not active to active, visible and not changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => [],
@@ -988,7 +984,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from not active to active, visible and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => [],
@@ -998,7 +994,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from not active to active, not visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => [],
@@ -1007,7 +1003,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from not active to active, not visible and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_NEW, ExtendScope::STATE_ACTIVE]],
             'attributeConfigValues' => [],
@@ -1017,7 +1013,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state active and not changed, visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1026,7 +1022,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state active and not changed, visible and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1036,7 +1032,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state active and not changed, not visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1045,7 +1041,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state active and not changed, not visible and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_ACTIVE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1055,7 +1051,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state update and not changed, visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1064,7 +1060,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state update and not changed, visible and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1074,7 +1070,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state update and not changed, not visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1083,7 +1079,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state update and not changed, not visible and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => [],
             'attributeConfigValues' => [],
@@ -1093,7 +1089,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
         // ----
         yield 'state changed from active to update, visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => [],
@@ -1102,7 +1098,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to update, visible and changed' => [
-            'expected' => $this->once(),
+            'expected' => self::once(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => [],
@@ -1112,7 +1108,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to update, not visible and not changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => [],
@@ -1121,7 +1117,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
 
         yield 'state changed from active to update, not visible and changed' => [
-            'expected' => $this->never(),
+            'expected' => self::never(),
             'extendConfigValues' => ['state' => ExtendScope::STATE_UPDATE],
             'extendChangeSet' => ['state' => [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE]],
             'attributeConfigValues' => [],
@@ -1161,7 +1157,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $extendConfigProvider */
         $extendConfigProvider = $this->createMock(ConfigProvider::class);
-        $extendConfigProvider->expects($this->any())
+        $extendConfigProvider->expects(self::any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($extendConfig);
@@ -1173,19 +1169,19 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
         $attributeConfigProvider = $this->createMock(ConfigProvider::class);
-        $attributeConfigProvider->expects($this->any())
+        $attributeConfigProvider->expects(self::any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($attributeConfig);
 
         /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
         $frontendConfigProvider = $this->createMock(ConfigProvider::class);
-        $frontendConfigProvider->expects($this->any())
+        $frontendConfigProvider->expects(self::any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($frontendConfig);
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('getProvider')
             ->willReturnMap(
                 [
@@ -1194,7 +1190,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
                     ['frontend', $frontendConfigProvider]
                 ]
             );
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('getConfigChangeSet')
             ->willReturnMap(
                 [

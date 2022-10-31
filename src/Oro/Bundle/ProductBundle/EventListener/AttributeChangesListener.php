@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Event\PostFlushConfigEvent;
 use Oro\Bundle\EntityConfigBundle\Event\PreFlushConfigEvent;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\ProductBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -197,7 +197,7 @@ class AttributeChangesListener
             return $fieldConfigModel->getId();
         }, $modelsForIndexation);
 
-        $this->producer->send(Topics::REINDEX_PRODUCTS_BY_ATTRIBUTES, ['attributeIds' => $attributeIds]);
+        $this->producer->send(ReindexProductsByAttributesTopic::getName(), ['attributeIds' => $attributeIds]);
     }
 
     protected function isSearchBoostEnabled(array $attributeChangeSet): bool

@@ -1,3 +1,4 @@
+import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 
 const GRID_STYLES = `<style>
@@ -35,14 +36,24 @@ const GridTypeBuilder = BaseTypeBuilder.extend({
         BlockManager.get('column1').set({
             content: `<div data-gjs-type="grid-row">
                             <div data-gjs-type="grid-column" style="width: 100%;"></div>
-                        </div>${GRID_STYLES}`
+                        </div>${GRID_STYLES}`,
+            category: {
+                label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
+                order: 200,
+                open: false
+            }
         });
 
         BlockManager.get('column2').set({
             content: `<div data-gjs-type="grid-row">
                             <div data-gjs-type="grid-column" style="width: 50%;"></div>
                             <div data-gjs-type="grid-column" style="width: 50%;"></div>
-                        </div>${GRID_STYLES}`
+                        </div>${GRID_STYLES}`,
+            category: {
+                label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
+                order: 200,
+                open: false
+            }
         });
 
         BlockManager.get('column3').set({
@@ -50,14 +61,24 @@ const GridTypeBuilder = BaseTypeBuilder.extend({
                             <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
                             <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
                             <div data-gjs-type="grid-column" style="width: 33.33%;"></div>
-                        </div>${GRID_STYLES}`
+                        </div>${GRID_STYLES}`,
+            category: {
+                label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
+                order: 200,
+                open: false
+            }
         });
 
         BlockManager.get('column3-7').set({
             content: `<div data-gjs-type="grid-row">
                             <div data-gjs-type="grid-column" style="width: 30%;"></div>
                             <div data-gjs-type="grid-column" style="width: 70%;"></div>
-                        </div>${GRID_STYLES}`
+                        </div>${GRID_STYLES}`,
+            category: {
+                label: __('oro.cms.wysiwyg.block_manager.categories.legacy'),
+                order: 200,
+                open: false
+            }
         });
     }
 });
