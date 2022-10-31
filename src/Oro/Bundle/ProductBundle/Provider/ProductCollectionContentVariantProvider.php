@@ -11,8 +11,9 @@ use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 /**
- * Mix into contentVariant query information about related products, for ProductCollectionSegment variant.
- * Fetching for this products from snapshot of related segment.
+ * Mix into contentVariant query information about related products & collection sort orders,
+ * for ProductCollectionSegment variant.
+ * Fetching for this data from snapshot of related segment.
  */
 class ProductCollectionContentVariantProvider implements ContentVariantProviderInterface
 {

@@ -15,6 +15,9 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 
+/**
+ * Loads demo data for Segment definitions in WebCatalog for the New Arrivals ContentVariants
+ */
 class LoadSegmentsForWebCatalogDemoData extends AbstractFixture implements DependentFixtureInterface
 {
     /**

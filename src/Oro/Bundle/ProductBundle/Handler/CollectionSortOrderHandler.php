@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
+/**
+ * Handler for CollectionSortOrder entities
+ */
 class CollectionSortOrderHandler
 {
     public function __construct(protected DoctrineHelper $doctrineHelper)
