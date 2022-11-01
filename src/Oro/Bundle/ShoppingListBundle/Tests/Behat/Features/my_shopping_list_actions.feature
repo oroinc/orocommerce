@@ -93,8 +93,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,818.00 | 32    | No      |
-      | Shopping List 1 | $1,581.00 | 3     | Yes     |
+      | Shopping List 3 | $8,818.00 | 32    | Yes     |
+      | Shopping List 1 | $1,581.00 | 3     | No      |
     And I click Edit "Shopping List 3" in grid
     And I sort grid by "SKU"
     When I click on "First Line Item Row Checkbox"
@@ -109,8 +109,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,785.00 | 31    | No      |
-      | Shopping List 1 | $1,614.00 | 4     | Yes     |
+      | Shopping List 3 | $8,785.00 | 31    | Yes     |
+      | Shopping List 1 | $1,614.00 | 4     | No      |
 
   Scenario: Delete line items from shopping list mass action
     Given I follow "Account"
@@ -118,8 +118,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,785.00 | 31    | No      |
-      | Shopping List 1 | $1,614.00 | 4     | Yes     |
+      | Shopping List 3 | $8,785.00 | 31    | Yes     |
+      | Shopping List 1 | $1,614.00 | 4     | No      |
     And I filter Name as is equal to "Shopping List 1"
     And I click Edit "Shopping List 1" in grid
     When I check first 4 records in "Frontend Shopping List Edit Grid"
@@ -131,8 +131,8 @@ Feature: My Shopping List Actions
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
-      | Shopping List 3 | $8,785.00 | 31    | No      |
-      | Shopping List 1 | $0.00     | 0     | Yes     |
+      | Shopping List 3 | $8,785.00 | 31    | Yes     |
+      | Shopping List 1 | $0.00     | 0     | No      |
 
   Scenario: Re-assign Action
     Given I click View "Shopping List 3" in grid
