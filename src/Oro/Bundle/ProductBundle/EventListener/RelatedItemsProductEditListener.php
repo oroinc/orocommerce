@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
@@ -17,19 +18,12 @@ use Twig\Environment;
  */
 class RelatedItemsProductEditListener
 {
-    const RELATED_ITEMS_ID = 'relatedItems';
+    public const RELATED_ITEMS_ID = 'relatedItems';
+    public const BLOCK_PRIORITY = 1500;
 
-    /** @var int */
-    const BLOCK_PRIORITY = 1500;
-
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var RelatedItemConfigHelper */
-    private $relatedItemConfigHelper;
-
-    /** @var AuthorizationCheckerInterface */
-    private $authorizationChecker;
+    private TranslatorInterface $translator;
+    private RelatedItemConfigHelper $relatedItemConfigHelper;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     public function __construct(
         TranslatorInterface $translator,
@@ -73,7 +67,7 @@ class RelatedItemsProductEditListener
                 'id' => 'upsell-products-block',
                 'label' => $this->translator->trans('oro.product.tabs.upsellProducts')
             ];
-            $grids[] = $this->getUpsellProductsEdidBlock($event, $twigEnv);
+            $grids[] = $this->getUpsellProductsEditBlock($event, $twigEnv);
         }
 
         if (count($tabs) > 1) {
@@ -144,7 +138,7 @@ class RelatedItemsProductEditListener
      * @param ScrollData $scrollData
      * @param string[] $htmlBlocks
      */
-    private function addEditPageBlock(ScrollData $scrollData, array $htmlBlocks)
+    private function addEditPageBlock(ScrollData $scrollData, array $htmlBlocks): void
     {
         $scrollData->addNamedBlock(
             self::RELATED_ITEMS_ID,
@@ -161,12 +155,7 @@ class RelatedItemsProductEditListener
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     * @param Environment $twigEnv
-     * @return string
-     */
-    private function getRelatedProductsEditBlock(BeforeListRenderEvent $event, Environment $twigEnv)
+    private function getRelatedProductsEditBlock(BeforeListRenderEvent $event, Environment $twigEnv): string
     {
         return $twigEnv->render(
             '@OroProduct/Product/RelatedItems/relatedProducts.html.twig',
@@ -178,12 +167,7 @@ class RelatedItemsProductEditListener
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     * @param Environment $twigEnv
-     * @return string
-     */
-    private function getUpsellProductsEdidBlock(BeforeListRenderEvent $event, Environment $twigEnv)
+    private function getUpsellProductsEditBlock(BeforeListRenderEvent $event, Environment $twigEnv): string
     {
         return $twigEnv->render(
             '@OroProduct/Product/RelatedItems/upsellProducts.html.twig',
@@ -195,12 +179,7 @@ class RelatedItemsProductEditListener
         );
     }
 
-    /**
-     * @param Environment $twigEnv
-     * @param array $tabs
-     * @return string
-     */
-    private function renderTabs(Environment $twigEnv, array $tabs)
+    private function renderTabs(Environment $twigEnv, array $tabs): string
     {
         return $twigEnv->render(
             '@OroProduct/Product/RelatedItems/tabs.html.twig',

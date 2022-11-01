@@ -1796,4 +1796,24 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
 
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
+
+    public function testResetDefaultShoppingListAfterShoppingListDeletion()
+    {
+        $customerUserId = $this->getReference('customer_user')->getId();
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $this->getCurrentShoppingListStorage()->set($customerUserId, $shoppingListId);
+
+        $response = $this->delete(['entity' => 'shoppinglists', 'id' => $shoppingListId]);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
+        self::assertNull($this->getCurrentShoppingListStorage()->get($customerUserId));
+
+        $response = $this->postSubresource(
+            ['entity' => 'shoppinglists', 'id' => 'default', 'association' => 'items'],
+            'add_line_item.yml'
+        );
+
+        $responseContent = $this->updateResponseContent('add_line_item.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
+    }
 }

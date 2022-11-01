@@ -133,7 +133,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         },
 
         onActive(event) {
-            this.em.get('Commands').run(this.model.getSettingsCommandName());
+            this.em.get('Commands').run(this.model.getSettingsCommandName(), this.model);
 
             event && event.stopPropagation();
         }

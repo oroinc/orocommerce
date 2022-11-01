@@ -122,6 +122,10 @@
             border: $product-item-list-view-border;
         }
 
+        &--no-image-view {
+            display: none;
+        }
+
         &--tiny {
             min-width: $product-item-image-holder-tiny-width;
             width: $product-item-image-holder-tiny-width;
