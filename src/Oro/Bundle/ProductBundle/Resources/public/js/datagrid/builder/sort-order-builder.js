@@ -35,7 +35,6 @@ define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/num
          */
         initialize: function(options) {
             this.grid = options.grid;
-            this.grid.refreshAction.execute();
 
             const inputSelector = options.options.metadata.options.cellSelection.selector;
             const sortOrderValidationOptions = $(inputSelector).first().data('sort-order-options');

@@ -11,7 +11,6 @@ Feature: Product collection confirmation and reset
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
     And I click on "First Content Variant Expand Button"
-    And I click "Preview Results"
     And type "PSKU2" in "value"
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
