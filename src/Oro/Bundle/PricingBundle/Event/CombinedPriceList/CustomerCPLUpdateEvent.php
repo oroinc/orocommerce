@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Event\CombinedPriceList;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class CustomerCPLUpdateEvent extends Event
 {
@@ -13,9 +13,6 @@ class CustomerCPLUpdateEvent extends Event
      */
     protected $customersData;
 
-    /**
-     * @param array $customersData
-     */
     public function __construct(array $customersData)
     {
         $this->customersData = $customersData;

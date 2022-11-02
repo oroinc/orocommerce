@@ -1,94 +1,90 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields;
 use Oro\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
+    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $context;
 
-    /**
-     * @var ZipCodeFieldsValidator
-     */
-    protected $validator;
+    /** @var ZipCodeFieldsValidator */
+    private $validator;
 
-    /**
-     * @var ZipCodeFields
-     */
-    protected $constraint;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->constraint = new ZipCodeFields();
-        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new ZipCodeFieldsValidator();
         $this->validator->initialize($this->context);
     }
 
-    protected function tearDown()
+    public function testGetTargets()
     {
-        unset($this->constraint, $this->context, $this->validator);
+        $constraint = new ZipCodeFields();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     /**
      * @dataProvider validateProvider
-     *
-     * @param ZipCode $zipCode
-     * @param array $violationContext
-     * @param array $violationCounts
      */
     public function testValidate(ZipCode $zipCode, array $violationContext = [], array $violationCounts = [])
     {
-        $validator = $this->createMock('Symfony\Component\Validator\Validator\ValidatorInterface');
+        $constraint = new ZipCodeFields();
+        $validator = $this->createMock(ValidatorInterface::class);
 
-        $validator->expects($this->any())->method('validate')->willReturnCallback(
-            function ($value) use ($violationCounts) {
-                $list = $this->createMock('Symfony\Component\Validator\ConstraintViolationListInterface');
+        $validator->expects($this->any())
+            ->method('validate')
+            ->willReturnCallback(function ($value) use ($violationCounts) {
+                $list = $this->createMock(ConstraintViolationListInterface::class);
 
                 if (!array_key_exists($value, $violationCounts)) {
-                    $list->expects($this->once())->method('count')->willReturn(0);
+                    $list->expects($this->once())
+                        ->method('count')
+                        ->willReturn(0);
 
                     return $list;
                 }
 
-                $list->expects($this->once())->method('count')->willReturn($violationCounts[$value]);
+                $list->expects($this->once())
+                    ->method('count')
+                    ->willReturn($violationCounts[$value]);
 
                 return $list;
-            }
-        );
+            });
 
-        $this->context->expects($this->any())->method('getValidator')->willReturn($validator);
+        $this->context->expects($this->any())
+            ->method('getValidator')
+            ->willReturn($validator);
 
         if (0 === count($violationContext)) {
-            $this->context->expects($this->never())->method('buildViolation');
+            $this->context->expects($this->never())
+                ->method('buildViolation');
         } else {
-            $builder = $this->createMock('\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
-
+            $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+            $builder->expects($this->once())
+                ->method('atPath')
+                ->with($violationContext[0])->willReturn($builder);
+            $builder->expects($this->once())
+                ->method('addViolation');
             $this->context->expects($this->once())
                 ->method('buildViolation')
-                ->with($this->constraint->{$violationContext[1]})
+                ->with($constraint->{$violationContext[1]})
                 ->willReturn($builder);
-
-            $builder->expects($this->once())->method('atPath')->with($violationContext[0])->willReturn($builder);
-            $builder->expects($this->once())->method('addViolation');
         }
 
-        $this->validator->validate($zipCode, $this->constraint);
+        $this->validator->validate($zipCode, $constraint);
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
         return [
             'single and range' => [
@@ -149,24 +145,31 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateWithZipEmpty()
     {
-        $builder = $this->createMock('\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
-        $builder->expects($this->once())->method('atPath')->with('zipRangeStart')->willReturn($builder);
-        $builder->expects($this->once())->method('addViolation');
+        $constraint = new ZipCodeFields();
 
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with('zipRangeStart')
+            ->willReturn($builder);
+        $builder->expects($this->once())
+            ->method('addViolation');
         $this->context->expects($this->once())
             ->method('buildViolation')
-            ->with($this->constraint->zipCodeCanNotBeEmpty)
+            ->with($constraint->zipCodeCanNotBeEmpty)
             ->willReturn($builder);
 
-        $this->validator->validate(new ZipCode(), $this->constraint);
+        $this->validator->validate(new ZipCode(), $constraint);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given
-     */
     public function testValidateWrongEntity()
     {
-        $this->validator->validate(new \stdClass(), $this->constraint);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\TaxBundle\Entity\ZipCode", "stdClass" given'
+        );
+
+        $constraint = new ZipCodeFields();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 }

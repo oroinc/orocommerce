@@ -1,13 +1,9 @@
 /* @theme: custom; */
 
-//Badge sizes
-$badge-sm-xs: 20px;
-$badge-sm: 26px;
-
 .sidebar__quick-access {
     margin-top: 3px;
 
-    background: get-color('additional', 'base');
+    background: $sidebar-quick-access-background;
 
     &:first-child {
         margin-top: 0;
@@ -28,10 +24,12 @@ $badge-sm: 26px;
     }
 
     .quick-access__link {
-        font-weight: 700;
+        font-weight: font-weight('bold');
     }
 
     .quick-access__badge {
+        $badge-sm: 26px;
+
         width: $badge-sm;
         height: $badge-sm;
         margin-right: 15px;

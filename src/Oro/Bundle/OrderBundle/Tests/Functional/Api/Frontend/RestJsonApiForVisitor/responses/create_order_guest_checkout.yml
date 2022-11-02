@@ -1,0 +1,165 @@
+data:
+    type: orders
+    id: new
+    attributes:
+        identifier: null
+        poNumber: null
+        customerNotes: null
+        shipUntil: null
+        currency: USD
+        subtotalValue: '10.1000'
+        totalValue: '10.1000'
+        shippingCostAmount: null
+        shippingMethod: null
+        paymentStatus:
+            code: pending
+            label: Pending payment
+        paymentMethod:
+            -
+                code: '@payment_term_method_config->type'
+                label: Payment Term
+        paymentTerm: '@payment_term_net_10->label'
+        discounts: []
+        shippingTrackings: []
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: new
+        customerUser:
+            data:
+                type: customerusers
+                id: new
+        customer:
+            data:
+                type: customers
+                id: new
+included:
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: item1
+        attributes:
+            productSku: PSKU1
+            productName: 'Product 1'
+            freeFormProduct: null
+            quantity: 10
+            productUnitCode: '<toString(@item->code)>'
+            price: '1.0100'
+            currency: USD
+            shipUntil: null
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: billingAddress
+        attributes:
+            phone: 123-456
+            label: 'Billing Address'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: shippingAddress
+        attributes:
+            phone: 123-456
+            label: 'Shipping Address'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: customerusers
+        id: new
+        meta:
+            includeId: guest
+        attributes:
+            email: test2341@test.com
+            confirmed: false
+            enabled: false
+            namePrefix: null
+            firstName: null
+            middleName: null
+            lastName: null
+            nameSuffix: null
+            birthday: null
+        relationships:
+            userRoles:
+                data:
+                    - { type: customeruserroles, id: new }
+            customer:
+                data:
+                    type: customers
+                    id: new
+            addresses:
+                data: []

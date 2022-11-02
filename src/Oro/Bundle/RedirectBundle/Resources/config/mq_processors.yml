@@ -1,0 +1,76 @@
+services:
+    _instanceof:
+        Psr\Log\LoggerAwareInterface:
+            calls:
+                - [setLogger, ['@logger']]
+            tags:
+                - { name: monolog.logger, channel: oro_redirect }
+
+        Oro\Component\MessageQueue\Client\TopicSubscriberInterface:
+            tags:
+                - { name: oro_message_queue.client.message_processor }
+
+    oro_redirect.async.direct_url_processor:
+        class: Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_redirect.generator.slug_entity'
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_redirect.url_cache'
+            - '@oro_redirect.cache.dumper.sluggable_url_dumper'
+
+    oro_redirect.async.direct_url_processor.job_runner:
+        class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_redirect.async.direct_url_processor'
+        tags:
+            - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesJobAwareTopic::NAME }
+
+    oro_redirect.async.batch_sluggable_entities_processor_abstract:
+        abstract: true
+        class: Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.direct_url_message_factory'
+
+    oro_redirect.async.sluggable_entities_processor:
+        parent: oro_redirect.async.batch_sluggable_entities_processor_abstract
+        arguments:
+            - !php/const Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesJobAwareTopic::NAME
+        tags:
+            - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\RedirectBundle\Async\Topic\RegenerateDirectUrlForEntityTypeTopic::NAME }
+
+    oro_redirect.async.direct_url_remove:
+        class: Oro\Bundle\RedirectBundle\Async\DirectUrlRemoveProcessor
+        arguments:
+           - '@doctrine'
+           - '@oro_message_queue.client.message_producer'
+
+    oro_redirect.async.sync_slug_redirects_processor:
+        class: Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor
+        arguments:
+            - '@doctrine'
+
+    oro_redirect.async.url_cache_mass_job_processor:
+        parent: oro_redirect.async.batch_sluggable_entities_processor_abstract
+        arguments:
+            - !php/const Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheJobAwareTopic::NAME
+        tags:
+            - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic::NAME }
+
+    oro_redirect.async.url_cache_job_processor:
+        class: Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor
+        arguments:
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_redirect.cache.dumper.sluggable_url_dumper'
+
+    oro_redirect.async.url_cache_job_processor.job_runner:
+        class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_redirect.async.url_cache_job_processor'
+        tags:
+            - { name: oro_message_queue.client.message_processor, topicName: !php/const Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheJobAwareTopic::NAME }

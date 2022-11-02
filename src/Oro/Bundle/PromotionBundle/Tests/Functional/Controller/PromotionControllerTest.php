@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PromotionControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -21,7 +21,7 @@ class PromotionControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('promotion-grid', $crawler->html());
+        static::assertStringContainsString('promotion-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -47,7 +47,7 @@ class PromotionControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Promotion has been saved', $crawler->html());
+        static::assertStringContainsString('Promotion has been saved', $crawler->html());
     }
 
     public function testUpdate()
@@ -62,7 +62,7 @@ class PromotionControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Promotion has been saved', $crawler->html());
+        static::assertStringContainsString('Promotion has been saved', $crawler->html());
     }
 
     public function testView()

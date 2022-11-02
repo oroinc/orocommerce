@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\FormBundle\Form\Handler\FormHandlerInterface;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -15,59 +15,36 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Handles the action of creating or editing a category. Allows to assign or remove products form category.
  */
-class CategoryHandler
+class CategoryHandler implements FormHandlerInterface
 {
     use RequestHandlerTrait;
 
-    /** @var FormInterface */
-    protected $form;
+    protected ObjectManager $manager;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /** @var Request */
-    protected $request;
-
-    /** @var EntityManager */
-    protected $manager;
-
-    /** @var  EventDispatcherInterface */
-    protected $eventDispatcher;
-
-    /**
-     * @param FormInterface $form
-     * @param Request $request
-     * @param ObjectManager $manager
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(
-        FormInterface $form,
-        Request $request,
-        ObjectManager $manager,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->form = $form;
-        $this->request = $request;
+    public function __construct(ObjectManager $manager, EventDispatcherInterface $eventDispatcher)
+    {
         $this->manager = $manager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * @param Category $category
-     *
-     * @return bool True on successful processing, false otherwise
+     * {@inheritDoc}
      */
-    public function process(Category $category)
+    public function process($category, FormInterface $form, Request $request)
     {
-        $this->form->setData($category);
+        $form->setData($category);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
-            $this->submitPostPutRequest($this->form, $this->request);
-            if ($this->form->isValid()) {
-                $appendProducts = $this->form->get('appendProducts')->getData();
-                $removeProducts = $this->form->get('removeProducts')->getData();
+        if (in_array($request->getMethod(), ['POST', 'PUT'])) {
+            $this->submitPostPutRequest($form, $request);
+            if ($form->isValid()) {
+                $appendProducts = $form->get('appendProducts')->getData();
+                $removeProducts = $form->get('removeProducts')->getData();
                 $this->onSuccess($category, $appendProducts, $removeProducts);
 
                 $this->eventDispatcher->dispatch(
-                    'oro_catalog.category.edit',
-                    new AfterFormProcessEvent($this->form, $category)
+                    new AfterFormProcessEvent($form, $category),
+                    'oro_catalog.category.edit'
                 );
 
                 return true;
@@ -82,14 +59,12 @@ class CategoryHandler
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
      */
-    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts)
+    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts): void
     {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
 
-        if ($category->getDefaultProductOptions()) {
-            $category->getDefaultProductOptions()->updateUnitPrecision();
-        }
+        $category->getDefaultProductOptions()?->updateUnitPrecision();
         $category->preUpdate();
         $this->manager->persist($category);
         $this->manager->flush();
@@ -99,10 +74,9 @@ class CategoryHandler
      * @param Category $category
      * @param Product[] $products
      */
-    protected function appendProducts(Category $category, array $products)
+    protected function appendProducts(Category $category, array $products): void
     {
-        $categoryRepository = $this->manager->getRepository('OroCatalogBundle:Category');
-        /** @var $product Product */
+        $categoryRepository = $this->manager->getRepository(Category::class);
         foreach ($products as $product) {
             $productCategory = $categoryRepository->findOneByProduct($product);
 
@@ -132,9 +106,8 @@ class CategoryHandler
      * @param Category $category
      * @param Product[] $products
      */
-    protected function removeProducts(Category $category, array $products)
+    protected function removeProducts(Category $category, array $products): void
     {
-        /** @var $product Product */
         foreach ($products as $product) {
             $category->removeProduct($product);
         }

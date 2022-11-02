@@ -31,6 +31,7 @@ class QuoteBackofficeDefaultWorkflowTest extends BaseQuoteBackofficeWorkflowTest
         'send_to_customer_transition',
         'cancel_transition',
         'expire_transition',
+        'auto_expire_transition',
         'create_new_quote_transition',
         'accept_transition',
         'decline_transition',

@@ -1,7 +1,7 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
-{% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+{% import '@OroShipping/ShippingMethodsConfigsRule/macros.html.twig' as ShipRuleMacro %}
 
 {% oro_title_set({params : {"%label%": entity.rule.name|default('N/A') }}) %}
 
@@ -16,6 +16,7 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {%- set shippingRuleInformation -%}
         <div class="row-fluid form-horizontal">

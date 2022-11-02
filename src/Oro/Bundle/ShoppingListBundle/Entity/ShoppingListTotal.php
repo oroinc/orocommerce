@@ -71,7 +71,6 @@ class ShoppingListTotal
         $this->currency = $currency;
     }
 
-
     /**
      * @return int
      */

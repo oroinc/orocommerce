@@ -23,7 +23,7 @@ class DiscountStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->strategyRegistry = $this->createMock(StrategyRegistry::class);
         $this->formType = new DiscountStrategySelectType($this->strategyRegistry);
@@ -44,7 +44,6 @@ class DiscountStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
             ->method('getStrategies')
             ->willReturn(['test' => $strategy]);
 
-        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')

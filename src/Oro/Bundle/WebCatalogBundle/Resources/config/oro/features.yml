@@ -1,0 +1,43 @@
+features:
+    web_catalog:
+        label: oro.webcatalog.feature.web_catalog.label
+        description: oro.webcatalog.feature.web_catalog.description
+        toggle: oro_web_catalog.web_catalog
+        configuration:
+            - oro_web_catalog.enable_web_catalog_canonical_url
+            - oro_web_catalog.navigation_root
+
+    navigation_root_system_configuration:
+        label: oro.webcatalog.feature.navigation_root_system_configuration.label
+        description: oro.webcatalog.feature.navigation_root_system_configuration.description
+        dependencies:
+            - web_catalog
+
+    web_catalog_based_canonical_urls:
+        label: oro.webcatalog.feature.web_catalog_canonical_url.label
+        description: oro.webcatalog.feature.web_catalog_canonical_url.description
+        dependencies:
+            - web_catalog
+        toggle: oro_web_catalog.enable_web_catalog_canonical_url
+
+    manage_web_catalog:
+        label: oro.webcatalog.feature.manage.label
+        description: oro.webcatalog.feature.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_web_catalog_index
+            - oro_web_catalog_view
+            - oro_web_catalog_create
+            - oro_web_catalog_update
+            - oro_web_catalog_move
+        entities:
+            - Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
+        api_resources:
+            - Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
+        operations:
+            - oro_web_catalog_edit_content_tree
+            - oro_web_catalog_delete_content_node
+        navigation_items:
+            - application_menu.marketing_tab.web_catalog_list
+            - shortcuts.shortcut_new_web_catalog
+            - shortcuts.shortcut_web_catalog_list

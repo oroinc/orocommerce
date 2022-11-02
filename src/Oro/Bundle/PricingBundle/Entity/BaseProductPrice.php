@@ -4,8 +4,9 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -17,14 +18,18 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * @ORM\MappedSuperclass()
  * @ORM\HasLifecycleCallbacks()
  */
-class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInterface, SettablePriceAwareInterface
+class BaseProductPrice implements
+    ProductUnitHolderInterface,
+    ProductHolderInterface,
+    PriceAwareInterface,
+    ProductPriceInterface
 {
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="guid")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="UUID")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -79,6 +84,9 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      *          "importexport"={
      *              "order"=20,
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -95,6 +103,9 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      *          "importexport"={
      *              "order"=30,
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -110,6 +121,9 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      *          "importexport"={
      *              "order"=40,
      *              "header"="Price"
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -125,6 +139,9 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      *          "importexport"={
      *              "order"=50,
      *              "identity"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
      *          }
      *      }
      * )
@@ -140,7 +157,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
     protected $price;
 
     /**
-     * @return integer
+     * @return string
      */
     public function getId()
     {
@@ -161,7 +178,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
      */
     public function setProduct(Product $product)
     {
-        $this->product    = $product;
+        $this->product = $product;
         $this->productSku = $product->getSku();
 
         return $this;

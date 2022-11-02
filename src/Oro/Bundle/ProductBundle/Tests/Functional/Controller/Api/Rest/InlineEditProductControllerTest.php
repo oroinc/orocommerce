@@ -1,7 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Api\Rest;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
@@ -12,6 +13,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class InlineEditProductControllerTest extends WebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const NEW_PRODUCT_NAME = 'New default product-1 name';
     const NEW_PRODUCT_SLUG_PROTOTYPE = 'new-default-product-1-name';
     const NEW_INVENTORY_STATUS_ID = 'out_of_stock';
@@ -19,7 +22,7 @@ class InlineEditProductControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -89,12 +92,12 @@ class InlineEditProductControllerTest extends WebTestCase
         $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
         $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
         $configManager->flush();
         $configManager->reload();
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
             [
@@ -116,7 +119,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
         $id = $product8->getId() + 999999;
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $id]),
             [
@@ -135,7 +138,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
         $id = $product8->getId() + 999999;
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $id])
         );
@@ -152,7 +155,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $this->assertEquals(LoadProductData::PRODUCT_1_DEFAULT_SLUG_PROTOTYPE, $product1->getDefaultSlugPrototype());
         $this->assertTrue($product1->getSlugPrototypesWithRedirect()->getCreateRedirect());
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
             [
@@ -173,7 +176,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $this->assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $product1->getInventoryStatus()->getId());
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
@@ -191,7 +194,7 @@ class InlineEditProductControllerTest extends WebTestCase
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()])
         );
@@ -206,7 +209,7 @@ class InlineEditProductControllerTest extends WebTestCase
         $product8 = $this->getReference(LoadProductData::PRODUCT_8);
         $id = $product8->getId() + 999999;
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $id])
         );
@@ -220,7 +223,7 @@ class InlineEditProductControllerTest extends WebTestCase
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [

@@ -1,0 +1,14 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            fields:
+                shippingAddress:
+                    collapse: false
+                    fields:
+                        owner:
+                            exclude: true
+                billingAddress:
+                    collapse: false
+                    fields:
+                        owner:
+                            exclude: true

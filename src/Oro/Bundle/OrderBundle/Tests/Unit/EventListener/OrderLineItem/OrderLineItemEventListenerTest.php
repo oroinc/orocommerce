@@ -20,7 +20,7 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemEventListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configurableProductProvider = $this->createMock(ConfigurableProductProvider::class);
 
@@ -58,7 +58,7 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testMethods($returnResult, $expectation)
     {
         $this->configurableProductProvider->expects($this->any())
-            ->method('getLineItemProduct')
+            ->method('getVariantFieldsValuesForLineItem')
             ->willReturn($returnResult);
 
         /** @var OrderLineItem $lineItem */

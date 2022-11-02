@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression\Preprocessor;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ProductAssignmentRuleExpressionPreprocessor;
 
@@ -19,7 +19,7 @@ class ProductAssignmentRuleExpressionPreprocessorTest extends \PHPUnit\Framework
      */
     protected $preprocessor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $registry = $this->createMock(ManagerRegistry::class);
         $this->em = $this->createMock(EntityManagerInterface::class);

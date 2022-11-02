@@ -2,19 +2,20 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Action;
 
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PaymentTermActionTest extends WebTestCase
 {
-    protected function setUp()
+    use OperationAwareTestTrait;
+
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadPaymentTermData::class,
-        ]);
+        $this->loadFixtures([LoadPaymentTermData::class]);
     }
 
     public function testDelete()
@@ -42,40 +43,14 @@ class PaymentTermActionTest extends WebTestCase
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        static::getContainer()->get('doctrine')->getManagerForClass(PaymentTerm::class)->clear();
+        self::getContainer()->get('doctrine')->getManagerForClass(PaymentTerm::class)->clear();
 
-        $removedTerm = static::getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPaymentTermBundle:PaymentTerm')
+        $removedTerm = self::getContainer()->get('doctrine')
+            ->getRepository(PaymentTerm::class)
             ->find($termId);
 
-        static::assertNull($removedTerm);
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
+        self::assertNull($removedTerm);
     }
 }

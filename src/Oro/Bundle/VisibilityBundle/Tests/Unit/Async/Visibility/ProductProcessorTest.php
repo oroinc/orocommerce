@@ -2,217 +2,223 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Driver\AbstractDriverException;
-use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
 
 class ProductProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    use LoggerAwareTraitTestTrait;
 
-    /**
-     * @var ProductMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $messageFactory;
+    private ProductCaseCacheBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $cacheBuilder;
 
-    /**
-     * @var ProductCaseCacheBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cacheBuilder;
+    private ProductProcessor $processor;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $logger;
+    private EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $entityManager;
 
-    /**
-     * @var DatabaseExceptionHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $databaseExceptionHelper;
+    private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
 
-    /**
-     * @var ProductProcessor
-     */
-    protected $visibilityProcessor;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->messageFactory = $this->getMockBuilder(ProductMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $this->cacheBuilder = $this->createMock(ProductCaseCacheBuilderInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->visibilityProcessor = new ProductProcessor(
-            $this->registry,
-            $this->messageFactory,
-            $this->logger,
-            $this->cacheBuilder,
-            $this->databaseExceptionHelper
-        );
-        $this->visibilityProcessor->setResolvedVisibilityClassName(ProductVisibilityResolved::class);
-    }
-    public function testProcess()
-    {
-        $data = ['test' => 42];
-        $body = json_encode($data);
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $em->expects(($this->never()))
-            ->method('rollback');
-        $em->expects(($this->once()))
-            ->method('commit');
-        $this->registry->expects($this->once())
+
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $managerRegistry->expects(self::any())
             ->method('getManagerForClass')
             ->with(ProductVisibilityResolved::class)
-            ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
+            ->willReturn($this->entityManager);
+
+        $this->repository = $this->createMock(ProductRepository::class);
+        $managerRegistry
+            ->expects(self::any())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($this->repository);
+
+        $this->processor = new ProductProcessor($managerRegistry, $this->cacheBuilder);
+        $this->setUpLoggerMock($this->processor);
+    }
+
+    private function getMessage(array $body): MessageInterface
+    {
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
+        $message->expects(self::once())
             ->method('getBody')
-            ->willReturn($body);
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
+            ->willReturn($body + ['scheduleReindex' => false]);
+
+        return $message;
+    }
+
+    private function getSession(): SessionInterface
+    {
+        return $this->createMock(SessionInterface::class);
+    }
+
+    public function testGetSubscribedTopics(): void
+    {
+        self::assertEquals(
+            [VisibilityOnChangeProductCategoryTopic::getName()],
+            ProductProcessor::getSubscribedTopics()
+        );
+    }
+
+    public function testProcess(): void
+    {
+        $body = ['id' => 42];
+
+        $this->entityManager->expects(self::once())
+            ->method('beginTransaction');
+        $this->entityManager->expects((self::never()))
+            ->method('rollback');
+        $this->entityManager->expects((self::once()))
+            ->method('commit');
+
         $product = new Product();
-        $this->messageFactory->expects($this->once())
-            ->method('getProductFromMessage')
-            ->with($data)
-            ->willReturn($product);
-        $this->cacheBuilder->expects($this->once())
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([$product]);
+
+        $this->cacheBuilder->expects(self::once())
             ->method('productCategoryChanged')
             ->with($product);
-        $this->assertEquals(
+
+        self::assertEquals(
             MessageProcessorInterface::ACK,
-            $this->visibilityProcessor->process($message, $session)
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
-    public function testProcessDeadlock()
+
+    public function testProcessDeadlock(): void
     {
-        /** @var PDOException $exception */
-        $exception = $this->getMockBuilder(PDOException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $body = ['id' => 42];
+
+        $exception = $this->createMock(DeadlockException::class);
+
+        $this->entityManager->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $this->entityManager->expects((self::once()))
             ->method('rollback');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ProductVisibilityResolved::class)
-            ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->will($this->throwException($exception));
-        $this->logger->expects($this->once())
+        $this->entityManager->expects((self::never()))
+            ->method('commit');
+
+        $product = new Product();
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([$product]);
+
+        $this->cacheBuilder->expects(self::once())
+            ->method('productCategoryChanged')
+            ->with($product)
+            ->willThrowException($exception);
+
+        $this->loggerMock->expects(self::once())
             ->method('error')
             ->with(
-                'Unexpected exception occurred during Product Visibility resolve by Product',
+                'Unexpected exception occurred during Product Visibility resolve by Product.',
                 ['exception' => $exception]
             );
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-        $driverException = $this->createMock(AbstractDriverException::class);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('getDriverException')
-            ->with($exception)
-            ->willReturn($driverException);
-        $this->databaseExceptionHelper->expects($this->once())
-            ->method('isDeadlock')
-            ->willReturn(true);
-        $this->assertEquals(
+
+        self::assertEquals(
             MessageProcessorInterface::REQUEUE,
-            $this->visibilityProcessor->process($message, $session)
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
-    public function testProcessException()
+
+    public function testProcessException(): void
     {
+        $body = ['id' => 42];
+
         $exception = new \Exception('Some error');
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+
+        $this->entityManager->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $this->entityManager->expects((self::once()))
             ->method('rollback');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ProductVisibilityResolved::class)
-            ->willReturn($em);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->will($this->throwException($exception));
-        $this->logger->expects($this->once())
+        $this->entityManager->expects((self::never()))
+            ->method('commit');
+
+        $product = new Product();
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([$product]);
+
+        $this->cacheBuilder->expects(self::once())
+            ->method('productCategoryChanged')
+            ->with($product)
+            ->willThrowException($exception);
+
+        $this->loggerMock->expects(self::once())
             ->method('error')
             ->with(
-                'Unexpected exception occurred during Product Visibility resolve by Product',
+                'Unexpected exception occurred during Product Visibility resolve by Product.',
                 ['exception' => $exception]
             );
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-        $this->databaseExceptionHelper->expects($this->never())
-            ->method('isDeadlock');
-        $this->assertEquals(
+
+        self::assertEquals(
             MessageProcessorInterface::REJECT,
-            $this->visibilityProcessor->process($message, $session)
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
-    public function testProcessReject()
+
+    public function testProcessWhenProductNotFound(): void
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $body = ['id' => 42];
+
+        $this->entityManager->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(($this->once()))
+        $this->entityManager->expects((self::once()))
             ->method('rollback');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ProductVisibilityResolved::class)
-            ->willReturn($em);
-        $this->messageFactory->expects($this->once())
-            ->method('getProductFromMessage')
-            ->will($this->throwException(new InvalidArgumentException('Wrong message')));
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(json_encode([]));
-        $this->logger->expects($this->once())
+        $this->entityManager->expects((self::never()))
+            ->method('commit');
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findBy')
+            ->with(['id' => [$body['id']]])
+            ->willReturn([]);
+
+        $this->cacheBuilder->expects(self::never())
+            ->method('productCategoryChanged');
+
+        $this->loggerMock->expects(self::once())
+            ->method('warning')
+            ->with('The following products have not been not found when trying to resolve visibility');
+
+        $this->loggerMock->expects(self::once())
             ->method('error')
-            ->with('Message is invalid: Wrong message');
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-        $this->assertEquals(
+            ->with(
+                'Unexpected exception occurred during Product Visibility resolve by Product.',
+                [
+                    'exception' => new EntityNotFoundException(
+                        'Products have not been found when trying to resolve visibility: 42'
+                    ),
+                ]
+            );
+
+        self::assertEquals(
             MessageProcessorInterface::REJECT,
-            $this->visibilityProcessor->process($message, $session)
-        );
-    }
-    public function testSetResolvedVisibilityClassName()
-    {
-        $this->assertAttributeEquals(
-            ProductVisibilityResolved::class,
-            'resolvedVisibilityClassName',
-            $this->visibilityProcessor
+            $this->processor->process($this->getMessage($body), $this->getSession())
         );
     }
 }

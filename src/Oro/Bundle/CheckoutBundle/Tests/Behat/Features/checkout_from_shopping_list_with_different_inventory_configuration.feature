@@ -3,7 +3,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 Feature: Checkout from Shopping List with different Inventory configuration
-  In order to to create order from Shopping List on front store
+  In order to create order from Shopping List on front store
   As a buyer
   I want to start checkout from Shopping List view page and view validation messages according to Inventory configuration
 

@@ -11,25 +11,19 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CreditCardFormProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FormFactoryInterface| \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $formFactory;
+    /** @var FormFactoryInterface| \PHPUnit\Framework\MockObject\MockObject */
+    private $formFactory;
 
-    /**
-     * @var CreditCardFormProvider
-     */
-    protected $provider;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface */
+    private $router;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
-     */
-    protected $router;
+    /** @var CreditCardFormProvider */
+    private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
-        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->provider = new CreditCardFormProvider($this->formFactory, $this->router);
     }
@@ -38,7 +32,7 @@ class CreditCardFormProviderTest extends \PHPUnit\Framework\TestCase
     {
         $formView = $this->createMock(FormView::class);
 
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);

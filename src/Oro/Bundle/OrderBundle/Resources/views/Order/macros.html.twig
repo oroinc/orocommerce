@@ -14,7 +14,7 @@
     {% endif %}
     {% set options = {
         view: view,
-        savedShippingMethodLabel: savedShippingMethodLabel|default(null),
+        savedShippingMethodLabel: savedShippingMethodLabel|default(null)|escape,
         savedShippingMethod: savedShippingMethod|default(null)
     } %}
     {% if events|length > 0 %}

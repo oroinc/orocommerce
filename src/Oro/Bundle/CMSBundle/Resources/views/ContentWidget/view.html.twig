@@ -1,0 +1,63 @@
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroScope/macros.html.twig' as scope %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {'%title%': entity.name} }) %}
+
+{% block stats %}
+    {% if is_granted('VIEW', entity, 'widgetType') and contentWidgetType is not empty %}
+        <li>{{ 'oro.cms.contentwidget.widget_type.label'|trans }}: {{ contentWidgetType.label|trans }}</li>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock stats %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_cms_content_widget_index'),
+        'indexLabel': 'oro.cms.contentwidget.entity_plural_label'|trans,
+        'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.cms.contentwidget.sections.general.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data' : [
+                    UI.renderProperty('oro.cms.contentwidget.name.label'|trans, entity.name),
+                    UI.renderHtmlProperty('oro.cms.contentwidget.description.label'|trans, entity.description|escape|nl2br),
+                    UI.renderProperty('oro.cms.contentwidget.layout.label'|trans, entity.layout ? entity.layout|content_widget_layout_label(entity.widgetType) : 'N/A'|trans),
+                ]
+            }]
+        },
+        {
+            'title': 'oro.cms.contentwidget.sections.usages.label'|trans,
+            'priority': 100,
+            'subblocks': [{
+                'title': 'oro.cms.page.entity_plural_label'|trans,
+                'data': [dataGrid.renderGrid('cms-content-widget-pages-grid', { content_widget_id: entity.id }, { cssClass: 'inner-grid' })]
+            }, {
+                'title': 'oro.cms.contentblock.entity_plural_label'|trans,
+                'data': [dataGrid.renderGrid('cms-content-widget-content-blocks-grid', { content_widget_id: entity.id }, { cssClass: 'inner-grid' })]
+            }]
+        }
+    ] %}
+
+    {% if additionalBlocks is not empty %}
+        {% set dataBlocks = dataBlocks|merge(additionalBlocks) %}
+    {% endif %}
+
+    {% set id = 'contentwidget-page-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

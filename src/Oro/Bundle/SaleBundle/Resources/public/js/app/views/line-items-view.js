@@ -1,18 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var LineItemsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export orosale/js/app/views/line-items-view
      * @extends oroui.app.views.base.View
      * @class orosale.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend({
+    const LineItemsView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -24,14 +22,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LineItemsView() {
-            LineItemsView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemsView(options) {
+            LineItemsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -39,11 +37,10 @@ define(function(require) {
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 tierPrices: this.options.tierPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
-                currency: this.options.currency,
                 customer: this.options.customer
             }));
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
         },
 
         /**

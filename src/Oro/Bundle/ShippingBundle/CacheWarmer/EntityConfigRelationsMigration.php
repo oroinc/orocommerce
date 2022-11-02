@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\ShippingBundle\CacheWarmer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Tools\ActivityListEntityConfigDumperExtension;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
+use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -16,6 +18,9 @@ use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\NoteBundle\Entity\Note;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Ensures that extend entity cache can be built after the removal of shipping rule-related entities.
+ */
 class EntityConfigRelationsMigration
 {
     /**
@@ -26,36 +31,25 @@ class EntityConfigRelationsMigration
     const SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig';
     const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var bool
-     */
-    private $applicationInstalled;
+    private ApplicationState $applicationState;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     * @param LoggerInterface $logger
-     * @param bool $applicationInstalled
-     */
-    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger, $applicationInstalled)
-    {
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        LoggerInterface $logger,
+        ApplicationState $applicationState
+    ) {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
-        $this->applicationInstalled = (bool)$applicationInstalled;
+        $this->applicationState = $applicationState;
     }
 
     public function migrate()
     {
-        if (!$this->applicationInstalled) {
+        if (!$this->applicationState->isInstalled()) {
             return;
         }
 
@@ -65,8 +59,8 @@ class EntityConfigRelationsMigration
 
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
-        $tables = $configConnection->getSchemaManager()->listTableNames();
-        if (!in_array('oro_entity_config', $tables, true)) {
+
+        if (!SafeDatabaseChecker::tablesExist($configConnection, 'oro_entity_config')) {
             return;
         }
 
@@ -81,9 +75,6 @@ class EntityConfigRelationsMigration
         $this->removeEntityFromEntityConfig($configConnection, self::SHIPPING_RULE_DESTINATION_CLASS_NAME);
     }
 
-    /**
-     * @param Connection $configConnection
-     */
     private function removeNoteRelationBeforeUpdateAssociationKind(Connection $configConnection)
     {
         $associationName = ExtendHelper::buildAssociationName(static::SHIPPING_RULE_CLASS_NAME);
@@ -93,9 +84,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param Connection $configConnection
-     */
     private function removeNoteRelationAfterUpdateAssociationKind(Connection $configConnection)
     {
         $associationName = ExtendHelper::buildAssociationName(
@@ -108,9 +96,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param Connection $configConnection
-     */
     private function removeActivityListRelation(Connection $configConnection)
     {
         $associationName = ExtendHelper::buildAssociationName(
@@ -133,16 +118,12 @@ class EntityConfigRelationsMigration
             new ParametrizedSqlMigrationQuery(
                 'DELETE FROM oro_entity_config WHERE class_name = :class_name',
                 ['class_name' => $className],
-                ['class_name' => Type::STRING]
+                ['class_name' => Types::STRING]
             ),
             $configConnection
         );
     }
 
-    /**
-     * @param ParametrizedMigrationQuery $query
-     * @param Connection $connection
-     */
     private function executeUpdateRelationsQuery(ParametrizedMigrationQuery $query, Connection $connection)
     {
         $query->setConnection($connection);

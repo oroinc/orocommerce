@@ -1,0 +1,38 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node1->id)>'
+    relationships:
+        content:
+            data:
+                type: productcollection
+                id: '<toString(@catalog1_node1->contentVariants->first()->id)>'
+included:
+    -
+        type: products
+        id: '<toString(@product1->id)>'
+        attributes:
+            sku: PSKU1
+            name: 'Product 1'
+            url: '/product1_slug_default'
+            urls:
+                - { url: '/product1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/product1_slug_default', localizationId: '<toString(@es->id)>' }
+    -
+        type: productsearch
+        id: '<toString(@product1->id)>'
+        attributes:
+            name: 'Product 1'
+        relationships:
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productcollection
+        id: '<toString(@catalog1_node1->contentVariants->first()->id)>'
+        relationships:
+            products:
+                data:
+                    -
+                        type: productsearch
+                        id: '<toString(@product1->id)>'

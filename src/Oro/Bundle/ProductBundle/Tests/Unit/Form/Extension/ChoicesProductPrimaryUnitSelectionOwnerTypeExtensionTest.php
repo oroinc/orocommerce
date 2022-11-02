@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
@@ -25,11 +26,6 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
     protected $childName;
 
     /**
-     * @var string|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $extendedType;
-
-    /**
      * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $productFormUnitFieldsSettings;
@@ -42,17 +38,24 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->childName = 'testChild';
         $this->productFormUnitFieldsSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);
         $this->choicesProductPrimaryUnitSelectionOwnerTypeExtension =
             new ChoicesProductPrimaryUnitSelectionOwnerTypeExtension(
                 $this->childName,
-                $this->extendedType,
                 $this->productFormUnitFieldsSettings
             );
         parent::setUp();
+    }
+
+    public function testGetExtendedTypes(): void
+    {
+        $this->assertEquals(
+            [ProductPrimaryUnitPrecisionType::class],
+            ChoicesProductPrimaryUnitSelectionOwnerTypeExtension::getExtendedTypes()
+        );
     }
 
     public function testBuildForm()
@@ -86,10 +89,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
 
     public function testSetAvailableUnitsThrowsException()
     {
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $event * */
-        $event = $this->getMockBuilder(FormEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(FormEvent::class);
         $form = $this->createMock(FormInterface::class);
         $event->method('getForm')->willReturn($form);
         $this->expectException(\InvalidArgumentException::class);
@@ -114,7 +114,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      */
     protected function getExtensions()
     {
-        /** @var UnitLabelFormatterInterface|\PHPUnit_Framework_MockObject_MockObject $formatter */
+        /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject $formatter */
         $formatter = $this->createMock(UnitLabelFormatterInterface::class);
         $productUnitSelectType = new ProductUnitSelectType($formatter);
         $type = $this->createMock(FormTypeInterface::class);

@@ -129,9 +129,6 @@ abstract class AbstractDiscount implements DiscountInterface
         return $this;
     }
 
-    /**
-     * @return OptionsResolver
-     */
     protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
@@ -171,10 +168,6 @@ abstract class AbstractDiscount implements DiscountInterface
         return $resolver;
     }
 
-    /**
-     * @param array $options
-     * @return array
-     */
     protected function getResolvedOptions(array $options): array
     {
         if (!$this->resolvedOptions) {

@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener;
@@ -11,242 +13,270 @@ use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Provider\PreviouslyPurchasedOrderStatusesProvider;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const WEBSITE_ID = 10;
+    private const ANOTHER_WEBSITE_ID = 20;
 
-    const WEBSITE_ID = 1;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject */
-    protected $event;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $reindexManager;
+    /** @var Website */
+    private $website;
 
-    /** @var ReindexProductLineItemListener */
-    protected $listener;
+    /** @var OrderStub */
+    private $order;
 
     /** @var OrderLineItem|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lineItem;
+    private $lineItem;
 
-    /** @var  OrderStub */
-    protected $order;
+    /** @var ReindexProductLineItemListener */
+    private $listener;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject  */
-    protected $featureChecker;
-
-    /** @var  Website */
-    protected $website;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->reindexManager = $this->createMock(ProductReindexManager::class);
-        $statusProvider = new PreviouslyPurchasedOrderStatusesProvider();
-        $this->lineItem = $this->createMock(OrderLineItem::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->website = $this->getEntity(Website::class, [ 'id' => self:: WEBSITE_ID ]);
+        $this->website = $this->getWebsite(self::WEBSITE_ID);
 
-        $this->order = $this->getEntity(OrderStub::class);
-        $this->order->setInternalStatus(new StubEnumValue(
-            OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-            OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
-        ));
+        $this->order = new OrderStub();
+        $this->order->setInternalStatus(
+            $this->getInternalStatus(OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED)
+        );
         $this->order->setWebsite($this->website);
 
-        $this->lineItem->expects($this->any())
+        $this->lineItem = $this->createMock(OrderLineItem::class);
+        $this->lineItem->expects(self::any())
             ->method('getOrder')
             ->willReturn($this->order);
 
-        $this->listener = new ReindexProductLineItemListener(
-            $this->reindexManager,
-            $statusProvider
-        );
+        $websiteProvider = $this->createMock(ReindexationWebsiteProviderInterface::class);
+        $websiteProvider->expects(self::any())
+            ->method('getReindexationWebsiteIds')
+            ->willReturnCallback(function (Website $website) {
+                return [$website->getId(), $website->getId() + 1, self::ANOTHER_WEBSITE_ID];
+            });
 
+        $this->listener = new ReindexProductLineItemListener(
+            $this->eventDispatcher,
+            new PreviouslyPurchasedOrderStatusesProvider(),
+            $websiteProvider
+        );
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('previously_purchased_products');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    private function getPreUpdateEvent(array $changeSet): PreUpdateEventArgs
     {
-        unset($this->order);
-        unset($this->website);
-        unset($this->listener);
-        unset($this->lineItem);
-        unset($this->reindexManager);
-        unset($this->featureChecker);
+        return new PreUpdateEventArgs(
+            $this->lineItem,
+            $this->createMock(EntityManagerInterface::class),
+            $changeSet
+        );
     }
 
-    public function testOrderLineItemProductNotChanged()
+    private function getWebsite(int $id): Website
     {
-        $this->featureChecker->expects($this->once())
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getInternalStatus(?string $id): AbstractEnumValue
+    {
+        return new TestEnumValue($id, null !== $id ? sprintf('Status (%s)', $id) : null);
+    }
+
+    public function testOrderLineItemProductNotChanged(): void
+    {
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $event = $this->getPreUpdateEvent();
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
 
-        $this->reindexManager
-            ->expects($this->never())
-            ->method('reindexProduct');
-
+        $event = $this->getPreUpdateEvent([]);
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
-    public function testOrderLineItemProductChange()
+    public function testOrderLineItemProductChange(): void
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
-        $event = $this->getPreUpdateEvent(
-            [
-                ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
-                    $product1,
-                    $product2,
-                ],
-            ]
-        );
+        $product1 = $this->getProduct(1);
+        $product2 = $this->getProduct(2);
 
-        $this->reindexManager
-            ->expects($this->exactly(2))
-            ->method('reindexProduct')
-            ->withConsecutive(
-                [$product1, self::WEBSITE_ID],
-                [$product2, self::WEBSITE_ID]
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [self::WEBSITE_ID, self::WEBSITE_ID + 1, self::ANOTHER_WEBSITE_ID],
+                    [$product1->getId(), $product2->getId()],
+                    true,
+                    ['order']
+                ),
+                ReindexationRequestEvent::EVENT_NAME
             );
 
+        $event = $this->getPreUpdateEvent(['product' => [$product1, $product2]]);
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
-    public function testReindexProductOnLineItemCreateOrDelete()
+    public function testOrderLineItemParentProductChange(): void
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
-        $product = $this->getEntity(Product::class);
+        $product1 = $this->getProduct(1);
+        $product2 = $this->getProduct(2);
 
-        $this->lineItem->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [self::WEBSITE_ID, self::WEBSITE_ID + 1, self::ANOTHER_WEBSITE_ID],
+                    [$product1->getId(), $product2->getId()],
+                    true,
+                    ['order']
+                ),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+
+        $event = $this->getPreUpdateEvent(['parentProduct' => [$product1, $product2]]);
+        $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
+    }
+
+    public function testReindexProductOnLineItemCreateOrDelete(): void
+    {
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
+
+        $product = $this->getProduct(1);
+
+        $this->lineItem->expects(self::once())
             ->method('getProduct')
             ->willReturn($product);
 
-        $this->reindexManager->expects($this->once())
-            ->method('reindexProduct')
-            ->with($product, self::WEBSITE_ID);
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [self::WEBSITE_ID, self::WEBSITE_ID + 1, self::ANOTHER_WEBSITE_ID],
+                    [$product->getId()],
+                    true,
+                    ['order']
+                ),
+                ReindexationRequestEvent::EVENT_NAME
+            );
 
         $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
     }
 
-    public function testReindexInOrderWithUnavailableStatus()
+    public function testReindexProductOnLineItemCreateOrDeleteWithParentProduct(): void
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('previously_purchased_products', $this->website)
+            ->willReturn(true);
+
+        $product = $this->getProduct(1);
+        $parentProduct = $this->getProduct(2);
+
+        $this->lineItem->expects(self::once())
+            ->method('getProduct')
+            ->willReturn($product);
+        $this->lineItem->expects(self::once())
+            ->method('getParentProduct')
+            ->willReturn($parentProduct);
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [self::WEBSITE_ID, self::WEBSITE_ID + 1, self::ANOTHER_WEBSITE_ID],
+                    [$product->getId(), $parentProduct->getId()],
+                    true,
+                    ['order']
+                ),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+
+        $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
+    }
+
+    public function testReindexInOrderWithUnavailableStatus(): void
+    {
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(true);
 
         $this->order->setInternalStatus(
-            new StubEnumValue(
-                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
-            )
+            $this->getInternalStatus(OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED)
         );
 
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
-        $event = $this->getPreUpdateEvent(
-            [
-                ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
-                    $product1,
-                    $product2,
-                ],
-            ]
-        );
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
 
-        $this->reindexManager->expects($this->never())
-            ->method('reindexProduct');
-
+        $event = $this->getPreUpdateEvent(['product' => [$this->getProduct(1), $this->getProduct(2)]]);
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
-    public function testReindexInOrderWithInvalidWebsite()
+    public function testReindexInOrderWithInvalidWebsite(): void
     {
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
-        $event = $this->getPreUpdateEvent(
-            [
-                ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
-                    $product1,
-                    $product2,
-                ],
-            ]
-        );
-
         $this->order->unsetWebsite();
 
-        $this->reindexManager
-            ->expects($this->never())
-            ->method('reindexProduct');
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
 
+        $event = $this->getPreUpdateEvent(['product' => [$this->getProduct(1), $this->getProduct(2)]]);
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
     }
 
-    public function testFeatureDisabled()
+    public function testFeatureDisabled(): void
     {
-        $product1 = $this->getEntity(Product::class, [ 'id' => 1 ]);
-        $product2 = $this->getEntity(Product::class, [ 'id' => 2 ]);
-        $event = $this->getPreUpdateEvent(
-            [
-                ReindexProductLineItemListener::ORDER_LINE_ITEM_PRODUCT_FIELD => [
-                    $product1,
-                    $product2,
-                ],
-            ]
-        );
-
-        $this->featureChecker->expects($this->exactly(2))
+        $this->featureChecker->expects(self::exactly(2))
             ->method('isFeatureEnabled')
             ->with('previously_purchased_products', $this->website)
             ->willReturn(false);
 
-        $this->reindexManager
-            ->expects($this->never())
-            ->method('reindexProduct');
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
 
+        $event = $this->getPreUpdateEvent(['product' => [$this->getProduct(1), $this->getProduct(2)]]);
         $this->listener->reindexProductOnLineItemUpdate($this->lineItem, $event);
         $this->listener->reindexProductOnLineItemCreateOrDelete($this->lineItem);
-    }
-
-    /**
-     * @param array       $changeSet
-     *
-     * @return PreUpdateEventArgs
-     */
-    protected function getPreUpdateEvent(array $changeSet = [])
-    {
-        /**
-         * @var $em EntityManagerInterface
-         */
-        $em = $this->createMock(EntityManagerInterface::class);
-        return new PreUpdateEventArgs(
-            $this->getEntity(OrderLineItem::class),
-            $em,
-            $changeSet
-        );
     }
 }

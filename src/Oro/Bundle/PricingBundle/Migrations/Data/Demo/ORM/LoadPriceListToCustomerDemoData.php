@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
@@ -74,7 +74,6 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
             $this->customers[$name] = $customer;
         }
 
-
         return $this->customers[$name];
     }
 
@@ -90,7 +89,7 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
 
         return $this->customerRepository;
     }
-    
+
     /**
      * {@inheritdoc}
      */

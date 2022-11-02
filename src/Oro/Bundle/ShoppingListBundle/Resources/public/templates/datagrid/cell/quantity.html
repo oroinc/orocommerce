@@ -1,0 +1,7 @@
+<% if (quantity > 0) { %>
+    <% let oroshoppinglist = _.macros('oroshoppinglist') %>
+    <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
+    <div class="mobile-row label-in-mobile-start label-bold-in-mobile" data-label="<%- _metadata.label %>:">
+        <span class="label-in-mobile-end" data-label="<%- oroshoppinglist.renderUnit({unit: unit, quantity: quantity}) %>"><%- formattedQuantity %></span>
+    </div>
+<% } %>

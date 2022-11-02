@@ -1,0 +1,27 @@
+data:
+    type: orderaddresses
+    attributes:
+        fromExternalSource: false
+        phone: '777-777-777'
+        label: 'New Address'
+        street: '1215 Caldwell Road'
+        street2: 'Street 2'
+        city: 'Rochester'
+        postalCode: '14608'
+        organization: 'test organization'
+        namePrefix: 'Mr.'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        nameSuffix: 'M.D.'
+        createdAt: '2017-03-28T06:30:16Z'
+        updatedAt: '2017-03-28T06:30:16Z'
+    relationships:
+        country:
+            data:
+                type: countries
+                id: '<toString(@country.usa->iso2Code)>'
+        region:
+            data:
+                type: regions
+                id: '<toString(@region.usny->combinedCode)>'

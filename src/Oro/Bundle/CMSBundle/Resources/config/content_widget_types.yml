@@ -1,0 +1,49 @@
+services:
+
+    oro_cms.content_widget_type.image_slider:
+        class: Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_cms.entity_listener.image_slide:
+        class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\ImageSlide', event: preRemove }
+
+    oro_cms.twig.image_slider_extension:
+        class: Oro\Bundle\CMSBundle\Twig\ImageSliderExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
+    oro_cms.event_listener.content_widget_form:
+        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
+
+    Oro\Bundle\CMSBundle\ContentWidget\TabbedContentWidgetType:
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    Oro\Bundle\CMSBundle\EventListener\TabbedContentWidgetFormEventListener:
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
+
+    oro_cms.form.type.tabbed_content_item:
+        class: Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemType
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.type.tabbed_content_item_collection:
+        class: Oro\Bundle\CMSBundle\Form\Type\TabbedContentItemCollectionType
+        tags:
+            - { name: form.type }

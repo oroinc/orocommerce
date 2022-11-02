@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Resolver;
 
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Return class with dependencies for website search mapping.
+ */
 class EntityDependenciesResolver implements EntityDependenciesResolverInterface
 {
-    /** @var WebsiteSearchMappingProvider */
+    /** @var SearchMappingProvider */
     private $mappingProvider;
 
     /** @var EventDispatcherInterface */
@@ -20,13 +23,9 @@ class EntityDependenciesResolver implements EntityDependenciesResolverInterface
     /** @var array */
     private $classesDependencies;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param WebsiteSearchMappingProvider $mappingProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        WebsiteSearchMappingProvider $mappingProvider
+        SearchMappingProvider $mappingProvider
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->mappingProvider = $mappingProvider;
@@ -60,7 +59,7 @@ class EntityDependenciesResolver implements EntityDependenciesResolverInterface
         }
 
         $collectDependentClassesEvent = new CollectDependentClassesEvent();
-        $this->eventDispatcher->dispatch(CollectDependentClassesEvent::NAME, $collectDependentClassesEvent);
+        $this->eventDispatcher->dispatch($collectDependentClassesEvent, CollectDependentClassesEvent::NAME);
 
         $this->classesDependencies = $collectDependentClassesEvent->getDependencies();
     }

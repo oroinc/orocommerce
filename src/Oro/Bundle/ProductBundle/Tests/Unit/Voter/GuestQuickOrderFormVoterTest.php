@@ -21,11 +21,11 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configVoter = $this->createMock(VoterInterface::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->voter = new GuestQuickOrderFormVoter($this->configVoter, $this->tokenStorage);
+        $this->voter = new GuestQuickOrderFormVoter($this->configVoter, $this->tokenStorage, 'guest_quick_order');
     }
 
     public function testVoteEnabledForNotAnonymousUser()

@@ -1,0 +1,96 @@
+{% block __oro_product_totals__totals_widget %}
+    {% set class_prefix = 'product-totals' %}
+
+    {% do block|merge_context({
+        class_prefix: class_prefix,
+        totals: totals|default({})
+    }) %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block('container_widget') }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__totals_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__wrapper',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__quantity_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__total-quantity',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__quantity_text_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__label',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__quantity_value_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__total-quantity-value',
+        'data-role': 'total-quantity'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ totals.quantity|default('')|oro_format_decimal }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__separator_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__separator'
+    }) %}
+
+    <div {{ block('block_attributes') }}>|</div>
+{% endblock %}
+
+{% block __oro_product_totals__total_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__total-price'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__total_text_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__label'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_totals__total_value_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}__total-price-value',
+        'data-role': 'total-price'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ totals.price|default('') }}
+    </div>
+{% endblock %}

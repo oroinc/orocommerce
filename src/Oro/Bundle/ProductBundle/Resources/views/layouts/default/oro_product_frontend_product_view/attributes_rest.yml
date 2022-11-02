@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/attributes_rest.html.twig'
+        - '@addTree':
+            items:
+                product_view_attributes_rest:
+                    blockType: attribute_group_rest
+                    options:
+                        entity: '=data["product"]'
+                        attribute_family: '=context["attribute_family"]'
+                        attr:
+                            class: "product-view__attributes-container"
+                        vars:
+                            tabsOptions: '=data["attribute_groups_tabs_options_provider"].getTabsOptions(context["attribute_family"])'
+
+            tree:
+                product_view_additional_container:
+                    product_view_attributes_rest: ~

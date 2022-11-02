@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
@@ -17,43 +17,40 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UrlItemsProviderTest extends OrmTestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /**
-     * @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $canonicalUrlGenerator;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
-
-    /**
-     * @var UrlItemsProvider
-     */
+    /** @var UrlItemsProvider */
     private $urlItemsProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+
+        $entityManager = $this->getTestEntityManager();
+        $entityManager->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
+            new AnnotationReader(),
+            'Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub'
+        ));
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($entityManager);
 
         $this->urlItemsProvider = new UrlItemsProvider(
             $this->canonicalUrlGenerator,
             $this->configManager,
             $this->eventDispatcher,
-            $this->registry
+            $doctrine
         );
         $this->urlItemsProvider->setEntityClass(Product::class);
         $this->urlItemsProvider->setType('test');
@@ -63,8 +60,6 @@ class UrlItemsProviderTest extends OrmTestCase
 
     public function testItDispatchEvent()
     {
-        $this->prepareEntityManager();
-
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
         $version = '1';
@@ -73,51 +68,31 @@ class UrlItemsProviderTest extends OrmTestCase
             ->method('dispatch')
             ->withConsecutive(
                 [
-                    UrlItemsProviderEvent::ON_START . '.test',
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_START . '.test'
                 ],
                 [
-                    UrlItemsProviderEvent::ON_START,
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_START
                 ],
                 [
-                    RestrictSitemapEntitiesEvent::NAME . '.test',
-                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class)
+                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class),
+                    RestrictSitemapEntitiesEvent::NAME . '.test'
                 ],
                 [
-                    RestrictSitemapEntitiesEvent::NAME,
-                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class)
+                    $this->isInstanceOf(RestrictSitemapEntitiesEvent::class),
+                    RestrictSitemapEntitiesEvent::NAME
                 ],
                 [
-                    UrlItemsProviderEvent::ON_END . '.test',
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_END . '.test'
                 ],
                 [
-                    UrlItemsProviderEvent::ON_END,
-                    $this->isInstanceOf(UrlItemsProviderEvent::class)
+                    $this->isInstanceOf(UrlItemsProviderEvent::class),
+                    UrlItemsProviderEvent::ON_END
                 ]
             );
 
         $this->urlItemsProvider->getUrlItems($website, $version)->current();
-    }
-
-    private function prepareEntityManager()
-    {
-        $reader = new AnnotationReader();
-        $metadataDriver = new AnnotationDriver(
-            $reader,
-            'Oro\Bundle\BatchBundle\Tests\Unit\ORM\Query\Stub'
-        );
-        $entityManager = $this->getTestEntityManager();
-        $entityManager->getConfiguration()->setMetadataDriverImpl($metadataDriver);
-        $entityManager->getConfiguration()->setEntityNamespaces(
-            array(
-                'Product' => Product::class
-            )
-        );
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(Product::class)
-            ->willReturn($entityManager);
     }
 }

@@ -1,156 +1,210 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Test\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPUnit\Framework\TestCase
+class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends ConstraintValidatorTestCase
 {
-    const VARIANT_FIELD_KEY_COLOR = 'color';
-    const VARIANT_FIELD_KEY_SIZE = 'size';
-    const MESSAGE = 'oro.product.product_variant_field.unique_variant_links_when_empty_variant_field_in_simple';
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /** @var ExecutionContextInterface| \PHPUnit\Framework\MockObject\MockObject */
-    private $context;
-
-    /** @var EmptyVariantFieldInSimpleProductForVariantLinksValidator */
-    private $validator;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator = new EmptyVariantFieldInSimpleProductForVariantLinksValidator($propertyAccessor);
-        $this->validator->initialize($this->context);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    protected function createValidator(): EmptyVariantFieldInSimpleProductForVariantLinksValidator
     {
-        unset($this->context, $this->validator);
+        return new EmptyVariantFieldInSimpleProductForVariantLinksValidator(
+            PropertyAccess::createPropertyAccessor(),
+            $this->registry
+        );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
-     */
+    public function testGetTargets()
+    {
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
+    }
+
     public function testValidateUnsupportedClass()
     {
-        $this->validator->validate(new \stdClass(), new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given'
+        );
+
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
     public function testDoesNothingIfProductConfigurable()
     {
         $product = new Product();
+        ReflectionUtil::setId($product, 1);
         $product->setType(Product::TYPE_CONFIGURABLE);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $this->assertNoViolation();
     }
 
-    public function testDoesNothingIfProductHasNoParentVariantLinks()
+    public function testDoesNothingIfNewProductHasNoParentVariantLinks()
     {
         $product = new Product();
         $product->setType(Product::TYPE_SIMPLE);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $this->registry->expects($this->never())
+            ->method($this->anything());
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateWithOneError()
+    public function testDoesNothingIfExistingProductHasNoParentVariantLinks()
     {
-        $parentProduct = $this->prepareParentProduct('sku1', ['color', 'size']);
-        $parentProduct2 = $this->prepareParentProduct('sku2', ['color']);
+        $product = $this->prepareProduct(1);
 
-        $product = $this->prepareProduct(['size' => 'M'], [$parentProduct, $parentProduct2]);
+        $this->getRequiredAttributesForSimpleProductExpectations($product, []);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with(
-                self::MESSAGE,
-                [
-                    '%variantField%' => 'color',
-                    '%products%' => 'sku1, sku2'
-                ]
-            );
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $this->assertNoViolation();
     }
 
-    public function testValidateWithTwoErrors()
+    public function testValidateWithOneErrorNewProduct()
     {
-        $parentProduct = $this->prepareParentProduct('sku1', ['color', 'size']);
-        $parentProduct2 = $this->prepareParentProduct('sku2', ['color']);
+        $parentProduct1 = $this->prepareParentProduct(1, 'sku1', ['color', 'size']);
+        $parentProduct2 = $this->prepareParentProduct(2, 'sku2', ['color']);
 
-        $product = $this->prepareProduct([], [$parentProduct, $parentProduct2]);
+        $product = $this->prepareProduct(null, 'M', [$parentProduct1, $parentProduct2]);
 
-        $this->context->expects($this->exactly(2))
-            ->method('addViolation')
-            ->withConsecutive(
-                [
-                    self::MESSAGE,
-                    [
-                        '%variantField%' => 'color',
-                        '%products%' => 'sku1, sku2'
-                    ]
-                ],
-                [
-                    self::MESSAGE,
-                    [
-                        '%variantField%' => 'size',
-                        '%products%' => 'sku1'
-                    ]
-                ]
-            );
+        $this->registry->expects($this->never())
+            ->method($this->anything());
 
-        $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'color', '%products%' => 'sku1, sku2'])
+            ->assertRaised();
     }
 
-    /**
-     * @param array $parentProducts
-     * @param array $variantFieldsValue
-     * @return StubProduct
-     */
-    private function prepareProduct(array $variantFieldsValue, array $parentProducts = [])
+    public function testValidateWithOneErrorExistingProduct()
+    {
+        $product = $this->prepareProduct(1, 'M');
+
+        $this->getRequiredAttributesForSimpleProductExpectations(
+            $product,
+            [
+                ['id' => 1, 'sku' => 'sku1', 'variantFields' => ['color', 'size']],
+                ['id' => 2, 'sku' => 'sku2', 'variantFields' => ['color']]
+            ]
+        );
+
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'color', '%products%' => 'sku1, sku2'])
+            ->assertRaised();
+    }
+
+    public function testValidateWithTwoErrorsExistingProduct()
+    {
+        $product = $this->prepareProduct(1);
+
+        $this->getRequiredAttributesForSimpleProductExpectations(
+            $product,
+            [
+                ['id' => 1, 'sku' => 'sku1', 'variantFields' => ['color', 'size']],
+                ['id' => 2, 'sku' => 'sku2', 'variantFields' => ['color']]
+            ]
+        );
+
+        $constraint = new EmptyVariantFieldInSimpleProductForVariantLinks();
+        $this->validator->validate($product, $constraint);
+
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'color', '%products%' => 'sku1, sku2'])
+            ->buildNextViolation($constraint->message)
+            ->setParameters(['%variantField%' => 'size', '%products%' => 'sku1'])
+            ->assertRaised();
+    }
+
+    private function prepareProduct(int $id = null, string $size = null, array $parentProducts = []): StubProduct
     {
         $product = (new StubProduct())
             ->setType(Product::TYPE_SIMPLE);
-
-        foreach ($variantFieldsValue as $variantField => $variantFieldValue) {
-            if ($variantField === self::VARIANT_FIELD_KEY_SIZE) {
-                $product->setSize($variantFieldValue);
-            }
-
-            if ($variantField === self::VARIANT_FIELD_KEY_COLOR) {
-                $product->setColor($variantFieldValue);
-            }
+        if (null !== $id) {
+            $product->setId($id);
+        }
+        if (null !== $size) {
+            $product->setSize($size);
         }
 
-        foreach ($parentProducts as $parentProduct) {
-            $product->addParentVariantLink(new ProductVariantLink($parentProduct, $product));
+        $parentVariantLinks = $this->createMock(AbstractLazyCollection::class);
+        $parentVariantLinks->expects($this->any())
+            ->method('isInitialized')
+            ->willReturn(!empty($parentProducts));
+        if ($parentProducts) {
+            $collection = new ArrayCollection();
+            foreach ($parentProducts as $parentProduct) {
+                $variantLink = new ProductVariantLink($parentProduct, $product);
+                $collection->add($variantLink);
+            }
+            $parentVariantLinks->expects($this->any())
+                ->method('getIterator')
+                ->willReturn($collection);
         }
+        $product->setParentVariantLinks($parentVariantLinks);
 
         return $product;
     }
 
-    private function prepareParentProduct($sku, array $variantFields)
+    private function getRequiredAttributesForSimpleProductExpectations(Product $product, array $attributeInfo): void
     {
-        $product = new Product();
+        $repo = $this->createMock(ProductRepository::class);
+        $repo->expects($this->once())
+            ->method('getRequiredAttributesForSimpleProduct')
+            ->with($product)
+            ->willReturn($attributeInfo);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(Product::class)
+            ->willReturn($repo);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($em);
+    }
+
+    private function prepareParentProduct(int $id, string $sku, array $variantFields): Product
+    {
+        $product = new StubProduct();
         $product->setType(Product::TYPE_CONFIGURABLE)
+            ->setId($id)
             ->setSku($sku)
             ->setVariantFields($variantFields);
 

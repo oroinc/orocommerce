@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * This extension is used to validate that content variant collection has no Product Collection variants with the same
@@ -20,19 +21,9 @@ class ProductCollectionExtension extends AbstractTypeExtension
      */
     private $translator;
 
-    /**
-     * @var string
-     */
-    private $extendedType;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param string $extendedType
-     */
-    public function __construct(TranslatorInterface $translator, $extendedType)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
-        $this->extendedType = $extendedType;
     }
 
     /**
@@ -43,9 +34,6 @@ class ProductCollectionExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPostSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -58,11 +46,13 @@ class ProductCollectionExtension extends AbstractTypeExtension
                 continue;
             }
 
-            $productCollectionSegmentNameForm = $variantForm->get('productCollectionSegment')->get('name');
-            $productCollectionSegmentName = $productCollectionSegmentNameForm->getData();
+            $productCollectionSegment = $variantForm->get('productCollectionSegment');
+            $productCollectionSegmentName = $productCollectionSegment
+                ->getData()
+                ->getNameLowercase();
 
             if (array_key_exists($productCollectionSegmentName, $names)) {
-                $productCollectionSegmentNameForm->addError(new FormError(
+                $productCollectionSegment->get('name')->addError(new FormError(
                     $this->translator->trans(
                         'oro.product.product_collection.unique_segment_name.message',
                         [],
@@ -81,8 +71,8 @@ class ProductCollectionExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [ContentVariantCollectionType::class];
     }
 }

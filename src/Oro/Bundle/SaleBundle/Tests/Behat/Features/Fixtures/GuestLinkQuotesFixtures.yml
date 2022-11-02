@@ -1,0 +1,28 @@
+include:
+    -  '@OroSaleBundle:QuoteProductFixture.yml'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        qid: 'Quote_1'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO123'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct1:
+        product: '@product1'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    quoteProductPrice1:
+        value: 100
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 10
+        allow_increments: true

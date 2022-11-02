@@ -1,0 +1,12 @@
+dependencies:
+  - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders
+
+Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+    order_shipping_tracking.1:
+        method: 'method 1'
+        number: 'number 1'
+        order: '@simple_order'
+    order_shipping_tracking.2:
+        method: 'method 2'
+        number: 'number 3'
+        order: '@my_order'

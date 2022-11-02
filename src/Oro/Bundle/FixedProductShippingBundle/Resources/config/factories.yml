@@ -1,0 +1,10 @@
+services:
+    oro_fixed_product_shipping.factory.method:
+        class: 'Oro\Bundle\FixedProductShippingBundle\Factory\FixedProductMethodFromChannelFactory'
+        public: false
+        arguments:
+            - '@oro_fixed_product_shipping.method.identifier_generator.method'
+            - '@oro_locale.helper.localization'
+            - '@oro_integration.provider.integration_icon'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '@oro_fixed_product_shipping.shipping_cost.provider'

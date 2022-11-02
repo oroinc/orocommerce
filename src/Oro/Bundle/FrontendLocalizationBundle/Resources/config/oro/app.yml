@@ -1,0 +1,9 @@
+oro_api:
+    api_doc_views:
+        frontend_rest_json_api:
+            headers:
+                X-Localization-ID: ~
+
+oro_translation:
+    package_names:
+        - OroCommerce

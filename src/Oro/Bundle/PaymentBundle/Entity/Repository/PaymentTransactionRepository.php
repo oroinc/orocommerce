@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
-class PaymentTransactionRepository extends EntityRepository
+/**
+ * Doctrine repository for PaymentTransaction entity
+ */
+class PaymentTransactionRepository extends ServiceEntityRepository
 {
     /**
      * @param string $entityClass

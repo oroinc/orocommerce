@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
@@ -12,29 +12,31 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Adds field "category" to product form and handles changes in it.
+ */
 class ProductFormExtension extends AbstractTypeExtension
 {
-    /** @var CategoryRepository */
-    private $categoryRepository;
+    protected ManagerRegistry $registry;
+    protected AuthorizationCheckerInterface $authorizationChecker;
+    private ?CategoryRepository $categoryRepository = null;
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        AuthorizationCheckerInterface $authorizationChecker
+    ) {
         $this->registry = $registry;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ProductType::class;
+        return [ProductType::class];
     }
 
     /**
@@ -42,6 +44,10 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
         $builder
             ->add(
                 'category',
@@ -57,10 +63,7 @@ class ProductFormExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormEvent $event
-     */
-    public function onPostSetData(FormEvent $event)
+    public function onPostSetData(FormEvent $event): void
     {
         /** @var Product|null $product */
         $product = $event->getData();
@@ -75,10 +78,7 @@ class ProductFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
-    public function onPostSubmit(FormEvent $event)
+    public function onPostSubmit(FormEvent $event): void
     {
         /** @var Product|null $product */
         $product = $event->getData();
@@ -108,14 +108,10 @@ class ProductFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * @return CategoryRepository
-     */
-    protected function getCategoryRepository()
+    protected function getCategoryRepository(): CategoryRepository
     {
         if (!$this->categoryRepository) {
-            $this->categoryRepository = $this->registry->getManagerForClass('OroCatalogBundle:Category')
-                ->getRepository('OroCatalogBundle:Category');
+            $this->categoryRepository = $this->registry->getRepository(Category::class);
         }
 
         return $this->categoryRepository;

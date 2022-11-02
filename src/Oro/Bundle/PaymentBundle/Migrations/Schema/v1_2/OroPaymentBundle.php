@@ -24,9 +24,6 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
         $this->addConstraintsToPaymentTransactionTable($schema, $queries);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updatePaymentTransactionTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_payment_transaction');
@@ -38,10 +35,6 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
         $table->getColumn('response')->setOptions(['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
     protected function addConstraintsToPaymentTransactionTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_payment_transaction');

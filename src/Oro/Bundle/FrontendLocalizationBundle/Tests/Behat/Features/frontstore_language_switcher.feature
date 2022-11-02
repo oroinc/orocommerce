@@ -1,5 +1,6 @@
 @regression
 @ticket-BAP-14671
+@ticket-BB-14857
 @fixture-OroFrontendLocalizationBundle:frontstore-customer.yml
 Feature: FrontStore language switcher
   In order to manage available localizations for language switcher
@@ -10,6 +11,8 @@ Feature: FrontStore language switcher
 
   Scenario: Feature Background
     Given I login as administrator
+    And I disable configuration options:
+      | oro_frontend.guest_access_enabled |
     And go to System/ Localization/ Languages
 
   Scenario Outline: Add Languages
@@ -24,11 +27,6 @@ Feature: FrontStore language switcher
       | Language Full Name          | Language Short Name |
       | Dutch (Netherlands) - nl_NL | Dutch               |
       | Japanese (Japan) - ja_JP    | Japanese            |
-
-  Scenario: Update cache
-    Given go to System/ Localization/ Translations
-    When click "Update Cache"
-    Then I should see "Translation Cache has been updated" flash message
 
   Scenario Outline: Add Localizations
     Given I go to System/ Localization/ Localizations
@@ -50,56 +48,56 @@ Feature: FrontStore language switcher
     Given I go to System/Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill "System Config Form" with:
-      | Enabled Localizations | [English,  Dutch, Japanese] |
+      | Enabled Localizations | [English (United States),  Dutch, Japanese] |
     And I save form
-    Then Enabled Localizations field should has [English,  Dutch, Japanese] value
+    Then Enabled Localizations field should has [English (United States),  Dutch, Japanese] value
 
   Scenario: Verify Switcher for anonymous front-end user
     Given I am on homepage
     When I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
-      | Dutch    |
-      | English  |
-      | Japanese |
-    And I should see that "English" localization is active
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
+    And I should see that "English (United States)" localization is active
 
     When I select "Dutch" localization
     And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
-      | English  |
-      | Dutch    |
-      | Japanese |
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
     And I should see that "Dutch" localization is active
 
     When I select "Japanese" localization
     And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
-      | English  |
-      | Dutch    |
-      | Japanese |
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
     And I should see that "Japanese" localization is active
 
   Scenario: Verify Switcher for logged in front-end user
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
-      | Dutch    |
-      | English  |
-      | Japanese |
-    And I should see that "English" localization is active
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
+    And I should see that "English (United States)" localization is active
 
     When I select "Dutch" localization
     And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
-      | English  |
-      | Dutch    |
-      | Japanese |
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
     And I should see that "Dutch" localization is active
 
     When I select "Japanese" localization
     And I click "Localization Switcher"
     Then I should see that localization switcher contains localizations:
-      | English  |
-      | Dutch    |
-      | Japanese |
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
     And I should see that "Japanese" localization is active

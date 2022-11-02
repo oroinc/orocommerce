@@ -2,125 +2,64 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheTopic;
 use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
+use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class UrlCacheProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SluggableUrlDumper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $dumper;
+    use LoggerAwareTraitTestTrait;
+    use EntityTrait;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
-    /**
-     * @var UrlCacheProcessor
-     */
-    private $processor;
+    private SluggableUrlDumper|\PHPUnit\Framework\MockObject\MockObject $dumper;
 
-    protected function setUp()
+    private UrlCacheProcessor $processor;
+
+    protected function setUp(): void
     {
-        $this->dumper = $this->getMockBuilder(SluggableUrlDumper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
+        $this->dumper = $this->createMock(SluggableUrlDumper::class);
 
-        $this->processor = new UrlCacheProcessor(
-            $this->dumper,
-            $this->logger
-        );
+        $this->processor = new UrlCacheProcessor($this->messageFactory, $this->dumper);
+        $this->setUpLoggerMock($this->processor);
     }
 
-    /**
-     * @dataProvider invalidMessageDataProvider
-     * @param array $data
-     */
-    public function testProcessInvalidMessage(array $data)
+    public function testProcess(): void
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
         $session = $this->createMock(SessionInterface::class);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
+
+        $data = ['class' => Product::class, 'entity_ids' => [1]];
         $message = $this->createMock(MessageInterface::class);
 
-        $message->expects($this->atLeastOnce())
+        $message->expects(self::atLeastOnce())
             ->method('getBody')
-            ->willReturn(JSON::encode($data));
+            ->willReturn($data);
 
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Queue Message is invalid');
+        $entity = $this->getEntity(Product::class, ['id' => 1]);
+        $this->messageFactory->expects(self::once())
+            ->method('getEntitiesFromMessage')
+            ->willReturn([$entity]);
 
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
-    }
-
-    /**
-     * @return array
-     */
-    public function invalidMessageDataProvider()
-    {
-        return [
-            'no route name' => [['entity_ids' => [1]]],
-            'no entity ids' => [['route_name' => 'test']],
-            'route name is not a string' => [['route_name' => [1], 'entity_ids' => [':|||:']]],
-            'entity_ids is not an array' => [['route_name' => 'test', 'entity_ids' => 1]]
-        ];
-    }
-
-    public function testProcessInvalidMessageOnGetEntity()
-    {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode(['route_name' => 'test', 'entity_ids' => [1]]));
-
-        $this->dumper->expects($this->once())
+        $this->dumper->expects(self::once())
             ->method('dump')
-            ->willThrowException(new \Exception('test'));
+            ->with($entity);
 
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('Unexpected exception occurred during queue message processing');
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    public function testProcess()
+    public function testGetSubscribedTopics(): void
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $data = ['route_name' => 'test', 'entity_ids' => [1]];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $this->dumper->expects($this->once())
-            ->method('dump')
-            ->with('test', [1]);
-
-        $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));
-    }
-
-    public function testGetSubscribedTopics()
-    {
-        $this->assertEquals(
-            [Topics::PROCESS_CALCULATE_URL_CACHE],
+        self::assertEquals(
+            [CalculateSlugCacheTopic::getName()],
             UrlCacheProcessor::getSubscribedTopics()
         );
     }

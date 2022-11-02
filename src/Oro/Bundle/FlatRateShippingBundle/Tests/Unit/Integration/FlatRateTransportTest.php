@@ -11,7 +11,7 @@ class FlatRateTransportTest extends \PHPUnit\Framework\TestCase
     /** @var FlatRateTransport */
     private $transport;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transport = new FlatRateTransport();
     }

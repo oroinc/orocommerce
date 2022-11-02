@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\RedirectBundle\Model;
 
-use Doctrine\ORM\Mapping as ORM;
-
 class TextSlugPrototypeWithRedirect
 {
     /**

@@ -8,8 +8,8 @@ Feature: Sub-Categories filter
 
   Scenario: Logged in as buyer and manager on different window sessions
     Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Prepare Web Catalog
     Given I proceed as the Admin
@@ -41,8 +41,8 @@ Feature: Sub-Categories filter
     And I click on "Show Variants Dropdown"
     And I click "Add Category"
     And I fill "Content Node Form" with:
-      | Titles   | Lighting Products             |
-      | Url Slug | lighting-products             |
+      | Titles         | Lighting Products       |
+      | Url Slug       | lighting-products       |
       | Sub-Categories | Include, show as filter |
     And I click "Lighting Products"
     And I save form
@@ -99,12 +99,11 @@ Feature: Sub-Categories filter
     When I click on "Frontend Grid Action Filter Button"
     Then I should see an "Subcategories Filter" element
     When I click on "Subcategories Filter"
-    And I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (1) |
       | Headlamps (2)                   |
 
-Scenario: Apply subcategories filter
+  Scenario: Apply subcategories filter
     Given I check "Architectural Floodlighting (1)" in "Sub-Categories" filter in frontend product grid
     Then number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU2" product
@@ -119,10 +118,9 @@ Scenario: Apply subcategories filter
     And I should see "PSKU3" product
     And I should see "PSKU4" product
 
-Scenario: Apply another filter
+  Scenario: Apply another filter
     Given I filter Text as does not contain "Product3"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value                           |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (1) |
       | Headlamps (1)                   |
     And number of records in "Product Frontend Grid" should be 2
@@ -130,35 +128,39 @@ Scenario: Apply another filter
     And I should see "PSKU4" product
 
     When I filter Text as does not contain "Product2"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value         |
-      | Headlamps (2) |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+      | Architectural Floodlighting (0) |
+      | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2
     And I should see "PSKU3" product
     And I should see "PSKU4" product
 
     When I filter Text as contains "Product1"
-    Then I should not see an "Subcategories Filter" element
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+      | Architectural Floodlighting (0) |
+      | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
-    And I should see grid with filter hints:
+    And should see filter hints in frontend grid:
       | Any Text: contains "Product1"                          |
       | Sub-Categories: Architectural Floodlighting, Headlamps |
     When I reload the page
-    Then I should not see an "Subcategories Filter" element
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+      | Architectural Floodlighting (0) |
+      | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
-    And I should see grid with filter hints:
+    And should see filter hints in frontend grid:
       | Any Text: contains "Product1"                          |
       | Sub-Categories: Architectural Floodlighting, Headlamps |
 
     When I filter Text as does not contain "Product2"
-    Then I should see "Subcategories Filter Select" with options:
-      | Value         |
-      | Headlamps (2) |
+    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+      | Architectural Floodlighting (0) |
+      | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2
     And I should see "PSKU3" product
     And I should see "PSKU4" product
 
-Scenario: Hide filter
+  Scenario: Hide filter
     Given I hide filter "Sub-Categories" in "ProductFrontendGrid" frontend grid
     When I filter Text as contains "Product1"
     Then I should not see an "Subcategories Filter" element
@@ -177,9 +179,10 @@ Scenario: Hide filter
     And number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU2" product
 
-Scenario: Change type to "Do not include"
+  Scenario: Change type to "Do not include"
     Given I proceed as the Admin
     And I click "Lighting Products"
+    And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Sub-Categories | Do not include |
     And I save form
@@ -194,8 +197,9 @@ Scenario: Change type to "Do not include"
     And number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU1" product
 
-Scenario: Change type to "Include, show as filter"
+  Scenario: Change type to "Include, show as filter"
     Given I proceed as the Admin
+    And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Sub-Categories | Include, show as filter |
     And I save form

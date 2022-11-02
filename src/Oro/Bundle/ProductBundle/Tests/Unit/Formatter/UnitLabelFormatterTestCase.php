@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -14,35 +14,24 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
     /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->formatter = $this->createFormatter();
     }
 
-    protected function tearDown()
-    {
-        unset($this->formatter, $this->translator);
-    }
-
     /**
      * @dataProvider formatProvider
-     *
-     * @param string $unitCode
-     * @param bool $isShort
-     * @param bool $isPlural
-     * @param string $expected
      */
-    public function testFormat($unitCode, $isShort, $isPlural, $expected)
+    public function testFormat(string $unitCode, bool $isShort, bool $isPlural, string $expected)
     {
-        $this->translator->expects($this->once())->method('trans')->with($expected);
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with($expected);
         $this->formatter->format($unitCode, $isShort, $isPlural);
     }
 
-    /**
-     * @return array
-     */
-    public function formatProvider()
+    public function formatProvider(): array
     {
         return [
             'format full single' => [
@@ -79,19 +68,15 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $isShort
-     * @param bool $isPlural
-     * @param array $expected
-     *
      * @dataProvider formatChoicesProvider
      */
-    public function testFormatChoices($isShort, $isPlural, array $expected)
+    public function testFormatChoices(bool $isShort, bool $isPlural, array $expected)
     {
         $units = [$this->createObject('kg'), $this->createObject('item')];
 
         $this->translator->expects($this->exactly(2))
             ->method('trans')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$this->getTranslationPrefix() . '.kg.label.full', [], null, null, '_KG'],
                 [$this->getTranslationPrefix() . '.kg.label.full_plural', [], null, null, '_KG_PLURAL'],
                 [$this->getTranslationPrefix() . '.item.label.full', [], null, null, '_ITEM'],
@@ -100,15 +85,12 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
                 [$this->getTranslationPrefix() . '.kg.label.short_plural', [], null, null, '_KG_SHORT_PLURAL'],
                 [$this->getTranslationPrefix() . '.item.label.short', [], null, null, '_ITEM_SHORT'],
                 [$this->getTranslationPrefix() . '.item.label.short_plural', [], null, null, '_ITEM_SHORT_PLURAL']
-            ]));
+            ]);
 
         $this->assertEquals($expected, $this->formatter->formatChoices($units, $isShort, $isPlural));
     }
 
-    /**
-     * @return array
-     */
-    public function formatChoicesProvider()
+    public function formatChoicesProvider(): array
     {
         return [
             'format choices full single' => [
@@ -146,19 +128,9 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return UnitLabelFormatterInterface
-     */
     abstract protected function createFormatter(): UnitLabelFormatterInterface;
 
-    /**
-     * @return string
-     */
     abstract protected function getTranslationPrefix(): string;
 
-    /**
-     * @param string $code
-     * @return MeasureUnitInterface
-     */
-    abstract protected function createObject($code): MeasureUnitInterface;
+    abstract protected function createObject(string $code): MeasureUnitInterface;
 }

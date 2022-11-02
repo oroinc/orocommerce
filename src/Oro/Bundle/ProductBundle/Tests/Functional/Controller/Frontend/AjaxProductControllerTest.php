@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -24,10 +24,8 @@ class AjaxProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider productNamesBySkusDataProvider
-     * @param array $skus
-     * @param array $expectedData
      */
-    public function testProductNamesBySkus(array $skus, array $expectedData)
+    public function testProductNamesBySkus(array $skus, array $expectedData): void
     {
         $this->client->request(
             'POST',
@@ -35,13 +33,13 @@ class AjaxProductControllerTest extends WebTestCase
             ['skus' => $skus]
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertEquals($expectedData, $data);
+        self::assertEquals($expectedData, $data);
     }
 
-    public function productNamesBySkusDataProvider()
+    public function productNamesBySkusDataProvider(): array
     {
         return [
             'restricted' => [
@@ -72,7 +70,7 @@ class AjaxProductControllerTest extends WebTestCase
         ];
     }
 
-    public function testProductImagesById()
+    public function testProductImagesById(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -87,23 +85,28 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertNotEmpty($data);
-        $this->assertArrayHasKey(0, $data);
-        $this->assertArrayHasKey('product_gallery_popup', $data[0]);
-        $this->assertStringMatchesFormat(
-            '/media/cache/attachment/%s/%s/product_gallery_popup/product-1',
-            $data[0]['product_gallery_popup']
+        self::assertNotEmpty($data);
+        self::assertArrayHasKey(0, $data);
+        self::assertArrayHasKey('isInitial', $data[0]);
+        self::assertArrayHasKey('product_gallery_popup', $data[0]);
+        self::assertStringMatchesFormat(
+            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1-product-1-original.jpg.webp',
+            $data[0]['product_gallery_popup'][0]['srcset']
+        );
+        self::assertStringMatchesFormat(
+            '/media/cache/attachment/%s/product_gallery_popup/%s/%d/product-1-product-1-original.jpg',
+            $data[0]['product_gallery_popup'][1]['srcset']
         );
     }
 
-    public function testProductImagesByIdWhenProductHasNoImages()
+    public function testProductImagesByIdWhenProductHasNoImages(): void
     {
         /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_3);
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
         $this->client->request(
             'GET',
             $this->getUrl(
@@ -115,13 +118,13 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertSame([], $data);
+        self::assertSame([], $data);
     }
 
-    public function testProductImagesByIdWhenProductIsMissing()
+    public function testProductImagesByIdWhenProductIsMissing(): void
     {
         $this->client->request(
             'GET',
@@ -134,13 +137,13 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertEquals([], $data);
+        self::assertEquals([], $data);
     }
 
-    public function testProductImagesByIdWhenFiltersNamesAreMissing()
+    public function testProductImagesByIdWhenFiltersNamesAreMissing(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -154,9 +157,89 @@ class AjaxProductControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        $this->assertEquals([], $data);
+        self::assertEquals([], $data);
+    }
+
+    /**
+     * @dataProvider getProductFiltersSidebarStateDataProvider
+     */
+    public function testSetProductFiltersSidebarStateAction(int|string $isSidebarExpanded, bool $expectedResult): void
+    {
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_product_frontend_ajax_set_product_filters_sidebar_state'),
+            [
+                'sidebarExpanded' => $isSidebarExpanded,
+            ]
+        );
+        $result = $this->client->getResponse();
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+
+        $userProductFiltersSidebarStateManager = $this->getContainer()
+            ->get('oro_product.manager.user_product_filters_sidebar_state_manager');
+
+        self::assertEquals(
+            $expectedResult,
+            $userProductFiltersSidebarStateManager->isProductFiltersSidebarExpanded()
+        );
+    }
+
+    /**
+     * @dataProvider getProductFiltersSidebarStateDataProvider
+     */
+    public function testSetProductFiltersSidebarStateActionAnon(
+        int|string $isSidebarExpanded,
+        bool $expectedResult
+    ): void {
+        $this->initClient();
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_product_frontend_ajax_set_product_filters_sidebar_state'),
+            [
+                'sidebarExpanded' => $isSidebarExpanded,
+            ]
+        );
+        $result = $this->client->getResponse();
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+
+        $this->ensureSessionIsAvailable();
+
+        $userProductFiltersSidebarStateManager = $this->getContainer()
+            ->get('oro_product.manager.user_product_filters_sidebar_state_manager');
+
+        self::assertEquals(
+            $expectedResult,
+            $userProductFiltersSidebarStateManager->isProductFiltersSidebarExpanded()
+        );
+    }
+
+    public function getProductFiltersSidebarStateDataProvider(): array
+    {
+        return [
+            [
+                'isSidebarExpanded' => '',
+                'expectedResult' => false,
+            ],
+            [
+                'isSidebarExpanded' => 0,
+                'expectedResult' => false,
+            ],
+            [
+                'isSidebarExpanded' => 1,
+                'expectedResult' => true,
+            ],
+            [
+                'isSidebarExpanded' => '0',
+                'expectedResult' => false,
+            ],
+            [
+                'isSidebarExpanded' => '1',
+                'expectedResult' => true,
+            ],
+        ];
     }
 }

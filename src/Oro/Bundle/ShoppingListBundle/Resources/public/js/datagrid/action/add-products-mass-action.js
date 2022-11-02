@@ -1,10 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var AddProductsAction;
-    var MassAction = require('oro/datagrid/action/mass-action');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
+    const MassAction = require('oro/datagrid/action/mass-action');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const loadModules = require('oroui/js/app/services/load-modules');
 
     /**
      * Add products to shopping list
@@ -13,37 +13,38 @@ define(function(require) {
      * @class   oro.datagrid.action.AddProductsAction
      * @extends oro.datagrid.action.MassAction
      */
-    AddProductsAction = MassAction.extend({
+    const AddProductsAction = MassAction.extend({
         shoppingLists: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function AddProductsAction() {
-            AddProductsAction.__super__.constructor.apply(this, arguments);
+        constructor: function AddProductsAction(options) {
+            AddProductsAction.__super__.constructor.call(this, options);
+            this.requestType = 'POST';
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
-            AddProductsAction.__super__.initialize.apply(this, arguments);
+            AddProductsAction.__super__.initialize.call(this, options);
 
             this.datagrid.on('action:add-products-mass:shopping-list', this._onAddProducts, this);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             this.datagrid.off(null, null, this);
-            return AddProductsAction.__super__.dispose.apply(this, arguments);
+            return AddProductsAction.__super__.dispose.call(this);
         },
 
         /**
          * Override function to change URL
          *
-         * @inheritDoc
+         * @inheritdoc
          */
         _handleWidget: function() {
             if (this.dispatched) {
@@ -53,22 +54,22 @@ define(function(require) {
             this.frontend_options.url = this.getLink();
             this.frontend_options.title = this.frontend_options.title || this.label;
 
-            require(['oro/' + this.frontend_handle + '-widget'], _.bind(this._createHandleWidget, this));
+            loadModules('oro/' + this.frontend_handle + '-widget', this._createHandleWidget.bind(this));
         },
 
         _createHandleWidget: function(WidgetType) {
-            var widget = new WidgetType(this.frontend_options);
+            const widget = new WidgetType(this.frontend_options);
             widget.render();
 
-            var datagrid = this.datagrid;
-            var selectionState = datagrid.getSelectionState();
+            const datagrid = this.datagrid;
+            const selectionState = datagrid.getSelectionState();
 
-            widget.on('formSave', _.bind(function(response) {
+            widget.on('formSave', response => {
                 datagrid.resetSelectionState(selectionState);
-                this.listenToOnce(datagrid.massActions, 'reset', function() {
+                this.listenToOnce(datagrid.massActions, 'reset', () => {
                     this._onSaveHandleWidget(response, datagrid);
                 });
-            }, this));
+            });
         },
 
         _onSaveHandleWidget: function(response, datagrid) {
@@ -88,22 +89,22 @@ define(function(require) {
          * @private
          */
         getActionParameters: function() {
-            var selectionState = this.datagrid.getSelectionState();
-            var collection = this.datagrid.collection;
-            var stateKey = collection.stateHashKey();
+            const selectionState = this.datagrid.getSelectionState();
+            const collection = this.datagrid.collection;
+            const stateKey = collection.stateHashKey();
 
-            var unitsAndQuantities = {};
+            const unitsAndQuantities = {};
             _.each(selectionState.selectedIds, function(productModel) {
-                var attributes = productModel.attributes;
+                const attributes = productModel.attributes;
                 unitsAndQuantities[attributes.sku] = {};
                 unitsAndQuantities[attributes.sku][attributes.unit] = attributes.quantity;
             });
 
-            var selectedIds = _.map(selectionState.selectedIds, function(productModel) {
+            const selectedIds = _.map(selectionState.selectedIds, function(productModel) {
                 return productModel.id;
             });
 
-            var params = {
+            let params = {
                 inset: selectionState.inset ? 1 : 0,
                 values: selectedIds.join(','),
                 units_and_quantities: JSON.stringify(unitsAndQuantities)
@@ -125,11 +126,17 @@ define(function(require) {
         },
 
         _onAjaxSuccess: function(data, textStatus, jqXHR) {
-            var datagrid = this.datagrid;
+            const datagrid = this.datagrid;
 
-            var models = _.map(data.products, function(product) {
-                return datagrid.collection.get(product.id);
-            });
+            const models = _.reduce(data.products, function(newModels, product) {
+                const productModel = datagrid.collection.get(product.id);
+
+                if (productModel) {
+                    newModels.push(productModel);
+                }
+
+                return newModels;
+            }, []);
 
             datagrid.resetSelectionState();
 

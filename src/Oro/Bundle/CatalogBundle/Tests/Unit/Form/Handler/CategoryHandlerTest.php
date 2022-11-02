@@ -2,158 +2,195 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
-use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category as CategoryStub;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class CategoryHandlerTest extends FormHandlerTestCase
+class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Category
-     */
-    protected $entity;
+    private const FORM_DATA = ['field' => 'value'];
 
-    /** @var  EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $manager;
 
-    protected function setUp()
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
+
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
+
+    /** @var CategoryStub */
+    private $entity;
+
+    /** @var CategoryHandler */
+    private $handler;
+
+    protected function setUp(): void
     {
-        parent::setUp();
+        $this->manager = $this->createMock(ObjectManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->entity = $this->createMock(Category::class);
-        $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
+        $this->form = $this->createMock(Form::class);
+        $this->entity = $this->createMock(CategoryStub::class);
+
+        $this->handler = new CategoryHandler($this->manager, $this->eventDispatcher);
+    }
+
+    private function expectsAppendRemoveProducts(): void
+    {
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(new AfterFormProcessEvent($this->form, $this->entity), 'oro_catalog.category.edit');
+
+        $appendProducts = $this->createMock(Form::class);
+        $appendProducts->expects(self::once())
+            ->method('getData')
+            ->willReturn([new Product()]);
+
+        $removeProducts = $this->createMock(Form::class);
+        $removeProducts->expects(self::once())
+            ->method('getData')
+            ->willReturn([new Product()]);
+
+        $this->form->expects(self::exactly(2))
+            ->method('get')
+            ->willReturnMap([
+                ['appendProducts', $appendProducts],
+                ['removeProducts', $removeProducts]
+            ]);
+    }
+
+    private function expectsCategoryUnitPrecisionUpdate(): void
+    {
+        $defaultProductOptions = $this->createMock(CategoryDefaultProductOptions::class);
+        $defaultProductOptions->expects(self::once())
+            ->method('updateUnitPrecision');
+        $this->entity->expects(self::any())
+            ->method('getDefaultProductOptions')
+            ->willReturn($defaultProductOptions);
+    }
+
+    public function testProcessUnsupportedRequest(): void
+    {
+        $request = new Request();
+        $request->setMethod('GET');
+
+        $this->form->expects(self::once())
+            ->method('setData')
+            ->with($this->entity);
+        $this->form->expects(self::never())
+            ->method('submit');
+
+        $this->assertFalse($this->handler->process($this->entity, $this->form, $request));
     }
 
     /**
      * @dataProvider supportedMethods
-     *
-     * @param string $method
-     * @param boolean $isValid
-     * @param boolean $isProcessed
      */
-    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
+    public function testProcessSupportedRequest(string $method): void
     {
-        $this->form->expects($this->once())
+        $request = new Request();
+        $request->initialize([], self::FORM_DATA);
+        $request->setMethod($method);
+
+        $this->form->expects(self::once())
             ->method('setData')
             ->with($this->entity);
-
-        $this->form->expects($this->any())
+        $this->form->expects(self::once())
             ->method('isValid')
-            ->will($this->returnValue($isValid));
+            ->willReturn(true);
 
-        if ($isValid) {
-            $this->assertAppendRemoveProducts();
-            $this->assertCategoryUnitPrecisionUpdate();
-        }
+        $this->expectsAppendRemoveProducts();
+        $this->expectsCategoryUnitPrecisionUpdate();
 
-        $this->request->initialize([], self::FORM_DATA);
-        $this->request->setMethod($method);
-
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('submit')
             ->with(self::FORM_DATA);
 
-        $this->mockProductCategory();
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+        $categoryRepository->expects(self::once())
+            ->method('findOneByProduct')
+            ->willReturn(new CategoryStub());
+        $this->manager->expects(self::once())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($categoryRepository);
 
-        $this->assertEquals($isProcessed, $this->handler->process($this->entity));
+        self::assertTrue($this->handler->process($this->entity, $this->form, $request));
     }
 
-    public function testProcessValidData()
+    public function supportedMethods(): array
     {
-        $event = new AfterFormProcessEvent($this->form, $this->entity);
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with('oro_catalog.category.edit', $event);
+        return [['POST'], ['PUT']];
+    }
 
-        $this->form->expects($this->once())
+    public function testProcessSupportedRequestWithInvalidData(): void
+    {
+        $request = new Request();
+        $request->initialize([], self::FORM_DATA);
+        $request->setMethod('POST');
+
+        $this->form->expects(self::once())
             ->method('setData')
             ->with($this->entity);
+        $this->form->expects(self::once())
+            ->method('isValid')
+            ->willReturn(false);
 
-        $this->request->initialize([], self::FORM_DATA);
-        $this->request->setMethod('POST');
-
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('submit')
             ->with(self::FORM_DATA);
 
-        $this->form->expects($this->once())
+        $this->manager->expects(self::never())
+            ->method('getRepository');
+
+        self::assertFalse($this->handler->process($this->entity, $this->form, $request));
+    }
+
+    public function testProcessValidData(): void
+    {
+        $request = new Request();
+        $request->initialize([], self::FORM_DATA);
+        $request->setMethod('POST');
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(new AfterFormProcessEvent($this->form, $this->entity), 'oro_catalog.category.edit');
+
+        $this->form->expects(self::once())
+            ->method('setData')
+            ->with($this->entity);
+        $this->form->expects(self::once())
+            ->method('submit')
+            ->with(self::FORM_DATA);
+        $this->form->expects(self::once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $this->assertAppendRemoveProducts();
-        $this->assertCategoryUnitPrecisionUpdate();
+        $this->expectsAppendRemoveProducts();
+        $this->expectsCategoryUnitPrecisionUpdate();
 
-        $this->mockProductCategory();
-
-        $this->manager->expects($this->any())
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+        $categoryRepository->expects(self::once())
+            ->method('findOneByProduct')
+            ->willReturn(new CategoryStub());
+        $this->manager->expects(self::once())
+            ->method('getRepository')
+            ->with(Category::class)
+            ->willReturn($categoryRepository);
+        $this->manager->expects(self::once())
             ->method('persist');
-
-        $this->manager->expects($this->any())
+        $this->manager->expects(self::once())
             ->method('flush');
 
-        $this->assertTrue($this->handler->process($this->entity));
-    }
-
-    protected function assertAppendRemoveProducts()
-    {
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            'oro_catalog.category.edit',
-            new AfterFormProcessEvent($this->form, $this->entity)
-        );
-        $appendProducts = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $appendProducts->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([new Product()]));
-
-        $this->form->expects($this->at(5))
-            ->method('get')
-            ->with('appendProducts')
-            ->will($this->returnValue($appendProducts));
-
-        $removeProducts = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $removeProducts->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([new Product()]));
-
-        $this->form->expects($this->at(6))
-            ->method('get')
-            ->with('removeProducts')
-            ->will($this->returnValue($removeProducts));
-    }
-
-    protected function mockProductCategory()
-    {
-        $category = new Category();
-        $categoryRepository = $this
-            ->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categoryRepository->expects($this->any())
-            ->method('findOneByProduct')
-            ->will($this->returnValue($category));
-        $this->manager->expects($this->any())
-            ->method('getRepository')
-            ->with('OroCatalogBundle:Category')
-            ->will($this->returnValue($categoryRepository));
-    }
-    
-    protected function assertCategoryUnitPrecisionUpdate()
-    {
-        $defaultProductOptions = $this->createMock('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
-        $defaultProductOptions->expects($this->once())
-            ->method('updateUnitPrecision');
-        $this->entity->expects($this->any())
-            ->method('getDefaultProductOptions')
-            ->will($this->returnValue($defaultProductOptions));
+        self::assertTrue($this->handler->process($this->entity, $this->form, $request));
     }
 }

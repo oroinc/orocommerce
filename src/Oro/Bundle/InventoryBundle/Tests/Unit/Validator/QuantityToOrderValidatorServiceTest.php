@@ -3,54 +3,65 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fallbackResolver;
+    /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $fallbackResolver;
 
-    /**
-     * @var QuantityToOrderValidatorService
-     */
-    protected $quantityToOrderValidatorService;
+    /** @var PreloadingManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $preloadingManager;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $translator;
+    /** @var QuantityToOrderValidatorService */
+    private $quantityToOrderValidatorService;
 
-    protected function setUp()
+    private array $fieldsToPreload = [
+        'product' => [
+            'minimumQuantityToOrder' => [],
+            'maximumQuantityToOrder' => [],
+            'category' => [
+                'minimumQuantityToOrder' => [],
+                'maximumQuantityToOrder' => [],
+            ],
+        ],
+    ];
+
+    protected function setUp(): void
     {
-        $this->fallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $this->fallbackResolver = $this->createMock(EntityFallbackResolver::class);
+        $this->preloadingManager = $this->createMock(PreloadingManager::class);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($message) {
-                    return $message;
-                }
-            );
+            ->willReturnCallback(function ($message) {
+                return $message;
+            });
+
         $this->quantityToOrderValidatorService = new QuantityToOrderValidatorService(
             $this->fallbackResolver,
-            $this->translator
+            $translator,
+            $this->preloadingManager
         );
     }
 
     public function testIsLineItemListValidReturnsTrueIfNoProduct()
     {
         $lineItems = [new LineItem()];
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with($lineItems, $this->fieldsToPreload);
+
         $this->assertTrue($this->quantityToOrderValidatorService->isLineItemListValid($lineItems));
     }
 
@@ -60,6 +71,10 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProduct(new Product());
         $lineItem->setQuantity(1);
         $lineItems = [$lineItem];
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with($lineItems, $this->fieldsToPreload);
 
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -73,6 +88,10 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProduct(new Product());
         $lineItem->setQuantity(3);
         $lineItems = [$lineItem];
+
+        $this->preloadingManager->expects($this->once())
+            ->method('preloadInEntities')
+            ->with($lineItems, $this->fieldsToPreload);
 
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -96,7 +115,6 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testIsMaxLimitLowerThenMinLimitReturnFalseIfNotNumeric()
     {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -107,7 +125,6 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testIsMaxLimitLowerThenMinLimitReturnFalse()
     {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -118,7 +135,6 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testIsMaxLimitLowerThenMinLimitReturnTrue()
     {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->exactly(2))
             ->method('getFallbackValue')
@@ -166,7 +182,6 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMinimumLimit()
     {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')
@@ -177,7 +192,6 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMaximumLimit()
     {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product * */
         $product = $this->createMock(Product::class);
         $this->fallbackResolver->expects($this->once())
             ->method('getFallbackValue')

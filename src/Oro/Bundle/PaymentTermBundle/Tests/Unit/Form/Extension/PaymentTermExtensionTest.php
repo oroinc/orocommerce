@@ -25,7 +25,7 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentTermProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()
@@ -34,9 +34,9 @@ class PaymentTermExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new PaymentTermExtension($this->paymentTermProvider);
     }
 
-    public function testGetExtended()
+    public function testGetExtendedTypes()
     {
-        $this->assertSame(PaymentTermSelectType::class, $this->extension->getExtendedType());
+        $this->assertSame([PaymentTermSelectType::class], PaymentTermExtension::getExtendedTypes());
     }
 
     /**

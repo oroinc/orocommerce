@@ -1,0 +1,2 @@
+include:
+    - '@OroProductBundle/Tests/Behat/Features/Fixtures/products_grid.yml'

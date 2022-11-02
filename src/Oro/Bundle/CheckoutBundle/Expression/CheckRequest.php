@@ -5,9 +5,16 @@ namespace Oro\Bundle\CheckoutBundle\Expression;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Component\ConfigExpression\Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Compares a parameter value from request with expected value.
+ *
+ * Usage:
+ * @check_request:
+ *     expected_key: update_checkout_state
+ *     expected_value: 1
+ */
 class CheckRequest extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
@@ -22,9 +29,6 @@ class CheckRequest extends AbstractCondition implements ContextAccessorAwareInte
      */
     protected $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
@@ -80,18 +84,14 @@ class CheckRequest extends AbstractCondition implements ContextAccessorAwareInte
         }
 
         $isAjax = $this->resolveValue($context, $this->options['is_ajax'], false);
-        if ($isAjax !== null) {
-            if ($request->isXmlHttpRequest() !== $isAjax) {
-                return false;
-            }
+        if ($isAjax !== null && $request->isXmlHttpRequest() !== $isAjax) {
+            return false;
         }
 
         $expectedKey = $this->resolveValue($context, $this->options['expected_key'], false);
         $expectedValue = $this->resolveValue($context, $this->options['expected_value'], false);
-        if ($request->get($expectedKey) != $expectedValue) {
-            return false;
-        }
+        $actualValue = $expectedKey ? $request->get($expectedKey) : null;
 
-        return true;
+        return $actualValue == $expectedValue;
     }
 }

@@ -3,20 +3,25 @@ oro_behat_extension:
         OroRFPBundle:
             contexts:
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroWorkflowBundle::FeatureContext
-                - OroApplicationBundle::CommerceMainContext
-                - OroShoppingListBundle::FeatureContext
-                - OroShoppingListBundle::ShoppingListContext
-                - OroRFPBundle::FeatureContext
-                - OroConfigBundle::FeatureContext
-                - OroNavigationBundle::FeatureContext
-                - OroUIBundle::TypeaheadContext
-                - OroProductBundle::FeatureContext
-                - OroLocaleBundle::LocalizationContext
-                - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-                - OroEmailBundle::EmailContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+                - Oro\Bundle\RFPBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\UIBundle\Tests\Behat\Context\TypeaheadContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+                - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+                - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
+                - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+                - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 
@@ -30,26 +35,89 @@ oro_behat_extension:
             selector: '.page-content'
 
         RequestForQuoteTitle:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'span.page-title__text'
 
         RequestForQuoteFlashMessage:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: '#flash-messages div.notification-flash__text'
 
         RequestMoreInformationPopupForm:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             selector: div.ui-dialog form
 
+        Customer Users RFQ:
+            selector: "div[id^='grid-customer-user-view-rfq-grid']"
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
         RequestNotesBlock:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: .page-content div.notes
         TargetPriceField:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'input[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]"]'
         LineItemDropdown:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: '.line-item-form .dropdown-toggle'
+
+        Request Notes:
+            selector: 'textarea[name="oro_rfp_frontend_request[note]"]'
+
+        RFQ Create Order:
+            selector: '.navigation a:contains("Create Order")'
+
+        Request Form:
+            selector: 'form[name^="oro_rfp_request"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Line Item Product:
+                        type: 'css'
+                        locator: 'input[name="oro_rfp_request[requestProducts][0][product]"]'
+                        element: Select2Entity
+                    Do Not Ship Later Than:
+                        type: 'css'
+                        locator: 'input[name^="oro_sale_quote_shipUntil"]'
+
+        Frontend Request Form:
+            selector: 'form[name^="oro_rfp_frontend_request"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Line Item Product:
+                        type: 'css'
+                        locator: 'input[name="oro_rfp_frontend_request[requestProducts][0][product]"]'
+                        element: Select2Entity
+                    Do Not Ship Later Than:
+                        type: 'css'
+                        locator: 'input[name^="oro_rfp_frontend_request_shipUntil"]'
+                    Line Item First Unit:
+                        type: 'css'
+                        locator: 'select[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]"]'
+                        element: Select2Entity
+
+        RFQ Products List:
+            selector: '.request-form__content'
+
+        Remove Request Product Edit Line Item:
+            selector:
+                locator: '//div[@data-role="line-item-edit"][1]//button[contains(@class, "removeRow")]'
+                type: xpath
+
+        Requests For Quote tab:
+            selector:
+              type: 'xpath'
+              locator: '//a[text()="Requests For Quote"]'
+
+        Edit Request Product Line Item:
+            selector:
+                locator: '//div[@data-role="line-item"][1]//button[@data-role="edit"]'
+                type: xpath
+
+        Add Another Line:
+            selector:
+                locator: '//div[@data-role="line-item"][1]//a[@data-role="lineitem-add"]'
+                type: xpath
+
+        Line Item Quantity:
+            selector:
+                locator: '//div[@data-role="line-item"][1]//div[@data-role="lineitems"]/div[last()]//input[@data-name="field__quantity"]'
+                type: xpath
 
     pages:
         RequestViewBackendPage:

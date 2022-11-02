@@ -2,14 +2,21 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\Proxy;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProductFactoryInterface;
 
+/**
+ * Adds empty line item (with empty matrix) of configurable product to shopping list
+ */
 class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 {
     /**
@@ -22,14 +29,11 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
      */
     private $lineItemFactory;
 
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param LineItemByShoppingListAndProductFactoryInterface $lineItemFactory
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         LineItemByShoppingListAndProductFactoryInterface $lineItemFactory,
@@ -56,11 +60,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         $this->addConfigurableProductToShoppingList($shoppingList, $product);
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return bool
-     */
     private function isShoppingListHasProductVariants(ShoppingList $shoppingList, Product $product): bool
     {
         return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
@@ -70,11 +69,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         ]) !== null;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @return bool
-     */
     private function isShoppingListHasConfigurableProduct(ShoppingList $shoppingList, Product $product): bool
     {
         return $this->doctrineHelper->getEntityRepository(LineItem::class)->findOneBy([
@@ -84,10 +78,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         ]) !== null;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     */
     private function addConfigurableProductToShoppingList(ShoppingList $shoppingList, Product $product)
     {
         $entityManager = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
@@ -123,9 +113,6 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         return true;
     }
 
-    /**
-     * @return bool
-     */
     private function isEmptyMatrixConfig(): bool
     {
         return $this->configManager
@@ -137,12 +124,47 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
      */
     public function hasEmptyMatrix(ShoppingList $shoppingList): bool
     {
-        foreach ($shoppingList->getLineItems() as $lineItem) {
+        $lineItemsCollection = $shoppingList->getLineItems();
+        if ($this->isTooManyUninitializedProducts($lineItemsCollection)) {
+            /** @var ShoppingListRepository $repository */
+            $repository = $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class);
+
+            return $repository->hasEmptyConfigurableLineItems($shoppingList);
+        }
+
+        foreach ($lineItemsCollection as $lineItem) {
             if ($lineItem->getProduct()->isConfigurable()) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private function isTooManyUninitializedProducts(Collection $lineItemsCollection): bool
+    {
+        $result = false;
+        if ($lineItemsCollection->isEmpty()) {
+            return $result;
+        }
+
+        if ($lineItemsCollection instanceof AbstractLazyCollection && !$lineItemsCollection->isInitialized()) {
+            $result = true;
+        } else {
+            $notInitializedCount = 0;
+            $lineItemsCollection->first();
+            do {
+                $product = $lineItemsCollection->current()->getProduct();
+                if ($product instanceof Proxy && !$product->__isInitialized()) {
+                    $notInitializedCount ++;
+                    if ($notInitializedCount > 2) {
+                        $result = true;
+                        break;
+                    }
+                }
+            } while ($lineItemsCollection->next());
+        }
+
+        return $result;
     }
 }

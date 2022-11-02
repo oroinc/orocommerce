@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetEntityClass()
@@ -43,6 +46,30 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([], $event->getEntitiesData());
     }
 
+    public function testSetEntitiesData()
+    {
+        $date = new \DateTime();
+        $expectedData = [
+            1 => [
+                'name' => [['value' => 'Product name', 'all_text' => true]],
+                'description' => [['value' => 'Product description', 'all_text' => true]],
+                'price' => [['value' => 100.00, 'all_text' => false]],
+                'categoryId' => [['value' => 3, 'all_text' => false]],
+                'colors' => [['value' => ['red', 'green', 'blue'], 'all_text' => false]],
+            ],
+            2 => [
+                'name' => [['value' => 'Another product name', 'all_text' => true]],
+                'date' => [['value' => $date, 'all_text' => false]],
+                'optional_field' => [['value' => null, 'all_text' => false]],
+            ],
+        ];
+
+        $event = new IndexEntityEvent(\stdClass::class, [1, 2], []);
+        $event->setEntitiesData($expectedData);
+
+        $this->assertEquals($expectedData, $event->getEntitiesData());
+    }
+
     public function testGetEntityDataWhenFieldsAreAdded()
     {
         $event = new IndexEntityEvent(\stdClass::class, [1, 2], []);
@@ -51,9 +78,11 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
         $event->addField(1, 'description', 'Product description', true);
         $event->addField(1, 'price', 100.00);
         $event->addField(1, 'categoryId', 3);
+        $event->addField(1, 'colors', ['red', 'green', 'blue']);
         $event->addField(2, 'name', 'Another product name', true);
         $date = new \DateTime();
         $event->addField(2, 'date', $date);
+        $event->addField(2, 'optional_field', null);
 
         $expectedData = [
             1 => [
@@ -61,42 +90,32 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
                 'description' => [['value' => 'Product description', 'all_text' => true]],
                 'price' => [['value' => 100.00, 'all_text' => false]],
                 'categoryId' => [['value' => 3, 'all_text' => false]],
+                'colors' => [['value' => ['red', 'green', 'blue'], 'all_text' => false]],
             ],
             2 => [
                 'name' => [['value' => 'Another product name', 'all_text' => true]],
                 'date' => [['value' => $date, 'all_text' => false]],
+                'optional_field' => [['value' => null, 'all_text' => false]],
             ],
         ];
 
-        $this->assertEquals($expectedData, $event->getEntitiesData());
+        $this->assertSame($expectedData, $event->getEntitiesData());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Scalars and \DateTime are supported only, "stdClass" given
-     */
     public function testAddFieldObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Scalars, \DateTime and NULL are supported only, "stdClass" given');
+
         $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addField(1, 'sku', new \stdClass());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Scalars and \DateTime are supported only, "array" given
-     */
-    public function testAddFieldArray()
-    {
-        $event = new IndexEntityEvent(\stdClass::class, [], []);
-        $event->addField(1, 'sku', []);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage supported only, "Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue" given
-     */
     public function testAddPlaceholderFieldNotSupported()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('supported only, "Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue" given');
+
         $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addPlaceholderField(1, 'sku', new LocalizedFallbackValue(), []);
     }
@@ -118,5 +137,22 @@ class IndexEntityEventTest extends \PHPUnit\Framework\TestCase
             ],
             $event->getEntitiesData()
         );
+    }
+
+    public function testRemoveEntityDataWhenNoEntity(): void
+    {
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
+        $event->removeEntityData(1);
+
+        $this->assertEmpty($event->getEntitiesData());
+    }
+
+    public function testRemoveEntityData(): void
+    {
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
+        $event->addField(1, 'sample_field', 'sample_value');
+        $event->removeEntityData(1);
+
+        $this->assertEmpty($event->getEntitiesData());
     }
 }

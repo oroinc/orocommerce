@@ -39,11 +39,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     /** @var PayPalCreditCardConfigInterface */
     protected $config;
 
-    /**
-     * @param Gateway $gateway
-     * @param PayPalCreditCardConfigInterface $config
-     * @param RouterInterface $router
-     */
     public function __construct(Gateway $gateway, PayPalCreditCardConfigInterface $config, RouterInterface $router)
     {
         $this->gateway = $gateway;
@@ -68,9 +63,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         return $this->{$action}($paymentTransaction) ?: [];
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     public function authorize(PaymentTransaction $paymentTransaction)
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
@@ -93,10 +85,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
             ->setResponse($response->getData());
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @param PaymentTransaction $sourcePaymentTransaction
-     */
     protected function useValidateTransactionData(
         PaymentTransaction $paymentTransaction,
         PaymentTransaction $sourcePaymentTransaction
@@ -242,8 +230,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
      */
     protected function secureTokenResponse(PaymentTransaction $paymentTransaction)
     {
-        $isSuccessful = $paymentTransaction->isSuccessful();
-
         // Mark successful false for generate token transaction
         // PayPal callback should update transaction
         $paymentTransaction->setSuccessful(false);
@@ -252,7 +238,9 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
 
         $response = array_intersect_key($paymentTransaction->getResponse(), array_flip($keys));
 
-        return array_merge($response, ['formAction' => $this->gateway->getFormAction(), 'successful' => $isSuccessful]);
+        $response['formAction'] = $this->gateway->getFormAction();
+
+        return $response;
     }
 
     /**
@@ -326,7 +314,10 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        $amount = round($context->getTotal(), self::AMOUNT_PRECISION);
+        $zeroAmount = round(0, self::AMOUNT_PRECISION);
+
+        return !($amount === $zeroAmount);
     }
 
     /**
@@ -353,9 +344,6 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         );
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
     public function complete(PaymentTransaction $paymentTransaction)
     {
         $response = new Response($paymentTransaction->getResponse());

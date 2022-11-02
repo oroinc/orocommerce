@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Test\Unit\Context\Factory;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Factory;
 
 use Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory;
@@ -21,7 +21,7 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->compositeFactory = $this->createMock(CompositeSupportsEntityPaymentContextFactory::class);
 

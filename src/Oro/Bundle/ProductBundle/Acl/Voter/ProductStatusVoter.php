@@ -2,37 +2,35 @@
 
 namespace Oro\Bundle\ProductBundle\Acl\Voter;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
- * Security voter that prevents direct access to the pages of disabled products on the front store
+ * Prevents direct access to the pages of disabled products on the storefront.
  */
 class ProductStatusVoter extends AbstractEntityVoter
 {
-    const ATTRIBUTE_VIEW = 'VIEW';
+    /** {@inheritDoc} */
+    protected $supportedAttributes = [BasicPermission::VIEW];
 
-    /**
-     * @var array
-     */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_VIEW,
-    ];
+    private FrontendHelper $frontendHelper;
 
-    /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
+    public function __construct(DoctrineHelper $doctrineHelper, FrontendHelper $frontendHelper)
+    {
+        parent::__construct($doctrineHelper);
+        $this->frontendHelper = $frontendHelper;
+    }
 
     /**
      * {@inheritDoc}
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
+        if ($this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
 
@@ -44,24 +42,14 @@ class ProductStatusVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        /** @var $repository ProductRepository */
-        $repository = $this->doctrineHelper->getEntityRepository($class);
-
-        /** @var Product $product */
-        $product = $repository->find($identifier);
-
-        if (!$product) {
+        /** @var Product|null $product */
+        $product = $this->doctrineHelper->getEntityRepository($class)->find($identifier);
+        if (null === $product) {
             return self::ACCESS_ABSTAIN;
         }
 
-        return $product->getStatus() === Product::STATUS_ENABLED ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
-    }
-
-    /**
-     * @param FrontendHelper $frontendHelper
-     */
-    public function setFrontendHelper(FrontendHelper $frontendHelper)
-    {
-        $this->frontendHelper = $frontendHelper;
+        return $product->getStatus() === Product::STATUS_ENABLED
+            ? self::ACCESS_GRANTED
+            : self::ACCESS_DENIED;
     }
 }

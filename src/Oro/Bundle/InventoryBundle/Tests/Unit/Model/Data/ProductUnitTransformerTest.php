@@ -1,7 +1,8 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Tests\Model\Data;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Model\Data;
 
+use Doctrine\Inflector\Rules\English\InflectorFactory;
 use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
@@ -9,31 +10,28 @@ class ProductUnitTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider productUnitsProvider
-     * @param $unit
      */
-    public function testTransformToProductUnit($unit, $expected)
+    public function testTransformToProductUnit(string $unit, string $expected)
     {
-        $productUnitProvider = $this->getMockBuilder(ProductUnitsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitProvider->expects($this->exactly(1))
+        $productUnitProvider = $this->createMock(ProductUnitsProvider::class);
+        $productUnitProvider->expects($this->once())
             ->method('getAvailableProductUnits')
-            ->will($this->returnValue([
+            ->willReturn([
                 'kilogram' => 'kg',
-                'item' => 'item',
-                'set' => 'set',
-                'piece' => 'piece',
-                'each' => 'each'
-            ]));
+                'item'     => 'item',
+                'set'      => 'set',
+                'piece'    => 'piece',
+                'each'     => 'each'
+            ]);
 
-        $transformer = new ProductUnitTransformer($productUnitProvider);
+        $transformer = new ProductUnitTransformer($productUnitProvider, (new InflectorFactory())->build());
 
         $code = $transformer->transformToProductUnit($unit);
 
         $this->assertEquals($code, $expected);
     }
 
-    public function productUnitsProvider()
+    public function productUnitsProvider(): array
     {
         return [
             [

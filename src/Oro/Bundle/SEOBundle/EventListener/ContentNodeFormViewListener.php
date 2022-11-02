@@ -7,17 +7,11 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 
 class ContentNodeFormViewListener extends BaseFormViewListener
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onContentNodeView(BeforeListRenderEvent $event)
     {
         $this->addViewPageBlock($event);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onContentNodeEdit(BeforeListRenderEvent $event)
     {
         $this->addEditPageBlock($event);

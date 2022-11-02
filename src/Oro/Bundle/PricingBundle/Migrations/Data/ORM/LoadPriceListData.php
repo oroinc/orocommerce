@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Migrations\Data\ORM\SetDefaultCurrencyFromLocale;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -38,9 +38,6 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
         $this->container = $container;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $priceList = new PriceList();

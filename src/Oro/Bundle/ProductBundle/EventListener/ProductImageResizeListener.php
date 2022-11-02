@@ -7,34 +7,26 @@ use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Sends MQ message to resize product images.
+ */
 class ProductImageResizeListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    const IMAGE_RESIZE_TOPIC = 'imageResize';
+    private MessageProducerInterface $producer;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    protected $producer;
-
-    /**
-     * @param MessageProducerInterface $producer
-     */
     public function __construct(MessageProducerInterface $producer)
     {
         $this->producer = $producer;
     }
 
-    /**
-     * @param ProductImageResizeEvent $event
-     */
-    public function resizeProductImage(ProductImageResizeEvent $event)
+    public function resizeProductImage(ProductImageResizeEvent $event): void
     {
         if (!$this->enabled) {
             return;
         }
 
-        $this->producer->send(self::IMAGE_RESIZE_TOPIC, $event->getData());
+        $this->producer->send($event->getTopicName(), $event->getData());
     }
 }

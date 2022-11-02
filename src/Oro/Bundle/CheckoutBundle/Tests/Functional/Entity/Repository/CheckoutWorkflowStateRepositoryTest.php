@@ -2,27 +2,22 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutWorkflowState;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutWorkflowState;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CheckoutWorkflowStateRepositoryTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(['Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutWorkflowState']);
+        $this->loadFixtures([LoadCheckoutWorkflowState::class]);
     }
 
-    /**
-     * @return CheckoutWorkflowStateRepository
-     */
-    protected function getRepository()
+    private function getRepository(): CheckoutWorkflowStateRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCheckoutBundle:CheckoutWorkflowState');
+        return $this->getContainer()->get('doctrine')->getRepository(CheckoutWorkflowState::class);
     }
 
     public function testGetEntityStateByToken()
@@ -52,10 +47,7 @@ class CheckoutWorkflowStateRepositoryTest extends WebTestCase
         $this->assertEquals(1, $this->countEntities());
     }
 
-    /**
-     * @return int
-     */
-    protected function countEntities()
+    private function countEntities(): int
     {
         return $this->getRepository()->createQueryBuilder('t')
             ->select('COUNT(t)')

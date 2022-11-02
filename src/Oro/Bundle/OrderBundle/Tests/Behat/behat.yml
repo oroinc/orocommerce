@@ -14,13 +14,46 @@ oro_behat_extension:
     Order Shipping Address Select:
       selector: '[name="oro_order_type[shippingAddress][customerAddress]"]'
 
+    FrontendOrderLineItem:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\OrderLineItem
+      selector: 'tbody.grid-body tr.grid-row'
+
+    Frontend Order Line Item Product View Link:
+      selector: 'h3.oro-grid-table__title a'
+
+    Frontend Order Line Item Product Attribute:
+      selector: 'td.grid-body-cell-product > div'
+
     BackendOrderLineItem:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
-      selector: 'tr'
+      selector: 'tbody > tr.order-line-item'
 
     BackendOrderLineItemsTable:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.order-line-items-table'
+
+    Backend Order First Line Item Taxes Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child div.line-item-taxes-items table.tax-result-grid'
+
+    Backend Order Second Line Item Taxes Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:nth-child(2) div.line-item-taxes-items table.tax-result-grid'
+
+    Backend Order First Line Item Taxes Results Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child div.line-item-taxes-results table.tax-result-grid'
+
+    Backend Order Second Line Item Taxes Results Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:nth-child(2) div.line-item-taxes-results table.tax-result-grid'
+
+    Backend Order First Line Item Discounts Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'tr.order-line-item:first-child table.applied_discounts-result-grid'
+
+    Backend Order Add Product Button:
+      selector: 'div.order-line-items a.add-list-item'
 
     BackendOrderLineItems:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItems
@@ -32,34 +65,41 @@ oro_behat_extension:
           type: xpath
           locator: '//div[@data-totals-container]'
 
+    Backend View Order Edit Action Button: # Unique element of the edit button (action button) on Order view page.
+      selector:
+        type: xpath
+        locator: './/a[contains(@class, "action-button") and contains(normalize-space(string(.)), "Edit")]'
+
     Order:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
       selector: '.page-content'
 
+    Order Line Items Table:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\ProductTable
+      selector: 'table.grid-main-container'
+
     OrderLineItemProductSku:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div:contains("Item #:") > span'
 
     OrderTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.page-title .page-title__text'
 
     Order Payment Transaction Grid:
-      selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
+      selector: "div[id^='grid-order-payment-transactions-grid']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Calculate Shipping Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'span[id="possible_shipping_methods_btn"]'
 
     Order Flat Rate:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//label[contains(text(),"Flat Rate")]'
         type: xpath
 
+    Flat Rate:
+      selector: '[id*="flat_rate"]'
+
     Order DPD Classic:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
         type: xpath
@@ -69,6 +109,10 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Currency:
+            type: xpath
+            locator: '//select[@name="oro_order_type[currency]"]'
+            element: Select2Choices
           Billing Address:
             locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type")]/input'
             type: xpath
@@ -117,9 +161,43 @@ oro_behat_extension:
           Price2:
             locator: '//input[@name="oro_order_type[lineItems][1][price][value]"]'
             type: xpath
+          FreeProduct3:
+            locator: '//input[contains(@id,"oro_order_type_lineItems_2_freeFormProduct-uid")]'
+            type: xpath
+          Quantity3:
+            locator: '//input[@name="oro_order_type[lineItems][2][quantity]"]'
+            type: xpath
+          Price3:
+            locator: '//input[@name="oro_order_type[lineItems][2][price][value]"]'
+            type: xpath
           PO Number:
             locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
             type: xpath
+          Do Not Ship Later Than:
+            type: 'css'
+            locator: 'input[name^="oro_order_type_shipUntil"]'
+
+    Order Form Line Item 1 Offer 1:
+      selector: '[name="oro_order_type[lineItems][0][offers]"]'
+
+    Order Form Line Item 2 Offer 1:
+      selector: '[name="oro_order_type[lineItems][1][offers]"]'
+
+    First Product Quantity Field In Order:
+      selector:
+        locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
+        type: xpath
+
+    Order Billing Address State Selector:
+      selector:
+        locator: '//div[contains(@id,"s2id_oro_order_type_billingAddress_region-uid")]'
+        type: xpath
+
+    Order Billing Address State Text Field:
+      selector:
+        locator: '//input[contains(@id,"oro_order_type_billingAddress_region_text-uid")]'
+        type: xpath
+
     Purchase History Settings Form:
       selector: 'form[name="purchase_history"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -156,6 +234,24 @@ oro_behat_extension:
     DiscountDescription:
       selector: 'input[name="oro_action_operation[orderDiscount][description]"]'
 
+    Discount Popup:
+      selector:
+        locator: '//div[@class="ui-dialog"]'
+        type: xpath
+
+    Discount Popup Cancel Button:
+      selector:
+        locator: '//div[contains(@class,"widget-actions-section")]/..//button[contains(text(),"Cancel")]'
+        type: xpath
+
+    Shopping list Orders Grid:
+      selector: 'div[data-page-component-name="shopping-list-orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Customer User Sales Orders Grid:
+      selector: 'div[data-page-component-name="customer-user-orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
@@ -165,21 +261,34 @@ oro_behat_extension:
     OroOrderBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroApplicationBundle::CommerceMainContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\OrderBundle\Tests\Behat\Context\FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroCheckoutBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroActionBundle::OroActionContext
-        - OroOrderBundle::OrderContext
-        - OroReportBundle::FeatureContext
-        - OroNavigationBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroProductBundle::FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ActionBundle\Tests\Behat\Context\OroActionContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\ReportBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PromotionBundle\Tests\Behat\Context\PromotionContext
+        - Oro\Bundle\TaxBundle\Tests\Behat\Context\TaxContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

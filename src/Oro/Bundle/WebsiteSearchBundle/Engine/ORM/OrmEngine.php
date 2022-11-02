@@ -19,9 +19,6 @@ class OrmEngine extends AbstractEngine
     /** @var Mapper */
     private $mapper;
 
-    /**
-     * @param Mapper $mapper
-     */
     public function setMapper(Mapper $mapper)
     {
         $this->mapper = $mapper;
@@ -57,7 +54,6 @@ class OrmEngine extends AbstractEngine
                 $results[] = new Item(
                     $item['entity'],
                     $item['recordId'],
-                    $item['title'],
                     null,
                     $this->mapper->mapSelectedData($query, $searchResult),
                     $this->mappingProvider->getEntityConfig($item['entity'])

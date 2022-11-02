@@ -1,0 +1,36 @@
+dependencies:
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        identifier: 'order1'
+        currency: 'USD'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+    order2:
+        identifier: 'order2'
+        currency: 'USD'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order1_line_item1:
+        order: '@order1'
+        product: '@product1'
+        quantity: 1
+        productUnit: '@item'
+        value: 10
+        currency: 'USD'
+    order2_line_item1:
+        order: '@order2'
+        product: '@product3'
+        quantity: 1
+        productUnit: '@item'
+        value: 10
+        currency: 'USD'

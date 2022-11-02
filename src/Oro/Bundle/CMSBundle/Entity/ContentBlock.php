@@ -15,7 +15,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Entity
+ * ContentBlock ORM entity.
+ *
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\ContentBlockRepository")
  * @ORM\Table(name="oro_cms_content_block")
  * @Config(
  *      routeName="oro_cms_content_block_index",
@@ -90,7 +92,8 @@ class ContentBlock extends ExtendContentBlock implements
      * @var ArrayCollection|Scope[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
+     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope",
+     *      fetch="EXTRA_LAZY"
      * )
      * @ORM\JoinTable(name="oro_cms_content_block_scope",
      *      joinColumns={
@@ -111,6 +114,13 @@ class ContentBlock extends ExtendContentBlock implements
      *     mappedBy="contentBlock",
      *     cascade={"ALL"},
      *     orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "actualize_owning_side_on_change"=true
+     *          }
+     *      }
      * )
      */
     protected $contentVariants;
@@ -282,6 +292,11 @@ class ContentBlock extends ExtendContentBlock implements
     }
 
     /**
+     * Get default variant.
+     *
+     * Prefer to use TextContentVariantRepository::getDefaultContentVariantForContentBlock
+     * to avoid contentVariants collection loading
+     *
      * @return TextContentVariant|null
      */
     public function getDefaultVariant()

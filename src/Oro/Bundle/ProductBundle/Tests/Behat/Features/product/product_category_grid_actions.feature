@@ -14,6 +14,7 @@ Feature: Product category grid actions
       | Edit      |
       | Delete    |
     #add filter to check that operations still available
+    And expand "NewCategory" in tree
     And I click "NewCategory2"
     And I filter SKU as is equal to "PSKU2"
     Then I should see following actions for PSKU2 in grid:

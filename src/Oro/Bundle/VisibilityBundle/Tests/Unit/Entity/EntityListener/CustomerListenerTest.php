@@ -6,141 +6,125 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCustomerTopic;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\CustomerListener;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CustomerListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $factory;
+    use EntityTrait;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /**
-     * @var CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $driver;
+    private CustomerPartialUpdateDriverInterface|\PHPUnit\Framework\MockObject\MockObject $driver;
 
-    /**
-     * @var Customer
-     */
-    protected $customer;
+    private CustomerListener $listener;
 
-    /**
-     * @var CustomerListener
-     */
-    protected $listener;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->factory = $this->getMockBuilder(MessageFactoryInterface::class)
-            ->getMock();
-        $this->producer = $this->getMockBuilder(MessageProducerInterface::class)
-            ->getMock();
-        $this->driver = $this->getMockBuilder(CustomerPartialUpdateDriverInterface::class)
-            ->getMock();
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
+        $this->driver = $this->createMock(CustomerPartialUpdateDriverInterface::class);
 
-        $this->customer = new Customer();
-        $this->listener = new CustomerListener($this->factory, $this->producer, $this->driver);
+        $this->listener = new CustomerListener($this->messageProducer, $this->driver);
     }
 
-    public function testPostPersistWithoutGroup()
+    private function disableListener(): void
     {
-        $this->producer->expects($this->never())
+        self::assertInstanceOf(OptionalListenerInterface::class, $this->listener);
+        $this->listener->setEnabled(false);
+    }
+
+    public function testPostPersistWithoutGroup(): void
+    {
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 123]);
+
+        $this->messageProducer->expects(self::never())
             ->method('send');
-        $this->driver->expects($this->once())
+        $this->driver->expects(self::once())
             ->method('createCustomerWithoutCustomerGroupVisibility')
-            ->with($this->customer);
+            ->with(self::identicalTo($customer));
 
-        $this->listener->postPersist($this->customer);
+        $this->listener->postPersist($customer);
     }
 
-    public function testPostPersistWithGroup()
+    public function testPostPersistWithGroup(): void
     {
-        $message = new Message();
-        $this->factory->expects($this->once())
-            ->method('createMessage')
-            ->with($this->customer)
-            ->willReturn($message);
-        $this->producer->expects($this->once())
+        $customerId = 123;
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => $customerId]);
+
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with('', $message);
-        $this->driver->expects($this->never())
+            ->with(VisibilityOnChangeCustomerTopic::getName(), ['id' => $customerId]);
+        $this->driver->expects(self::never())
             ->method('createCustomerWithoutCustomerGroupVisibility');
 
-        $this->customer->setGroup(new CustomerGroup());
-        $this->listener->postPersist($this->customer);
+        $customer->setGroup(new CustomerGroup());
+        $this->listener->postPersist($customer);
     }
 
-    public function testPostPersistWithGroupAndDisabledListener()
+    public function testPostPersistWithGroupAndDisabledListener(): void
     {
-        $this->producer->expects($this->never())
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 123]);
+
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $this->disableListener();
-        $this->customer->setGroup(new CustomerGroup());
-        $this->listener->postPersist($this->customer);
+        $customer->setGroup(new CustomerGroup());
+        $this->listener->postPersist($customer);
     }
 
-    public function testPreRemove()
+    public function testPreRemove(): void
     {
-        $this->driver->expects($this->once())
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 123]);
+
+        $this->driver->expects(self::once())
             ->method('deleteCustomerVisibility')
-            ->with($this->customer);
+            ->with(self::identicalTo($customer));
 
-        $this->listener->preRemove($this->customer);
+        $this->listener->preRemove($customer);
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $args */
-        $args = $this->getMockBuilder(PreUpdateEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $args->expects($this->once())
-            ->method('hasChangedField')
-            ->with('group')
-            ->willReturn(true);
+        $customerId = 123;
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => $customerId]);
 
-        $message = new Message();
-        $this->factory->expects($this->once())
-            ->method('createMessage')
-            ->with($this->customer)
-            ->willReturn($message);
-        $this->producer->expects($this->once())
-            ->method('send')
-            ->with('', $message);
-
-        $this->listener->preUpdate($this->customer, $args);
-    }
-
-    public function testPreUpdateWithDisabledListener()
-    {
-        /* @var $args PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject */
         $args = $this->createMock(PreUpdateEventArgs::class);
-        $args->expects($this->once())
+        $args->expects(self::once())
             ->method('hasChangedField')
             ->with('group')
             ->willReturn(true);
 
-        $this->producer->expects($this->never())
+        $this->messageProducer->expects(self::once())
+            ->method('send')
+            ->with(VisibilityOnChangeCustomerTopic::getName(), ['id' => $customerId]);
+
+        $this->listener->preUpdate($customer, $args);
+    }
+
+    public function testPreUpdateWithDisabledListener(): void
+    {
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 123]);
+
+        $args = $this->createMock(PreUpdateEventArgs::class);
+        $args->expects(self::once())
+            ->method('hasChangedField')
+            ->with('group')
+            ->willReturn(true);
+
+        $this->messageProducer->expects(self::never())
             ->method('send');
 
         $this->disableListener();
-        $this->listener->preUpdate($this->customer, $args);
-    }
-
-    protected function disableListener()
-    {
-        $this->assertInstanceOf(OptionalListenerInterface::class, $this->listener);
-        $this->listener->setEnabled(false);
+        $this->listener->preUpdate($customer, $args);
     }
 }

@@ -1,0 +1,218 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
+            form_options:
+                constraints:
+                    - Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
+                          addressType: billing
+                    - Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
+                          addressType: shipping
+            fields:
+                sourceEntityClass:
+                    exclude: true
+                sourceEntityId:
+                    exclude: true
+                sourceEntityIdentifier:
+                    exclude: true
+                totalDiscountsAmount:
+                    exclude: true
+                lineItems:
+                    max_results: -1
+                discounts:
+                    data_type: objects
+                    max_results: -1
+                    exclusion_policy: all
+                    fields:
+                        type:
+                            data_type: string
+                            property_path: _
+                        description: ~
+                        amount: ~
+                    form_options:
+                        mapped: false
+                shippingTrackings:
+                    data_type: objects
+                    max_results: -1
+                    exclusion_policy: all
+                    fields:
+                        method: ~
+                        number: ~
+                    form_options:
+                        mapped: false
+                shippingCostAmount:
+                    property_path: estimatedShippingCostAmount
+                    depends_on: [overriddenShippingCostAmount]
+                    form_options:
+                        mapped: false
+                overriddenShippingCostAmount:
+                    exclude: true
+                shippingMethod:
+                    data_type: object
+                    property_path: _
+                    depends_on: [shippingMethod, shippingMethodType]
+                    exclusion_policy: all
+                    fields:
+                        code:
+                            data_type: string
+                        label:
+                            data_type: string
+                    form_options:
+                        mapped: false
+                # declare excluded field for "shippingMethod" entity property
+                # to be able to use "shippingMethod" property in "depends_on" option
+                _shippingMethod:
+                    property_path: shippingMethod
+                    exclude: true
+                shippingMethodType:
+                    exclude: true
+                paymentTerm:
+                    property_path: payment_term_7c4f1e8e.label
+                    form_options:
+                        mapped: false
+                payment_term_7c4f1e8e:
+                    exclude: true
+                paymentStatus:
+                    data_type: object
+                    property_path: _
+                    exclusion_policy: all
+                    fields:
+                        code:
+                            data_type: string
+                        label:
+                            data_type: string
+                    form_options:
+                        mapped: false
+                paymentMethod:
+                    data_type: objects
+                    property_path: _
+                    exclusion_policy: all
+                    fields:
+                        code:
+                            data_type: string
+                        label:
+                            data_type: string
+                    form_options:
+                        mapped: false
+                currency:
+                    form_options:
+                        mapped: false
+                totalValue:
+                    form_options:
+                        mapped: false
+                subtotalValue:
+                    form_options:
+                        mapped: false
+                billingAddress:
+                    form_options:
+                        constraints:
+                            - NotBlank: ~
+                            - Oro\Bundle\AddressBundle\Validator\Constraints\NewAddress: ~
+                shippingAddress:
+                    form_options:
+                        constraints:
+                            - NotBlank: ~
+                            - Oro\Bundle\AddressBundle\Validator\Constraints\NewAddress: ~
+            actions:
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'
+            form_options:
+                constraints:
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
+                          path: productUnit
+                          sell: true
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                          path: quantity
+            fields:
+                fromExternalSource:
+                    exclude: true
+                priceType:
+                    exclude: true
+                productVariantFields:
+                    exclude: true
+                price:
+                    property_path: value
+                shipUntil:
+                    property_path: shipBy
+                freeFormProduct:
+                    form_options:
+                        mapped: false
+                productName:
+                    form_options:
+                        mapped: false
+                productUnitCode:
+                    form_options:
+                        mapped: false
+            actions:
+                create:
+                    status_codes:
+                        201: false
+                        400: false
+                        403: Returned always
+                        409: false
+                        500: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderAddress:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_address.md'
+            fields:
+                createdAt:
+                    property_path: created
+                updatedAt:
+                    property_path: updated
+                customRegion:
+                    exclude: false # set manually because this field is marked as excluded in entity.yml
+                    property_path: regionText
+                fromExternalSource:
+                    exclude: true
+            actions:
+                get_list: false
+                create:
+                    status_codes:
+                        201: false
+                        400: false
+                        403: Returned always
+                        409: false
+                        500: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+            # this entity does not have own API resource,
+            # but it should be defined to correct work of "discounts" property
+            # of the order API resource
+            actions: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+            # this entity does not have own API resource,
+            # but it should be defined to correct work of "shippingTrackings" property
+            # of the order API resource
+            actions: false
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/product_search.md'
+            fields:
+                orderedAt:
+                    data_type: datetime
+                    property_path: datetime.ordered_at_by.CUSTOMER_USER_ID
+            filters:
+                fields:
+                    searchQuery:
+                        options:
+                            field_mappings:
+                                orderedAt: ordered_at_by.CUSTOMER_USER_ID
+                    aggregations:
+                        options:
+                            field_mappings:
+                                orderedAt: ordered_at_by.CUSTOMER_USER_ID
+            sorters:
+                fields:
+                    orderedAt:
+                        property_path: datetime.ordered_at_by.CUSTOMER_USER_ID

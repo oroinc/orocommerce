@@ -1,0 +1,91 @@
+services:
+    oro_catalog.importexport.template_fixture.category:
+        class: Oro\Bundle\CatalogBundle\ImportExport\TemplateFixture\CategoryFixture
+        calls:
+            - ['setMasterCatalogRootProvider', ['@oro_catalog.provider.master_catalog_root']]
+        arguments:
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro_importexport.template_fixture }
+
+    # Converter
+    oro_catalog.importexport.data_converter.category:
+        parent: oro_locale.importexport.data_converter.localized_fallback_value_aware
+        class: Oro\Bundle\CatalogBundle\ImportExport\DataConverter\CategoryDataConverter
+        calls:
+            - [setEntityName, ['Oro\Bundle\CatalogBundle\Entity\Category']]
+            - [setTranslateUsingLocale, [false]]
+
+    oro_catalog.importexport.template_fixture.data_converter.category:
+        parent: oro_catalog.importexport.data_converter.category
+        arguments:
+            index_1: '@oro_importexport.data_converter.template_fixture.relation_calculator'
+
+    # Normalizer
+    oro_catalog.importexport.normalizer.category:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Normalizer\CategoryNormalizer
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        calls:
+            - [setCategoryImportExportHelper, ['@oro_catalog.importexport.helper.category_import_export']]
+            - [setDoctrine, ['@doctrine']]
+        tags:
+            - { name: oro_importexport.normalizer }
+
+    # Strategy
+    oro_catalog.importexport.strategy.category.add_or_replace:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Strategy\CategoryAddOrReplaceStrategy
+        parent: oro_locale.importexport.strategy.localized_fallback_value_aware
+        calls:
+            - ['setCategoryImportExportHelper', ['@oro_catalog.importexport.helper.category_import_export']]
+            - ['setTokenAccessor', ['@oro_security.token_accessor']]
+
+    # Import processor
+    oro_catalog.importexport.processor.import.add_or_replace:
+        parent: oro_importexport.processor.import_abstract
+        calls:
+            - [setDataConverter, ['@oro_catalog.importexport.data_converter.category']]
+            - [setStrategy, ['@oro_catalog.importexport.strategy.category.add_or_replace']]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category.add_or_replace }
+
+    # Export processor
+    oro_catalog.importexport.processor.export:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_catalog.importexport.data_converter.category']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category }
+
+    oro_catalog.importexport.processor.export_template:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_catalog.importexport.template_fixture.data_converter.category']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: 'Oro\Bundle\CatalogBundle\Entity\Category', alias: oro_category }
+
+    # Configuration
+    oro_catalog.importexport.configuration_provider.category:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Configuration\CategoryImportExportConfigurationProvider
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_category }
+
+    # Writers
+    oro_catalog.importexport.writer.category:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Writer\CategoryWriter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_importexport.writer.entity_detach_fixer'
+            - '@oro_importexport.context_registry'
+            - '@oro_catalog.event_listener.tree'
+        tags:
+            - { name: oro_importexport.writer, alias: entity }
+
+    # Others
+    oro_catalog.importexport.helper.category_import_export:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Helper\CategoryImportExportHelper
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'

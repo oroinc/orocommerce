@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -10,6 +10,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 
+/**
+ * Provides a checkout started from the given quote.
+ */
 class QuoteCheckoutProvider
 {
     /**
@@ -17,9 +20,6 @@ class QuoteCheckoutProvider
      */
     protected $managerRegistry;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
@@ -39,7 +39,7 @@ class QuoteCheckoutProvider
             return null;
         }
 
-        return $this->getCheckoutRepository()->findCheckoutByCustomerUserAndSourceCriteria(
+        return $this->getCheckoutRepository()->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
             $customerUser,
             ['quoteDemand' => $quoteDemand],
             $workflowName

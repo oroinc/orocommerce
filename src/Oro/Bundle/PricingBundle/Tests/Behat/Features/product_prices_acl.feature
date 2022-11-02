@@ -21,8 +21,8 @@ Feature: Product prices ACL
     And I click view First Price List in grid
     Then I should see following "Price list Product prices Grid" grid:
       | Product SKU | Product name | Quantity | Unit  | Value   | Currency | Type   |
-      | PSKU1       | Product 1    | 5        | item  | 15.0000 | USD      | Manual |
-      | PSKU2       | Product 2    | 10       | piece | 30.0000 | USD      | Manual |
+      | PSKU1       | Product 1    | 5        | item  | 15.00 | USD      | Manual |
+      | PSKU2       | Product 2    | 10       | piece | 30.00 | USD      | Manual |
 
     When I proceed as the admin
     And I login as administrator
@@ -43,6 +43,7 @@ Feature: Product prices ACL
 
   Scenario: Check product prices at the grid, view and edit product page when VIEW forbidden
     Given I go to Products/ Products
+    And I check "USD"
     Then I shouldn't see "Price (USD)" column in grid
     When click view "PSKU1" in grid
     Then I should not see an "ProductPricesGrid" element
@@ -56,6 +57,7 @@ Feature: Product prices ACL
 
     And I proceed as the manager
     And I go to Products/ Products
+    And I check "USD"
     Then I should see "Price (USD)" column in grid
     When I click view "PSKU1" in grid
     Then I should see an "ProductPricesGrid" element
@@ -70,6 +72,7 @@ Feature: Product prices ACL
 
     And I proceed as the manager
     And I go to Products/ Products
+    And I check "USD"
     Then I should see "Price (USD)" column in grid
     When I click view "PSKU1" in grid
     Then I should see an "ProductPricesGrid" element

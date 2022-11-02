@@ -2,59 +2,48 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 class CategoryListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
-    /**
-     * @var EntityManager
-     */
-    protected $categoryManager;
+    private EntityManagerInterface $categoryManager;
 
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
+    private CategoryRepository $categoryRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadProductVisibilityData::class]);
+        self::enableMessageBuffering();
+
+        $this->getOptionalListenerManager()->enableListener('oro_visibility.event_listener.category_listener');
+        $this->getOptionalListenerManager()->enableListener('oro_visibility.entity_listener.change_product_category');
+
         $this->categoryManager = self::getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category');
+            ->getManagerForClass(Category::class);
         $this->categoryRepository = $this->categoryManager
-            ->getRepository('OroCatalogBundle:Category');
-
-        $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
-
-        $this->cleanScheduledMessages();
+            ->getRepository(Category::class);
     }
 
-    /**
-     * @return ProductMessageHandler
-     */
-    protected function getMessageHandler()
+    public function testChangeProductCategory(): void
     {
-        return self::getContainer()->get('oro_visibility.model.product_message_handler');
-    }
-
-    public function testChangeProductCategory()
-    {
-        /** @var $product Product */
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $previousCategory = $this->categoryRepository->findOneByProduct($product);
 
-        /** @var $newCategory Category */
+        /** @var Category $newCategory */
         $newCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->categoryManager->refresh($newCategory);
 
@@ -62,37 +51,31 @@ class CategoryListenerTest extends WebTestCase
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.change_product_category',
+            VisibilityOnChangeProductCategoryTopic::getName(),
             ['id' => $product->getId()]
         );
     }
 
-    public function testRemoveProductFromCategoryAndAddProductToCategory()
+    public function testRemoveProductFromCategoryAndAddProductToCategory(): void
     {
-        /** @var $product Product */
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_2);
         $category = $this->categoryRepository->findOneByProduct($product);
 
         $category->removeProduct($product);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.change_product_category',
+            VisibilityOnChangeProductCategoryTopic::getName(),
             ['id' => $product->getId()]
         );
 
         $category->addProduct($product);
         $this->categoryManager->flush();
 
-        $this->sendScheduledMessages();
-
         self::assertMessageSent(
-            'oro_visibility.visibility.change_product_category',
+            VisibilityOnChangeProductCategoryTopic::getName(),
             ['id' => $product->getId()]
         );
     }

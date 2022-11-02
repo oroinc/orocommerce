@@ -5,25 +5,26 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Order;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderLineItemGridListener */
-    protected $listener;
-
     /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $settingsProvider;
+    private $settingsProvider;
 
-    protected function setUp()
+    /** @var OrderLineItemGridListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        $this->settingsProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider')
-            ->disableOriginalConstructor()->getMock();
+        $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);
 
         $this->listener = new OrderLineItemGridListener(
             $this->settingsProvider,
-            'Oro\Bundle\TaxBundle\Entity\TaxValue'
+            TaxValue::class
         );
     }
 
@@ -31,8 +32,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock(DatagridInterface::class);
         $event = new BuildBefore($dataGrid, $gridConfig);
 
         $this->listener->onBuildBefore($event);
@@ -44,11 +44,12 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock(DatagridInterface::class);
         $event = new BuildBefore($dataGrid, $gridConfig);
 
-        $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->settingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $this->listener->onBuildBefore($event);
 
@@ -58,14 +59,15 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnBuildBefore()
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid-frontend']);
-        $from = ['alias' => 'orders', 'table' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'];
+        $from = ['alias' => 'orders', 'table' => OrderLineItem::class];
         $gridConfig->offsetSetByPath('[source][query][from]', [$from]);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock(DatagridInterface::class);
         $event = new BuildBefore($dataGrid, $gridConfig);
 
-        $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->settingsProvider->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $this->listener->onBuildBefore($event);
 
@@ -78,7 +80,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'join' => [
                             'left' => [
                                 [
-                                    'join' => 'Oro\Bundle\TaxBundle\Entity\TaxValue',
+                                    'join' => TaxValue::class,
                                     'alias' => 'taxValue',
                                     'conditionType' => 'WITH',
                                     'condition' => 'taxValue.entityClass = ' .
@@ -96,7 +98,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/unitIncludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/unitIncludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'unitPriceExcludingTax' => [
@@ -104,7 +106,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/unitExcludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/unitExcludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'unitPriceTaxAmount' => [
@@ -112,7 +114,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/unitTaxAmount.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/unitTaxAmount.html.twig',
                         'renderable' => false,
                     ],
                     'rowTotalIncludingTax' => [
@@ -120,7 +122,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/rowIncludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/rowIncludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'rowTotalExcludingTax' => [
@@ -128,7 +130,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/rowExcludingTax.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/rowExcludingTax.html.twig',
                         'renderable' => false,
                     ],
                     'rowTotalTaxAmount' => [
@@ -136,7 +138,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle:Order:Datagrid/Property/rowTaxAmount.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/Property/rowTaxAmount.html.twig',
                         'renderable' => false,
                     ],
                     'taxes' => [
@@ -144,7 +146,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'twig',
                         'frontend_type' => 'html',
                         'data_name' => 'result',
-                        'template' => 'OroTaxBundle::Order/Datagrid/taxes.html.twig',
+                        'template' => '@OroTax/Order/Datagrid/taxes.html.twig',
                         'renderable' => false,
                     ],
                 ],

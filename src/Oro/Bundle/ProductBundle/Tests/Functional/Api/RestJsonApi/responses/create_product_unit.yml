@@ -1,0 +1,9 @@
+data:
+    type: productunits
+    id: test_unit
+    attributes:
+        defaultPrecision: 2
+        label: test
+        shortLabel: tst
+        pluralLabel: tests
+        shortPluralLabel: tsts

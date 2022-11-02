@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ShippingMethodTypeStub implements ShippingMethodTypeInterface
 {
@@ -16,7 +15,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
     /**
      * @var string
      */
-    protected $label;
+    protected string $label = '';
 
     /**
      * @var int
@@ -26,7 +25,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
     /**
      * @var string
      */
-    protected $optionsConfigurationFormType = HiddenType::class;
+    protected $optionsConfigurationFormType = ShippingMethodTypeConfigTypeOptionsStub::class;
 
     /**
      * @return string
@@ -49,7 +48,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
     }

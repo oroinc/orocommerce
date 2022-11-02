@@ -15,48 +15,23 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper
-     */
-    protected $fieldHelper;
+    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
 
-    /**
-     * @var ProductImageNormalizer $productImageNormalizer
-     */
-    protected $productImageNormalizer;
+    private ProductImageNormalizer $productImageNormalizer;
 
-    /**
-     * @var FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator
-     */
-    protected $fileLocator;
+    private FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator;
 
-    /**
-     * @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider
-     */
-    protected $imageTypeProvider;
+    private ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider * */
-        $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
+        $this->fileLocator = $this->createMock(FileLocator::class);
+        $this->fieldHelper = $this->createMock(FieldHelper::class);
 
-        /** @var FileLocator|\PHPUnit\Framework\MockObject\MockObject $fileLocator * */
-        $this->fileLocator = $this->getMockBuilder(FileLocator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->imageTypeProvider->expects($this->any())
+        $this->imageTypeProvider->expects(self::any())
             ->method('getImageTypes')
             ->willReturn(
                 [
@@ -64,8 +39,8 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $this->fieldHelper->expects($this->any())
-            ->method('getFields')
+        $this->fieldHelper->expects(self::any())
+            ->method('getEntityFields')
             ->willReturn(
                 [
                     [
@@ -76,7 +51,6 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->productImageNormalizer = new ProductImageNormalizer($this->fieldHelper);
         $this->productImageNormalizer->setProductImageClass(ProductImage::class);
-        $this->productImageNormalizer->setProductImageDir('');
         $this->productImageNormalizer->setImageTypeProvider($this->imageTypeProvider);
         $this->productImageNormalizer->setFileLocator($this->fileLocator);
     }
@@ -86,9 +60,9 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
      *
      * @dataProvider normalizationDataProvider
      */
-    public function testNormalize($productImage)
+    public function testNormalize($productImage): void
     {
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('getObjectValue')
             ->willReturn(
                 [
@@ -101,11 +75,11 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
             null
         );
 
-        $this->assertArrayHasKey('types', $result);
-        $this->assertArrayHasKey('image', $result);
+        self::assertArrayHasKey('types', $result);
+        self::assertArrayHasKey('image', $result);
     }
 
-    public function testDenormalize()
+    public function testDenormalize(): void
     {
         $productImageData = [
             'types' => [
@@ -114,22 +88,12 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
             'image' => ['name' => 'imageName'],
         ];
 
-        $this->fileLocator->expects($this->once())
-            ->method('locate')
-            ->willReturn(
-                [
-                    'imagePath'
-                ]
-            );
-
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects(self::once())
             ->method('setObjectValue')
-            ->will(
-                $this->returnCallback(
-                    function (ProductImage $result, $fieldName, $value) {
-                        return $result->{'add' . ucfirst(substr($fieldName, 0, -1))}(reset($value));
-                    }
-                )
+            ->willReturnCallback(
+                function (ProductImage $result, $fieldName, $value) {
+                    return $result->{'add' . ucfirst(substr($fieldName, 0, -1))}(reset($value));
+                }
             );
 
         $productImage = $this->productImageNormalizer->denormalize(
@@ -138,34 +102,34 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
             null
         );
 
-        $this->assertArrayHasKey(ProductImageType::TYPE_MAIN, $productImage->getTypes());
+        self::assertArrayHasKey(ProductImageType::TYPE_MAIN, $productImage->getTypes());
     }
 
-    public function testSupportsNormalization()
+    public function testSupportsNormalization(): void
     {
         $result = $this->productImageNormalizer->supportsNormalization(
             new StubProductImage(),
             null
         );
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
-    public function testSupportsDenormalization()
+    public function testSupportsDenormalization(): void
     {
         $result = $this->productImageNormalizer->supportsDenormalization(
             [],
-            new StubProductImage(),
+            StubProductImage::class,
             null
         );
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
     /**
      * @return array
      */
-    public function normalizationDataProvider()
+    public function normalizationDataProvider(): array
     {
         $productImage = new StubProductImage();
 

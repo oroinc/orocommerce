@@ -1,0 +1,40 @@
+/* @theme: default; */
+
+.my-shopping-list-owner-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    margin-bottom: $offset-y-s;
+    margin-left: auto;
+
+    .action {
+        cursor: pointer;
+    }
+
+    .shopping-list-owner,
+    &__actions {
+        padding: $offset-y-s 0;
+    }
+
+    &__actions {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-left: auto;
+    }
+
+    .separator {
+        display: none;
+        margin: 0 ($offset-y-m + $offset-y-s);
+        width: 1px;
+        height: 16px;
+
+        line-height: 1;
+        background: $my-shopping-list-owner-wrapper-separator-background;
+    }
+
+    &.show-separator .separator {
+        display: inline-flex;
+    }
+}

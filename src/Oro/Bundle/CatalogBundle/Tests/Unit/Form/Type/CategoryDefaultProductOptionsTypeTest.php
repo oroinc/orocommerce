@@ -29,7 +29,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new CategoryDefaultProductOptionsType();
         $this->formType->setDataClass(self::DATA_CLASS);
@@ -80,6 +80,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

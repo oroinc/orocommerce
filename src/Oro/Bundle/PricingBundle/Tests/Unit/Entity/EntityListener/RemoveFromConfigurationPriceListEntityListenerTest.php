@@ -29,7 +29,7 @@ class RemoveFromConfigurationPriceListEntityListenerTest extends TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->configConverter = $this->createMock(PriceListConfigConverter::class);
@@ -109,11 +109,6 @@ class RemoveFromConfigurationPriceListEntityListenerTest extends TestCase
         $this->listener->preRemove($this->createPriceList(4));
     }
 
-    /**
-     * @param int $id
-     *
-     * @return PriceList
-     */
     private function createPriceList(int $id): PriceList
     {
         return $this->getEntity(PriceList::class, ['id' => $id]);

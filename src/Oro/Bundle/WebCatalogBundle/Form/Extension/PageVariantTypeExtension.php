@@ -15,14 +15,17 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Extension adds fields for all Content Variant types
+ */
 class PageVariantTypeExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PageVariantType::class;
+        return [PageVariantType::class];
     }
 
     /**
@@ -58,6 +61,13 @@ class PageVariantTypeExtension extends AbstractTypeExtension
                 [
                     'required' => true
                 ]
+            )
+            ->add(
+                'expanded',
+                HiddenType::class,
+                [
+                    'data' => true,
+                ]
             );
 
         $builder->addEventListener(
@@ -67,6 +77,24 @@ class PageVariantTypeExtension extends AbstractTypeExtension
                 if ($data instanceof ContentVariantInterface) {
                     $data->setType($pageContentVariantTypeName);
                 }
+            }
+        );
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!\is_array($data)) {
+                    return;
+                }
+
+                if (!empty($data['expanded']) && !isset($data['scopes'])) {
+                    $data['scopes'] = [];
+                }
+                if (!isset($data['default'])) {
+                    $data['default'] = false;
+                }
+
+                $event->setData($data);
             }
         );
     }
@@ -80,5 +108,6 @@ class PageVariantTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('web_catalog', ['null', WebCatalog::class]);
 
         $resolver->setDefault('data_class', ContentVariant::class);
+        $resolver->setDefault('error_bubbling', false);
     }
 }

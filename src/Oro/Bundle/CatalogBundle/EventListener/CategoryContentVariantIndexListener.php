@@ -18,6 +18,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Triggers Product re-indexation on some ContentNode fields changes
+ */
 class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwareInterface
 {
     use ChangedEntityGeneratorTrait;
@@ -42,12 +45,6 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      */
     protected $fieldsChangesListenTo = ['titles'];
 
-    /**
-     * @param ProductIndexScheduler $indexScheduler
-     * @param PropertyAccessorInterface $accessor
-     * @param FieldUpdatesChecker       $fieldUpdatesChecker
-     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
-     */
     public function __construct(
         ProductIndexScheduler $indexScheduler,
         PropertyAccessorInterface $accessor,
@@ -80,9 +77,6 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         return $this->fieldsChangesListenTo;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
@@ -105,9 +99,9 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param array|Collection $entities
-     * @param Category[] &$categories
+     * @param Category[] $categories
      */
-    private function collectCategories($entities, array &$categories)
+    private function collectCategories($entities, array &$categories): void
     {
         foreach ($entities as $entity) {
             if ($entity instanceof ContentVariantInterface
@@ -124,10 +118,10 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param array|Collection $entities
-     * @param Category[] &$categories
+     * @param Category[] $categories
      * @param UnitOfWork $unitOfWork
      */
-    private function collectChangedCategories($entities, array &$categories, UnitOfWork $unitOfWork)
+    private function collectChangedCategories($entities, array &$categories, UnitOfWork $unitOfWork): void
     {
         foreach ($entities as $entity) {
             if ($entity instanceof ContentVariantInterface
@@ -149,9 +143,9 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param array|Collection $entities
-     * @param array|null &$websitesId
+     * @param array|null $websitesId
      */
-    private function collectWebsiteIds($entities, &$websitesId)
+    private function collectWebsiteIds($entities, &$websitesId): void
     {
         if ($this->webCatalogUsageProvider === null) {
             return;
@@ -186,7 +180,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      * @param Category[] $categories
      * @param array $websiteIds
      */
-    private function collectChangedFields($entity, array &$categories, array &$websiteIds)
+    private function collectChangedFields($entity, array &$categories, array &$websiteIds): void
     {
         $isAnyFieldChanged = false;
 
@@ -212,7 +206,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      * @param mixed $entity
      * @return bool
      */
-    private function isValidContentVariantEntity($entity)
+    private function isValidContentVariantEntity($entity): bool
     {
         if (!$entity instanceof ContentVariantInterface
             || !$entity instanceof ContentNodeAwareInterface
@@ -230,10 +224,10 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     }
 
     /**
-     * @param Category[] &$categories
+     * @param Category[] $categories
      * @param Category $category
      */
-    private function addCategory(array &$categories, Category $category)
+    private function addCategory(array &$categories, Category $category): void
     {
         $categoryId = $category->getId();
         if ($categoryId && !array_key_exists($categoryId, $categories)) {
@@ -245,14 +239,14 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      * @param Category[] $categories
      * @param array $websiteIds
      */
-    private function scheduleProductsReindex(array $categories, array $websiteIds = [])
+    private function scheduleProductsReindex(array $categories, array $websiteIds = []): void
     {
         if (count($categories) === 0 || count($websiteIds) === 0) {
             return;
         }
 
         foreach ($websiteIds as $websiteId) {
-            $this->indexScheduler->scheduleProductsReindex($categories, $websiteId);
+            $this->indexScheduler->scheduleProductsReindex($categories, $websiteId, true, ['main']);
         }
     }
 }

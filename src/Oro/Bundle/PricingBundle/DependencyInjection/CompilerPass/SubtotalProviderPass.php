@@ -2,44 +2,49 @@
 
 namespace Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass;
 
+use Oro\Component\DependencyInjection\Compiler\PriorityTaggedLocatorTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Registers all subtotal providers.
+ */
 class SubtotalProviderPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'oro_pricing.subtotal_processor.subtotal_provider_registry';
-    const TAG = 'oro_pricing.subtotal_provider';
-    const PRIORITY = 'priority';
+    use PriorityTaggedLocatorTrait;
 
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition(self::REGISTRY_SERVICE)) {
-            return;
+        $tagName = 'oro_pricing.subtotal_provider';
+        $items = [];
+        $taggedServices = $container->findTaggedServiceIds($tagName, true);
+        foreach ($taggedServices as $id => $tags) {
+            foreach ($tags as $attributes) {
+                $items[$this->getPriorityAttribute($attributes)][] = [
+                    $this->getRequiredAttribute($attributes, 'alias', $id, $tagName),
+                    $id
+                ];
+            }
         }
 
-        $taggedServices = $container->findTaggedServiceIds(self::TAG);
-
-        if (empty($taggedServices)) {
-            return;
+        $services = [];
+        if ($items) {
+            ksort($items);
+            $items = array_merge(...array_values($items));
+            foreach ($items as [$key, $id]) {
+                if (!isset($services[$key])) {
+                    $services[$key] = new Reference($id);
+                }
+            }
         }
 
-        $providers      = [];
-        foreach ($taggedServices as $serviceId => $tags) {
-            $priority = isset($tags[0][self::PRIORITY]) ? $tags[0][self::PRIORITY] : 0;
-            $providers[$priority][] = $serviceId;
-        }
-
-        ksort($providers);
-        $providers = call_user_func_array('array_merge', $providers);
-
-        $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);
-
-        foreach ($providers as $provider) {
-            $registryDefinition->addMethodCall('addProvider', [new Reference($provider)]);
-        }
+        $container->getDefinition('oro_pricing.subtotal_processor.subtotal_provider_registry')
+            ->setArgument('$providerNames', array_keys($services))
+            ->setArgument('$providerContainer', ServiceLocatorTagPass::register($container, $services));
     }
 }

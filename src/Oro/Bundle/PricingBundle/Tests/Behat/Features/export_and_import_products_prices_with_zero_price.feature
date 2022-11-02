@@ -26,11 +26,11 @@ Feature: Export and Import Products Prices with zero price
     And I import file
     And reload the page
     Then should see following grid:
-      | Product SKU         | Product name    | Quantity | Unit | Value    | Currency |
-      | PSKU1               | Product 1       | 1        | item | 6.000    | USD      |
-      | PSKU2               | Product 2       | 2        | item | 10.000   | USD      |
-      | PSKU3               | Product 3       | 1        | item | 0.000    | USD      |
-      | PSKU4               | Product 4       | 3        | item | 12.000   | USD      |
+      | Product SKU         | Product name    | Quantity | Unit | Value   | Currency |
+      | PSKU1               | Product 1       | 1        | item | 6.00    | USD      |
+      | PSKU2               | Product 2       | 2        | item | 10.00   | USD      |
+      | PSKU3               | Product 3       | 1        | item | 0.00    | USD      |
+      | PSKU4               | Product 4       | 3        | item | 12.00   | USD      |
 
   Scenario: Export Products Price that was imported before
     Given go to Sales/ Price Lists

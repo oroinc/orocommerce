@@ -1,0 +1,18 @@
+api:
+    entities:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend_sku/product.md'
+            identifier_field_names: ['sku']
+            fields:
+                productId:
+                    property_path: id
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
+            documentation_resource: '@OroProductBundle/Resources/doc/api_frontend_sku/product_search.md'
+            fields:
+                productId:
+                    data_type: integer
+                    property_path: integer.system_entity_id
+                product:
+                    data_type: string
+                    property_path: text.sku

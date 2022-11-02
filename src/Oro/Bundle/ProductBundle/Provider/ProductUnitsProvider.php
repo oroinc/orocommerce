@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Provides product units
@@ -14,55 +15,53 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
  */
 class ProductUnitsProvider
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private const CACHE_KEY_CODES = 'codes';
+    private const CACHE_KEY_CODES_WITH_PRECISION = 'codes_with_precision';
 
-    /**
-     * @var UnitLabelFormatterInterface
-     */
-    protected $formatter;
+    protected ManagerRegistry $registry;
+    protected UnitLabelFormatterInterface $formatter;
+    protected CacheInterface $cache;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param UnitLabelFormatterInterface $formatter
-     */
-    public function __construct(ManagerRegistry $registry, UnitLabelFormatterInterface $formatter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        UnitLabelFormatterInterface $formatter,
+        CacheInterface $cache
+    ) {
         $this->registry = $registry;
         $this->formatter = $formatter;
+        $this->cache = $cache;
     }
-    
-    /**
-     * @return array
-     */
-    public function getAvailableProductUnits()
+
+    public function getAvailableProductUnits(): array
     {
-        $productUnits = $this->getRepository()->getAllUnits();
+        $productUnitCodes = $this->cache->get(self::CACHE_KEY_CODES, function () {
+            return $this->getRepository()->getAllUnitCodes();
+        });
 
         $unitsFull = [];
-        foreach ($productUnits as $unit) {
-            $code = $unit->getCode();
+        foreach ($productUnitCodes as $code) {
             $unitsFull[$this->formatter->format($code)] = $code;
         }
 
         return $unitsFull;
     }
 
-    /**
-     * @return array
-     */
-    public function getAvailableProductUnitsWithPrecision()
+    public function getAvailableProductUnitsWithPrecision(): array
     {
-        $productUnits = $this->getRepository()->getAllUnits();
+        return $this->cache->get(self::CACHE_KEY_CODES_WITH_PRECISION, function () {
+            $productUnits = $this->getRepository()->getAllUnits();
+            $unitsWithPrecision = [];
+            foreach ($productUnits as $unit) {
+                $unitsWithPrecision[$unit->getCode()] = $unit->getDefaultPrecision();
+            }
+            return $unitsWithPrecision;
+        });
+    }
 
-        $unitsWithPrecision = array();
-        foreach ($productUnits as $unit) {
-            $unitsWithPrecision[$unit->getCode()] = $unit->getDefaultPrecision();
-        }
-
-        return $unitsWithPrecision;
+    public function clearCache(): void
+    {
+        $this->cache->delete(self::CACHE_KEY_CODES);
+        $this->cache->delete(self::CACHE_KEY_CODES_WITH_PRECISION);
     }
 
     /**

@@ -1,0 +1,100 @@
+/* @theme: default; */
+
+.view-product-gallery {
+    display: $view-product-gallery-display;
+    position: $view-product-gallery-position;
+    top: $view-product-gallery-top;
+    left: $view-product-gallery-left;
+    right: $view-product-gallery-right;
+    bottom: $view-product-gallery-bottom;
+
+    color: $view-product-gallery-icon-color;
+    font-size: $view-product-gallery-icon-size;
+    text-shadow: $view-product-gallery-icon-text-shadow;
+    border: $view-product-gallery-border;
+
+    justify-content: $view-product-gallery-justify-content;
+    align-items: $view-product-gallery-align-items;
+
+    background: $view-product-gallery-background;
+    opacity: $view-product-gallery-opacity;
+
+    width: $view-product-gallery-width;
+    height: $view-product-gallery-height;
+
+    border-radius: $view-product-gallery-border-radius;
+    transition: $view-product-gallery-transition;
+
+    &:not(:disabled) {
+        cursor: $btn-cursor;
+    }
+
+    &.focus-visible,
+    &:hover {
+        opacity: $view-product-gallery-hover-opacity;
+    }
+
+    &:hover {
+        background: $view-product-gallery-hover-background;
+    }
+
+    .product-item__preview:hover + &,
+    .product-item__preview:focus + & {
+        opacity: $view-product-gallery-hover-opacity;
+    }
+
+    &.stretched {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+        padding: 0;
+
+        font-size: $base-font-size--large;
+
+        border-radius: 0;
+
+        &::before {
+            margin: 0;
+        }
+    }
+
+    @include fa-icon($view-product-gallery-icon, before, true) {
+        margin: $view-product-gallery-icon-offset;
+    }
+}
+
+@include breakpoint('tablet') {
+    .view-product-gallery {
+        opacity: $view-product-gallery-tablet-opacity;
+
+        &.stretched {
+            opacity: $view-product-gallery-opacity;
+        }
+    }
+
+    .row-selection-enabled {
+        .view-product-gallery {
+            display: none;
+        }
+    }
+}
+
+@include only-mobile {
+    .view-product-gallery {
+        opacity: $view-product-gallery-mobile-opacity;
+
+        &.stretched {
+            opacity: $view-product-gallery-opacity;
+        }
+    }
+
+    .row-selection-enabled {
+        .view-product-gallery {
+            display: none;
+        }
+    }
+}

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -33,13 +33,11 @@ class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture imple
             $entity = new PaymentMethodsConfigsRuleDestination();
 
             /** @var Country $country */
-            $country = $manager
-                ->getRepository('OroAddressBundle:Country')
+            $country = $manager->getRepository(Country::class)
                 ->findOneBy(['iso2Code' => $data['iso2_country_code']]);
 
             /** @var Region $region */
-            $region = $manager
-                ->getRepository('OroAddressBundle:Region')
+            $region = $manager->getRepository(Region::class)
                 ->findOneBy(['combinedCode' => $data['iso2_country_code'].'-'.$data['region_code']]);
 
             /** @var PaymentMethodsConfigsRule $configsRule */

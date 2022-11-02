@@ -12,10 +12,13 @@ oro:
 
         entity_label: Payment Term
         entity_plural_label: Payment Terms
-        entity_description: Represents payment terms
+        entity_grid_all_view_label: All %entity_plural_label%
+        entity_description: Payment terms are the conditions that are used to complete a sale and typically cover a payment due date (e.g. payment ten days after invoice date) and/or payment conditions (e.g. cash before shipment).
 
         id.label: ID
-        label.label: Label
+        label:
+            label: Label
+            description: A custom label that describes a payment term, e.g. *Net 10*, *COD* or *CWO*.
         form.choose: 'Choose a payment term...'
         customer_groups.label: 'Customer Group'
         customers.label: 'Customer'
@@ -40,7 +43,10 @@ oro:
         payment_terms:
             label: 'Terms: %paymentTerm%'
 
-        delete.message.placeholder: '%confirmationMessage%'
+        feature:
+            manage:
+                label: Payment Term Management
+                description: Enables creating a particular term of payment that defines a period for the buyer to complete their purchase based on certain conditions or contract agreements.
 
     payment:
         admin:

@@ -1,0 +1,62 @@
+{% block __customer_user_shopping_list_actions__shopping_list_actions_container_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% if block.children %}
+        {% set togglerId = 'dropdown-'|uniqid %}
+        <div class="btn-group">
+            <button id="{{ togglerId }}"
+                    class="btn btn--default btn--size-s btn--no-y-offset dropdown-toggle dropdown-toggle--no-caret"
+                    type="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-label="{{'oro.frontend.shoppinglist.btn.actions.aria_label'|trans({'%name%': shoppingList.label}) }}"
+                    data-placement="bottom-end"
+                    data-inherit-parent-width="loosely"
+            >
+                <span class="fa fa-ellipsis-h fa--gray" aria-hidden="true"></span>
+                <span class="fa fa-caret-down fa--gray fa--no-offset" aria-hidden="true"></span>
+            </button>
+            <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{%- block __customer_user_shopping_list_actions__shopping_list_action_list_widget -%}
+    {%- for button in buttons -%}
+        {%- set options = oro_action_frontend_options(button) -%}
+        {%- set buttonOptions = options.options -%}
+        <button
+            type="button"
+            class="action mode-icon-text dropdown-item"
+            title="{{ button.label|trans }}"
+            aria-label="{{ button.ariaLabel|trans({'%name%': shoppingList.label}) }}"
+            data-operation-url="{{ buttonOptions.url }}"
+            data-options="{{ buttonOptions|json_encode }}"
+            data-page-component-module="oroaction/js/app/components/button-component"
+        ><span class="icon {{ button.icon }}" aria-hidden="true"></span>
+            {{- button.label|trans -}}
+        </button>
+    {%- endfor -%}
+{%- endblock -%}
+
+{% block __customer_user_shopping_list_actions__shopping_list_action_assign_widget %}
+    <button
+        type="button"
+        class="action mode-icon-text dropdown-item"
+        title="{{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}"
+        aria-label="{{ 'oro.frontend.shoppinglist.btn.assign.aria_label'|trans({'%name%': shoppingList.label}) }}"
+        data-page-component-view="oroshoppinglist/js/app/views/shopping-list-assign-link-view"
+        data-page-component-options="{{ {
+            dialogUrl: path('oro_shopping_list_frontend_assign', {id : shoppingList.id}),
+            dialogTitle: 'oro.frontend.shoppinglist.view.choose_assign_user.label'|trans({'%label%': shoppingList.label}),
+            shoppingListOwnerChangeUrl: path('oro_api_set_shopping_list_owner', {id : shoppingList.id})
+        }|json_encode }}">
+        {%- apply spaceless -%}
+            <span class="icon fa-user" aria-hidden="true"></span>
+            {{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}
+        {%- endapply -%}
+    </button>
+{% endblock %}

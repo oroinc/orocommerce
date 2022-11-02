@@ -2,12 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Controller\Api\Rest;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
+use Doctrine\Persistence\ObjectManager;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -16,10 +11,9 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("paymentmethodsconfigsrules")
- * @NamePrefix("oro_api_")
+ * REST API Payment Methods Configs Rule Controller
  */
-class PaymentMethodsConfigsRuleController extends RestController implements ClassResourceInterface
+class PaymentMethodsConfigsRuleController extends RestController
 {
     /**
      * Enable payment rule
@@ -27,18 +21,13 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      * Returns
      * - HTTP_OK (200)
      *
-     * @Get(
-     *      "/paymentrules/{id}/enable",
-     *      requirements={"version"="latest|v1"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Enable Payment Rule", resource=true)
      * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
      * @param $id
      * @return Response
      */
-    public function enableAction($id)
+    public function enableAction(int $id)
     {
         /** @var PaymentMethodsConfigsRule $paymentMethodsConfigsRule */
         $paymentMethodsConfigsRule = $this->getManager()->find($id);
@@ -55,13 +44,12 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
                         $this->get('translator')->trans('oro.payment.paymentmethodsconfigsrule.notification.enabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
-
 
         return $this->handleView(
             $view
@@ -74,18 +62,13 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
      * Returns
      * - HTTP_OK (200)
      *
-     * @Get(
-     *      "/paymentrules/{id}/disable",
-     *      requirements={"version"="latest|v1"},
-     *      defaults={"version"="latest", "_format"="json"}
-     * )
      * @ApiDoc(description="Disable Payment Rule", resource=true)
      * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
      * @param $id
      * @return Response
      */
-    public function disableAction($id)
+    public function disableAction(int $id)
     {
         /** @var PaymentMethodsConfigsRule $paymentMethodsConfigsRule */
         $paymentMethodsConfigsRule = $this->getManager()->find($id);
@@ -102,13 +85,12 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
                         $this->get('translator')->trans('oro.payment.paymentmethodsconfigsrule.notification.disabled'),
                     'successful' => true,
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             );
         } else {
             /** @var View $view */
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
-
 
         return $this->handleView(
             $view

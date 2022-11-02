@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -11,9 +12,22 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Product row type which is used in quick add form.
+ */
 class ProductRowType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_row';
+
+    /**
+     * @var  ProductUnitsProvider
+     */
+    protected $productUnitsProvider;
+
+    public function __construct(ProductUnitsProvider $productUnitsProvider)
+    {
+        $this->productUnitsProvider = $productUnitsProvider;
+    }
 
     /**
      * {@inheritdoc}
@@ -24,6 +38,9 @@ class ProductRowType extends AbstractProductAwareType
         if ($options['validation_required']) {
             $productSkuOptions['constraints'][] = new ProductBySku();
         }
+
+        // To keep select consistent with Select2 after page JS initialization have to add first empty option
+        $unitChoices = array_merge(['--' => ''], $this->productUnitsProvider->getAvailableProductUnits());
 
         $builder
             ->add(
@@ -45,7 +62,8 @@ class ProductRowType extends AbstractProductAwareType
                 ProductUnitsType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.product.productunitprecision.unit.label'
+                    'label' => 'oro.product.productunitprecision.unit.label',
+                    'choices' => $unitChoices
                 ]
             )
             ->add(
@@ -105,7 +123,7 @@ class ProductRowType extends AbstractProductAwareType
     {
         $product = parent::getProduct($form);
         if (!$product && $form->getParent()) {
-            $sku = strtoupper($form->get(ProductDataStorage::PRODUCT_SKU_KEY)->getData());
+            $sku = mb_strtoupper($form->get(ProductDataStorage::PRODUCT_SKU_KEY)->getData());
             $products = $form->getParent()->getConfig()->getOption('products', []);
             if ($products && isset($products[$sku])) {
                 $product = $products[$sku];

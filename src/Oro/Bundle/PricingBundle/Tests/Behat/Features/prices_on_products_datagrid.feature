@@ -10,7 +10,11 @@ Feature: Prices on Products Datagrid
   Scenario: Disable price column on products datagrid
     Given I login as administrator
     And I go to Products/ Products
-    When I hide column Price (USD) in grid
+    And I shouldn't see "Price (USD)" column in grid
+    And I shouldn't see "Price (EUR)" column in grid
+    When I check "USD"
+    And I should see "Price (USD)" column in grid
+    And I hide column Price (USD) in grid
     Then I shouldn't see "Price (USD)" column in grid
 
   Scenario: Ensure price column on products datagrid can be loaded when enabled

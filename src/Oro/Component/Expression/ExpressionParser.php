@@ -2,7 +2,6 @@
 
 namespace Oro\Component\Expression;
 
-use Oro\Component\Expression\Node;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -28,9 +27,6 @@ class ExpressionParser
      */
     protected $expressionCache = [];
 
-    /**
-     * @param ExpressionLanguageConverter $converter
-     */
     public function __construct(ExpressionLanguageConverter $converter)
     {
         $this->converter = $converter;

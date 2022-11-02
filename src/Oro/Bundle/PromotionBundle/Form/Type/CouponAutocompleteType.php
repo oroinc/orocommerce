@@ -6,6 +6,9 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Coupon select.
+ */
 class CouponAutocompleteType extends AbstractType
 {
     const NAME = 'oro_promotion_coupon_autocomplete';
@@ -46,8 +49,8 @@ class CouponAutocompleteType extends AbstractType
                 'label' => 'oro.promotion.coupon.entity_label',
                 'configs' => [
                     'placeholder' => 'oro.promotion.coupon.autocomplete.placeholder',
-                    'result_template_twig' => 'OroPromotionBundle:Coupon:Autocomplete/result.html.twig',
-                    'selection_template_twig' => 'OroPromotionBundle:Coupon:Autocomplete/selection.html.twig',
+                    'result_template_twig' => '@OroPromotion/Coupon/Autocomplete/result.html.twig',
+                    'selection_template_twig' => '@OroPromotion/Coupon/Autocomplete/selection.html.twig',
                 ]
             ]
         );

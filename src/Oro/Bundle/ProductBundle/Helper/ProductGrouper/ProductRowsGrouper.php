@@ -4,9 +4,11 @@ namespace Oro\Bundle\ProductBundle\Helper\ProductGrouper;
 
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 
+/**
+ * Groups array/ArrayCollection of products by SKU and Unit
+ */
 class ProductRowsGrouper implements ProductsGrouperInterface
 {
-
     /**
      * {@inheritDoc}
      * @param ProductRow[] $products
@@ -35,13 +37,9 @@ class ProductRowsGrouper implements ProductsGrouperInterface
      */
     private function createIndex(ProductRow $productRow)
     {
-        return sprintf('%s_%s', strtoupper($productRow->productSku), $productRow->productUnit);
+        return sprintf('%s_%s', mb_strtoupper($productRow->productSku), $productRow->productUnit);
     }
 
-    /**
-     * @param ProductRow $productRowTo
-     * @param ProductRow $productRowFrom
-     */
     private function addQuantity(ProductRow $productRowTo, ProductRow $productRowFrom)
     {
         $productRowTo->productQuantity += $productRowFrom->productQuantity;

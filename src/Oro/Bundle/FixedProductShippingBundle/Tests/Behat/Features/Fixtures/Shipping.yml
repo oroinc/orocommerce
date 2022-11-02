@@ -1,0 +1,26 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRule:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            surcharge_type: 'percent'
+            surcharge_on: 'product_price'
+            surcharge_amount: 10
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("fixed_product_".@fixedProductIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule:
+        rule: '@shippingRule'
+        methodConfigs: ['@shippingMethodConfig']
+        currency: 'USD'
+        organization: '@organization'

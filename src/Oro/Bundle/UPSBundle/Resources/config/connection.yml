@@ -9,8 +9,12 @@ services:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory'
         public: false
 
+    Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator:
+        alias: oro_ups.connection.validator
+
     oro_ups.connection.validator:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator'
+        public: true
         arguments:
             - '@oro_ups.connection.validator.request.factory.rate_request'
             - '@oro_ups.client.factory_basic'

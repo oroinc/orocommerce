@@ -6,6 +6,7 @@ use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\CustomerAddressItemResolver;
 
 class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
@@ -13,32 +14,36 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
     /** @var CustomerAddressItemResolver */
     protected $resolver;
 
-    /** {@inheritdoc} */
-    protected function createResolver()
+    /**
+     * {@inheritDoc}
+     */
+    protected function createResolver(): AbstractItemResolver
     {
         return new CustomerAddressItemResolver($this->unitResolver, $this->rowTotalResolver, $this->matcher);
     }
 
-    /** {@inheritdoc} */
-    protected function getTaxable()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getTaxable(): Taxable
     {
         return new Taxable();
     }
 
-    public function testItemNotApplicable()
+    /**
+     * {@inheritDoc}
+     */
+    protected function assertEmptyResult(Taxable $taxable): void
     {
-        $taxable = new Taxable();
-        $taxable->addItem(new Taxable());
-
-        $this->assertNothing();
-
-        $this->resolver->resolve($taxable);
-
-        $this->assertEmptyResult($taxable);
+        $this->assertEquals(new ResultElement(), $taxable->getResult()->getUnit());
+        $this->assertEquals(new ResultElement(), $taxable->getResult()->getRow());
+        $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
 
-    /** {@inheritdoc} */
-    public function rulesDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function rulesDataProvider(): array
     {
         return [
             [
@@ -55,6 +60,18 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
         ];
     }
 
+    public function testItemNotApplicable()
+    {
+        $taxable = new Taxable();
+        $taxable->addItem(new Taxable());
+
+        $this->assertNothing();
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertEmptyResult($taxable);
+    }
+
     public function testResultLocked()
     {
         $result = new Result();
@@ -67,13 +84,5 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
         $this->assertNothing();
 
         $this->resolver->resolve($taxable);
-    }
-
-    /** {@inheritdoc} */
-    protected function assertEmptyResult(Taxable $taxable)
-    {
-        $this->assertEquals(new ResultElement(), $taxable->getResult()->getUnit());
-        $this->assertEquals(new ResultElement(), $taxable->getResult()->getRow());
-        $this->assertEquals([], $taxable->getResult()->getTaxes());
     }
 }

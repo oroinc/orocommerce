@@ -1,9 +1,11 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
 {% set pageTitle = 'oro.cms.page.entity_plural_label'|trans %}
 {% set gridName = 'cms-page-grid' %}
 
 {% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% if is_granted('oro_cms_page_create') %}
         <div class="btn-group">
             {{ UI.addButton({

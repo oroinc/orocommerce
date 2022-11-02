@@ -8,7 +8,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Extends Choice type behavior by modifying 'choice_label' using translator and unitValueFormatter
@@ -32,11 +32,6 @@ class QuoteProductDemandOfferChoiceType extends AbstractType
      */
     protected $unitVisibility;
 
-    /**
-     * @param UnitValueFormatterInterface $unitValueFormatter
-     * @param TranslatorInterface $translator
-     * @param UnitVisibilityInterface $unitVisibility
-     */
     public function __construct(
         UnitValueFormatterInterface $unitValueFormatter,
         TranslatorInterface $translator,

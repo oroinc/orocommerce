@@ -1,0 +1,59 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api_frontend/order.md'
+            fields:
+                totalIncludingTax:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                totalExcludingTax:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                totalTaxAmount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api_frontend/order_line_item.md'
+            fields:
+                unitPriceIncludingTax:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                unitPriceExcludingTax:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                unitPriceTaxAmount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                rowTotalIncludingTax:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                rowTotalExcludingTax:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                rowTotalTaxAmount:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                taxes:
+                    data_type: objects
+                    property_path: _
+                    form_options:
+                        mapped: false

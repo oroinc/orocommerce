@@ -24,8 +24,8 @@ Feature: Guest RFQ
     And I check "Enable Guest RFQ"
     And I save setting
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     When I save setting
     Then I should see "Configuration saved" flash message
 
@@ -40,16 +40,17 @@ Feature: Guest RFQ
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
     And I hover on "Shopping List Widget"
     And I should see "1 Item | $0.00" in the "Shopping List Widget" element
+    And I click on empty space
     And click "Request Quote"
     And I fill form with:
-      | First Name             | Tester               |
-      | Last Name              | Testerson            |
-      | Email Address          | testerson@example.com|
-      | Phone Number           | 72 669 62 82         |
-      | Company                | Red Fox Tavern       |
-      | Role                   | CEO                  |
-      | Notes                  | Test note for quote. |
-      | PO Number              | PO Test 01           |
+      | First Name    | Tester                |
+      | Last Name     | Testerson             |
+      | Email Address | testerson@example.com |
+      | Phone Number  | 72 669 62 82          |
+      | Company       | Red Fox Tavern        |
+      | Role          | CEO                   |
+      | Notes         | Test note for quote.  |
+      | PO Number     | PO Test 01            |
     And click "Edit"
     And I fill in "TargetPriceField" with "10.99"
     And click "Update"
@@ -61,10 +62,10 @@ Feature: Guest RFQ
     Given I proceed as the Admin
     When I go to Sales/ Requests For Quote
     Then I should see "Tester Testerson" in grid with following data:
-      | SUBMITTED BY    | Tester Testerson     |
-      | CUSTOMER        | Tester Testerson     |
-      | INTERNAL STATUS | Open                 |
-      | PO NUMBER       | PO Test 01           |
+      | SUBMITTED BY    | Tester Testerson |
+      | CUSTOMER        | Tester Testerson |
+      | INTERNAL STATUS | Open             |
+      | PO NUMBER       | PO Test 01       |
     And I click view "PO Test 01" in grid
     And I should see " First Name Tester "
     And I should see " Last Name Testerson "
@@ -82,19 +83,27 @@ Feature: Guest RFQ
     And click "LineItemDropdown"
     And click "Request a Quote"
     And I fill form with:
-      | First Name             | Tester               |
-      | Last Name              | Testerson            |
-      | Email Address          | testerson@example.com|
-      | Phone Number           | 72 669 62 82         |
-      | Company                | Red Fox Tavern       |
-      | Role                   | CEO                  |
-      | Notes                  | Test note for quote. |
-      | PO Number              | PO Test 02           |
+      | First Name    | Tester2               |
+      | Last Name     | Testerson             |
+      | Email Address | testerson@example.com |
+      | Phone Number  | 72 669 62 82          |
+      | Company       | Red Fox Tavern        |
+      | Role          | CEO                   |
+      | Notes         | Test note for quote.  |
+      | PO Number     | PO Test 02            |
+    And click on "Edit Request Product Line Item"
+    And click on "Add Another Line"
+    And I type "20" in "Line Item Quantity"
+    And I click "Update"
     When I click "Submit Request"
     Then I should see "Request has been saved" flash message
     And I should see "Thank You For Your Request!"
+    And email with Subject "Your RFQ has been received." containing the following was sent:
+      | Body | 1 item |
+    And email with Subject "Your RFQ has been received." containing the following was sent:
+      | Body | 20 item |
 
-  Scenario: Check that second RFQ assigned to the same customer
+  Scenario: Check that second RFQ assigned to the different customer
     Given I proceed as the Admin
     And go to Customers/ Customers
     And I should see "Tester Testerson" in grid with following data:
@@ -102,7 +111,7 @@ Feature: Guest RFQ
       | Account | Tester Testerson           |
     When I click view "Tester Testerson" in grid
     Then I should see "PO Test 01"
-    And I should see "PO Test 02"
+    And I should not see "PO Test 02"
 
   Scenario: Create RFQ with another localization and check product unit in email
     Given I proceed as the Buyer
@@ -110,13 +119,13 @@ Feature: Guest RFQ
     And I click "Localization Switcher"
     And I select "Localization 1" localization
     And I open shopping list widget
-    And I click "View Details"
+    And I click "View List"
     And click "Request Quote"
     And I fill form with:
-      | First Name             | Tester               |
-      | Last Name              | Testerson            |
-      | Email Address          | testerson@example.com|
-      | Company                | Red Fox Tavern       |
+      | First Name    | Tester                |
+      | Last Name     | Testerson             |
+      | Email Address | testerson@example.com |
+      | Company       | Red Fox Tavern        |
     When I click "Submit Request"
     Then email with Subject "Your RFQ has been received." containing the following was sent:
-      | Body    | 1 item (lang1) |
+      | Body | 1 item (lang1) |

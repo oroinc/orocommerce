@@ -2,45 +2,34 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Url provider for ContentVariant entity.
+ */
 class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
 {
     const USED_SLUG_KEY = '_used_slug';
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private RequestStack $requestStack;
 
-    /**
-     * @var UrlCacheInterface
-     */
-    private $cache;
+    private UrlCacheInterface $cache;
 
-    /**
-     * @var UserLocalizationManager
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param UrlCacheInterface $cache
-     * @param UserLocalizationManager $userLocalizationManager
-     */
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManager $userLocalizationManager
+        LocalizationProviderInterface $localizationProvider
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -52,7 +41,7 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
 
         if (!$contextUrl) {
             $localizationId = null;
-            if ($localization = $this->userLocalizationManager->getCurrentLocalization()) {
+            if ($localization = $this->localizationProvider->getCurrentLocalization()) {
                 $localizationId = $localization->getId();
             }
 

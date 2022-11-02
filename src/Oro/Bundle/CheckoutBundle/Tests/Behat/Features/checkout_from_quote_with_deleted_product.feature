@@ -28,7 +28,7 @@ Feature: Checkout from quote with deleted product
   Scenario: Create order from Quote PO1
     Given AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click view PO1 in grid
 

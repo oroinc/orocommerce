@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItemUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +24,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -34,6 +36,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
         $this->loadFixtures([
             LoadShoppingListACLData::class,
+            LoadShoppingListLineItemUserACLData::class,
             LoadFrontendProductVisibilityData::class,
         ]);
 
@@ -43,8 +46,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductFromView()
     {
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
                 [
@@ -62,8 +65,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
      */
     public function testRemoveProductFromView()
     {
-        $this->client->request(
-            'POST',
+        $this->ajaxRequest(
+            'DELETE',
             $this->getUrl(
                 'oro_shopping_list_frontend_remove_product',
                 [
@@ -76,12 +79,46 @@ class AjaxLineItemControllerAclTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
     }
 
+    public function testRemoveLineItemAction()
+    {
+        $shoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL);
+        $lineItem = $shoppingList->getLineItems()->first();
+
+        $this->ajaxRequest(
+            'DELETE',
+            $this->getUrl(
+                'oro_shopping_list_frontend_remove_line_item',
+                [
+                    'lineItemId' => $lineItem->getId(),
+                ]
+            )
+        );
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_FORBIDDEN);
+
+        $this->ajaxRequest(
+            'DELETE',
+            $this->getUrl(
+                'oro_shopping_list_frontend_remove_line_item',
+                [
+                    'lineItemId' => $lineItem->getId(),
+                ]
+            ),
+            [],
+            [],
+            $this->generateBasicAuthHeader(
+                LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL
+            )
+        );
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), Response::HTTP_OK);
+    }
+
     public function testAddProductsMassAction()
     {
         $this->markTestSkipped('Enable in BB-5144');
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_add_products_massaction',
                 [
@@ -99,8 +136,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductsToNewMassAction()
     {
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $this->getUrl(
                 'oro_shopping_list_add_products_to_new_massaction',
                 [

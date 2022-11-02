@@ -34,9 +34,9 @@ Feature: Import of Coupons codes
       | Coupon Code | Enabled | Promotion                    | Valid From            | Valid Until            | Uses per Coupon | Uses per Person |
       | test1       | Yes     | order Discount Promotion     | Jan 1, 2010, 12:00 AM | Jan 1, 2020, 12:00 AM  | 101             | 91              |
       | test2       | Yes     | line Item Discount Promotion | Jan 1, 2000, 12:00 AM | Oct 10, 2010, 10:00 AM | 102             | 92              |
-      | test3       | No      | N/A                          |                       |                        | 103             | 93              |
-      | test4       | No      | N/A                          |                       |                        | 104             | 94              |
-      | test5       | No      | N/A                          |                       |                        | 105             | 95              |
+      | test3       | No      |                              |                       |                        | 103             | 93              |
+      | test4       | No      |                              |                       |                        | 104             | 94              |
+      | test5       | No      |                              |                       |                        | 105             | 95              |
     And number of records should be 5
     When I click on test5 in grid
     Then I should see "Owner: Child Business Unit"

@@ -7,6 +7,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Registers services needed for working with expressions in price lists (expression parser, query builder,
+ * field providers, etc.).
+ */
 class ProductExpressionServicesPass implements CompilerPassInterface
 {
     const EXPRESSION_PARSER = 'oro_product.expression.parser';
@@ -31,7 +35,7 @@ class ProductExpressionServicesPass implements CompilerPassInterface
             $container->getDefinition(self::EXPRESSION_PARSER)
                 ->addMethodCall(
                     'addNameMapping',
-                    ['pricelist', $container->getParameter('oro_pricing.entity.price_list.class')]
+                    ['pricelist', PriceList::class]
                 );
         }
 

@@ -10,25 +10,25 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderAddressEventListener */
     protected $listener;
 
-    /** @var EngineInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $twigEngine;
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    protected $twig;
 
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $formFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->twigEngine = $this->createMock(EngineInterface::class);
+        $this->twig = $this->createMock(Environment::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
-        $this->listener = new OrderDiscountEventListener($this->twigEngine, $this->formFactory);
+        $this->listener = new OrderDiscountEventListener($this->twig, $this->formFactory);
     }
 
     public function testOnOrderEvent()
@@ -46,7 +46,9 @@ class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
         $form->expects(static::any())->method('getData')->willReturn($order);
 
         $formView = static::createMock(FormView::class);
-        $this->twigEngine->expects(static::once())
+        $formView->children = ['discounts' => $this->createMock(FormView::class)];
+
+        $this->twig->expects(static::once())
             ->method('render')
             ->with(OrderDiscountEventListener::TEMPLATE, ['form' => $formView])
             ->willReturn($viewHtml);

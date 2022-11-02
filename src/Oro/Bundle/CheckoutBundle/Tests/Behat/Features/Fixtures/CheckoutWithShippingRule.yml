@@ -1,0 +1,167 @@
+include:
+    - '@OroPaymentTermBundle:PaymentTermIntegration.yml'
+    - '@OroCheckoutBundle:Payment.yml'
+    - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: '10'
+        currency: 'USD'
+    price2:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locProduct1:
+        string: 'Product1'
+    locProduct2:
+        string: 'Product2'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@locProduct1']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        primaryUnitPrecision: '@precision2'
+        __calls:
+            - addName: ['@locProduct2']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel1:
+        product: '@product1'
+        productUnitPrecision: '@precision1'
+        quantity: 100
+    inventoryLevel2:
+        product: '@product2'
+        productUnitPrecision: '@precision2'
+        quantity: 100
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist1:
+        name: 'Pricelist'
+        default: true
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct1:
+        priceList: '@pricelist1'
+        product: '@product1'
+    priceListToProduct2:
+        priceList: '@pricelist1'
+        product: '@product2'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelist1'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer'
+        pricelist: '@pricelist1'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@pricelist1'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 1
+        unit: '@item'
+        value: 3
+        currency: 'USD'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'List1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+    lineitem2:
+        product: '@product2'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist1','USD']
+        shoppingList: '@shoppinglist1'
+        currency: 'USD'
+        subtotalValue: 40
+        valid: true
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRule:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+        expression: 'lineItems.any(lineItem.product.sku = "SKU2")'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.5
+            type: 'per_order'
+            handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule:
+        rule: '@shippingRule'
+        methodConfigs: ['@shippingMethodConfig']
+        currency: 'USD'
+        organization: '@organization'

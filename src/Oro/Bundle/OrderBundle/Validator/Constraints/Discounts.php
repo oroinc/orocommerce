@@ -4,15 +4,15 @@ namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * This constraint is used to check that the sum of all order discounts does not exceed the order grand total amount.
+ */
 class Discounts extends Constraint
 {
-    /**
-     * @var string
-     */
     public $errorMessage = 'oro.order.discounts.sum.error.label';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTargets()
     {

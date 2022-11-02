@@ -19,9 +19,6 @@ class OroCheckoutBundle implements Migration
         $this->addRegisteredCustomerUser($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addRegisteredCustomerUser(Schema $schema)
     {
         $table = $schema->getTable('oro_checkout');

@@ -10,9 +10,9 @@ use Symfony\Component\Form\FormView;
 class ShippingOriginConfigTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShippingOriginConfigType */
-    protected $formType;
+    private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ShippingOriginConfigType();
     }
@@ -29,61 +29,60 @@ class ShippingOriginConfigTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testFinishViewWithoutParentForm()
     {
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $mockFormView */
-        $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockFormView = $this->createMock(FormView::class);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mockFormInterface */
-        $mockFormInterface = $this->createMock('Symfony\Component\Form\FormInterface');
-        $mockFormInterface->expects($this->once())->method('getParent')->willReturn(null);
+        $mockFormInterface = $this->createMock(FormInterface::class);
+        $mockFormInterface->expects($this->once())
+            ->method('getParent')
+            ->willReturn(null);
 
         $this->formType->finishView($mockFormView, $mockFormInterface, []);
     }
 
     public function testFinishViewWithoutParentScopeValue()
     {
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $mockFormView */
-        $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockFormView = $this->createMock(FormView::class);
 
-        $mockParentForm = $this->createMock('Symfony\Component\Form\FormInterface');
-        $mockParentForm->expects($this->once())->method('has')->with('use_parent_scope_value')->willReturn(false);
+        $mockParentForm = $this->createMock(FormInterface::class);
+        $mockParentForm->expects($this->once())
+            ->method('has')
+            ->with('use_parent_scope_value')
+            ->willReturn(false);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mockFormInterface */
-        $mockFormInterface = $this->createMock('Symfony\Component\Form\FormInterface');
-        $mockFormInterface->expects($this->once())->method('getParent')->willReturn($mockParentForm);
+        $mockFormInterface = $this->createMock(FormInterface::class);
+        $mockFormInterface->expects($this->once())
+            ->method('getParent')
+            ->willReturn($mockParentForm);
 
         $this->formType->finishView($mockFormView, $mockFormInterface, []);
     }
 
     public function testFinishViewParentScopeValue()
     {
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $childView */
-        $childView = $this->getMockBuilder('Symfony\Component\Form\FormView')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $childView = $this->createMock(FormView::class);
 
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $mockFormView */
-        $mockFormView = $this->getMockBuilder('Symfony\Component\Form\FormView')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockFormView = $this->createMock(FormView::class);
         $mockFormView->children = [$childView];
 
-        $mockParentScopeValueForm = $this->createMock('Symfony\Component\Form\FormInterface');
-        $mockParentScopeValueForm->expects($this->once())->method('getData')->willReturn('data');
+        $mockParentScopeValueForm = $this->createMock(FormInterface::class);
+        $mockParentScopeValueForm->expects($this->once())
+            ->method('getData')
+            ->willReturn('data');
 
-        $mockParentForm = $this->createMock('Symfony\Component\Form\FormInterface');
-        $mockParentForm->expects($this->once())->method('has')->with('use_parent_scope_value')->willReturn(true);
+        $mockParentForm = $this->createMock(FormInterface::class);
+        $mockParentForm->expects($this->once())
+            ->method('has')
+            ->with('use_parent_scope_value')
+            ->willReturn(true);
         $mockParentForm->expects($this->once())
             ->method('get')
             ->with('use_parent_scope_value')
             ->willReturn($mockParentScopeValueForm);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $mockFormInterface */
-        $mockFormInterface = $this->createMock('Symfony\Component\Form\FormInterface');
-        $mockFormInterface->expects($this->once())->method('getParent')->willReturn($mockParentForm);
+        $mockFormInterface = $this->createMock(FormInterface::class);
+        $mockFormInterface->expects($this->once())
+            ->method('getParent')
+            ->willReturn($mockParentForm);
 
         $this->formType->finishView($mockFormView, $mockFormInterface, []);
 

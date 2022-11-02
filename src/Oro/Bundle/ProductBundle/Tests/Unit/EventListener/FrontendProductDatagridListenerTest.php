@@ -2,55 +2,56 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var FrontendProductDatagridListener
-     */
-    protected $listener;
+    private const NO_IMAGE_PATH = '/path/no_image.jpg';
 
-    /**
-     * @var DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $themeHelper;
+    private DataGridThemeHelper|\PHPUnit\Framework\MockObject\MockObject $themeHelper;
 
-    /**
-     * @var CacheManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $imagineCacheManager;
+    private ImagePlaceholderProviderInterface|\PHPUnit\Framework\MockObject\MockObject $imagePlaceholderProvider;
 
-    public function setUp()
+    private FrontendProductDatagridListener $listener;
+
+    protected function setUp(): void
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
-        $this->imagineCacheManager = $this->createMock(CacheManager::class);
+        $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
 
-        $this->listener = new FrontendProductDatagridListener($this->themeHelper, $this->imagineCacheManager);
+        $urlHelper = $this->createMock(UrlHelper::class);
+        $urlHelper
+            ->expects(self::any())
+            ->method('getAbsolutePath')
+            ->willReturnCallback(static fn (string $path) => '/absolute' . $path);
+
+        $this->listener = new FrontendProductDatagridListener(
+            $this->themeHelper,
+            $this->imagePlaceholderProvider,
+            $urlHelper
+        );
     }
 
     /**
      * @dataProvider onPreBuildDataProvider
-     *
-     * @param string $themeName
-     * @param array $expectedConfig
      */
-    public function testOnPreBuild($themeName, array $expectedConfig)
+    public function testOnPreBuild(string $themeName, array $expectedConfig)
     {
         $gridName = 'grid-name';
-        $this->themeHelper->expects($this->any())
+        $this->themeHelper->expects(self::any())
             ->method('getTheme')
             ->willReturn($themeName);
 
@@ -58,14 +59,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $params = new ParameterBag();
         $event  = new PreBuild($config, $params);
         $this->listener->onPreBuild($event);
-        $this->assertEquals($expectedConfig, $config->toArray());
+        self::assertEquals($expectedConfig, $config->toArray());
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function onPreBuildDataProvider()
+    public function onPreBuildDataProvider(): array
     {
         return [
             'list'  => [
@@ -76,6 +76,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         'product_units' => [
                             'type' => 'field',
                             'frontend_type' => 'row_array',
+                        ],
+                        'hasImage' => [
+                            'type' => 'field',
+                            'frontend_type' => 'boolean',
                         ]
                     ],
                     'columns' => [
@@ -96,6 +100,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                             'type'      => LocalizedValueProperty::NAME,
                             'data_name' => 'shortDescriptions',
                         ],
+                        'hasImage' => [
+                            'type' => 'field',
+                            'frontend_type' => 'boolean',
+                        ]
                     ],
                     'columns'    => [
                         'image'            => ['label' => 'oro.product.image.label'],
@@ -111,6 +119,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         'product_units' => [
                             'type'          => 'field',
                             'frontend_type' => 'row_array',
+                        ],
+                        'hasImage' => [
+                            'type' => 'field',
+                            'frontend_type' => 'boolean',
                         ]
                     ],
                     'columns'    => [
@@ -124,64 +136,51 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @dataProvider onResultAfterDataProvider
-     *
-     * @param string $themeName
-     * @param array $data
-     * @param array $expectedData
      */
-    public function testOnResultAfter(
-        $themeName,
-        array $data,
-        array $expectedData
-    ) {
+    public function testOnResultAfter(string $themeName, array $data, array $expectedData)
+    {
         $records = [];
         foreach ($data as $record) {
             $records[] = new ResultRecord($record);
         }
 
-        /**
-         * @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event
-         */
-        $event = $this->getMockBuilder(SearchResultAfter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->once())
+        $event = $this->createMock(SearchResultAfter::class);
+        $event->expects(self::once())
             ->method('getRecords')
             ->willReturn($records);
 
-        /**
-         * @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid
-         */
-        $datagrid = $this->getMockBuilder(Datagrid::class)
-            ->disableOriginalConstructor()->getMock();
-
         $gridName = 'grid-name';
-        $datagrid->expects($this->once())
+        $datagrid = $this->createMock(Datagrid::class);
+        $datagrid->expects(self::once())
             ->method('getName')
             ->willReturn($gridName);
 
-        $this->themeHelper->expects($this->any())
+        $this->themeHelper->expects(self::any())
             ->method('getTheme')
             ->willReturn($themeName);
 
-        $event->expects($this->once())
+        $this->imagePlaceholderProvider->expects(self::any())
+            ->method('getPath')
+            ->with('product_medium')
+            ->willReturn(self::NO_IMAGE_PATH);
+
+        $event->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($datagrid);
 
         $this->listener->onResultAfter($event);
         foreach ($expectedData as $expectedRecord) {
+            /** @var ResultRecord $record */
             $record = current($records);
-            $this->assertEquals($expectedRecord['id'], $record->getValue('id'));
-            $this->assertEquals($expectedRecord['image'], $record->getValue('image'));
-            $this->assertEquals($expectedRecord['expectedUnits'], $record->getValue('product_units'));
+            self::assertEquals($expectedRecord['id'], $record->getValue('id'));
+            self::assertSame($expectedRecord['hasImage'], $record->getValue('hasImage'));
+            self::assertEquals($expectedRecord['image'], $record->getValue('image'));
+            self::assertEquals($expectedRecord['expectedUnits'], $record->getValue('product_units'));
             next($records);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function onResultAfterDataProvider()
+    public function onResultAfterDataProvider(): array
     {
         return [
             [
@@ -203,7 +202,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                 'expectedData' => [
                     [
                         'id'            => 1,
-                        'image'         => '/image/1/medium',
+                        'hasImage'      => true,
+                        'image'         => '/absolute/image/1/medium',
                         'expectedUnits' => [
                             'each' => 3,
                             'set' => 0
@@ -211,14 +211,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         'id'            => 2,
-                        'image'         => null,
+                        'hasImage'      => false,
+                        'image'         => self::NO_IMAGE_PATH,
                         'expectedUnits' => [
                             'bottle' => 0
                         ]
                     ],
                     [
                         'id'            => 3,
-                        'image'         => '/image/3/medium',
+                        'hasImage'      => true,
+                        'image'         => '/absolute/image/3/medium',
                         'expectedUnits' => []
                     ],
                 ],
@@ -241,17 +243,20 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                 'expectedData' => [
                     [
                         'id'            => 1,
-                        'image'         => '/image/1/medium',
+                        'hasImage'      => true,
+                        'image'         => '/absolute/image/1/medium',
                         'expectedUnits' => []
                     ],
                     [
                         'id'            => 2,
-                        'image'         => null,
+                        'hasImage'      => false,
+                        'image'         => self::NO_IMAGE_PATH,
                         'expectedUnits' => []
                     ],
                     [
                         'id'            => 3,
-                        'image'         => '/image/3/medium',
+                        'hasImage'      => true,
+                        'image'         => '/absolute/image/3/medium',
                         'expectedUnits' => []
                     ],
                 ],
@@ -261,42 +266,32 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider themesWithoutImageDataProvider
-     *
-     * @param string $themeName
      */
-    public function testOnResultAfterViewWithoutImage($themeName)
+    public function testOnResultAfterViewWithoutImage(string $themeName)
     {
-        /** @var SearchResultAfter|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(SearchResultAfter::class)
-            ->disableOriginalConstructor()->getMock();
-        $event->expects($this->once())
+        $event = $this->createMock(SearchResultAfter::class);
+        $event->expects(self::once())
             ->method('getRecords')
             ->willReturn([]);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $datagrid */
-        $datagrid = $this->getMockBuilder(Datagrid::class)
-            ->disableOriginalConstructor()->getMock();
-
         $gridName = 'grid-name';
-        $datagrid->expects($this->once())
+        $datagrid = $this->createMock(Datagrid::class);
+        $datagrid->expects(self::once())
             ->method('getName')
             ->willReturn($gridName);
 
-        $this->themeHelper->expects($this->any())
+        $this->themeHelper->expects(self::any())
             ->method('getTheme')
             ->willReturn($themeName);
 
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($datagrid);
 
         $this->listener->onResultAfter($event);
     }
 
-    /**
-     * @return array
-     */
-    public function themesWithoutImageDataProvider()
+    public function themesWithoutImageDataProvider(): array
     {
         return [
             ['themeName' => DataGridThemeHelper::VIEW_LIST],

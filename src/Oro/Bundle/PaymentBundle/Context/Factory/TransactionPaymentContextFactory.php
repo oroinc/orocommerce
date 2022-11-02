@@ -11,9 +11,6 @@ class TransactionPaymentContextFactory implements TransactionPaymentContextFacto
      */
     private $compositeFactory;
 
-    /**
-     * @param CompositeSupportsEntityPaymentContextFactory $compositeFactory
-     */
     public function __construct(CompositeSupportsEntityPaymentContextFactory $compositeFactory)
     {
         $this->compositeFactory = $compositeFactory;

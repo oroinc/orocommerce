@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
@@ -17,67 +18,51 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PriceList
-     */
-    protected $priceList;
+    /** @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $builder;
 
-    /**
-     * @var PriceListListener
-     */
-    protected $listener;
+    /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $triggerHandler;
 
-    /**
-     * @var CombinedPriceListActivationPlanBuilder|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $builder;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $triggerHandler;
+    /** @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceRuleLexemeHandler;
 
-    /**
-     * @var PriceRuleLexemeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceRuleLexemeHandler;
+    /** @var PriceList */
+    private $priceList;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    /** @var PriceListListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        $this->builder = $this
-            ->getMockBuilder(CombinedPriceListActivationPlanBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->triggerHandler = $this
-            ->getMockBuilder(PriceListRelationTriggerHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->priceRuleLexemeHandler = $this
-            ->getMockBuilder(PriceRuleLexemeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->builder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
+        $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);
+        $this->priceRuleLexemeHandler = $this->createMock(PriceRuleLexemeHandler::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->listener = new PriceListListener(
             $this->builder,
             $this->triggerHandler,
             $this->priceRuleLexemeHandler
         );
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('oro_price_lists_combined');
 
         $this->priceList = $this->createPriceList();
-
-        // Need call this event first, to set initial state
-        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
     }
 
-    public function testPostSubmit()
+    public function testPostSubmitWithoutCurrencyChange()
     {
-        /** @var FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+
+        $form = $this->createMock(FormInterface::class);
 
         $event = new AfterFormProcessEvent($form, $this->priceList);
 
@@ -90,6 +75,12 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testWithoutChanges()
     {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+
         $this->builder->expects($this->never())
             ->method('buildByPriceList');
 
@@ -99,8 +90,32 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
 
+    public function testAfterFlushCplFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(false);
+        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+
+        $this->priceList->setActive(false);
+        $this->builder->expects($this->never())
+            ->method('buildByPriceList');
+
+        $this->triggerHandler->expects($this->once())
+            ->method('handlePriceListStatusChange');
+
+        $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
+    }
+
     public function testStatusChanged()
     {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+
         $this->priceList->setActive(false);
         $this->triggerHandler->expects($this->once())
             ->method('handlePriceListStatusChange');
@@ -110,6 +125,12 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testWhenScheduleCollectionWasChanged()
     {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+
         /** @var PriceListSchedule $schedule */
         $schedule = $this->priceList->getSchedules()->first();
         $schedule->setActiveAt(new \DateTime('2016-01-01T22:00:00Z'));
@@ -123,6 +144,12 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testWhenScheduleCollectionElementDeleted()
     {
+        $this->featureChecker->expects($this->any())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+        $this->listener->beforeSubmit($this->createFormProcessEvent($this->priceList));
+
         $this->priceList->getSchedules()->remove(1);
 
         $this->builder->expects($this->once())
@@ -132,13 +159,9 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->afterFlush($this->createAfterFormProcessEvent($this->priceList));
     }
 
-    /**
-     * @return PriceList
-     */
-    protected function createPriceList()
+    private function createPriceList(): PriceList
     {
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', ['id' => 1]);
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $schedule1 = new PriceListSchedule(
             new \DateTime('2016-03-01T22:00:00Z'),
             new \DateTime('2016-04-01T22:00:00Z')
@@ -148,33 +171,27 @@ class PriceListListenerTest extends \PHPUnit\Framework\TestCase
             new \DateTime('2016-06-01T22:00:00Z')
         );
 
+        $priceList->setCurrencies(['USD']);
+
         $priceList->addSchedule($schedule1)
             ->addSchedule($schedule2);
 
         return $priceList;
     }
 
-    /**
-     * @param PriceList $priceList
-     * @return FormProcessEvent
-     */
-    protected function createFormProcessEvent(PriceList $priceList)
+    private function createFormProcessEvent(PriceList $priceList): FormProcessEvent
     {
-        /** @var FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-
-        return new FormProcessEvent($form, $priceList);
+        return new FormProcessEvent(
+            $this->createMock(\Symfony\Component\Form\FormInterface::class),
+            $priceList
+        );
     }
 
-    /**
-     * @param PriceList $priceList
-     * @return AfterFormProcessEvent
-     */
-    protected function createAfterFormProcessEvent(PriceList $priceList)
+    private function createAfterFormProcessEvent(PriceList $priceList): AfterFormProcessEvent
     {
-        /** @var FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-
-        return new AfterFormProcessEvent($form, $priceList);
+        return new AfterFormProcessEvent(
+            $this->createMock(\Symfony\Component\Form\FormInterface::class),
+            $priceList
+        );
     }
 }

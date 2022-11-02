@@ -7,14 +7,15 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 class CategoryBreadcrumbProviderTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
+            self::generateBasicAuthHeader(
                 LoadCustomerUserData::AUTH_USER,
                 LoadCustomerUserData::AUTH_PW
             )
@@ -23,22 +24,21 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadMasterCatalogLocalizedTitles::class,
-                LoadCategoryData::class
+                LoadCategoryData::class,
+                LoadCategoryVisibilityData::class,
             ]
         );
     }
 
     /**
      * @dataProvider dataProvider
-     * @param string $category
-     * @param array $urlParts
      */
-    public function testHaveCategoriesInBreadcrumbs($category, array $urlParts)
+    public function testHaveCategoriesInBreadcrumbs(string $category, array $urlParts): void
     {
         $url = $this->getUrl(
             'oro_product_frontend_product_index',
             [
-                RequestProductHandler::CATEGORY_ID_KEY           => $this->getCategory($category),
+                RequestProductHandler::CATEGORY_ID_KEY => $this->getReference($category)->getId(),
                 RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => 1,
             ]
         );
@@ -49,57 +49,46 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $breadCrumbsNodes = $crawler->filter('span.breadcrumbs__item a');
+        $breadCrumbsNodes = $crawler->filter('.breadcrumbs__item a');
+        self::assertEquals(count($urlParts), $breadCrumbsNodes->count());
 
         foreach ($breadCrumbsNodes as $key => $node) {
-            $this->assertNotNull($node->getAttribute('href'));
-            $this->assertNotNull($node->textContent);
-            $this->assertEquals($urlParts[$key], trim($node->textContent));
+            self::assertNotNull($node->getAttribute('href'));
+            self::assertNotNull($node->textContent);
+            self::assertEquals($urlParts[$key], trim($node->textContent));
         }
     }
 
-    /**
-     * @return array
-     */
-    public function dataProvider()
+    public function dataProvider(): array
     {
         return [
             [
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'urlParts' => [
-                    'All Products',
+                    'master',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
-                ]
+                ],
             ],
             [
-                'categoryId' => LoadCategoryData::THIRD_LEVEL1,
-                'urlParts'   => [
-                    'All Products',
+                'category' => LoadCategoryData::THIRD_LEVEL1,
+                'urlParts' => [
+                    'master',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
-                    LoadCategoryData::THIRD_LEVEL1
-                ]
+                    LoadCategoryData::THIRD_LEVEL1,
+                ],
             ],
             [
-                'categoryId' => LoadCategoryData::SECOND_LEVEL1,
-                'urlParts'   => [
-                    'All Products',
+                'category' => LoadCategoryData::SECOND_LEVEL1,
+                'urlParts' => [
+                    'master',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
-                ]
-            ]
+                ],
+            ],
         ];
-    }
-
-    /**
-     * @param string $category
-     * @return object
-     */
-    private function getCategory($category)
-    {
-        return $this->getReference($category);
     }
 }

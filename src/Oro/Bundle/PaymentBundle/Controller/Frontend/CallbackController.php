@@ -4,25 +4,28 @@ namespace Oro\Bundle\PaymentBundle\Controller\Frontend;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackHandler;
 use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-class CallbackController extends Controller
+/**
+ * Serves callback actions.
+ */
+class CallbackController extends AbstractController
 {
     /**
      * @Route(
      *     "/return/{accessIdentifier}",
      *     name="oro_payment_callback_return",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"},
+     *     methods={"GET", "POST"}
      * )
-     * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
-     * @Method({"GET", "POST"})
+     * @ParamConverter("paymentTransaction", options={"mapping": {"accessIdentifier": "accessIdentifier"}})
      * @param PaymentTransaction $paymentTransaction
      * @param Request $request
      * @return Response
@@ -32,17 +35,17 @@ class CallbackController extends Controller
         $event = new CallbackReturnEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('oro_payment.event.callback_handler')->handle($event);
+        return $this->get(CallbackHandler::class)->handle($event);
     }
 
     /**
      * @Route(
      *     "/error/{accessIdentifier}",
      *     name="oro_payment_callback_error",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"},
+     *     methods={"GET", "POST"}
      * )
-     * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
-     * @Method({"GET", "POST"})
+     * @ParamConverter("paymentTransaction", options={"mapping": {"accessIdentifier": "accessIdentifier"}})
      * @param PaymentTransaction $paymentTransaction
      * @param Request $request
      * @return Response
@@ -52,20 +55,20 @@ class CallbackController extends Controller
         $event = new CallbackErrorEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('oro_payment.event.callback_handler')->handle($event);
+        return $this->get(CallbackHandler::class)->handle($event);
     }
 
     /**
      * @Route(
      *     "/notify/{accessIdentifier}/{accessToken}",
      *     name="oro_payment_callback_notify",
-     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+", "accessToken"="[a-zA-Z0-9\-]+"}
+     *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+", "accessToken"="[a-zA-Z0-9\-]+"},
+     *     methods={"POST"}
      * )
      * @ParamConverter(
      *     "paymentTransaction",
-     *     options={"accessIdentifier" = "accessIdentifier", "accessToken" = "accessToken"}
+     *     options={"mapping": {"accessIdentifier": "accessIdentifier", "accessToken": "accessToken"}}
      * )
-     * @Method("POST")
      * @param Request $request
      * @param PaymentTransaction $paymentTransaction
      * @return Response
@@ -75,6 +78,19 @@ class CallbackController extends Controller
         $event = new CallbackNotifyEvent($request->request->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('oro_payment.event.callback_handler')->handle($event);
+        return $this->get(CallbackHandler::class)->handle($event);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                CallbackHandler::class,
+            ]
+        );
     }
 }

@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var AddressView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export orosale/js/app/views/address-view
      * @extends oroui.app.views.base.View
      * @class orosale.app.views.AddressView
      */
-    AddressView = BaseView.extend({
+    const AddressView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -55,45 +54,45 @@ define(function(require) {
          */
         loadingMaskView: null,
 
-        /**
-         * @inheritDoc
-         */
-        constructor: function AddressView() {
-            AddressView.__super__.constructor.apply(this, arguments);
+        listen: {
+            'quote:load:related-data mediator': 'loadingStart',
+            'quote:loaded:related-data mediator': 'loadedRelatedData'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function AddressView(options) {
+            AddressView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
 
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
-
-            mediator.on('quote:load:related-data', this.loadingStart, this);
-            mediator.on('quote:loaded:related-data', this.loadedRelatedData, this);
         },
 
         /**
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            var self = this;
+            const self = this;
 
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
-
-            this.setAddress(this.$el.find(this.options.selectors.address));
 
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
-                var $field = $(this);
+                const $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;
                 }
-                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
 
@@ -104,20 +103,30 @@ define(function(require) {
 
                 mediator.trigger('entry-point:quote:init');
             }
+
+            if (this.options.selectors.address) {
+                this.setAddress(this.$el.find(this.options.selectors.address));
+
+                this.$fields.each(function() {
+                    const $field = $(this);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', $field.select2('val'));
+                    }
+                });
+                this.customerAddressChange();
+            }
         },
 
         /**
          * Loading form after on select address click
          */
         addressFormChange: function() {
-            var self = this;
+            const self = this;
             this.$fields.each(function() {
-                var $field = $(this);
-                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                const $field = $(this);
+                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
-
-            this.customerAddressChange();
         },
 
         /**
@@ -129,7 +138,7 @@ define(function(require) {
          */
         normalizeName: function(name) {
             name = name.split('_');
-            for (var i = 1, iMax = name.length; i < iMax; i++) {
+            for (let i = 1, iMax = name.length; i < iMax; i++) {
                 name[i] = name[i][0].toUpperCase() + name[i].substr(1);
             }
             return name.join('');
@@ -143,7 +152,7 @@ define(function(require) {
         setAddress: function($address) {
             this.$address = $address;
 
-            var self = this;
+            const self = this;
             this.$address.change(function(e) {
                 self.customerAddressChange(e);
             });
@@ -153,23 +162,24 @@ define(function(require) {
          * Implement customer address change logic
          */
         customerAddressChange: function() {
-            if (this.$address.val() !== this.options.enterManuallyValue) {
+            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
                 this.$fields.each(function() {
-                    var $field = $(this);
+                    const $field = $(this);
 
                     $field.prop('readonly', true).inputWidget('refresh');
                 });
 
-                var address = this.$address.data('addresses')[this.$address.val()] || null;
+                const address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
-                    var self = this;
+                    const self = this;
 
                     _.each(address, function(value, name) {
                         if (_.isObject(value)) {
                             value = _.first(_.values(value));
                         }
-                        var $field = self.fieldsByName[self.normalizeName(name)] || null;
-                        if ($field) {
+                        const $field = self.fieldsByName[self.normalizeName(name)] || null;
+                        // set new value only in case if it is different from exising (`null` is transformed to `''`)
+                        if ($field && $field.val() !== (value || '')) {
                             $field.val(value);
                             if ($field.data('select2')) {
                                 $field.data('selected-data', value).change();
@@ -179,10 +189,14 @@ define(function(require) {
                 }
             } else {
                 this.$fields.each(function() {
-                    var $field = $(this);
+                    const $field = $(this);
 
                     $field.prop('readonly', false).inputWidget('refresh');
                 });
+                const $country = this.fieldsByName.country;
+                if ($country) {
+                    $country.trigger('redraw');
+                }
             }
         },
 
@@ -201,46 +215,53 @@ define(function(require) {
         },
 
         /**
-         * Set customer address choices from order related data
-         *
-         * @param {Object} response
+         * Reset address form state
          */
-        loadedRelatedData: function(response) {
-            var address = response[this.options.type + 'Address'] || null;
-            if (!address) {
-                this.loadingEnd();
-                return;
-            }
-
-            var $oldAddress = this.$address;
-            this.setAddress($(address));
+        resetAddressForm: function() {
             this.$fields.each(function() {
-                var $field = $(this);
+                const $field = $(this);
                 $field.val('');
                 $field.prop('readonly', true).inputWidget('refresh');
                 if ($field.data('select2')) {
                     $field.data('selected-data', '').change();
                 }
             });
-            $oldAddress.parent().trigger('content:remove');
-            $oldAddress.inputWidget('dispose');
-            $oldAddress.replaceWith(this.$address);
-
-            this.initLayout().done(_.bind(this.loadingEnd, this));
         },
 
         /**
-         * @inheritDoc
+         * Reset address selector
          */
-        dispose: function() {
-            if (this.disposed) {
+        resetAddressSelector: function() {
+            this.$address.empty();
+            this.$address.data('addresses', {});
+            if (this.$address.data('select2')) {
+                this.$address.data('selected-data', '').change();
+            }
+        },
+
+        /**
+         * Set customer address choices from order related data
+         *
+         * @param {Object} response
+         */
+        loadedRelatedData: function(response) {
+            const address = response[this.options.type + 'Address'] || null;
+            if (!address) {
+                this.resetAddressSelector();
+                this.resetAddressForm();
+                this.loadingEnd();
                 return;
             }
 
-            mediator.off('order:load:related-data', this.loadingStart, this);
-            mediator.off('order:loaded:related-data', this.loadedRelatedData, this);
+            const $oldAddress = this.$address;
+            this.setAddress($(address));
+            this.resetAddressForm();
+            $oldAddress.parent()
+                .trigger('content:remove')
+                .empty()
+                .append(this.$address);
 
-            AddressView.__super__.dispose.call(this);
+            this.initLayout().done(this.loadingEnd.bind(this));
         }
     });
 

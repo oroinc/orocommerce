@@ -28,7 +28,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     protected $generator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->generator = new ShippingContextCacheKeyGenerator();
     }
@@ -161,12 +161,6 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertAddressesFieldAffectsHash($context1, $context2, $address1, $address2);
     }
 
-    /**
-     * @param ShippingContext $context1
-     * @param ShippingContext $context2
-     * @param ShippingAddressStub $address1
-     * @param ShippingAddressStub $address2
-     */
     protected function assertAddressesFieldAffectsHash(
         ShippingContext $context1,
         ShippingContext $context2,
@@ -456,19 +450,11 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertHashEquals($context1, $context2);
     }
 
-    /**
-     * @param ShippingContextInterface $context1
-     * @param ShippingContextInterface $context2
-     */
     protected function assertHashEquals(ShippingContextInterface $context1, ShippingContextInterface $context2)
     {
         $this->assertEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
     }
 
-    /**
-     * @param ShippingContextInterface $context1
-     * @param ShippingContextInterface $context2
-     */
     protected function assertHashNotEquals(ShippingContextInterface $context1, ShippingContextInterface $context2)
     {
         $this->assertNotEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));

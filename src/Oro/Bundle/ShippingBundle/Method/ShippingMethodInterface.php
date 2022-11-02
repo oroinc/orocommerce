@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * An interface for shipping method type.
+ */
 interface ShippingMethodInterface
 {
     /**
@@ -22,7 +25,7 @@ interface ShippingMethodInterface
     /**
      * @return string
      */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * @return ShippingMethodTypeInterface[]

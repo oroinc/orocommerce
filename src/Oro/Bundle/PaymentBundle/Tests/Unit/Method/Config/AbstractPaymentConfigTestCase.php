@@ -1,11 +1,7 @@
 <?php
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -20,7 +16,7 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->getPaymentConfig();
     }

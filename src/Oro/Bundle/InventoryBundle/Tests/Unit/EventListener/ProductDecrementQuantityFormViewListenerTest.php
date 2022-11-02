@@ -11,7 +11,7 @@ class ProductDecrementQuantityFormViewListenerTest extends AbstractFallbackField
     /** @var ProductDecrementQuantityFormViewListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -22,7 +22,7 @@ class ProductDecrementQuantityFormViewListenerTest extends AbstractFallbackField
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 
@@ -42,7 +42,14 @@ class ProductDecrementQuantityFormViewListenerTest extends AbstractFallbackField
      */
     protected function getExpectedScrollData()
     {
-        return [ScrollData::DATA_BLOCKS => [1 => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']]];
+        return [
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.product.sections.inventory.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
+                ]
+            ]
+        ];
     }
 
     /**

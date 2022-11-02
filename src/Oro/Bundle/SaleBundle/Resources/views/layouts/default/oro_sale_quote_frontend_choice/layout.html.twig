@@ -12,37 +12,40 @@
         lineItemsSelector: '.quote-line-items'
     } %}
 
+    <div data-page-component-module="orosale/js/app/components/quote-demand-component"
+         data-page-component-options="{{ componentOptions|json_encode }}">
         {{ form_errors(form) }}
+        <form method="POST"
+              data-nohash="true"
+              data-disable-autofocus="true"
+              id="{{ form.vars.id }}"
+              name="{{ form.vars.name }}"
+              class="quote-choice-form"
+        >
 
-    <form method="POST"
-          data-nohash="true"
-          data-disable-autofocus="true"
-          id="{{ form.vars.id }}"
-          name="{{ form.vars.name }}"
-          data-page-component-module="orosale/js/app/components/quote-demand-component"
-          data-page-component-options="{{ componentOptions|json_encode }}"
-          class="quote-choice-form"
-    >
-        {{ form_widget(form.demandProducts) }}
-        {{ form_rest(form) }}
-        <div class="order-checkout-widget text-right">
-            {{ block_widget(block) }}
-        </div>
-    </form>
+                {{ form_widget(form.demandProducts) }}
+                {{ form_rest(form) }}
+                <div class="order-checkout-widget">
+                    {{ block_widget(block) }}
+                </div>
+
+        </form>
+        {{ oro_form_js_validation(form) }}
+    </div>
 {% endblock %}
 
 {% block _quote_choice_submit_button_widget %}
-    <div class=" order-checkout-widget text-right">
+    <div class=" order-checkout-widget">
         <div class=" text-right">
-            <button class="btn theme-btn" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+            <button class="btn" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
         </div>
     </div>
 {% endblock %}
 
 {% block _quote_choice_subtotals_widget %}
     <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container--lg">
-            <table class="order-checkout-widget__table pull-right">
+        <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
+            <table class="order-checkout-widget__table">
                 {% for subtotal in subtotals %}
                     {% if subtotal.visible %}
                         <tr>
@@ -52,7 +55,7 @@
                     {% endif %}
                 {% endfor %}
                 <tr>
-                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
+                    <td class="order-checkout-widget__total">{{ total.label }}</td>
                     <td class="order-checkout-widget__total"><span class="order-checkout-widget__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>
@@ -63,10 +66,10 @@
 {% block _quote_view_information_widget %}
     <div class="customer-info-grid">
         <h2 class="customer-info-grid__title">
-            {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+            {{- 'oro.frontend.sale.quote.sections.general'|trans -}}
         </h2>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6 grid__column--no-gutters-l">
+        <div class="grid">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__table">
                     <tbody>
                         {% if quote.assignedUsers | length %}
@@ -87,12 +90,12 @@
                         </tr>
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
-                            <td class="customer-info-grid__element-content">{{ quote.poNumber|default('N/A'|trans) }}</td>
+                            <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="grid__column grid__column--6 grid__column--no-gutters-r">
+            <div class="grid-col-6 grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__table">
                     <tbody>
                         <tr class="customer-info-grid__row">
@@ -121,8 +124,8 @@
 {% endblock %}
 
 {% block address_widget %}
-    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
-    {{ renderAddress(address) }}
+    {% from '@OroAddress/macros.html.twig' import renderAddress %}
+    {{ renderAddress(address, true) }}
 {% endblock %}
 
 {% block quote_body_column_element_widget %}

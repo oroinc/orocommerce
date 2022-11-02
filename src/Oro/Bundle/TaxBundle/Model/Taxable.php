@@ -5,6 +5,9 @@ namespace Oro\Bundle\TaxBundle\Model;
 use Brick\Math\BigDecimal;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
+/**
+ * Object which holds all data related to tax such as line items, destination, amount, etc.
+ */
 class Taxable
 {
     const DIGITAL_PRODUCT = 'digital_product';
@@ -52,7 +55,7 @@ class Taxable
     protected $amount;
 
     /**
-     * @var BigDecimal
+     * @var BigDecimal|null
      */
     protected $shippingCost;
 
@@ -81,7 +84,7 @@ class Taxable
         $this->quantity = BigDecimal::one();
         $this->price = BigDecimal::zero();
         $this->amount = BigDecimal::zero();
-        $this->shippingCost = BigDecimal::zero();
+        $this->shippingCost = null;
 
         $this->items = new \SplObjectStorage();
         $this->result = new Result();
@@ -203,7 +206,7 @@ class Taxable
     }
 
     /**
-     * @return BigDecimal
+     * @return BigDecimal|null
      */
     public function getShippingCost()
     {
@@ -408,5 +411,22 @@ class Taxable
         $this->taxationAddress = $this->origin;
 
         return $this;
+    }
+
+    public function __clone()
+    {
+        $propertiesToExplicitClone = ['price', 'taxationAddress', 'origin', 'amount', 'quantity', 'shippingCost',
+            'result', 'destination'];
+
+        foreach ($propertiesToExplicitClone as $property) {
+            $this->$property = is_object($this->$property) ? clone $this->$property : null;
+        }
+
+        $newItemStorage = new \SplObjectStorage();
+        $this->items->rewind();
+        foreach ($this->items as $item) {
+            $newItemStorage->attach(clone $item);
+        }
+        $this->items = $newItemStorage;
     }
 }

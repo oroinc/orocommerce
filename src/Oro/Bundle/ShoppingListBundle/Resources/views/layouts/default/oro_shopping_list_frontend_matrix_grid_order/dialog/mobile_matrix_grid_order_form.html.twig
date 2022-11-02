@@ -1,0 +1,103 @@
+{% block _matrix_collection_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
+    {% set defaultColumns = form.rows[0].columns %}
+    {% set rowsCount = form.rows|length %}
+    {% set columnsCount = defaultColumns|length %}
+
+    {{ block('_matrix_collection_widget_body') }}
+{% endblock %}
+
+{% block _matrix_collection_widget_body %}
+    {% set rows = columnsCount > 1 ? form.rows : [form.rows[0]] %}
+    <div class="{{ class_prefix }}__grid--mobile fade-in">
+        {% for row in rows %}
+            {% set rowIndex = loop.index %}
+            {% set collapseId = 'collapse-'|uniqid ~ rowIndex %}
+            {{ block('_matrix_collection_widget_body_row') }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row %}
+    <div class="{{ class_prefix }}__item">
+        {{ block('_matrix_collection_widget_body_row_head') }}
+        {{ block('_matrix_collection_widget_body_row_cells') }}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row_head %}
+    <div class="{{ class_prefix }}__item-info"
+         data-toggle="collapse"
+         data-target="{{ '#' ~ collapseId }}"
+         aria-expanded="false"
+         aria-controls="{{ collapseId }}"
+    >
+        {% if columnsCount > 1 %}
+        <div>
+            {% set cell = row %}
+            {{ block('_matrix_collection_widget_side_cell_label') }}
+        </div>
+        {% endif %}
+        <div class="{{ class_prefix }}__item-info-wrapper">
+            <div>
+                <span>{{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}: </span>
+                <span data-rows-quantity="{{ rowIndex }}">0</span>
+            </div>
+            <span class="{{ class_prefix }}__item-separator">|</span>
+            <div>
+                <span>{{ 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans }}: </span>
+                <span data-rows-price="{{ rowIndex }}">0</span>
+            </div>
+        </div>
+        <div class="{{ class_prefix }}__item-icon-wrapper">
+            <span class="{{ class_prefix }}__item-icon fa-plus fa--large" data-icon aria-hidden="true"></span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row_cells %}
+    {% set cells = columnsCount > 1 ? row.columns : form.rows %}
+    <div class="{{ class_prefix }}__item-container collapse" id="{{ collapseId }}"
+         data-trigger-icon-show-class="fa-minus"
+         data-trigger-icon-hide-class="fa-plus"
+    >
+        <div class="{{ class_prefix }}__item-content-wrapper">
+            {% for cell in cells %}
+                {% set cellIndex = loop.index %}
+                {{ block('_matrix_collection_widget_body_row_cell') }}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row_cell %}
+    {% set row = columnsCount > 1 ? row : cell %}
+    {% set cell = columnsCount > 1 ? cell : row.columns[0] %}
+    <label class="{{ class_prefix }}__item-content" data-zoom-disable>
+        {{ block('_matrix_collection_widget_body_row_cell_widget') }}
+    </label>
+{% endblock %}
+
+{% block _matrix_collection_widget_body_row_cell_widget %}
+    <div class="{{ class_prefix }}__item-label">
+        {% if columnsCount == 1 %}
+            {% set tempCell = cell %}
+            {% set cell = row %}
+        {% endif %}
+        {{ block('_matrix_collection_widget_head_cell_label') }}
+        {% if columnsCount == 1 %}
+            {% set cell = tempCell %}
+        {% endif %}
+    </div>
+    {{ form_widget(cell, {
+        'attr': {
+            'class': class_prefix ~ '__item-value',
+            'data-product-id': cell.vars.productId,
+            'data-index': {
+                'row': rowIndex,
+                'column': cellIndex
+            }|json_encode
+        },
+    }) }}
+{% endblock %}

@@ -1,8 +1,7 @@
 @regression
 @smoke-community-edition-only
 Feature: Commerce smoke e2e
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
-
+  End-to-end smoke tests for commerce functionality
   Scenario: Create different window session
     Given sessions active:
       | Admin  |first_session |
@@ -381,13 +380,13 @@ Feature: Commerce smoke e2e
     And I import file
     And reload the page
     Then should see following grid:
-      | Product SKU         | Product name    | Quantity | Unit | Value    | Currency |
-      | Black_Shirt_L_sku   | Black Shirt     | 10       | item | 7.0000   | USD      |
-      | Black_Shirt_M_sku   | Black Shirt     | 10       | item | 9.0000   | USD      |
-      | Lenovo_Vibe_sku     | Lenovo Vibe     | 10       | item | 90.0000  | USD      |
-      | White_Shirt_L_sku   | White Shirt     | 10       | item | 12.0000  | USD      |
-      | White_Shirt_M_sku   | White Shirt     | 10       | item | 11.0000  | USD      |
-      | Xiaomi_Redmi_3S_sku | Xiaomi Redmi 3S | 10       | item | 135.0000 | USD      |
+      | Product SKU         | Product name    | Quantity | Unit | Value  | Currency |
+      | Black_Shirt_L_sku   | Black Shirt     | 10       | item | 7.00   | USD      |
+      | Black_Shirt_M_sku   | Black Shirt     | 10       | item | 9.00   | USD      |
+      | Lenovo_Vibe_sku     | Lenovo Vibe     | 10       | item | 90.00  | USD      |
+      | White_Shirt_L_sku   | White Shirt     | 10       | item | 12.00  | USD      |
+      | White_Shirt_M_sku   | White Shirt     | 10       | item | 11.00  | USD      |
+      | Xiaomi_Redmi_3S_sku | Xiaomi Redmi 3S | 10       | item | 135.00 | USD      |
 
   Scenario: Create customer
     Given I proceed as the Admin
@@ -413,6 +412,7 @@ Feature: Commerce smoke e2e
       |First Name      |Branda                     |
       |Last Name       |Sanborn                    |
       |Email Address   |BrandaJSanborn1@example.org|
+    And I focus on "Birthday" field
     And click "Today"
     And fill form with:
       |Password        |BrandaJSanborn1@example.org|
@@ -457,7 +457,7 @@ Feature: Commerce smoke e2e
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
     And click "Sign In"
-    Then I should see "User account is locked"
+    Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
 
   Scenario: Activate customer user
     Given  I proceed as the Admin
@@ -575,8 +575,7 @@ Feature: Commerce smoke e2e
     And click "List View"
 
   Scenario: Check Contact Us and About us pages, Products views, correct price for the product for customer user and for customer group
-    Given I proceed as the User
-    And I signed in as AmandaRCole1@example.org on the store frontend
+    Given I signed in as AmandaRCole1@example.org on the store frontend
     When click "About"
     Then Page title equals to "About"
     When click "Phones"
@@ -586,6 +585,8 @@ Feature: Commerce smoke e2e
     And should see "Product Name" for "Lenovo_Vibe_sku" product
     And should see "Your Price: $80.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
+    And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
+    And should see "Product has been added to "
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping List button" for "Lenovo_Vibe_sku" product
     And should see "View Details" for "Xiaomi_Redmi_3S_sku" product
@@ -615,7 +616,7 @@ Feature: Commerce smoke e2e
     And click "Add to Shopping List"
     And should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And click "View Details"
     And should see "Subtotal $175.20"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
@@ -624,12 +625,14 @@ Feature: Commerce smoke e2e
       |Quantity|10  |
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
-    And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
+    When click "Add to Shopping List" for "Lenovo_Vibe_sku" product
+    Then should see "Product has been added to "
+    And I scroll to top
     When click "View Details" for "Xiaomi_Redmi_3S_sku" product
     Then should see "1 $120.00"
     And should see "10 $135.00"
     When I hover on "Shopping Cart"
-    And click "Shopping List"
+    And click "View Details"
     Then should see "Subtotal $900.00"
 
   Scenario: Create shopping list, update shopping list, delete shopping list from front store
@@ -649,24 +652,24 @@ Feature: Commerce smoke e2e
     And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
     When I hover on "Shopping Cart"
     And click "New Front Shopping List"
-    And I type "52" in "ShoppingListLineItemForm > Quantity"
-    And I click on empty space
-    And should see "Subtotal $4,680.00"
-    Then I should see "Record has been successfully updated" flash message
-    When I click on "Flash Message Close Button"
-    And I click "Edit Shoppping List Label"
-    And type "Updated Shopping List" in "Shopping List Label"
-    And click "Save"
-    Then should see "Record has been successfully updated" flash message
+    And I click on "Shopping List Line Item 1 Quantity"
+    And I type "52" in "Shopping List Line Item 1 Quantity Input"
+    And I click on "Shopping List Line Item 1 Save Changes Button"
+    Then should see "Subtotal $4,680.00"
+    When I click "Shopping List Actions"
+    And I click "Rename"
+    And I fill "Shopping List Rename Action Form" with:
+      | Label | Updated Shopping List |
+    And I click "Shopping List Action Submit"
+    Then I should see "Shopping list has been successfully renamed" flash message and I close it
 
-  Scenario: Checkout by customer created from admin througth the shopping list updated from admin panel
+  Scenario: Checkout by customer created from admin through the shopping list updated from admin panel
     Given I proceed as the Admin
     And go to Sales/ Shopping Lists
     When click on Updated Shopping List in grid
     And click "Add Line Item"
     Then should see an "Add Line Item Popup" element
     And fill form with:
-      |Owner   |John Doe           |
       |Product |Xiaomi_Redmi_3S_sku|
       |Quantity|12                 |
       |Unit    |item               |
@@ -703,7 +706,6 @@ Feature: Commerce smoke e2e
     When click "Create Order"
     And fill form with:
       |SELECT BILLING ADDRESS|New address|
-    And fill form with:
       |Label          |Home Address  |
       |First name     |NewFname      |
       |Last name      |NewLname      |
@@ -726,15 +728,14 @@ Feature: Commerce smoke e2e
     And click "Sign Out"
 
   Scenario: Checkout by customer created from front store through the shopping list created by himself and review the submited order
-    Given I proceed as the User
-    And I signed in as AmandaRCole1@example.org on the store frontend
-    When I hover on "Shopping Cart"
-    And click "Shopping List"
+    Given I signed in as AmandaRCole1@example.org on the store frontend
+    And should see "1 Shopping List"
+    When I open page with shopping list "Shopping List"
     And click "Create Order"
     And fill form with:
       |Label          |Home Address  |
-      |First name     |NewAmanda     |
-      |Last name      |NewCole       |
+      |First Name     |NewAmanda     |
+      |Last Name      |NewCole       |
       |Organization   |NewOrg        |
       |Street         |Stanyan St 12 |
       |City           |San Francisco |
@@ -758,7 +759,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping Method Flat_Rate"
     And should see "Payment Method Payment Terms"
     And should see "Payment Term net_10"
-    And should see "Payment Status Paid in full"
+    And should see "Payment Status Pending"
     And should see "Subtotal $175.20"
     And should see "Discount $0.00"
     And should see "Shipping $120.00"
@@ -770,9 +771,9 @@ Feature: Commerce smoke e2e
     And click "Phones"
     And fill "FrontendLineItemForm" with:
       |Quantity|10  |
+    And I scroll to top
     And click "Add to Shopping List"
-    When I hover on "Shopping Cart"
-    And click "Shopping List"
+    When I open page with shopping list "Shopping List"
     And click "Request Quote"
     And fill form with:
       |PO Number|PO00001|
@@ -786,7 +787,7 @@ Feature: Commerce smoke e2e
     And click "Delete Line Item"
     And should not see "Xiaomi Redmi 3S QTY: 20 item Target Price $110.00 Listed Price: $120.00"
     And click "Add Another Product"
-    And fill "Frontstore RFQ Line Item Form2" with:
+    And fill "Frontstore RFQ Line Item Form1" with:
       |SKU         |Xiaomi_Redmi_3S_sku Xiaomi Redmi 3S|
       |Quantity    |30             |
       |Target Price|110            |
@@ -818,7 +819,7 @@ Feature: Commerce smoke e2e
       | Internal Status | Sent to Customer |
       | Customer Status | N/A              |
     And I proceed as the User
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     And click on PO00001 in grid
     When click "Accept and Submit to Order"
@@ -853,6 +854,7 @@ Feature: Commerce smoke e2e
       |First Name      |Lonnie                      |
       |Last Name       |Townsend                    |
       |Email Address   |LonnieVTownsend1@example.org|
+    And I focus on "Birthday" field
     And click "Today"
     And fill form with:
       |Password        |LonnieVTownsend1@example.org|
@@ -890,7 +892,7 @@ Feature: Commerce smoke e2e
     Then I should see "Quote #2 successfully sent to customer" flash message
     And I proceed as the User
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    And click "Account"
+    And follow "Account"
     And click "Quotes"
     When click on PO1001 in grid
     When click "Accept and Submit to Order"
@@ -902,9 +904,9 @@ Feature: Commerce smoke e2e
     And click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Customer User with Administrator privilegeshave ability to see orders, RFQ, quotes of other users for the same customer
+  Scenario: Customer User with Administrator privileges have ability to see orders, RFQ, quotes of other users for the same customer
     Given I proceed as the User
-    And click "Account"
+    And follow "Account"
     When click "Requests For Quote"
     And click on PO00001 in grid
     Then should see "First Name Amanda"
@@ -927,7 +929,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping Method Flat_Rate"
     And should see "Payment Method Payment Terms"
     And should see "Payment Term net_10"
-    And should see "Payment Status Paid in full"
+    And should see "Payment Status Pending"
     And should see "Subtotal $175.20"
     And should see "Discount $0.00"
     And should see "Shipping $120.00"
@@ -936,11 +938,12 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges create/update/block/delete new Customer User
     Given I proceed as the User
-    And click "Account"
+    And follow "Account"
     And click "Roles"
     When click edit "Buyer" in grid
     And fill form with:
       |Role Title|NewByerRole|
+    And I scroll to top
     And click "Save"
     Then should see "Customer User Role has been saved" flash message
     When click "Users"
@@ -959,14 +962,14 @@ Feature: Commerce smoke e2e
     Then should see "Signed in as: TestF TestL"
     And click "Sign Out"
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When click "Account"
+    When follow "Account"
     And click "Users"
     And click disable "TestUser1@test.com" in grid
     And click "Sign Out"
     And I signed in as TestUser1@test.com on the store frontend
-    Then should see "User account is locked"
+    Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When click "Account"
+    When follow "Account"
     And click "Users"
     And click edit "TestUser1@test.com" in grid
     And fill form with:

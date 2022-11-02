@@ -5,15 +5,14 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class PaymentTransactionCaptureActionTest extends AbstractActionTest
 {
     /**
      * @dataProvider executeDataProvider
-     *
-     * @param array $data
-     * @param array $expected
      */
     public function testExecute(array $data, array $expected)
     {
@@ -23,13 +22,11 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
         $options = $data['options'];
         $context = [];
 
-        $this->contextAccessor
-            ->expects(static::any())
+        $this->contextAccessor->expects(self::any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->paymentTransactionProvider
-            ->expects(static::once())
+        $this->paymentTransactionProvider->expects(self::once())
             ->method('createPaymentTransactionByParentTransaction')
             ->with(PaymentMethodInterface::CAPTURE, $authorizationPaymentTransaction)
             ->willReturn($capturePaymentTransaction);
@@ -40,35 +37,30 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             $responseValue = $this->throwException($data['response']);
         }
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects(static::once())
+        $paymentMethod->expects(self::once())
             ->method('execute')
             ->with(PaymentMethodInterface::CAPTURE, $capturePaymentTransaction)
             ->will($responseValue);
 
-        $this->paymentMethodProvider
-            ->expects(static::once())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('hasPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn(true);
 
-        $this->paymentMethodProvider
-            ->expects(static::once())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('getPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
 
-        $this->paymentTransactionProvider
-            ->expects(static::exactly(2))
+        $this->paymentTransactionProvider->expects(self::exactly(2))
             ->method('savePaymentTransaction')
             ->withConsecutive(
-                $capturePaymentTransaction,
-                $authorizationPaymentTransaction
+                [$capturePaymentTransaction],
+                [$authorizationPaymentTransaction]
             );
 
-        $this->contextAccessor
-            ->expects(static::once())
+        $this->contextAccessor->expects(self::once())
             ->method('setValue')
             ->with($context, $options['attribute'], $expected);
 
@@ -76,10 +68,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
         $this->action->execute($context);
     }
 
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
+    public function executeDataProvider(): array
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('testPaymentMethodType');
@@ -130,14 +119,11 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
     }
 
     /**
-     * @param array $options
-     *
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException
-     *
      * @dataProvider executeWrongOptionsDataProvider
      */
-    public function testExecuteWrongOptions($options)
+    public function testExecuteWrongOptions(array $options)
     {
+        $this->expectException(UndefinedOptionsException::class);
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod('testPaymentMethodType');
 
@@ -145,10 +131,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
         $this->action->execute([]);
     }
 
-    /**
-     * @return array
-     */
-    public function executeWrongOptionsDataProvider()
+    public function executeWrongOptionsDataProvider(): array
     {
         return [
             [['someOption' => 'someValue']],
@@ -170,5 +153,93 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             $this->paymentTransactionProvider,
             $this->router
         );
+    }
+
+    public function testExecuteFailedWhenPaymentMethodNotExists()
+    {
+        $context = [];
+        $options = [
+            'paymentTransaction' => new PaymentTransaction(),
+            'attribute' => new PropertyPath('test'),
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->willReturn(false);
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->contextAccessor->expects(self::once())
+            ->method('setValue')
+            ->with(
+                $context,
+                $options['attribute'],
+                [
+                    'transaction' => null,
+                    'successful' => false,
+                    'message' => 'oro.payment.message.error',
+                    'testOption' => 'testOption',
+                ]
+            );
+
+        $this->action->initialize($options);
+        $this->action->execute($context);
+    }
+
+    public function testUseSourcePaymentTransaction()
+    {
+        $context = [];
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setSuccessful(true)
+            ->setActive(true);
+        $options = [
+            'paymentTransaction' => $paymentTransaction,
+            'attribute' => new PropertyPath('test'),
+            'transactionOptions' => [
+                'testOption' => 'testOption',
+            ],
+        ];
+
+        $paymentMethod = $this->createMock(PaymentMethodWithPostponedCaptureInterface::class);
+        $paymentMethod->expects(self::once())
+            ->method('useSourcePaymentTransaction')
+            ->willReturn(true);
+        $paymentMethod->expects(self::once())
+            ->method('execute')
+            ->with(PaymentMethodInterface::CAPTURE, $paymentTransaction)
+            ->willReturn(['testResponse' => 'testResponse']);
+        $this->paymentMethodProvider->expects(self::any())
+            ->method('hasPaymentMethod')
+            ->willReturn(true);
+        $this->paymentMethodProvider->expects(self::any())
+            ->method('getPaymentMethod')
+            ->willReturn($paymentMethod);
+        $this->paymentTransactionProvider->expects(self::never())
+            ->method('createPaymentTransactionByParentTransaction');
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->contextAccessor->expects(self::once())
+            ->method('setValue')
+            ->with(
+                $context,
+                $options['attribute'],
+                [
+                    'transaction' => null,
+                    'successful' => true,
+                    'message' => null,
+                    'testOption' => 'testOption',
+                    'testResponse' => 'testResponse',
+                ]
+            );
+
+        $this->action->initialize($options);
+        $this->action->execute($context);
     }
 }

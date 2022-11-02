@@ -4,78 +4,61 @@ namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
+/**
+ * Checks if URL is storefront URL and it is not configured to be skipped on storefront.
+ */
 class MatchedUrlDecisionMaker
 {
-    /**
-     * @var bool
-     */
-    protected $installed;
+    private FrontendHelper $frontendHelper;
+    /** @var string[] */
+    private array $skippedUrlPatterns;
+    /** @var bool[] [pathinfo => check result, ...] */
+    private array $checkedUrls = [];
 
     /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
-     * @var array
-     */
-    protected $skippedUrlPatterns = [];
-
-    /**
+     * @param string[]       $skippedUrlPatterns
      * @param FrontendHelper $frontendHelper
-     * @param boolean $installed
      */
-    public function __construct(
-        FrontendHelper $frontendHelper,
-        $installed
-    ) {
+    public function __construct(array $skippedUrlPatterns, FrontendHelper $frontendHelper)
+    {
+        $this->skippedUrlPatterns = $skippedUrlPatterns;
         $this->frontendHelper = $frontendHelper;
-        $this->installed = $installed;
     }
 
     /**
-     * Skipped url pattern should start with slash.
+     * Registers an additional pattern for skipped urls.
      *
-     * @param string $skippedUrlPattern
+     * @param string $skippedUrlPattern The pattern; should start with the slash, e.g. "/test"
      */
-    public function addSkippedUrlPattern($skippedUrlPattern)
+    public function addSkippedUrlPattern(string $skippedUrlPattern): void
     {
         $this->skippedUrlPatterns[] = $skippedUrlPattern;
+        if ($this->checkedUrls) {
+            $this->checkedUrls = [];
+        }
     }
 
-    /**
-     * @param string $url
-     * @return bool
-     */
-    public function matches($url)
+    public function matches(string $pathinfo): bool
     {
-        if (!$this->installed) {
-            return false;
-        }
-
-        if (!$this->frontendHelper->isFrontendUrl($url)) {
-            return false;
-        }
-
-        if ($this->isSkippedUrl($url)) {
-            return false;
-        }
-
-        return true;
+        return
+            $this->frontendHelper->isFrontendUrl($pathinfo)
+            && !$this->isSkippedUrl($pathinfo);
     }
 
-    /**
-     * @param string $url
-     * @return bool
-     */
-    protected function isSkippedUrl($url)
+    private function isSkippedUrl(string $pathinfo): bool
     {
-        foreach ($this->skippedUrlPatterns as $pattern) {
-            if (strpos($url, $pattern) === 0) {
-                return true;
+        $result = $this->checkedUrls[$pathinfo] ?? null;
+        if (null === $result) {
+            $result = false;
+            foreach ($this->skippedUrlPatterns as $pattern) {
+                if (str_starts_with($pathinfo, $pattern)) {
+                    $result = true;
+                    break;
+                }
             }
+            $this->checkedUrls[$pathinfo] = $result;
         }
 
-        return false;
+        return $result;
     }
 }

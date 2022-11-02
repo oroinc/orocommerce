@@ -8,14 +8,29 @@ use Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PaymentMethodsConfigsRuleController extends Controller
+/**
+ * Payment Methods Configs Rule Controller
+ */
+class PaymentMethodsConfigsRuleController extends AbstractController
 {
+    private array $addMethodWidgetUpdateFlags = [PaymentMethodsConfigsRuleHandler::UPDATE_FLAG];
+
+    public function addUpdateFlagToAddMethodWidget(string $addMethodWidgetUpdateFlags): void
+    {
+        if (false === \in_array($addMethodWidgetUpdateFlags, $this->addMethodWidgetUpdateFlags, true)) {
+            $this->addMethodWidgetUpdateFlags[] = $addMethodWidgetUpdateFlags;
+        }
+    }
+
     /**
      * @Route("/", name="oro_payment_methods_configs_rule_index")
      * @Template
@@ -26,13 +41,13 @@ class PaymentMethodsConfigsRuleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_payment.entity.payment_methods_configs_rule.class')
+            'entity_class' => PaymentMethodsConfigsRule::class
         ];
     }
 
     /**
      * @Route("/create", name="oro_payment_methods_configs_rule_create")
-     * @Template("OroPaymentBundle:PaymentMethodsConfigsRule:update.html.twig")
+     * @Template("@OroPayment/PaymentMethodsConfigsRule/update.html.twig")
      * @Acl(
      *     id="oro_payment_methods_configs_rule_create",
      *     type="entity",
@@ -96,13 +111,13 @@ class PaymentMethodsConfigsRuleController extends Controller
     protected function update(PaymentMethodsConfigsRule $entity, Request $request)
     {
         $form = $this->createForm(PaymentMethodsConfigsRuleType::class);
-        if ($this->get('oro_payment.form.handler.payment_methods_configs_rule')->process($form, $entity)) {
-            $this->get('session')->getFlashBag()->add(
+        if ($this->get(PaymentMethodsConfigsRuleHandler::class)->process($form, $entity)) {
+            $request->getSession()->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('oro.payment.controller.rule.saved.message')
+                $this->get(TranslatorInterface::class)->trans('oro.payment.controller.rule.saved.message')
             );
 
-            return $this->get('oro_ui.router')->redirect($entity);
+            return $this->get(Router::class)->redirect($entity);
         }
 
         if ($request->get(PaymentMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
@@ -113,7 +128,8 @@ class PaymentMethodsConfigsRuleController extends Controller
 
         return [
             'entity' => $entity,
-            'form'   => $form->createView()
+            'form'   => $form->createView(),
+            'addMethodWidgetUpdateFlags' => $this->addMethodWidgetUpdateFlags
         ];
     }
 
@@ -125,6 +141,8 @@ class PaymentMethodsConfigsRuleController extends Controller
      *     permission="EDIT",
      *     class="OroPaymentBundle:PaymentMethodsConfigsRule"
      * )
+     * @CsrfProtection()
+     *
      * @param string $gridName
      * @param string $actionName
      * @param Request $request
@@ -133,8 +151,7 @@ class PaymentMethodsConfigsRuleController extends Controller
      */
     public function markMassAction($gridName, $actionName, Request $request)
     {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+        $massActionDispatcher = $this->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 
@@ -144,5 +161,21 @@ class PaymentMethodsConfigsRuleController extends Controller
         ];
 
         return new JsonResponse(array_merge($data, $response->getOptions()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                Router::class,
+                PaymentMethodsConfigsRuleHandler::class,
+                MassActionDispatcher::class,
+            ]
+        );
     }
 }

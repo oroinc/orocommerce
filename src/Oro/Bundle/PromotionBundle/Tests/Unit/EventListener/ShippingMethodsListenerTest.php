@@ -12,29 +12,27 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
     protected $promotionExecutor;
 
-    /**
-     * @var ShippingMethodsListener
-     */
+    /** @var ShippingMethodsListener */
     protected $shippingMethodsListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
+
         $this->shippingMethodsListener = new ShippingMethodsListener($this->promotionExecutor);
     }
 
-    public function testModifyPricesNotSupportedSourceEntity()
+    public function testModifyPricesNotSupportedSourceEntity(): void
     {
         $shippingMethodViewCollection = new ShippingMethodViewCollection();
         $sourceEntity = new \stdClass();
@@ -45,13 +43,13 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($shippingMethodViewCollection, $event->getMethodCollection());
     }
 
-    public function testModifyPricesCheckoutFromNotSupportedSource()
+    public function testModifyPricesCheckoutFromNotSupportedSource(): void
     {
         $shippingMethodViewCollection = new ShippingMethodViewCollection();
         $sourceEntity = $this->createMock(Checkout::class);
         $sourceEntity->expects($this->any())
             ->method('getSourceEntity')
-            ->willReturn(new \stdClass());
+            ->willReturn($this->createMock(CheckoutSourceEntityInterface::class));
 
         $event = new ApplicableMethodsEvent($shippingMethodViewCollection, $sourceEntity);
 
@@ -61,18 +59,14 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider modifyPricesDataProvider
-     *
-     * @param ShippingMethodViewCollection $shippingMethodViewCollection
-     * @param array $discountContexts
-     * @param ShippingMethodViewCollection $modifiedShippingMethodViewCollection
      */
     public function testModifyPrices(
         ShippingMethodViewCollection $shippingMethodViewCollection,
         array $discountContexts,
         ShippingMethodViewCollection $modifiedShippingMethodViewCollection
-    ) {
+    ): void {
         $sourceEntity = $this->createMock(Checkout::class);
-        $sourceEntity->expects($this->once())
+        $sourceEntity->expects($this->any())
             ->method('getSourceEntity')
             ->willReturn(new ShoppingList());
 
@@ -93,10 +87,8 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function modifyPricesDataProvider()
+    public function modifyPricesDataProvider(): array
     {
         return [
             [

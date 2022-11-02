@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -17,7 +16,6 @@ interface DiscountLineItemInterface extends
     QuantityAwareInterface,
     PriceAwareInterface,
     PriceTypeAwareInterface,
-    SettablePriceAwareInterface,
     SubtotalAwareInterface
 {
     /**
@@ -31,9 +29,6 @@ interface DiscountLineItemInterface extends
      */
     public function setProduct(Product $product = null);
 
-    /**
-     * @return string
-     */
     public function getProductSku(): string;
 
     /**
@@ -53,9 +48,6 @@ interface DiscountLineItemInterface extends
      */
     public function setProductUnit(ProductUnit $productUnit = null);
 
-    /**
-     * @return string
-     */
     public function getProductUnitCode(): string;
 
     /**
@@ -75,6 +67,14 @@ interface DiscountLineItemInterface extends
      * @return $this
      */
     public function setSubtotal($subtotal);
+
+    public function getSubtotalAfterDiscounts(): float;
+
+    /**
+     * @param float $subtotal
+     * @return $this
+     */
+    public function setSubtotalAfterDiscounts(float $subtotal): self;
 
     /**
      * @param DiscountInterface $discount
@@ -104,9 +104,6 @@ interface DiscountLineItemInterface extends
      */
     public function getDiscountsInformation(): array;
 
-    /**
-     * @return float
-     */
     public function getDiscountTotal(): float;
 
     /**

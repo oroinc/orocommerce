@@ -3,11 +3,14 @@
 namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates that one of fields is required.
+ */
 class NotBlankOneOfValidator extends ConstraintValidator
 {
     /**
@@ -15,9 +18,6 @@ class NotBlankOneOfValidator extends ConstraintValidator
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -58,7 +58,7 @@ class NotBlankOneOfValidator extends ConstraintValidator
                 $constraint->message,
                 [
                     "%fields%" => implode(', ', array_map(function ($value) {
-                        return $this->translator->trans($value);
+                        return $this->translator->trans((string) $value);
                     }, $fieldGroup))
                 ]
             )

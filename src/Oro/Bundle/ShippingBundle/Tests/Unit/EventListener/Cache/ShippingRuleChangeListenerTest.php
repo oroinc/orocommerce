@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Cache;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Cache;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -41,7 +41,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
             ->disableOriginalConstructor()

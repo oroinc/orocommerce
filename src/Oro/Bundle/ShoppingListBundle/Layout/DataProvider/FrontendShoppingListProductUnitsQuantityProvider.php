@@ -3,56 +3,57 @@
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 
+/**
+ * Provides information about shopping lists to which a product can be added.
+ */
 class FrontendShoppingListProductUnitsQuantityProvider
 {
-    /**
-     * @var array
-     */
-    protected $data = [];
+    private ProductShoppingListsDataProvider $productShoppingListsDataProvider;
 
-    /**
-     * @var ProductShoppingListsDataProvider
-     */
-    protected $productShoppingListsDataProvider;
+    /** @var array [product id => [shopping list data (array), ...] or null, ...] */
+    private array $shoppingLists = [];
 
-    /**
-     * @param ProductShoppingListsDataProvider $productShoppingListsDataProvider
-     */
     public function __construct(ProductShoppingListsDataProvider $productShoppingListsDataProvider)
     {
         $this->productShoppingListsDataProvider = $productShoppingListsDataProvider;
     }
 
     /**
-     * @param Product|null $product
-     * @return mixed|null
+     * @param Product|ProductView|null $product
+     *
+     * @return array|null [shopping list data (array), ...]
      */
-    public function getByProduct(Product $product = null)
+    public function getByProduct(Product|ProductView|null $product): ?array
     {
-        if (!$product) {
+        if (null === $product) {
             return null;
         }
 
-        $this->setByProducts([$product]);
+        $productId = $product->getId();
+        $this->setByProducts([$productId]);
 
-        return $this->data[$product->getId()];
+        return $this->shoppingLists[$productId];
     }
 
     /**
-     * @param Product[] $products
-     * @return array
+     * @param ProductView[] $products
+     *
+     * @return array [product id => [shopping list data (array), ...] or null, ...]
      */
-    public function getByProducts($products)
+    public function getByProducts(array $products): array
     {
-        $this->setByProducts($products);
+        $productIds = array_map(function (ProductView $product) {
+            return $product->getId();
+        }, $products);
+        $this->setByProducts($productIds);
 
         $shoppingLists = [];
-        foreach ($products as $product) {
-            $productId = $product->getId();
-            if ($this->data[$productId]) {
-                $shoppingLists[$productId] = $this->data[$productId];
+        foreach ($productIds as $productId) {
+            if ($this->shoppingLists[$productId]) {
+                $shoppingLists[$productId] = $this->shoppingLists[$productId];
             }
         }
 
@@ -60,21 +61,20 @@ class FrontendShoppingListProductUnitsQuantityProvider
     }
 
     /**
-     * @param Product[] $products
+     * @param int[] $productIds
      */
-    protected function setByProducts($products)
+    private function setByProducts(array $productIds): void
     {
-        $products = array_filter($products, function (Product $product) {
-            return !array_key_exists($product->getId(), $this->data);
+        $productIds = array_filter($productIds, function (int $productId) {
+            return !\array_key_exists($productId, $this->shoppingLists);
         });
-        if (!$products) {
+        if (!$productIds) {
             return;
         }
 
-        $shoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
-        foreach ($products as $product) {
-            $productId = $product->getId();
-            $this->data[$productId] = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : null;
+        $shoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($productIds);
+        foreach ($productIds as $productId) {
+            $this->shoppingLists[$productId] = $shoppingLists[$productId] ?? null;
         }
     }
 }

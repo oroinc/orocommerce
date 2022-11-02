@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchSegmentListener;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
@@ -30,7 +30,7 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $websiteSearchSegmentListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->getMockBuilder(ContentVariantSegmentProvider::class)
             ->disableOriginalConstructor()
@@ -45,63 +45,114 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnWebsiteSearchIndexWhenNoContentVariantSegments()
+    /**
+     * @dataProvider processWithoutProductEntityProvider
+     * @param mixed $classOrClasses
+     */
+    public function testProcessWithoutProductEntity($classOrClasses)
     {
-        $event = new IndexEntityEvent(Product::class, [$this->getEntity(Product::class, ['id' => 1])], []);
-
-        $this->contentVariantSegmentProvider
-            ->expects($this->once())
-            ->method('getContentVariantSegments')
-            ->willReturn([]);
-
-        $this->staticSegmentManager
-            ->expects($this->never())
-            ->method('run');
-
-        $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
-    }
-
-    public function testOnWebsiteSearchIndexWithUnsupportedEntity()
-    {
-        $event = new IndexEntityEvent(ProductImage::class, [$this->getEntity(ProductImage::class, ['id' => 1])], []);
-
-        $this->contentVariantSegmentProvider
-            ->expects($this->never())
+        $this->contentVariantSegmentProvider->expects($this->never())
             ->method('getContentVariantSegments');
-
-        $this->staticSegmentManager
-            ->expects($this->never())
+        $this->staticSegmentManager->expects($this->never())
             ->method('run');
-
-        $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
+        $event = new BeforeReindexEvent($classOrClasses);
+        $this->websiteSearchSegmentListener->process($event);
     }
 
-    public function testOnWebsiteSearchIndexWhenContentVariantSegmentsExist()
+    public function processWithoutProductEntityProvider(): array
     {
-        $entityIds = [1, 3, 5];
-        $entities = [
-            $this->getEntity(Product::class, ['id' => 1]),
-            $this->getEntity(Product::class, ['id' => 3]),
-            $this->getEntity(Product::class, ['id' => 5])
+        return [
+            'without product in array' => [
+                [\stdClass::class],
+            ],
+            'not a product in string' => [
+                \stdClass::class,
+            ],
         ];
-        $event = new IndexEntityEvent(Product::class, $entities, []);
+    }
 
-        $firstSegment = $this->getEntity(Segment::class, ['id' => 1]);
-        $secondSegment = $this->getEntity(Segment::class, ['id' => 2]);
+    public function testProcessUnsupportedFieldsGroup()
+    {
+        $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] = [];
+        $context[AbstractIndexer::CONTEXT_WEBSITE_IDS] = [1, 2];
+        $context[AbstractIndexer::CONTEXT_FIELD_GROUPS] = ['image'];
 
-        $this->contentVariantSegmentProvider
-            ->expects($this->once())
-            ->method('getContentVariantSegments')
-            ->willReturn([$firstSegment, $secondSegment]);
+        $this->contentVariantSegmentProvider->expects($this->never())
+            ->method('getContentVariantSegments');
+        $this->staticSegmentManager->expects($this->never())
+            ->method('run');
 
-        $this->staticSegmentManager
-            ->expects($this->exactly(2))
+        $event = new BeforeReindexEvent(Product::class, $context);
+        $this->websiteSearchSegmentListener->process($event);
+    }
+
+    public function testProcessForWebsite()
+    {
+        $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] = [];
+        $context[AbstractIndexer::CONTEXT_WEBSITE_IDS] = [1, 2];
+        $segment1 = new Segment();
+        $segment2 = new Segment();
+        $this->contentVariantSegmentProvider->expects($this->exactly(2))
+            ->method('getContentVariantSegmentsByWebsiteId')
+            ->withConsecutive(
+                [1],
+                [2]
+            )
+            ->willReturnOnConsecutiveCalls([$segment1], [$segment2]);
+        $this->staticSegmentManager->expects($this->exactly(2))
             ->method('run')
             ->withConsecutive(
-                [$firstSegment, $entityIds],
-                [$secondSegment, $entityIds]
+                [$segment1, $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]],
+                [$segment2, $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]]
             );
+        $event = new BeforeReindexEvent(Product::class, $context);
+        $this->websiteSearchSegmentListener->process($event);
+    }
 
-        $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
+    /**
+     * @dataProvider processProvider
+     * @param mixed $classOrClasses
+     * @param array $context
+     */
+    public function testProcess($classOrClasses, array $context)
+    {
+        $segment1 = new Segment();
+        $segment2 = new Segment();
+        $this->contentVariantSegmentProvider->expects($this->once())
+            ->method('getContentVariantSegments')
+            ->willReturn([$segment1, $segment2]);
+        $this->staticSegmentManager->expects($this->exactly(2))
+            ->method('run')
+            ->withConsecutive(
+                [$segment1, $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]],
+                [$segment2, $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY]]
+            );
+        $event = new BeforeReindexEvent($classOrClasses, $context);
+        $this->websiteSearchSegmentListener->process($event);
+    }
+
+    public function processProvider(): array
+    {
+        return [
+            'with empty classes and empty ids' => [
+                [],
+                [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => []],
+            ],
+            'with product class in array and filled ids' => [
+                [Product::class],
+                [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777]],
+            ],
+            'with product class and filled ids' => [
+                Product::class,
+                [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777]],
+            ],
+            'with product class and filled ids main fields group' => [
+                Product::class,
+                [
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [333, 777],
+                    AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']
+                ],
+            ]
+        ];
     }
 }

@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -282,7 +282,6 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         foreach (self::$items as $item) {
             $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
 
-            /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])

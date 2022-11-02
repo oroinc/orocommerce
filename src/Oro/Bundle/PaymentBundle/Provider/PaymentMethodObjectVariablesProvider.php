@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\PaymentBundle\Provider;
 
-use Oro\Bundle\EmailBundle\Provider\EntityVariablesProviderInterface;
+use Oro\Bundle\EntityBundle\Twig\Sandbox\EntityVariablesProviderInterface;
 use Oro\Bundle\PaymentBundle\Twig\DTO\PaymentMethodObject;
 
 /**
- * Provider allows to use PaymentMethodObject's getters from email templates
+ * The provider that allows to use PaymentMethodObject in email templates.
  */
 class PaymentMethodObjectVariablesProvider implements EntityVariablesProviderInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function getVariableDefinitions($class = null)
+    public function getVariableDefinitions(): array
     {
         return [];
     }
@@ -21,8 +21,21 @@ class PaymentMethodObjectVariablesProvider implements EntityVariablesProviderInt
     /**
      * {@inheritdoc}
      */
-    public function getVariableGetters($class = null)
+    public function getVariableGetters(): array
     {
-        return [PaymentMethodObject::class => ['getLabel', 'getOptions']];
+        return [
+            PaymentMethodObject::class => [
+                'label'   => 'getLabel',
+                'options' => 'getOptions'
+            ]
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVariableProcessors(string $entityClass): array
+    {
+        return [];
     }
 }

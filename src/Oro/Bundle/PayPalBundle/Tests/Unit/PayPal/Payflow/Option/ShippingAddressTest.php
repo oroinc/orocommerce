@@ -50,7 +50,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOFIRSTNAME" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOLASTNAME' => [
@@ -59,7 +59,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOLASTNAME" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOSTREET' => [
@@ -68,7 +68,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOSTREET" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOSTREET2' => [
@@ -77,7 +77,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOSTREET2" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOCITY' => [
@@ -86,7 +86,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOCITY" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOSTATE' => [
@@ -95,7 +95,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOSTATE" with value 1 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOZIP' => [
@@ -104,7 +104,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOZIP" with value 12345 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
             'invalid SHIPTOCOUNTRY' => [
@@ -113,7 +113,7 @@ class ShippingAddressTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "SHIPTOCOUNTRY" with value 840 is expected to be of type "string", but is of type ' .
-                    '"integer".',
+                    '"int".',
                 ],
             ],
         ];

@@ -6,7 +6,6 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
-use Oro\Bundle\ProductBundle\Exception\EmptyCollectionException;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
@@ -23,9 +22,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Handles quick add form.
+ */
 class QuickAddHandler
 {
     /**
@@ -63,16 +65,6 @@ class QuickAddHandler
      */
     protected $productGrouperFactory;
 
-    /**
-     * @param ProductFormProvider $productFormProvider
-     * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
-     * @param ComponentProcessorRegistry $componentRegistry
-     * @param UrlGeneratorInterface $router
-     * @param TranslatorInterface $translator
-     * @param ValidatorInterface $validator
-     * @param ProductsGrouperFactory $productGrouperFactory
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(
         ProductFormProvider $productFormProvider,
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
@@ -172,8 +164,8 @@ class QuickAddHandler
                     ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
                     ->process($collection);
                 $this->eventDispatcher->dispatch(
-                    QuickAddRowsCollectionReadyEvent::NAME,
-                    new QuickAddRowsCollectionReadyEvent($collection)
+                    new QuickAddRowsCollectionReadyEvent($collection),
+                    QuickAddRowsCollectionReadyEvent::NAME
                 );
                 $data = $collection->getFormData();
                 $this->productFormProvider->getQuickAddForm($data);
@@ -264,8 +256,6 @@ class QuickAddHandler
     }
 
     /**
-     * @param QuickAddRowCollection $collection
-     * @throws EmptyCollectionException
      * @internal param bool $allowEmpty
      */
     protected function validateCollection(QuickAddRowCollection $collection)

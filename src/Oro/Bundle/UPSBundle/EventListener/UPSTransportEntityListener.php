@@ -27,11 +27,6 @@ class UPSTransportEntityListener
      */
     private $typeRemovalEventDispatcher;
 
-    /**
-     * @param IntegrationIdentifierGeneratorInterface   $integrationIdentifierGenerator
-     * @param UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator
-     * @param MethodTypeRemovalEventDispatcherInterface $typeRemovalEventDispatcher
-     */
     public function __construct(
         IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
         UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
@@ -42,10 +37,6 @@ class UPSTransportEntityListener
         $this->typeRemovalEventDispatcher = $typeRemovalEventDispatcher;
     }
 
-    /**
-     * @param UPSTransport $transport
-     * @param LifecycleEventArgs $args
-     */
     public function postUpdate(UPSTransport $transport, LifecycleEventArgs $args)
     {
         /** @var PersistentCollection $services */

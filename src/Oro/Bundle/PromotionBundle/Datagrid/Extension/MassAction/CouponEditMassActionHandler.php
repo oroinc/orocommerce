@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
 {
@@ -27,17 +27,11 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
      */
     private $formData;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * @param FormFactoryInterface $formFactory
-     */
     public function setFormFactory(FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
@@ -90,9 +84,8 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
 
         return new MassActionResponse(
             $successful,
-            $this->translator->transChoice(
+            $this->translator->trans(
                 'oro.grid.mass_action.edit.success_message',
-                $entitiesCount,
                 ['%count%' => $entitiesCount]
             ),
             $options

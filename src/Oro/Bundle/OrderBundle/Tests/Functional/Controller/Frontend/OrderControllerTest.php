@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
@@ -25,7 +25,7 @@ class OrderControllerTest extends WebTestCase
     protected $client;
 
     /**
-     * @var DateTimeFormatter
+     * @var DateTimeFormatterInterface
      */
     protected $dateFormatter;
 
@@ -34,7 +34,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected $numberFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -58,7 +58,7 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('frontend-orders-grid', $crawler->html());
+        static::assertStringContainsString('frontend-orders-grid', $crawler->html());
     }
 
     public function testOrdersGrid()
@@ -227,15 +227,11 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param array $expectedViewData
-     */
     public function assertViewPage(Crawler $crawler, array $expectedViewData)
     {
         $html = $crawler->html();
         foreach ($expectedViewData as $data) {
-            $this->assertContains($data, $html);
+            static::assertStringContainsString($data, $html);
         }
     }
 }

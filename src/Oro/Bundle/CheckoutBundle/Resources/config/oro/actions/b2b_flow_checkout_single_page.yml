@@ -1,0 +1,130 @@
+operations:
+    b2b_flow_checkout_single_page_new_address:
+        label: oro.checkout.form.address.manual
+        enabled: true
+        page_reload: false
+        applications: [commerce]
+        acl_resource: oro_checkout_frontend_checkout
+        frontend_options:
+            template: '@OroCheckout/Action/address.html.twig'
+
+    b2b_flow_checkout_single_page_new_billing_address:
+        extends: b2b_flow_checkout_single_page_new_address
+        attributes:
+            visitor_email:
+                label: oro.customer.customeruser.username.label
+                type: string
+            address:
+                property_path: data.billingAddress
+            save_address:
+                label: oro.checkout.save_billing_address.label
+                type: boolean
+        form_options:
+            attribute_fields:
+                visitor_email:
+                    form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
+                address:
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                    options:
+                        object: $.data
+                        addressType: 'billing'
+                        required: true
+                        constraints:
+                            - Valid: ~
+                            - NotBlank: ~
+                            - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
+                save_address:
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+        form_init:
+            - '@call_service_method':
+                service: oro_workflow.manager
+                method: getFirstWorkflowItemByEntity
+                method_parameters: [$.data]
+                attribute: $.workflowItem
+
+            - '@assign_value': [$.visitor_email, $.workflowItem.data.email]
+
+            - '@assign_value': [$.address, $.data.billingAddress]
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerUserAddress'
+                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerAddress'
+                actions:
+                    - '@assign_value': [$.save_address, $.data.saveBillingAddress]
+        actions:
+            - '@assign_value': [$.workflowItem.data.email, $.visitor_email]
+            - '@call_method':
+                object: $.workflowItem
+                method: setUpdated
+            - '@flush_entity': $.workflowItem
+
+            - '@assign_value': [$.data.saveBillingAddress, $.save_address]
+            - '@run_action_group':
+                action_group: b2b_flow_checkout_update_shipping_address
+                parameters_mapping:
+                    checkout: $.data
+            - '@run_action_group':
+                action_group: b2b_flow_checkout_update_shipping_method
+                parameters_mapping:
+                    checkout: $.data
+            - '@tree':
+                conditions:
+                    '@empty': $.data.shippingCost
+                actions:
+                    - '@unset_value': $.data.shippingMethod
+                    - '@call_service_method':
+                         service: oro_checkout.action.default_shipping_method_setter
+                         method: setDefaultShippingMethod
+                         method_parameters: [$.data]
+            - '@flush_entity': [$.address]
+            - '@flush_entity': [$.data]
+
+    b2b_flow_checkout_single_page_new_shipping_address:
+        extends: b2b_flow_checkout_single_page_new_address
+        attributes:
+            address:
+                property_path: data.shippingAddress
+            save_address:
+                label: oro.checkout.save_shipping_address.label
+                type: boolean
+        form_options:
+            attribute_fields:
+                address:
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                    options:
+                        object: $.data
+                        addressType: 'shipping'
+                        required: true
+                        constraints:
+                            - Valid: ~
+                            - NotBlank: ~
+                            - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
+                save_address:
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+        form_init:
+            - '@assign_value': [$.address, $.data.shippingAddress]
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerUserAddress'
+                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerAddress'
+                actions:
+                    - '@assign_value': [$.save_address, $.data.saveShippingAddress]
+        actions:
+            - '@assign_value': [$.data.saveShippingAddress, $.save_address]
+            - '@run_action_group':
+                action_group: b2b_flow_checkout_update_shipping_method
+                parameters_mapping:
+                    checkout: $.data
+            - '@tree':
+                conditions:
+                    '@empty': $.data.shippingCost
+                actions:
+                    - '@unset_value': $.data.shippingMethod
+                    - '@call_service_method':
+                         service: oro_checkout.action.default_shipping_method_setter
+                         method: setDefaultShippingMethod
+                         method_parameters: [$.data]
+            - '@flush_entity': [$.address]
+            - '@flush_entity': [$.data]

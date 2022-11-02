@@ -31,10 +31,6 @@ class AssignUserCurrencyAction extends AbstractAction
      */
     protected $currencyManager;
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(ContextAccessor $contextAccessor, UserCurrencyManager $currencyManager)
     {
         parent::__construct($contextAccessor);

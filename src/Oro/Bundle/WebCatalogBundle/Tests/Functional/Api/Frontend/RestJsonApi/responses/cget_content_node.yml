@@ -1,0 +1,182 @@
+data:
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_rootNode->id)>'
+        attributes:
+            createdAt: '@catalog1_rootNode->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@catalog1_rootNode->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Web Catalog 1 Root Node'
+            order: 1
+            url: '/catalog1_rootNode'
+            urls:
+                - { url: '/catalog1_rootNode', localizationId: '<toString(@es->id)>' }
+                - { url: '/catalog1_rootNode', localizationId: '<toString(@en_CA->id)>' }
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+        relationships:
+            parent:
+                data: null
+            path:
+                data: []
+            content:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_node1->id)>'
+        attributes:
+            createdAt: '@catalog1_node1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@catalog1_node1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Web Catalog 1 Node 1'
+            order: 2
+            url: '/catalog1_node1'
+            urls:
+                - { url: '/catalog1_node1', localizationId: '<toString(@es->id)>' }
+                - { url: '/catalog1_node1_en_CA', localizationId: '<toString(@en_CA->id)>' }
+            metaTitle: 'Web Catalog 1 Node 1 Meta Title'
+            metaDescription: 'Web Catalog 1 Node 1 Meta Description'
+            metaKeywords: 'Web Catalog 1 Node 1 Meta Keywords'
+        relationships:
+            parent:
+                data:
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_rootNode->id)>'
+            path:
+                data:
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_rootNode->id)>'
+            content:
+                data:
+                    type: productcollection
+                    id: '<toString(@catalog1_node1_variant->id)>'
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_node11->id)>'
+        attributes:
+            createdAt: '@catalog1_node11->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@catalog1_node11->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Web Catalog 1 Node 1.1'
+            order: 3
+            url: '/catalog1_node11'
+            urls:
+                - { url: '/catalog1_node11_es', localizationId: '<toString(@es->id)>' }
+                - { url: '/catalog1_node11_en_CA', localizationId: '<toString(@en_CA->id)>' }
+            metaTitle: 'Web Catalog 1 Node 1.1 Meta Title'
+            metaDescription: 'Web Catalog 1 Node 1.1 Meta Description'
+            metaKeywords: 'Web Catalog 1 Node 1.1 Meta Keywords'
+        relationships:
+            parent:
+                data:
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_node1->id)>'
+            path:
+                data:
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_rootNode->id)>'
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_node1->id)>'
+            content:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category1->id)>'
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_node111->id)>'
+        attributes:
+            createdAt: '@catalog1_node111->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@catalog1_node111->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Web Catalog 1 Node 1.1.1'
+            order: 4
+            url: '/catalog1_node111'
+            urls:
+                - { url: '/catalog1_node111', localizationId: '<toString(@es->id)>' }
+                - { url: '/catalog1_node111', localizationId: '<toString(@en_CA->id)>' }
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+        relationships:
+            parent:
+                data:
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_node11->id)>'
+            path:
+                data:
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_rootNode->id)>'
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_node1->id)>'
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_node11->id)>'
+            content:
+                data:
+                    type: systempages
+                    id: 'oro_product_frontend_product_index'
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_node12->id)>'
+        attributes:
+            createdAt: '@catalog1_node12->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@catalog1_node12->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Web Catalog 1 Node 1.2'
+            order: 7
+            url: '/catalog1_node12'
+            urls:
+                - { url: '/catalog1_node12', localizationId: '<toString(@es->id)>' }
+                - { url: '/catalog1_node12', localizationId: '<toString(@en_CA->id)>' }
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+        relationships:
+            parent:
+                data:
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_node1->id)>'
+            path:
+                data:
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_rootNode->id)>'
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_node1->id)>'
+            content:
+                data:
+                    type: productcollection
+                    id: '<toString(@catalog1_node12->contentVariants->first()->id)>'
+    -
+        type: webcatalogtree
+        id: '<toString(@catalog1_node2->id)>'
+        attributes:
+            createdAt: '@catalog1_node2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@catalog1_node2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Web Catalog 1 Node 2'
+            order: 26
+            url: '/catalog1_node2'
+            urls:
+                - { url: '/catalog1_node2', localizationId: '<toString(@es->id)>' }
+                - { url: '/catalog1_node2', localizationId: '<toString(@en_CA->id)>' }
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+        relationships:
+            parent:
+                data:
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_rootNode->id)>'
+            path:
+                data:
+                    -
+                        type: webcatalogtree
+                        id: '<toString(@catalog1_rootNode->id)>'
+            content:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category111->id)>'

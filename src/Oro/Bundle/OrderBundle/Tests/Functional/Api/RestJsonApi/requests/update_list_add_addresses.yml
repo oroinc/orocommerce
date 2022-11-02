@@ -1,0 +1,130 @@
+data:
+    -
+        meta:
+            update: true
+        type: orders
+        id: <toString(@simple_order->id)>
+        relationships:
+            billingAddress:
+                data:
+                    type: orderaddresses
+                    id: 'billing1'
+            shippingAddress:
+                data:
+                    type: orderaddresses
+                    id: 'shipping1'
+    -
+        meta:
+            update: true
+        type: orders
+        id: <toString(@simple_order2->id)>
+        relationships:
+            billingAddress:
+                data:
+                    type: orderaddresses
+                    id: 'billing2'
+            shippingAddress:
+                data:
+                    type: orderaddresses
+                    id: 'shipping2'
+included:
+    -
+        type: orderaddresses
+        id: 'billing1'
+        attributes:
+            phone: '777-777-777'
+            label: 'Billing 1'
+            street: '1215 Caldwell Road'
+            street2: 'Street 2'
+            city: 'Rochester'
+            postalCode: '14608'
+            organization: 'test organization'
+            namePrefix: 'Mr.'
+            firstName: 'John'
+            middleName: 'Edgar'
+            lastName: 'Doo'
+            nameSuffix: 'M.D.'
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.usny->combinedCode)>'
+    -
+        type: orderaddresses
+        id: 'shipping1'
+        attributes:
+            phone: '555-55-55'
+            label: 'Shipping 1'
+            street: '1215 Caldwell Road'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90210'
+            organization: 'test1 organization'
+            namePrefix: 'Mr.'
+            firstName: 'John'
+            middleName: 'Edgar'
+            lastName: 'Doe'
+            nameSuffix: 'M.D.'
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.usny->combinedCode)>'
+    -
+        type: orderaddresses
+        id: 'billing2'
+        attributes:
+            phone: '777-777-777'
+            label: 'Billing 2'
+            street: '1215 Caldwell Road'
+            street2: 'Street 2'
+            city: 'Rochester'
+            postalCode: '14608'
+            organization: 'test organization'
+            namePrefix: 'Mr.'
+            firstName: 'John'
+            middleName: 'Edgar'
+            lastName: 'Doo'
+            nameSuffix: 'M.D.'
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.usny->combinedCode)>'
+    -
+        type: orderaddresses
+        id: 'shipping2'
+        attributes:
+            phone: '555-55-55'
+            label: 'Shipping 2'
+            street: '1215 Caldwell Road'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90210'
+            organization: 'test1 organization'
+            namePrefix: 'Mr.'
+            firstName: 'John'
+            middleName: 'Edgar'
+            lastName: 'Doe'
+            nameSuffix: 'M.D.'
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.usny->combinedCode)>'

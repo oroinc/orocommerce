@@ -6,37 +6,6 @@ configuration:
         country: 'DE'
         region: 'DE-BW'
 databaseBefore:
-    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
-        ua_billing_address:
-            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'UA' } }
-            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'UA-30' } }
-    'Oro\Bundle\OrderBundle\Entity\Order':
-        simple_order:
-            poNumber: simple_order
-            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
-            currency: USD
-            billingAddress: '@ua_billing_address'
-            shippingAddress: '@ua_billing_address'
-    'Oro\Bundle\CurrencyBundle\Entity\Price':
-        usd_price_15.99:
-            value: 15.99
-            currency: USD
-        usd_price_5.55:
-            value: 5.55
-            currency: USD
-    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
-        order_line_item_1:
-            productSku: order_line_item_1
-            order: '@simple_order'
-            quantity: 5
-            price: '@usd_price_15.99'
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
-        order_line_item_2:
-            productSku: order_line_item_2
-            order: '@simple_order'
-            quantity: 6
-            price: '@usd_price_5.55'
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         europe_germany_jurisdiction_code:
             code: europe_germany_jurisdiction_code
@@ -57,6 +26,42 @@ databaseBefore:
             taxJurisdiction: '@europe_ukraine_jurisdiction_code'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
             customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
+databaseBeforeSecondPart:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        ua_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'UA' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'UA-30' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: simple_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@ua_billing_address'
+            shippingAddress: '@ua_billing_address'
+            __calls:
+                -   addLineItem: ['@order_line_item_1']
+                -   addLineItem: ['@order_line_item_2']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+        usd_price_5.55:
+            value: 5.55
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 5
+            price: '@usd_price_15.99'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+        order_line_item_2:
+            productSku: order_line_item_2
+            order: '@simple_order'
+            quantity: 6
+            price: '@usd_price_5.55'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+disableTaxCalculation: false
 expectedResult:
     total:
         includingTax: '135.9'

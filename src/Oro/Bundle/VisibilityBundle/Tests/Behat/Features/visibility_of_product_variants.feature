@@ -1,7 +1,8 @@
 @fixture-OroVisibilityBundle:configurable_product_visibility.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
+@ticket-BB-16482
+@ticket-BB-20790
 Feature: Visibility of product variants
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Create different window session
       Given sessions active:
@@ -81,7 +82,7 @@ Feature: Visibility of product variants
     # Save configurable product with simple products selected
     And I go to Products / Products
     And I click Edit SKU_CONFIGURABLE in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Size] |
     And I check SKU2 record in grid
@@ -142,6 +143,4 @@ Feature: Visibility of product variants
     And I click "Product Configurable"
     Then I should see "Add to Shopping List"
     And I select "Please select option" from "Size"
-    And I should see "Related Products"
-    And I click "Add to Shopping List"
-    Then I should see "Product has been added to \"Shopping list\""
+    And I should see "This value should not be blank."

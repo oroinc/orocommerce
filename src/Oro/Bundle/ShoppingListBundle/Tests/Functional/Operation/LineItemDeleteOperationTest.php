@@ -7,7 +7,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -30,7 +30,7 @@ class LineItemDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $lineItem->getId(),
-            $this->getContainer()->getParameter('oro_shopping_list.entity.line_item.class'),
+            LineItem::class,
             ['datagrid' => 'shopping-list-line-items-grid']
         );
 

@@ -3,25 +3,25 @@
     <% var togglerId = _.uniqueId('collapse-') %>
     <% var regionId = _.uniqueId('collapse-region-') %>
     <% var collapseShow = _.defaults(item.data.show, true); %>
-    <div id="<%- labelId %>" class="control-group">
-        <label class="control-label"><%= item.label %></label>
-        <div class="controls">
+    <div id="<%- labelId %>" class="attribute-item">
+        <label class="attribute-item__term"><%- item.label %></label>
+        <div class="attribute-item__description">
             <button id="<%- togglerId %>" class="amount<%- collapseShow ? '' : ' collapsed' %>" type="button"
                    data-toggle="collapse" data-target="#<%- regionId %>" aria-controls="<%- regionId %>"
                    aria-expanded="<%- collapseShow ? 'true' : 'false' %>">
-                <%= item.formattedAmount %>
+                <%- item.formattedAmount %>
             </button>
         </div>
     </div>
     <div class="collapse<%- collapseShow ? ' show' : '' %>" id="<%- regionId %>" data-role="order-taxes-totals"
          role="region" aria-labelledby="<%- labelId + ' ' + togglerId %>">
         <div class="controls">
-            {% import 'OroTaxBundle::macros.html.twig' as TAX %}
+            {% import '@OroTax/macros.html.twig' as TAX %}
             <% var total = item.data.total %>
             <% var shipping = item.data.shipping %>
-            {{ TAX.renderJsItems() }}
+            <div class="grid-scrollable-container">{{ TAX.renderJsItems() }}</div>
             <% var taxes = item.data.taxes %>
-            {{ TAX.renderJsTaxes() }}
+            <div class="grid-scrollable-container">{{ TAX.renderJsTaxes() }}</div>
         </div>
     </div>
 </script>

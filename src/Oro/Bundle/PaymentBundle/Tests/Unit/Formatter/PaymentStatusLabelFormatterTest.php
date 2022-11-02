@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PaymentStatusLabelFormatterTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +18,7 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit\Framework\TestCase
      */
     protected $translator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 
@@ -42,23 +42,29 @@ class PaymentStatusLabelFormatterTest extends \PHPUnit\Framework\TestCase
             'authorized' => PaymentStatusProvider::AUTHORIZED,
             'pending' => PaymentStatusProvider::PENDING,
             'declined' => PaymentStatusProvider::DECLINED,
-            'partial' => PaymentStatusProvider::PARTIALLY
+            'partial' => PaymentStatusProvider::PARTIALLY,
+            'canceled' => PaymentStatusProvider::CANCELED,
+            'canceled_partially' => PaymentStatusProvider::CANCELED_PARTIALLY
         ];
-        $this->translator->expects($this->exactly(5))
+        $this->translator->expects($this->exactly(7))
             ->method('trans')
             ->withConsecutive(
                 ['oro.payment.status.' . PaymentStatusProvider::FULL],
                 ['oro.payment.status.' . PaymentStatusProvider::AUTHORIZED],
                 ['oro.payment.status.' . PaymentStatusProvider::PENDING],
                 ['oro.payment.status.' . PaymentStatusProvider::DECLINED],
-                ['oro.payment.status.' . PaymentStatusProvider::PARTIALLY]
+                ['oro.payment.status.' . PaymentStatusProvider::PARTIALLY],
+                ['oro.payment.status.' . PaymentStatusProvider::CANCELED],
+                ['oro.payment.status.' . PaymentStatusProvider::CANCELED_PARTIALLY]
             )
             ->willReturnOnConsecutiveCalls(
                 'full',
                 'authorized',
                 'pending',
                 'declined',
-                'partial'
+                'partial',
+                'canceled',
+                'canceled_partially'
             );
         $result = $this->formatter->getAvailableStatuses();
         $this->assertEquals($expected, $result);

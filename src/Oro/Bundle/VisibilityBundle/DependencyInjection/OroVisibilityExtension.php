@@ -12,20 +12,22 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroVisibilityExtension extends Extension implements PrependExtensionInterface
 {
-    const ALIAS = 'oro_visibility';
-
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('services_api.yml');
         $loader->load('form_types.yml');
         $loader->load('commands.yml');
+        $loader->load('controllers.yml');
+        $loader->load('website_search.yml');
+        $loader->load('mq_topics.yml');
+        $loader->load('mq_processors.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
@@ -38,13 +40,5 @@ class OroVisibilityExtension extends Extension implements PrependExtensionInterf
         /** @var ExtendedContainerBuilder $container */
         SecurityExtensionHelper::makeFirewallLatest($container, 'frontend_secure');
         SecurityExtensionHelper::makeFirewallLatest($container, 'frontend');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
     }
 }

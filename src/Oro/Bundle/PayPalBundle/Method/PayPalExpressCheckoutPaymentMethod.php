@@ -7,9 +7,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -20,6 +20,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Executes payment for PayPal Express Checkout.
+ */
 class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 {
     const COMPLETE = 'complete';
@@ -47,27 +50,18 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     /** @var PayPalExpressCheckoutConfigInterface */
     protected $config;
 
-    /** @var ExtractOptionsProvider */
+    /** @var OptionsProviderInterface */
     protected $optionsProvider;
 
     /** @var SurchargeProvider */
     protected $surchargeProvider;
 
-    /**
-     * @param Gateway $gateway
-     * @param PayPalExpressCheckoutConfigInterface $config
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param ExtractOptionsProvider $optionsProvider
-     * @param SurchargeProvider $surchargeProvider
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         Gateway $gateway,
         PayPalExpressCheckoutConfigInterface $config,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
-        ExtractOptionsProvider $optionsProvider,
+        OptionsProviderInterface $optionsProvider,
         SurchargeProvider $surchargeProvider,
         PropertyAccessor $propertyAccessor
     ) {
@@ -107,7 +101,10 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        $amount = round($context->getTotal(), self::AMOUNT_PRECISION);
+        $zeroAmount = round(0, self::AMOUNT_PRECISION);
+
+        return !($amount === $zeroAmount);
     }
 
     /**
@@ -123,11 +120,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         );
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function purchase(PaymentTransaction $paymentTransaction)
+    protected function purchase(PaymentTransaction $paymentTransaction): array
     {
         $options = array_merge(
             $this->getCredentials(),
@@ -149,10 +142,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         ];
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
-    protected function complete(PaymentTransaction $paymentTransaction)
+    protected function complete(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
             $this->getCredentials(),
@@ -185,10 +175,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         }
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
-    protected function authorize(PaymentTransaction $paymentTransaction)
+    protected function authorize(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
             $paymentTransaction->getRequest(),
@@ -200,10 +187,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     */
-    protected function charge(PaymentTransaction $paymentTransaction)
+    protected function charge(PaymentTransaction $paymentTransaction): void
     {
         $options = array_merge(
             $paymentTransaction->getRequest(),
@@ -215,11 +199,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
-    /**
-     * @param PaymentTransaction $paymentTransaction
-     * @return array
-     */
-    protected function capture(PaymentTransaction $paymentTransaction)
+    protected function capture(PaymentTransaction $paymentTransaction): array
     {
         $sourcePaymentTransaction = $paymentTransaction->getSourcePaymentTransaction();
         if (!$sourcePaymentTransaction) {
@@ -277,11 +257,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $paymentTransaction->setReference($data[ECOption\Token::TOKEN]);
     }
 
-    /**
-     * @param string $token
-     * @return string
-     */
-    protected function getRedirectUrl($token)
+    protected function getRedirectUrl(string $token): string
     {
         $redirectUrl = $this->config->isTestMode() ? self::PILOT_REDIRECT_URL : self::PRODUCTION_REDIRECT_URL;
 
@@ -326,11 +302,15 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
      */
     protected function getDoExpressCheckoutOptions(PaymentTransaction $paymentTransaction)
     {
-        $options = [
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
-            Option\Transaction::TRXTYPE => $this->getTransactionType($paymentTransaction),
-            ECOption\Token::TOKEN => $paymentTransaction->getReference(),
-        ];
+        $options = array_merge(
+            $this->getLineItemOptions($paymentTransaction),
+            $this->getSurcharges($paymentTransaction),
+            [
+                Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
+                Option\Transaction::TRXTYPE => $this->getTransactionType($paymentTransaction),
+                ECOption\Token::TOKEN => $paymentTransaction->getReference(),
+            ]
+        );
 
         $response = $paymentTransaction->getResponse();
 
@@ -382,8 +362,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
             return [];
         }
 
-        $class = $this->doctrineHelper->getEntityClass($shippingAddress);
-        $addressOption = $this->optionsProvider->getShippingAddressOptions($class, $shippingAddress);
+        $addressOption = $this->optionsProvider->getShippingAddressOptions($shippingAddress);
 
         return [
             Option\ShippingAddress::SHIPTOFIRSTNAME => $addressOption->getFirstName(),
@@ -417,7 +396,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         }
 
         $options = [];
-        $lineItemOptions = $this->optionsProvider->getLineItemPaymentOptions($entity);
+        $lineItemOptions = $this->optionsProvider->getLineItemOptions($entity);
 
         foreach ($lineItemOptions as $lineItemOption) {
             $options[] = [
@@ -425,7 +404,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
                 Option\LineItems::DESC => $lineItemOption->getDescription(),
                 Option\LineItems::COST => $lineItemOption->getCost(),
                 // PayPal accepts only integer qty.
-                // Float qty could be correctly converted to int in getLineItemPaymentOptions
+                // Float qty could be correctly converted to int in getLineItemOptions
                 Option\LineItems::QTY => (int)$lineItemOption->getQty(),
             ];
         }

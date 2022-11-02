@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Section;
 
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -18,14 +17,14 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FormRegistryInterface */
     protected $formRegistry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formRegistry = $this->createMock(FormRegistryInterface::class);
 
         $this->sectionProvider = new SectionProvider($this->formRegistry);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->sectionProvider);
     }
@@ -50,10 +49,6 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $sections
-     * @param array $sectionsModifiers
-     * @param array $expectedSections
-     *
      * @dataProvider sectionsDataProvider
      */
     public function testSections(array $sections = [], array $sectionsModifiers = [], array $expectedSections = [])

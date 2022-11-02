@@ -1,0 +1,78 @@
+oro_behat_extension:
+  suites:
+    OroConsentBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
+      paths:
+        - '@OroConsentBundle/Tests/Behat/Features'
+
+  elements:
+    Landing Page Form:
+      selector: 'form[name="oro_cms_page"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Titles: 'oro_cms_page[titles][values][default]'
+          URL Slug: 'oro_cms_page[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+    Consent Form:
+      selector: 'form[name="oro_consent"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_consent[names][values][default]'
+          Type: 'oro_consent[mandatory]'
+    Consent Settings Form:
+        selector: 'form[name="consents"]'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+        options:
+          mapping:
+            Enabled User Consents Use Default: 'consents[oro_consent___enabled_consents][use_parent_scope_value]'
+    Consent Popup:
+      selector: '.consent-dialog-widget'
+    Accepted Consent:
+      selector: '.consent-list__item.accepted'
+    Unaccepted Consent:
+      selector: '.consent-list__item.unaccepted'
+    Required Consent Checkbox:
+      selector: '.consent-item.required input[type=checkbox]'
+    Required Consent:
+      selector: '.consent-item.required'
+    Optional Consent:
+      selector: '.consent-item.optional'
+    Consent Link:
+      selector: '.consent-item a'
+    Consent Item Link:
+      selector: '.consent-list__item .consent-list__link'
+    Data Protection Section:
+      selector: '[data-role="profile-consents"]'
+    Sortable Consent List:
+      selector: '.consent-sortable-list'
+    Web Catalog Hamburger Button:
+      selector:
+        locator: '//div[contains(@id,"oro_consent_webcatalog-uid")]/div/button[contains(@class, "entity-select-btn")]'
+        type: xpath
+    Expand Store and Process Node:
+      selector:
+        type: xpath
+        locator: '//a[text()="Store and Process Node"]/../i[@role="presentation"]'
+    Customer user View page Consent Link:
+      selector:
+        type: xpath
+        locator: '//h4[text()="Consents"]/ancestor::*[contains(@class, "responsive-section")][1]/.//a[contains(@title, "Yes")]'

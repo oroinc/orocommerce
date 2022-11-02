@@ -1,0 +1,24 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node11->id)>'
+    relationships:
+        content:
+            data:
+                type: mastercatalogcategories
+                id: '<toString(@category1->id)>'
+included:
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1->id)>'
+        attributes:
+            title: 'Category 1'
+            url: '/category1_slug_default'
+            urls:
+                - { url: '/category1_slug_default', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'

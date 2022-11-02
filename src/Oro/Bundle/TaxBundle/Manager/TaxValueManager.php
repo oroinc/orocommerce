@@ -2,15 +2,26 @@
 
 namespace Oro\Bundle\TaxBundle\Manager;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityBundle\EventListener\DoctrineFlushProgressListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use ProxyManager\Proxy\VirtualProxyInterface;
 
+/**
+ * Class provides a methods to work with TaxValue entity
+ *
+ * Should not be used outside this bundle
+ */
 class TaxValueManager
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
+    /** @var DoctrineFlushProgressListener */
+    protected $doctrineFlushProgressListener;
 
     /** @var string */
     protected $taxValueClass;
@@ -23,14 +34,20 @@ class TaxValueManager
 
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineFlushProgressListener $doctrineFlushProgressListener
      * @param string $taxValueClass
      * @param string $taxClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxValueClass, $taxClass)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        DoctrineFlushProgressListener $doctrineFlushProgressListener,
+        $taxValueClass,
+        $taxClass
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->taxValueClass = (string)$taxValueClass;
         $this->taxClass = (string)$taxClass;
+        $this->doctrineFlushProgressListener = $doctrineFlushProgressListener;
     }
 
     /**
@@ -72,7 +89,7 @@ class TaxValueManager
         }
 
         // Save taxValues to cache only with entity IDs
-        if ($entityId) {
+        if ($entityId && $taxValue->getId()) {
             $key = $this->getTaxValueCacheKey($entityClass, $entityId);
             $this->taxValues[$key] = $taxValue;
         }
@@ -143,22 +160,37 @@ class TaxValueManager
             ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
     }
 
+    public function saveTaxValue(TaxValue $taxValue)
+    {
+        $em = $this->getTaxValueEntityManager();
+        $em->persist($taxValue);
+
+        if ($this->doctrineFlushProgressListener->isFlushInProgress($em)) {
+            // If flush is in progress we can compute changeset and doctrine will update it
+            $em->getUnitOfWork()->computeChangeSet(
+                $em->getClassMetadata(ClassUtils::getClass($taxValue)),
+                $taxValue
+            );
+        }
+    }
+
     /**
-     * @param TaxValue $taxValue
-     * @param bool $flush
+     * Flush tax value changes to database if it is allowed to do
+     *
+     * @param null|TaxValue|TaxValue[] $entity
+     * @return bool
      */
-    public function saveTaxValue(TaxValue $taxValue, $flush = true)
+    public function flushTaxValueIfAllowed($entity = null): bool
     {
         $em = $this->getTaxValueEntityManager();
 
-        /** todo: BB-3483  */
-        $em->getUnitOfWork()->scheduleExtraUpdate($taxValue, ['result' => [null, $taxValue->getResult()]]);
+        if (!$this->doctrineFlushProgressListener->isFlushInProgress($em)) {
+            $em->flush($entity);
 
-        $em->persist($taxValue);
-
-        if ($flush) {
-            $em->flush($taxValue);
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -205,7 +237,9 @@ class TaxValueManager
      */
     protected function getTaxValueEntityManager()
     {
-        return $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
+        $em = $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
+
+        return $em instanceof VirtualProxyInterface ? $em->getWrappedValueHolderValue() : $em;
     }
 
     /**

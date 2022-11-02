@@ -54,7 +54,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_14';
+        return 'v1_14_2';
     }
 
     /**
@@ -86,8 +86,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Create oro_order table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderTable(Schema $schema)
     {
@@ -170,8 +168,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Create oro_order_address table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderAddressTable(Schema $schema)
     {
@@ -202,8 +198,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Create oro_order_discount table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderDiscountTable(Schema $schema)
     {
@@ -228,8 +222,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Create oro_order_line_item table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderLineItemTable(Schema $schema)
     {
@@ -263,8 +255,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Create oro_order_shipping_tracking table
-     *
-     * @param Schema $schema
      */
     protected function createOroOrderShippingTrackingTable(Schema $schema)
     {
@@ -278,8 +268,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order foreign keys.
-     *
-     * @param Schema $schema
      *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
@@ -333,8 +321,6 @@ class OroOrderBundleInstaller implements
     /**
      * Add oro_order_address foreign keys.
      *
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroOrderAddressForeignKeys(Schema $schema)
@@ -368,8 +354,6 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order_line_item foreign keys.
-     *
-     * @param Schema $schema
      *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
@@ -405,8 +389,6 @@ class OroOrderBundleInstaller implements
     /**
      * Add oro_order_discount foreign keys.
      *
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroOrderDiscountForeignKeys(Schema $schema)
@@ -423,8 +405,6 @@ class OroOrderBundleInstaller implements
     /**
      * Add oro_order_shipping_tracking foreign keys.
      *
-     * @param Schema $schema
-     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroOrderShippingTrackingForeignKeys(Schema $schema)
@@ -438,9 +418,6 @@ class OroOrderBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOrderInternalStatusField(Schema $schema)
     {
         $internalStatusOptions = new OroOptions();

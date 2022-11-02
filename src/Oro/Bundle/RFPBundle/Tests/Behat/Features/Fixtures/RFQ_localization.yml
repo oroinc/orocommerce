@@ -1,0 +1,14 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+    - '@OroShoppingListBundle:ShoppingListFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: <("Product1`\"'&йёщ®&reg;>")>
+
+Oro\Bundle\TranslationBundle\Entity\Translation:
+    translation_product_unit_item_lang1:
+        translationKey: '@translation_key_jsmessages_oro_product_product_unit_item_label_full'
+        value: 'item (lang1)'
+        language: '@language1'
+        scope: 1

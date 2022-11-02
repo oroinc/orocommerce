@@ -2,30 +2,46 @@
 
 namespace Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass;
 
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
+use Oro\Bundle\EmailBundle\DependencyInjection\Compiler\AbstractTwigSandboxConfigurationPass;
 
-class TwigSandboxConfigurationPass implements CompilerPassInterface
+/**
+ * Registers the "rfp_products" Twig function for the email templates rendering sandbox.
+ */
+class TwigSandboxConfigurationPass extends AbstractTwigSandboxConfigurationPass
 {
-    const EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY = 'oro_email.twig.email_security_policy';
-    const EMAIL_TEMPLATE_RENDERER_SERVICE_KEY = 'oro_email.email_renderer';
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFunctions(): array
+    {
+        return [
+            'rfp_products'
+        ];
+    }
 
     /**
      * {@inheritDoc}
      */
-    public function process(ContainerBuilder $container)
+    protected function getFilters(): array
     {
-        if ($container->hasDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY)
-            && $container->hasDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY)
-        ) {
-            $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
+        return [];
+    }
 
-            $functions = array_merge($securityPolicyDef->getArgument(4), ['rfp_products']);
-            $securityPolicyDef->replaceArgument(4, $functions);
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTags(): array
+    {
+        return [];
+    }
 
-            $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall('addExtension', [new Reference('oro_rfp.twig.request_products')]);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions(): array
+    {
+        return [
+            'oro_rfp.twig.request_products'
+        ];
     }
 }

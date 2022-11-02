@@ -3,21 +3,17 @@
 namespace Oro\Bundle\UPSBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\Yaml\Dumper;
 
-class FeatureContext extends OroFeatureContext implements KernelAwareContext
+class FeatureContext extends OroFeatureContext
 {
-    const BEHAT_YAML_DIR_NAME = 'behat';
-    const BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
-    const HEADER_METHOD = 'Method';
-    const HEADER_CURRENCY = 'Currency';
-    const HEADER_COST = 'Cost';
-
-    use KernelDictionary;
+    private const BEHAT_YAML_DIR_NAME = 'behat';
+    private const BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
+    private const HEADER_METHOD = 'Method';
+    private const HEADER_CURRENCY = 'Currency';
+    private const HEADER_COST = 'Cost';
 
     /**
      * Configures UPS with expected costs.
@@ -28,7 +24,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
      *      | 12          | USD      | 77.0 |
      *
      * @Then /^(?:|I )expect the following shipping costs:$/
-     * @param TableNode $table
      */
     public function iExpectUPSShippingCosts(TableNode $table)
     {
@@ -38,10 +33,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $this->writeFile($yamlDumper->dump($data));
     }
 
-    /**
-     * @param string $cacheDir
-     * @return string
-     */
     public static function getBehatYamlFilename(string $cacheDir): string
     {
         $behatCacheDir = $cacheDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_DIR_NAME;
@@ -53,10 +44,6 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         return $behatCacheDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_FILE_NAME;
     }
 
-    /**
-     * @param TableNode $table
-     * @return array
-     */
     private function parseShippingCostsTable(TableNode $table): array
     {
         $rows = $table->getRows();
@@ -89,13 +76,9 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         return $data;
     }
 
-    /**
-     * @param string $description
-     * @return string
-     */
     private function getMethodCodeByDescription(string $description): string
     {
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(ShippingService::class);
+        $entityManager = $this->getAppContainer()->get('doctrine')->getManagerForClass(ShippingService::class);
         $repository = $entityManager->getRepository(ShippingService::class);
 
         /** @var ShippingService $shippingService */
@@ -108,12 +91,9 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         return $shippingService->getCode();
     }
 
-    /**
-     * @param string $content
-     */
     private function writeFile(string $content)
     {
-        $cacheDir = $this->getContainer()->getParameter('kernel.cache_dir');
+        $cacheDir = $this->getAppContainer()->getParameter('kernel.cache_dir');
         $yamlFile = fopen(self::getBehatYamlFilename($cacheDir), 'wt');
         fwrite($yamlFile, $content);
         fclose($yamlFile);

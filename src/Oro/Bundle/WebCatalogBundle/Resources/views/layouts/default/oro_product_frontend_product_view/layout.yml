@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: product_view_attribute_group_general_attribute_localized_fallback_names
+            optionName: translated_value
+            optionValue: '=data["web_catalog_title"].getNodeTitle(data["locale"].getLocalizedValue(value))'

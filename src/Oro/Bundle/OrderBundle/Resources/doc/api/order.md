@@ -40,20 +40,14 @@ Example:
       "billingAddress": {
         "data": {
           "type": "orderaddresses",
-          "id": "18"
-        }
-      },
-      "website": {
-        "data": {
-          "type": "websites",
-          "id": "1"
+          "id": "billing_address_1"
         }
       },
       "lineItems": {
         "data": [
           {
             "type": "orderlineitems",
-            "id": "1"
+            "id": "line_item_1"
           }
         ]
       },
@@ -64,7 +58,61 @@ Example:
         }
       }
     }
-  }
+  },
+  "included": [
+    {
+      "type": "orderaddresses",
+      "id": "billing_address_1",
+      "attributes": {
+        "label": "Address 01",
+        "street": "1215 Caldwell Road",
+        "city": "Rochester",
+        "postalCode": "14608",
+        "firstName": "Amanda",
+        "lastName": "Cole"
+      },
+      "relationships": {
+        "country": {
+          "data": {
+            "type": "countries",
+            "id": "US"
+          }
+        },
+        "region": {
+          "data": {
+            "type": "regions",
+            "id": "US-NY"
+          }
+        }
+      }
+    },
+    {
+      "type": "orderlineitems",
+      "id": "line_item_1",
+      "attributes": {
+        "productSku": "4HC51",
+        "quantity": 19,     
+        "value": 23.55,
+        "currency": "USD",
+        "priceType": 10,
+        "shipBy": "2016-04-30"
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "23"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "piece"
+          }
+        }      
+      }
+    }
+  ]
 }
 ```
 {@/request}
@@ -86,31 +134,7 @@ Example:
     "type": "orders",
     "id": "1",
     "attributes": {
-      "poNumber": "CV032342USDD",
-      "customerNotes": "Please, call before delivery",
-      "shipUntil": "2017-08-15"
-    },
-    "relationships": {      
-      "website": {
-        "data": {
-          "type": "websites",
-          "id": "1"
-        }
-      },
-      "lineItems": {
-        "data": [
-          {
-            "type": "orderlineitems",
-            "id": "1"
-          }
-        ]
-      },
-      "customer": {
-        "data": {
-          "type": "customers",
-          "id": "1"
-        }
-      }
+      "customerNotes": "Please, call before delivery"
     }
   }
 }
@@ -137,7 +161,7 @@ Delete a collection of order records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### lineItems
 
@@ -145,7 +169,43 @@ Delete a collection of order records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+### source
+
+The entity from which this order was created.
+
+### currency
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### subtotalValue
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### totalValue
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### totalDiscountsAmount
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 
@@ -161,7 +221,7 @@ Retrieve ID of address record assigned to a specific order record.
 
 #### update_relationship
 
-Replace address assigned to a specific order record.
+Replace the address record assigned to a specific order record.
 
 {@request:json_api}
 Example:
@@ -203,7 +263,6 @@ Example:
 ```
 {@/request}
 
-
 ### customerUser
 
 #### get_subresource
@@ -224,7 +283,7 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "customer_users",
+    "type": "customerusers",
     "id": "1"
   }
 }
@@ -235,7 +294,7 @@ Example:
 
 #### get_subresource
 
-Retrieve a records of discount assigned to a specific order record.
+Retrieve records of discount assigned to a specific order record.
 
 #### get_relationship
 
@@ -431,7 +490,7 @@ Retrieve ID of address record assigned to a specific order record.
 
 #### update_relationship
 
-Replace address assigned to a specific order record.
+Replace the address record assigned to a specific order record.
 
 {@request:json_api}
 Example:
@@ -513,60 +572,6 @@ Example:
 ```
 {@/request}
 
-### website
-
-#### get_subresource
-
-Retrieve a record of website assigned to a specific order record.
-
-#### get_relationship
-
-Retrieve ID of website record assigned to a specific order record.
-
-#### update_relationship
-
-Replace website assigned to a specific order record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "websites",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
-### warehouse
-
-#### get_subresource
-
-Retrieve a record of warehouse assigned to a specific order record.
-
-#### get_relationship
-
-Retrieve ID of warehouse record assigned to a specific order record.
-
-#### update_relationship
-
-Replace warehouse assigned to a specific order record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "warehouses",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
 ### paymentTerm
 
 #### get_subresource
@@ -589,6 +594,33 @@ Example:
   "data": {
     "type": "paymentterms",
     "id": "2"
+  }
+}
+```
+{@/request}
+
+### source
+
+#### get_subresource
+
+Retrieve the entity from which a specific order was created.
+
+#### get_relationship
+
+Retrieve the ID the entity from which a specific order was created.
+
+#### update_relationship
+
+Retrieve the entity from which a specific order was created.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "shoppinglists",
+    "id": "1"
   }
 }
 ```

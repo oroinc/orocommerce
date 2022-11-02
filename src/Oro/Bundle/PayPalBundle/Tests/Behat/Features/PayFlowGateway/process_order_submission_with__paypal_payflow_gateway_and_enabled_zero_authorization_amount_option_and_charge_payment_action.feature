@@ -1,7 +1,9 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Process order submission with  PayPal PayFlow Gateway and enabled zero "authorization amount" option and Charge payment action
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Create new  PayPal PayFlow Gateway Integration
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
     And I login as administrator and use in "second_session" as "Admin"

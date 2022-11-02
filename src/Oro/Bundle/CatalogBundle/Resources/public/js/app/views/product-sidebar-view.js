@@ -1,13 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ProductSidebarView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseTreeView = require('oroui/js/app/views/jstree/base-tree-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseTreeView = require('oroui/js/app/views/jstree/base-tree-view');
+    const tools = require('oroui/js/tools');
 
-    ProductSidebarView = BaseTreeView.extend({
+    const ProductSidebarView = BaseTreeView.extend({
         /**
          * @property {Object}
          */
@@ -41,10 +41,10 @@ define(function(require) {
         gridName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductSidebarView() {
-            ProductSidebarView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductSidebarView(options) {
+            ProductSidebarView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -58,12 +58,14 @@ define(function(require) {
 
             this.selectedCategoryId = options.defaultCategoryId;
             this.$tree.jstree('select_node', this.selectedCategoryId);
-            this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
+            this.$tree.on('select_node.jstree', this.onCategorySelect.bind(this));
 
             this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
             this.notCategorizedProductSelector = $(this.options.includeNotCategorizedProductSelector);
-            this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
-            this.notCategorizedProductSelector.on('change', _.bind(this.onIncludeNonCategorizedProductChange, this));
+            this.subcategoriesSelector.on('change', this.onIncludeSubcategoriesChange.bind(this));
+            this.notCategorizedProductSelector.on('change', this.onIncludeNonCategorizedProductChange.bind(this));
+
+            mediator.on('import-export:handleExport', this.onHandleExport, this);
         },
 
         onGridLoadComplete: function(collection) {
@@ -117,8 +119,25 @@ define(function(require) {
             this.triggerSidebarChanged();
         },
 
+        /**
+         * @param exportRouteOptions
+         */
+        onHandleExport: function(exportRouteOptions) {
+            const queryParams = tools.unpackFromQueryString(window.location.search);
+
+            if (queryParams.hasOwnProperty('categoryId')) {
+                exportRouteOptions.categoryId = queryParams['categoryId'];
+            }
+            if (queryParams.hasOwnProperty('includeSubcategories')) {
+                exportRouteOptions.includeSubcategories = queryParams['includeSubcategories'];
+            }
+            if (queryParams.hasOwnProperty('includeNotCategorizedProducts')) {
+                exportRouteOptions.includeNotCategorizedProducts = queryParams['includeNotCategorizedProducts'];
+            }
+        },
+
         triggerSidebarChanged: function() {
-            var params = {
+            const params = {
                 categoryId: this.selectedCategoryId ? this.selectedCategoryId : 0,
                 includeSubcategories: this.subcategoriesSelector.prop('checked') ? 1 : 0,
                 includeNotCategorizedProducts: this.notCategorizedProductSelector.prop('checked') ? 1 : 0
@@ -142,6 +161,8 @@ define(function(require) {
 
             this.subcategoriesSelector.off('change');
             ProductSidebarView.__super__.dispose.call(this);
+
+            mediator.off('import-export:handleExport', this.onHandleExport, this);
         }
     });
 

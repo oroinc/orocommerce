@@ -24,8 +24,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Create oro_rfp_assigned_acc_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpAssignedAccUsersTable(Schema $schema)
     {
@@ -37,8 +35,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Create oro_rfp_assigned_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroRfpAssignedUsersTable(Schema $schema)
     {
@@ -50,8 +46,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Add oro_rfp_assigned_acc_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpAssignedAccUsersForeignKeys(Schema $schema)
     {
@@ -72,8 +66,6 @@ class OroRFPBundle implements Migration
 
     /**
      * Add oro_rfp_assigned_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRfpAssignedUsersForeignKeys(Schema $schema)
     {

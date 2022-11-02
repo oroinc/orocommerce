@@ -28,7 +28,7 @@ Feature: Mass Product Actions shopping list limit
     And I click "Search Button"
     Then I should see "PSKU1"
     And I check PSKU1 record in "Product Frontend Grid" grid
-    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     Then should see an "Create New Shopping List popup" element
     When I type "First Shopping List" in "Shopping List Name"
     And click "Create and Add"
@@ -38,8 +38,9 @@ Feature: Mass Product Actions shopping list limit
 
   Scenario: "Create New Shopping List" action is not available when Shopping List limit is less or equals the number of Shopping Lists
     When I check PSKU1 record in "Product Frontend Grid" grid
-    And I click "ProductFrontendMassActionButton"
-    Then I should not see "Create New Shopping List" in the "ProductFrontendGridMassActionMenu" element
+    And I should see "ProductFrontendMassPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
+    And I should not see "ProductFrontendMassOpenInDropdown"
+    Then I should not see "Create New Shopping List" in the "ProductFrontendMassPanelInBottomSticky" element
     And I uncheck PSKU1 record in "Product Frontend Grid" grid
 
   Scenario: Shopping List can not be added when Shopping List limit is less or equals the number of Shopping Lists
@@ -55,7 +56,8 @@ Feature: Mass Product Actions shopping list limit
     And I click "Search Button"
     Then I should see "PSKU2"
     When I check PSKU2 record in "Product Frontend Grid" grid
-    And I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "ProductFrontendMassOpenInDropdown"
+    And I click "Create New Shopping List" in "ProductFrontendMassMenuInBottomSticky" element
     Then should see an "Create New Shopping List popup" element
     And I type "Second Shopping List" in "Shopping List Name"
 

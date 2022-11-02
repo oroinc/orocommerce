@@ -31,20 +31,17 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
             'template_name' => 'some_template'
         ]);
 
-        $this->assertArraySubset(
-            [
-                'page_component' => 'SomeComponent',
-                'template_name' => 'some_template',
-                'error_bubbling' => false,
-                'prototype' => true,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'page_component_options' => [],
-                'prototype_name' => '__table_collection_item__',
-                'by_reference' => false
-            ],
-            $form->getConfig()->getOptions()
-        );
+        $options = $form->getConfig()->getOptions();
+
+        $this->assertSame('SomeComponent', $options['page_component']);
+        $this->assertSame('some_template', $options['template_name']);
+        $this->assertSame(false, $options['error_bubbling']);
+        $this->assertSame(true, $options['prototype']);
+        $this->assertSame(true, $options['allow_add']);
+        $this->assertSame(true, $options['allow_delete']);
+        $this->assertSame([], $options['page_component_options']);
+        $this->assertSame('__table_collection_item__', $options['prototype_name']);
+        $this->assertSame(false, $options['by_reference']);
     }
 
     public function testView()
@@ -57,13 +54,11 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
 
         $formView = $form->createView();
 
-        $this->assertArraySubset([
-            'template_name' => 'some_template',
-            'attr' => [
-                'data-page-component-module' => 'SomeComponent',
-                'data-page-component-options' => '{"option":"value"}'
-            ]
-        ], $formView->vars);
+        $this->assertSame('some_template', $formView->vars['template_name']);
+        $this->assertSame([
+            'data-page-component-module' => 'SomeComponent',
+            'data-page-component-options' => '{"option":"value"}'
+        ], $formView->vars['attr']);
     }
 
     public function testViewWithParent()
@@ -76,13 +71,11 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
 
         $formView = $form->createView();
 
-        $this->assertArraySubset([
-            'template_name' => 'some_template',
-            'attr' => [
-                'data-page-component-module' => 'SomeComponent',
-                'data-page-component-options' => '{"option":"value"}'
-            ]
-        ], $formView->vars);
+        $this->assertSame('some_template', $formView->vars['template_name']);
+        $this->assertSame([
+            'data-page-component-module' => 'SomeComponent',
+            'data-page-component-options' => '{"option":"value"}'
+        ], $formView->vars['attr']);
     }
 
     public function testGetBlockPrefix()

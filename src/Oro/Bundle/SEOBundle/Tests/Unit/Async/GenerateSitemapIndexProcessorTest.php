@@ -2,168 +2,343 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
-use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
-use Oro\Bundle\SEOBundle\Async\Topics;
-use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
+use Oro\Bundle\SEOBundle\Async\Topic\GenerateSitemapIndexTopic;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\PublicSitemapFilesystemAdapter;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
-use Oro\Component\Website\WebsiteInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapIndexProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    const INDEX_FILE_PROVIDER_NAME = 'index';
+    use EntityTrait;
 
-    /**
-     * @var SitemapIndexMessageFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageFactory;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
-    /**
-     * @var SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $dumper;
+    private SitemapDumperInterface|\PHPUnit\Framework\MockObject\MockObject $sitemapDumper;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private PublicSitemapFilesystemAdapter|\PHPUnit\Framework\MockObject\MockObject $fileSystemAdapter;
 
-    /**
-     * @var GenerateSitemapIndexProcessor
-     */
-    private $processor;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    protected function setUp()
+    private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
+
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+
+    private GenerateSitemapIndexProcessor $processor;
+
+    protected function setUp(): void
     {
-        $this->messageFactory = $this->getMockBuilder(SitemapIndexMessageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dumper = $this->createMock(SitemapDumperInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->sitemapDumper = $this->createMock(SitemapDumperInterface::class);
+        $this->fileSystemAdapter = $this->createMock(PublicSitemapFilesystemAdapter::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->processor = new GenerateSitemapIndexProcessor(
-            $this->messageFactory,
-            $this->dumper,
-            $this->logger
+            $this->doctrine,
+            $this->sitemapDumper,
+            $this->fileSystemAdapter,
+            $this->logger,
+            $this->websiteManager,
+            $this->configManager
         );
     }
 
-    public function testProcessWhenThrowsInvalidArgumentException()
+    private function getSession(): SessionInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $exception = new InvalidArgumentException();
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willThrowException($exception);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Queue Message is invalid',
-                [
-                    'exception' => $exception,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $this->createMock(SessionInterface::class);
     }
 
-    public function testProcessWhenThrowsException()
+    private function getMessage(string $messageId, array $body): MessageInterface
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
+        $message = new Message();
+        $message->setMessageId($messageId);
+        $message->setBody($body);
 
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willReturn($website);
-        
-        $version = time();
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($data)
-            ->willReturn($version);
-
-        $exception = new \Exception();
-        $this->dumper->expects($this->once())
-            ->method('dump')
-            ->with($website, $version, self::INDEX_FILE_PROVIDER_NAME)
-            ->willThrowException($exception);
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'exception' => $exception,
-                    'topic' => Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
-                ]
-            );
-
-        $this->assertEquals(UrlCacheProcessor::REJECT, $this->processor->process($message, $session));
+        return $message;
     }
 
-    public function testProcess()
+    public function testGetSubscribedTopics(): void
     {
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $data = ['key' => 'value'];
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-
-        $message->expects($this->atLeastOnce())
-            ->method('getBody')
-            ->willReturn(JSON::encode($data));
-
-        $website = $this->createMock(WebsiteInterface::class);
-        $this->messageFactory->expects($this->once())
-            ->method('getWebsiteFromMessage')
-            ->with($data)
-            ->willReturn($website);
-
-        $version = time();
-        $this->messageFactory->expects($this->once())
-            ->method('getVersionFromMessage')
-            ->with($data)
-            ->willReturn($version);
-
-        $this->dumper->expects($this->once())
-            ->method('dump', self::INDEX_FILE_PROVIDER_NAME)
-            ->with($website, $version);
-
-        $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));
-    }
-
-    public function testGetSubscribedTopics()
-    {
-        $this->assertEquals(
-            [Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE],
+        self::assertEquals(
+            [GenerateSitemapIndexTopic::getName()],
             GenerateSitemapIndexProcessor::getSubscribedTopics()
+        );
+    }
+
+    public function testProcess(): void
+    {
+        $version = 1;
+        $websiteIds = [123];
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'version' => $version,
+            'websiteIds' => $websiteIds,
+        ]);
+
+        $website = $this->getEntity(Website::class, ['id' => 123]);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, 123)
+            ->willReturn($website);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(123);
+
+        $this->sitemapDumper->expects(self::once())
+            ->method('dump')
+            ->with($website, $version, 'index');
+        $this->fileSystemAdapter->expects(self::once())
+            ->method('moveSitemaps')
+            ->with([123]);
+
+        $this->logger->expects(self::never())
+            ->method(self::anything());
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessDumpFailed(): void
+    {
+        $version = 1;
+        $websiteIds = [123];
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'version' => $version,
+            'websiteIds' => $websiteIds,
+        ]);
+
+        $website = $this->getEntity(Website::class, ['id' => 123]);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, 123)
+            ->willReturn($website);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(123);
+
+        $exception = new \Exception('Test');
+
+        $this->sitemapDumper->expects(self::once())
+            ->method('dump')
+            ->with($website, $version, 'index')
+            ->willThrowException($exception);
+        $this->fileSystemAdapter->expects(self::never())
+            ->method('moveSitemaps');
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during generating a sitemap index for a website.',
+                [
+                    'websiteId' => 123,
+                    'exception' => $exception,
+                ]
+            );
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessMoveFailed(): void
+    {
+        $version = 1;
+        $websiteIds = [123];
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'version' => $version,
+            'websiteIds' => $websiteIds,
+        ]);
+
+        $website = $this->createMock(Website::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('find')
+            ->with(Website::class, 123)
+            ->willReturn($website);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+
+        $exception = new \Exception('Test');
+
+        $this->sitemapDumper->expects(self::once())
+            ->method('dump')
+            ->with($website, $version, 'index');
+        $this->fileSystemAdapter->expects(self::once())
+            ->method('moveSitemaps')
+            ->willThrowException($exception);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during moving the generated sitemaps.',
+                [
+                    'websiteIds' => [123],
+                    'exception' => $exception,
+                ]
+            );
+
+        self::assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessDumpForMoreThanOneWebsiteOnlyOneFound(): void
+    {
+        $version = 1;
+        $websiteIds = [1, 2];
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'version' => $version,
+            'websiteIds' => $websiteIds,
+        ]);
+
+        $website = $this->getEntity(Website::class, ['id' => 2]);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::exactly(2))
+            ->method('find')
+            ->withConsecutive(
+                [Website::class, 1],
+                [Website::class, 2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                null,
+                $website
+            );
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+
+        $this->websiteManager
+            ->expects($this->once())
+            ->method('setCurrentWebsite')
+            ->with($website);
+        $this->configManager
+            ->expects($this->once())
+            ->method('setScopeId')
+            ->with(2);
+
+        $this->sitemapDumper->expects(self::once())
+            ->method('dump')
+            ->with($website, $version, 'index');
+        $this->fileSystemAdapter->expects(self::once())
+            ->method('moveSitemaps')
+            ->with([2]);
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('The website with 1 was not found during generating a sitemap index');
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
+        );
+    }
+
+    public function testProcessDumpForMoreThanOneWebsiteOnlyOneDumped(): void
+    {
+        $version = 1;
+        $websiteIds = [1, 2];
+        $messageId = '1000';
+        $message = $this->getMessage($messageId, [
+            'version' => $version,
+            'websiteIds' => $websiteIds,
+        ]);
+
+        $website1 = $this->getEntity(Website::class, ['id' => 1]);
+        $website2 = $this->getEntity(Website::class, ['id' => 2]);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::exactly(2))
+            ->method('find')
+            ->withConsecutive(
+                [Website::class, 1],
+                [Website::class, 2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $website1,
+                $website2
+            );
+        $this->doctrine->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($em);
+
+        $this->websiteManager
+            ->expects(self::exactly(2))
+            ->method('setCurrentWebsite')
+            ->withConsecutive([$website1], [$website2]);
+        $this->configManager
+            ->expects(self::exactly(2))
+            ->method('setScopeId')
+            ->withConsecutive([1], [2]);
+
+        $exception = new \Exception('Test');
+        $this->sitemapDumper->expects(self::exactly(2))
+            ->method('dump')
+            ->willReturnCallback(function ($ws) use ($website1, $exception) {
+                if ($ws === $website1) {
+                    throw $exception;
+                }
+            });
+        $this->fileSystemAdapter->expects(self::once())
+            ->method('moveSitemaps')
+            ->with([2]);
+
+        $this->logger->expects(self::once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during generating a sitemap index for a website.',
+                [
+                    'websiteId' => 1,
+                    'exception' => $exception,
+                ]
+            );
+
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($message, $this->getSession())
         );
     }
 }

@@ -2,23 +2,35 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\DependencyInjection\OroCMSExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Symfony\Component\DependencyInjection\ChildDefinition;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroCMSExtensionTest extends ExtensionTestCase
+class OroCMSExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    public function testLoad()
+    /** @var OroCMSExtension */
+    private $extension;
+
+    protected function setUp(): void
     {
-        $this->loadExtension(new OroCMSExtension());
+        $this->extension = new OroCMSExtension();
+    }
 
-        $expectedParameters = [
-            'oro_cms.entity.page.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
+    public function testConfigureContentWidgetType()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'prod');
 
-        $expectedExtensionConfigs = [
-            'oro_cms',
-        ];
-        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
+        $contentWidgetTypeAutoconfigurationDefinition =  (new ChildDefinition(''))
+            ->addTag('oro_cms.content_widget.type');
+
+        $this->extension->load([], $container);
+        self::assertEquals(
+            [
+                ContentWidgetTypeInterface::class => $contentWidgetTypeAutoconfigurationDefinition
+            ],
+            $container->getAutoconfiguredInstanceof()
+        );
     }
 }

@@ -8,33 +8,26 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
+/**
+ * Adds following category SEO fields to Product documents at search index
+ * - meta title (all_text_LOCALIZATION_ID)
+ * - meta description (all_text_LOCALIZATION_ID)
+ * - meta keywords (all_text_LOCALIZATION_ID)
+ */
 class ProductSearchIndexListener
 {
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
+    use ContextTrait;
 
-    /**
-     * @var AbstractWebsiteLocalizationProvider
-     */
-    private $websiteLocalizationProvider;
+    private DoctrineHelper $doctrineHelper;
+    private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
+    private WebsiteContextManager $websiteContextManager;
 
-    /**
-     * @var WebsiteContextManager
-     */
-    private $websiteContextManager;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param WebsiteContextManager $websiteContextManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -45,43 +38,12 @@ class ProductSearchIndexListener
         $this->websiteContextManager       = $websiteContextManager;
     }
 
-    /**
-     * @param Product|Category $entity
-     * @param Localization $localization
-     * @return array
-     */
-    protected function getMetaFieldsForEntity($entity, $localization)
-    {
-        return [
-            $entity->getMetaTitle($localization),
-            $entity->getMetaDescription($localization),
-            $entity->getMetaKeyword($localization)
-        ];
-    }
-
-    /**
-     * @param IndexEntityEvent $event
-     * @param int $productId
-     * @param string $metaField
-     * @param int $localizationId
-     */
-    protected function addPlaceholderToEvent($event, $productId, $metaField, $localizationId)
-    {
-        $metaField = $this->cleanUpString($metaField);
-        $event->addPlaceholderField(
-            $productId,
-            IndexDataProvider::ALL_TEXT_L10N_FIELD,
-            $metaField,
-            [LocalizationIdPlaceholder::NAME => $localizationId],
-            true
-        );
-    }
-
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
@@ -91,37 +53,54 @@ class ProductSearchIndexListener
 
         /** @var Product[] $products */
         $products = $event->getEntities();
-
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
-        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
+        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
         foreach ($products as $product) {
-            // Localized fields
-            $category = &$categoryMap[$product->getId()];
+            $category = $categoryMap[$product->getId()] ?? null;
+            if (null === $category) {
+                continue;
+            }
             foreach ($localizations as $localization) {
-                if (!empty($category)) {
-                    foreach ($this->getMetaFieldsForEntity($category, $localization) as $metaField) {
-                        $this->addPlaceholderToEvent($event, $product->getId(), $metaField, $localization->getId());
-                    }
+                $metaField = (string)$category->getMetaTitle($localization);
+                if ($metaField) {
+                    $this->addPlaceholderToEvent($event, $product, $metaField, $localization);
+                }
+                $metaField = (string)$category->getMetaDescription($localization);
+                if ($metaField) {
+                    $this->addPlaceholderToEvent($event, $product, $metaField, $localization);
+                }
+                $metaField = (string)$category->getMetaKeyword($localization);
+                if ($metaField) {
+                    $this->addPlaceholderToEvent($event, $product, $metaField, $localization);
                 }
             }
         }
     }
 
-    /**
-     * Cleans up a unicode string from control characters.
-     *
-     * @param string $string
-     * @return string
-     */
-    private function cleanUpString($string)
-    {
-        return preg_replace('/[[:cntrl:]]/', '', $string);
+    private function addPlaceholderToEvent(
+        IndexEntityEvent $event,
+        Product $product,
+        string $metaField,
+        Localization $localization
+    ): void {
+        $event->addPlaceholderField(
+            $product->getId(),
+            IndexDataProvider::ALL_TEXT_L10N_FIELD,
+            $this->cleanUpString($metaField),
+            [LocalizationIdPlaceholder::NAME => $localization->getId()],
+            true
+        );
     }
 
     /**
-     * @return CategoryRepository
+     * Cleans up a unicode string from control characters.
      */
-    protected function getRepository()
+    private function cleanUpString(string $string): string
+    {
+        return preg_replace('/[[:cntrl:]]/', '', (string)$string);
+    }
+
+    private function getRepository(): CategoryRepository
     {
         return $this->doctrineHelper->getEntityRepository(Category::class);
     }

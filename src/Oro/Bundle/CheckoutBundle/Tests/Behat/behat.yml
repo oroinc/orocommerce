@@ -3,40 +3,65 @@ oro_behat_extension:
     OroCheckoutBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroFormBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroDataGridBundle::GridContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroShippingBundle::SingleCurrencyContext
-        - OroShippingBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroCustomerBundle::FrontendGridContext
-        - OroCheckoutBundle::FeatureContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroOrderBundle::OrderContext
-        - OroCustomerBundle::ACLContext
-        - OroProductBundle::FeatureContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
-        - OroDataGridBundle::GridContext
-        - OroUIBundle::DatepickerContext
-        - OroEmailBundle::EmailContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
+        - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\DatepickerContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\PromotionBundle\Tests\Behat\Context\PromotionContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
-    SelectBillingAddress:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    Select Billing Address:
       selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
-    SelectShippingAddress:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Billing Address:
+      selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+
+    Checkout Billing Address:
+      selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+
+    Checkout Shipping Address:
+      selector: 'select[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+      class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
+
+    Select Shipping Address:
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+
+    Select Single Page Checkout Billing Address:
+      selector: '[name="oro_workflow_transition[billing_address]"]'
+
+    Select Single Page Checkout Shipping Address:
+      selector: '[name="oro_workflow_transition[shipping_address]"]'
 
     Edit Billing Information:
       selector: '[data-title="Edit Billing Information"]'
+
+    Edit Shipping Information:
+      selector: '[data-title="Edit Shipping Information"]'
 
     Checkout Shipping Method:
       selector: '[data-content="shipping_method_form"] .checkout-form__radio label'
@@ -48,8 +73,18 @@ oro_behat_extension:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[data-role="checkout-content"]'
 
+    CheckoutProductTableRow:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTableRow
+      selector: 'tr.grid-row'
+
+    CheckoutProductViewLink:
+      selector: 'h3.grid-line-items__title a'
+
+    Single Page Checkout Step:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
+      selector: 'div.checkout-order-summary__totals'
+
     CheckoutStepTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h2.checkout__title'
 
     CheckoutSuccessStep:
@@ -57,7 +92,6 @@ oro_behat_extension:
       selector: '.checkout__success'
 
     CheckoutSuccessStepTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.checkout__success__title'
 
     Checkout Order Review Form:
@@ -92,8 +126,7 @@ oro_behat_extension:
         class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     OpenOrdersGridFiltersState:
-        selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filters-state'
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        selector: 'div[data-page-component-name="frontend-checkouts-grid"] .filters-state'
 
     OpenOrdersGridFilterItem:
       selector: 'div.filter-items-hint span'
@@ -107,6 +140,17 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    PastOrdersGridFilters:
+      selector: 'div[data-page-component-name="frontend-orders-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    PastOrdersGridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-orders-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    PastOrdersGridFiltersState:
+      selector: 'div[data-page-component-name="frontend-orders-grid"] .filters-state'
+
     BackendOrderLineItemsGrid:
       selector: 'div[data-page-component-name="order-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -115,43 +159,58 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="order-line-items-grid-frontend"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Checkout Line Items Table:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTable
+      selector: 'div.checkout-order-summary__content table'
+
     CheckoutStepLineItem:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStepLineItem
       selector: 'table[data-scrollable-inner-content] tr'
 
     CheckoutStepLineItemProductSku:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: 'td.checkout-order-summary__grid-td--sku div'
+      selector: 'td.grid-body-cell-item div.grid-line-items__row span, td.grid-body-cell-sku'
+
+    Checkout Line Item Product Attribute:
+      selector: 'td.grid-body-cell-item div.grid-line-items__configuration div.grid-line-items__field'
 
     Ship to This Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Checkbox
       selector:
         type: xpath
-        locator: '//span[contains(., "Ship to this address")]'
+        locator: '//label[contains(., "Ship to this address")]'
 
     Order Summary Products Grid:
       selector: '.checkout-order-summary__content'
 
     Order Summary Products GridProductLine:
-      selector: 'table.checkout-order-summary__grid tr.checkout-order-summary__grid-tr'
+      selector: 'table tr.grid-row'
 
     Order Summary Products GridProductLineName:
-      selector: '.checkout-order-summary__grid-td--info'
+      selector: '.grid-body-cell-item'
 
     Order Summary Products GridProductLineQuantity:
-      selector: '.checkout-order-summary__grid-td--qty'
+      selector: '.grid-body-cell-quantity'
 
     Order Summary Products GridProductLineUnit:
-      selector: '.checkout-order-summary__grid-td--qty'
+      selector: '.grid-body-cell-unit'
+
+    Order Summary Products GridProductLinePrice:
+      selector: '.grid-body-cell-price'
+
+    Order Summary Products GridProductLineSubtotal:
+      selector: '.grid-body-cell-subtotal'
+
+    Checkout Order Summary Notes:
+      selector: 'div.shopping-list-notes'
 
     CheckoutGoBackButton:
-        selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
+        selector: 'div.checkout-sidebar ol.checkout-navigation > li > h3.checkout-navigation__title > a'
 
     ShippingMethodFlatRate2:
-      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Flat Rate 2: $2.00")'
+      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio label.checkbox-label:contains("Flat Rate 2: $2.00")'
 
     PaymentMethodPaymentTerm30:
-      selector: 'div[data-content="payment_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Payment Term 30")'
+      selector: 'div[data-content="payment_method_form"] div.checkout-form__radio label.checkbox-label:contains("Payment Term 30")'
 
     Billing Information Form:
       selector: 'form[name="oro_workflow_transition"]'
@@ -163,7 +222,6 @@ oro_behat_extension:
           Last Name: 'oro_workflow_transition[billing_address][lastName]'
           Organization: 'oro_workflow_transition[billing_address][organization]'
           Email: 'oro_workflow_transition[email]'
-          Email: 'oro_workflow_transition[visitor_email]'
           Street: 'oro_workflow_transition[billing_address][street]'
           City: 'oro_workflow_transition[billing_address][city]'
           Country: 'oro_workflow_transition[billing_address][country]'
@@ -197,38 +255,35 @@ oro_behat_extension:
 
     Checkout Edit Order Link:
       selector: '.checkout-order-summary__edit-link'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Submit Order:
       selector: '.order-checkout-widget button:contains("Submit Order")'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    # Disabled Submit order button is actually other element (div)
+    Disabled Submit Order Button:
+      selector: '.order-checkout-widget .btn--disabled.checkout__submit-btn:contains("Submit Order")'
 
     Customer Users List button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[@class="add-on btn entity-select-btn"]'
+        locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
 
     Product Line Item Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_product_quick_add_products_1_productDisplayName-uid")]'
         type: xpath
 
     Qty Line Item Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_product_quick_add_products_1_productQuantity-uid")]'
         type: xpath
 
     Paste Your Order Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
-        locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste-uid")]'
+        locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste")]'
         type: xpath
 
     Assigned To Input Field:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
@@ -237,8 +292,11 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.quick_add_validation_items'
 
+    Quick Order Add Form:
+      selector: 'form[name="oro_product_quick_add"]'
+
     Customers Address Book Paginator:
-      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.oro-items-counter'
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.visible-items-counter'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridToolbarPaginator
 
     Customers Address Book Grid:
@@ -253,18 +311,18 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Customers Address Book GridFiltersState:
-      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] .filters-state'
 
     Customers Address Book GridToolbarActions:
       selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.toolbar div.actions-panel'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     Customers Address Book GridFilterItem:
-      selector: 'div.filter-items-hint span'
+      selector: 'span.filter-criteria-hint-item'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
 
     Customer Users Address Book Paginator:
-      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.oro-items-counter'
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.visible-items-counter'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridToolbarPaginator
 
     Customer Users Address Book Grid:
@@ -279,15 +337,62 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Customer Users Address Book GridFiltersState:
-      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.filters-state'
+      selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] .filters-state'
 
     Customer Users Address Book GridToolbarActions:
       selector: 'div[data-page-component-name="frontend-customer-customer-user-address-grid"] div.toolbar div.actions-panel'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
 
     Customer Users Address Book GridFilterItem:
-      selector: 'div.filter-items-hint span'
+      selector: 'span.filter-criteria-hint-item'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridFilterItem
 
     Permissions Dropdown Items:
       selector: '.dropdown-menu__permissions-item a'
+
+    Billing Address Select:
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_billing_address-uid-")]/a'
+
+    Shipping Address Select:
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_shipping_address-uid-")]/a'
+
+    New Address Option:
+      selector:
+        type: xpath
+        locator: '//ul[@class="select2-results"]/li/div[contains(., "New address")]'
+
+    New Address Popup Form:
+      selector: 'form[name="oro_action_operation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Email: 'oro_action_operation[visitor_email]'
+          Label: 'oro_action_operation[address][label]'
+          Name Prefix: 'oro_action_operation[address][namePrefix]'
+          First Name: 'oro_action_operation[address][firstName]'
+          Middle Name: 'oro_action_operation[address][middleName]'
+          Last Name: 'oro_action_operation[address][lastName]'
+          Name Suffix: 'oro_action_operation[address][nameSuffix]'
+          Organization: 'oro_action_operation[address][organization]'
+          Phone: 'oro_action_operation[address][phone]'
+          Street: 'oro_action_operation[address][street]'
+          Street 2: 'oro_action_operation[address][street2]'
+          City: 'oro_action_operation[address][city]'
+          Country: 'oro_action_operation[address][country]'
+          State: 'oro_action_operation[address][region]'
+          Postal Code: 'oro_action_operation[address][postalCode]'
+          Save Address: 'oro_action_operation[save_address]'
+
+    Checkout Address Fields:
+      selector: '#checkout-address-fields-container'
+
+    Checkout Line Item Product Link:
+      selector: 'h3.grid-line-items__title a[title]'
+  pages:
+    Checkout:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage
+      route: oro_checkout_frontend_checkout

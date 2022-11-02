@@ -1,2 +1,2 @@
 bundles:
-    - OroShippingBundle:Form:fields.html.twig
+    - '@OroShipping/Form/fields.html.twig'

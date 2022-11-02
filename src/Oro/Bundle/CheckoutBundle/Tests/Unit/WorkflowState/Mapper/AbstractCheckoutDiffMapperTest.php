@@ -20,13 +20,13 @@ abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit\Framework\TestCas
      */
     protected $checkout;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->checkout = $this->getEntity(Checkout::class, ['id' => 1]);
         $this->mapper = $this->getMapper();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->mapper, $this->checkout);
     }

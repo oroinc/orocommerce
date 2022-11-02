@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures
 
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
-use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
+use Oro\Bundle\ScopeBundle\Tests\Functional\DataFixtures\LoadScopeData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
 class LoadWebCatalogPageData extends AbstractLoadWebCatalogData

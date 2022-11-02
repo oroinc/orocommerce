@@ -15,9 +15,6 @@ class CouponValidationHandler extends AbstractCouponHandler
      */
     private $couponApplicabilityValidationService;
 
-    /**
-     * @param CouponApplicabilityValidationService $couponApplicabilityValidationService
-     */
     public function setCouponApplicabilityValidationService(
         CouponApplicabilityValidationService $couponApplicabilityValidationService
     ) {

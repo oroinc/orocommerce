@@ -2,22 +2,33 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Intl\Intl;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Intl\Currencies;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AjaxPriceListController extends Controller
+/**
+ * Price list AJAX controller.
+ */
+class AjaxPriceListController extends AbstractController
 {
     /**
-     * @Route("/default/{id}", name="oro_pricing_price_list_default", requirements={"id"="\d+"})
+     * Set given price list as default.
+     *
+     * @Route("/default/{id}", name="oro_pricing_price_list_default", requirements={"id"="\d+"}, methods={"POST"})
      * @AclAncestor("oro_pricing_price_list_update")
+     * @CsrfProtection()
      *
      * @param PriceList $priceList
+     *
      * @return JsonResponse
      */
     public function defaultAction(PriceList $priceList)
@@ -35,7 +46,7 @@ class AjaxPriceListController extends Controller
                 )
             ];
         } catch (\Exception $e) {
-            $this->get('logger')->error(
+            $this->get(LoggerInterface::class)->error(
                 sprintf(
                     'Set default price list failed: %s: %s',
                     $e->getCode(),
@@ -50,6 +61,8 @@ class AjaxPriceListController extends Controller
     }
 
     /**
+     * Get price list currencies.
+     *
      * @Route("/get-pricelist-currency-list/{id}",
      *      name="oro_pricing_price_list_currency_list",
      *      requirements={"id"="\d+"})
@@ -60,28 +73,35 @@ class AjaxPriceListController extends Controller
      */
     public function getPriceListCurrencyListAction(PriceList $priceList)
     {
-        $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->get('oro_locale.settings')->getLocale());
+        $currencyNames = Currencies::getNames($this->get(LocaleSettings::class)->getLocale());
 
         $currencies = array_intersect_key($currencyNames, array_fill_keys($priceList->getCurrencies(), null));
 
         return new JsonResponse($currencies);
     }
 
-    /**
-     * @return PriceListRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): PriceListRepository
     {
         return $this->container
-            ->get('doctrine')
-            ->getRepository($this->container->getParameter('oro_pricing.entity.price_list.class'));
+            ->get(ManagerRegistry::class)
+            ->getRepository(PriceList::class);
+    }
+
+    protected function getTranslator(): TranslatorInterface
+    {
+        return $this->container->get(TranslatorInterface::class);
     }
 
     /**
-     * @return TranslatorInterface
+     * {@inheritdoc}
      */
-    protected function getTranslator()
+    public static function getSubscribedServices(): array
     {
-        return $this->container->get('translator');
+        return array_merge(parent::getSubscribedServices(), [
+            LocaleSettings::class,
+            ManagerRegistry::class,
+            TranslatorInterface::class,
+            LoggerInterface::class,
+        ]);
     }
 }

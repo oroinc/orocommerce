@@ -26,14 +26,4 @@ class LoadPriceListSchedulesSimplified extends LoadPriceListSchedules implements
             ]
         ],
     ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadPriceLists::class
-        ];
-    }
 }

@@ -7,7 +7,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Handler checks that count of selected products do not exceed limitation and returns product ids from given grid.
@@ -27,9 +27,6 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
      */
     private $translator;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager, TranslatorInterface $translator)
     {
         $this->configManager = $configManager;

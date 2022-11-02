@@ -1,13 +1,33 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
         string: 'Green shirt L'
     product2_name:
         string: 'Red shirt M'
     configurable_product_name:
         string: 'Shirt_1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    product1_meta_title:
+        string: 'Meta title for Green simple product'
+    product1_meta_description:
+        string: 'Meta description for Green simple product'
+    product1_meta_keywords:
+        string: 'Meta keywords for Green simple product'
+    product2_meta_title:
+        string: 'Meta title for Red simple product'
+    product2_meta_description:
+        string: 'Meta description for Red simple product'
+    product2_meta_keywords:
+        string: 'Meta keywords for Red simple product'
+    configurable_meta_title:
+        string: 'Meta title for configurable product'
+    configurable_meta_description:
+        string: 'Meta description for configurable product'
+    configurable_meta_keywords:
+        string: 'Meta keywords for configurable product'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     unit_precision1:
@@ -37,10 +57,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision1'
-        addName: ['@product1_name']
+        __calls:
+            - addName: ['@product1_name']
+            - addAdditionalUnitPrecision: ['@unit_precision_additional1']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-        addAdditionalUnitPrecision: ['@unit_precision_additional1']
+        metaTitles: ['@product1_meta_title']
+        metaDescriptions: ['@product1_meta_description']
+        metaKeywords: ['@product1_meta_keywords']
+
     product2:
         type: 'simple'
         sku: 'rtsh_m'
@@ -48,10 +73,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision2'
-        addName: ['@product2_name']
+        __calls:
+            - addName: ['@product2_name']
+            - addAdditionalUnitPrecision: ['@unit_precision_additional2']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-        addAdditionalUnitPrecision: ['@unit_precision_additional2']
+        metaTitles: ['@product2_meta_title']
+        metaDescriptions: ['@product2_meta_description']
+        metaKeywords: ['@product2_meta_keywords']
+
     configurable_product:
         type: 'configurable'
         sku: 'shirt_main'
@@ -59,10 +89,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision3'
-        addName: ['@configurable_product_name']
+        __calls:
+            - addName: ['@configurable_product_name']
+            - addAdditionalUnitPrecision: ['@unit_precision_additional3']
         status: 'enabled'
         inventoryStatus: '@enumInventoryStatuses'
-        addAdditionalUnitPrecision: ['@unit_precision_additional3']
+        metaTitles: ['@configurable_meta_title']
+        metaDescriptions: ['@configurable_meta_description']
+        metaKeywords: ['@configurable_meta_keywords']
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     product1ItemPrice:
@@ -101,33 +135,3 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelationRpoduct2DefaultPriceList:
         product: '@product2'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    product1ItemCombined:
-        unit: '@item'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'
-    product1SetCombined:
-        unit: '@set'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 445.50
-        currency: 'USD'
-    product2ItemCombined:
-        unit: '@item'
-        product: '@product2'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 7
-        currency: 'USD'
-    product2SetCombined:
-        unit: '@set'
-        product: '@product2'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 432.30
-        currency: 'USD'

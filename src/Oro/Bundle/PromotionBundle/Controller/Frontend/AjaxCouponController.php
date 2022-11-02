@@ -3,27 +3,33 @@
 namespace Oro\Bundle\PromotionBundle\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler;
+use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxCouponController extends Controller
+/**
+ * Ajax Coupon Controller
+ * @CsrfProtection()
+ */
+class AjaxCouponController extends AbstractController
 {
     /**
-     * @Route("/add-coupon", name="oro_promotion_frontend_add_coupon")
-     * @Method({"POST"})
+     * @Route("/add-coupon", name="oro_promotion_frontend_add_coupon", methods={"POST"})
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function addCouponAction(Request $request)
     {
-        return $this->get('oro_promotion.handler.frontend_coupon_handler')->handle($request);
+        return $this->get(FrontendCouponHandler::class)->handle($request);
     }
 
     /**
@@ -33,9 +39,9 @@ class AjaxCouponController extends Controller
      *     requirements={
      *          "entityId"="\d+",
      *          "id"="\d+"
-     *     }
+     *     },
+     *     methods={"DELETE"}
      * )
-     * @Method({"DELETE"})
      *
      * @param string $entityClass
      * @param int $entityId
@@ -44,13 +50,28 @@ class AjaxCouponController extends Controller
      */
     public function removeCouponAction($entityClass, $entityId, AppliedCoupon $appliedCoupon)
     {
-        $entity = $this->get('oro_entity.routing_helper')->getEntity($entityClass, $entityId);
+        $entity = $this->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId);
         if (!$entity instanceof AppliedCouponsAwareInterface) {
             throw new BadRequestHttpException('Unsupported entity class ' . ClassUtils::getClass($entity));
         }
 
-        $this->get('oro_promotion.handler.frontend_coupon_remove_handler')->handleRemove($entity, $appliedCoupon);
+        $this->get(FrontendCouponRemoveHandler::class)->handleRemove($entity, $appliedCoupon);
 
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                FrontendCouponHandler::class,
+                EntityRoutingHelper::class,
+                FrontendCouponRemoveHandler::class,
+            ]
+        );
     }
 }

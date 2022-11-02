@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 
@@ -13,7 +14,9 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
  */
 class CheckoutControllerAclTest extends FrontendWebTestCase
 {
-    protected function setUp()
+    use ConfigManagerAwareTestTrait;
+
+    protected function setUp(): void
     {
         $this->initClient();
         $this->setCurrentWebsite('default');
@@ -38,9 +41,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
     {
         $this->initClient([], static::generateBasicAuthHeader($user, $user));
 
-        $configManager = $this
-            ->getContainer()
-            ->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
 
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();

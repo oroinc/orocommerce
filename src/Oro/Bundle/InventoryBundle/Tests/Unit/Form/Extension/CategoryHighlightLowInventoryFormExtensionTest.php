@@ -11,7 +11,7 @@ class CategoryHighlightLowInventoryFormExtensionTest extends CategoryInventoryTe
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->categoryFormExtension = new CategoryHighlightLowInventoryFormExtension();

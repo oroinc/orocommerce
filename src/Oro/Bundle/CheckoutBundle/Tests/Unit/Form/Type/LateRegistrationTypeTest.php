@@ -13,33 +13,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class LateRegistrationTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var LateRegistrationType
-     */
-    private $formType;
-
-    /**
      * {@inheritdoc}
      */
-    protected function setUp()
-    {
-        $this->formType = new LateRegistrationType();
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $validator = $this->createMock(ValidatorInterface::class);
-
-        $validator
+        $validator->expects($this->any())
             ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
-
-        $validator
+            ->willReturn(new ConstraintViolationList());
+        $validator->expects($this->any())
             ->method('getMetadataFor')
-            ->will($this->returnValue(new ClassMetadata(Form::class)));
+            ->willReturn(new ClassMetadata(Form::class));
 
         return [
             new ValidatorExtension($validator),
@@ -61,9 +45,49 @@ class LateRegistrationTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $formData = $form->getData();
         $submittedData['password'] = 'Q1foobar';
         $this->assertEquals($submittedData, $formData);
+    }
+
+    public function testIsLateRegistrationEnabledByDefault()
+    {
+        $expectedData =  [
+            'is_late_registration_enabled' => true
+        ];
+
+        $form = $this->factory->create(LateRegistrationType::class);
+        $formData = $form->getData();
+        $this->assertEquals($expectedData, $formData);
+    }
+
+    public function testIsLateRegistrationEnabledByDefaultWithNullEmail()
+    {
+        $form = $this->factory->create(LateRegistrationType::class, ['email' => null]);
+        $formData = $form->getData();
+        $this->assertEquals(
+            [
+                'email' => null,
+                'is_late_registration_enabled' => true
+            ],
+            $formData
+        );
+    }
+
+    public function testSubmitWithUncheckedCheckbox()
+    {
+        $expectedData =  [
+            'is_late_registration_enabled' => false,
+            'email' =>  null,
+            'password' => null
+        ];
+
+        $form = $this->factory->create(LateRegistrationType::class);
+        $form->submit([]);
+        $formData = $form->getData();
+
+        $this->assertEquals($expectedData, $formData);
     }
 }

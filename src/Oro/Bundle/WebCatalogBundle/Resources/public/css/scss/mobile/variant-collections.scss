@@ -1,0 +1,29 @@
+/* @theme: admin.oro; */
+
+.oro-content-variant-collection {
+    .content-variant-item {
+        padding: 8px 10px 10px;
+    }
+
+    .content-variant-item-title {
+        margin-left: 30px;
+        margin-right: 48px;
+    }
+
+    .content-variant-add-btn-container {
+        > .btn-group {
+            max-width: 100%;
+            overflow-y: auto;
+        }
+    }
+
+    .btn-remove-variant {
+        top: 0;
+        right: 0;
+    }
+
+    .btn-toggle-variant {
+        top: 0;
+        left: 0;
+    }
+}

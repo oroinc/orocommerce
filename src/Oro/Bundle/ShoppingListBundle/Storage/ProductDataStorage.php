@@ -6,22 +6,19 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Service for storing product data in session
+ */
 class ProductDataStorage
 {
     /** @var Storage */
     protected $storage;
 
-    /**
-     * @param Storage $storage
-     */
     public function __construct(Storage $storage)
     {
         $this->storage = $storage;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
     public function saveToStorage(ShoppingList $shoppingList)
     {
         $data = [
@@ -31,6 +28,7 @@ class ProductDataStorage
                 'sourceEntityId' => $shoppingList->getId(),
                 'sourceEntityClass' => ClassUtils::getClass($shoppingList),
                 'sourceEntityIdentifier' => $shoppingList->getIdentifier(),
+                'note' => $shoppingList->getNotes(),
             ],
         ];
 

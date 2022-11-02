@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/page_template/list/layout.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/page_template/list/layout.html.twig'
         - '@move':
             id: product_view_line_item_container
             parentId: product_view_content_container
@@ -16,7 +16,7 @@ layout:
             prepend: true
         - '@add':
             id: product_main_container
-            parentId: product_view_container
+            parentId: product_view_microdata_container
             blockType: container
         - '@add':
             id: product_aside_container

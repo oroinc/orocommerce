@@ -3,7 +3,6 @@
 @fixture-OroProductBundle:Products_validate_unique_variant_field_values.yml
 @regression
 Feature: Validate unique variant field values when changing simple products
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   #Case 1:
   #Validate unique variant field values in configurable product in case of change product variant
@@ -152,7 +151,7 @@ Feature: Validate unique variant field values when changing simple products
   Scenario: Save configurable product with simple products selected
     And I go to Products / Products
     And I click Edit shirt_101 in grid
-    And I should see "No records found"
+    And I should see "There are no product variants"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Color, Size] |
     And I check gtsh_l and rtsh_m in grid

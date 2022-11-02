@@ -4,10 +4,10 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Base data provider for fields autocomplete, used in ExpressionEditors
+ * Provides base functionality for autocomplete fields.
  */
 abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsProviderInterface
 {
@@ -58,11 +58,6 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
      */
     protected $specialFieldsInformation = [];
 
-    /**
-     * @param ExpressionParser $expressionParser
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ExpressionParser $expressionParser,
         FieldsProviderInterface $fieldsProvider,
@@ -167,8 +162,8 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         foreach ($data as &$fields) {
             $fields = array_map(
                 function (array $item) {
-                    if (!empty($item['label'])) {
-                        $item['label'] = $this->translator->trans($item['label']);
+                    if (isset($item['label'])) {
+                        $item['label'] = $this->translator->trans((string) $item['label']);
                     }
 
                     return $item;
@@ -180,9 +175,6 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         return $data;
     }
 
-    /**
-     * @param array $result
-     */
     protected function removeEmptyRelations(array &$result)
     {
         $hasChanges = true;

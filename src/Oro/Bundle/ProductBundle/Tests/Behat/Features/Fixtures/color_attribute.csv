@@ -1,0 +1,2 @@
+fieldName,type,entity.label,entity.description,form.is_enabled,importexport.header,importexport.identity,importexport.excluded,attribute.searchable,attribute.filterable,attribute.filter_by,attribute.sortable,attribute.enabled,attribute.visible,email.available_in_template,datagrid.show_filter,view.is_displayable,search.searchable,dataaudit.auditable,enum.enum_options.0.label,enum.enum_options.0.is_default,enum.enum_options.1.label,enum.enum_options.1.is_default
+Color,enum,Color,Color,yes,Color,no,no,yes,yes,exact_value,yes,yes,yes,yes,yes,yes,yes,yes,Black,no,White,no

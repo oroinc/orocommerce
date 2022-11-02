@@ -1,4 +1,0 @@
-assets:
-    css:
-        'oroinvoice':
-            - 'bundles/oroinvoice/css/scss/main.scss'

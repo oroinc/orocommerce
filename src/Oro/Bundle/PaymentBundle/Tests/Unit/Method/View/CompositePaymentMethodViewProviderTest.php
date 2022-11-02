@@ -8,72 +8,66 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class CompositePaymentMethodViewProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CompositePaymentMethodViewProvider
-     */
-    protected $registry;
-
-    protected function setUp()
-    {
-        $this->registry = new CompositePaymentMethodViewProvider();
-    }
-
-    public function testGetPaymentMethodViews()
+    public function testGetPaymentMethodViews(): void
     {
         $testView = $this->getTypeMock('test_method_view');
         $testView2 = $this->getTypeMock('test_method_view2');
 
-        /** @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $viewProvider */
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
-        $viewProvider->expects($this->any())->method('getPaymentMethodViews')
-            ->with(['test_method_view', 'test_method_view2'])
-            ->will($this->returnValue([$testView, $testView2]));
+        $viewProvider
+            ->expects(self::any())
+            ->method('hasPaymentMethodView')
+            ->withConsecutive(['test_method_view'], ['test_method_view2'])
+            ->willReturnOnConsecutiveCalls(true, true);
 
-        $this->registry->addProvider($viewProvider);
+        $viewProvider
+            ->expects(self::any())
+            ->method('getPaymentMethodView')
+            ->withConsecutive(['test_method_view'], ['test_method_view2'])
+            ->willReturnOnConsecutiveCalls($testView, $testView2);
 
-        $views = $this->registry->getPaymentMethodViews(['test_method_view', 'test_method_view2']);
-        $this->assertCount(2, $views);
-        $this->assertEquals([$testView, $testView2], $views);
+        $registry = new CompositePaymentMethodViewProvider([$viewProvider]);
+
+        $views = $registry->getPaymentMethodViews(['test_method_view', 'test_method_view2']);
+        self::assertCount(2, $views);
+        self::assertEquals([$testView, $testView2], $views);
     }
 
-    public function testGetPaymentMethodView()
+    public function testGetPaymentMethodView(): void
     {
         $testView = $this->getTypeMock('test_method_view');
-            
-        /** @var PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $viewProvider */
+
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
-        $viewProvider->expects($this->any())->method('getPaymentMethodView')
+        $viewProvider->expects(self::any())
+            ->method('getPaymentMethodView')
             ->with('test_method_view')
-            ->will($this->returnValue($testView));
-        $viewProvider->expects($this->any())->method('hasPaymentMethodView')
+            ->willReturn($testView);
+        $viewProvider->expects(self::any())
+            ->method('hasPaymentMethodView')
             ->with('test_method_view')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $this->registry->addProvider($viewProvider);
+        $registry = new CompositePaymentMethodViewProvider([$viewProvider]);
 
-        $paymentMethodView = $this->registry->getPaymentMethodView($testView->getPaymentMethodIdentifier());
+        $paymentMethodView = $registry->getPaymentMethodView($testView->getPaymentMethodIdentifier());
 
-        $this->assertEquals($paymentMethodView, $testView);
+        self::assertEquals($paymentMethodView, $testView);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp  /There is no payment method view for "\w+"/
-     */
-    public function testGetPaymentMethodViewExceptionTriggered()
+    public function testGetPaymentMethodViewExceptionTriggered(): void
     {
-        $this->registry->getPaymentMethodView('not_exists_payment_method');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/There is no payment method view for "\w+"/');#z
+        $registry = new CompositePaymentMethodViewProvider([]);
+        $registry->getPaymentMethodView('not_exists_payment_method');
     }
 
-    /**
-     * @param string $name
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject|PaymentMethodViewInterface
-     */
-    protected function getTypeMock($name)
+    private function getTypeMock(string $name): PaymentMethodViewInterface|\PHPUnit\Framework\MockObject\MockObject
     {
         $type = $this->createMock(PaymentMethodViewInterface::class);
-        $type->expects($this->any())->method('getPaymentMethodIdentifier')->will($this->returnValue($name));
+        $type->expects(self::any())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn($name);
 
         return $type;
     }

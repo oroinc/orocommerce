@@ -3,38 +3,24 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BooleanVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var BooleanVariantFieldValueHandler */
     private $handler;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->any())
             ->method('trans')
             ->willReturnMap([
                 ['oro.product.variant_fields.no.label', [], null, null, 'No'],
                 ['oro.product.variant_fields.yes.label', [], null, null, 'Yes'],
             ]);
 
-        $this->handler = new BooleanVariantFieldValueHandler($this->translator);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->handler);
+        $this->handler = new BooleanVariantFieldValueHandler($translator);
     }
 
     public function testGetType()
@@ -44,33 +30,26 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetValues()
     {
-        $this->assertEquals(['No' => 0, 'Yes' => 1], $this->handler->getPossibleValues('testField'));
+        $this->assertEquals([0 => 'No', 1 => 'Yes'], $this->handler->getPossibleValues('testField'));
     }
 
     /**
      * @dataProvider getScalarValueProvider
-     * @param mixed $value
-     * @param bool $expected
      */
-    public function testGetScalarValue($value, $expected)
+    public function testGetScalarValue(mixed $value, bool $expected)
     {
-        $this->assertEquals($expected, $this->handler->getScalarValue($value));
+        $this->assertSame($expected, $this->handler->getScalarValue($value));
     }
 
     /**
      * @dataProvider getHumanReadableValueProvider
-     * @param mixed $value
-     * @param bool $expected
      */
-    public function testGetHumanReadableValue($value, $expected)
+    public function testGetHumanReadableValue(mixed $value, string $expected)
     {
         $this->assertEquals($expected, $this->handler->getHumanReadableValue('any_value', $value));
     }
 
-    /**
-     * @return array
-     */
-    public function getScalarValueProvider()
+    public function getScalarValueProvider(): array
     {
         return [
             'return false' => [
@@ -84,10 +63,7 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getHumanReadableValueProvider()
+    public function getHumanReadableValueProvider(): array
     {
         return [
             'return human readable false' => [

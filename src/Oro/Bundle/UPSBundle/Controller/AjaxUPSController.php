@@ -5,33 +5,37 @@ namespace Oro\Bundle\UPSBundle\Controller;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
+use Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AjaxUPSController extends Controller
+/**
+ * Ajax UPS Controller
+ */
+class AjaxUPSController extends AbstractController
 {
     /**
      * @Route("/get-shipping-services-by-country/{code}",
      *      name="oro_ups_country_shipping_services",
-     *      requirements={"code"="^[A-Z]{2}$"})
+     *      requirements={"code"="^[A-Z]{2}$"},
+     *      methods={"GET"})
      * @ParamConverter("country", options={"id" = "code"})
-     * @Method("GET")
      * @param Country $country
      * @return JsonResponse
      */
     public function getShippingServicesByCountryAction(Country $country)
     {
         /** @var ShippingServiceRepository $repository */
-        $repository = $this->container
-            ->get('doctrine')
+        $repository = $this->get('doctrine')
             ->getManagerForClass('OroUPSBundle:ShippingService')
             ->getRepository('OroUPSBundle:ShippingService');
         $services = $repository->getShippingServicesByCountry($country);
@@ -43,9 +47,9 @@ class AjaxUPSController extends Controller
     }
 
     /**
-     * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection")
+     * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection", methods={"POST"})
      * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
-     * @Method("POST")
+     * @CsrfProtection()
      *
      * @param Request      $request
      * @param Channel|null $channel
@@ -66,7 +70,7 @@ class AjaxUPSController extends Controller
 
         /** @var UPSTransport $transport */
         $transport = $channel->getTransport();
-        $result = $this->get('oro_ups.connection.validator')->validateConnectionByUpsSettings($transport);
+        $result = $this->get(UpsConnectionValidator::class)->validateConnectionByUpsSettings($transport);
 
         if (!$result->getStatus()) {
             return new JsonResponse([
@@ -75,9 +79,11 @@ class AjaxUPSController extends Controller
             ]);
         }
 
+        $translator = $this->get(TranslatorInterface::class);
+
         return new JsonResponse([
             'success' => true,
-            'message' => $this->get('translator')->trans('oro.ups.connection_validation.result.success.message'),
+            'message' => $translator->trans('oro.ups.connection_validation.result.success.message'),
         ]);
     }
 
@@ -103,6 +109,20 @@ class AjaxUPSController extends Controller
                 $message = 'oro.ups.connection_validation.result.server_error.message';
                 break;
         }
-        return $this->get('translator')->trans($message, $parameters);
+        return $this->get(TranslatorInterface::class)->trans($message, $parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpsConnectionValidator::class,
+            ]
+        );
     }
 }

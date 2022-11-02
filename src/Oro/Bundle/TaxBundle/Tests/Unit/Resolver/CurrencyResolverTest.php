@@ -18,7 +18,7 @@ class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
     /** @var CurrencyResolver */
     protected $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new CurrencyResolver();
     }

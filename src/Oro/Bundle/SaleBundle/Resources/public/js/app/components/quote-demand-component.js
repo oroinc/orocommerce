@@ -1,18 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var QuoteDemandComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
-    var template = require('tpl!../../../templates/quote-to-order-item-error.html');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
 
-    if (typeof template === 'string') {
-        template = _.template(template);
-    }
-
-    QuoteDemandComponent = BaseComponent.extend({
+    const QuoteDemandComponent = BaseComponent.extend({
         options: {
             subtotalsRoute: 'oro_sale_quote_frontend_subtotals',
             quoteDemandId: null,
@@ -32,10 +26,10 @@ define(function(require) {
         subtotalUrl: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function QuoteDemandComponent() {
-            QuoteDemandComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuoteDemandComponent(options) {
+            QuoteDemandComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -45,40 +39,16 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$el = options._sourceElement;
-            this.blockQuantityUpdate = false;
 
             this.subtotalUrl = routing.generate(this.options.subtotalsRoute, {
                 id: this.options.quoteDemandId
             });
 
-            this.$form = this.$el;
-            if (this.options.formSelector) {
-                this.$form = this.$el.find(this.options.formSelector);
-            }
-            this.initFormValidation();
+            this.$form = this.$el.find(this.options.formSelector || 'form');
 
-            $(this.options.lineItemsSelector).on('quote-items-changed', $.proxy(this.loadSubtotals, this));
-        },
+            this.loadSubtotals = this.loadSubtotals.bind(this);
 
-        initFormValidation: function() {
-            this.$form.validate(
-                {
-                    errorClass: 'error',
-                    showErrors: function(errorMap, errorList) {
-                        var $element = $(this.currentElements[0]);
-                        var $container = $element.closest('td');
-
-                        $container.find('[data-role="error-container"]').remove();
-                        $element.removeClass(this.settings.errorClass);
-                        if (errorList.length) {
-                            $element.addClass(this.settings.errorClass);
-                            _.each(errorMap, function(message) {
-                                $(template({message: message})).appendTo($container);
-                            });
-                        }
-                    }
-                }
-            );
+            $(this.options.lineItemsSelector).on('quote-items-changed', this.loadSubtotals);
         },
 
         dispose: function() {
@@ -86,7 +56,7 @@ define(function(require) {
                 return;
             }
 
-            $(this.options.lineItemsSelector).off('quote-items-changed', $.proxy(this.loadSubtotals, this));
+            $(this.options.lineItemsSelector).off('quote-items-changed', this.loadSubtotals);
 
             QuoteDemandComponent.__super__.dispose.call(this);
         },
@@ -103,15 +73,15 @@ define(function(require) {
                     data: {
                         _widgetContainer: 'ajax'
                     },
-                    success: _.bind(this.onSubtotalSuccess, this)
+                    success: this.onSubtotalSuccess.bind(this)
                 });
             }
         },
 
         onSubtotalSuccess: function(response) {
             this.inProgress = false;
-            var $response = $('<div/>').html(response);
-            var $content = $(this.options.subtotalSelector);
+            const $response = $('<div/>').html(response);
+            const $content = $(this.options.subtotalSelector);
             $content.html($response.find(this.options.subtotalSelector).html());
         }
     });

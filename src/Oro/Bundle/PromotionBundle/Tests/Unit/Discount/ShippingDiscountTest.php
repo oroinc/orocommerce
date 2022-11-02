@@ -15,14 +15,13 @@ class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
      */
     private $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = new ShippingDiscount();
     }
 
     /**
      * @dataProvider invalidOptionsDataProvider
-     * @param array $options
      */
     public function testInvalidOptions(array $options)
     {
@@ -30,9 +29,6 @@ class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
         $this->discount->configure($options);
     }
 
-    /**
-     * @return array
-     */
     public function invalidOptionsDataProvider(): array
     {
         return [
@@ -91,9 +87,6 @@ class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedDiscount, $this->discount->calculate($entity));
     }
 
-    /**
-     * @return array
-     */
     public function calculateDataProvider(): array
     {
         return [

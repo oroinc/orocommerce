@@ -4,16 +4,22 @@ namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class ProductUnitFieldsSettingsExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to retrieve product unit display configuration for a product:
+ *   - oro_is_product_unit_selection_visible
+ *   - oro_is_product_primary_unit_visible
+ *   - oro_is_adding_additional_units_to_product_available
+ */
+class ProductUnitFieldsSettingsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -33,15 +39,15 @@ class ProductUnitFieldsSettingsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_product_unit_selection_visible',
                 [$this, 'isProductUnitSelectionVisible']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_product_primary_unit_visible',
                 [$this, 'isProductPrimaryUnitVisible']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_is_adding_additional_units_to_product_available',
                 [$this, 'isAddingAdditionalUnitsToProductAvailable']
             ),
@@ -76,5 +82,15 @@ class ProductUnitFieldsSettingsExtension extends \Twig_Extension
     public function isAddingAdditionalUnitsToProductAvailable(Product $product = null)
     {
         return $this->getProductUnitFieldsSettings()->isAddingAdditionalUnitsToProductAvailable($product);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.visibility.product_unit_fields_settings' => ProductUnitFieldsSettingsInterface::class,
+        ];
     }
 }

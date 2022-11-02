@@ -7,16 +7,16 @@ services:
         parent: oro_config.provider.value.entity_id
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_segment.segment.entity.class%'
+            - 'Oro\Bundle\SegmentBundle\Entity\Segment'
             -
-                'entity': '%oro_product.entity.product.class%'
+                'entity': 'Oro\Bundle\ProductBundle\Entity\Product'
                 'name': '%oro_product.segment.new_arrival.name%'
 
     oro_product.provider.default_value.featured_products:
         parent: oro_config.provider.value.entity_id
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_segment.segment.entity.class%'
+            - 'Oro\Bundle\SegmentBundle\Entity\Segment'
             -
-                'entity': '%oro_product.entity.product.class%'
+                'entity': 'Oro\Bundle\ProductBundle\Entity\Product'
                 'name': '%oro_product.segment.featured_products.name%'

@@ -31,20 +31,6 @@
         margin: 0 0 $offset-y-m;
     }
 
-    &__radio {
-        margin: 0 0 $offset-y-m;
-
-        .custom-radio {
-            &.checked {
-                + .checkout-form__payment-container {
-                  .checkout-form__payment-methods-form {
-                      display: block;
-                  }
-                }
-            }
-        }
-    }
-
     &__submit {
         min-width: $checkout-form-submit-min-width;
     }
@@ -81,6 +67,8 @@
     &__payment-methods-list {
         @include list-normalize();
         @include clearfix();
+
+        margin: $checkout-form-payment-methods-list-form-margin;
     }
 
     &__payment-methods-item {
@@ -89,13 +77,9 @@
     }
 
     &__payment-methods-form {
-        margin: $checkout-form-payment-methods-form-margin;
-    }
-
-    &__req-text {
-        margin: $checkout-form-req-text-margin;
-
-        color: $checkout-form-req-text-color;
+        .form-row:not(:last-child) {
+            margin-bottom: $offset-y;
+        }
     }
 
     &__asterix {
@@ -105,7 +89,27 @@
     }
 
     &__back {
-        padding: $checkout-form-back-padding;
+        margin: $checkout-form-back-offset;
+
+        &--no-offset {
+            margin: 0;
+        }
+
+        &--offset-bottom {
+            margin: $checkout-form-back-bottom-offset;
+        }
+    }
+
+    &__radio {
+        margin-bottom: $offset-y-m;
+
+        &:last-child {
+            margin-bottom: 0;
+
+            .checkout-form__payment-container {
+                margin-bottom: 0;
+            }
+        }
     }
 
     .form-field-cvv,
@@ -119,12 +123,6 @@
         &__submit {
             min-width: $checkout-form-submit-tablet-min-width;
             width: $checkout-form-submit-tablet-width;
-        }
-
-        &__req-text {
-            position: $checkout-form-req-text-tablet-position;
-
-            margin: $checkout-form-req-text-tablet-margin;
         }
     }
 }

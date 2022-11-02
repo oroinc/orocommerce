@@ -13,9 +13,6 @@ class BasicPaymentContextBuilderFactory implements PaymentContextBuilderFactoryI
      */
     private $collectionFactory;
 
-    /**
-     * @param PaymentLineItemCollectionFactoryInterface $collectionFactory
-     */
     public function __construct(PaymentLineItemCollectionFactoryInterface $collectionFactory)
     {
         $this->collectionFactory = $collectionFactory;

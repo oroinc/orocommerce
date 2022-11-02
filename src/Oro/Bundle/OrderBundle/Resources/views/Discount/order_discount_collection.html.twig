@@ -1,4 +1,5 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% set addAndEditLinkSettings = {
     'widget': {
@@ -46,7 +47,7 @@
 </div>
 
 {% if collection|length %}
-    <table class="grid table-hover table table-bordered table-condensed">
+    <table class="grid grid-main-container table-hover table table-bordered table-condensed">
         <thead>
             <tr>
                 <th class="order-discount-item-description">
@@ -67,10 +68,10 @@
                         {% if discount.description %}
                             {{ discount.description }}
                         {% else %}
-                            <span class="not-available">{{ 'N/A'|trans }}</span>
+                            {{ dataGrid.renderBlankCellValue() }}
                         {% endif %}
                     </td>
-                    <td class="discount">
+                    <td class="discount direction-ltr">
                         {% if discount.order is not empty %}
                             -{{ discount.amountPrice|oro_format_price }}
                         {% endif %}
@@ -101,7 +102,7 @@
                             }|merge_recursive(addAndEditLinkSettings)) }}
                         </td>
                         <td class="action">
-                            <a data-role="remove" href="javascript:void(0);" title="{{ 'oro.order.order_discount.actions.remove'|trans }}">
+                            <a data-role="remove" href="#" title="{{ 'oro.order.order_discount.actions.remove'|trans }}">
                                 <i data-element-index="{{ loop.index0 }}" class="fa-trash hide-text">
                                     {{ 'oro.order.order_discount.actions.remove'|trans }}
                                 </i>
@@ -113,5 +114,7 @@
         </tbody>
     </table>
 {% elseif editable is not defined or not editable %}
-    <div class="no-data"><span>{{ 'oro.order.order_discount.no_entities'|trans }}<span></span></span></div>
+    <div class="no-data">
+        {{ 'oro.order.order_discount.no_entities'|trans }}
+    </div>
 {% endif %}

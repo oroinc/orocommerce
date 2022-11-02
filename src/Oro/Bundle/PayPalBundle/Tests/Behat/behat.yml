@@ -33,7 +33,6 @@ oro_behat_extension:
           CVV: 'CVV2'
     Transaction Capture Button:
       selector: 'div.action-row a.action[title="Capture"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     Transactions History Grid:
       selector:
         locator: '//div[contains(@class, "responsive-section ")]/h4[text()="Payment History"]/..//div[@class="oro-datagrid"]//table'
@@ -43,14 +42,20 @@ oro_behat_extension:
     OroPayPalBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroFormBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroConfigBundle::FeatureContext
-        - OroProductBundle::FeatureContext
-        - OroPayPalBundle::FeatureContext
-        - OroCheckoutBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroDataGridBundle::GridContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\PayPalBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\PaymentBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroPayPalBundle/Tests/Behat/Features'

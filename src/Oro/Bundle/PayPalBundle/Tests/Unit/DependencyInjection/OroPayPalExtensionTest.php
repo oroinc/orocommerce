@@ -12,8 +12,7 @@ class OroPayPalExtensionTest extends ExtensionTestCase
         $container = $this->getContainerMock();
         $container->expects(static::once())
             ->method('getParameter')
-            ->willReturn('prod')
-        ;
+            ->willReturn('prod');
 
         $extension = new OroPayPalExtension();
         $extension->load([], $container);
@@ -26,8 +25,7 @@ class OroPayPalExtensionTest extends ExtensionTestCase
         $container = $this->getContainerMock();
         $container->expects(static::once())
             ->method('getParameter')
-            ->willReturn('test')
-        ;
+            ->willReturn('test');
 
         $extension = new OroPayPalExtension();
         $extension->load([], $container);
@@ -40,10 +38,7 @@ class OroPayPalExtensionTest extends ExtensionTestCase
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 
-    /**
-     * @return array
-     */
-    private function getExpectedDefinitions()
+    private function getExpectedDefinitions(): array
     {
         return [
             'oro_paypal.integation.payflow_gateway.channel',
@@ -81,14 +76,16 @@ class OroPayPalExtensionTest extends ExtensionTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    private function getExpectedTestDefinitions()
+    private function getExpectedTestDefinitions(): array
     {
         return [
             'oro_paypal.test.payment_method.express_checkout_provider',
             'oro_paypal.test.payment_method.view.express_checkout_provider',
         ];
+    }
+
+    public function testGetAlias()
+    {
+        self::assertEquals('oro_paypal', (new OroPayPalExtension())->getAlias());
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Action;
 
 use Oro\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
+use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -11,30 +12,25 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 class GetCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    protected $contextAccessor;
+    private $contextAccessor;
 
     /** @var CheckoutDiffStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $diffStorage;
-
-    /** @var GetCheckoutStateAction */
-    protected $action;
+    private $diffStorage;
 
     /** @var EventDispatcherInterface */
-    protected $dispatcher;
+    private $dispatcher;
 
-    protected function setUp()
+    /** @var GetCheckoutStateAction */
+    private $action;
+
+    protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);
         $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);
-        $this->action = new GetCheckoutStateAction($this->contextAccessor, $this->diffStorage);
-
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->action->setDispatcher($this->dispatcher);
-    }
 
-    protected function tearDown()
-    {
-        unset($this->contextAccessor, $this->diffStorage, $this->dispatcher, $this->action);
+        $this->action = new GetCheckoutStateAction($this->contextAccessor, $this->diffStorage);
+        $this->action->setDispatcher($this->dispatcher);
     }
 
     public function testExecute()
@@ -51,18 +47,15 @@ class GetCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
 
         $state = ['saved state'];
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects($this->any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects($this->any())
             ->method('setValue')
             ->with([], $attribute, $state);
 
-        $this->diffStorage
-            ->expects($this->once())
+        $this->diffStorage->expects($this->once())
             ->method('getState')
             ->with($entity, $token)
             ->willReturn($state);
@@ -82,23 +75,21 @@ class GetCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
         $this->action->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
-     * @expectedExceptionMessage Parameter "entity" is required
-     */
     public function testInitializeWithoutRequiredFieldEntity()
     {
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Parameter "entity" is required');
+
         $options = [];
 
         $this->action->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
-     * @expectedExceptionMessage Parameter "token" is required
-     */
     public function testInitializeWithoutRequiredFieldToken()
     {
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Parameter "token" is required');
+
         $options = [
             'entity' => new \stdClass(),
 
@@ -107,12 +98,11 @@ class GetCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
         $this->action->initialize($options);
     }
 
-    /**
-     * @expectedException \Oro\Component\Action\Exception\InvalidParameterException
-     * @expectedExceptionMessage Parameter "attribute" is required
-     */
     public function testInitializeWithoutRequiredField()
     {
+        $this->expectException(InvalidParameterException::class);
+        $this->expectExceptionMessage('Parameter "attribute" is required');
+
         $options = [
             'entity' => new \stdClass(),
             'token' => 'token',

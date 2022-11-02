@@ -14,7 +14,7 @@ class OrderDiscountTest extends \PHPUnit\Framework\TestCase
      */
     private $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = new OrderDiscount();
     }
@@ -66,9 +66,6 @@ class OrderDiscountTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->discount->calculate($entity));
     }
 
-    /**
-     * @return array
-     */
     public function calculateDataProvider(): array
     {
         return [

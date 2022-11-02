@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Shopping list should be removed when limit by shopping list is reached
@@ -28,10 +28,6 @@ class ShoppingListLimitListener
      */
     private $doctrineHelper;
 
-    /**
-     * @param ShoppingListLimitManager $shoppingListLimitManager
-     * @param DoctrineHelper           $doctrineHelper
-     */
     public function __construct(
         ShoppingListLimitManager $shoppingListLimitManager,
         DoctrineHelper $doctrineHelper
@@ -40,9 +36,6 @@ class ShoppingListLimitListener
         $this->doctrineHelper           = $doctrineHelper;
     }
 
-    /**
-     * @param Event $event
-     */
     public function onCheckoutLogin(Event $event)
     {
         if (!class_exists(CheckoutSource::class)

@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData;
-use Oro\Bundle\RuleBundle\Entity\RuleInterface;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -19,47 +20,37 @@ use Symfony\Component\DomCrawler\Form;
  */
 class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 {
-    const NAME = 'New rule';
-    const PAYMENT_METHOD_TYPE = 'payment_term';
+    private const PAYMENT_METHOD_TYPE = 'payment_term';
 
-    /**
-     * @var Translator;
-     */
-    protected $translator;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->translator = static::getContainer()->get('translator');
-        $currentBundleDataFixturesNameSpace = 'Oro\Bundle\PaymentBundle\Tests\Functional';
-        $this->loadFixtures(
-            [
-                $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData',
-                $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData',
-                $currentBundleDataFixturesNameSpace.'\DataFixtures\LoadUserData',
-                LoadChannelData::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadPaymentMethodsConfigsRuleData::class,
+            LoadPaymentMethodsConfigsRuleDestinationData::class,
+            LoadUserData::class,
+            LoadChannelData::class
+        ]);
     }
 
     public function testIndex()
     {
-        $auth = static::generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR);
+        $auth = self::generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR);
         $this->initClient([], $auth);
         $crawler = $this->client->request('GET', $this->getUrl('oro_payment_methods_configs_rule_index'));
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('payment-methods-configs-rule-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringContainsString('payment-methods-configs-rule-grid', $crawler->html());
         $href = $crawler->selectLink('Create Payment Rule')->attr('href');
-        static::assertEquals($this->getUrl('oro_payment_methods_configs_rule_create'), $href);
+        self::assertEquals($this->getUrl('oro_payment_methods_configs_rule_create'), $href);
 
         $response = $this->client->requestGrid([
             'gridName' => 'payment-methods-configs-rule-grid',
             'payment-methods-configs-rule-grid[_sort_by][id]' => 'ASC',
         ]);
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
         $data = $result['data'];
 
@@ -69,7 +60,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $payMethods = $paymentRule->getMethodConfigs();
         $payMethodsLabels = [];
         foreach ($payMethods as $method) {
-            $payMethodsLabels[] = $this->translator
+            $payMethodsLabels[] = self::getContainer()->get('translator')
                 ->trans(sprintf('oro.payment.admin.%s.label', $method->getType()));
         }
 
@@ -110,21 +101,19 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
-            static::assertEquals($expectedColumns, $testedColumns);
+            self::assertEquals($expectedColumns, $testedColumns);
         }
 
         $expectedDataCount = count($expectedData['data']);
         for ($i = 0; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
-                static::assertArrayHasKey($key, $data[$i]);
-                switch ($key) {
-                    case 'methodConfigs':
-                        foreach ($value as $methodLabel) {
-                            static::assertContains($methodLabel, $data[$i][$key]);
-                        }
-                        break;
-                    default:
-                        static::assertEquals(trim($value), trim($data[$i][$key]));
+                self::assertArrayHasKey($key, $data[$i]);
+                if ('methodConfigs' === $key) {
+                    foreach ($value as $methodLabel) {
+                        self::assertContains($methodLabel, $data[$i][$key]);
+                    }
+                } else {
+                    self::assertEquals(trim($value), trim($data[$i][$key]));
                 }
             }
         }
@@ -132,25 +121,21 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 
     public function testIndexWithoutCreate()
     {
-        $this->initClient([], static::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER));
+        $this->initClient([], self::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER));
         $crawler = $this->client->request('GET', $this->getUrl('oro_payment_methods_configs_rule_index'));
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertEquals(0, $crawler->selectLink('Create Payment Rule')->count());
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertEquals(0, $crawler->selectLink('Create Payment Rule')->count());
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): string
     {
         $this->initClient(
             [],
-            static::generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR)
+            self::generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR)
         );
         $crawler = $this->client->request('GET', $this->getUrl('oro_payment_methods_configs_rule_create'));
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $name = 'New Rule';
@@ -177,24 +162,22 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $html = $crawler->html();
 
-        static::assertContains('Payment rule has been saved', $html);
-        static::assertContains('No', $html);
+        self::assertStringContainsString('Payment rule has been saved', $html);
+        self::assertStringContainsString('No', $html);
 
         return $name;
     }
 
     /**
      * @depends testCreate
-     *
-     * @param string $name
      */
-    public function testView($name)
+    public function testView(string $name)
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $paymentRule = $this->getPaymentMethodsConfigsRuleByName($name);
 
         $crawler = $this->client->request(
@@ -203,39 +186,24 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
 
-        static::assertContains($paymentRule->getRule()->getName(), $html);
-        $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
+        self::assertStringContainsString($paymentRule->getRule()->getName(), $html);
         $destination = $paymentRule->getDestinations();
-        static::assertContains((string)$destination[0], $html);
-        static::assertContains($this->getReference('payment_term:channel_1')->getName(), $html);
-    }
-
-    protected function checkCurrenciesOnPage($currency, $html)
-    {
-        return true;
-    }
-
-    protected function checkCurrency($currency)
-    {
-        return true;
+        self::assertStringContainsString((string)$destination[0], $html);
+        self::assertStringContainsString($this->getReference('payment_term:channel_1')->getName(), $html);
     }
 
     /**
      * @depends testCreate
-     *
-     * @param string $name
-     *
-     * @return PaymentMethodsConfigsRule|object|null
      */
-    public function testUpdate($name)
+    public function testUpdate(string $name): PaymentMethodsConfigsRule
     {
         $paymentRule = $this->getPaymentMethodsConfigsRuleByName($name);
 
-        static::assertNotEmpty($paymentRule);
+        self::assertNotEmpty($paymentRule);
 
         $id = $paymentRule->getId();
         $crawler = $this->client->request(
@@ -243,11 +211,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
             $this->getUrl('oro_payment_methods_configs_rule_update', ['id' => $id])
         );
 
-        $html = $crawler->html();
-
-        $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
-
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $newName = 'New name for new rule';
@@ -273,82 +236,65 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $html = $crawler->html();
-        static::assertContains('Payment rule has been saved', $html);
+        self::assertStringContainsString('Payment rule has been saved', $html);
 
         $paymentRule = $this->getPaymentMethodsConfigsRuleByName($newName);
-        static::assertEquals($id, $paymentRule->getId());
+        self::assertEquals($id, $paymentRule->getId());
 
-        $this->checkCurrency($paymentRule->getCurrency());
         $destination = $paymentRule->getDestinations();
-        static::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
-        static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
-        static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
+        self::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
+        self::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
+        self::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $paymentRule->getMethodConfigs();
-        static::assertEquals($this->getPaymentMethodIdentifier(), $methodConfigs[0]->getType());
+        self::assertEquals($this->getPaymentMethodIdentifier(), $methodConfigs[0]->getType());
 
-        static::assertFalse($paymentRule->getRule()->isEnabled());
+        self::assertFalse($paymentRule->getRule()->isEnabled());
 
         return $paymentRule;
     }
 
     /**
      * @depends testUpdate
-     *
-     * @param PaymentMethodsConfigsRule $paymentRule
      */
     public function testCancel(PaymentMethodsConfigsRule $paymentRule)
     {
         $paymentRule = $this->getPaymentMethodsConfigsRuleByName($paymentRule->getRule()->getName());
 
-        static::assertNotEmpty($paymentRule);
+        self::assertNotEmpty($paymentRule);
 
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_payment_methods_configs_rule_update', ['id' => $paymentRule->getId()])
         );
-
-        $html = $crawler->html();
-
-        $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
 
         $link = $crawler->selectLink('Cancel')->link();
         $this->client->click($link);
         $response = $this->client->getResponse();
 
-        static::assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertHtmlResponseStatusCodeEquals($response, 200);
 
         $html = $response->getContent();
 
-        static::assertContains($paymentRule->getRule()->getName(), $html);
-        $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
+        self::assertStringContainsString($paymentRule->getRule()->getName(), $html);
         $destination = $paymentRule->getDestinations();
-        static::assertContains((string)$destination[0], $html);
-        static::assertContains($this->getReference('payment_term:channel_1')->getName(), $html);
+        self::assertStringContainsString((string)$destination[0], $html);
+        self::assertStringContainsString($this->getReference('payment_term:channel_1')->getName(), $html);
     }
 
     /**
      * @depends testUpdate
-     *
-     * @param PaymentMethodsConfigsRule $paymentRule
-     *
-     * @return object|PaymentMethodsConfigsRule
      */
-    public function testUpdateRemoveDestination(PaymentMethodsConfigsRule $paymentRule)
+    public function testUpdateRemoveDestination(PaymentMethodsConfigsRule $paymentRule): PaymentMethodsConfigsRule
     {
-        static::assertNotEmpty($paymentRule);
+        self::assertNotEmpty($paymentRule);
 
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_payment_methods_configs_rule_update', ['id' => $paymentRule->getId()])
         );
 
-        $html = $crawler->html();
-
-        $this->checkCurrenciesOnPage($paymentRule->getCurrency(), $html);
-
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
@@ -357,19 +303,16 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $paymentRule = $this->getEntityManager()->find(
-            'OroPaymentBundle:PaymentMethodsConfigsRule',
-            $paymentRule->getId()
-        );
-        static::assertCount(0, $paymentRule->getDestinations());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $paymentRule = $this->getEntityManager()->find(PaymentMethodsConfigsRule::class, $paymentRule->getId());
+        self::assertCount(0, $paymentRule->getDestinations());
 
         return $paymentRule;
     }
 
     public function testStatusDisableMass()
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         /** @var PaymentMethodsConfigsRule $paymentRule1 */
         $paymentRule1 = $this->getReference('payment.payment_methods_configs_rule.1');
         /** @var PaymentMethodsConfigsRule $paymentRule2 */
@@ -387,15 +330,15 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
                 )
             ]
         );
-        $this->client->request('POST', $url);
+        $this->ajaxRequest('POST', $url);
         $result = $this->client->getResponse();
-        $data = json_decode($result->getContent(), true);
-        static::assertTrue($data['successful']);
-        static::assertSame(2, $data['count']);
-        static::assertFalse(
+        $data = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertTrue($data['successful']);
+        self::assertSame(2, $data['count']);
+        self::assertFalse(
             $this->getPaymentMethodsConfigsRuleById($paymentRule1->getId())->getRule()->isEnabled()
         );
-        static::assertFalse(
+        self::assertFalse(
             $this->getPaymentMethodsConfigsRuleById($paymentRule2->getId())->getRule()->isEnabled()
         );
     }
@@ -405,7 +348,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
      */
     public function testStatusEnableMass()
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         /** @var PaymentMethodsConfigsRule $paymentRule1 */
         $paymentRule1 = $this->getReference('payment.payment_methods_configs_rule.1');
         /** @var PaymentMethodsConfigsRule $paymentRule2 */
@@ -423,22 +366,22 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
                 )
             ]
         );
-        $this->client->request('POST', $url);
+        $this->ajaxRequest('POST', $url);
         $result = $this->client->getResponse();
-        $data = json_decode($result->getContent(), true);
-        static::assertTrue($data['successful']);
-        static::assertSame(2, $data['count']);
-        static::assertTrue(
+        $data = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertTrue($data['successful']);
+        self::assertSame(2, $data['count']);
+        self::assertTrue(
             $this->getPaymentMethodsConfigsRuleById($paymentRule1->getId())->getRule()->isEnabled()
         );
-        static::assertTrue(
+        self::assertTrue(
             $this->getPaymentMethodsConfigsRuleById($paymentRule2->getId())->getRule()->isEnabled()
         );
     }
 
     public function testPaymentMethodsConfigsRuleEditWOPermission()
     {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER);
+        $authParams = self::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER);
         $this->initClient([], $authParams);
 
         /** @var PaymentMethodsConfigsRule $paymentRule */
@@ -449,67 +392,46 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
             $this->getUrl('oro_payment_methods_configs_rule_update', ['id' => $paymentRule->getId()])
         );
 
-        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
-
 
     public function testDeleteButtonNotVisible()
     {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER);
+        $authParams = self::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER);
         $this->initClient([], $authParams);
 
         $response = $this->client->requestGrid([
             'gridName' => 'payment-methods-configs-rule-grid'
         ], [], true);
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
-        static::assertEquals(false, isset($result['metadata']['massActions']['delete']));
+        self::assertEquals(false, isset($result['metadata']['massActions']['delete']));
     }
 
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|mixed|null|object
-     */
-    protected function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
-        return static::getContainer()
+        return self::getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroPaymentBundle:PaymentMethodsConfigsRule');
+            ->getManagerForClass(PaymentMethodsConfigsRule::class);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return PaymentMethodsConfigsRule|object|null
-     */
-    protected function getPaymentMethodsConfigsRuleByName($name)
+    private function getPaymentMethodsConfigsRuleByName(string $name): ?PaymentMethodsConfigsRule
     {
-        /** @var RuleInterface $rule */
-        $rule = $this->getEntityManager()
-            ->getRepository('OroRuleBundle:Rule')
-            ->findOneBy(['name' => $name]);
+        $em = $this->getEntityManager();
 
-        return $this->getEntityManager()
-            ->getRepository('OroPaymentBundle:PaymentMethodsConfigsRule')
-            ->findOneBy(['rule' => $rule]);
+        return $em->getRepository(PaymentMethodsConfigsRule::class)
+            ->findOneBy(['rule' => $em->getRepository(Rule::class)->findOneBy(['name' => $name])]);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return PaymentMethodsConfigsRule|null
-     */
-    protected function getPaymentMethodsConfigsRuleById($id)
+    private function getPaymentMethodsConfigsRuleById(int $id): PaymentMethodsConfigsRule
     {
         return $this->getEntityManager()
-            ->getRepository('OroPaymentBundle:PaymentMethodsConfigsRule')
+            ->getRepository(PaymentMethodsConfigsRule::class)
             ->find($id);
     }
 
-    /**
-     * @return string
-     */
-    protected function getPaymentMethodIdentifier()
+    private function getPaymentMethodIdentifier(): string
     {
         return (new PrefixedIntegrationIdentifierGenerator(self::PAYMENT_METHOD_TYPE))
             ->generateIdentifier($this->getReference('payment_term:channel_1'));

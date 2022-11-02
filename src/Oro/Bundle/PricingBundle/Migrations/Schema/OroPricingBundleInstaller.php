@@ -17,8 +17,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    /** @var  ActivityExtension */
-    protected $activityExtension;
+    protected ActivityExtension $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -33,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_23';
     }
 
     /**
@@ -66,7 +65,8 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->createOroriceListToProductTable($schema);
         $this->createOroPriceRuleTable($schema);
         $this->createOroPriceRuleLexemeTable($schema);
-        $this->createOroNotificationMessageTable($schema);
+        $this->createOroPriceListCombinedBuildActivityTable($schema);
+        $this->createOroPriceListCombinedGCTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroPriceListCurrencyForeignKeys($schema);
@@ -87,15 +87,16 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->addOroCplActivationRuleForeignKeys($schema);
         $this->addOroPriceAttributeCurrencyForeignKeys($schema);
         $this->addOroPriceAttributeProductPriceForeignKeys($schema);
+        $this->addOroPriceAttributeOrganizationForeignKeys($schema);
         $this->addOroriceListToProductForeignKeys($schema);
         $this->addOroPriceRuleForeignKeys($schema);
         $this->addOroPriceRuleLexemeForeignKeys($schema);
+        $this->addOroPriceListCombinedBuildActivityForeignKeys($schema);
+        $this->addOroPriceListCombinedGCForeignKeys($schema);
     }
 
     /**
      * Create oro_price_list table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListTable(Schema $schema)
     {
@@ -116,8 +117,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_currency table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListCurrencyTable(Schema $schema)
     {
@@ -130,8 +129,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_cus_group table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListToCustomerGroupTable(Schema $schema)
     {
@@ -148,8 +145,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_customer table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListToCustomerTable(Schema $schema)
     {
@@ -166,8 +161,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_website table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListToWebsiteTable(Schema $schema)
     {
@@ -183,8 +176,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceProductTable(Schema $schema)
     {
@@ -198,17 +189,17 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'],
             'oro_pricing_price_list_uidx'
         );
+        $table->addIndex(['price_list_id', 'version', 'product_id'], 'oro_price_version_idx', []);
     }
 
     /**
      * Create oro_price_list_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListCombinedTable(Schema $schema)
     {
@@ -224,13 +215,12 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_product_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceProductCombinedTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_product_combined');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
+        $table->addColumn('origin_price_id', 'guid', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('combined_price_list_id', 'integer', []);
@@ -240,7 +230,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->addColumn('merge_allowed', 'boolean');
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(
+        $table->addIndex(
             [
                 'combined_price_list_id',
                 'product_id',
@@ -248,7 +238,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
                 'unit_code',
                 'quantity'
             ],
-            'oro_combined_price_unq_idx'
+            'oro_combined_price_idx'
         );
         $table->addIndex(
             ['combined_price_list_id', 'product_id', 'merge_allowed'],
@@ -262,8 +252,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_plist_curr_combined table
-     *
-     * @param Schema $schema
      */
     protected function createOroPlistCurrCombinedTable(Schema $schema)
     {
@@ -276,8 +264,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_customer_fallback table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListAccountFallbackTable(Schema $schema)
     {
@@ -292,8 +278,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_cus_gr_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListAccGroupFallbackTable(Schema $schema)
     {
@@ -308,8 +292,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_website_fb table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListWebsiteFallbackTable(Schema $schema)
     {
@@ -323,8 +305,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cmb_price_list_to_cus table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccTable(Schema $schema)
     {
@@ -334,14 +314,13 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['customer_id', 'website_id'], 'oro_cpl_to_cus_ws_unq');
         $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_cmb_plist_to_cus_gr table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccGrTable(Schema $schema)
     {
@@ -351,14 +330,13 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['customer_group_id', 'website_id'], 'oro_cpl_to_cus_gr_ws_unq');
         $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_cmb_price_list_to_ws table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPriceListToWsTable(Schema $schema)
     {
@@ -367,14 +345,13 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('version', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['website_id'], 'oro_cpl_to_ws_unq');
         $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_cmb_pl_to_pl table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmbPlToPlTable(Schema $schema)
     {
@@ -388,11 +365,8 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addIndex(['combined_price_list_id', 'sort_order'], 'cmb_pl_to_pl_cmb_prod_sort_idx', []);
     }
 
-
     /**
      * Create oro_price_list_schedule table
-     *
-     * @param Schema $schema
      */
     protected function createOroPriceListScheduleTable(Schema $schema)
     {
@@ -407,8 +381,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_cpl_activation_rule table
-     *
-     * @param Schema $schema
      */
     protected function createOroCplActivationRuleTable(Schema $schema)
     {
@@ -424,23 +396,18 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addIndex(['full_combined_price_list_id'], 'IDX_E71CEADA579D9EF', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_attribute_pl');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('field_name', 'string', ['length' => 255]);
+        $table->addColumn('is_enabled_in_export', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('oro_product_attr_currency');
@@ -450,9 +417,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createOroPriceAttributeProductPriceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_attribute_price');
@@ -473,13 +437,11 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_price_list_to_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroriceListToProductTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_list_to_product');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('is_manual', 'boolean', []);
@@ -488,9 +450,79 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     }
 
     /**
-     * Add oro_price_list_currency foreign keys.
+     * Create oro_price_rule table
+     */
+    protected function createOroPriceRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_price_rule');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('price_list_id', 'integer', []);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('quantity', 'float', ['notnull' => false]);
+        $table->addColumn('rule_condition', 'text', ['notnull' => false]);
+        $table->addColumn('rule', 'text', ['notnull' => true]);
+        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
+        $table->addColumn('currency_expression', 'text', ['notnull' => false]);
+        $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_price_rule_lexeme table
+     */
+    protected function createOroPriceRuleLexemeTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_price_rule_lexeme');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
+        $table->addColumn('price_list_id', 'integer');
+        $table->addColumn('class_name', 'string', ['length' => 255]);
+        $table->addColumn('field_name', 'string', ['length' => 255]);
+        $table->addColumn('relation_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    protected function createOroPriceListCombinedBuildActivityTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_price_list_combined_build_activity');
+        $table->addColumn('id', 'bigint', ['autoincrement' => true]);
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('parent_job_id', 'integer', ['notnull' => false]);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addIndex(['parent_job_id'], 'oro_cpl_build_activity_job_idx');
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create `oro_combined_price_gc' table.
      *
-     * @param Schema $schema
+     * This table stores CPL removal request by GC. Records are removed from this table only when actual CPL removal is
+     * performed. Presence of CPL in the table does not mean that it will be actually removed, the request actuality is
+     * checked and the moment of actual removal.
+     */
+    protected function createOroPriceListCombinedGCTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_price_list_combined_gc');
+        $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
+        $table->addColumn('requested_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addUniqueIndex(['combined_price_list_id'], 'oro_cpl_gc_unq_idx');
+    }
+
+    protected function addOroPriceListCombinedGCForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_price_list_combined_gc');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_price_list_combined'),
+            ['combined_price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_price_list_currency foreign keys.
      */
     protected function addOroPriceListCurrencyForeignKeys(Schema $schema)
     {
@@ -505,8 +537,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_cus_group foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListToAccGrForeignKeys(Schema $schema)
     {
@@ -533,8 +563,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_customer foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListToAccountForeignKeys(Schema $schema)
     {
@@ -561,8 +589,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_website foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListToWebsiteForeignKeys(Schema $schema)
     {
@@ -583,8 +609,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceProductForeignKeys(Schema $schema)
     {
@@ -617,8 +641,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_product_combined foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceProductCombinedForeignKeys(Schema $schema)
     {
@@ -645,8 +667,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_plist_curr_combined foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPlistCurrCombinedForeignKeys(Schema $schema)
     {
@@ -661,8 +681,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_customer_fallback foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListAccountFallbackForeignKeys(Schema $schema)
     {
@@ -683,8 +701,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_cus_gr_fb foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListAccGroupFallbackForeignKeys(Schema $schema)
     {
@@ -705,8 +721,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_website_fb foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListWebsiteFallbackForeignKeys(Schema $schema)
     {
@@ -721,8 +735,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_plist_to_cus_gr foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPriceListToAccGrForeignKeys(Schema $schema)
     {
@@ -755,8 +767,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_price_list_to_ws foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPriceListToWsForeignKeys(Schema $schema)
     {
@@ -783,8 +793,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_price_list_to_cus foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPriceListToAccForeignKeys(Schema $schema)
     {
@@ -817,8 +825,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cmb_pl_to_pl foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmbPlToPlForeignKeys(Schema $schema)
     {
@@ -839,8 +845,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_schedule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceListScheduleForeignKeys(Schema $schema)
     {
@@ -855,8 +859,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_cpl_activation_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCplActivationRuleForeignKeys(Schema $schema)
     {
@@ -875,9 +877,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPriceAttributeCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_product_attr_currency');
@@ -889,9 +888,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addOroPriceAttributeProductPriceForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_price_attribute_price');
@@ -917,8 +913,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_list_to_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroriceListToProductForeignKeys(Schema $schema)
     {
@@ -938,71 +932,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     }
 
     /**
-     * Create oro_price_rule table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPriceRuleTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_price_rule');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('price_list_id', 'integer', []);
-        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('quantity', 'float', ['notnull' => false]);
-        $table->addColumn('rule_condition', 'text', ['notnull' => false]);
-        $table->addColumn('rule', 'text', ['notnull' => true]);
-        $table->addColumn('priority', 'integer', []);
-        $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
-        $table->addColumn('currency_expression', 'text', ['notnull' => false]);
-        $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create oro_price_rule_lexeme table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPriceRuleLexemeTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_price_rule_lexeme');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
-        $table->addColumn('price_list_id', 'integer');
-        $table->addColumn('class_name', 'string', ['length' => 255]);
-        $table->addColumn('field_name', 'string', ['length' => 255]);
-        $table->addColumn('relation_id', 'integer', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create oro_notification_message table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroNotificationMessageTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_notification_message');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('message', 'text', []);
-        $table->addColumn('message_status', 'string', ['length' => 255]);
-        $table->addColumn('channel', 'string', ['length' => 255]);
-        $table->addColumn('receiver_entity_fqcn', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('receiver_entity_id', 'integer', ['notnull' => false]);
-        $table->addColumn('is_resolved', 'boolean', []);
-        $table->addColumn('resolved_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('topic', 'string', ['length' => 255]);
-        $table->addIndex(['channel', 'topic'], 'oro_notif_msg_channel', []);
-        $table->addIndex(['receiver_entity_fqcn', 'receiver_entity_id'], 'oro_notif_msg_entity', []);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
      * Add oro_price_rule foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceRuleForeignKeys(Schema $schema)
     {
@@ -1011,7 +941,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
             $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_price_list'),
@@ -1023,8 +953,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_price_rule_lexeme foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPriceRuleLexemeForeignKeys(Schema $schema)
     {
@@ -1038,6 +966,29 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_price_list'),
             ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    private function addOroPriceAttributeOrganizationForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_price_attribute_pl');
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    protected function addOroPriceListCombinedBuildActivityForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_price_list_combined_build_activity');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_price_list_combined'),
+            ['combined_price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

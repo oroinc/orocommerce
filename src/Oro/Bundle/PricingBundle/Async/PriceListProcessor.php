@@ -2,146 +2,60 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListBuildActivityRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
-use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListStatusHandlerInterface;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Job\DependentJobService;
+use Oro\Component\MessageQueue\Job\Job;
+use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
- * Updates combined price lists in case of price changes in some products
+ * Combine prices for active and ready to rebuild Combined Price List for a given list of price lists and products.
+ * Receives message in format: array{'product': array{(priceListId)int: list<(productId)int>}
  */
-class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var CombinedPriceListTriggerHandler
-     */
-    protected $triggerHandler;
+    use LoggerAwareTrait;
 
-    /**
-     * @var PriceListTriggerFactory
-     */
-    protected $triggerFactory;
+    private ManagerRegistry $doctrine;
+    private CombinedPriceListStatusHandlerInterface $statusHandler;
+    private MessageProducerInterface $producer;
+    private JobRunner $jobRunner;
+    private DependentJobService $dependentJob;
+    private int $productsBatchSize = ProductPriceRepository::BUFFER_SIZE;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var CombinedPriceListsBuilderFacade
-     */
-    protected $combinedPriceListsBuilderFacade;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
-     * @param PriceListTriggerFactory $triggerFactory
-     * @param ManagerRegistry $registry
-     * @param CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade
-     * @param LoggerInterface $logger
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
-     * @param CombinedPriceListTriggerHandler $triggerHandler
-     */
     public function __construct(
-        PriceListTriggerFactory $triggerFactory,
-        ManagerRegistry $registry,
-        CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade,
-        LoggerInterface $logger,
-        DatabaseExceptionHelper $databaseExceptionHelper,
-        CombinedPriceListTriggerHandler $triggerHandler
+        ManagerRegistry $doctrine,
+        CombinedPriceListStatusHandlerInterface $statusHandler,
+        MessageProducerInterface $producer,
+        JobRunner $jobRunner,
+        DependentJobService $dependentJob
     ) {
-        $this->triggerFactory = $triggerFactory;
-        $this->registry = $registry;
-        $this->combinedPriceListsBuilderFacade = $combinedPriceListsBuilderFacade;
-        $this->logger = $logger;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
-        $this->triggerHandler = $triggerHandler;
+        $this->doctrine = $doctrine;
+        $this->statusHandler = $statusHandler;
+        $this->producer = $producer;
+        $this->jobRunner = $jobRunner;
+        $this->dependentJob = $dependentJob;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function setProductsBatchSize(int $productsBatchSize): void
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(CombinedPriceList::class);
-        $em->beginTransaction();
-
-        try {
-            $this->triggerHandler->startCollect();
-            $messageData = JSON::decode($message->getBody());
-            $trigger = $this->triggerFactory->createFromArray($messageData);
-
-            /** @var CombinedPriceListToPriceListRepository $cpl2plRepository */
-            $cpl2plRepository = $this->getRepository(CombinedPriceListToPriceList::class);
-            $allProducts = $trigger->getProducts();
-
-            $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
-            foreach ($cpls as $cpl) {
-                $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
-
-                $products = array_merge(...array_intersect_key($allProducts, array_flip($pls)));
-
-                $this->combinedPriceListsBuilderFacade->rebuild([$cpl], array_unique($products));
-            }
-
-            $this->combinedPriceListsBuilderFacade->dispatchEvents();
-            $em->commit();
-            $this->triggerHandler->commit();
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
-
-            return self::REJECT;
-        } catch (\Exception $e) {
-            $this->logger->error(
-                'Unexpected exception occurred during Combined Price Lists build',
-                ['exception' => $e]
-            );
-
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
-                return self::REQUEUE;
-            }
-
-            return self::REJECT;
-        } finally {
-            if (isset($e)) {
-                $em->rollback();
-                $this->triggerHandler->rollback();
-            }
-        }
-
-        return self::ACK;
-    }
-
-    /**
-     * @param string $className
-     * @return ObjectRepository
-     */
-    private function getRepository($className)
-    {
-        return $this->registry->getManagerForClass($className)->getRepository($className);
+        $this->productsBatchSize = $productsBatchSize;
     }
 
     /**
@@ -149,6 +63,117 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_COMBINED_PRICES];
+        return [ResolveCombinedPriceByPriceListTopic::getName()];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process(MessageInterface $message, SessionInterface $session)
+    {
+        $body = $message->getBody();
+        try {
+            $jobName = ResolveCombinedPriceByPriceListTopic::getName() . ':' . md5(json_encode($body));
+            $result = $this->jobRunner->runUnique(
+                $message->getMessageId(),
+                $jobName,
+                function (JobRunner $jobRunner, Job $job) use ($body) {
+                    $this->schedulePostCplJobs($job);
+
+                    $cpl2plRepository = $this->doctrine->getRepository(CombinedPriceListToPriceList::class);
+                    $allProducts = $body['product'];
+                    $activeCpls = $this->getActiveCPlsByPls($cpl2plRepository, $allProducts);
+
+                    $this->addCplBuildActivity($job, $activeCpls);
+                    foreach ($activeCpls as $cpl) {
+                        $jobRunner->createDelayed(
+                            sprintf('%s:cpl:%s', $job->getName(), $cpl->getName()),
+                            function (JobRunner $jobRunner, Job $child) use ($cpl2plRepository, $cpl, $allProducts) {
+                                $products = $this->getProductsForCombinedPriceList(
+                                    $cpl2plRepository,
+                                    $cpl,
+                                    $allProducts
+                                );
+
+                                foreach ($this->getProductBatches($products) as $productBatch) {
+                                    $this->producer->send(
+                                        CombineSingleCombinedPriceListPricesTopic::getName(),
+                                        [
+                                            'cpl' => $cpl->getId(),
+                                            'products' => $productBatch,
+                                            'jobId' => $child->getId()
+                                        ]
+                                    );
+                                }
+                            }
+                        );
+                    }
+
+                    return true;
+                }
+            );
+
+            return $result ? self::ACK : self::REJECT;
+        } catch (\Exception $e) {
+            $this->logger?->error(
+                'Unexpected exception occurred during Price Lists build.',
+                ['exception' => $e]
+            );
+
+            return self::REJECT;
+        }
+    }
+
+    private function schedulePostCplJobs(Job $job): void
+    {
+        $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
+        $context->addDependentJob(
+            RunCombinedPriceListPostProcessingStepsTopic::getName(),
+            ['relatedJobId' => $job->getRootJob()->getId()]
+        );
+        $this->dependentJob->saveDependentJob($context);
+    }
+
+    private function getActiveCPlsByPls(
+        CombinedPriceListToPriceListRepository $cpl2plRepository,
+        array $allProducts
+    ): array {
+        $cpls = $cpl2plRepository->getCombinedPriceListsByActualPriceLists(array_keys($allProducts));
+        $activeCpls = [];
+        foreach ($cpls as $cpl) {
+            if ($this->statusHandler->isReadyForBuild($cpl)) {
+                $activeCpls[] = $cpl;
+            }
+        }
+
+        return $activeCpls;
+    }
+
+    private function getProductsForCombinedPriceList(
+        CombinedPriceListToPriceListRepository $cpl2plRepository,
+        CombinedPriceList $cpl,
+        array $allProducts
+    ): array {
+        $pls = $cpl2plRepository->getPriceListIdsByCpls([$cpl]);
+
+        return array_merge(...array_intersect_key($allProducts, array_flip($pls)));
+    }
+
+    private function addCplBuildActivity(Job $job, array $activeCpls): void
+    {
+        /** @var CombinedPriceListBuildActivityRepository $repo */
+        $repo = $this->doctrine->getRepository(CombinedPriceListBuildActivity::class);
+        $repo->addBuildActivities($activeCpls, $job->getRootJob()->getId());
+    }
+
+    private function getProductBatches(array $products): \Generator
+    {
+        if (!$products) {
+            yield [];
+        } else {
+            foreach (array_chunk($products, $this->productsBatchSize) as $batch) {
+                yield $batch;
+            }
+        }
     }
 }

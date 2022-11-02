@@ -23,7 +23,7 @@ class CategoryRoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
@@ -37,7 +37,7 @@ class CategoryUrlItemsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $urlItemsProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
         $this->configManager = $this->createMock(ConfigManager::class);

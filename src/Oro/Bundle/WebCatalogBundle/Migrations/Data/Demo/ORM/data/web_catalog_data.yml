@@ -16,37 +16,193 @@
             customer: null
             customerGroup: null
     children:
-        Products:
-            defaultTitle: Products
-            defaultSlugPrototype: products
+        "Navigation Root":
+            defaultTitle: "Navigation Root"
+            defaultSlugPrototype: "navigation-root"
+            parentScopeUsed: true
+            isNavigationRoot: true
             contentVariants:
                 -
-                    type: product_collection
+                    type: system_page
                     params:
-                        title: "All Products"
+                        route: "oro_frontend_root"
                     isDefault: true
-            parentScopeUsed: true
             children:
-                "By Category":
-                    defaultTitle: "By Category"
-                    defaultSlugPrototype: "by-category"
+                Products:
+                    defaultTitle: Products
+                    defaultSlugPrototype: products
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
                                 title: "All Products"
-                                excludeSubcategories: false
                             isDefault: true
                     parentScopeUsed: true
                     children:
-                        Industrial:
-                            defaultTitle: Industrial
-                            defaultSlugPrototype: industrial
+                        "By Category":
+                            defaultTitle: "By Category"
+                            defaultSlugPrototype: "by-category"
+                            contentVariants:
+                                -
+                                    type: category_page
+                                    params:
+                                        title: "All Products"
+                                        excludeSubcategories: false
+                                    isDefault: true
+                            parentScopeUsed: true
+                            children:
+                                Industrial:
+                                    defaultTitle: Industrial
+                                    defaultSlugPrototype: industrial
+                                    contentVariants:
+                                        -
+                                            type: cms_page
+                                            params:
+                                                title: "Haec quo modo conveniant"
+                                            isDefault: true
+                                    parentScopeUsed: true
+                                    children:
+                                        "Lighting Products":
+                                            defaultTitle: "Lighting  Products"
+                                            defaultSlugPrototype: "lighting-products"
+                                            parentScopeUsed: true
+                                            contentVariants:
+                                                -
+                                                    type: category_page
+                                                    params:
+                                                        title: "Lighting Products"
+                                                    isDefault: true
+                                            children: ~
+                                        "Architectural Floodlighting":
+                                            defaultTitle: "Architectural Floodlighting"
+                                            defaultSlugPrototype: "architectural-floodlighting"
+                                            parentScopeUsed: true
+                                            contentVariants:
+                                                -
+                                                    type: category_page
+                                                    params:
+                                                        title: "Architectural Floodlighting"
+                                                    isDefault: true
+                                            children: ~
+                                Medical:
+                                    defaultTitle: Medical
+                                    defaultSlugPrototype: Medical
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Medical"
+                                                excludeSubcategories: false
+                                            isDefault: true
+                                    parentScopeUsed: true
+                                    children:
+                                        "Uniforms":
+                                            defaultTitle: "Uniforms"
+                                            defaultSlugPrototype: "uniforms"
+                                            parentScopeUsed: true
+                                            contentVariants:
+                                                -
+                                                    type: category_page
+                                                    params:
+                                                        title: "Medical Uniforms"
+                                                    isDefault: true
+                                            children: ~
+                                        "Footwear":
+                                            defaultTitle: "Footwear"
+                                            defaultSlugPrototype: "footwear"
+                                            parentScopeUsed: true
+                                            contentVariants:
+                                                -
+                                                    type: category_page
+                                                    params:
+                                                        title: "Footwear"
+                                                    isDefault: true
+                                            children: ~
+                                        "Identification":
+                                            defaultTitle: "Identification"
+                                            defaultSlugPrototype: "identification"
+                                            parentScopeUsed: true
+                                            contentVariants:
+                                                -
+                                                    type: category_page
+                                                    params:
+                                                        title: "Patient Identification"
+                                                    isDefault: true
+                                            children: ~
+                                        "Transportation":
+                                            defaultTitle: "Transportation"
+                                            defaultSlugPrototype: "transportation"
+                                            parentScopeUsed: true
+                                            contentVariants:
+                                                -
+                                                    type: category_page
+                                                    params:
+                                                        title: "Patient Transportation Equipment"
+                                                    isDefault: true
+                                            children: ~
+                                "All products":
+                                    defaultTitle: "All Products"
+                                    defaultSlugPrototype: "all-products"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: system_page
+                                            params:
+                                                route: "oro_catalog_frontend_product_allproducts"
+                                            isDefault: true
+                                    children: ~
+                        "By Brand":
+                            defaultTitle: "By Brand"
+                            defaultSlugPrototype: "by-brand"
+                            contentVariants:
+                                -
+                                    type: product_collection
+                                    params:
+                                        title: "All Products"
+                                    isDefault: true
+                            parentScopeUsed: true
+                            children:
+                                "Retail Supplies":
+                                    defaultTitle: "Retail Supplies"
+                                    defaultSlugPrototype: "retail-supplies"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Retail Supplies"
+                                            isDefault: true
+                                    children: ~
+                                "Office Furniture":
+                                    defaultTitle: "Office Furniture"
+                                    defaultSlugPrototype: "office-furniture"
+                                    parentScopeUsed: true
+                                    contentVariants:
+                                        -
+                                            type: category_page
+                                            params:
+                                                title: "Office Furniture"
+                                            isDefault: true
+                                    children: ~
+                                Retail:
+                                    defaultTitle: Retail
+                                    defaultSlugPrototype: Retail
+                                    contentVariants:
+                                        -
+                                            type: cms_page
+                                            params:
+                                                title: "Haec quo modo conveniant"
+                                            isDefault: true
+                                    parentScopeUsed: true
+                                    children: ~
+                        "By Item":
+                            defaultTitle: "Clearance"
+                            defaultSlugPrototype: "clearance"
                             contentVariants:
                                 -
                                     type: cms_page
                                     params:
-                                        title: "Haec quo modo conveniant"
+                                        title: "Bonum negas esse divitias"
                                     isDefault: true
                             parentScopeUsed: true
                             children:
@@ -72,93 +228,81 @@
                                                 title: "Architectural Floodlighting"
                                             isDefault: true
                                     children: ~
-                        Medical:
-                            defaultTitle: Medical
-                            defaultSlugPrototype: Medical
-                            contentVariants:
-                                -
-                                    type: category_page
-                                    params:
-                                        title: "Medical"
-                                        excludeSubcategories: false
-                                    isDefault: true
-                            parentScopeUsed: true
-                            children:
-                                "Uniforms":
-                                    defaultTitle: "Uniforms"
-                                    defaultSlugPrototype: "uniforms"
+                                "Medical Apparel":
+                                    defaultTitle: "Medical Apparel"
+                                    defaultSlugPrototype: "medical-apparel"
                                     parentScopeUsed: true
                                     contentVariants:
                                         -
                                             type: category_page
                                             params:
-                                                title: "Medical Uniforms"
+                                                title: "Medical Apparel"
                                             isDefault: true
                                     children: ~
-                                "Footwear":
-                                    defaultTitle: "Footwear"
-                                    defaultSlugPrototype: "footwear"
+                                "Office Furniture":
+                                    defaultTitle: "Office Furniture"
+                                    defaultSlugPrototype: "office-furniture"
                                     parentScopeUsed: true
                                     contentVariants:
                                         -
                                             type: category_page
                                             params:
-                                                title: "Footwear"
+                                                title: "Office Furniture"
                                             isDefault: true
                                     children: ~
-                                "Identification":
-                                    defaultTitle: "Identification"
-                                    defaultSlugPrototype: "identification"
+                                "Retail Supplies":
+                                    defaultTitle: "Retail Supplies"
+                                    defaultSlugPrototype: "retail-supplies"
                                     parentScopeUsed: true
                                     contentVariants:
                                         -
                                             type: category_page
                                             params:
-                                                title: "Patient Identification"
+                                                title: "Retail Supplies"
                                             isDefault: true
                                     children: ~
-                                "Transportation":
-                                    defaultTitle: "Transportation"
-                                    defaultSlugPrototype: "transportation"
-                                    parentScopeUsed: true
-                                    contentVariants:
-                                        -
-                                            type: category_page
-                                            params:
-                                                title: "Patient Transportation Equipment"
-                                            isDefault: true
-                                    children: ~
-                        "All products":
-                            defaultTitle: "All Products"
-                            defaultSlugPrototype: "all-products"
-                            parentScopeUsed: true
-                            contentVariants:
-                                -
-                                    type: system_page
-                                    params:
-                                        route: "oro_catalog_frontend_product_allproducts"
-                                    isDefault: true
-                            children: ~
-                "By Brand":
-                    defaultTitle: "By Brand"
-                    defaultSlugPrototype: "by-brand"
+                "New Arrivals":
+                    defaultTitle: "New Arrivals"
+                    defaultSlugPrototype: "new-arrivals"
                     contentVariants:
                         -
-                            type: product_collection
+                            type: cms_page
                             params:
-                                title: "All Products"
+                                title: "Bonum negas esse divitias"
                             isDefault: true
                     parentScopeUsed: true
                     children:
-                        "Retail Supplies":
-                            defaultTitle: "Retail Supplies"
-                            defaultSlugPrototype: "retail-supplies"
+                        "Lighting Products":
+                            defaultTitle: "Lighting  Products"
+                            defaultSlugPrototype: "lighting-products"
                             parentScopeUsed: true
                             contentVariants:
                                 -
-                                    type: category_page
+                                    type: product_collection
                                     params:
-                                        title: "Retail Supplies"
+                                        title: "New Arrivals / Lighting Products"
+                                    isDefault: true
+                            children: ~
+                        "Architectural Floodlighting":
+                            defaultTitle: "Architectural Floodlighting"
+                            defaultSlugPrototype: "architectural-floodlighting"
+                            parentScopeUsed: true
+                            contentVariants:
+                                -
+                                    type: product_collection
+                                    params:
+                                        title: "New Arrivals / Architectural Floodlighting"
+                                    isDefault: true
+                            children: ~
+                        "Medical Apparel":
+                            defaultTitle: "Medical Apparel"
+                            defaultSlugPrototype: "medical-apparel"
+                            parentScopeUsed: true
+                            contentVariants:
+                                -
+                                    type: product_collection
+                                    params:
+                                        title: "New Arrivals / Medical Apparel"
                                     isDefault: true
                             children: ~
                         "Office Furniture":
@@ -167,23 +311,23 @@
                             parentScopeUsed: true
                             contentVariants:
                                 -
-                                    type: category_page
+                                    type: product_collection
                                     params:
-                                        title: "Office Furniture"
+                                        title: "New Arrivals / Office Furniture"
                                     isDefault: true
                             children: ~
-                        Retail:
-                            defaultTitle: Retail
-                            defaultSlugPrototype: Retail
+                        "Retail Supplies":
+                            defaultTitle: "Retail Supplies"
+                            defaultSlugPrototype: "retail-supplies"
+                            parentScopeUsed: true
                             contentVariants:
                                 -
-                                    type: cms_page
+                                    type: product_collection
                                     params:
-                                        title: "Haec quo modo conveniant"
+                                        title: "New Arrivals / Retail Supplies"
                                     isDefault: true
-                            parentScopeUsed: true
                             children: ~
-                "By Item":
+                "Clearance":
                     defaultTitle: "Clearance"
                     defaultSlugPrototype: "clearance"
                     contentVariants:
@@ -249,135 +393,3 @@
                                         title: "Retail Supplies"
                                     isDefault: true
                             children: ~
-        "New Arrivals":
-            defaultTitle: "New Arrivals"
-            defaultSlugPrototype: "new-arrivals"
-            contentVariants:
-                -
-                    type: cms_page
-                    params:
-                        title: "Bonum negas esse divitias"
-                    isDefault: true
-            parentScopeUsed: true
-            children:
-                "Lighting Products":
-                    defaultTitle: "Lighting  Products"
-                    defaultSlugPrototype: "lighting-products"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: product_collection
-                            params:
-                                title: "New Arrivals / Lighting Products"
-                            isDefault: true
-                    children: ~
-                "Architectural Floodlighting":
-                    defaultTitle: "Architectural Floodlighting"
-                    defaultSlugPrototype: "architectural-floodlighting"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: product_collection
-                            params:
-                                title: "New Arrivals / Architectural Floodlighting"
-                            isDefault: true
-                    children: ~
-                "Medical Apparel":
-                    defaultTitle: "Medical Apparel"
-                    defaultSlugPrototype: "medical-apparel"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: product_collection
-                            params:
-                                title: "New Arrivals / Medical Apparel"
-                            isDefault: true
-                    children: ~
-                "Office Furniture":
-                    defaultTitle: "Office Furniture"
-                    defaultSlugPrototype: "office-furniture"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: product_collection
-                            params:
-                                title: "New Arrivals / Office Furniture"
-                            isDefault: true
-                    children: ~
-                "Retail Supplies":
-                    defaultTitle: "Retail Supplies"
-                    defaultSlugPrototype: "retail-supplies"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: product_collection
-                            params:
-                                title: "New Arrivals / Retail Supplies"
-                            isDefault: true
-                    children: ~
-        "Clearance":
-            defaultTitle: "Clearance"
-            defaultSlugPrototype: "clearance"
-            contentVariants:
-                -
-                    type: cms_page
-                    params:
-                        title: "Bonum negas esse divitias"
-                    isDefault: true
-            parentScopeUsed: true
-            children:
-                "Lighting Products":
-                    defaultTitle: "Lighting  Products"
-                    defaultSlugPrototype: "lighting-products"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: category_page
-                            params:
-                                title: "Lighting Products"
-                            isDefault: true
-                    children: ~
-                "Architectural Floodlighting":
-                    defaultTitle: "Architectural Floodlighting"
-                    defaultSlugPrototype: "architectural-floodlighting"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: category_page
-                            params:
-                                title: "Architectural Floodlighting"
-                            isDefault: true
-                    children: ~
-                "Medical Apparel":
-                    defaultTitle: "Medical Apparel"
-                    defaultSlugPrototype: "medical-apparel"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: category_page
-                            params:
-                                title: "Medical Apparel"
-                            isDefault: true
-                    children: ~
-                "Office Furniture":
-                    defaultTitle: "Office Furniture"
-                    defaultSlugPrototype: "office-furniture"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: category_page
-                            params:
-                                title: "Office Furniture"
-                            isDefault: true
-                    children: ~
-                "Retail Supplies":
-                    defaultTitle: "Retail Supplies"
-                    defaultSlugPrototype: "retail-supplies"
-                    parentScopeUsed: true
-                    contentVariants:
-                        -
-                            type: category_page
-                            params:
-                                title: "Retail Supplies"
-                            isDefault: true
-                    children: ~

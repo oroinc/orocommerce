@@ -1,0 +1,39 @@
+/* @theme: default; */
+
+$shopping-lists-display: flex !default;
+$shopping-lists-content-position: relative !default;
+$shopping-lists-content-display: inline-flex !default;
+$shopping-lists-content-justify-content: center !default;
+$shopping-lists-content-align-items: center !default;
+$shopping-lists-content-inner-offset: $offset-y-s 0 !default;
+$shopping-lists-content-width: 100% !default;
+$shopping-lists-content-height: auto !default;
+$shopping-lists-content-min-height: 30px !default;
+$shopping-lists-content-color: #5c7a58 !default;
+$shopping-lists-content-background: #d9e8d0 !default;
+$shopping-lists-content-border-radius: 2px !default;
+$shopping-lists-content-color-opacity-hover: .8 !default;
+
+$shopping-lists-content-wrapper-offset: 0 34px 0 8px !default;
+
+$shopping-lists-text-display: inline-block !default;
+
+$shopping-lists-notes-offset: 22px 0 16px !default;
+$shopping-lists-notes-font-size: $base-font-size - 2 !default;
+$shopping-lists-notes-font-s: italic !default;
+$shopping-lists-notes-line-height: 1.35 !default;
+$shopping-lists-notes-expanded-height: 200px !default;
+
+$shopping-lists-notes-title-font-w: font-weight('bold') !default;
+$shopping-lists-notes-title-offset: $offset-y-m !default;
+
+$shopping-lists-cart-offset: $offset-x-m !default;
+
+$shopping-lists-cart-font-size: $base-font-size--s !default;
+$shopping-lists-cart-icon: $fa-var-cart-arrow-down !default;
+
+$shopping-lists-area-trigger-position: absolute !default;
+$shopping-lists-area-trigger-font-size: $base-font-size--s !default;
+$shopping-lists-area-trigger-icon: $fa-var-pencil !default;
+$shopping-lists-area-trigger-right: 4px !default;
+$shopping-lists-area-trigger-size: 24px !default;

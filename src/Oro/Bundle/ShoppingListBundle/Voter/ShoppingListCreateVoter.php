@@ -14,9 +14,6 @@ class ShoppingListCreateVoter implements VoterInterface
      */
     private $shoppingListLimitManager;
 
-    /**
-     * @param ShoppingListLimitManager $shoppingListLimitManager
-     */
     public function __construct(ShoppingListLimitManager $shoppingListLimitManager)
     {
         $this->shoppingListLimitManager  = $shoppingListLimitManager;

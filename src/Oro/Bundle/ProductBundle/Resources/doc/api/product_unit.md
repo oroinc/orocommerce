@@ -29,9 +29,13 @@ Example:
 {
   "data": {
     "type": "productunits",
-    "id": "item",
+    "id": "kilogram",
     "attributes": {
-      "defaultPrecision": 0
+      "defaultPrecision": 0,
+      "label": "kilogram",
+      "shortLabel": "kg",
+      "pluralLabel": "kilograms",
+      "shortPluralLabel": "kgs"
     }
   }
 }
@@ -53,9 +57,10 @@ Example:
 {
   "data": {
     "type": "productunits",
-    "id": "item",
+    "id": "kilogram",
     "attributes": {
-      "defaultPrecision": 10
+      "defaultPrecision": 10,
+      "label": "kilogram"
     }
   }
 }
@@ -76,18 +81,74 @@ Delete a collection of product unit records.
 
 ## FIELDS
 
+### label
+
+The localized label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+### shortLabel
+
+The localized short label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
+
+### pluralLabel
+
+The localized plural label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
+
+### shortPluralLabel
+
+The localized short plural label of the product unit.
+
+#### create
+
+{@inheritdoc}
+
+**The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
+
 ### defaultPrecision
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
-### id
-
-#### create
+#### update
 
 {@inheritdoc}
 
-**The required field**
+**This field must not be empty, if it is passed.**

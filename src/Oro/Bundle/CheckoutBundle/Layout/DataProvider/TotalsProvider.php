@@ -19,9 +19,6 @@ class TotalsProvider
      */
     protected $totals = [];
 
-    /**
-     * @param CheckoutTotalsProvider $checkoutTotalsProvider
-     */
     public function __construct(CheckoutTotalsProvider $checkoutTotalsProvider)
     {
         $this->checkoutTotalsProvider = $checkoutTotalsProvider;

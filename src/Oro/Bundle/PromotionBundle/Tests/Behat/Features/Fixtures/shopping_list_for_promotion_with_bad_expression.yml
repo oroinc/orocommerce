@@ -1,0 +1,51 @@
+include:
+    - shopping_list.yml
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    lineItemDiscountPromotionLabel:
+        string: 'Line Item Discount Promotion 123'
+    lineItemDiscountPromotionDesc:
+        string: 'Line Item Discount Promotion Description 123'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm:
+        label: net 10
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.5
+            apply_to: 'line_items_total'
+            maximum_qty: 100
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'line Item Discount Promotion SKU1'
+        expression: "lineItems.any(lineItem.product.sku in ('SKU1'))"
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    lineItemDiscountPromotionSegment:
+        name: 'Promotion Matching Products #123'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion:
+        __calls:
+            - addLabel: ['@lineItemDiscountPromotionLabel']
+            - addDescription: ['@lineItemDiscountPromotionDesc']
+            - addScope: ['@default_scope']
+        productsSegment: '@lineItemDiscountPromotionSegment'
+        rule: '@lineItemDiscountPromotionRule'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false

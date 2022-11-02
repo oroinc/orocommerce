@@ -55,8 +55,8 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $this->entityManager->flush($resolvedVisibility);
 
         $repository = $this->getRepository();
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $visibilities = $repository->findBy(['product' => $product]);
         $this->assertNotEmpty($visibilities);
 
@@ -68,8 +68,8 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     public function testInsertByProduct()
     {
         $repository = $this->getRepository();
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $repository->deleteByProduct($product);
         $category = $this->getCategory($product);
         $repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category);

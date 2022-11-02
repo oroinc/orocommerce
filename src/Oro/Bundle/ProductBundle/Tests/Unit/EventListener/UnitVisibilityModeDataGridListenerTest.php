@@ -37,7 +37,7 @@ class UnitVisibilityModeDataGridListenerTest extends \PHPUnit\Framework\TestCase
         'initialUnitColumnParams' => ['someUnitParam1' => 'var1', 'someUnitParam2' => 'var2'],
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->singleModeProvider = $this
             ->getMockBuilder(SingleUnitModeService::class)

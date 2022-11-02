@@ -1,0 +1,102 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+  attributes:
+    id:
+      groups: ['shipping_context']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  attributes:
+    id:
+      groups: ['shipping_context']
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  attributes:
+    id:
+      groups: ['shipping_context']
+
+Oro\Bundle\ShippingBundle\Model\ShippingOrigin:
+  attributes:
+    id:
+      groups: ['shipping_context']
+    street:
+      groups: ['shipping_context']
+    street2:
+      groups: ['shipping_context']
+    city:
+      groups: ['shipping_context']
+    postalCode:
+      groups: ['shipping_context']
+    country:
+      groups: ['shipping_context']
+    region:
+      groups: ['shipping_context']
+    organization:
+      groups: ['shipping_context']
+    regionText:
+      groups: ['shipping_context']
+    namePrefix:
+      groups: ['shipping_context']
+    firstName:
+      groups: ['shipping_context']
+    middleName:
+      groups: ['shipping_context']
+    lastName:
+      groups: ['shipping_context']
+    nameSuffix:
+      groups: ['shipping_context']
+    phone:
+      groups: ['shipping_context']
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+  attributes:
+    id:
+      groups: ['shipping_context']
+    street:
+      groups: ['shipping_context']
+    street2:
+      groups: ['shipping_context']
+    city:
+      groups: ['shipping_context']
+    postalCode:
+      groups: ['shipping_context']
+    country:
+      groups: ['shipping_context']
+    region:
+      groups: ['shipping_context']
+    organization:
+      groups: ['shipping_context']
+    regionText:
+      groups: ['shipping_context']
+    namePrefix:
+      groups: ['shipping_context']
+    firstName:
+      groups: ['shipping_context']
+    middleName:
+      groups: ['shipping_context']
+    lastName:
+      groups: ['shipping_context']
+    nameSuffix:
+      groups: ['shipping_context']
+    phone:
+      groups: ['shipping_context']
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+  attributes:
+    value:
+      groups: ['shipping_context']
+    currency:
+      groups: ['shipping_context']
+
+Oro\Bundle\WebsiteBundle\Entity\Website:
+  attributes:
+    id:
+      groups: ['shipping_context']
+
+Oro\Bundle\CheckoutBundle\Entity\Checkout:
+  attributes:
+    id:
+      groups: ['shipping_context']
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+  attributes:
+    id:
+      groups: ['shipping_context']

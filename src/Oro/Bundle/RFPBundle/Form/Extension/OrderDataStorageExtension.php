@@ -6,10 +6,10 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Create order line items based on RFP
+ */
 class OrderDataStorageExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
@@ -32,14 +35,9 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     protected $requestStack;
 
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceProviderInterface
      */
     protected $productPriceProvider;
-
-    /**
-     * @var PriceListTreeHandler
-     */
-    protected $priceListTreeHandler;
 
     /**
      * @var array
@@ -47,26 +45,26 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
     protected $productPriceCriteriaCache = [];
 
     /**
-     * @param RequestStack $requestStack
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $priceListTreeHandler
+     * @var ProductPriceScopeCriteriaFactoryInterface
      */
+    protected $priceScopeCriteriaFactory;
+
     public function __construct(
         RequestStack $requestStack,
-        ProductPriceProvider $productPriceProvider,
-        PriceListTreeHandler $priceListTreeHandler
+        ProductPriceProviderInterface $productPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
         $this->requestStack = $requestStack;
         $this->productPriceProvider = $productPriceProvider;
-        $this->priceListTreeHandler = $priceListTreeHandler;
+        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [OrderType::class];
     }
 
     /**
@@ -121,7 +119,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         }
         $matchedPrices = $this->productPriceProvider->getMatchedPrices(
             $productsPriceCriteria,
-            $this->getPriceList($order)
+            $this->priceScopeCriteriaFactory->createByContext($order)
         );
         foreach ($matchedPrices as $identifier => $price) {
             foreach ($lineItems[$identifier] as $lineItem) {
@@ -130,21 +128,10 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function isApplicable()
+    protected function isApplicable(): bool
     {
         $request = $this->requestStack->getCurrentRequest();
-        return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
-    }
 
-    /**
-     * @param Order $order
-     * @return BasePriceList
-     */
-    protected function getPriceList(Order $order)
-    {
-        return $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
+        return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
     }
 }

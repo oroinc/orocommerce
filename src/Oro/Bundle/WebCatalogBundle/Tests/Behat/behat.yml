@@ -15,10 +15,45 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "By Brand")]'
 
+        On Sale:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Additional Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "On Sale")]'
+
+        Headlamps:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Headlamps")]'
+
         Default Web Catalog:
             selector:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]'
+
+        Additional Web Catalog:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Additional Web Catalog")]'
+
+        Products node:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Web Catalog Root")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products node")]'
+
+        Products duplicate:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Web Catalog Root")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products node")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Products duplicate")]'
+
+        Content Node Form Titles Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="Titles"]/../..//button[contains(@class, "fallback-status")]'
+
+        Content Node Form Url Slug Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="URL Slug"]/../..//button[contains(@class, "fallback-status")]'
 
         Content Node:
             selector: 'form[name="oro_web_catalog_content_node"]'
@@ -26,12 +61,70 @@ oro_behat_extension:
             options:
                 mapping:
                     Title: 'oro_web_catalog_content_node[titles][values][default]'
+                    Title English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    Title English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "Titles"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+                    URL Slugs English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+                    URL Slugs French value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs French use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
+                    Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
+                    Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
+                    Restriction1 Customer:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customer-"]'
+                        element: Select2Entity
+                    Restriction1 CustomerGroup:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_customerGroup-"]'
+                        element: Select2Entity
+                    Restriction1 Website:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_website-"]'
+                        element: Select2Entity
+                    Restriction1 Localization:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_0_localization-"]'
+                        element: Select2Entity
+                    Restriction2 Customer:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_customer-"]'
+                        element: Select2Entity
+                    Restriction2 CustomerGroup:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_customerGroup-"]'
+                        element: Select2Entity
+                    Restriction2 Website:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_website-"]'
+                        element: Select2Entity
+                    Restriction2 Localization:
+                        type: 'css'
+                        locator: 'div[id^="oro_web_catalog_content_node_scopes_1_localization-"]'
+                        element: Select2Entity
+                    Product:
+                        type: css
+                        locator: 'div[id^="oro_web_catalog_content_node_contentVariants_0_productPageProduct-"]'
+                        element: Select2Entity
 
         Content Variant:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-            selector: 'form[name="oro_web_catalog_content_node"] div[data-content="0"]'
+            selector:
+                type: xpath
+                locator: '//form[@name="oro_web_catalog_content_node"]//div[contains(concat(" ", normalize-space(@class), " "), " content-variant-item ") and position()=1]'
             options:
                 mapping:
                     Product:
@@ -39,24 +132,98 @@ oro_behat_extension:
                         locator: 'input[name="oro_web_catalog_content_node[contentVariants][0][productPageProduct]"]'
                         element: Select2Entity
 
+        First Content Variant Remove First Restriction:
+            selector: '[data-ftid="oro_web_catalog_content_node_contentVariants_1_scopes"] .removeRow'
+
+        Content Node Remove First Restriction:
+            selector: '[data-content="oro_web_catalog_content_node[scopes][0]"] .removeRow'
+
+        Content Node Remove Second Restriction:
+            selector: '[data-content="oro_web_catalog_content_node[scopes][1]"] .removeRow'
+
+        Override Product Variant Configuration:
+            selector: '[name="oro_web_catalog_content_node[contentVariants][0][overrideVariantConfiguration]"]'
+
         Headlamps category:
             selector:
                 type: xpath
                 locator: '//div[contains(@class, "embedded-list")]//a//dt[contains(text(),"Headlamps")]'
+
         WebCatalogSystemConfigSelect:
             selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
             class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
+        Clearance menu item:
+            selector:
+                type: xpath
+                locator: '//span[@class="main-menu__text"][text()="Clearance"]'
+
+        Inherit Parent:
+            selector: '[name="oro_web_catalog_content_node[parentScopeUsed]"]'
+
+        NewCategory2 category:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "embedded-list")]//a//dt[contains(text(),"NewCategory2")]'
+
+        NewCategory2 breadcrumb item:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "breadcrumbs__item")]/a[contains(., "NewCategory2")]'
+
+        First Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][0]"] .btn-toggle-variant'
+
+        Second Content Variant Expand Button:
+            selector: '[data-content="oro_web_catalog_content_node[contentVariants][1]"] .btn-toggle-variant'
+
+        Content Variant Collection:
+            selector: "div.variant-collection"
+
+        Add Content Variant Restriction:
+            selector: ".variant-collection .add-list-item"
+
+        Content Variant Restriction Validation Error:
+            selector: ".variant-collection .validation-failed"
+
+        Default Content Variant Expand Button:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-variant-item-default") and @data-role="content-variant-item"]//*[contains(@class, "btn-toggle-variant")]'
+
+        Non Default Content Variant Expand Button:
+            selector:
+                type: xpath
+                locator: '//div[not(contains(@class,"content-variant-item-default")) and @data-role="content-variant-item"]//*[contains(@class, "btn-toggle-variant")]'
+
+        Non Default Content Variant Remove First Restriction:
+            selector:
+                type: xpath
+                locator: '//div[not(contains(@class,"content-variant-item-default")) and @data-role="content-variant-item"]//*[contains(@class, "removeRow")][1]'
+
+        Sub Categories Tooltip Icon:
+            selector:
+                type: xpath
+                locator: '//label[contains(., "Sub-Categories")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+
+    pages:
+        Content Node Update:
+            class: Oro\Bundle\WebCatalogBundle\Tests\Behat\Page\ContentNodeUpdate
+            route: 'oro_content_node_update'
+
     suites:
         OroWebCatalogBundle:
             contexts:
-                - OroApplicationBundle::CommerceMainContext
-                - OroProductBundle::FeatureContext
-                - OroConfigBundle::FeatureContext
-                - OroDataGridBundle::GridContext
-                - OroFormBundle::FormContext
-                - OroWebCatalogBundle::FeatureContext
-                - OroCustomerBundle::FrontendGridContext
+                - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+                - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'

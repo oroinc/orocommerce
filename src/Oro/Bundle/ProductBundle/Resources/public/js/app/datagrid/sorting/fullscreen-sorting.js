@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var FullscreenSorting;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var template = require('tpl!oroproduct/templates/datagrid/fullscreen-sorting.html');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var FullscreenPopupView = require('orofrontend/blank/js/app/views/fullscreen-popup-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/fullscreen-sorting.html');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
 
-    FullscreenSorting = BaseView.extend({
+    const FullscreenSorting = BaseView.extend({
         keepElement: true,
 
         autoRender: true,
@@ -22,10 +21,10 @@ define(function(require) {
         sortingSwitcherSelector: '[data-role="fullscreen-sorting-switcher"]',
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function FullscreenSorting() {
-            FullscreenSorting.__super__.constructor.apply(this, arguments);
+        constructor: function FullscreenSorting(options) {
+            FullscreenSorting.__super__.constructor.call(this, options);
         },
 
         /**
@@ -43,7 +42,7 @@ define(function(require) {
 
         initEvents: function() {
             this.$popupHandler.on({
-                click: _.bind(this.onFullscreenPopup, this)
+                click: this.onFullscreenPopup.bind(this)
             });
         },
 
@@ -51,14 +50,14 @@ define(function(require) {
             e.preventDefault();
 
             this.$sortingSwitcher.on({
-                change: _.bind(this.onChange, this)
+                change: this.onChange.bind(this)
             });
 
             this.fullscreenView = new FullscreenPopupView({
                 contentElement: this.$popupContent,
                 popupIcon: 'fa-chevron-left'
             });
-            this.fullscreenView.on('close', _.bind(this.onClosePopup, this));
+            this.fullscreenView.on('close', this.onClosePopup.bind(this));
             this.fullscreenView.show();
         },
 
@@ -77,13 +76,13 @@ define(function(require) {
         },
 
         getTemplateData: function() {
-            var itemsList = [];
+            const itemsList = [];
 
-            var currentVal = this.$el.val();
-            var groupName = 'sorting-' + _.random(1000, 10000);
+            const currentVal = this.$el.val();
+            const groupName = 'sorting-' + _.random(1000, 10000);
 
             this.$el.find('option').each(function() {
-                var val = $(this).prop('value');
+                const val = $(this).prop('value');
 
                 itemsList.push({
                     name: groupName,

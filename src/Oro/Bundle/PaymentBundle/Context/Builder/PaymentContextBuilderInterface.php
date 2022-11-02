@@ -11,6 +11,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Provides an interface for payment context builder
+ */
 interface PaymentContextBuilderInterface
 {
     /**
@@ -94,4 +97,11 @@ interface PaymentContextBuilderInterface
      * @return self
      */
     public function setWebsite(Website $website);
+
+    /**
+     * @param float $total
+     *
+     * @return self
+     */
+    public function setTotal($total);
 }

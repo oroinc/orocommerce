@@ -1,0 +1,44 @@
+/* @theme: admin.oro; */
+
+.oro-image-slide-collection {
+    .oro-multiselect-holder {
+        display: inline-block;
+        position: relative;
+
+        width: auto;
+        min-width: 100%;
+        padding: $image-slide-item-padding;
+
+        background: $primary-900;
+
+        border-radius: $border-radius;
+    }
+
+    .selector {
+        width: 100%;
+    }
+
+    .responsive-block {
+        margin-bottom: $content-padding-medium;
+    }
+
+    .removeRow {
+        position: absolute;
+        top: $image-slide-remove-button-offset;
+        right: $image-slide-remove-button-offset;
+    }
+}
+
+.validation-error {
+    .image-slide-collection {
+        .select2-container {
+            border-color: $primary-750;
+        }
+
+        .error {
+            .select2-container {
+                border-color: $input-error-border-color;
+            }
+        }
+    }
+}

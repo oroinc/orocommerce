@@ -1,0 +1,7 @@
+ACME_BUYER:
+    permissions:
+        entity|Oro\Bundle\SaleBundle\Entity\Quote: [VIEW_BASIC]
+
+ACME_ADMINISTRATOR:
+    permissions:
+        entity|Oro\Bundle\SaleBundle\Entity\Quote: [VIEW_DEEP, CREATE_DEEP, ASSIGN_DEEP]

@@ -4,16 +4,16 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class RequestAdditionalNoteTest extends AbstractTest
+class RequestAdditionalNoteTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RequestAdditionalNote */
-    protected $requestAdditionalNote;
+    use EntityTestCaseTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    /** @var RequestAdditionalNote */
+    private $requestAdditionalNote;
+
+    protected function setUp(): void
     {
         $this->requestAdditionalNote = new RequestAdditionalNote();
     }
@@ -50,12 +50,11 @@ class RequestAdditionalNoteTest extends AbstractTest
         $this->assertFalse($this->requestAdditionalNote->isTypeAllowed('unknown type'));
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Type "unknown type" is not allowed
-     */
     public function testSetTypeWithException()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Type "unknown type" is not allowed');
+
         $this->requestAdditionalNote->setType('unknown type');
     }
 }

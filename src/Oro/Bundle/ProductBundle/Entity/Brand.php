@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -20,7 +21,9 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
- * @ORM\Entity()
+ * Brand entity class.
+ *
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\BrandRepository")
  * @ORM\Table(
  *      name="oro_brand",
  *      indexes={
@@ -61,6 +64,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *      )
  * })
  * @Config(
+ *      routeName="oro_product_brand_index",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-briefcase"
@@ -83,6 +87,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *              "type"="ACL",
  *              "group_name"=""
  *          },
+ *          "slug"={
+ *              "source"="names"
+ *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -97,7 +104,8 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 class Brand extends ExtendBrand implements
     OrganizationAwareInterface,
     SluggableInterface,
-    DatesAwareInterface
+    DatesAwareInterface,
+    DenormalizedPropertyAwareInterface
 {
     use DatesAwareTrait;
     use SluggableTrait;
@@ -226,13 +234,13 @@ class Brand extends ExtendBrand implements
      * )
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=60,
      *              "full"=true,
-     *              "fallback_field"="text"
+     *              "fallback_field"="wysiwyg"
+     *          },
+     *          "attachment"={
+     *              "acl_protected"=false
      *          },
      *          "attribute"={
      *              "is_attribute"=true
@@ -261,9 +269,6 @@ class Brand extends ExtendBrand implements
      * )
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=50,
      *              "full"=true,
@@ -512,7 +517,7 @@ class Brand extends ExtendBrand implements
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        $this->defaultTitle = $this->getName()->getString();
+        $this->updateDenormalizedProperties();
     }
 
     /**
@@ -523,6 +528,12 @@ class Brand extends ExtendBrand implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->updateDenormalizedProperties();
+    }
+
+    public function updateDenormalizedProperties(): void
+    {
         $this->defaultTitle = $this->getName()->getString();
     }
 
@@ -536,6 +547,8 @@ class Brand extends ExtendBrand implements
             $this->slugPrototypes = new ArrayCollection();
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
+
+            $this->cloneLocalizedFallbackValueAssociations();
         }
     }
 

@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceAttributePriceListRepositoryTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadPriceAttributePriceLists::class]);
@@ -17,7 +17,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
 
     public function testGetAttributesWithoutCurrencies()
     {
-        $priceAttributesWithCurrencies = $this->getRepository()->getAttributesWithCurrencies([]);
+        $qb = $this->getRepository()->getAttributesWithCurrenciesQueryBuilder([]);
+        $priceAttributesWithCurrencies = $qb->getQuery()->getResult();
         $this->assertCount(0, $priceAttributesWithCurrencies);
     }
 
@@ -28,7 +29,8 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
      */
     public function testGetAttributesWithCurrencies($currencies, $expectedPriceAttributes)
     {
-        $priceAttributesWithCurrencies = $this->getRepository()->getAttributesWithCurrencies($currencies);
+        $qb = $this->getRepository()->getAttributesWithCurrenciesQueryBuilder($currencies);
+        $priceAttributesWithCurrencies = $qb->getQuery()->getResult();
         $this->assertCount(count($expectedPriceAttributes), $priceAttributesWithCurrencies);
         foreach ($priceAttributesWithCurrencies as $attribute) {
             $this->assertTrue($this->checkExistPair($attribute, $expectedPriceAttributes));
@@ -44,21 +46,12 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
             [
                 'currencies' => ['USD'],
                 'expectedPriceAttributes' => [
+                    ['name' => 'Shipping Cost', 'currency' => 'USD'],
                     ['name' => 'priceAttributePriceList1', 'currency' => 'USD'],
                     ['name' => 'priceAttributePriceList2', 'currency' => 'USD'],
                     ['name' => 'priceAttributePriceList6', 'currency' => 'USD'],
                 ],
-            ],
-            [
-                'currencies' => ['USD', 'EUR'],
-                'expectedPriceAttributes' => [
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList2', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList6', 'currency' => 'USD'],
-                    ['name' => 'priceAttributePriceList5', 'currency' => 'EUR'],
-                    ['name' => 'priceAttributePriceList1', 'currency' => 'EUR'],
-                ],
-            ],
+            ]
         ];
     }
 
@@ -66,6 +59,7 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
     {
         $actual = $this->getRepository()->getFieldNames();
 
+        /** @var PriceAttributePriceList[] $priceAttributePriceLists */
         $priceAttributePriceLists = $this->getContainer()->get('doctrine')
             ->getManagerForClass(PriceAttributePriceList::class)
             ->getRepository(PriceAttributePriceList::class)
@@ -101,7 +95,7 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
 
         return false;
     }
-    
+
     /**
      * @return PriceAttributePriceListRepository
      */
@@ -109,6 +103,6 @@ class PriceAttributePriceListRepositoryTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceAttributePriceList');
+            ->getRepository(PriceAttributePriceList::class);
     }
 }

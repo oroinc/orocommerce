@@ -1,0 +1,18 @@
+templates:
+    -
+        label: oro.product.page_template.short.label
+        description: oro.product.page_template.short.description
+        route_name: oro_product_frontend_product_view
+        key: short
+    -
+        label: oro.product.page_template.two_columns.label
+        description: oro.product.page_template.two_columns.description
+        route_name: oro_product_frontend_product_view
+        key: two-columns
+    -
+        label: oro.product.page_template.list.label
+        description: oro.product.page_template.list.description
+        route_name: oro_product_frontend_product_view
+        key: list
+titles:
+    oro_product_frontend_product_view: oro.product.page_template.title

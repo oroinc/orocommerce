@@ -1,0 +1,15 @@
+{% block _product_item_select_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    viewport: {
+                    maxScreenType: 'tablet'
+                },
+                    moveTo: '#' ~ __productUniqId ~ 'image-holder'
+                }
+            ]
+        }
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

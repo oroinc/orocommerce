@@ -15,9 +15,6 @@ abstract class AbstractMethodsListener
      */
     private $orderAddressManager;
 
-    /**
-     * @param OrderAddressManager $orderAddressManager
-     */
     public function __construct(OrderAddressManager $orderAddressManager)
     {
         $this->orderAddressManager = $orderAddressManager;
@@ -46,9 +43,6 @@ abstract class AbstractMethodsListener
      */
     abstract protected function getApplicableAddresses(Checkout $checkout);
 
-    /**
-     * @param ExtendableConditionEvent $event
-     */
     final public function onStartCheckout(ExtendableConditionEvent $event)
     {
         if (!$this->isApplicable($event)) {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\RelatedItem;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 interface AbstractAssignerRepositoryInterface extends ObjectRepository

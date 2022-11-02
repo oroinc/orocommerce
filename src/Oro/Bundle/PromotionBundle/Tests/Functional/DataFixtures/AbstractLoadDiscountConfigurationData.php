@@ -3,14 +3,11 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 
 abstract class AbstractLoadDiscountConfigurationData extends AbstractFixture
 {
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         foreach ($this->getDiscountConfiguration() as $reference => $configurationData) {

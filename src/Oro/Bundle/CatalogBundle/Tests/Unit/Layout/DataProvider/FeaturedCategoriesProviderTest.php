@@ -2,130 +2,114 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\Localization;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Tests\Unit\Stub\WebsiteStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use PHPUnit\Framework\Constraint\IsType;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $categoryTreeProvider;
+    private const LIFETIME = 4242;
 
-    /**
-     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $tokenStorage;
+    private CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject $categoryTreeProvider;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $localizationHelper;
+    private TokenAccessor|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
 
-    /**
-     * @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $cache;
+    private AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject $cache;
 
-    /**
-     * @var FeaturedCategoriesProvider
-     */
-    protected $featuredCategoriesProvider;
+    private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
 
-    protected function setUp()
+    private FeaturedCategoriesProvider $featuredCategoriesProvider;
+
+    protected function setUp(): void
     {
-        $this->categoryTreeProvider = $this->getMockBuilder(CategoryTreeProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessor::class);
+
+        $localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $localization = new Localization();
+        $localization->setId(1);
+
+        $localizationHelper
+            ->expects(self::any())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
 
         $this->featuredCategoriesProvider = new FeaturedCategoriesProvider(
             $this->categoryTreeProvider,
-            $this->tokenStorage,
-            $this->localizationHelper
+            $this->tokenAccessor,
+            $localizationHelper,
+            $this->websiteManager
         );
 
-        $this->cache = $this->createMock(CacheProvider::class);
-        $this->featuredCategoriesProvider->setCache($this->cache);
+        $this->cache = $this->createMock(AbstractAdapter::class);
+        $this->featuredCategoriesProvider->setCache($this->cache, self::LIFETIME);
     }
 
     /**
      * @dataProvider categoriesDataProvider
-     *
-     * @param array $data
-     * @param array $categoryIds
-     * @param array $result
      */
-    public function testGetAll($data, $categoryIds, $result)
+    public function testGetAll(array $data, array $categoryIds, array $result): void
     {
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->any())
-            ->method('getUser')
-            ->will($this->returnValue(new CustomerUser()));
-
         $categories = [];
         foreach ($data as $categoryData) {
             $categories[] = $this->getEntity(Category::class, $categoryData);
         }
 
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $this->websiteManager
+            ->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn(null);
 
-        $this->categoryTreeProvider->expects($this->once())
+        $this->cache->expects(self::once())
+            ->method('get')
+            ->with(
+                'featured_categories_100_1_0_0__' . implode('_', $categoryIds) . '__7_0',
+                new IsType(IsType::TYPE_CALLABLE)
+            )
+            ->willReturnCallback(function (string $key, callable $callback) {
+                $cacheItem = $this->createMock(ItemInterface::class);
+                $cacheItem->expects(self::once())
+                    ->method('expiresAfter')
+                    ->with(self::LIFETIME);
+
+                return $callback($cacheItem);
+            });
+
+        $user = new CustomerUserStub(100);
+        $organization = $this->getEntity(Organization::class, ['id' => 7]);
+
+        $this->tokenAccessor->expects(self::once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->tokenAccessor->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $this->categoryTreeProvider->expects(self::once())
             ->method('getCategories')
-            ->with($this->tokenStorage->getToken()->getUser())
+            ->with($user)
             ->willReturn($categories);
 
-        $this->cache->expects($this->exactly(2))
-            ->method('save');
-
         $actual = $this->featuredCategoriesProvider->getAll($categoryIds);
-        $this->assertEquals($result, $actual);
+        self::assertEquals($result, $actual);
     }
 
-    public function testGetAllCached()
-    {
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->any())
-            ->method('getUser')
-            ->will($this->returnValue(new CustomerUser()));
-
-        $result = ['id' => 1, 'title' => '', 'small_image' => null];
-
-        $this->cache->expects($this->once())
-            ->method('fetch')
-            ->with('cacheVal_featured_categories__0_1')
-            ->willReturn($result);
-
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->will($this->returnValue($token));
-
-        $this->categoryTreeProvider->expects($this->never())
-            ->method('getCategories');
-
-        $this->cache->expects($this->never())
-            ->method('save');
-
-        $actual = $this->featuredCategoriesProvider->getAll([1]);
-        $this->assertEquals($result, $actual);
-    }
-
-    /**
-     * @return array
-     */
-    public function categoriesDataProvider()
+    public function categoriesDataProvider(): array
     {
         return [
             'level is equal zero' => [
@@ -150,9 +134,42 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'categoryIds' => [1, 2],
                 'result' => [
-                    ['id' => 1, 'title' => '', 'small_image' => null]
-                ]
+                    ['id' => 1, 'title' => '', 'small_image' => null, 'short' => ''],
+                ],
             ],
         ];
+    }
+
+    public function testGetAllCached(): void
+    {
+        $result = ['id' => 1, 'title' => '', 'small_image' => null];
+
+        $website = new WebsiteStub(42);
+        $this->websiteManager
+            ->expects(self::once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->cache->expects(self::once())
+            ->method('get')
+            ->with('featured_categories_100_1_0_0__1__7_42')
+            ->willReturn($result);
+
+        $user = new CustomerUserStub(100);
+        $organization = $this->getEntity(Organization::class, ['id' => 7]);
+
+        $this->tokenAccessor->expects(self::once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->tokenAccessor->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $this->categoryTreeProvider->expects(self::never())
+            ->method('getCategories');
+
+        $actual = $this->featuredCategoriesProvider->getAll([1]);
+        self::assertEquals($result, $actual);
     }
 }

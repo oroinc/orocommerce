@@ -2,147 +2,252 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Notification;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
+use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
-use Oro\Bundle\EmailBundle\Mailer\Processor;
+use Oro\Bundle\EmailBundle\Sender\EmailModelSender;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Notification\NotificationHelper;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 class NotificationHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+    use LoggerAwareTraitTestTrait;
 
-    const QUOTE_CLASS_NAME = 'Oro\Bundle\SaleBundle\Entity\Quote';
-    const EMAIL_TEMPLATE_CLASS_NAME = 'Oro\Bundle\EmailBundle\Entity\EmailTemplate';
+    private EmailModelBuilder|\PHPUnit\Framework\MockObject\MockObject $emailModelBuilder;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    protected $registry;
+    private EmailModelSender|\PHPUnit\Framework\MockObject\MockObject $emailModelSender;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EmailModelBuilder */
-    protected $emailModelBuilder;
+    private FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Processor */
-    protected $emailProcessor;
+    private NotificationHelper $helper;
 
-    /** @var NotificationHelper */
-    protected $helper;
+    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock(ManagerRegistry::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
 
-        $this->emailModelBuilder = $this->getMockBuilder('Oro\Bundle\EmailBundle\Builder\EmailModelBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $registry->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(EmailTemplate::class)
+            ->willReturn($this->entityManager);
 
-        $this->emailProcessor = $this->getMockBuilder('Oro\Bundle\EmailBundle\Mailer\Processor')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->emailModelBuilder = $this->createMock(EmailModelBuilder::class);
+        $this->emailModelSender = $this->createMock(EmailModelSender::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->helper = new NotificationHelper(
-            $this->registry,
+            $registry,
             $this->emailModelBuilder,
-            $this->emailProcessor
+            $this->emailModelSender,
+            $this->featureChecker
         );
-        $this->helper->setQuoteClassName(self::QUOTE_CLASS_NAME);
-        $this->helper->setEmailTemplateClassName(self::EMAIL_TEMPLATE_CLASS_NAME);
+        $this->helper->setQuoteClassName(Quote::class);
+        $this->helper->setEmailTemplateClassName(EmailTemplate::class);
+        $this->setUpLoggerMock($this->helper);
     }
 
-    protected function tearDown()
+    public function testGetEmailModel(): void
     {
-        unset($this->helper, $this->registry, $this->emailModelBuilder, $this->emailProcessor);
-    }
-
-    public function testGetEmailModel()
-    {
-        $request = new Request(['entityClass' => self::QUOTE_CLASS_NAME, 'entityId' => 42]);
+        $request = new Request(['entityClass' => Quote::class, 'entityId' => 42]);
         $request->setMethod('GET');
 
-        $this->emailModelBuilder->expects($this->once())
+        $this->emailModelBuilder->expects(self::once())
             ->method('createEmailModel')
             ->willReturn(new Email());
 
-        $this->emailModelBuilder->expects($this->once())->method('setRequest')->with($request);
+        $this->emailModelBuilder->expects(self::once())->method('setRequest')->with($request);
 
         $customerUser = new CustomerUser();
         $customerUser->setEmail('test@example.com');
 
         /** @var Quote $quote */
-        $quote = $this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'customerUser' => $customerUser]);
+        $quote = $this->getEntity(
+            Quote::class,
+            ['id' => 42, 'customerUser' => $customerUser, 'organization' => new Organization()]
+        );
 
-        $this->assertRepositoryCalled(self::EMAIL_TEMPLATE_CLASS_NAME);
-        $this->assertEquals(
-            $this->createEmailModel($quote, 'test@example.com', self::QUOTE_CLASS_NAME, 42),
+        $this->assertRepositoryCalled(EmailTemplate::class);
+        self::assertEquals(
+            $this->createEmailModel($quote, 'test@example.com', Quote::class, 42, 'quote_email_link'),
             $this->helper->getEmailModel($quote)
         );
     }
 
-    public function testSend()
+    /**
+     * @dataProvider guestAccessProvider
+     */
+    public function testGetEmailModelGuestAccess(
+        bool $isGuestQuoteEnabled,
+        ?CustomerUser $customerUser,
+        string $expectedTemplate
+    ): void {
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('guest_quote')
+            ->willReturn($isGuestQuoteEnabled);
+
+        $request = new Request(['entityClass' => Quote::class, 'entityId' => 42]);
+        $request->setMethod('GET');
+
+        $this->emailModelBuilder->expects(self::once())
+            ->method('createEmailModel')
+            ->willReturn(new Email());
+
+        $this->emailModelBuilder->expects(self::once())->method('setRequest')->with($request);
+
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class, ['id' => 42, 'customerUser' => $customerUser]);
+
+        $this->assertRepositoryCalled(EmailTemplate::class);
+        self::assertEquals(
+            $this->createEmailModel(
+                $quote,
+                $customerUser?->getEmail(),
+                Quote::class,
+                42,
+                $expectedTemplate
+            ),
+            $this->helper->getEmailModel($quote)
+        );
+    }
+
+    public function guestAccessProvider(): array
+    {
+        $common = new CustomerUser();
+        $common->setEmail('test@example.com');
+
+        $guest = clone $common;
+        $guest->setIsGuest(true);
+
+        return [
+            'feature disabled' => [
+                'isGuestQuoteEnabled' => false,
+                'customerUser' => $guest,
+                'expectedTemplate' => 'quote_email_link',
+            ],
+            'feature enabled with common user' => [
+                'isGuestQuoteEnabled' => true,
+                'customerUser' => $common,
+                'expectedTemplate' => 'quote_email_link',
+            ],
+            'feature enabled without user' => [
+                'isGuestQuoteEnabled' => true,
+                'customerUser' => null,
+                'expectedTemplate' => 'quote_email_link_guest',
+            ],
+            'feature enabled with guest user' => [
+                'isGuestQuoteEnabled' => true,
+                'customerUser' => $guest,
+                'expectedTemplate' => 'quote_email_link_guest',
+            ],
+        ];
+    }
+
+    public function testSend(): void
     {
         /** @var Quote $quote */
-        $quote = $this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42]);
-        $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42);
+        $quote = $this->getEntity(Quote::class, ['id' => 42]);
+        $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42, 'quote_email_link');
 
-        $this->emailProcessor->expects($this->once())->method('process')->with($emailModel);
-        $this->registry->expects($this->never())->method($this->anything());
+        $this->emailModelSender->expects(self::once())->method('send')->with($emailModel);
 
         $this->helper->send($emailModel);
     }
 
-    /**
-     * @param string $className
-     * @return \PHPUnit\Framework\MockObject\MockObject|ObjectManager
-     */
-    protected function assertManagerCalled($className)
+    public function testSendLogsErrorWhenException(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
-        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class, ['id' => 42]);
+        $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42, 'quote_email_link');
 
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with($className)
-            ->willReturn($manager);
+        $exception = new \RuntimeException('Sample exception');
+        $this->emailModelSender
+            ->expects(self::once())
+            ->method('send')
+            ->with($emailModel)
+            ->willThrowException($exception);
 
-        return $manager;
+        $this->loggerMock->expects(self::once())
+            ->method('error')
+            ->willReturnCallback(static function (string $message, array $context) use ($exception, $emailModel) {
+                self::assertEquals('Failed to send email model to test@example.com: Sample exception', $message);
+                self::assertSame($exception, $context['exception']);
+                self::assertSame($emailModel, $context['emailModel']);
+            });
+
+        $this->helper->send($emailModel);
     }
 
-    /**
-     * @param string $className
-     */
-    protected function assertRepositoryCalled($className)
+    public function testSendDisabled(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
-        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        /** @var Quote $quote */
+        $quote = $this->getEntity(Quote::class, ['id' => 42]);
+        $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42, 'quote_email_link');
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager $manager */
-        $manager = $this->assertManagerCalled($className);
-        $manager->expects($this->once())
+        $this->emailModelSender->expects(self::never())->method(self::anything());
+
+        $this->helper->setEnabled(false);
+        $this->helper->send($emailModel);
+    }
+
+    private function assertRepositoryCalled(string $className): void
+    {
+        $commonTemplate = new EmailTemplate();
+        $commonTemplate->setName('quote_email_link');
+
+        $guestTemplate = new EmailTemplate();
+        $guestTemplate->setName('quote_email_link_guest');
+
+        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $repository */
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects(self::any())
+            ->method('findOneBy')
+            ->willReturnMap(
+                [
+                    [['name' => $commonTemplate->getName()], $commonTemplate],
+                    [['name' => $guestTemplate->getName()], $guestTemplate],
+                ]
+            );
+
+        $this->entityManager->expects(self::once())
             ->method('getRepository')
             ->with($className)
             ->willReturn($repository);
     }
 
-    /**
-     * @param Quote $quote
-     * @param string $email
-     * @param string $entityClass
-     * @param int $entityId
-     * @return Email
-     */
-    protected function createEmailModel(Quote $quote, $email, $entityClass, $entityId)
-    {
+    private function createEmailModel(
+        Quote $quote,
+        ?string $email,
+        string $entityClass,
+        int $entityId,
+        string $template
+    ): Email {
+        $emailTemplate = new EmailTemplate();
+        $emailTemplate->setName($template);
+
         $emailModel = new Email();
         $emailModel
             ->setTo([$email])
             ->setEntityClass($entityClass)
             ->setEntityId($entityId)
-            ->setContexts([$quote]);
+            ->setContexts([$quote])
+            ->setTemplate($emailTemplate);
+
+        if ($quote->getOrganization()) {
+            $emailModel->setOrganization($quote->getOrganization());
+        }
 
         return $emailModel;
     }

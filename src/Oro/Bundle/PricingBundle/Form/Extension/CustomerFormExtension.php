@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\EventListener\CustomerListener;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
@@ -11,8 +13,14 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
-class CustomerFormExtension extends AbstractTypeExtension
+/**
+ * Adds priceListsByWebsites field of ScopedDataType type to a given form builder
+ * Adds CustomerListener::onPostSetData to form builder
+ */
+class CustomerFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var CustomerListener
      */
@@ -23,9 +31,6 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     protected $relationClass = 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer';
 
-    /**
-     * @param CustomerListener $listener
-     */
     public function __construct(CustomerListener $listener)
     {
         $this->listener = $listener;
@@ -34,9 +39,9 @@ class CustomerFormExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CustomerType::class;
+        return [CustomerType::class];
     }
 
     /**
@@ -44,6 +49,10 @@ class CustomerFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $builder->add(
             CustomerListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME,
             WebsiteScopedDataType::class,
@@ -62,7 +71,6 @@ class CustomerFormExtension extends AbstractTypeExtension
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->listener, 'onPostSetData']);
     }
-
 
     /**
      * @return array

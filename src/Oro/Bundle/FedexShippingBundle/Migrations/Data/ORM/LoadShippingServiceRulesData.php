@@ -4,7 +4,7 @@ namespace Oro\Bundle\FedexShippingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 
 class LoadShippingServiceRulesData extends AbstractFixture implements OrderedFixtureInterface
@@ -44,9 +44,6 @@ class LoadShippingServiceRulesData extends AbstractFixture implements OrderedFix
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
     private function getData(): array
     {
         return [

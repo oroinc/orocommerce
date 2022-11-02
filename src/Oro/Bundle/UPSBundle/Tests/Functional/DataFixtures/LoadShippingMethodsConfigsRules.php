@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -102,8 +102,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
         }
         foreach ($data['destinations'] as $destination) {
             /** @var Country $country */
-            $country = $manager
-                ->getRepository('OroAddressBundle:Country')
+            $country = $manager->getRepository(Country::class)
                 ->findOneBy(['iso2Code' => $destination['country']]);
 
             $shippingMethodsConfigsRuleDestination = clone $shippingMethodsConfigsRuleDestinationBase;
@@ -113,8 +112,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
 
             if (array_key_exists('region', $destination)) {
                 /** @var Region $region */
-                $region = $manager
-                    ->getRepository('OroAddressBundle:Region')
+                $region = $manager->getRepository(Region::class)
                     ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
                 $shippingMethodsConfigsRuleDestination->setRegion($region);
             }

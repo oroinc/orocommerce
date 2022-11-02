@@ -19,64 +19,39 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const VISITOR_CREDENTIALS = [1, 'someSessionId'];
+    private const VISITOR_CREDENTIALS = [1, 'someSessionId'];
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var InteractiveLoginEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $event;
+    private InteractiveLoginListener $listener;
 
-    /**
-     * @var InteractiveLoginListener
-     */
-    private $listener;
+    private CustomerVisitorManager|\PHPUnit\Framework\MockObject\MockObject $visitorManager;
 
-    /**
-     * @var CustomerVisitorManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $visitorManager;
+    private GuestShoppingListMigrationManager|\PHPUnit\Framework\MockObject\MockObject
+        $guestShoppingListMigrationManager;
 
-    /**
-     * @var GuestShoppingListMigrationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $guestShoppingListMigrationManager;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private SendChangedEntitiesToMessageQueueListener|\PHPUnit\Framework\MockObject\MockObject
+        $sendChangedEntitiesToMessageQueueListener;
 
-    /**
-     * @var SendChangedEntitiesToMessageQueueListener|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $sendChangedEntitiesToMessageQueueListener;
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->guestShoppingListMigrationManager         = $this->createMock(GuestShoppingListMigrationManager::class);
-        $this->visitorManager                            = $this->createMock(CustomerVisitorManager::class);
-        $this->logger                                    = $this->createMock(LoggerInterface::class);
-        $this->request                                   = new Request();
-        $this->configManager                             = $this->createMock(ConfigManager::class);
+        $this->guestShoppingListMigrationManager = $this->createMock(GuestShoppingListMigrationManager::class);
+        $this->visitorManager = $this->createMock(CustomerVisitorManager::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->request = new Request();
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->sendChangedEntitiesToMessageQueueListener = $this->createMock(
             SendChangedEntitiesToMessageQueueListener::class
         );
-        $this->event                             = $this->getMockBuilder(InteractiveLoginEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->listener                          = new InteractiveLoginListener(
+
+        $this->listener = new InteractiveLoginListener(
             $this->visitorManager,
             $this->guestShoppingListMigrationManager,
             $this->logger,
@@ -85,167 +60,111 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testWithoutCookie()
+    public function testWithoutCookie(): void
     {
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
 
-        $this->configureToken();
-
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->getToken()));
     }
 
-    public function testWithoutVisitor()
+    public function testWithoutVisitor(): void
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-        $this->configureToken();
 
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->visitorManager->expects($this->once())
+        $this->visitorManager->expects(self::once())
             ->method('find')
             ->willReturn(null);
 
-        $this->sendChangedEntitiesToMessageQueueListener->expects($this->once())
+        $this->sendChangedEntitiesToMessageQueueListener->expects(self::once())
             ->method('setEnabled')
             ->with();
 
-        $this->guestShoppingListMigrationManager->expects($this->never())
+        $this->guestShoppingListMigrationManager->expects(self::never())
             ->method('migrateGuestShoppingList');
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->getToken()));
     }
 
-    public function testWithoutVisitorShoppingLists()
+    public function testWithoutVisitorShoppingLists(): void
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
 
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-        $this->configureToken();
 
         $visitor = new CustomerVisitorStub();
-        $this->visitorManager->expects($this->once())
+        $this->visitorManager->expects(self::once())
             ->method('find')
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
 
-        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
+        $this->sendChangedEntitiesToMessageQueueListener->expects(self::exactly(2))
             ->method('setEnabled')
             ->withConsecutive([false], []);
 
-        $this->guestShoppingListMigrationManager->expects($this->never())
+        $this->guestShoppingListMigrationManager->expects(self::never())
             ->method('migrateGuestShoppingList');
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->getToken()));
     }
 
-    public function testWithEmptyVisitorShoppingList()
+    public function testMigrateGuestShoppingList(): void
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
-
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-        $this->configureToken();
 
-        $visitor = new CustomerVisitorStub();
-        $visitor->addShoppingList(new ShoppingList());
-        $this->visitorManager->expects($this->once())
-            ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
-            ->willReturn($visitor);
-
-        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
-            ->method('setEnabled')
-            ->withConsecutive([false], []);
-
-        $this->guestShoppingListMigrationManager->expects($this->never())
-            ->method('migrateGuestShoppingList');
-
-        $this->listener->onInteractiveLogin($this->event);
-    }
-
-    public function testMigrateGuestShoppingList()
-    {
-        $this->request->cookies->set(
-            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
-            base64_encode(json_encode(self::VISITOR_CREDENTIALS))
-        );
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_shopping_list.availability_for_guests')
-            ->willReturn(true);
-        $customerUser = $this->configureToken();
+        $customerUser = new CustomerUser();
+        $token = $this->getToken($customerUser);
 
         $shoppingList = new ShoppingList();
         $shoppingList->addLineItem(new LineItem());
         $visitor = new CustomerVisitorStub();
         $visitor->addShoppingList($shoppingList);
-        $this->visitorManager->expects($this->once())
+        $this->visitorManager->expects(self::once())
             ->method('find')
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
 
-        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
+        $this->sendChangedEntitiesToMessageQueueListener->expects(self::exactly(2))
             ->method('setEnabled')
             ->withConsecutive([false], []);
 
-        $this->guestShoppingListMigrationManager->expects($this->once())
+        $this->guestShoppingListMigrationManager->expects(self::once())
             ->method('migrateGuestShoppingList')
             ->with($visitor, $customerUser, $shoppingList);
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $token));
     }
 
-    public function testLogException()
+    public function testLogException(): void
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
-        $this->event->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
@@ -254,78 +173,65 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->addLineItem(new LineItem());
         $visitor = new CustomerVisitorStub();
         $visitor->addShoppingList($shoppingList);
-        $this->visitorManager->expects($this->once())
+        $this->visitorManager->expects(self::once())
             ->method('find')
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
 
-        $customerUser = $this->configureToken();
-        $this->guestShoppingListMigrationManager->expects($this->once())
+        $customerUser = new CustomerUser();
+        $token = $this->getToken($customerUser);
+        $this->guestShoppingListMigrationManager->expects(self::once())
             ->method('migrateGuestShoppingList')
             ->with($visitor, $customerUser, $shoppingList)
             ->willThrowException(new \Exception());
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with('Migration of the guest shopping list failed.');
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $token));
     }
 
-    /**
-     * @param bool $isCustomer
-     * @return CustomerUser|\stdClass
-     */
-    private function configureToken($isCustomer = true)
+    private function getToken(object $customerUser = null): TokenInterface
     {
-        $customerUser = $isCustomer ? new CustomerUser() : new \stdClass();
+        $customerUser = $customerUser ?: new CustomerUser();
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
-        $this->event->expects($this->once())
-            ->method('getAuthenticationToken')
-            ->willReturn($token);
 
-        return $customerUser;
+        return $token;
     }
 
-    public function testNotCustomerLogin()
+    public function testNotCustomerLogin(): void
     {
-        $this->configManager->expects($this->never())
+        $this->configManager->expects(self::never())
             ->method('get');
-        $this->configureToken(false);
-        $this->event->expects($this->never())
-            ->method('getRequest')
-            ->willReturn($this->request);
 
-        $this->visitorManager->expects($this->never())
+        $this->visitorManager->expects(self::never())
             ->method('find');
 
-        $this->guestShoppingListMigrationManager->expects($this->never())
+        $this->guestShoppingListMigrationManager->expects(self::never())
             ->method('migrateGuestShoppingList');
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(
+            new InteractiveLoginEvent($this->request, $this->getToken(new \stdClass()))
+        );
     }
 
-    public function testGuestShoppingListConfigurationDisabled()
+    public function testGuestShoppingListConfigurationDisabled(): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(false);
 
-        $this->configureToken();
-        $this->event->expects($this->never())
-            ->method('getRequest')
-            ->willReturn($this->request);
-
-        $this->visitorManager->expects($this->never())
+        $this->visitorManager->expects(self::never())
             ->method('find');
 
-        $this->guestShoppingListMigrationManager->expects($this->never())
+        $this->guestShoppingListMigrationManager->expects(self::never())
             ->method('migrateGuestShoppingList');
 
-        $this->listener->onInteractiveLogin($this->event);
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->getToken()));
     }
 }

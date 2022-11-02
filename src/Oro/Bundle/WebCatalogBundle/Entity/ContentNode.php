@@ -22,6 +22,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 
 /**
+ * Represents a node in the web catalog tree.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
  * @ORM\Table(name="oro_web_catalog_content_node")
  * @Gedmo\Tree(type="nested")
@@ -52,6 +54,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  *          },
  *          "activity"={
  *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
+ *          },
+ *          "slug"={
+ *              "source"="titles"
  *          }
  *     }
  * )
@@ -174,7 +179,6 @@ class ContentNode extends ExtendContentNode implements
      *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant",
      *     mappedBy="node",
      *     cascade={"ALL"},
-     *     fetch="EAGER",
      *     orphanRemoval=true
      * )
      */
@@ -220,6 +224,12 @@ class ContentNode extends ExtendContentNode implements
      * )
      */
     protected $localizedUrls;
+
+    /**
+     * Property used by {@see \Gedmo\Tree\Entity\Repository\NestedTreeRepository::__call}
+     * @var self|null
+     */
+    public $sibling;
 
     /**
      * ContentNode Constructor
@@ -399,15 +409,15 @@ class ContentNode extends ExtendContentNode implements
     }
 
     /**
-     * @param ContentVariant $page
+     * @param ContentVariant $contentVariant
      *
      * @return $this
      */
-    public function addContentVariant(ContentVariant $page)
+    public function addContentVariant(ContentVariant $contentVariant)
     {
-        if (!$this->contentVariants->contains($page)) {
-            $page->setNode($this);
-            $this->contentVariants->add($page);
+        if (!$this->contentVariants->contains($contentVariant)) {
+            $contentVariant->setNode($this);
+            $this->contentVariants->add($contentVariant);
         }
 
         return $this;
@@ -581,5 +591,12 @@ class ContentNode extends ExtendContentNode implements
     public function hasLocalizedUrl(LocalizedFallbackValue $url)
     {
         return $this->localizedUrls->contains($url);
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
     }
 }

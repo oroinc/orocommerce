@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -23,6 +23,7 @@ use Symfony\Component\DomCrawler\Field\InputFormField;
 class RequestControllerTest extends WebTestCase
 {
     use ProductPriceReference;
+    use ConfigManagerAwareTestTrait;
 
     const PHONE = '2-(999)507-4625';
     const COMPANY = 'google';
@@ -36,7 +37,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -66,7 +67,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndexAccessDeniedForAnonymousUsers()
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager = self::getConfigManager('global');
         $configManager->set('oro_rfp.guest_rfp', true);
         $configManager->flush();
 
@@ -101,7 +102,7 @@ class RequestControllerTest extends WebTestCase
             return;
         }
 
-        static::assertContains('frontend-requests-grid', $crawler->html());
+        static::assertStringContainsString('frontend-requests-grid', $crawler->html());
 
         $response = $this->client->requestFrontendGrid(['gridName' => 'frontend-requests-grid']);
 
@@ -140,7 +141,7 @@ class RequestControllerTest extends WebTestCase
 
             $this->assertEquals($request->getPoNumber(), $testedData[$request->getId()]['poNumber']);
             if ($request->getShipUntil()) {
-                $this->assertContains(
+                static::assertStringContainsString(
                     $request->getShipUntil()->format('Y-m-d'),
                     $testedData[$request->getId()]['shipUntil']
                 );
@@ -156,15 +157,12 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
      * @dataProvider viewProvider
      */
     public function testView(array $inputData, array $expectedData)
     {
         $this->loginUser($inputData['login']);
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference($inputData['request']);
 
         $crawler = $this->client->request(
@@ -184,11 +182,11 @@ class RequestControllerTest extends WebTestCase
             $request->getPoNumber(),
         ];
         if ($request->getShipUntil()) {
-            $shouldContainText[] = $request->getShipUntil()->format('M j, Y');
+            $shouldContainText[] = $request->getShipUntil()->format('n/j/Y');
         }
 
         foreach ($shouldContainText as $expectedText) {
-            $this->assertContains(
+            static::assertStringContainsString(
                 $expectedText,
                 $result->getContent()
             );
@@ -201,7 +199,7 @@ class RequestControllerTest extends WebTestCase
 
         if (isset($expectedData['hideButtonEdit'])) {
             $buttonEdit = $crawler->filter('.controls-list')->html();
-            static::assertNotContains('edit', $buttonEdit);
+            static::assertStringNotContainsString('edit', $buttonEdit);
         }
     }
 
@@ -215,7 +213,7 @@ class RequestControllerTest extends WebTestCase
     public function testActionsForDeletedRequest(array $input, $path, $code)
     {
         $this->loginUser($input['login']);
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST14);
 
         $this->client->request('GET', $this->getUrl($path, ['id' => $request->getId()]));
@@ -247,7 +245,9 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_aria_label',
                         'update_link',
+                        'view_aria_label',
                         'view_link',
                         'workflowStepLabel',
                         'action_configuration',
@@ -276,7 +276,9 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_aria_label',
                         'update_link',
+                        'view_aria_label',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -305,7 +307,9 @@ class RequestControllerTest extends WebTestCase
                         'shipUntil',
                         'createdAt',
                         'customerUserName',
+                        'update_aria_label',
                         'update_link',
+                        'view_aria_label',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -330,7 +334,9 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_aria_label',
                         'update_link',
+                        'view_aria_label',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -356,7 +362,9 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_aria_label',
                         'update_link',
+                        'view_aria_label',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -382,7 +390,9 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_aria_label',
                         'update_link',
+                        'view_aria_label',
                         'view_link',
                         'action_configuration',
                         'customerUserName',
@@ -474,7 +484,7 @@ class RequestControllerTest extends WebTestCase
             $this->initClient([]);
         }
 
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference($request);
 
         $this->client->request(
@@ -567,10 +577,26 @@ class RequestControllerTest extends WebTestCase
         ];
     }
 
+    public function testCreatePageHasSameSiteBackUrl(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        $referer = 'http://example.org';
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_rfp_frontend_request_create'),
+            [],
+            [],
+            ['HTTP_REFERER' => $referer]
+        );
+
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $backToUrl = $crawler->selectLink('Back')->attr('href');
+        self::assertNotEquals($referer, $backToUrl);
+    }
+
     /**
-     * @param array $formData
-     * @param array $expected
-     *
      * @dataProvider createProvider
      */
     public function testCreate(array $formData, array $expected)
@@ -580,13 +606,12 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
+        $crfToken = $this->getCsrfToken('oro_rfp_frontend_request')->getValue();
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [
-            'input_action' => 'save_and_stay',
             'oro_rfp_frontend_request' => $formData
         ];
         $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;
@@ -612,7 +637,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData($result->getContent(), $expected);
     }
@@ -650,9 +675,6 @@ class RequestControllerTest extends WebTestCase
 
     /**
      * @dataProvider createQueryInitDataProvider
-     *
-     * @param array $productItems
-     * @param array $expectedData
      */
     public function testCreateQueryInit(array $productItems, array $expectedData)
     {
@@ -767,7 +789,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData(
             $result->getContent(),
@@ -786,7 +808,7 @@ class RequestControllerTest extends WebTestCase
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
-        /* @var $request Request */
+        /* @var Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST2);
         $id = $request->getId();
 
@@ -834,7 +856,7 @@ class RequestControllerTest extends WebTestCase
     protected function assertContainsRequestData($html, $fields)
     {
         foreach ($fields as $fieldValue) {
-            $this->assertContains($fieldValue, $html);
+            static::assertStringContainsString($fieldValue, $html);
         }
     }
 }

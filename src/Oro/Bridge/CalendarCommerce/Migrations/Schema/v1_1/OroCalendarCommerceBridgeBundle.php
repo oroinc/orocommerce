@@ -31,11 +31,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
         self::renameActivityTables($schema, $queries, $this->renameExtension);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param RenameExtension $extension
-     */
     public static function renameActivityTables(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         self::renameCustomerRelated($schema, $queries, $extension);
@@ -44,11 +39,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
         self::renameSaleRelated($schema, $queries, $extension);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param RenameExtension $extension
-     */
     private static function renameCustomerRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // CustomerBundle v1_7 - calendar event to account user association
@@ -98,11 +88,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
         ));
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param RenameExtension $extension
-     */
     private static function renameOrderRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // OrderBundle v1_5 - calendar event to order association
@@ -124,11 +109,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
         }
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param RenameExtension $extension
-     */
     private static function renameRFPRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // RFPBundle v1_6 - calendar event to request association
@@ -150,11 +130,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
         }
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param RenameExtension $extension
-     */
     private static function renameSaleRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // SaleBundle v1_10 - calendar event to quote association

@@ -27,8 +27,6 @@ class AddTextContentVariantTable implements
 
     /**
      * Create oro_cms_text_content_variant table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsTextContentVariantTable(Schema $schema)
     {
@@ -42,8 +40,6 @@ class AddTextContentVariantTable implements
 
     /**
      * Create oro_cms_txt_cont_variant_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroCmsTextContentVariantScopeTable(Schema $schema)
     {
@@ -55,8 +51,6 @@ class AddTextContentVariantTable implements
 
     /**
      * Add oro_cms_text_content_variant foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsTextContentVariantForeignKeys(Schema $schema)
     {
@@ -71,8 +65,6 @@ class AddTextContentVariantTable implements
 
     /**
      * Add oro_cms_txt_cont_variant_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCmsTextContentVariantScopeForeignKeys(Schema $schema)
     {

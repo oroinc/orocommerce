@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
@@ -10,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * The form type for Brand entity
+ */
 class BrandType extends AbstractType
 {
     const NAME = 'oro_product_brand';
@@ -58,16 +63,12 @@ class BrandType extends AbstractType
                 [
                     'label' => 'oro.product.brand.descriptions.label',
                     'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
+                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
+                    'entry_type' => WYSIWYGValueType::class,
                     'entry_options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 300,
-                        ]
-                    ]
+                        'entity_class' => LocalizedFallbackValue::class
+                    ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -80,12 +81,12 @@ class BrandType extends AbstractType
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
-                            'statusbar' => true,
+                            'elementpath' => true,
                             'resize' => true,
-                            'width' => 500,
                             'height' => 300,
                         ]
-                    ]
+                    ],
+                    'use_tabs' => true,
                 ]
             )
         ;

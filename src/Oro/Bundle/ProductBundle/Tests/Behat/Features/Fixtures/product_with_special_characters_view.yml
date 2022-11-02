@@ -1,0 +1,6 @@
+include:
+    - '@OroShoppingListBundle:ProductFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: <("Product1`\"'&йёщ®&reg;>")>

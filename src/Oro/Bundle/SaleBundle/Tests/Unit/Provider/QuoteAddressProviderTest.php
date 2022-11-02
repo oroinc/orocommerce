@@ -7,13 +7,14 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Provider\AbstractQuoteAddressProviderTest;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
 {
     /** @var QuoteAddressProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -27,21 +28,19 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: shipping
-     */
     public function testGetCustomerAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: shipping');
+
         $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: shipping
-     */
     public function testGetCustomerUserAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: shipping');
+
         $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 
@@ -89,7 +88,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -98,7 +97,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -108,7 +107,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ]
         ];
     }
@@ -120,7 +119,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
     {
         return [
             ['shipping', 'oro_quote_address_shipping_customer_use_any', new CustomerUser()],
-            ['shipping', 'oro_quote_address_shipping_customer_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_quote_address_shipping_customer_use_any_backend', new User()],
         ];
     }
 }

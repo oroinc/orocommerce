@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Factory\Settings\PaymentTermConfigBySettingsFactoryInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
@@ -25,11 +25,6 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
      */
     protected $logger;
 
-    /**
-     * @param ManagerRegistry                             $doctrine
-     * @param LoggerInterface                             $logger
-     * @param PaymentTermConfigBySettingsFactoryInterface $paymentTermConfigBySettingsFactory
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -79,7 +74,6 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
     {
         return null !== $this->getPaymentConfig($identifier);
     }
-
 
     /**
      * @return PaymentTermSettings[]

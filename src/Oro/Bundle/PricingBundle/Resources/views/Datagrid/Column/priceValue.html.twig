@@ -1,0 +1,11 @@
+{%- if value is null -%}
+    {{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}
+{%- else -%}
+    {%- set MIN_FRACTION_DIGITS = constant('\\NumberFormatter::MIN_FRACTION_DIGITS') -%}
+    {%- set options = {
+        'attributes': {
+            MIN_FRACTION_DIGITS: oro_locale_number_attribute('min_fraction_digits', 'currency')
+        }
+    } -%}
+    {{- value|oro_format_decimal(options) -}}
+{%- endif -%}

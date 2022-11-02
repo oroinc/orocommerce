@@ -1,4 +1,4 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% set decrementQuantity = oro_entity_fallback_value(entity, 'decrementQuantity') %}
 {% if decrementQuantity is not null %}

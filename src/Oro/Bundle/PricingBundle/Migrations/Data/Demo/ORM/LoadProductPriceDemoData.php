@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -89,11 +88,6 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         $manager->flush();
     }
 
-    /**
-     * @param PriceManager $priceManager
-     * @param ProductPrice $productPrice
-     * @param Price $unitPrice
-     */
     protected function createPriceTiers(
         PriceManager $priceManager,
         ProductPrice $productPrice,

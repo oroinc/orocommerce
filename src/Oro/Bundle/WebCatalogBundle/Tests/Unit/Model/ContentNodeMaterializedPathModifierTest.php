@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -21,7 +21,7 @@ class ContentNodeMaterializedPathModifierTest extends \PHPUnit\Framework\TestCas
      */
     protected $modifier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->modifier = new ContentNodeMaterializedPathModifier($this->registry);

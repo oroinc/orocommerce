@@ -1,0 +1,30 @@
+data:
+    -
+        type: productsearch
+        id: '<toString(@product1->id)>'
+        attributes:
+            sku: PSKU1
+            name: 'Product 1'
+            shortDescription: 'Product 1 Short Description'
+            productType: simple
+            productId: '@product1->id'
+            isVariant: false
+            newArrival: true
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, default: true }
+                - { unit: '@set->code', precision: 1, default: false }
+            minimalPrices:
+                - { price: '11.0000', currencyId: 'USD', unit: 'item' }
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->sku)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'

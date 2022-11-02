@@ -1,0 +1,15 @@
+Oro\Bundle\SaleBundle\Entity\Quote:
+    firstQuote:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@amanda'
+        poNumber: 'PO1'
+        qid: '1'
+        website: '@website1'
+    secondQuote:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@amanda'
+        poNumber: 'PO2'
+        qid: '2'
+        website: '@website1'

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroHiddenNumberType;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
@@ -18,29 +20,24 @@ use Symfony\Component\Validator\Validation;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var OrderDiscountItemType
-     */
-    protected $formType;
+    /** @var TotalHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalHelper;
 
-    /**
-     * @var TotalHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalHelper;
+    /** @var OrderDiscountItemType */
+    private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalHelper = $this->createMock(TotalHelper::class);
         $this->formType = new OrderDiscountItemType($this->totalHelper);
-        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderDiscount');
+        $this->formType->setDataClass(OrderDiscount::class);
         parent::setUp();
     }
 
     public function testBuildView()
     {
         $view = new FormView();
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
 
         $options = [
             'currency' => 'USD',
@@ -66,7 +63,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         $expectedOptions = [
             'currency' => 'USD',
             'total' => 99,
-            'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderDiscount',
+            'data_class' => OrderDiscount::class,
             'csrf_token_id' => 'order_discount_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
@@ -106,9 +103,12 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
             'description' => 'some test description'
         ];
 
-        $this->totalHelper
-            ->expects($this->once())
+        $this->totalHelper->expects($this->once())
             ->method('fillDiscounts')
+            ->with($order);
+
+        $this->totalHelper->expects($this->once())
+            ->method('fillTotal')
             ->with($order);
 
         $expectedData = new OrderDiscount();
@@ -120,17 +120,26 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+
         return [
-            new PreloadedExtension([$this->formType], []),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
+            new PreloadedExtension(
+                [
+                    $this->formType,
+                    OroHiddenNumberType::class => new OroHiddenNumberType($numberFormatter),
+                ],
+                []
+            )
         ];
     }
 }

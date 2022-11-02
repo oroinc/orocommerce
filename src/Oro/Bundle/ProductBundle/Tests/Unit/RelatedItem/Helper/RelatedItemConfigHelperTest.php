@@ -3,25 +3,34 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\Helper;
 
 use Oro\Bundle\ProductBundle\Exception\ConfigProviderNotFoundException;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
 class RelatedItemConfigHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RelatedItemConfigHelper */
     private $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new RelatedItemConfigHelper();
+    }
+
+    private function getProvider(bool $isEnabled): RelatedItemConfigProviderInterface
+    {
+        $provider = $this->createMock(RelatedItemConfigProviderInterface::class);
+        $provider->expects($this->any())
+            ->method('isEnabled')
+            ->willReturn($isEnabled);
+
+        return $provider;
     }
 
     public function testConfigProvidersCanBeAddedToHelper()
     {
         $this->assertCount(0, $this->helper->getConfigProviders());
 
-        /** @var AbstractRelatedItemConfigProvider $provider */
-        $provider = $this->createMock(AbstractRelatedItemConfigProvider::class);
+        $provider = $this->createMock(RelatedItemConfigProviderInterface::class);
         $this->helper->addConfigProvider('related_product', $provider);
 
         $this->assertCount(1, $this->helper->getConfigProviders());
@@ -31,13 +40,14 @@ class RelatedItemConfigHelperTest extends \PHPUnit\Framework\TestCase
     public function testReturnsConfigProviderNotFoundExceptionOnNonExistingProvider()
     {
         $this->expectException(ConfigProviderNotFoundException::class);
+
         $this->helper->getConfigProvider('non-existing');
     }
 
     public function testIsAnyEnabledReturnsTrueIfAtLeastOneIsEnabled()
     {
-        $providerEnabled = $this->getProviderMock(true);
-        $providerDisabled = $this->getProviderMock(false);
+        $providerEnabled = $this->getProvider(true);
+        $providerDisabled = $this->getProvider(false);
 
         $this->helper->addConfigProvider('enabled', $providerEnabled);
         $this->helper->addConfigProvider('disabled', $providerDisabled);
@@ -47,8 +57,8 @@ class RelatedItemConfigHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testIsAnyEnabledReturnsFalseIfNoneIsEnabled()
     {
-        $providerDisabled = $this->getProviderMock(false);
-        $providerDisabledTwo = $this->getProviderMock(false);
+        $providerDisabled = $this->getProvider(false);
+        $providerDisabledTwo = $this->getProvider(false);
 
         $this->helper->addConfigProvider('disabled', $providerDisabled);
         $this->helper->addConfigProvider('disabled_2', $providerDisabledTwo);
@@ -58,54 +68,42 @@ class RelatedItemConfigHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetRelatedItemsTranslationKeyReturnsDefaultKeyIfNoneConfigProviderIsEnabled()
     {
-        $providerDisabled = $this->getProviderMock(false);
-        $providerDisabledTwo = $this->getProviderMock(false);
+        $providerDisabled = $this->getProvider(false);
+        $providerDisabledTwo = $this->getProvider(false);
 
         $this->helper->addConfigProvider('disabled', $providerDisabled);
         $this->helper->addConfigProvider('disabled_2', $providerDisabledTwo);
 
-        $expected = RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.';
-        $expected .= RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_DEFAULT;
-
-        $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
+        $this->assertEquals(
+            'oro.product.sections.related_items',
+            $this->helper->getRelatedItemsTranslationKey()
+        );
     }
 
     public function testGetRelatedItemsTranslationKeyReturnsSpecificKeyIfOneConfigProviderIsEnabled()
     {
         $providerName = 'related_product';
-        $providerEnabled = $this->getProviderMock(true);
+        $providerEnabled = $this->getProvider(true);
 
         $this->helper->addConfigProvider($providerName, $providerEnabled);
 
-        $expected = RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.' . $providerName;
-
-        $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
+        $this->assertEquals(
+            'oro.product.sections.' . $providerName,
+            $this->helper->getRelatedItemsTranslationKey()
+        );
     }
 
     public function testGetRelatedItemsTranslationKeyReturnsReturnsDefaultIfMoreConfigProvidersAreEnabled()
     {
-        $providerEnabled = $this->getProviderMock(true);
-        $providerEnabledTwo = $this->getProviderMock(true);
+        $providerEnabled = $this->getProvider(true);
+        $providerEnabledTwo = $this->getProvider(true);
 
         $this->helper->addConfigProvider('related_product', $providerEnabled);
         $this->helper->addConfigProvider('up_sell_product', $providerEnabledTwo);
 
-        $expected = RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.';
-        $expected .= RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_DEFAULT;
-
-        $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
-    }
-
-    /**
-     * @param $isEnabled
-     * @return AbstractRelatedItemConfigProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getProviderMock($isEnabled)
-    {
-        /** @var AbstractRelatedItemConfigProvider|\PHPUnit\Framework\MockObject\MockObject $provider */
-        $provider = $this->createMock(AbstractRelatedItemConfigProvider::class);
-        $provider->expects($this->any())->method('isEnabled')->willReturn($isEnabled);
-
-        return $provider;
+        $this->assertEquals(
+            'oro.product.sections.related_items',
+            $this->helper->getRelatedItemsTranslationKey()
+        );
     }
 }

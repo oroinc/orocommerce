@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -32,6 +32,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     const PRODUCT_PRICE_14 = 'product_price.14';
     const PRODUCT_PRICE_15 = 'product_price.15';
     const PRODUCT_PRICE_16 = 'product_price.16';
+    const PRODUCT_PRICE_17 = 'product_price.17';
 
     /**
      * @var ContainerInterface
@@ -161,7 +162,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         ],
         self::PRODUCT_PRICE_15 => [
             'product' => 'product-2',
-            'priceList' => 'price_list_6',
+            'priceList' => 'price_list_6', // Not active
             'quantity' => 97,
             'unit' => 'product_unit.liter',
             'value' => 15,
@@ -169,11 +170,19 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         ],
         self::PRODUCT_PRICE_16 => [
             'product' => 'product-2',
-            'priceList' => 'price_list_6',
+            'priceList' => 'price_list_6', // Not active
             'quantity' => 97,
             'unit' => 'product_unit.bottle',
             'value' => 15,
             'currency' => 'EUR',
+        ],
+        self::PRODUCT_PRICE_17 => [
+            'product' => 'product-3',
+            'priceList' => 'price_list_3',
+            'quantity' => 10,
+            'unit' => 'product_unit.bottle',
+            'value' => 15,
+            'currency' => 'USD',
         ],
     ];
 
@@ -187,7 +196,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository('OroPricingBundle:PriceList')->getDefault();
+                $priceList = $manager->getRepository(PriceList::class)->getDefault();
             } else {
                 /** @var PriceList $priceList */
                 $priceList = $this->getReference($data['priceList']);

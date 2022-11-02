@@ -15,7 +15,12 @@ Oro\Bundle\SaleBundle\Entity\Quote:
             - Length:
                 max: 255
         shipUntil:
-            - Date: ~
+            - Type:
+                type: DateTimeInterface
+                message: oro.sale.quote.ship_until.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         quoteProducts:
             - Valid: ~
 
@@ -39,6 +44,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
             - Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
     properties:
         quoteProduct:
             - NotBlank: ~
@@ -55,6 +63,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
             - Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
     properties:
         quoteProduct:
             - NotBlank: ~
@@ -78,6 +89,8 @@ Oro\Bundle\SaleBundle\Entity\QuoteAddress:
         phone:
             - Length:
                 max: 255
+        country:
+            - NotBlank: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteDemand:
     properties:
@@ -87,6 +100,8 @@ Oro\Bundle\SaleBundle\Entity\QuoteDemand:
 Oro\Bundle\SaleBundle\Entity\QuoteProductDemand:
     constraints:
         - Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+              path: quantity
     properties:
         quantity:
             - NotBlank: ~

@@ -10,21 +10,17 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Form;
 
 class ProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadProductUnitPrecisions::class]);
     }
 
-    /**
-     * @return ProductShippingOptions
-     */
-    public function testUpdateProductWithNewUnit()
+    public function testUpdateProductWithNewUnit(): ProductShippingOptions
     {
         $data = [
             'productUnit' => 'box',
@@ -47,7 +43,6 @@ class ProductControllerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
@@ -58,12 +53,11 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Product has been saved', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('Product has been saved', $crawler->html());
 
-        $repository = static::getContainer()
-            ->get('doctrine')
-            ->getRepository('OroShippingBundle:ProductShippingOptions');
+        $repository = self::getContainer()->get('doctrine')
+            ->getRepository(ProductShippingOptions::class);
 
         /** @var ProductShippingOptions $option */
         $option = $repository->findOneBy(['product' => $product, 'productUnit' => 'box']);
@@ -82,8 +76,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @depends testUpdateProductWithNewUnit
-     *
-     * @param ProductShippingOptions $option
      */
     public function testViewProduct(ProductShippingOptions $option)
     {
@@ -92,15 +84,13 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->assertProductShippingOptions($option, $crawler->html());
     }
 
     /**
      * @depends testUpdateProductWithNewUnit
-     *
-     * @param ProductShippingOptions $option
      */
     public function testIndexProduct(ProductShippingOptions $option)
     {
@@ -112,36 +102,32 @@ class ProductControllerTest extends WebTestCase
             ['products-grid[_filter][sku][value]' => $product->getSku()]
         );
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
         $result = reset($result['data']);
 
         $this->assertProductShippingOptions($option, $result['product_shipping_options']);
     }
 
-    /**
-     * @param ProductShippingOptions $option
-     * @param string $html
-     */
-    protected function assertProductShippingOptions(ProductShippingOptions $option, $html)
+    private function assertProductShippingOptions(ProductShippingOptions $option, string $html): void
     {
         /** @var UnitLabelFormatterInterface $unitFormatter */
-        $unitFormatter = static::getContainer()->get('oro_product.formatter.product_unit_label');
+        $unitFormatter = self::getContainer()->get('oro_product.formatter.product_unit_label');
 
         /** @var UnitValueFormatterInterface $weightFormatter */
-        $weightFormatter = static::getContainer()->get('oro_shipping.formatter.weight_unit_value');
+        $weightFormatter = self::getContainer()->get('oro_shipping.formatter.weight_unit_value');
 
         /** @var UnitLabelFormatterInterface $lengthFormatter */
-        $lengthFormatter = static::getContainer()->get('oro_shipping.formatter.length_unit_label');
+        $lengthFormatter = self::getContainer()->get('oro_shipping.formatter.length_unit_label');
 
         /** @var UnitLabelFormatterInterface $freightFormatter */
-        $freightFormatter = static::getContainer()->get('oro_shipping.formatter.freight_class_label');
+        $freightFormatter = self::getContainer()->get('oro_shipping.formatter.freight_class_label');
 
-        $this->assertContains($unitFormatter->format($option->getProductUnit()), $html);
-        $this->assertContains(
+        self::assertStringContainsString($unitFormatter->format($option->getProductUnit()), $html);
+        self::assertStringContainsString(
             $weightFormatter->formatShort($option->getWeight()->getValue(), $option->getWeight()->getUnit()),
             $html
         );
-        $this->assertContains(
+        self::assertStringContainsString(
             sprintf(
                 '%s x %s x %s %s',
                 $option->getDimensions()->getValue()->getLength(),
@@ -152,6 +138,6 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $this->assertContains($freightFormatter->format($option->getFreightClass()), $html);
+        self::assertStringContainsString($freightFormatter->format($option->getFreightClass()), $html);
     }
 }

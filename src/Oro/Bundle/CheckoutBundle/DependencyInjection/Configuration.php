@@ -8,25 +8,34 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
+    public const ROOT_NODE = 'oro_checkout';
+    public const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
-        $rootNode = $treeBuilder->root('oro_checkout');
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
             [
+                'frontend_show_open_orders' => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
                 'frontend_open_orders_separate_page' => [
                     'type' => 'boolean',
                     'value' => false,
                 ],
                 'guest_checkout' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
+                'single_page_checkout_increase_performance' => [
                     'type' => 'boolean',
                     'value' => false,
                 ],
@@ -41,7 +50,11 @@ class Configuration implements ConfigurationInterface
                 'allow_checkout_without_email_confirmation' => [
                     'type' => 'boolean',
                     'value' => false,
-                ]
+                ],
+                'checkout_max_line_items_per_page' => [
+                    'type' => 'integer',
+                    'value' => 1000,
+                ],
             ]
         );
 

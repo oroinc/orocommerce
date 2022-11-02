@@ -7,6 +7,9 @@ use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Symfony\Component\Config\FileLocator;
 
+/**
+ * Import/export normalizer for ProductImage entities.
+ */
 class ProductImageNormalizer extends ConfigurableEntityNormalizer
 {
     /**
@@ -24,14 +27,6 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
      */
     protected $fileLocator;
 
-    /**
-     * @var  string $productImageDir
-     */
-    protected $productImageDir;
-
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     */
     public function setImageTypeProvider(ImageTypeProvider $imageTypeProvider)
     {
         $this->imageTypeProvider = $imageTypeProvider;
@@ -45,20 +40,9 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         $this->productImageClass = $productImageClass;
     }
 
-    /**
-     * @param FileLocator $fileLocator
-     */
     public function setFileLocator(FileLocator $fileLocator)
     {
         $this->fileLocator = $fileLocator;
-    }
-
-    /**
-     * @param string $productImageDir
-     */
-    public function setProductImageDir($productImageDir)
-    {
-        $this->productImageDir = $productImageDir;
     }
 
     /**
@@ -70,8 +54,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     {
         $data = parent::normalize($productImage, $format, $context);
 
+        $name = $productImage->getImage()->getOriginalFileName();
+        if (!$name) {
+            $name = $productImage->getImage()->getFilename();
+        }
+
         if (array_key_exists('image', $data)) {
-            $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
+            $data['image']['name'] = $name;
         }
 
         if (!array_key_exists('types', $data)) {
@@ -88,7 +77,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         }
 
         $data['types'] = $availableTypesArray;
-        $data['image']['name'] = $productImage->getImage()->getOriginalFileName();
+        $data['image']['name'] = $name;
 
         return $data;
     }
@@ -96,38 +85,30 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function denormalize($productImageData, $class, $format = null, array $context = [])
+    public function denormalize($productImageData, $type, $format = null, array $context = [])
     {
-        try {
-            $imagePath = $this->fileLocator->locate(
-                sprintf(
-                    '%s%s',
-                    $this->productImageDir,
-                    $productImageData['image']['name']
-                )
-            );
-        } catch (\Exception $e) {
-            $imagePath = null;
-        }
-
-        $productImageData['image'] = is_array($imagePath) ? current($imagePath) : $imagePath;
         $imageTypes = $this->imageTypeProvider->getImageTypes();
-
-        foreach ($productImageData['types'] as $type => $value) {
-            if (!array_key_exists($type, $imageTypes) || !boolval($value)) {
-                unset($imageTypes[$type]);
+        foreach ($productImageData['types'] as $imageType => $value) {
+            if (!array_key_exists($imageType, $imageTypes) || !boolval($value)) {
+                unset($imageTypes[$imageType]);
             }
         }
 
+        $imagePath = '';
+        if (!empty($productImageData['image']['name'])) {
+            $imagePath = $productImageData['image']['name'];
+        }
+
+        $productImageData['image'] = $imagePath;
         $productImageData['types'] = array_keys($imageTypes);
 
-        return parent::denormalize($productImageData, $class, $format, $context);
+        return parent::denormalize($productImageData, $type, $format, $context);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, $this->productImageClass);
     }
@@ -135,8 +116,8 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
-        return is_a($type, $this->productImageClass, true);
+        return is_array($data) && is_a($type, $this->productImageClass, true);
     }
 }

@@ -1,0 +1,21 @@
+product-100:
+    productCode: '100'
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-100.names.default, string: product-100.names.default }
+    slugPrototypes:
+        - { reference: product-100.slugPrototypes.default, string: product-100.slugPrototypes.default }
+    descriptions:
+        - { reference: product-100.descriptions.default, wysiwyg: product-100.descriptions.default }
+    shortDescriptions:
+        - { reference: product-100.shortDescriptions.default, text: product-100.shortDescriptions.default }
+    manageInventory:
+        reference: product-100.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null

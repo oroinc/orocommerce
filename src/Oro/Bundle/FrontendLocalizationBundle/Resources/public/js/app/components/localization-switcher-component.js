@@ -1,38 +1,40 @@
 define(function(require) {
     'use strict';
 
-    var LocalizationSwitcherComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const routing = require('routing');
 
-    LocalizationSwitcherComponent = BaseComponent.extend({
+    const LocalizationSwitcherComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
             localizationSwitcherRoute: 'oro_frontend_localization_frontend_set_current_localization',
             localizationElement: '[data-localization]',
-            selectedLocalization: null
+            selectedLocalization: null,
+            currentRoute: 'oro_frontend_root',
+            currentRouteParameters: null,
+            currentQueryParameters: null
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LocalizationSwitcherComponent() {
-            LocalizationSwitcherComponent.__super__.constructor.apply(this, arguments);
+        constructor: function LocalizationSwitcherComponent(options) {
+            LocalizationSwitcherComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('click', this.options.localizationElement, _.bind(this.onLocalizationChange, this));
+                .on('click', this.options.localizationElement, this.onLocalizationChange.bind(this));
         },
 
         /**
@@ -40,19 +42,41 @@ define(function(require) {
          */
         onLocalizationChange: function(e) {
             e.preventDefault();
-            var $el = $(e.target);
+            const newLocalization = $(e.target).data('localization');
+            const {selectedLocalization: initialLocalization} = this.options;
 
-            var localization = $el.data('localization');
-            if (localization !== this.options.selectedLocalization) {
-                mediator.execute('showLoading');
-                $.post(
-                    routing.generate(this.options.localizationSwitcherRoute),
-                    {localization: localization},
-                    function() {
-                        mediator.execute('refreshPage');
+            mediator.execute('showLoading');
+            this.syncActiveLocalization(newLocalization)
+                // if localization is successfully changed,
+                // page will redirect to a new page with appropriate slug if localized slug is in using.
+                .then(function(data) {
+                    if (!_.isUndefined(data.redirectTo)) {
+                        const url = data.redirectTo;
+                        mediator.execute('redirectTo', {url: url}, {redirect: true});
+                    } else {
+                        mediator.execute('showFlashMessage', 'error', 'Selected language is not enabled.');
                     }
-                );
-            }
+                })
+                .fail(() => {
+                    // rollback selected localization if refresh was canceled
+                    this.syncActiveLocalization(initialLocalization);
+                });
+        },
+
+        syncActiveLocalization(localization) {
+            const url = routing.generate(this.options.localizationSwitcherRoute);
+            const {
+                currentRoute: redirectRoute,
+                currentRouteParameters: redirectRouteParameters,
+                currentQueryParameters: redirectQueryParameters
+            } = this.options;
+
+            return $.post(url, {
+                localization: localization,
+                redirectRoute: redirectRoute,
+                redirectRouteParameters: redirectRouteParameters,
+                redirectQueryParameters: redirectQueryParameters
+            }).always(() => mediator.execute('hideLoading'));
         },
 
         dispose: function() {

@@ -1,0 +1,13 @@
+{% block _content_widget_container_widget %}
+    {% do block|merge_context(blockContext) %}
+    {{ block('container_widget') }}
+{% endblock %}
+
+{% block _product_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'product-item',
+        '~class': ' product-item',
+    }) %}
+
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}

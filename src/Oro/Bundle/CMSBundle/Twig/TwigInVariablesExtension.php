@@ -2,22 +2,28 @@
 
 namespace Oro\Bundle\CMSBundle\Twig;
 
-/**
- * This extension renders twig at variables passed to template with "@oro_cms.twig.renderer".
- * Allowed in variables tags and functions are limited by "@oro_cms.twig.content_security_policy" service,
- * to add something to whitelist use that public methods.
- */
-class TwigInVariablesExtension extends \Twig_Extension
-{
-    /** @var \Twig_Environment */
-    protected $twig;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
-    /**
-     * @param \Twig_Environment $twig
-     */
-    public function __construct(\Twig_Environment $twig)
+/**
+ * Provides a Twig function to render an inline template with "@oro_cms.twig.renderer":
+ *   - render_content
+ *
+ * Allowed variables, tags and functions are limited by "@oro_cms.twig.content_security_policy" service.
+ */
+class TwigInVariablesExtension extends AbstractExtension implements ServiceSubscriberInterface
+{
+    private ContainerInterface $container;
+    private LoggerInterface $logger;
+
+    public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
-        $this->twig = $twig;
+        $this->container = $container;
+        $this->logger = $logger;
     }
 
     /**
@@ -26,7 +32,7 @@ class TwigInVariablesExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('render_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
+            new TwigFilter('render_content', [$this, 'renderContent'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -36,8 +42,34 @@ class TwigInVariablesExtension extends \Twig_Extension
      */
     public function renderContent($content)
     {
-        $template = $this->twig->createTemplate($content);
+        if (!$content) {
+            return '';
+        }
 
-        return $template->render([]);
+        try {
+            return $this->getCmsTwigRenderer()->createTemplate($content)->render([]);
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                sprintf('Could not render content: %s', $content),
+                ['exception' => $exception]
+            );
+        }
+
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_cms.twig.renderer' => Environment::class,
+        ];
+    }
+
+    private function getCmsTwigRenderer(): Environment
+    {
+        return $this->container->get('oro_cms.twig.renderer');
     }
 }

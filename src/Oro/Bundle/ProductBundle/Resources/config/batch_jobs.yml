@@ -1,0 +1,40 @@
+connector:
+    name: oro_importexport
+    jobs:
+        related_product_export_to_csv:
+            title: "Export Related Products to CSV"
+            type: export
+            steps:
+                export:
+                    title:     export
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_product.importexport.reader.related_product.entity
+                        processor: oro_importexport.processor.export_delegate
+                        writer:    oro_importexport.writer.csv
+                    parameters: ~
+        related_product_import_from_csv:
+            title: "Import Related Products from CSV"
+            type: import
+            steps:
+                import:
+                    title:     import
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_importexport.reader.csv
+                        processor: oro_importexport.processor.import_delegate
+                        writer:    oro_product.importexport.writer.related_product.entity
+                    parameters: ~
+
+        filtered_frontend_product_export_to_csv:
+            title: "Export Filtered Frontend Product Data to CSV"
+            type: export
+            steps:
+                export:
+                    title:     export
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_datagrid.importexport.export_filtered_reader
+                        processor: oro_importexport.processor.export_delegate
+                        writer:    oro_importexport.writer.csv
+                    parameters: ~

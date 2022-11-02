@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var routing = require('routing');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
-    var FrontendCouponAddView;
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const routing = require('routing');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const mediator = require('oroui/js/mediator');
+    const errorsTemplate = require('tpl-loader!oropromotion/templates/field-errors.html');
 
-    FrontendCouponAddView = BaseView.extend({
+    const FrontendCouponAddView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -40,7 +39,7 @@ define(function(require) {
         ],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function FrontendCouponAddView(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -49,15 +48,42 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        initialize: function(options) {
+            FrontendCouponAddView.__super__.initialize.call(this, options);
+
+            // Removes update_checkout_state GET parameters to avoid accidental state updates when page is refreshed.
+            const url = location.href.replace(/\&?update_checkout_state=1\&?/i, '');
+            if (url !== location.href) {
+                history.replaceState({}, document.title, url);
+            }
+        },
+
+        /**
+         * @inheritdoc
          */
         events: function() {
-            var events = {};
+            const events = {};
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
-            events['keydown ' + this.options.selectors.couponCodeSelector] = 'applyCouponByEnter';
+            events['keydown ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
+            events['change ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
             events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
+            events['shown.bs.collapse'] = 'focusCouponField';
 
             return events;
+        },
+
+        /**
+         @param {jQuery.Event} e
+         */
+        updateCouponState: function(e) {
+            this.applyCouponByEnter(e);
+            this._clearMessages();
+        },
+
+        focusCouponField: function() {
+            this.$(this.options.selectors.couponCodeSelector).trigger('focus');
         },
 
         /**
@@ -75,12 +101,12 @@ define(function(require) {
         applyCoupon: function(e) {
             e.preventDefault();
 
-            var couponCode = this.$(this.options.selectors.couponCodeSelector).val();
+            const couponCode = this.$(this.options.selectors.couponCodeSelector).val();
             if (!couponCode) {
                 return;
             }
 
-            var data = {
+            const data = {
                 couponCode: couponCode,
                 entityClass: this.options.entityClass,
                 entityId: this.options.entityId
@@ -92,23 +118,23 @@ define(function(require) {
                 type: 'POST',
                 data: data,
                 dataType: 'json',
-                success: _.bind(function(response) {
+                success: response => {
                     if (response.success) {
                         this._showSuccess(__('oro.promotion.coupon.messages.coupon_code_applied_successfully'));
                         this._updatePageData();
                     } else {
                         this._showErrors(response.errors);
                     }
-                }, this)
+                }
             }).always(
-                _.bind(this._hideLoadingMask, this)
+                this._hideLoadingMask.bind(this)
             );
         },
 
         removeCoupon: function(e) {
             e.preventDefault();
-            var $el = $(e.currentTarget);
-            var appliedCouponId = $el.data('object-id');
+            const $el = $(e.currentTarget);
+            const appliedCouponId = $el.data('object-id');
 
             this._showLoadingMask();
             $.ajax({
@@ -122,12 +148,12 @@ define(function(require) {
                 ),
                 type: 'DELETE',
                 dataType: 'json',
-                success: _.bind(function() {
+                success: () => {
                     this._showSuccess(__('oro.promotion.coupon.messages.removed'));
                     this._updatePageData();
-                }, this)
+                }
             }).always(
-                _.bind(this._hideLoadingMask, this)
+                this._hideLoadingMask.bind(this)
             );
         },
 
@@ -137,7 +163,8 @@ define(function(require) {
          * @private
          */
         _showSuccess: function(message) {
-            var attr = {flash: true};
+            this._clearMessages();
+            const attr = {flash: true};
             if (this.options.refreshOnSuccess) {
                 attr.afterReload = true;
             }
@@ -151,34 +178,26 @@ define(function(require) {
          */
         _showErrors: function(errors) {
             this._clearMessages();
-            var messageOptions = this._prepareMessageOptions();
-            _.each(errors, function(message) {
-                messageOptions.delay = false;
-                mediator.execute('showMessage', 'error', __(message), messageOptions);
-            }, messageOptions);
+
+            this.$(this.options.selectors.couponCodeSelector).addClass('input--error');
+            this.$(this.options.selectors.messagesContainer).html(errorsTemplate({
+                messages: errors.map(message => __(message))
+            }));
         },
 
         _clearMessages: function() {
-            messenger.clear(this.options.messageNamespace, {
-                container: this.options.selectors.messagesContainer
-            });
-        },
-
-        /**
-         * @returns {Object} messageOptions
-         * @private
-         */
-        _prepareMessageOptions: function() {
-            return {
-                container: this.options.selectors.messagesContainer,
-                namespace: this.options.messageNamespace
-            };
+            this.$(this.options.selectors.couponCodeSelector).removeClass('input--error');
+            this.$el.find(this.options.selectors.messagesContainer).html('');
         },
 
         _updatePageData: function() {
             if (this.options.refreshOnSuccess) {
                 mediator.execute('showLoading');
-                mediator.execute('refreshPage');
+
+                // Adds update_checkout_state GET parameter to force update checkout state after coupon is added.
+                const parts = location.href.split('?');
+                const query = (typeof parts[1] === 'undefined' ? '?' : parts[1] + '&') + 'update_checkout_state=1';
+                mediator.execute('redirectTo', {url: parts[0] + '?' + query}, {replace: true, fullRedirect: true});
             } else {
                 mediator.trigger('frontend:coupons:changed');
             }
@@ -223,15 +242,15 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]) && !this.options[option];
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
-            _.each(this.options.selectors, function(selector, selectorName) {
+            const requiredSelectors = [];
+            _.each(this.options.selectors, (selector, selectorName) => {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
                 }

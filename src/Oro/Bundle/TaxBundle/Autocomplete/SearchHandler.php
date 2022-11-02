@@ -5,6 +5,9 @@ namespace Oro\Bundle\TaxBundle\Autocomplete;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler as BaseSearchHandler;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * The autocomplete handler to search product TAX codes.
+ */
 class SearchHandler extends BaseSearchHandler
 {
     /**
@@ -33,7 +36,7 @@ class SearchHandler extends BaseSearchHandler
         $queryBuilder->setMaxResults($maxResults);
         $queryBuilder->setFirstResult($firstResult);
 
-        $query = $this->aclHelper->apply($queryBuilder, 'VIEW');
+        $query = $this->aclHelper->apply($queryBuilder);
 
         return $query->getArrayResult();
     }

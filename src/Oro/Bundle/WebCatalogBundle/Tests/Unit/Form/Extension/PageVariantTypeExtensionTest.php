@@ -20,7 +20,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new PageVariantTypeExtension();
         parent::setUp();
@@ -38,6 +38,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('type'));
         $this->assertTrue($form->has('default'));
+        $this->assertTrue($form->has('expanded'));
 
         $submittedData = $this->createMock(ContentVariantInterface::class);
         $submittedData->expects($this->once())->method('setType')->with($pageContentVariantType);
@@ -69,9 +70,9 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
         ]);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes(): void
     {
-        $this->assertEquals(PageVariantType::class, $this->extension->getExtendedType());
+        $this->assertEquals([PageVariantType::class], PageVariantTypeExtension::getExtendedTypes());
     }
 
     /**

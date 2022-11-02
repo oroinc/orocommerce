@@ -1,0 +1,54 @@
+include:
+    -  '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    -  '@OroSaleBundle:QuoteProductFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    productName1:
+        string: <("Product1`\"'&йёщ®&reg;>")>
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        currency: 'USD'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'Q123'
+        qid: '1'
+        website: '@website1'
+        internal_status: '@quote_internal_status_sent_to_customer'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct1:
+        product: '@product1'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    quoteProductPrice1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
+    quote1WorkflowItem:
+        workflowName: 'b2b_quote_backoffice_approvals'
+        definition: '@workflow_b2b_quote_backoffice_approvals'
+        currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
+        # Cannot use '@quote1->id' because quote is not yet persisted to DB at this point.
+        entityId: '1'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
+        serializedData: <('[]')>

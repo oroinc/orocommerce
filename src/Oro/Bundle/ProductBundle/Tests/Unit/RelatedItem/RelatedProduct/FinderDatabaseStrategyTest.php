@@ -2,150 +2,91 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\RelatedProduct;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
-use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\AbstractFinderDatabaseStrategyTest;
+use Oro\Component\Testing\ReflectionUtil;
 
-class FinderDatabaseStrategyTest extends AbstractFinderDatabaseStrategyTest
+class FinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
 {
-    public function testFindIdsIfTheyExist()
+    /** @var RelatedProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
+
+    /** @var RelatedItemConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $configProvider;
+
+    /** @var FinderDatabaseStrategy */
+    private $strategy;
+
+    protected function setUp(): void
     {
-        $productA = $this->getProduct(['id' => 1]);
-        $productB = $this->getProduct(['id' => 2]);
-        $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB->getId(), $productC->getId()];
+        $this->repository = $this->createMock(RelatedProductRepository::class);
+        $this->configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
 
-        $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelatedIds($productA, false, null, $expectedResult);
-        $this->configManagerBidirectionalOptionShouldBeIgnored();
-        $this->configManagerLimitOptionShouldBeIgnored();
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(RelatedProduct::class)
+            ->willReturn($this->repository);
 
-        $this->assertSame(
-            $expectedResult,
-            $this->strategy->findIds($productA)
-        );
+        $this->strategy = new FinderDatabaseStrategy($doctrine, $this->configProvider);
     }
 
-    public function testFindIdsNoRelatedProductsIfFunctionalityIsDisabled()
+    private function getProduct(int $id): Product
     {
-        $productA = $this->getProduct(['id' => 1]);
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
 
-        $this->doctrineHelperShouldNotBeAskedForRepository();
-        $this->relatedItemsFunctionalityShouldBeDisabled();
-        $this->configManagerBidirectionalOptionShouldBeIgnored();
-        $this->configManagerLimitOptionShouldBeIgnored();
-
-        $this->assertCount(0, $this->strategy->findIds($productA));
+        return $product;
     }
 
-    public function testFindIdsWithLimit()
+    public function testFindIdsWhenRelatedProductsDisabled(): void
     {
-        $productA = $this->getProduct(['id' => 1]);
-        $productB = $this->getProduct(['id' => 2]);
-        $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB->getId(), $productC->getId()];
+        $product = $this->getProduct(1);
 
-        $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelatedIds($productA, false, 2, $expectedResult);
-        $this->configManagerBidirectionalOptionShouldBeIgnored();
-        $this->configManagerLimitOptionShouldBeIgnored();
+        $this->configProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(false);
+        $this->repository->expects(self::never())
+            ->method('findRelatedIds');
 
-        $this->assertSame(
-            $expectedResult,
-            $this->strategy->findIds($productA, false, 2)
-        );
+        self::assertSame([], $this->strategy->findIds($product));
     }
 
-    public function testFindIdsBidirectional()
+    public function testFindIdsWhenRelatedProductsEnabled(): void
     {
-        $productA = $this->getProduct(['id' => 1]);
-        $productB = $this->getProduct(['id' => 2]);
-        $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB, $productC];
+        $product = $this->getProduct(1);
+        $foundProductIds = [2, 3];
 
-        $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelatedIds($productA, true, null, $expectedResult);
-        $this->configManagerBidirectionalOptionShouldBeIgnored();
-        $this->configManagerLimitOptionShouldBeIgnored();
+        $this->configProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(true);
+        $this->repository->expects(self::once())
+            ->method('findRelatedIds')
+            ->with($product->getId(), false, null)
+            ->willReturn($foundProductIds);
 
-        $this->assertSame(
-            $expectedResult,
-            $this->strategy->findIds($productA, true)
-        );
+        self::assertSame($foundProductIds, $this->strategy->findIds($product));
     }
 
-    public function testFindIdsNonBidirectional()
+    public function testFindIdsWhenRelatedProductsEnabledAndWithCustomParameters(): void
     {
-        $productA = $this->getProduct(['id' => 1]);
-        $productB = $this->getProduct(['id' => 2]);
-        $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB, $productC];
+        $product = $this->getProduct(1);
+        $foundProductIds = [2, 3];
+        $bidirectional = true;
+        $limit = 10;
 
-        $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelatedIds($productA, false, null, $expectedResult);
-        $this->configManagerBidirectionalOptionShouldBeIgnored();
-        $this->configManagerLimitOptionShouldBeIgnored();
-
-        $this->assertSame(
-            $expectedResult,
-            $this->strategy->findIds($productA)
-        );
-    }
-
-    public function testFindIdsShouldIgnoredConfigManagerIfArgumentsArePassed()
-    {
-        $productA = $this->getProduct(['id' => 1]);
-        $productB = $this->getProduct(['id' => 2]);
-        $productC = $this->getProduct(['id' => 3]);
-        $expectedResult = [$productB, $productC];
-
-        $this->relatedItemsFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelatedIds($productA, false, null, $expectedResult);
-        $this->configManagerBidirectionalOptionShouldBeIgnored();
-        $this->configManagerLimitOptionShouldBeIgnored();
-
-        $this->assertSame(
-            $expectedResult,
-            $this->strategy->findIds($productA, false, null)
-        );
-    }
-
-    /**
-     * @param Product $product
-     * @param bool|\PHPUnit\Framework\Constraint\IsAnything $bidirectional
-     * @param null|int|\PHPUnit\Framework\Constraint\IsAnything $limit
-     * @param array $related
-     */
-    protected function andProductRepositoryShouldFindRelatedIds(
-        Product $product,
-        $bidirectional,
-        $limit,
-        array $related
-    ) {
-        $this->repository
-            ->expects($this->once())
+        $this->configProvider->expects(self::once())
+            ->method('isEnabled')
+            ->willReturn(true);
+        $this->repository->expects(self::once())
             ->method('findRelatedIds')
             ->with($product->getId(), $bidirectional, $limit)
-            ->willReturn($related);
-    }
+            ->willReturn($foundProductIds);
 
-    /**
-     * @return FinderDatabaseStrategy
-     */
-    public function createFinderStrategy()
-    {
-        return new FinderDatabaseStrategy(
-            $this->doctrineHelper,
-            $this->configProvider
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createRepositoryMock()
-    {
-        return $this->createMock(RelatedProductRepository::class);
+        self::assertSame($foundProductIds, $this->strategy->findIds($product, $bidirectional, $limit));
     }
 }

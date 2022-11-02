@@ -1,47 +1,40 @@
 define(function(require) {
     'use strict';
 
-    var BreadcrumbsNavigationBlock;
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var $ = require('jquery');
-    var __ = require('orotranslation/js/translator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
 
-    BreadcrumbsNavigationBlock = BaseComponent.extend({
+    const BreadcrumbsNavigationBlock = BaseComponent.extend({
         /**
          * @property
          */
         $element: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function BreadcrumbsNavigationBlock() {
-            BreadcrumbsNavigationBlock.__super__.constructor.apply(this, arguments);
+        constructor: function BreadcrumbsNavigationBlock(options) {
+            BreadcrumbsNavigationBlock.__super__.constructor.call(this, options);
+        },
+
+        listen: {
+            'datagrid_filters:update mediator': 'onFiltersUpdate'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.$element = options._sourceElement;
 
-            mediator.on('datagrid_filters:update', $.proxy(this, 'updateFiltersInfo'));
-            mediator.on('datagrid_filters:update', $.proxy(this, 'updateSortingInfo'));
-            mediator.on('datagrid_filters:update', $.proxy(this, 'updatePaginationInfo'));
-
-            BreadcrumbsNavigationBlock.__super__.initialize.apply(this, arguments);
+            BreadcrumbsNavigationBlock.__super__.initialize.call(this, options);
         },
 
-        /**
-         * {@inheritDoc}
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            BreadcrumbsNavigationBlock.__super__.dispose.call(this);
+        onFiltersUpdate: function(datagrid) {
+            this.updateFiltersInfo(datagrid);
+            this.updateSortingInfo(datagrid);
+            this.updatePaginationInfo(datagrid);
         },
 
         /**
@@ -51,10 +44,10 @@ define(function(require) {
          * @param {object} datagrid
          */
         updateFiltersInfo: function(datagrid) {
-            var currentFilters = [];
-            var iterator = function(filterName, filterDefinition) {
+            const currentFilters = [];
+            const iterator = function(filterName, filterDefinition) {
                 if (filterDefinition.name === filterName && filterDefinition.visible) {
-                    var hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
+                    const hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
 
                     currentFilters.push({
                         hint: hint,
@@ -63,7 +56,7 @@ define(function(require) {
                 }
             };
 
-            for (var filterName in datagrid.collection.state.filters) {
+            for (const filterName in datagrid.collection.state.filters) {
                 if (datagrid.collection.state.filters.hasOwnProperty(filterName)) {
                     datagrid.metadata.filters.forEach(iterator.bind(null, filterName));
                 }
@@ -75,17 +68,17 @@ define(function(require) {
                 return;
             }
 
-            var buildFilterString = function(filter) {
+            const buildFilterString = function(filter) {
                 return filter.label + ' ' + filter.hint;
             };
 
-            var filtersStrings = [];
+            const filtersStrings = [];
 
             currentFilters.forEach(function(filter) {
                 filtersStrings.push(buildFilterString(filter));
             });
 
-            var filtersString = '[' + filtersStrings.join(', ') + ']';
+            const filtersString = '[' + filtersStrings.join(', ') + ']';
 
             $('.filters-info', this.$element).text(filtersString);
         },
@@ -97,13 +90,13 @@ define(function(require) {
          * @param {object} datagrid
          */
         updateSortingInfo: function(datagrid) {
-            var info = __('oro.product.grid.navigation_bar.sorting.label');
+            let info = __('oro.product.grid.navigation_bar.sorting.label');
 
-            var sorter = datagrid.collection.state.sorters;
-            var sorterLabel = '';
-            var sorterDirection = '';
+            const sorter = datagrid.collection.state.sorters;
+            let sorterLabel = '';
+            let sorterDirection = '';
 
-            for (var k in sorter) {
+            for (const k in sorter) {
                 if (sorter.hasOwnProperty(k)) {
                     sorterLabel = k;
                     sorterDirection = __('oro.product.grid.navigation_bar.sorting.' + (sorter[k] > 0 ? 'desc' : 'asc'));
@@ -124,11 +117,11 @@ define(function(require) {
          * @param {object} datagrid
          */
         updatePaginationInfo: function(datagrid) {
-            var info = __('oro.product.grid.navigation_bar.pagination.label');
-            var state = datagrid.collection.state;
+            let info = __('oro.product.grid.navigation_bar.pagination.label');
+            const state = datagrid.collection.state;
 
-            var start = (state.currentPage - 1) * state.pageSize + 1;
-            var end = state.totalRecords < state.pageSize ? state.totalRecords : (state.currentPage) * state.pageSize;
+            const start = (state.currentPage - 1) * state.pageSize + 1;
+            const end = state.totalRecords < state.pageSize ? state.totalRecords : (state.currentPage) * state.pageSize;
 
             info = info.replace('%start%', start).replace('%end%', end).replace('%total%', state.totalRecords);
 

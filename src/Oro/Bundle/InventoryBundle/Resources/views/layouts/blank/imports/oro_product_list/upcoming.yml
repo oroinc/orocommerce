@@ -1,9 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'OroInventoryBundle:layouts:blank/imports/oro_product_list/upcoming.html.twig'
-        - '@add':
-            id: __product_upcoming_label
-            parentId: __product_specification
-            blockType: container
-            prepend: true

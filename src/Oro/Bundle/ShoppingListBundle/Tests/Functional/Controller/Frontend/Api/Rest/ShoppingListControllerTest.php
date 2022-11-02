@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
@@ -10,70 +11,60 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShoppingListControllerTest extends WebTestCase
 {
-    protected function setUp()
+    use OperationAwareTestTrait;
+
+    protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                LoadShoppingListACLData::class,
-            ]
-        );
+        $this->loadFixtures([LoadShoppingListACLData::class]);
     }
 
     /**
      * @dataProvider ACLProvider
-     * @param string $resource
-     * @param string $user
-     * @param int $status
      */
-    public function testSetCurrent($resource, $user, $status)
+    public function testSetCurrent(string $resource, string $user, int $status)
     {
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_set_shopping_list_current', ['id' => $shoppingList->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, $status);
-        if ($user && $status == 204) {
-            $currentShoppingList = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')
+        if ($user && $status === 204) {
+            $currentShoppingList = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
                 ->getCurrent();
 
             $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
         }
     }
 
-    public function testSetCurrentFailsOnNonExistingList()
+    public function testSetCurrentFailsOnNonExistingList(): void
     {
-        $this->client->request(
-            'PUT',
-            $this->getUrl('oro_api_set_shopping_list_current', ['id' => -1])
-        );
+        $url = str_replace($id = 999999, 'invalid', $this->getUrl('oro_api_set_shopping_list_current', ['id' => $id]));
+        $this->client->jsonRequest('PUT', $url);
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
     /**
      * @dataProvider actionACLProvider
-     * @param string $resource
-     * @param string $user
-     * @param int $status
      */
-    public function testDelete($resource, $user, $status)
+    public function testDelete(string $resource, string $user, int $status)
     {
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
 
         $operationName = 'oro_shoppinglist_delete';
         $entityId = $shoppingList->getId();
-        $entityClass = self::getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
-        $this->client->request(
+        $entityClass = ShoppingList::class;
+        $this->client->jsonRequest(
             'POST',
             $this->getUrl(
                 'oro_frontend_action_operation_execute',
@@ -84,27 +75,22 @@ class ShoppingListControllerTest extends WebTestCase
                 ]
             ),
             $this->getOperationExecuteParams($operationName, $entityId, $entityClass),
-            [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
 
         if ($status === 200) {
-            static::getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class)->clear();
+            self::getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class)->clear();
 
-            $removedShoppingList = static::getContainer()
-                ->get('doctrine')
-                ->getRepository('OroShoppingListBundle:ShoppingList')
+            $removedShoppingList = self::getContainer()->get('doctrine')
+                ->getRepository(ShoppingList::class)
                 ->find($entityId);
 
-            static::assertNull($removedShoppingList);
+            self::assertNull($removedShoppingList);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function ACLProvider()
+    public function ACLProvider(): array
     {
         return [
             'anonymous user' => [
@@ -140,10 +126,7 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function actionACLProvider()
+    public function actionACLProvider(): array
     {
         $acls = $this->ACLProvider();
         $acls['anonymous user']['status'] = 403;
@@ -156,30 +139,23 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @dataProvider ownerProvider
-     * @param string $resource
-     * @param string $user
-     * @param int $status
-     * @param string $assignedUserEmail
      */
-    public function testSetOwner($resource, $user, $assignedUserEmail, $status)
+    public function testSetOwner(string $resource, string $user, string $assignedUserEmail, int $status)
     {
         $this->loginUser($user);
         $shoppingList = $this->getReference($resource);
         $assignedUser = $this->getReference($assignedUserEmail);
 
-        $this->client->request(
+        $this->client->jsonRequest(
             'PUT',
             $this->getUrl('oro_api_set_shopping_list_owner', ['id' => $shoppingList->getId()]),
-            ["ownerId" => $assignedUser->getId()]
+            ['ownerId' => $assignedUser->getId()]
         );
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, $status);
     }
 
-    /**
-     * @return array
-     */
-    public function ownerProvider()
+    public function ownerProvider(): array
     {
         return [
             'anonymous user' => [
@@ -227,27 +203,11 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass)
+    public function testSetOwnerWhenInvalidShoppingListId()
     {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
+        $url = str_replace($id = 999999, 'invalid', $this->getUrl('oro_api_set_shopping_list_owner', ['id' => $id]));
+        $this->client->jsonRequest('PUT', $url);
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 }

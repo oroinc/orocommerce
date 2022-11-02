@@ -1,7 +1,9 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Order submission with PayPal Payments Pro and zero "authorization amount" option
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Create new PayPal Payments Pro Integration
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
     And I login as administrator and use in "second_session" as "Admin"

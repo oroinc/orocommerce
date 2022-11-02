@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddImportValidationComponent;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var widgetManager = require('oroui/js/widget-manager');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const widgetManager = require('oroui/js/widget-manager');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
 
-    QuickAddImportValidationComponent = BaseComponent.extend({
+    const QuickAddImportValidationComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -20,71 +19,64 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function QuickAddImportValidationComponent() {
-            QuickAddImportValidationComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddImportValidationComponent(options) {
+            QuickAddImportValidationComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            mediator.on('widget:contentLoad', this.onWidgetRender, this);
-        },
-
-        submitAction: function(widget) {
-            var itemRows = $(this.options.itemsTableRows, widget.el);
-            var result = [];
-            var that = this;
-
-            itemRows.each(function(index, element) {
-                var $fields = $('td', element);
-
-                result.push({
-                    sku: $fields.get(-1).textContent,
-                    quantity: $fields.get(1).textContent,
-                    unit: $fields.get(2).textContent
-                });
-            }).promise().done(function() {
-                mediator.trigger('quick-add-import-form:submit', result);
-                widgetManager.getWidgetInstance(that.options._wid, that.closeWidget);
+            this.listenTo(mediator, {
+                'widget:contentLoad': this.onWidgetRender
             });
         },
 
+        submitAction: function(widget) {
+            const itemRows = $(this.options.itemsTableRows, widget.el);
+            const result = [];
+
+            itemRows.each((index, element) => {
+                result.push($(element).data('rowItem'));
+            });
+            mediator.trigger('quick-add-import-form:submit', result);
+            widgetManager.getWidgetInstance(this.options._wid, this.closeWidget);
+        },
+
         closeWidget: function(widget) {
-            widget.dispose();
+            widget.remove();
         },
 
         onWidgetRender: function() {
-            var title = _.template(this.options.titleTemplate);
-            var subtitle = '';
-            var that = this;
+            const title = _.template(this.options.titleTemplate);
+            let subtitle = '';
 
-            widgetManager.getWidgetInstance(this.options._wid, function(widget) {
-                var dialogWidget = widget.getWidget();
-                var instanceData = dialogWidget.get(0);
-                var instance = $.data(instanceData, 'ui-dialog');
+            widgetManager.getWidgetInstance(this.options._wid, widget => {
+                const dialogWidget = widget.getWidget();
+                const instanceData = dialogWidget.get(0);
+                const instance = $.data(instanceData, 'ui-dialog');
 
                 widget
                     .off('adoptedFormSubmitClick')
-                    .on('adoptedFormSubmitClick', _.bind(that.submitAction, that, widget));
+                    .on('adoptedFormSubmitClick', this.submitAction.bind(this, widget));
 
-                instance._title = function(title) {
-                    if (this.options.title) {
-                        title.html(this.options.title);
+                instance._title = title => {
+                    if (instance.options.title) {
+                        title.html(instance.options.title);
                     } else {
                         title.html('&#160;');
                     }
                 };
 
-                if (that.options.validItemsCount !== undefined) {
+                if (this.options.validItemsCount !== undefined) {
                     subtitle = __(
                         'oro.product.frontend.quick_add.import_validation.subtitle',
-                        {count: that.options.validItemsCount},
-                        that.options.validItemsCount
+                        {count: this.options.validItemsCount},
+                        this.options.validItemsCount
                     );
                 }
 

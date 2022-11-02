@@ -10,11 +10,14 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Represents history of payment transactions.
+ *
  * @ORM\Table(
  *      name="oro_payment_transaction",
  *      uniqueConstraints={
@@ -22,25 +25,11 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
- * @Config(
- *       mode="hidden",
- *       defaultValues={
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="frontendOwner",
- *              "frontend_owner_column_name"="frontend_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          }
- *      }
- * )
+ * @Config()
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class PaymentTransaction implements DatesAwareInterface
+class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -74,6 +63,17 @@ class PaymentTransaction implements DatesAwareInterface
     /**
      * @var string
      * @ORM\Column(name="access_token", type="string")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $accessToken;
 
@@ -92,6 +92,17 @@ class PaymentTransaction implements DatesAwareInterface
     /**
      * @var string
      * @ORM\Column(name="reference", type="string", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $reference;
 
@@ -143,23 +154,56 @@ class PaymentTransaction implements DatesAwareInterface
     /**
      * @var array
      * @ORM\Column(name="request", type="secure_array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $request;
 
     /**
      * @var array
      * @ORM\Column(name="response", type="secure_array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $response;
 
     /**
      * @var array
      * @ORM\Column(name="transaction_options", type="secure_array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      },
+     *      mode="hidden"
+     * )
      */
     protected $transactionOptions;
 
     /**
-     * @param CustomerUser
+     * @var CustomerUser
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
@@ -363,7 +407,7 @@ class PaymentTransaction implements DatesAwareInterface
      */
     public function setAmount($amount)
     {
-        $this->amount = (string)round($amount, 2);
+        $this->amount = (string)round((float)$amount, 2);
 
         return $this;
     }

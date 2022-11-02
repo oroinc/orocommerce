@@ -1,0 +1,90 @@
+layout:
+    imports:
+        -
+            id: oro_customer_toolbar_actions
+            root: quote_view_page
+            namespace: quote_view_page_toolbar
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%id%': '=data["entity"].getQid()'
+
+        - '@setOption':
+            id: page_title
+            optionName: class_prefix
+            optionValue: 'customer'
+
+        - '@setOption':
+            id: quote_view_page_toolbar_print_button
+            optionName: text
+            optionValue: 'oro.frontend.sale.quote.toolbar-actions.btn.print'
+
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue:
+                label: 'oro.frontend.sale.quote.title.label'
+                parameters:
+                    '%id%': '=data["entity"].getQid()'
+
+        - '@addTree':
+            items:
+                quote_view_page:
+                    blockType: container
+                quote_view_controls_list:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                quote_view_customer_status:
+                    blockType: text
+                    options:
+                        visible: '=data["entity"].getCustomerStatus()!=null'
+                        text: '=data["entity"].getCustomerStatus().getName()'
+                quote_view_information:
+                    blockType: quote_view_information
+                    options:
+                        quote: '=data["entity"]'
+                        vars:
+                            paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["entity"])'
+                quote_view_line_items:
+                    blockType: quote_products_container
+                    options:
+                        quoteProducts: '=data["entity"].getQuoteProducts()'
+                quote_view_back_link:
+                    blockType: link
+                    options:
+                        route_name: oro_sale_quote_frontend_index
+                        text: oro.frontend.sale.quote.sections.back.label
+                        icon: angle-left
+                        attr:
+                            class: 'link pull-left hide-on-print'
+                        visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
+                quote_view_accept_button:
+                    blockType: combined_buttons
+                    options:
+                        visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
+                quote_view_accept_container:
+                    blockType: container
+                quote_shipping_address:
+                    blockType: address
+                    options:
+                        address: '=data["entity"].getShippingAddress()'
+                        label: 'oro.sale.quote.shipping_address.label'
+                        additional_block_prefixes: ['quote_body_column_element']
+            tree:
+                page_content:
+                    quote_view_page:
+                        quote_view_customer_status: ~
+                        quote_view_controls_list: ~
+                        quote_view_information:
+                            quote_shipping_address: ~
+                        quote_view_line_items: ~
+                        quote_view_accept_container:
+                            quote_view_back_link: ~
+                            quote_view_accept_button: ~

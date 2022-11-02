@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Functional\Routing;
 
-use Doctrine\Common\Cache\ArrayCache;
 use Oro\Bundle\CacheBundle\Provider\FilesystemCache;
 use Oro\Bundle\CacheBundle\Provider\PhpFileCache;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlKeyValueCache;
 use Oro\Bundle\RedirectBundle\Cache\UrlLocalCache;
@@ -18,52 +18,51 @@ use Oro\Bundle\RedirectBundle\Provider\SluggableUrlDatabaseAwareProvider;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class SluggableUrlGeneratorTest extends WebTestCase
 {
-    use EntityTrait;
+    use ConfigManagerAwareTestTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                LoadSlugsData::class
-            ]
-        );
+        $this->loadFixtures([LoadSlugsData::class]);
     }
 
     /**
      * @dataProvider urlServicesDataProvider
-     * @param string $urlProviderType
-     * @param string $urlCacheService
      */
-    public function testGenerateUrlFirstDefaultLoadedThenLocalized($urlProviderType, $urlCacheService)
-    {
+    public function testGenerateUrlFirstDefaultLoadedThenLocalized(
+        string $urlProviderType,
+        string $urlCacheService
+    ): void {
         /** @var Slug $defaultSlug */
         $defaultSlug = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_1);
         /** @var Slug $localizedSlug */
         $localizedSlug = $this->getReference(LoadSlugsData::SLUG_URL_LOCALIZATION_2);
 
-        $localization = $this->getEntity(Localization::class, ['id' => $localizedSlug->getLocalization()->getId()]);
-        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->exactly(2))
+        $localization = $this->createLocalization($localizedSlug->getLocalization()->getId());
+        /** @var LocalizationProviderInterface|MockObject $localizationProvider */
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider->expects(self::exactly(2))
             ->method('getCurrentLocalization')
             ->willReturnOnConsecutiveCalls(
                 null,
                 $localization
             );
 
-        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
+        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationProvider);
 
-        $this->assertEquals(
+        self::assertEquals(
             $defaultSlug->getUrl(),
             $urlGenerator->generate($defaultSlug->getRouteName(), $defaultSlug->getRouteParameters())
         );
-        $this->assertEquals(
+        self::assertEquals(
             $localizedSlug->getUrl(),
             $urlGenerator->generate($defaultSlug->getRouteName(), $defaultSlug->getRouteParameters())
         );
@@ -71,24 +70,22 @@ class SluggableUrlGeneratorTest extends WebTestCase
 
     /**
      * @dataProvider urlServicesDataProvider
-     * @param string $urlProviderType
-     * @param string $urlCacheService
      */
-    public function testGenerateUrlWithFallbackToDefaultSlug($urlProviderType, $urlCacheService)
+    public function testGenerateUrlWithFallbackToDefaultSlug(string $urlProviderType, string $urlCacheService): void
     {
         /** @var Slug $defaultSlug */
         $defaultSlug = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
 
-        $localization = $this->getEntity(Localization::class, ['id' => 1]);
-        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->any())
+        $localization = $this->createLocalization(1);
+        /** @var LocalizationProviderInterface|MockObject $localizationProvider */
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
+        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationProvider);
 
-        $this->assertEquals(
+        self::assertEquals(
             $defaultSlug->getUrl(),
             $urlGenerator->generate($defaultSlug->getRouteName(), $defaultSlug->getRouteParameters())
         );
@@ -96,32 +93,29 @@ class SluggableUrlGeneratorTest extends WebTestCase
 
     /**
      * @dataProvider urlServicesDataProvider
-     * @param string $urlProviderType
-     * @param string $urlCacheService
      */
-    public function testGenerateUrlLocalizedVersionWithoutFallbacks($urlProviderType, $urlCacheService)
-    {
+    public function testGenerateUrlLocalizedVersionWithoutFallbacks(
+        string $urlProviderType,
+        string $urlCacheService
+    ): void {
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::PAGE_3_LOCALIZED_EN_CA);
 
-        $localization = $this->getEntity(Localization::class, ['id' => $slug->getLocalization()->getId()]);
-        /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject $localizationManager */
-        $localizationManager = $this->createMock(UserLocalizationManager::class);
-        $localizationManager->expects($this->any())
+        $localization = $this->createLocalization($slug->getLocalization()->getId());
+        /** @var LocalizationProviderInterface|MockObject $localizationProvider */
+        $localizationProvider = $this->createMock(LocalizationProviderInterface::class);
+        $localizationProvider->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationManager);
+        $urlGenerator = $this->getUrlGenerator($urlProviderType, $urlCacheService, $localizationProvider);
 
-        $this->assertEquals(
+        self::assertEquals(
             $slug->getUrl(),
             $urlGenerator->generate($slug->getRouteName(), $slug->getRouteParameters())
         );
     }
 
-    /**
-     * @return array
-     */
     public function urlServicesDataProvider(): array
     {
         return [
@@ -134,16 +128,18 @@ class SluggableUrlGeneratorTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $urlProviderType
-     * @param string $urlCacheType
-     * @param UserLocalizationManager $localizationManager
-     * @return SluggableUrlGenerator
-     */
+    private function createLocalization(int $id): Localization
+    {
+        $localization = new Localization();
+        ReflectionUtil::setId($localization, $id);
+
+        return $localization;
+    }
+
     private function getUrlGenerator(
-        $urlProviderType,
-        $urlCacheType,
-        UserLocalizationManager $localizationManager
+        string $urlProviderType,
+        string $urlCacheType,
+        LocalizationProviderInterface $localizationProvider
     ): SluggableUrlGenerator {
         $urlCache = $this->createCache($urlCacheType);
         $cacheUrlProvider = new SluggableUrlCacheAwareProvider($urlCache);
@@ -158,51 +154,54 @@ class SluggableUrlGeneratorTest extends WebTestCase
             );
         }
 
+        $contextUrlProviders = $this->createMock(ContainerInterface::class);
+        $contextUrlProviders->expects(self::any())
+            ->method('has')
+            ->willReturn(false);
+
         $urlGenerator = new SluggableUrlGenerator(
             $urlProvider,
-            new ContextUrlProviderRegistry(),
-            $localizationManager
+            new ContextUrlProviderRegistry($contextUrlProviders),
+            $localizationProvider,
+            self::getConfigManager(null)
         );
-        $urlGenerator->setBaseGenerator($this->getContainer()->get('oro_test.router.default.alias'));
+        $urlGenerator->setBaseGenerator($this->getContainer()->get('router.default'));
 
         return $urlGenerator;
     }
 
-    /**
-     * @param string $type
-     * @return UrlCacheInterface
-     */
-    private function createCache($type)
+    private function createCache(string $type): UrlCacheInterface
     {
         switch ($type) {
             case 'storage':
                 $persistentCache = new PhpFileCache(
+                    'oro_slug_url_test',
+                    0,
                     $this->getContainer()->getParameter('kernel.cache_dir') . DIRECTORY_SEPARATOR . 'oro_data'
                 );
-                $persistentCache->setNamespace('oro_slug_url_test');
 
                 return new UrlStorageCache(
                     $persistentCache,
-                    new ArrayCache(),
+                    new ArrayAdapter(0, false),
                     $this->getContainer()->get('filesystem'),
                     2
                 );
 
             case 'key_value':
                 $persistentCache = new FilesystemCache(
+                    'oro_slug_kv_test',
+                    0,
                     $this->getContainer()->getParameter('kernel.cache_dir') . DIRECTORY_SEPARATOR . 'oro_data'
                 );
-                $persistentCache->setNamespace('oro_slug_kv_test');
 
                 return new UrlKeyValueCache(
                     $persistentCache,
-                    new ArrayCache(),
-                    $this->getContainer()->get('filesystem')
+                    new ArrayAdapter(0, false)
                 );
 
             case 'local':
             default:
-                return new UrlLocalCache(new ArrayCache());
+                return new UrlLocalCache(new ArrayAdapter(0, false));
         }
     }
 }

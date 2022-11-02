@@ -3,17 +3,36 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 
 abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
-    public function setUp()
+    use MysqlVersionCheckTrait;
+
+    protected function setUp(): void
     {
         $this->setDatagridIndexPath('oro_frontend_datagrid_index');
         $this->setSearchAutocompletePath('oro_frontend_autocomplete_search');
 
         parent::setUp();
 
-        $this->configScope = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $this->configScopeName = 'website';
+        $this->configScopeIdentifier = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
+    }
+
+    /**
+     * @dataProvider restrictionSelectDataProvider
+     */
+    public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
+    {
+        if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            $this->markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+
+        parent::testSearchRestriction($restrictionParams, $expectedProducts);
     }
 
     /**
@@ -24,11 +43,20 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],
@@ -46,7 +74,6 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_7,
                 ]
             ],
         ];
@@ -60,11 +87,22 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],

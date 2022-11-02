@@ -17,7 +17,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|SinglePageTransitionProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->baseProvider = $this->createMock(TransitionProviderInterface::class);
         $this->provider = new SinglePageTransitionProvider($this->baseProvider);
@@ -39,7 +39,6 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider continueTransitionDataProvider
-     * @param bool $isAllowed
      */
     public function testGetContinueTransition(bool $isAllowed)
     {

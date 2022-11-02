@@ -17,6 +17,7 @@ use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
@@ -45,7 +46,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
 
@@ -56,7 +57,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->type);
     }
@@ -103,9 +104,11 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
-                []
+                [
+                    SystemPageVariantType::class => [new PageVariantTypeExtension()],
+                ]
             ),
-            $this->getValidatorExtension(true)
+            $this->getValidatorExtension(false)
         ];
     }
 
@@ -169,6 +172,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         );
         $this->assertEquals([], $errors);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var ContentNode $data */
         $data = $form->getData();

@@ -14,7 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -40,18 +40,19 @@ class ProductControllerTest extends WebTestCase
 
         $content = $crawler->html();
 
-        $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
+        $shoppingListClass = ShoppingList::class;
 
         /** @var ShoppingList[] $shoppingLists */
-        $shoppingLists = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->getShoppingLists();
+        $shoppingLists = $this->getContainer()->get('oro_shopping_list.manager.current_shopping_list')
+            ->getShoppingLists();
         /** @var ShoppingList $shoppingListFromAnotherSite */
         $shoppingListFromAnotherSite = $this->getReference(LoadShoppingLists::SHOPPING_LIST_9);
 
         foreach ($shoppingLists as $shoppingList) {
             if ($shoppingList !== $shoppingListFromAnotherSite) {
-                $this->assertContains('Add to ' . $shoppingList->getLabel(), $content);
+                static::assertStringContainsString('Add to ' . $shoppingList->getLabel(), $content);
             } else {
-                $this->assertNotContains('Add to ' . $shoppingList->getLabel(), $content);
+                static::assertStringNotContainsString('Add to ' . $shoppingList->getLabel(), $content);
             }
         }
 
@@ -60,9 +61,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertCount(1, $shoppingList->getLineItems());
 
-        $tokenManager = $this->getContainer()->get('security.csrf.token_manager');
-
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
@@ -75,7 +74,7 @@ class ProductControllerTest extends WebTestCase
                 'oro_product_frontend_line_item' => [
                     'quantity' => 5,
                     'unit'     => 'liter',
-                    '_token'   => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
+                    '_token'   => $this->getCsrfToken('oro_product_frontend_line_item')->getValue()
                 ]
             ]
         );
@@ -87,7 +86,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('message', $result);
         $this->assertEquals(
             'Product has been added to "<a href="' .
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
+            $this->getUrl('oro_shopping_list_frontend_update', ['id' => $shoppingList->getId()]) .
             '">'.$shoppingList->getLabel().'</a>"',
             $result['message']
         );

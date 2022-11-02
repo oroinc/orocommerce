@@ -4,12 +4,12 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
+use Oro\Bundle\ScopeBundle\Tests\Functional\DataFixtures\LoadScopeData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -29,8 +29,11 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
 
-        /** @var SluggableInterface $entity */
-        $entity = $this->getEntity();
+        /** @var SluggableInterface[] $entities */
+        $entities = $this->getEntity();
+        if (!is_array($entities)) {
+            $entities = [$entities];
+        }
 
         /** @var Scope $scope */
         $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
@@ -44,26 +47,31 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         $node->setDefaultTitle($nodeTitle);
         $node->addScope($scope);
 
-        $slug = new Slug();
-        $slug->setUrl(self::CONTENT_NODE_SLUG);
-        $slug->setRouteName($this->getRoute());
-        $slug->setRouteParameters(['id' => $entity->getId()]);
-        $slug->addScope($scope);
-
-        $variant = new ContentVariant();
-        $variant->setType($this->getContentVariantType());
-        $variant->setNode($node);
-        $variant->addScope($scope);
-
         $entitySetterMethod = $this->getEntitySetterMethod();
-        if (method_exists($variant, $entitySetterMethod)) {
-            $variant->$entitySetterMethod($entity);
+
+        foreach ($entities as $entity) {
+            $variant = new ContentVariant();
+            $variant->setType($this->getContentVariantType());
+            $variant->setNode($node);
+            $variant->addScope($scope);
+
+            $slug = new Slug();
+            $slug->setUrl(sprintf('%s-%s', self::CONTENT_NODE_SLUG, $entity->getId()));
+            $slug->setRouteName($this->getRoute());
+            $slug->setRouteParameters(['id' => $entity->getId()]);
+            $slug->addScope($scope);
+            $slug->setOrganization($webCatalog->getOrganization());
+
+            if (method_exists($variant, $entitySetterMethod)) {
+                $variant->$entitySetterMethod($entity);
+            }
+
+            $variant->addSlug($slug);
+
+            $manager->persist($slug);
+            $manager->persist($variant);
         }
 
-        $variant->addSlug($slug);
-
-        $manager->persist($slug);
-        $manager->persist($variant);
         $manager->persist($node);
         $this->setReference(self::CONTENT_NODE, $node);
 
@@ -86,7 +94,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
     abstract protected function getEntitySetterMethod();
 
     /**
-     * @return SluggableInterface
+     * @return SluggableInterface|SluggableInterface[]
      */
     abstract protected function getEntity();
 }

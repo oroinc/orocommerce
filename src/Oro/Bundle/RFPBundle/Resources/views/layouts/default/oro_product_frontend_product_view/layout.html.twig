@@ -1,0 +1,45 @@
+{% block _units_request_for_quote_widget %}
+    <tfoot class="product-prices__tfoot">
+        {% for unit in units %}
+            {% if isPriceUnitsVisible %}
+                <tr class="product-prices__tr">
+                    <td colspan="2" class="product-prices__td">
+                        <strong>{{ unit.code|oro_format_product_unit_label|capitalize }}</strong>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr class="product-prices__tr">
+                <td colspan="2" class="product-prices__td">
+                    <div class="product_view_request_quote_for_unit">{{ 'oro.rfp.btn.add_to_rfp'|trans }}</div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tfoot>
+{% endblock %}
+
+{% block _request_a_quote_form_button_widget %}
+    {% set visible = false %}
+    {% if block.vars.product is not empty %}
+        {% set visible = is_quote_visible(block.vars.product) %}
+    {% endif %}
+
+    {% if visible == true %}
+        {% import '@OroUI/macros.html.twig' as UI %}
+        {% set btnOptions = {
+            'label': 'oro.frontend.product.view.request_a_quote'|trans,
+            'iCss': 'fa fa-file-text fa--fw fa--as-line',
+            'labelInIcon': false,
+            'dataIntention': 'important',
+            'dataUrl': 'oro_rfp_frontend_request_create',
+            'pageComponent': {
+                'module': 'oroui/js/app/components/view-component',
+                'options': {
+                    'view': 'orosale/js/app/views/product-add-to-rfq-view'
+                }
+            }
+        } %}
+        <div class="pull-left btn-group icons-holder full">
+            {{ UI.clientLink(btnOptions|merge({'class': 'btn icons-holder-text'})) }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -2,21 +2,20 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
+/**
+ * The registry of payment method view providers.
+ */
 class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /**
-     * @var PaymentMethodViewProviderInterface[]
-     */
-    private $providers = [];
+    /** @var iterable|PaymentMethodViewProviderInterface[] */
+    private $providers;
 
     /**
-     * Add payment method type to the registry
-     *
-     * @param PaymentMethodViewProviderInterface $provider
+     * @param iterable|PaymentMethodViewProviderInterface[] $providers
      */
-    public function addProvider(PaymentMethodViewProviderInterface $provider)
+    public function __construct(iterable $providers)
     {
-        $this->providers[] = $provider;
+        $this->providers = $providers;
     }
 
     /**
@@ -24,12 +23,16 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
      */
     public function getPaymentMethodViews(array $identifiers)
     {
-        $result = [];
-        foreach ($this->providers as $provider) {
-            $result = array_merge($result, $provider->getPaymentMethodViews($identifiers));
+        $items = [];
+        foreach ($identifiers as $identifier) {
+            foreach ($this->providers as $provider) {
+                if ($provider->hasPaymentMethodView($identifier)) {
+                    $items[] = $provider->getPaymentMethodView($identifier);
+                }
+            }
         }
-        
-        return $result;
+
+        return $items;
     }
 
     /**
@@ -42,7 +45,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
                 return $provider->getPaymentMethodView($identifier);
             }
         }
-        
+
         throw new \InvalidArgumentException('There is no payment method view for "'.$identifier.'"');
     }
 
@@ -56,7 +59,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
                 return true;
             }
         }
-        
+
         return false;
     }
 }

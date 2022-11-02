@@ -1,0 +1,14 @@
+<% if (isUpcoming) { %>
+<div class="notification notification--warning notification--lite" role="alert">
+    <div class="notification__item notification__item--flex">
+        <span class="fa-exclamation-circle" aria-hidden="true"></span>
+        <span class="notification__text">
+        <% if (availabilityDate) { %>
+            <%- _.__('oro.inventory.is_upcoming.notification_with_date', {date: availabilityDate}) %>
+        <% } else { %>
+            <%- _.__('oro.inventory.is_upcoming.notification') %>
+        <% } %>
+    </span>
+    </div>
+</div>
+<% } %>

@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Component\Testing\ReflectionUtil;
 
 class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +28,7 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
@@ -40,16 +41,13 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 
     public function testCalculateMaterializedPath()
     {
-        $reflection = new \ReflectionProperty(Category::class, 'id');
-        $reflection->setAccessible(true);
-
         $parent = new Category();
         $parent->setMaterializedPath('1_2');
-        $reflection->setValue($parent, 2);
+        ReflectionUtil::setId($parent, 2);
 
         $category = new Category();
         $category->setParentCategory($parent);
-        $reflection->setValue($category, 3);
+        ReflectionUtil::setId($category, 3);
 
         $this->repository->expects(static::once())->method('updateMaterializedPath');
         $this->doctrineHelper->expects(static::once())
@@ -63,15 +61,12 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateMaterializedPathNested()
     {
-        $reflection = new \ReflectionProperty(Category::class, 'id');
-        $reflection->setAccessible(true);
-
         $parent = new Category();
-        $reflection->setValue($parent, 1);
+        ReflectionUtil::setId($parent, 1);
 
         $category = new Category();
         $category->setParentCategory($parent);
-        $reflection->setValue($category, 2);
+        ReflectionUtil::setId($category, 2);
 
         $children = [$category];
 

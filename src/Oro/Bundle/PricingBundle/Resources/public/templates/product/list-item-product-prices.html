@@ -1,0 +1,43 @@
+<% var maxFractionDigits = localeSettings.getNumberFormats('currency')['max_fraction_digits'] %>
+<% if (price === null) { %>
+<div class="product-price__not_found"><%- _.__('oro.pricing.product_prices.price_not_found') %></div>
+<% } else {%>
+<% if (false !== showValuePrice) { %>
+<div class="product-price__your" data-name="price">
+    <span class="product-price__label"><%- _.__('oro.pricing.product_prices.your_price') %></span>
+    <span class="product-price__main-box">
+        <span class="product-price__value" data-name="price-value" itemscope="itemscope" itemtype="http://schema.org/Offer" itemprop="offers">
+            <span itemprop="priceCurrency" class="hidden" aria-hidden="true"><%- price.currency %></span><span itemprop="price" class="hidden" aria-hidden="true"><%- numeral(price.price).format('0.00') %></span><%- price.formatted_price.trim() %>
+        </span>
+        <span> / </span>
+        <span class="product-price__unit" data-name="unit">
+            <span class="product-price__unit-full">
+                <%- _.__('oro.product.product_unit.' + price.unit + '.label.full') %>
+            </span>
+            <span class="product-price__unit-short">
+                <%- _.__('oro.product.product_unit.' + price.unit + '.label.short') %>
+            </span>
+        </span>
+    </span>
+</div>
+<% } %>
+<% if (false !== showListedPrice) { %>
+<div class="product-price__listed">
+    <span class="product-price__listed-label"><%- _.__('oro.pricing.product_prices.listed_price') %></span>
+    <% _.each(listedPrice, function(price, unitCode) { %>
+    <span class="product-price__listed-box" title="<%- _.__('oro.pricing.product_prices.applicable_from', { amount: price.quantity }) %>">
+        <span class="product-price__listed-value"><%- price.formatted_price %></span>
+        <span> / </span>
+        <span class="product-price__unit" data-name="unit">
+            <span class="product-price__unit-full">
+                <%- _.__('oro.product.product_unit.' + price.unit + '.label.full') %>
+            </span>
+            <span class="product-price__unit-short">
+                <%- _.__('oro.product.product_unit.' + price.unit + '.label.short') %>
+            </span>
+        </span>
+    </span>
+    <% }) %>
+</div>
+<% } %>
+<% } %>

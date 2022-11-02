@@ -9,13 +9,6 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 interface FedexRateServiceRequestSettingsFactoryInterface
 {
-    /**
-     * @param FedexIntegrationSettings $integrationSettings
-     * @param ShippingContextInterface $shippingContext
-     * @param ShippingServiceRule      $rule
-     *
-     * @return FedexRateServiceRequestSettingsInterface
-     */
     public function create(
         FedexIntegrationSettings $integrationSettings,
         ShippingContextInterface $shippingContext,

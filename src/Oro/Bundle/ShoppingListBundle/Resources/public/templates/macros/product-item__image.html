@@ -1,0 +1,40 @@
+<% if (obj.src) { %>
+<% let galleryOpener = 'data-trigger-gallery-open-product-' + _cid %>
+<div class="grid-line-items__row grid-line-items__row--offset-y-end product-item__image-holder--aspect-ratio product-item__image-holder--tiny"
+     data-page-component-init-on="click,focusin"
+>
+    <div class="product-item__preview"
+         data-page-component-module="orofrontend/js/app/components/popup-gallery-widget"
+         data-page-component-options="<%- JSON.stringify({
+                ajaxMode: true,
+                ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
+                id: productId,
+                galleryFilter: 'product_gallery_popup',
+                alt: alt,
+                uniqueTriggerToOpenGallery: '[data-role="' + galleryOpener + '"]'
+         }) %>"
+    >
+        <picture class="product-item__preview-picture" data-object-fit="">
+            <% if (obj.srcWebp && obj.srcWebp !== obj.src) { %>
+                <source srcset="<%- srcWebp %>" type="image/webp">
+            <% } %>
+            <img src="<%- src %>"
+                 title="<%- title %>"
+                 alt="<%- alt %>"
+                 class="product-item__preview-image" loading="lazy">
+        </picture>
+    </div>
+    <button class="view-product-gallery stretched"
+            data-role="<%- galleryOpener %>"
+            aria-label="<%- _.__('oro.product.images.zoom.label') %>"
+    ></button>
+</div>
+<% } else if (obj.placeholder) { %>
+<div class="grid-line-items__row grid-line-items__row--offset-y-end product-item__image-holder--tiny">
+    <img src="<%- obj.placeholder %>"
+         title="<%- title %>"
+         alt="<%- alt %>"
+         class="product-item__preview-image"
+    >
+</div>
+<% } %>

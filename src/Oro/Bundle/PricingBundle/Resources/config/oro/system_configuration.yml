@@ -1,5 +1,7 @@
 system_configuration:
     groups:
+        pricing_general:
+            title: oro.pricing.system_configuration.groups.pricing_general.title
         default_price_lists:
             title: oro.pricing.system_configuration.groups.default_price_lists.title
         price_rounding:
@@ -12,6 +14,11 @@ system_configuration:
         price_strategies:
             title: oro.pricing.system_configuration.groups.price_strategies.title
     fields:
+        oro_pricing.default_price_list:
+            data_type: integer
+            type: Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType
+            options:
+                label: oro.pricing.pricelist.entity_label
         oro_pricing.default_price_lists:
             data_type: array
             type: Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType
@@ -43,11 +50,26 @@ system_configuration:
             priority: 20
             options:
                 label: oro.pricing.system_configuration.fields.precision.label
+                tooltip: oro.pricing.system_configuration.fields.precision.tooltip
                 required: true
                 constraints:
                     - NotBlank: ~
                     - Range:
                         min: 0
+                    - Type:
+                        type: integer
+        oro_pricing.price_calculation_precision:
+            data_type: integer
+            type: Symfony\Component\Form\Extension\Core\Type\IntegerType
+            search_type: text
+            priority: 30
+            options:
+                label: oro.pricing.system_configuration.fields.price_calculation_precision.label
+                tooltip: oro.pricing.system_configuration.fields.price_calculation_precision.tooltip
+                constraints:
+                    - Range:
+                        min: 0
+                        max: 4
                     - Type:
                         type: integer
         oro_pricing.offset_of_processing_cpl_prices:
@@ -57,6 +79,7 @@ system_configuration:
             options:
                 label: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.label
                 tooltip: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
+                required: true
                 constraints:
                     - NotBlank: ~
                     - Type:
@@ -71,6 +94,15 @@ system_configuration:
                 multiple: false
                 constraints:
                     - NotBlank: ~
+        oro_pricing.feature_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            page_reload: true
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.feature_enabled.label
+                tooltip: oro.pricing.system_configuration.fields.feature_enabled.tooltip
     tree:
         system_configuration:
             commerce:
@@ -80,14 +112,20 @@ system_configuration:
                             pricing:
                                 priority: 100
                                 children:
+                                    pricing_general:
+                                        priority: 300
+                                        children:
+                                            - oro_pricing.feature_enabled
                                     price_rounding:
                                         priority: 200
                                         children:
                                             - oro_pricing.rounding_type
                                             - oro_pricing.precision
+                                            - oro_pricing.price_calculation_precision
                                     default_price_lists:
                                         priority: 100
                                         children:
+                                            - oro_pricing.default_price_list
                                             - oro_pricing.default_price_lists
                                     price_lists_update:
                                         priority: 50

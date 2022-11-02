@@ -1,0 +1,28 @@
+{% block _matrix_grid_update_form_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' matrix-grid-update-container',
+        '~data-page-component-view': {
+            view: 'oropricing/js/app/views/base-product-matrix-view',
+            prices: prices,
+            autoRender: true
+        },
+        'data-columns-count': form.rows[0].columns|length
+    }) %}
+
+    {% do block|merge_context({
+        prices: prices
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _matrix_grid_update_form_fields_widget %}
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block _matrix_grid_update_form_end_widget %}
+    {{ form_widget(form._token) }}
+    {{ form_end(form,  {'render_rest': false}) }}
+{% endblock %}

@@ -3,11 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Base implementation of Price entity repositories.
+ */
 class BasePriceListRepository extends EntityRepository
 {
     /**
@@ -31,8 +33,7 @@ class BasePriceListRepository extends EntityRepository
         $query = $qb->getQuery();
         $query->useQueryCache(false);
         $query->setHint('priceList', $priceList->getId());
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+        $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $shardManager);
 
         $productPrices = $query->getArrayResult();
         $result = [];

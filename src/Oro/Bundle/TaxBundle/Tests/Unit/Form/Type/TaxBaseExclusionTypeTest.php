@@ -12,21 +12,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 {
     /** @var TaxBaseExclusionType */
-    protected $formType;
+    private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new TaxBaseExclusionType(new AddressCountryAndRegionSubscriberStub());
-        $this->formType->setDataClass('\ArrayObject');
+        $this->formType->setDataClass(\ArrayObject::class);
 
         parent::setUp();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
     }
 
     public function testConfigureOptions()
@@ -36,15 +29,12 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('data_class', $options);
-        $this->assertEquals('\ArrayObject', $options['data_class']);
+        $this->assertEquals(\ArrayObject::class, $options['data_class']);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
-        list($country, $region) = $this->getValidCountryAndRegion();
+        [$country, $region] = $this->getValidCountryAndRegion();
 
         return [
             'valid form' => [
@@ -117,7 +107,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getFormTypeClass()
+    protected function getFormTypeClass(): string
     {
         return TaxBaseExclusionType::class;
     }
@@ -125,7 +115,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return array_merge([
             new PreloadedExtension([$this->formType], []),

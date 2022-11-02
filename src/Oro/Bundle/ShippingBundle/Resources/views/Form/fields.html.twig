@@ -11,36 +11,50 @@
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_country_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_region_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_region_text_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_postalCode_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_city_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_street_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block _shipping_origin_oro_shipping___shipping_origin_value_street2_row %}
-    {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
+    {% import _self as fields %}
+
+    {{ fields.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
 {% block oro_shipping_weight_widget %}
     <div class="float-holder shipping-weight">
-        <table>
+        <table class="validate-group">
             <tr>
                 <td>{{ form_widget(form.value) }}</td>
                 <td>{{ form_widget(form.unit) }}</td>
@@ -103,8 +117,13 @@
 {% endblock %}
 
 {% block oro_shipping_product_shipping_options_collection_widget %}
+    {% import _self as fields %}
+
+    {% set widgetContainerAttributes %}
+        {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
+    {% endset %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.oro_shipping_product_shipping_options_prototype(form) %}
+        {% set prototype_html = fields.oro_shipping_product_shipping_options_prototype(form, widgetContainerAttributes) %}
     {% endif %}
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
@@ -115,7 +134,7 @@
             }|json_encode }}" {{ block('widget_container_attributes') }}
             data-layout="separate"
         >
-            <table class="grid table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
+            <table class="grid grid-main-container table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
                 <thead>
                 <tr>
                     <th><span class="text-center">{{ 'oro.shipping.product_shipping_options.product_unit.label'|trans }}</span></th>
@@ -130,19 +149,19 @@
                 >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.oro_shipping_product_shipping_options_prototype(child) }}
+                            {{ fields.oro_shipping_product_shipping_options_prototype(child, widgetContainerAttributes) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
                     {% endif %}
                 </tbody>
             </table>
-            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
+            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="#">{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
         </div>
     </div>
 {% endblock %}
 
-{% macro oro_shipping_product_shipping_options_prototype(widget) %}
+{% macro oro_shipping_product_shipping_options_prototype(widget, attributes) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -151,11 +170,12 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
 
-    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+    <tr class="list-item" data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         data-page-component-module="oroshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">
-            <button type="button" class="removeRow btn btn-icon icons-holder remove-list-item" data-related="{{ name }}"><i class="fa-close"></i></button>
+            <button type="button" class="removeRow btn btn-icon btn-square-lighter"
+                    data-related="{{ name }}" aria-label="{{ 'Remove row'|trans }}"><span class="fa-trash-o" aria-hidden="true"></span></button>
         </td>
     </tr>
 {% endmacro %}
@@ -168,33 +188,39 @@
 {% endblock %}
 
 {% block oro_shipping_method_config_widget %}
-    {% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
+    {% import '@OroShipping/ShippingMethodsConfigsRule/macros.html.twig' as ShipRuleMacro %}
 
-    {% set collapseView = {
-        group: 'shipping-method',
-        open: true
-    } %}
-
-    <div class="shipping-method-config shipping-method-config-{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }} collapse-view"
-         data-page-component-collapse="{{ collapseView|json_encode }}"
+    {% set collapseId = 'collapse-'|uniqid %}
+    {% if form.parent is not null  %}
+        {% set collapseId = 'shipping-methods-collection' ~ form.parent.vars.id %}
+    {% endif %}
+    <div class="shipping-method-config shipping-method-config-{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }}"
          data-role="method-view">
         {% if form.method.vars.value %}
+            {% set collapseId = collapseId~ form.method.vars.value %}
             <div class="shipping-method-config__header"
-                 data-collapse-trigger>
+                 role="button"
+                 data-toggle="collapse"
+                 data-target="{{ '#' ~ collapseId }}"
+                 aria-expanded="false"
+                 aria-controls="{{ collapseId }}"
+            >
                 <div class="shipping-method-config__item">
-                    <i class="fa-plus-square-o"></i>
+                    <span class="collapse-icon fa-minus-square-o" aria-hidden="true" data-icon></span>
                     {% set icon = methods_icons[form.method.vars.value]|default('') %}
                     {% set label = methods_labels[form.method.vars.value]|trans %}
-                    {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}"/>{% endif %}
-                    {{ label }}
+                    {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}">{% endif %}
+                    {{- label -}}
                     {{ ShipRuleMacro.renderShippingMethodDisabledFlag(form.method.vars.value) }}
                 </div>
                 <div class="shipping-method-config__info" data-role="method-preview"></div>
             </div>
         {% endif %}
 
-        <div class="shipping-method-config__body"
-             data-collapse-container>
+        <div id="{{ collapseId }}" class="shipping-method-config__body collapse show"
+            data-trigger-icon-show-class="fa-minus-square-o"
+            data-trigger-icon-hide-class="fa-plus-square-o"
+        >
             <div class="shipping-method-config__global-options">
                 {{ form_widget(form.options) }}
             </div>
@@ -281,18 +307,18 @@
     {{ form_rest(form) }}
 {% endblock %}
 
-{% block oro_shipping_method_config_collection_widget %}
-    {% if form|length != 0 %}
+{%- block oro_shipping_method_config_collection_widget -%}
+    {%- if form|length != 0 -%}
         <div class="shipping-methods-grid">
             <div class="shipping-methods-grid__header">
-                {% set collapseView = {
-                    widgetModule: 'oroui/js/widget/collapse-group-widget',
-                    group: 'shipping-method'
-                } %}
                 <div class="shipping-methods-grid__header-method"
-                     data-page-component-jquery="{{ collapseView|json_encode }}">
-                    <i class="fa-plus-square-o"></i>
-                    {{ 'oro.shipping.shipping_methods_table.method.label'|trans }}
+                     data-toggle="collapse"
+                     data-target="[id^='shipping-methods-collection{{ form.vars.id }}']"
+                >
+                {% apply spaceless %}
+                    <span class="collapse-icon fa-minus-square-o" aria-hidden="true" data-icon></span>
+                    {{- 'oro.shipping.shipping_methods_table.method.label'|trans -}}
+                {% endapply %}
                 </div>
                 <div>{{ 'oro.shipping.shipping_methods_table.options.label'|trans }}</div>
             </div>
@@ -301,5 +327,5 @@
                 {{ form_errors(form) }}
             </div>
         </div>
-    {% endif %}
-{% endblock %}
+    {%- endif -%}
+{%- endblock -%}

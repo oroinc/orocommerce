@@ -8,11 +8,5 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 interface ShippingPackageOptionsFactoryInterface
 {
-    /**
-     * @param Dimensions $dimensions
-     * @param Weight     $weight
-     *
-     * @return ShippingPackageOptionsInterface
-     */
     public function create(Dimensions $dimensions, Weight $weight): ShippingPackageOptionsInterface;
 }

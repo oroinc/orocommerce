@@ -1,0 +1,22 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'content_widget_tabs.html.twig'
+
+        - '@add':
+            id: tabbed_content_content_widget_tabs
+            parentId: content_widget_container
+            blockType: container
+
+        - '@add':
+            id: tabbed_content_content_widget_tabs_items
+            parentId: tabbed_content_content_widget_tabs
+            blockType: block
+            options:
+                vars:
+                    tabbedContentItems: '=data["tabbedContentItems"]'
+
+        - '@remove':
+            id: content_widget_default_template
+
+    conditions: 'context["content_widget"].getLayout() == "tabs"'

@@ -7,18 +7,23 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 
 /**
+ * Coupon ORM entity
+ *
  * @ORM\Table(
  *      name="oro_promotion_coupon",
  *      indexes={
  *          @ORM\Index(name="idx_oro_promotion_coupon_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_promotion_coupon_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_promotion_coupon_updated_at", columns={"updated_at"}),
+ *          @ORM\Index(name="idx_oro_promotion_coupon_code_upper", columns={"code_uppercase"}),
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="oro_promotion_coupon_index",
  *      routeView="oro_promotion_coupon_view",
@@ -48,7 +53,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
  * )
  */
 class Coupon implements
-    DatesAwareInterface
+    DatesAwareInterface,
+    OrganizationAwareInterface
 {
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
@@ -86,6 +92,19 @@ class Coupon implements
      *  )
      */
     protected $code;
+
+    /**
+     * @var string
+     * @ORM\Column(name="code_uppercase", type="string", length=255, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     *  )
+     */
+    protected $codeUppercase;
 
     /**
      * @var bool
@@ -270,8 +289,13 @@ class Coupon implements
     }
 
     /**
-     * @return bool
+     * @return string
      */
+    public function getCodeUppercase()
+    {
+        return $this->codeUppercase;
+    }
+
     public function isEnabled(): bool
     {
         return $this->enabled;
@@ -345,10 +369,7 @@ class Coupon implements
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getValidFrom()
+    public function getValidFrom(): ?\DateTime
     {
         return $this->validFrom;
     }
@@ -357,17 +378,14 @@ class Coupon implements
      * @param \DateTime|null $validFrom
      * @return Coupon
      */
-    public function setValidFrom($validFrom)
+    public function setValidFrom(\DateTime $validFrom = null)
     {
         $this->validFrom = $validFrom;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getValidUntil()
+    public function getValidUntil(): ?\DateTime
     {
         return $this->validUntil;
     }
@@ -376,10 +394,35 @@ class Coupon implements
      * @param \DateTime|null $validUntil
      * @return Coupon
      */
-    public function setValidUntil($validUntil)
+    public function setValidUntil(\DateTime $validUntil = null)
     {
         $this->validUntil = $validUntil;
 
         return $this;
+    }
+
+    /**
+     * Pre persist event handler.
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->updateCodeUppercase();
+    }
+
+    /**
+     * Pre update event handler.
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updateCodeUppercase();
+    }
+
+    private function updateCodeUppercase()
+    {
+        $this->codeUppercase = strtoupper($this->code);
     }
 }

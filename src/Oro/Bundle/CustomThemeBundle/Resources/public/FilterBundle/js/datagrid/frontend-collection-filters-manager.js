@@ -1,68 +1,26 @@
-define(function(require) {
+define(function(require, exports, module) {
     'use strict';
 
-    var FrontendCollectionFiltersManager;
-    var _ = require('underscore');
-    var CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
-    var viewportManager = require('oroui/js/viewport-manager');
-    var config = require('module').config();
+    const _ = require('underscore');
+    const CollectionFiltersManager = require('orofrontend/js/app/datafilter/frontend-collection-filters-manager');
+    let config = require('module-config').default(module.id);
     config = _.extend({
         enableMultiselectWidget: true
     }, config);
 
-    FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
+    const FrontendCollectionFiltersManager = CollectionFiltersManager.extend({
         /**
-         * @property {Boolean}
+         * @inheritdoc
          */
         enableMultiselectWidget: config.enableMultiselectWidget,
 
-        /**
-         * @inheritDoc
-         */
-        _updateRenderMode: function() {
-            switch (viewportManager.getViewport().type) {
-                case 'tablet':
-                case 'tablet-small':
-                    this.renderMode = 'collapse-mode';
-                    break;
-                case 'mobile-landscape':
-                case 'mobile':
-                    this.renderMode = 'toggle-mode';
-                    break;
-            }
+        preinitialize(options) {
+            // Launcher might be hidden by default so by default Filter Manager should be open
+            options.defaultFiltersViewMode = CollectionFiltersManager.MANAGE_VIEW_MODE;
         },
 
         /**
-         * @inheritDoc
-         */
-        _initializeSelectWidget: function() {
-            if (!this.enableMultiselectWidget) {
-                this.$(this.filterSelector).hide();
-                return;
-            }
-            FrontendCollectionFiltersManager.__super__._initializeSelectWidget.apply(this, arguments);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        _refreshSelectWidget: function() {
-            if (this.enableMultiselectWidget) {
-                FrontendCollectionFiltersManager.__super__._refreshSelectWidget.apply(this, arguments);
-            }
-        },
-
-        /**
-         * @inheritDoc
-         */
-        _onChangeFilterSelect: function() {
-            if (this.enableMultiselectWidget) {
-                FrontendCollectionFiltersManager.__super__._onChangeFilterSelect.apply(this, arguments);
-            }
-        },
-
-        /**
-         * @inheritDoc
+         * @inheritdoc
          */
         isFiltersStateViewNeeded: function(options) {
             return false;

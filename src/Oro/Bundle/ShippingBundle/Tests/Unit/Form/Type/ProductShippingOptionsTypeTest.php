@@ -3,8 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ShippingBundle\Entity\FreightClass;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Form\Type\DimensionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType;
 use Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType;
@@ -12,12 +16,15 @@ use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightType;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
@@ -25,47 +32,32 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /** @var ProductShippingOptionsType */
-    protected $formType;
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ProductShippingOptionsType();
-        $this->formType->setDataClass('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions');
+        $this->formType->setDataClass(ProductShippingOptions::class);
         parent::setUp();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $constraint = new UniqueProductUnitShippingOptions();
-
-        $uniqueEntity = $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         return [
-            $constraint->validatedBy() => new UniqueProductUnitShippingOptionsValidator(),
-            'doctrine.orm.validator.unique' => $uniqueEntity
+            UniqueProductUnitShippingOptionsValidator::class => new UniqueProductUnitShippingOptionsValidator(),
+            'doctrine.orm.validator.unique' => $this->createMock(UniqueEntityValidator::class)
         ];
     }
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'product' => null,
-                    'data_class' => 'Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions'
-                ]
-            );
+            ->with(['product' => null, 'data_class' => ProductShippingOptions::class]);
 
         $this->formType->configureOptions($resolver);
     }
@@ -76,16 +68,15 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param bool $isValid
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     * @param array $options
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, array $submittedData, $expectedData, $defaultData = null, array $options = [])
-    {
+    public function testSubmit(
+        bool $isValid,
+        array $submittedData,
+        ProductShippingOptions $expectedData,
+        ProductShippingOptions $defaultData = null,
+        array $options = []
+    ) {
         $form = $this->factory->create(ProductShippingOptionsType::class, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -93,15 +84,14 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
 
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty form' => [
@@ -227,28 +217,19 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     *
-     * @param string $unitCode
-     * @param array $weight
-     * @param array $dimensions
-     * @param string $freightClass
-     *
-     * @return ProductShippingOptions
-     */
-    protected function getProductShippingOptions(
-        $unitCode = null,
+    private function getProductShippingOptions(
+        string $unitCode = null,
         array $weight = null,
         array $dimensions = null,
-        $freightClass = null
-    ) {
+        string $freightClass = null
+    ): ProductShippingOptions {
         $productShippingOptions = new ProductShippingOptions();
         $productShippingOptions->setProduct(new Product());
 
         if ($unitCode) {
             $productShippingOptions->setProductUnit(
                 $this->getEntity(
-                    'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                    ProductUnit::class,
                     [
                         'code' => $unitCode,
                         'defaultPrecision' => 1,
@@ -260,11 +241,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         if ($weight) {
             $productShippingOptions->setWeight(
                 $this->getEntity(
-                    'Oro\Bundle\ShippingBundle\Model\Weight',
+                    Weight::class,
                     [
                         'value' => $weight[0],
                         'unit' => $this->getEntity(
-                            'Oro\Bundle\ShippingBundle\Entity\WeightUnit',
+                            WeightUnit::class,
                             [
                                 'code' => $weight[1]
                             ]
@@ -277,10 +258,10 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         if ($dimensions) {
             $productShippingOptions->setDimensions(
                 $this->getEntity(
-                    'Oro\Bundle\ShippingBundle\Model\Dimensions',
+                    Dimensions::class,
                     [
                         'value' => $this->getEntity(
-                            'Oro\Bundle\ShippingBundle\Model\DimensionsValue',
+                            DimensionsValue::class,
                             [
                                 'length' => $dimensions[0],
                                 'width' => $dimensions[1],
@@ -288,7 +269,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                             ]
                         ),
                         'unit' => $this->getEntity(
-                            'Oro\Bundle\ShippingBundle\Entity\LengthUnit',
+                            LengthUnit::class,
                             [
                                 'code' => $dimensions[3]
                             ]
@@ -301,7 +282,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         if ($freightClass) {
             $productShippingOptions->setFreightClass(
                 $this->getEntity(
-                    'Oro\Bundle\ShippingBundle\Entity\FreightClass',
+                    FreightClass::class,
                     [
                         'code' => $freightClass,
                     ]
@@ -315,19 +296,19 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $productUnitSelectionType = new EntityType(
             [
                 'each' => $this->getEntity(
-                    'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                    ProductUnit::class,
                     [
                         'code' => 'each',
                         'defaultPrecision' => 1,
                     ]
                 ),
                 'item' => $this->getEntity(
-                    'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                    ProductUnit::class,
                     [
                         'code' => 'item',
                         'defaultPrecision' => 1
@@ -338,13 +319,13 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         );
 
         $weightType = new WeightType();
-        $weightType->setDataClass('Oro\Bundle\ShippingBundle\Model\Weight');
+        $weightType->setDataClass(Weight::class);
 
         $dimensionsType = new DimensionsType();
-        $dimensionsType->setDataClass('Oro\Bundle\ShippingBundle\Model\Dimensions');
+        $dimensionsType->setDataClass(Dimensions::class);
 
         $dimensionsValueType = new DimensionsValueType();
-        $dimensionsValueType->setDataClass('Oro\Bundle\ShippingBundle\Model\DimensionsValue');
+        $dimensionsValueType->setDataClass(DimensionsValue::class);
 
         return [
             new PreloadedExtension(
@@ -356,7 +337,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                     FreightClassSelectType::class => new EntityType(
                         [
                             'pl' => $this->getEntity(
-                                'Oro\Bundle\ShippingBundle\Entity\FreightClass',
+                                FreightClass::class,
                                 ['code' => 'pl']
                             )
                         ],
@@ -365,11 +346,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                     WeightUnitSelectType::class => new EntityType(
                         [
                             'mg' => $this->getEntity(
-                                'Oro\Bundle\ShippingBundle\Entity\WeightUnit',
+                                WeightUnit::class,
                                 ['code' => 'mg']
                             ),
                             'kg' => $this->getEntity(
-                                'Oro\Bundle\ShippingBundle\Entity\WeightUnit',
+                                WeightUnit::class,
                                 ['code' => 'kg']
                             )
                         ],
@@ -378,11 +359,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
                     LengthUnitSelectType::class => new EntityType(
                         [
                             'mm' => $this->getEntity(
-                                'Oro\Bundle\ShippingBundle\Entity\LengthUnit',
+                                LengthUnit::class,
                                 ['code' => 'mm']
                             ),
                             'cm' => $this->getEntity(
-                                'Oro\Bundle\ShippingBundle\Entity\LengthUnit',
+                                LengthUnit::class,
                                 ['code' => 'cm']
                             )
                         ],

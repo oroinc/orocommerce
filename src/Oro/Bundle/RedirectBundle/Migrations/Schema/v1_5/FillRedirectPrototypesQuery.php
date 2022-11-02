@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_5;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -75,24 +75,20 @@ class FillRedirectPrototypesQuery extends ParametrizedMigrationQuery
      */
     private function executeQuery(LoggerInterface $logger, string $query, int $start, int $end, $dryRun)
     {
-        $types = ['start' => Type::INTEGER, 'end' => Type::INTEGER];
+        $types = ['start' => Types::INTEGER, 'end' => Types::INTEGER];
 
         while ($start <= $end) {
             $params = ['start' => $start, 'end' => $end];
 
             $this->logQuery($logger, $query, $params, $types);
             if (!$dryRun) {
-                $this->connection->executeUpdate($query, $params, $types);
+                $this->connection->executeStatement($query, $params, $types);
             }
 
             $start += self::BATCH_SIZE;
         }
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @return array
-     */
     private function getScope(LoggerInterface $logger): array
     {
         $query = 'SELECT MIN(id) AS start, MAX(id) AS end FROM oro_redirect LIMIT 1';

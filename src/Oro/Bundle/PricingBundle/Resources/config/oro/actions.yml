@@ -10,7 +10,7 @@ operations:
             icon: fa-plus
 
         frontend_options:
-            template: OroPricingBundle:Action:addProductPrice.html.twig
+            template: '@OroPricing/Action/addProductPrice.html.twig'
             options:
                 allowMaximize: true
                 allowMinimize: true
@@ -98,10 +98,15 @@ operations:
             - '@flash_message':
                 message: oro.pricing.pricelist.status.message.enabled
                 type: 'success'
-            - '@call_service_method':
-                service: oro_pricing.price_list_relation_trigger_handler
-                method: handlePriceListStatusChange
-                method_parameters: [$.data]
+            # Rebuilding of the combined price list is required only after the prices are generated.
+            - '@tree':
+                  conditions:
+                      '@no_elements': $.data.priceRules
+                  actions:
+                      - '@call_service_method':
+                            service: oro_pricing.price_list_relation_trigger_handler
+                            method: handlePriceListStatusChange
+                            method_parameters: [$.data]
 
     oro_pricing_price_list_disable:
         label: oro.pricing.pricelist.status.disable
@@ -197,19 +202,24 @@ operations:
                   - [[setNull], [propertyName, [id]]]
                   - [[emptyCollection], [propertyName, [prices]]]
                   - [[emptyCollection], [propertyName, [schedules]]]
+                  - [[emptyCollection], [propertyName, [lexemes]]]
                   - [[collection], [propertyName, [priceRules]]]
-                  - [[collection], [propertyName, [lexemes]]]
                   - [[keep], [propertyName, [productUnit]]]
                   - [[collection], [propertyName, [currencies]]]
                   - [[shallowCopy], [propertyType, ['\DateTime']]]
             - '@assign_value': [$.newPriceList.name, $.newName]
             - '@assign_value': [$.newPriceList.active, false]
+            - '@assign_value': [$.newPriceList.actual, true]
             - '@assign_value': [$.newPriceList.default, false]
             - '@call_service_method':
                 service: oro_pricing.duplicator.schedule
                 method: duplicateSchedule
                 method_parameters: [$.data,$.newPriceList]
             - '@flush_entity': $.newPriceList
+            - '@call_service_method':
+                service: oro_pricing.handler.price_rule_lexeme_handler
+                method: updateLexemes
+                method_parameters: [$.newPriceList]
             - '@call_service_method':
                 service: oro_pricing.duplicator.price_list_to_product_duplicator
                 method: duplicate

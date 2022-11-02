@@ -1,0 +1,24 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node11->id)>'
+    relationships:
+        content:
+            data:
+                type: products
+                id: '<toString(@product2->id)>'
+included:
+    -
+        type: products
+        id: '<toString(@product2->id)>'
+        attributes:
+            sku: PSKU2
+            name: 'Product 2'
+            url: '/product2_slug_es'
+            urls:
+                - { url: '/product2_slug_default', localizationId: '<toString(@current_localization->id)>' }
+                - { url: '/product2_slug_default', localizationId: '<toString(@en_CA->id)>' }
+        relationships:
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'

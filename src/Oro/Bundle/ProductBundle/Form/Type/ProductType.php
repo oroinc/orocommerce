@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
@@ -12,7 +13,11 @@ use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallba
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
@@ -51,15 +56,18 @@ class ProductType extends AbstractType
     private $urlGenerator;
 
     /**
-     * @param DefaultProductUnitProviderInterface $provider
-     * @param UrlGeneratorInterface $urlGenerator
+     * @var ProductImageHelper
      */
+    private $productImageHelper;
+
     public function __construct(
         DefaultProductUnitProviderInterface $provider,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        ProductImageHelper $productImageHelper
     ) {
         $this->provider = $provider;
         $this->urlGenerator = $urlGenerator;
+        $this->productImageHelper = $productImageHelper;
     }
 
     /**
@@ -96,6 +104,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.names.label',
                     'required' => true,
+                    'value_class' => ProductName::class,
                     'entry_options' => [
                         'constraints' => [new NotBlank(['message' => 'oro.product.names.blank'])],
                         StripTagsExtension::OPTION_NAME => true,
@@ -108,16 +117,14 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.descriptions.label',
                     'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
+                    'value_class' => ProductDescription::class,
+                    'field' => ['wysiwyg', 'wysiwyg_style', 'wysiwyg_properties'],
+                    'entry_type' => WYSIWYGValueType::class,
                     'entry_options' => [
-                        'wysiwyg_options' => [
-                            'statusbar' => true,
-                            'resize' => true,
-                            'width' => 500,
-                            'height' => 300,
-                        ],
+                        'entity_class' => ProductDescription::class,
+                        'error_mapping' => ['wysiwygStyle' => 'wysiwyg_style'],
                     ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -126,16 +133,18 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.short_descriptions.label',
                     'required' => false,
+                    'value_class' => ProductShortDescription::class,
                     'field' => 'text',
                     'entry_type' => OroRichTextType::class,
                     'entry_options' => [
                         'wysiwyg_options' => [
-                            'statusbar' => true,
+                            'autoRender' => false,
+                            'elementpath' => true,
                             'resize' => true,
-                            'width' => 500,
                             'height' => 300,
                         ]
-                    ]
+                    ],
+                    'use_tabs' => true,
                 ]
             )
             ->add(
@@ -143,7 +152,7 @@ class ProductType extends AbstractType
                 ProductPrimaryUnitPrecisionType::class,
                 [
                     'label'          => 'oro.product.primary_unit_precision.label',
-                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
+                    'tooltip'        => 'oro.product.primary_unit_precision.tooltip',
                     'error_bubbling' => false,
                     'required'       => true,
                     'mapped'         => false,
@@ -154,7 +163,7 @@ class ProductType extends AbstractType
                 ProductUnitPrecisionCollectionType::class,
                 [
                     'label'          => 'oro.product.additional_unit_precisions.label',
-                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
+                    'tooltip'        => 'oro.product.additional_unit_precisions.tooltip',
                     'error_bubbling' => false,
                     'required'       => false,
                     'mapped'         => false,
@@ -169,13 +178,14 @@ class ProductType extends AbstractType
                 'pageTemplate',
                 EntityFieldFallbackValueType::class,
                 [
+                    'label' => 'oro.product.page_template.label',
                     'value_type' => PageTemplateType::class,
                     'value_options' => [
                         'route_name' => self::PAGE_TEMPLATE_ROUTE_NAME
                     ]
                 ]
             )
-            ->add('type', HiddenType::class)
+            ->add('type', HiddenType::class, ['label' => 'oro.product.type.label'])
 
             ->add(
                 'slugPrototypesWithRedirect',
@@ -193,7 +203,7 @@ class ProductType extends AbstractType
             ])
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
-                'tooltip' => 'oro.product.form.tooltip.new_arrival',
+                'tooltip' => 'oro.product.new_arrival.tooltip',
                 'choices' => ['oro.product.new_arrival.no' => 0, 'oro.product.new_arrival.yes' => 1],
                 'placeholder' => false,
             ])
@@ -205,9 +215,6 @@ class ProductType extends AbstractType
             ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetDataListener(FormEvent $event)
     {
         /** @var Product $product */
@@ -224,7 +231,7 @@ class ProductType extends AbstractType
             ProductCustomVariantFieldsCollectionType::class,
             [
                 'label' => 'oro.product.variant_fields.label',
-                'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                'tooltip' => 'oro.product.variant_fields.tooltip',
                 'required' => false,
                 'attributeFamily' => $product->getAttributeFamily()
             ]
@@ -237,7 +244,7 @@ class ProductType extends AbstractType
                 ProductPrimaryUnitPrecisionType::class,
                 [
                     'label'          => 'oro.product.primary_unit_precision.label',
-                    'tooltip'        => 'oro.product.form.tooltip.unit_precision',
+                    'tooltip'        => 'oro.product.primary_unit_precision.tooltip',
                     'error_bubbling' => false,
                     'required'       => true,
                     'data'           => $this->provider->getDefaultProductUnitPrecision()
@@ -268,11 +275,18 @@ class ProductType extends AbstractType
                     ['product_class' => $this->dataClass, 'by_reference' => false]
                 );
         }
+
+        if (!$product->getImages()->isEmpty()) {
+            $productImagesCollection = $product->getImages();
+            $sortedProductImages = $this->productImageHelper->sortImages($productImagesCollection->toArray());
+            $productImagesCollection->clear();
+
+            foreach ($sortedProductImages as $image) {
+                $productImagesCollection->add($image);
+            }
+        }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function postSetDataListener(FormEvent $event)
     {
         /** @var Product $product */
@@ -290,9 +304,6 @@ class ProductType extends AbstractType
         $form->get('additionalUnitPrecisions')->setData($product->getAdditionalUnitPrecisions());
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function submitListener(FormEvent $event)
     {
         /** @var Product $product */

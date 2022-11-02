@@ -2,11 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
+use Doctrine\ORM\PersistentCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Validate that combination of additional fields is unique for each configurable product where the current one is used.
+ */
 class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_unique_variant_links_simple_product';
@@ -15,11 +22,14 @@ class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
     private $validator;
 
     /**
-     * @param ValidatorInterface $validator
+     * @var ManagerRegistry
      */
-    public function __construct(ValidatorInterface $validator)
+    private $registry;
+
+    public function __construct(ValidatorInterface $validator, ManagerRegistry $registry)
     {
         $this->validator = $validator;
+        $this->registry = $registry;
     }
 
     /**
@@ -52,8 +62,8 @@ class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
     private function validateUniqueVariantLinks(Product $value, Constraint $constraint)
     {
         $productsSku = [];
-        foreach ($value->getParentVariantLinks() as $parentVariantLink) {
-            $parentProduct = $parentVariantLink->getParentProduct();
+        $parentProducts = $this->getParentProducts($value);
+        foreach ($parentProducts as $parentProduct) {
             $violationsList = $this->validator->validate($parentProduct, new UniqueProductVariantLinks());
 
             if ($violationsList->count() > 0) {
@@ -64,5 +74,45 @@ class UniqueVariantLinksSimpleProductValidator extends ConstraintValidator
         if ($productsSku) {
             $this->context->addViolation($constraint->message, ['%products%' => implode(', ', $productsSku)]);
         }
+    }
+
+    /**
+     * @param Product $value
+     * @return array|Product[]
+     */
+    private function getParentProducts(Product $value)
+    {
+        $parentVariantLinks = $value->getParentVariantLinks();
+        if ($value->getId()
+            && $parentVariantLinks instanceof AbstractLazyCollection
+            && !$parentVariantLinks->isInitialized()
+        ) {
+            $repo = $this
+                ->registry
+                ->getManagerForClass(ProductVariantLink::class)
+                ->getRepository(ProductVariantLink::class);
+
+            // variantLinksInDb
+            $persistedParentProductVariantLinks = $repo->findBy([
+                'product' => $value
+            ]);
+
+            $parentVariantLinkCollection = [];
+            // Merge items from DB with newly added or changes items
+            if ($parentVariantLinks instanceof PersistentCollection) {
+                $parentVariantLinkCollection = $parentVariantLinks->unwrap()->toArray();
+            }
+
+            return array_map(function (ProductVariantLink $productVariantLink) {
+                return $productVariantLink->getParentProduct();
+            }, array_merge($parentVariantLinkCollection, $persistedParentProductVariantLinks));
+        }
+
+        $parentProducts = [];
+        foreach ($parentVariantLinks as $parentVariantLink) {
+            $parentProducts[] = $parentVariantLink->getParentProduct();
+        }
+
+        return $parentProducts;
     }
 }

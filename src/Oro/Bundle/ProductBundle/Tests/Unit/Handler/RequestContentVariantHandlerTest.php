@@ -19,13 +19,13 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->handler = new RequestContentVariantHandler($this->requestStack);
     }
 
-    public function testGetContentVariantIdNoRequest()
+    public function testGetCategoryContentVariantIdNoRequest()
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -34,7 +34,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->handler->getContentVariantId());
     }
 
-    public function testGetContentVariantIdIsBool()
+    public function testGetCategoryContentVariantIdIsBool()
     {
         $request = new Request([ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => false]);
         $this->requestStack->expects($this->once())
@@ -44,7 +44,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->handler->getContentVariantId());
     }
 
-    public function testGetContentVariantIdZero()
+    public function testGetCategoryContentVariantIdZero()
     {
         $request = new Request([ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => 0]);
         $this->requestStack->expects($this->once())
@@ -54,7 +54,7 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->handler->getContentVariantId());
     }
 
-    public function testGetContentVariantId()
+    public function testGetCategoryContentVariantId()
     {
         $value = 777;
         $request = new Request([ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $value]);
@@ -63,5 +63,79 @@ class RequestContentVariantHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($request);
 
         $this->assertEquals($value, $this->handler->getContentVariantId());
+    }
+
+    /**
+     * @dataProvider overrideVariantConfigurationDataProvider
+     *
+     * @param string|int|bool $value
+     * @param bool $expected
+     */
+    public function testGetOverrideVariantConfiguration($value, $expected)
+    {
+        $request = new Request([ProductCollectionContentVariantType::OVERRIDE_VARIANT_CONFIGURATION_KEY => $value]);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $actual = $this->handler->getOverrideVariantConfiguration();
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function overrideVariantConfigurationDataProvider()
+    {
+        return [
+            [
+                'value' => true,
+                'expected' => true,
+            ],
+            [
+                'value' => false,
+                'expected' => false,
+            ],
+            [
+                'value' => 'true',
+                'expected' => true,
+            ],
+            [
+                'value' => 'false',
+                'expected' => false,
+            ],
+            [
+                'value' => 1,
+                'expected' => true,
+            ],
+            [
+                'value' => 0,
+                'expected' => false,
+            ],
+            [
+                'value' => -1,
+                'expected' => false,
+            ],
+            [
+                'value' => '1',
+                'expected' => true,
+            ],
+            [
+                'value' => '0',
+                'expected' => false,
+            ],
+            [
+                'value' => '-1',
+                'expected' => false,
+            ],
+            [
+                'value' => null,
+                'expected' => false,
+            ],
+            [
+                'value' => 'test',
+                'expected' => false,
+            ],
+        ];
     }
 }

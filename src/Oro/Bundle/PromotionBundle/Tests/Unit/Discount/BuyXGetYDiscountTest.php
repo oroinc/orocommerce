@@ -8,24 +8,27 @@ use Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var BuyXGetYDiscount
      */
     private $discount;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discount = new BuyXGetYDiscount();
     }
 
     public function testApply()
     {
-        $matchingProduct = new Product();
-        $notMatchingProduct = new Product();
+        $matchingProduct = $this->getEntity(Product::class, ['id' => 42]);
+        $notMatchingProduct = $this->getEntity(Product::class, ['id' => 123]);
         $lineItemWithDiscount = (new DiscountLineItem())
             ->setProduct($matchingProduct)
             ->setQuantity(10.0)
@@ -66,7 +69,6 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider invalidOptionsDataProvider
-     * @param array $options
      */
     public function testInvalidOptions(array $options)
     {
@@ -74,9 +76,6 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
         $this->discount->configure($options);
     }
 
-    /**
-     * @return array
-     */
     public function invalidOptionsDataProvider(): array
     {
         return [
@@ -146,7 +145,6 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function calculateDataProvider(): array

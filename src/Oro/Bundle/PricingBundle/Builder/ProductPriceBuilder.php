@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Handler\CombinedPriceListBuildTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\ShardQueryExecutorInterface;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -17,57 +20,48 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 /**
  * Builder for product prices
  */
-class ProductPriceBuilder
+class ProductPriceBuilder implements FeatureToggleableInterface
 {
-    /**
-     * @var ShardManager
-     */
-    protected $shardManager;
+    use FeatureCheckerHolderTrait;
+
+    protected ShardManager $shardManager;
+    protected ManagerRegistry $registry;
+    protected ShardQueryExecutorInterface $shardInsertQueryExecutor;
+    protected PriceListRuleCompiler $ruleCompiler;
+    protected PriceListTriggerHandler $priceListTriggerHandler;
+    protected CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler;
+    private ?ProductPriceRepository $productPriceRepository = null;
+    private ?int $version = null;
 
     /**
-     * @var ManagerRegistry
+     * @var int
      */
-    protected $registry;
+    private $batchSize = ProductPriceRepository::BUFFER_SIZE;
 
-    /**
-     * @var ShardQueryExecutorInterface
-     */
-    protected $insertFromSelectQueryExecutor;
-
-    /**
-     * @var PriceListRuleCompiler
-     */
-    protected $ruleCompiler;
-
-    /**
-     * @var ProductPriceRepository
-     */
-    protected $productPriceRepository;
-
-    /**
-     * @var PriceListTriggerHandler
-     */
-    protected $priceListTriggerHandler;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardQueryExecutorInterface $insertFromSelectQueryExecutor
-     * @param PriceListRuleCompiler $ruleCompiler
-     * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param ShardManager $shardManager
-     */
     public function __construct(
         ManagerRegistry $registry,
-        ShardQueryExecutorInterface $insertFromSelectQueryExecutor,
+        ShardQueryExecutorInterface $shardInsertQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
         PriceListTriggerHandler $priceListTriggerHandler,
-        ShardManager $shardManager
+        ShardManager $shardManager,
+        CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler
     ) {
         $this->registry = $registry;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->shardInsertQueryExecutor = $shardInsertQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->shardManager = $shardManager;
+        $this->combinedPriceListBuildTriggerHandler = $combinedPriceListBuildTriggerHandler;
+    }
+
+    public function setBatchSize(int $batchSize)
+    {
+        $this->batchSize = $batchSize;
+    }
+
+    public function setShardInsertQueryExecutor(ShardQueryExecutorInterface $shardInsertQueryExecutor)
+    {
+        $this->shardInsertQueryExecutor = $shardInsertQueryExecutor;
     }
 
     /**
@@ -76,24 +70,16 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, array $products = [])
     {
-        $this->buildByPriceListWithoutTriggerSend($priceList, $products);
-        $this->flush();
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param array|Product[] $products
-     */
-    public function buildByPriceListWithoutTriggerSend(PriceList $priceList, array $products = [])
-    {
+        if (!$products) {
+            $this->version = time();
+        }
         $this->buildByPriceListWithoutTriggers($priceList, $products);
 
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $products);
-    }
+        if ($this->isFeaturesEnabled()) {
+            $this->emitCplTriggers($priceList, $products);
+        }
 
-    public function flush()
-    {
-        $this->priceListTriggerHandler->sendScheduledTriggers();
+        $this->version = null;
     }
 
     /**
@@ -102,11 +88,14 @@ class ProductPriceBuilder
      */
     protected function applyRule(PriceRule $priceRule, array $products = [])
     {
-        $this->insertFromSelectQueryExecutor->execute(
-            ProductPrice::class,
-            $this->ruleCompiler->getOrderedFields(),
-            $this->ruleCompiler->compile($priceRule, $products)
-        );
+        $fields = $this->ruleCompiler->getOrderedFields();
+        $qb = $this->ruleCompiler->compile($priceRule, $products);
+        if ($this->version) {
+            $fields[] = 'version';
+            $qb->addSelect((string)$qb->expr()->literal($this->version));
+        }
+
+        $this->shardInsertQueryExecutor->execute(ProductPrice::class, $fields, $qb);
     }
 
     /**
@@ -132,12 +121,8 @@ class ProductPriceBuilder
         $rules = $priceList->getPriceRules()->toArray();
         usort(
             $rules,
-            function (PriceRule $a, PriceRule $b) {
-                if ($a->getPriority() === $b->getPriority()) {
-                    return 0;
-                }
-
-                return $a->getPriority() < $b->getPriority() ? -1 : 1;
+            static function (PriceRule $a, PriceRule $b) {
+                return $a->getPriority() <=> $b->getPriority();
             }
         );
 
@@ -150,11 +135,56 @@ class ProductPriceBuilder
      */
     public function buildByPriceListWithoutTriggers(PriceList $priceList, array $products = [])
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $products);
-        if (count($priceList->getPriceRules()) > 0) {
-            $rules = $this->getSortedRules($priceList);
-            foreach ($rules as $rule) {
-                $this->applyRule($rule, $products);
+        foreach ($this->getProductBatches($products) as $productBatch) {
+            $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $productBatch);
+            if (count($priceList->getPriceRules()) > 0) {
+                $rules = $this->getSortedRules($priceList);
+                foreach ($rules as $rule) {
+                    $this->applyRule($rule, $productBatch);
+                }
+            }
+        }
+    }
+
+    private function emitCplTriggers(PriceList $priceList, array $products): void
+    {
+        $priceRulesCount = count($priceList->getPriceRules());
+
+        // In some cases, we cannot guarantee that a combined price list includes a specific price list.
+        // This problem arises if prices are generated dynamically, and we do not know whether it is possible to
+        // include this price list in the combined price list until prices are generated.
+        // After generating prices need to send message to rebuild the combined price list.
+        if ($priceRulesCount > 0 && $this->combinedPriceListBuildTriggerHandler->handle($priceList)) {
+            return;
+        }
+
+        if ($products || $priceRulesCount === 0) {
+            $productsBatches = $this->getProductBatches($products);
+        } else {
+            $productsBatches = $this->getProductPriceRepository()->getProductsByPriceListAndVersion(
+                $this->shardManager,
+                $priceList->getId(),
+                $this->version,
+                $this->batchSize
+            );
+        }
+
+        foreach ($productsBatches as $batch) {
+            $this->priceListTriggerHandler->handlePriceListTopic(
+                ResolveCombinedPriceByPriceListTopic::getName(),
+                $priceList,
+                $batch
+            );
+        }
+    }
+
+    private function getProductBatches(array $products): \Generator
+    {
+        if (!$products) {
+            yield [];
+        } else {
+            foreach (array_chunk($products, $this->batchSize) as $batch) {
+                yield $batch;
             }
         }
     }

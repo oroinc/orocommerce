@@ -27,7 +27,7 @@ class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\Test
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->tokenStorage   = $this->createMock(TokenStorageInterface::class);

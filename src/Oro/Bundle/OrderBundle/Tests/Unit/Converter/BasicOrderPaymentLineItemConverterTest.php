@@ -32,7 +32,7 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $paymentLineItemBuilderFactory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentLineItemBuilderFactory = new BasicPaymentLineItemBuilderFactory();
         $this->collectionFactory = new DoctrinePaymentLineItemCollectionFactory();
@@ -44,9 +44,6 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertLineItemsDataProvider
-     *
-     * @param Collection $orderCollection
-     * @param array      $expectedLineItems
      */
     public function testConvertLineItems(Collection $orderCollection, array $expectedLineItems)
     {

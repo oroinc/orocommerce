@@ -1,0 +1,59 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRule:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+    shippingRule:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.5
+            type: 'per_order'
+            handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule:
+        rule: '@shippingRule'
+        methodConfigs: ['@shippingMethodConfig']
+        currency: 'USD'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm:
+        label: net 10
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address:
+        country: '@germany'
+        region: '@berlin'
+        label: 'Primary address'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '10115'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address'
+        type: '@billingType'
+        default: true
+    shipping:
+        address: '@address'
+        type: '@shippingType'
+        default: true

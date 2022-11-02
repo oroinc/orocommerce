@@ -18,9 +18,6 @@ class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidator
      */
     private $crypter;
 
-    /**
-     * @param SymmetricCrypterInterface $crypter
-     */
     public function __construct(SymmetricCrypterInterface $crypter)
     {
         $this->crypter = $crypter;

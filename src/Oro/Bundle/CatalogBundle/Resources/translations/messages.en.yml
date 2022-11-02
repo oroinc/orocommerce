@@ -3,7 +3,8 @@ oro:
         category:
             entity_label:                           'Category'
             entity_plural_label:                    'Categories'
-            entity_description:                     A category of the <a href="https://www.oroinc.com/doc/orocommerce/current/user-guide/master-catalog">master catalog</a>.
+            entity_grid_all_view_label:             'All %entity_plural_label%'
+            entity_description:                     A category of the <a href="https://doc.oroinc.com/user/back-office/products/master-catalog/">master catalog</a>.
             id.label:                               'ID'
             titles:
                 label:                              'Title'
@@ -41,6 +42,10 @@ oro:
             products:
                 label:                              'Products'
                 description:                        The relationship between the category and the products in it.
+            organization:
+                label:                              'Organization'
+                description:                        The relationship on organization.
+            default_product_options.label:          Default options for products
             categories.label:                       'Product categories'
             include_subcategories.label:            'Include Sub-Categories'
             include_not_categorized_products.label: 'Include Not Categorized Products'
@@ -77,6 +82,85 @@ oro:
             minimum_quantity_to_order:
                 label:                              'Minimum quantity to order'
                 description:                        The minimum quantity that the user can order by default for the products in the category. This option applies only when the category settings apply to the product.
+
+            importexport:
+                export:
+                    label: 'Export Categories'
+
+        categoryshortdescription:
+            entity_label: 'Category Short Description'
+            entity_plural_label: 'Category Short Descriptions'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the category short description values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            category:
+                label: 'Category'
+                description: 'The value for the related category'
+
+        categorytitle:
+            entity_label: 'Category Title'
+            entity_plural_label: 'Category Titles'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the category title values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            category:
+                label: 'Category'
+                description: 'The value for the related category'
+
+        categorylongdescription:
+            entity_label: 'Category Long Description'
+            entity_plural_label: 'Category Long Description'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Entity stores relationships between the category long description values and their translation data.'
+            id.label: 'ID'
+            fallback:
+                label: 'Fallback'
+                description: 'The value for the fallback'
+            localization:
+                label: 'Localization'
+                description: 'The value for the localization, selected language'
+            string:
+                label: 'String value'
+                description: 'The string value for the current localization'
+            text:
+                label: 'Text value'
+                description: 'The text value for the current localization, can contain html tags'
+            wysiwyg:
+                label: 'WYSIWYG value'
+                description: 'The text value for the current localization, can contain html tags'
+            wysiwyg_style:
+                label: 'WYSIWYG Style value'
+                description: 'The text value for the current localization, can contain css data'
+            wysiwyg_properties:
+                label: 'WYSIWYG Properties'
+                description: 'The text value for the current localization, can contain additional WYSIWYG data'
+            category:
+                label: 'Category'
+                description: 'The value for the related category'
 
         all_products:
             label: All Products
@@ -127,7 +211,10 @@ oro:
                 category_direct_url_prefix.label: 'Category URL prefix'
                 all_products_page_enabled:
                     label: 'Enable all products page'
-                    tooltip: 'Once you enable All Products page, add it as a part of your web catalog (Marketing>Web Catalogs) or a frontend menu (System>Frontend Menus). To add All Products Page to the frontend menu, use the /catalog/allproducts URL. If you add All Products Page to a web catalog, the URL slug will be autogenerated or provided manually.'
+                    tooltip: 'Select the option to enable the All Products page. Next, add it as a part of your web catalog (Marketing>Web Catalogs) or a storefront menu (System>Frontend Menus).  When you add the All Products page to the storefront menu, use the /catalog/allproducts URL. If you add it to a web catalog, the URL slug is autogenerated or provided manually.'
+                category_image_placeholder:
+                    label: 'Category Image Placeholder'
+                    tooltip: 'Select the image file to be used in various category widgets (e.g., Featured Categories) for the categories that have no associated images.'
 
         featured_categories:
             label: 'Featured Categories'
@@ -140,15 +227,23 @@ oro:
 
         feature:
             frontend_master_catalog:
-                label: Frontend Master Catalog
-                description: Frontend Master Catalog functionality allows to show categories structure on frontend page
+                label: Storefront Master Catalog
+                description: Enables the master catalog categories to be displayed in the storefront.
             all_products_page:
-                label: All products page
-                description: This feature enables a page where all products are shown on one page grouped by category
+                label: All Products Page
+                description: Enables a storefront page that displays all available products grouped by category.
+            master_catalog:
+                manage:
+                    label: Master Catalog Management
+                    description: Enables the master catalog feature that helps structure all existing products by categories.
 
         filter:
             subcategory:
                 label: 'Sub-Categories'
+
+        override_variant_configuration:
+            label: Override Product Variant Configuration
+            tooltip: If selected, all simple product variants assigned to this category will be displayed on the page regardless of "Display Simple Variations" setting in the system configuration.
 
     product:
         category:

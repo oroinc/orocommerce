@@ -15,6 +15,7 @@
         width: $checkout-view-column-width;
         margin: $checkout-view-column-margin;
         padding: $checkout-view-column-offset;
+        min-width: $checkout-view-column-min-width;
 
         &-inner {
             padding: $checkout-view-column-inner-offset;
@@ -27,11 +28,11 @@
             &::after {
                 left: $checkout-view-column-first-width;
 
-                content: "";
+                content: '';
             }
         }
 
-        &--extended{
+        &--extended {
             width: $checkout-view-column-extended-width;
             padding-right: 0;
             margin-bottom: 0;
@@ -39,7 +40,7 @@
             &::after {
                 right: $checkout-view-column-extended-width;
 
-                content: "";
+                content: '';
             }
         }
 
@@ -52,13 +53,23 @@
 
             background: $checkout-view-column-pseudo-background;
         }
+
+        &-header {
+            position: relative;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+
+            &.has-offset:not(.in-sticky) {
+                margin: $checkout-head-margin;
+            }
+        }
     }
 
     &__title {
-        position: $checkout-view-title-position;
-
-        min-height: $checkout-view-title-min-height;
-        margin: $checkout-view-title-margin;
+        display: block;
 
         color: $checkout-view-title-color;
 
@@ -73,23 +84,18 @@
 
     &__title-text {
         vertical-align: middle;
-
-        font-weight: 700;
     }
 
     &__badge {
-        @include badge($checkout-view-badge-size, $checkout-view-badge-font-size, get-color('primary', 'base'), 50%);
+        @include badge($checkout-view-badge-size, $checkout-view-badge-font-size);
 
         margin: $checkout-view-badge-margin;
     }
 
     &__shipping-methods,
-    &__payment-methods {
+    &__payment-methods,
+    &__shipping_date {
         margin: $checkout-view-shipping-methods-margin;
-
-        > .label {
-            text-transform: uppercase;
-        }
     }
 
     &__sticky-titles {
@@ -144,13 +150,17 @@
 
     &__notification-container {
         &:not(:empty) {
-            background: get-color('additional', 'ultra');
+            background: $checkout-view-notification-container-background;
         }
 
         .notification-flash-container {
             margin: 0 auto;
             padding: $offset-y-m;
         }
+    }
+
+    .checkout {
+        padding: $checkout-padding-narrow;
     }
 
     .checkout-form__payment-methods {
@@ -163,28 +173,23 @@
         max-width: $checkout-view-payment-methods-image-max-width;
     }
 
-    .checkout-order-summary__content {
-        padding: 0;
-    }
-
-    .checkout-order-summary__subtitle {
-        color: get-color('additional', 'middle');
-    }
-
-    .checkout-order-summary__collapse-container {
-        &::after {
-            background: $checkout-view-summary-grid-container-shadow-background;
-        }
+    .checkout-order-summary__edit-link {
+        align-self: flex-end;
     }
 
     .datepicker-input {
         max-width: $checkout-view-shipping-methods-datepicker-box-max-width;
     }
 
-    @include update-checkout-blocks;
+    .datagrid-toolbar {
+        .datagrid-toolbar__start,
+        .datagrid-toolbar__end {
+            flex-basis: auto;
+        }
+    }
 }
 
-@include breakpoint('tablet') {
+@include breakpoint('single-page-checkout-overflow') {
     .single-page-checkout-view {
         &__column {
             position: relative;
@@ -194,7 +199,7 @@
             &::after {
                 left: -1px;
 
-                content: "";
+                content: '';
             }
 
             &--first {
@@ -240,6 +245,7 @@
 @media (max-width: $checkout-view-breakpoint-max-desktop) {
     .checkout-order-summary-totals-sticky {
         &.in-sticky {
+            // stylelint-disable-next-line declaration-no-important
             left: $checkout-view-checkout-order-summary-totals-sticky-left !important;
             right: $checkout-view-checkout-order-summary-totals-sticky-right;
         }

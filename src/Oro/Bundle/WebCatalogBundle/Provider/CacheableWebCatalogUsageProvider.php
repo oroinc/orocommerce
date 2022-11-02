@@ -20,9 +20,6 @@ class CacheableWebCatalogUsageProvider implements WebCatalogUsageProviderInterfa
     /** @var array [web catalog id => in use flag, ...] */
     private $inUseWebCatalogs = [];
 
-    /**
-     * @param WebCatalogUsageProviderInterface $webCatalogUsageProvider
-     */
     public function __construct(WebCatalogUsageProviderInterface $webCatalogUsageProvider)
     {
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;

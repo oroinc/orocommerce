@@ -7,6 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type to select a tax provider from the list of applicable tax providers.
+ */
 class TaxProviderType extends AbstractType
 {
     const NAME = 'oro_tax_provider_type';
@@ -16,9 +19,6 @@ class TaxProviderType extends AbstractType
      */
     protected $registry;
 
-    /**
-     * @param TaxProviderRegistry $registry
-     */
     public function __construct(TaxProviderRegistry $registry)
     {
         $this->registry = $registry;
@@ -29,12 +29,10 @@ class TaxProviderType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $choicesRaw = $this->registry->getProviders();
-
         $choices = [];
-
-        foreach ($choicesRaw as $choiceRaw) {
-            $choices[$choiceRaw->getLabel()] = $choiceRaw->getName();
+        $providers = $this->registry->getProviders();
+        foreach ($providers as $name => $provider) {
+            $choices[$provider->getLabel()] = $name;
         }
 
         $resolver->setDefaults([

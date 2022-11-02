@@ -8,19 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxJurisdictionSelectTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TaxJurisdictionSelectType
-     */
-    protected $type;
+    /** @var TaxJurisdictionSelectType */
+    private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new TaxJurisdictionSelectType();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->type);
     }
 
     public function testGetParent()

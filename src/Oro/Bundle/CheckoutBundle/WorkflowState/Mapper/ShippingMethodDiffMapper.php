@@ -14,9 +14,6 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
      */
     private $checkoutShippingMethodsProvider;
 
-    /**
-     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-     */
     public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
     {
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;

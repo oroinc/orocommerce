@@ -9,29 +9,21 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @dbIsolationPerTest
  */
 class ShoppingListControllerTest extends WebTestCase
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emProduct;
+    private EntityManagerInterface $emProduct;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emFallback;
+    private EntityManagerInterface $emFallback;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    private TranslatorInterface $translator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -54,13 +46,9 @@ class ShoppingListControllerTest extends WebTestCase
     }
 
     /**
-     * @param $quantity
-     * @param $minLimit
-     * @param $maxLimit
-     *
      * @dataProvider getShoppingListDataProvider
      */
-    public function testQuantitysOnShoppingListView($quantity, $minLimit, $maxLimit)
+    public function testQuantitysOnShoppingListView(int $quantity, int $minLimit, int $maxLimit): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
@@ -69,21 +57,28 @@ class ShoppingListControllerTest extends WebTestCase
         $product = $lineItem->getProduct();
         $this->setProductLimits($product, $minLimit, $maxLimit);
 
-        $crawler = $this->client->request(
+        $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+            $this->getUrl(
+                'oro_shopping_list_frontend_view',
+                ['id' => $shoppingList->getId(), 'layout_block_ids' => ['combined_button_wrapper']]
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $content = \json_decode($response->getContent(), true);
+        $crawler = new Crawler($content['combined_button_wrapper']);
+
         $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
-        $this->assertContains($createOrderLabel, $crawler->html());
-        $this->client->followRedirects(true);
-        $crawler->selectLink($createOrderLabel)->link();
+        static::assertStringContainsString($createOrderLabel, $crawler->html());
     }
 
-    /**
-     * @return array
-     */
-    public function getShoppingListDataProvider()
+    public function getShoppingListDataProvider(): array
     {
         return [
             [
@@ -95,21 +90,15 @@ class ShoppingListControllerTest extends WebTestCase
     }
 
     /**
-     * @param $quantity
-     * @param $minLimit
-     * @param $maxLimit
-     * @param $errorMessage
-     * @param $errorLimit
-     *
      * @dataProvider getShoppingListErrorsDataProvider
      */
     public function testQuantityErrorMessagesOnShoppingListView(
-        $quantity,
-        $minLimit,
-        $maxLimit,
-        $errorLimit,
-        $errorMessage = null
-    ) {
+        int $quantity,
+        int $minLimit,
+        int $maxLimit,
+        int $errorLimit,
+        string $errorMessage
+    ): void {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $lineItem = $shoppingList->getLineItems()[0];
@@ -123,19 +112,16 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
-        $this->assertNotContains($createOrderLabel, $crawler->html());
+        static::assertStringNotContainsString($createOrderLabel, $crawler->html());
 
         $errorMessage = $this->translator->trans(
             $errorMessage,
             ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
         );
-        $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
+        static::assertStringContainsString($errorMessage, $this->client->getResponse()->getContent());
     }
 
-    /**
-     * @return array
-     */
-    public function getShoppingListErrorsDataProvider()
+    public function getShoppingListErrorsDataProvider(): array
     {
         return [
             [
@@ -155,12 +141,7 @@ class ShoppingListControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param Product $product
-     * @param int $minLimit
-     * @param int $maxLimit
-     */
-    protected function setProductLimits(Product $product, $minLimit, $maxLimit)
+    protected function setProductLimits(Product $product, int $minLimit, int $maxLimit): void
     {
         $entityFallback = $this->createFallbackEntity($minLimit);
         $entityFallback2 = $this->createFallbackEntity($maxLimit);
@@ -174,7 +155,7 @@ class ShoppingListControllerTest extends WebTestCase
      * @param mixed $scalarValue
      * @return EntityFieldFallbackValue
      */
-    protected function createFallbackEntity($scalarValue)
+    protected function createFallbackEntity($scalarValue): EntityFieldFallbackValue
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setScalarValue($scalarValue);

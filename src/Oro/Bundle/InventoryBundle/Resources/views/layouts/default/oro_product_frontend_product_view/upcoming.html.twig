@@ -1,0 +1,12 @@
+{% block _upcoming_label_widget %}
+    {% if oro_inventory_is_product_upcoming(product) %}
+        {% set availableDate = oro_inventory_upcoming_product_availability_date(product) %}
+        <p class="product-upcoming-label">
+            {% if availableDate is not null %}
+                {{ 'oro.inventory.is_upcoming.notification_with_date'|trans({'%date%': availableDate|oro_format_date({'timeZone': oro_timezone()})}) }}
+            {% else %}
+                {{ 'oro.inventory.is_upcoming.notification'|trans }}
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock %}

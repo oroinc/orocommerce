@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\DataConverter;
 
+use Oro\Bundle\ImportExportBundle\Context\ContextAwareInterface;
+use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
+/**
+ * Prepares Product data for import and export
+ */
+class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter implements ContextAwareInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -15,11 +20,21 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
     protected $eventDispatcher;
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var ContextInterface
      */
+    protected $context;
+
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setImportExportContext(ContextInterface $context): void
+    {
+        $this->context = $context;
     }
 
     /**
@@ -50,7 +65,9 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 
         if ($this->eventDispatcher) {
             $event = new ProductDataConverterEvent($backendHeader);
-            $this->eventDispatcher->dispatch(ProductDataConverterEvent::BACKEND_HEADER, $event);
+            $event->setContext($this->context);
+
+            $this->eventDispatcher->dispatch($event, ProductDataConverterEvent::BACKEND_HEADER);
             $backendHeader = $event->getData();
         }
 
@@ -66,7 +83,9 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 
         if ($this->eventDispatcher) {
             $event = new ProductDataConverterEvent($data);
-            $this->eventDispatcher->dispatch(ProductDataConverterEvent::CONVERT_TO_EXPORT, $event);
+            $event->setContext($this->context);
+
+            $this->eventDispatcher->dispatch($event, ProductDataConverterEvent::CONVERT_TO_EXPORT);
             $data = $event->getData();
         }
 
@@ -82,16 +101,15 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 
         if ($this->eventDispatcher) {
             $event = new ProductDataConverterEvent($data);
-            $this->eventDispatcher->dispatch(ProductDataConverterEvent::CONVERT_TO_IMPORT, $event);
+            $event->setContext($this->context);
+
+            $this->eventDispatcher->dispatch($event, ProductDataConverterEvent::CONVERT_TO_IMPORT);
             $data = $event->getData();
         }
 
         return $data;
     }
 
-    /**
-     * @param RelationCalculatorInterface $relationCalculator
-     */
     public function setRelationCalculator(RelationCalculatorInterface $relationCalculator)
     {
         $this->relationCalculator = $relationCalculator;

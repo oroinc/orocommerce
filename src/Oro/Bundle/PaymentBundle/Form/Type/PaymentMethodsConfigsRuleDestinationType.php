@@ -25,9 +25,6 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
      */
     protected $subscriber;
 
-    /**
-     * @param AddressCountryAndRegionSubscriber $subscriber
-     */
     public function __construct(AddressCountryAndRegionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;
@@ -57,9 +54,6 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
         $builder->get('postalCodes')->addModelTransformer(new DestinationPostalCodeTransformer());
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

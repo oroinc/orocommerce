@@ -14,20 +14,19 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class RedirectListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RedirectListener */
-    protected $listener;
-
     /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    protected $session;
+    private $session;
 
     /** @var PaymentTransaction */
-    protected $paymentTransaction;
+    private $paymentTransaction;
 
     /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $messageProvider;
+    private $messageProvider;
 
+    /** @var RedirectListener */
+    private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
         $this->paymentTransaction = new PaymentTransaction();
@@ -36,17 +35,10 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new RedirectListener($this->session, $this->messageProvider);
     }
 
-    protected function tearDown()
-    {
-        unset($this->listener, $this->paymentTransaction, $this->session, $this->paymentMethodProvider);
-    }
-
     /**
      * @dataProvider onReturnProvider
-     * @param array $options
-     * @param RedirectResponse|response $expectedResponse
      */
-    public function testOnReturn($options, $expectedResponse)
+    public function testOnReturn(array $options, Response $expectedResponse): void
     {
         $this->paymentTransaction
             ->setTransactionOptions($options);
@@ -59,19 +51,16 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
-    public function testOnReturnWithoutTransaction()
+    public function testOnReturnWithoutTransaction(): void
     {
         $event = new CallbackReturnEvent();
 
         $this->listener->onReturn($event);
 
-        $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $event->getResponse());
+        self::assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
 
-    /**
-     * @return array
-     */
-    public function onReturnProvider()
+    public function onReturnProvider(): array
     {
         return [
             [
@@ -80,24 +69,20 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN)
+                'expectedResponse' => new Response(null, Response::HTTP_FORBIDDEN)
             ],
         ];
     }
 
     /**
      * @dataProvider onErrorProvider
-     * @param bool $errorAlreadyInFlashBag
-     * @param array $options
-     * @param Response $expectedResponse
-     * @param string $expectedFlashError
      */
     public function testOnError(
-        $errorAlreadyInFlashBag,
-        $options,
-        $expectedResponse,
-        $expectedFlashError = null
-    ) {
+        bool $errorAlreadyInFlashBag,
+        array $options,
+        Response $expectedResponse,
+        ?string $expectedFlashError = null
+    ): void {
         $this->paymentTransaction->setTransactionOptions($options);
 
         $this->messageProvider->expects($this->once())
@@ -107,8 +92,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
-        /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject $flashBag */
-        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock(FlashBagInterface::class);
 
         $flashBag->expects($this->once())
             ->method('has')
@@ -128,10 +112,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertResponses($expectedResponse, $event->getResponse());
     }
 
-    /**
-     * @return array
-     */
-    public function onErrorProvider()
+    public function onErrorProvider(): array
     {
         return [
             [
@@ -143,7 +124,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
             [
                 'errorAlreadyInFlashBag' => true,
                 'options' => ['someAnotherValue'],
-                'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN),
+                'expectedResponse' => new Response(null, Response::HTTP_FORBIDDEN),
                 'expectedFlashError' => null
             ],
             [
@@ -167,14 +148,10 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param Response $expectedResponse
-     * @param Response $actualResponse
-     */
-    private function assertResponses(Response $expectedResponse, Response $actualResponse)
+    private function assertResponses(Response $expectedResponse, Response $actualResponse): void
     {
         // Hack response datetime because of requests might have different datetime
         $expectedResponse->setDate($actualResponse->getDate());
-        $this->assertEquals($expectedResponse, $actualResponse);
+        self::assertEquals($expectedResponse, $actualResponse);
     }
 }

@@ -2,18 +2,42 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
-use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
+use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
-class CheckoutRepository extends EntityRepository
+/**
+ * Handles logic for fetching checkout and checkout items by ids and different criteria
+ */
+class CheckoutRepository extends ServiceEntityRepository implements ResettableCustomerUserRepositoryInterface
 {
     use WorkflowQueryTrait;
+    use ResetCustomerUserTrait;
+
+    /**
+     * @param int $checkoutId
+     *
+     * @return Checkout|null
+     */
+    public function getCheckoutWithRelations($checkoutId)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('c', 'cli', 'p')
+            ->leftJoin('c.lineItems', 'cli')
+            ->leftJoin('cli.product', 'p')
+            ->where($qb->expr()->eq('c.id', ':id'))
+            ->setParameter('id', $checkoutId);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 
     /**
      * Return the count of line items per Checkout.
@@ -98,15 +122,17 @@ class CheckoutRepository extends EntityRepository
      * @param CustomerUser $customerUser
      * @param array        $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string       $workflowName
+     * @param string|null  $currency
      *
      * @return Checkout|null
      */
-    public function findCheckoutByCustomerUserAndSourceCriteria(
+    public function findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
         CustomerUser $customerUser,
         array $sourceCriteria,
-        $workflowName
+        string $workflowName,
+        ?string $currency = null
     ) {
-        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName);
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
         $qb
             ->andWhere(
                 $qb->expr()->eq('c.customerUser', ':customerUser')
@@ -164,20 +190,22 @@ class CheckoutRepository extends EntityRepository
     /**
      * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string $workflowName
+     * @param string|null $currency
      *
      * @return Checkout|null
      */
-    public function findCheckoutBySourceCriteria(
+    public function findCheckoutBySourceCriteriaWithCurrency(
         array $sourceCriteria,
-        $workflowName
+        string $workflowName,
+        ?string $currency = null
     ) {
-        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName);
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * @return array|Checkout[]
+     * @return \Iterator|Checkout[]
      */
     public function findWithInvalidSubtotals()
     {
@@ -185,20 +213,22 @@ class CheckoutRepository extends EntityRepository
             ->select('c, cs')
             ->join('c.subtotals', 'cs')
             ->where('cs.valid = :valid')
-            ->setParameter('valid', false, Type::BOOLEAN);
+            ->setParameter('valid', false, Types::BOOLEAN);
 
-        return $qb->getQuery()->getResult();
+        return new BufferedIdentityQueryResultIterator($qb);
     }
 
     /**
      * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string $workflowName
+     * @param string|null $currency
      *
      * @return QueryBuilder
      */
     private function getCheckoutBySourceCriteriaQueryBuilder(
         array $sourceCriteria,
-        $workflowName
+        string $workflowName,
+        ?string $currency = null
     ) {
         $qb = $this->createQueryBuilder('c');
         $this->joinWorkflowItem($qb)
@@ -209,9 +239,14 @@ class CheckoutRepository extends EntityRepository
                 $qb->expr()->eq('c.completed', ':completed'),
                 $qb->expr()->eq('workflowItem.workflowName', ':workflowName')
             )
-            ->setParameter('deleted', false, Type::BOOLEAN)
-            ->setParameter('completed', false, Type::BOOLEAN)
+            ->setParameter('deleted', false, Types::BOOLEAN)
+            ->setParameter('completed', false, Types::BOOLEAN)
             ->setParameter('workflowName', $workflowName);
+
+        if ($currency) {
+            $qb->andWhere($qb->expr()->eq('c.currency', ':currency'))
+                ->setParameter('currency', $currency, Types::STRING);
+        }
 
         foreach ($sourceCriteria as $field => $value) {
             QueryBuilderUtil::checkIdentifier($field);

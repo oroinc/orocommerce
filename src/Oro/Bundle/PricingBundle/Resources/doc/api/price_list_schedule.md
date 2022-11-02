@@ -16,10 +16,15 @@ Retrieve a collection of price list schedule records.
 
 ### create
 
-Create a new price list schedule. The period defined by the `activeAt` and `deactivateAt` values should not overlap with
-periods defined by other schedules for the same price list.
+Create a new price list schedule.
+
+The created record is returned in the response.
 
 {@inheritdoc}
+
+**Note:**
+The period defined by the **activeAt** and **deactivateAt** values should not overlap with
+periods defined by other schedules for the same price list.
 
 {@request:json_api}
 Example:
@@ -47,13 +52,16 @@ Example:
 
 ### update
 
-Update a price list schedule record.
+Edit a specific price list schedule record.
 
-**Notes:**
-* The period defined by the `activeAt` and `deactivateAt` values should not overlap with periods defined by other schedules for the same price list. 
-* The `priceList` value is not allowed to be updated. To modify the relationship with the price list, delete the incorrect price list schedule and create a new one including the correct price list.
+The updated record is returned in the response.
 
 {@inheritdoc}
+
+**Notes:**
+
+* The period defined by the **activeAt** and **deactivateAt** values should not overlap with periods defined by other schedules for the same price list. 
+* The **priceList** value is not allowed to be updated. To modify the relationship with the price list, delete the incorrect price list schedule and create a new one including the correct price list.
 
 {@request:json_api}
 Example:
@@ -85,21 +93,13 @@ Delete a collection of price list schedule records.
 
 ## FIELDS
 
-### id
-
-#### update
-
-{@inheritdoc}
-
-**The required field**
-
 ### activeAt
 
-Defines time when price list should be activated
+Defines time when price list should be activated.
 
 ### deactivateAt
 
-Defines time when price list should be deactivated
+Defines time when price list should be deactivated.
 
 ### priceList
 
@@ -109,7 +109,15 @@ The price list this schedule is created for.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
+
+### priceList
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 

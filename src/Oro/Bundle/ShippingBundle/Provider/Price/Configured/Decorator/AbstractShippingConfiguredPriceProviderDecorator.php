@@ -13,9 +13,6 @@ class AbstractShippingConfiguredPriceProviderDecorator implements ShippingConfig
      */
     private $shippingConfiguredPriceProvider;
 
-    /**
-     * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
-     */
     public function __construct(ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider)
     {
         $this->shippingConfiguredPriceProvider = $shippingConfiguredPriceProvider;

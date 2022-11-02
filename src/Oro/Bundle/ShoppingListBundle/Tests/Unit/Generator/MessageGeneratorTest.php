@@ -2,41 +2,42 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Generator;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface */
-    protected $router;
+    /** @var ShoppingListUrlProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlProvider;
 
     /** @var MessageGenerator */
-    protected $generator;
+    private $generator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
-        $this->generator = new MessageGenerator($this->translator, $this->router);
-    }
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->urlProvider = $this->createMock(ShoppingListUrlProvider::class);
 
-    protected function tearDown()
-    {
-        unset($this->translator, $this->router, $this->generator);
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->with(ShoppingList::class, 42)
+            ->willReturn((new ShoppingListStub())->setId(42));
+
+        $this->generator = new MessageGenerator($this->translator, $this->urlProvider, $doctrineHelper);
     }
 
     /**
      * @dataProvider getSuccessMessageDataProvider
-     *
-     * @param string $expectedMessage
-     * @param int $entitiesCount
-     * @param null $shoppingListId
      */
-    public function testGetSuccessMessage($expectedMessage, $entitiesCount = 0, $shoppingListId = null)
+    public function testGetSuccessMessage(string $expectedMessage, int $entitiesCount, ?int $shoppingListId)
     {
         $withUrl = $entitiesCount && $shoppingListId;
 
@@ -44,28 +45,34 @@ class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
         $transChoice = 'transchoice';
         $transMessage = 'action';
 
-        $this->router->expects($withUrl ? $this->once() : $this->never())
-            ->method('generate')
-            ->with('oro_shopping_list_frontend_view', ['id' => $shoppingListId])
+        $this->urlProvider->expects($withUrl ? $this->once() : $this->never())
+            ->method('getFrontendUrl')
+            ->with((new ShoppingListStub())->setId(42))
             ->willReturn($url);
 
-        $this->translator->expects($this->once())
-            ->method('transChoice')
-            ->with('oro.shoppinglist.actions.add_success_message', $entitiesCount, ['%count%' => $entitiesCount])
-            ->willReturn($transChoice);
-
-        $this->translator->expects($withUrl ? $this->once() : $this->never())
+        $this->translator->expects($this->any())
             ->method('trans')
-            ->with('oro.shoppinglist.actions.view')
-            ->willReturn($transMessage);
+            ->willReturnMap([
+                [
+                    'oro.shoppinglist.actions.add_success_message',
+                    ['%count%' => $entitiesCount],
+                    null,
+                    null,
+                    $transChoice
+                ],
+                [
+                    'oro.shoppinglist.actions.view',
+                    [],
+                    null,
+                    null,
+                    $withUrl ? $transMessage : null
+                ],
+            ]);
 
         $this->assertEquals($expectedMessage, $this->generator->getSuccessMessage($shoppingListId, $entitiesCount));
     }
 
-    /**
-     * @return array
-     */
-    public function getSuccessMessageDataProvider()
+    public function getSuccessMessageDataProvider(): array
     {
         return [
             [
@@ -90,7 +97,7 @@ class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $message = 'test message';
 
-        $this->router->expects($this->never())
+        $this->urlProvider->expects($this->never())
             ->method($this->anything());
 
         $this->translator->expects($this->once())

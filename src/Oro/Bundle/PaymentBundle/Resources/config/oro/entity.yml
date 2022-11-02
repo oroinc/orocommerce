@@ -1,0 +1,21 @@
+oro_entity:
+    exclusions:
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: accessIdentifier }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: accessToken }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: reference }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: request }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: response }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: transactionOptions }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: entityClass }
+        - { entity: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, field: entityIdentifier }
+
+    virtual_relations:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            paymentTrans:
+                relation_type: oneToMany
+                related_entity_name: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
+                label: oro.payment.paymenttransaction.entity_label
+                query:
+                    join:
+                        left:
+                            - { join: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction, alias: paymentTrans, conditionType: WITH, condition: "paymentTrans.entityClass = 'Oro\\Bundle\\OrderBundle\\Entity\\Order' AND paymentTrans.entityIdentifier = entity.id" }

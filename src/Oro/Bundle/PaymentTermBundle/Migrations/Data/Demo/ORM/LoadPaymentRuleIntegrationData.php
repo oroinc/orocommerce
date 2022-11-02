@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -81,10 +81,6 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         return $channel;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Channel       $channel
-     */
     private function loadShippingRule(ObjectManager $manager, Channel $channel)
     {
         $methodConfig = new PaymentMethodConfig();

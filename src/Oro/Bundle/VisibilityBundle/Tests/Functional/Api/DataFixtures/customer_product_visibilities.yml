@@ -1,0 +1,17 @@
+dependencies:
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData
+    - Oro\Bundle\VisibilityBundle\Tests\Functional\Api\DataFixtures\LoadCustomerProductVisibilityScopes
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:
+    visibility_1:
+        visibility: visible
+        product: "@product-1"
+        scope: "@scope_1"
+    visibility_2:
+        visibility: hidden
+        product: "@product-2"
+        scope: "@scope_2"
+    visibility_3:
+        visibility: visible
+        product: "@product-3"
+        scope: "@scope_3"

@@ -23,12 +23,9 @@ use Symfony\Component\Validator\Validation;
 class QuickAddTypeTest extends FormIntegrationTestCase
 {
     /** @var QuickAddType */
-    protected $formType;
+    private $formType;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new QuickAddType(new ProductsGrouperFactory());
 
@@ -36,9 +33,9 @@ class QuickAddTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $unitsProviderMock = $this->createMock(ProductUnitsProvider::class);
         $unitsProviderMock->expects($this->any())
@@ -49,7 +46,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
             new PreloadedExtension([
                 $this->formType,
                 ProductRowCollectionType::class => new ProductRowCollectionType(),
-                ProductRowType::class => new ProductRowType(),
+                ProductRowType::class => new ProductRowType($unitsProviderMock),
                 CollectionType::class => new CollectionType(),
                 ProductAutocompleteType::class => new StubProductAutocompleteType(),
                 ProductUnitsType::class => new ProductUnitsType($unitsProviderMock)
@@ -60,11 +57,8 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      */
-    public function testSubmit($submittedData, $expectedData)
+    public function testSubmit(mixed $submittedData, mixed $expectedData)
     {
         $products = [new Product(), new Product()];
         $options = [
@@ -78,17 +72,16 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         $this->assertEquals($products, $collectionProducts);
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $productRow = new ProductRow();
         $productRow->productSku = 'sku';
         $productRow->productQuantity = 42;
+
         return [
             'valid data' => [
                 'submittedData' => [
@@ -119,22 +112,20 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(QuickAddType::class);
         $form->submit([]);
         $this->assertFalse($form->isValid());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
-                $this->callback(
-                    function (array $options) {
-                        $this->assertArrayHasKey('products', $options);
-                        $this->assertNull($options['products']);
-                        return true;
-                    }
-                )
+                $this->callback(function (array $options) {
+                    $this->assertArrayHasKey('products', $options);
+                    $this->assertNull($options['products']);
+                    return true;
+                })
             );
 
         $this->formType->configureOptions($resolver);

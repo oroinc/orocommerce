@@ -3,8 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -56,7 +57,7 @@ class UpdateOrderLineItem extends AbstractFixture implements ContainerAwareInter
 
                 $product = $lineItem->getProduct();
                 if ($product) {
-                    $fields = $provider->getLineItemProduct($lineItem);
+                    $fields = $provider->getVariantFieldsValuesForLineItem($lineItem, false);
                     if (!empty($fields[$product->getId()])) {
                         $lineItem->setProductVariantFields($fields[$product->getId()]);
                     }
@@ -73,6 +74,6 @@ class UpdateOrderLineItem extends AbstractFixture implements ContainerAwareInter
      */
     private function isApplicable()
     {
-        return $this->container->hasParameter('installed') && $this->container->getParameter('installed');
+        return $this->container->get(ApplicationState::class)->isInstalled();
     }
 }

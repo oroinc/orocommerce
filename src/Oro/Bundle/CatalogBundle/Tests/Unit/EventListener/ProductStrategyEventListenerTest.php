@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
 use Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,15 +20,22 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $registry;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
     /**
      * @var ProductStrategyEventListener
      */
     private $listener;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->listener = new ProductStrategyEventListener($this->registry, Category::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->listener = new ProductStrategyEventListener($this->registry, $this->aclHelper, Category::class);
     }
 
     public function testOnProcessAfterWithoutCategoryKey()
@@ -41,17 +51,26 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnProcessAfterWithoutCategory()
     {
         $product = new Product();
-
         $title = 'some title';
 
         $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
         $event = new ProductStrategyEvent($product, $rawData);
 
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn(null);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->willReturn($query);
         $categoryRepo = $this->createMock(CategoryRepository::class);
         $categoryRepo->expects($this->once())
-            ->method('findOneByDefaultTitle')
+            ->method('findOneByDefaultTitleQueryBuilder')
             ->with($title)
-            ->willReturn(null);
+            ->willReturn($queryBuilder);
         $this->registry->expects($this->once())
             ->method('getRepository')
             ->with(Category::class)
@@ -65,17 +84,27 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $product = new Product();
         $category = new Category();
-
         $title = 'some title';
 
         $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
         $event = new ProductStrategyEvent($product, $rawData);
 
+        $query = $this->createMock(AbstractQuery::class);
+        $query
+            ->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->willReturn($category);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->willReturn($query);
+
         $categoryRepo = $this->createMock(CategoryRepository::class);
         $categoryRepo->expects($this->once())
-            ->method('findOneByDefaultTitle')
+            ->method('findOneByDefaultTitleQueryBuilder')
             ->with($title)
-            ->willReturn($category);
+            ->willReturn($queryBuilder);
         $this->registry->expects($this->once())
             ->method('getRepository')
             ->with(Category::class)

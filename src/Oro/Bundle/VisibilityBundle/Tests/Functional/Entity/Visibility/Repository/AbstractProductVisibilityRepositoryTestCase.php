@@ -55,12 +55,9 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         );
     }
 
-    /**
-     * @param Category $category
-     */
     protected function deleteCategory(Category $category)
     {
-        /* @var $em EntityManager */
+        /* @var EntityManager $em */
         $em = static::getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category');

@@ -9,9 +9,9 @@ class ContentNodeFormExtension extends BaseMetaFormExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ContentNodeType::class;
+        return [ContentNodeType::class];
     }
 
     /**

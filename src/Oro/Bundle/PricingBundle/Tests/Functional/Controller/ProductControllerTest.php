@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\Controller\ProductHelperTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -21,21 +22,20 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductControllerTest extends ProductHelperTestCase
 {
-    /**
-     * @var array
-     */
-    protected $newPrice = [
+    use OperationAwareTestTrait;
+
+    private const NEW_PRICE = [
         'quantity' => 1,
         'unit' => 'box',
-        'price' => '12.34',
+        'price' => '12.3400',
         'currency' => 'EUR',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
+        $this->loadFixtures([LoadProductPrices::class]);
     }
 
     public function testSidebar()
@@ -46,26 +46,23 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
-        /** @var PriceList $defaultPriceList */
+        $repository = self::getContainer()->get('doctrine')->getRepository(PriceList::class);
         $defaultPriceList = $repository->getDefault();
 
-        static::assertEquals(
+        self::assertEquals(
             $defaultPriceList->getId(),
             $crawler->filter('.sidebar-items .default-price-list-choice input[type=hidden]')->attr('value')
         );
 
         foreach ($crawler->filter('.sidebar-items .currencies input[type=checkbox]')->children() as $checkbox) {
-            static::assertContains($checkbox->attr('value'), $defaultPriceList->getCurrencies());
+            self::assertContains($checkbox->attr('value'), $defaultPriceList->getCurrencies());
         }
 
-        static::assertContains(
-            static::getContainer()->get('translator')->trans('oro.pricing.productprice.show_tier_prices.label'),
+        self::assertStringContainsString(
+            self::getContainer()->get('translator')->trans('oro.pricing.productprice.show_tier_prices.label'),
             $crawler->filter('.sidebar-items .show-tier-prices-choice')->html()
         );
     }
@@ -73,9 +70,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testPriceListFromRequest()
     {
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = self::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
 
@@ -90,9 +85,9 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertEquals(
+        self::assertEquals(
             $priceList->getId(),
             $crawler->filter('.sidebar-items .default-price-list-choice input[type=hidden]')->attr('value')
         );
@@ -101,9 +96,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testPriceListCurrenciesFromRequestUnchecked()
     {
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = self::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
 
@@ -119,17 +112,17 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertSameSize(
+        self::assertSameSize(
             $priceList->getCurrencies(),
             $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
         );
-        static::assertCount(0, $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]'));
+        self::assertCount(0, $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]'));
         $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList) {
-                static::assertContains($node->attr('value'), $priceList->getCurrencies());
-                static::assertEmpty($node->attr('checked'));
+                self::assertContains($node->attr('value'), $priceList->getCurrencies());
+                self::assertEmpty($node->attr('checked'));
             }
         );
     }
@@ -137,9 +130,7 @@ class ProductControllerTest extends ProductHelperTestCase
     public function testPriceListCurrenciesFromRequestChecked()
     {
         /** @var PriceListRepository $repository */
-        $repository = static::getContainer()->get('doctrine')->getRepository(
-            static::getContainer()->getParameter('oro_pricing.entity.price_list.class')
-        );
+        $repository = self::getContainer()->get('doctrine')->getRepository(PriceList::class);
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
 
@@ -155,20 +146,20 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertSameSize(
+        self::assertSameSize(
             $priceList->getCurrencies(),
             $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
         );
-        static::assertSameSize(
+        self::assertSameSize(
             $priceList->getCurrencies(),
             $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]')
         );
         $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList) {
-                static::assertContains($node->attr('value'), $priceList->getCurrencies());
-                static::assertNotEmpty($node->attr('checked'));
+                self::assertContains($node->attr('value'), $priceList->getCurrencies());
+                self::assertNotEmpty($node->attr('checked'));
             }
         );
     }
@@ -191,24 +182,24 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertSameSize(
+        self::assertSameSize(
             $priceList->getCurrencies(),
             $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
         );
-        static::assertSameSize(
+        self::assertSameSize(
             $selectedCurrencies,
             $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]')
         );
         $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList, $selectedCurrencies) {
-                static::assertContains($node->attr('value'), $priceList->getCurrencies());
+                self::assertContains($node->attr('value'), $priceList->getCurrencies());
 
                 if (in_array($node->attr('value'), $selectedCurrencies, true)) {
-                    static::assertNotEmpty($node->attr('checked'));
+                    self::assertNotEmpty($node->attr('checked'));
                 } else {
-                    static::assertEmpty($node->attr('checked'));
+                    self::assertEmpty($node->attr('checked'));
                 }
             }
         );
@@ -227,9 +218,9 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertEquals(
+        self::assertEquals(
             'checked',
             $crawler->filter('.sidebar-items .show-tier-prices-choice input[type=checkbox]')->attr('checked')
         );
@@ -248,9 +239,9 @@ class ProductControllerTest extends ProductHelperTestCase
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertEquals(
+        self::assertEquals(
             '',
             $crawler->filter('.sidebar-items .show-tier-prices-choice input[type=checkbox]')->attr('checked')
         );
@@ -268,45 +259,43 @@ class ProductControllerTest extends ProductHelperTestCase
             $this->getUrl('oro_product_update', ['id' => $product->getId()])
         );
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getPhpValues();
         $formValues['oro_product']['additionalUnitPrecisions'][] = [
-            'unit' => $this->newPrice['unit'],
+            'unit' => self::NEW_PRICE['unit'],
             'precision' => 0
         ];
         $formValues['oro_product']['prices'][] = [
             'priceList' => $priceList->getId(),
-            'quantity' => $this->newPrice['quantity'],
-            'unit' => $this->newPrice['unit'],
+            'quantity' => self::NEW_PRICE['quantity'],
+            'unit' => self::NEW_PRICE['unit'],
             'price' => [
-                'value' => $this->newPrice['price'],
-                'currency' => $this->newPrice['currency'],
+                'value' => self::NEW_PRICE['price'],
+                'currency' => self::NEW_PRICE['currency'],
             ]
         ];
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('Product has been saved', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringContainsString('Product has been saved', $crawler->html());
 
         /** @var ProductPrice $price */
         $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
-        $prices = static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroPricingBundle:ProductPrice')
-            ->getRepository('OroPricingBundle:ProductPrice')
+        $prices = self::getContainer()->get('doctrine')
+            ->getRepository(ProductPrice::class)
             ->findByPriceList($shardManager, $priceList, [
                 'product' => $product,
                 'priceList' => $priceList,
-                'quantity' => $this->newPrice['quantity'],
-                'unit' => $this->newPrice['unit'],
-                'currency' => $this->newPrice['currency'],
+                'quantity' => self::NEW_PRICE['quantity'],
+                'unit' => self::NEW_PRICE['unit'],
+                'currency' => self::NEW_PRICE['currency'],
             ]);
 
-        static::assertNotEmpty($prices);
+        self::assertNotEmpty($prices);
         $price = $prices[0];
-        static::assertEquals($this->newPrice['price'], $price->getPrice()->getValue());
+        self::assertEquals(self::NEW_PRICE['price'], $price->getPrice()->getValue());
     }
 
     public function testPricesUnitsSwap()
@@ -321,7 +310,6 @@ class ProductControllerTest extends ProductHelperTestCase
             $this->getUrl('oro_product_update', ['id' => $product->getId()])
         );
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getPhpValues();
 
@@ -331,8 +319,8 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertContains('Product has been saved', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringContainsString('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request(
             'GET',
@@ -350,20 +338,13 @@ class ProductControllerTest extends ProductHelperTestCase
         $formValues['oro_product']['prices'][0] = $bottle;
         $formValues['oro_product']['prices'][2] = $box;
 
-        static::assertEquals(
-            $formValues,
-            $actualValues
-        );
+        self::assertEquals($formValues, $actualValues);
     }
 
     /**
      * @dataProvider filterDataProvider
-     *
-     * @param array  $filter
-     * @param string $priceListReference
-     * @param array  $expected
      */
-    public function testGridFilter(array $filter, $priceListReference, array $expected)
+    public function testGridFilter(array $filter, string $priceListReference, array $expected)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceListReference);
@@ -372,17 +353,18 @@ class ProductControllerTest extends ProductHelperTestCase
             [
                 'gridName' => 'products-grid',
                 PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
+                PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => ['USD', 'EUR'],
             ],
             $filter,
             true
         );
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
-        static::assertArrayHasKey('data', $result);
-        static::assertSameSize($expected, $result['data']);
+        self::assertArrayHasKey('data', $result);
+        self::assertSameSize($expected, $result['data']);
 
         foreach ($result['data'] as $product) {
-            static::assertContains($product['sku'], $expected);
+            self::assertContains($product['sku'], $expected);
         }
     }
 
@@ -404,7 +386,7 @@ class ProductControllerTest extends ProductHelperTestCase
         );
         $response = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($response, 200);
-        $data = json_decode($response->getContent(), true);
+        $data = self::jsonToArray($response->getContent());
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $this->client->request('GET', $data['redirectUrl']);
@@ -440,10 +422,7 @@ class ProductControllerTest extends ProductHelperTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function filterDataProvider()
+    public function filterDataProvider(): array
     {
         return [
             'equal 10 USD per liter' => [
@@ -493,29 +472,20 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
         $result = $this->client->getResponse();
 
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        static::assertContains('Export Price Attribute Data', $crawler->html());
-        static::assertContains('Import file', $crawler->html());
+        self::assertStringContainsString('Export Price Attribute Data', $crawler->html());
+        self::assertStringContainsString('Import file', $crawler->html());
     }
 
-    /**
-     * @param string $operationName
-     * @param mixed $entityId
-     * @param string $entityClass
-     * @param array $data
-     * @param array $server
-     * @param int $expectedCode
-     * @return Crawler
-     */
-    protected function assertExecuteOperation(
-        $operationName,
-        $entityId,
-        $entityClass,
+    private function assertExecuteOperation(
+        string $operationName,
+        mixed $entityId,
+        string $entityClass,
         array $data = [],
         array $server = ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-        $expectedCode = Response::HTTP_OK
-    ) {
+        int $expectedCode = Response::HTTP_OK
+    ): Crawler {
         $actionContext = [
             'operationName' => $operationName,
             'entityId'      => $entityId,
@@ -530,32 +500,5 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), $expectedCode);
 
         return $crawler;
-    }
-
-    /**
-     * @param $operationName
-     * @param $entityId
-     * @param $entityClass
-     * @param $datagrid
-     *
-     * @return array
-     */
-    protected function getOperationExecuteParams($operationName, $entityId, $entityClass, $datagrid = null)
-    {
-        $actionContext = [
-            'entityId'    => $entityId,
-            'entityClass' => $entityClass,
-            'datagrid'    => $datagrid
-        ];
-        $container = self::getContainer();
-        $operation = $container->get('oro_action.operation_registry')->findByName($operationName);
-        $actionData = $container->get('oro_action.helper.context')->getActionData($actionContext);
-
-        $tokenData = $container
-            ->get('oro_action.operation.execution.form_provider')
-            ->createTokenData($operation, $actionData);
-        $container->get('session')->save();
-
-        return $tokenData;
     }
 }

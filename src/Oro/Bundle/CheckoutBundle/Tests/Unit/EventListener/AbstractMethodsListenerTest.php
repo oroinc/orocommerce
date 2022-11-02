@@ -40,14 +40,14 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject
      */
-    protected $contextFactory;
+    protected $checkoutContextProvider;
 
     /**
      * @var AbstractMethodsListener
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->getMockBuilder(OrderAddressSecurityProvider::class)
             ->disableOriginalConstructor()
@@ -62,7 +62,7 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
             ->getMock();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset(
             $this->addressProvider,
@@ -145,9 +145,9 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturnMap($addressSecurityProviderReturnMap);
 
         $context = $this->createContext();
-        $this->contextFactory
+        $this->checkoutContextProvider
             ->expects($this->once())
-            ->method('create')
+            ->method('getContext')
             ->with($this->isInstanceOf(Checkout::class))
             ->willReturn($context);
 
@@ -171,9 +171,9 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit\Framework\TestCase
     ) {
         $paymentContext = $this->createContext();
 
-        $this->contextFactory
+        $this->checkoutContextProvider
             ->expects($this->exactly($expectedCalls))
-            ->method('create')
+            ->method('getContext')
             ->with($this->callback(function (Checkout $checkout) {
                 $this->assertInstanceOf(OrderAddress::class, $this->getAddressToCheck($checkout));
 

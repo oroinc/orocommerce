@@ -53,7 +53,7 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
      */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionExecutorServiceLink = $this->createMock(ServiceLink::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -108,6 +108,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         ));
 
         $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
         $executor->expects($this->once())
             ->method('execute')
             ->with($order)
@@ -178,6 +182,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -210,6 +218,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
             });
 
         $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
         $executor->expects($this->once())
             ->method('execute')
             ->with($order)
@@ -256,6 +268,10 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $executor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn(new DiscountContext());
@@ -269,9 +285,24 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $entityManager
             ->expects($this->exactly(2))
             ->method('remove')
-            ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
+            ->withConsecutive([$firstAppliedPromotion], [$secondAppliedPromotion]);
 
         $this->manager->createAppliedPromotions($order, true);
+    }
+
+    public function testCreateAppliedPromotionsWhenNoSupports()
+    {
+        $order = new Order();
+        $executor = $this->getExecutor();
+        $executor->expects($this->once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(false);
+        $executor->expects($this->never())
+            ->method('execute')
+            ->with($order);
+
+        $this->manager->createAppliedPromotions($order);
     }
 
     /**

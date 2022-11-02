@@ -2,113 +2,90 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Updates scopes of Redirects by Slug id
  */
-class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    use LoggerAwareTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param LoggerInterface $logger
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        LoggerInterface $logger,
-        DatabaseExceptionHelper $databaseExceptionHelper
-    ) {
-        $this->registry = $registry;
-        $this->logger = $logger;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $messageData = JSON::decode($message->getBody());
+        $messageData = $message->getBody();
 
-        if (!array_key_exists('slugId', $messageData)) {
-            $this->logger->critical(
-                'Message is invalid. Key "slugId" is missing from message data.'
+        /** @var Slug $slug */
+        $slug = $this->managerRegistry
+            ->getRepository(Slug::class)
+            ->find($messageData[SyncSlugRedirectsTopic::SLUG_ID]);
+
+        // Slug not found, do nothing
+        if (!$slug) {
+            $this->logger->info('Slug #{slugId} is not found.', $messageData);
+
+            return self::REJECT;
+        }
+
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->managerRegistry->getManagerForClass(Redirect::class);
+        /** @var Redirect[] $redirects */
+        $redirects = $entityManager->getRepository(Redirect::class)->findBy(['slug' => $slug]);
+        // No redirects found, nothing to do.
+        if (!$redirects) {
+            $this->logger->info(
+                'Nothing to synchronize for slug #{slugId}: redirects are not found.',
+                $messageData + ['slug' => $slug]
             );
 
             return self::REJECT;
         }
 
-        /** @var EntityManager $manager */
-        $manager = $this->registry->getManagerForClass(Redirect::class);
-        $manager->beginTransaction();
+        foreach ($redirects as $redirect) {
+            $redirect->setScopes($slug->getScopes());
+        }
+
         try {
-            /** @var Slug $slug */
-            $slug = $this->registry->getManagerForClass(Slug::class)
-                ->getRepository(Slug::class)
-                ->find($messageData['slugId']);
-
-            $slugScopes = $slug->getScopes();
-
-            /** @var Redirect[] $redirects */
-            $redirects = $manager->getRepository(Redirect::class)
-                ->findBy(['slug' => $slug]);
-
-            foreach ($redirects as $redirect) {
-                $redirect->setScopes($slugScopes);
-            }
-
-            $manager->flush();
-            $manager->commit();
+            $entityManager->flush();
         } catch (\Exception $e) {
-            $manager->rollback();
-
             $this->logger->error(
-                'Unexpected exception occurred during Deleting attribute relation',
+                'Unexpected exception occurred during scopes update of Redirects by Slug',
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::SYNC_SLUG_REDIRECTS];
+        return [SyncSlugRedirectsTopic::getName()];
     }
 }

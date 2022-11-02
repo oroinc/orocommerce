@@ -36,7 +36,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $resolver = new OptionsResolver();
         $request->configureOptions($resolver);
-        $this->assertInternalType('array', $resolver->resolve($options));
+        $this->assertIsArray($resolver->resolve($options));
     }
 
     /**

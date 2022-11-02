@@ -2,31 +2,48 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
-class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
+/**
+ * The product visibility cache builder.
+ */
+class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
+    ProductCaseCacheBuilderInterface
 {
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
+    private ScopeManager $scopeManager;
+    private InsertFromSelectQueryExecutor $insertExecutor;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ProductReindexManager $productReindexManager,
+        ScopeManager $scopeManager,
+        InsertFromSelectQueryExecutor $insertExecutor
+    ) {
+        parent::__construct($doctrine, $productReindexManager);
+        $this->scopeManager = $scopeManager;
+        $this->insertExecutor = $insertExecutor;
+    }
 
     /**
-     * @param VisibilityInterface|ProductVisibility $visibilitySettings
+     * {@inheritdoc}
      */
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
+        /** @var ProductVisibility $visibilitySettings */
         $scope = $visibilitySettings->getScope();
         $product = $visibilitySettings->getProduct();
 
@@ -38,8 +55,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $update = [];
         $where = ['scope' => $scope, 'product' => $product];
 
-        $em = $this->registry->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
-        $er = $em->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
+        $er = $this->doctrine->getRepository(ProductVisibilityResolved::class);
         $hasProductVisibilityResolved = $er->hasEntity($where);
 
         if (!$hasProductVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
@@ -47,10 +63,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         }
 
         if ($selectedVisibility === ProductVisibility::CATEGORY) {
-            $category = $this->registry
-                ->getManagerForClass('OroCatalogBundle:Category')
-                ->getRepository('OroCatalogBundle:Category')
-                ->findOneByProduct($product);
+            $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
             if ($category) {
                 $update = [
                     'sourceProductVisibility' => null,
@@ -58,11 +71,9 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
                     'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
                     'category' => $category
                 ];
-            } else {
+            } elseif ($hasProductVisibilityResolved) {
                 // default fallback
-                if ($hasProductVisibilityResolved) {
-                    $delete = true;
-                }
+                $delete = true;
             }
         } elseif ($selectedVisibility === ProductVisibility::CONFIG) {
             if ($hasProductVisibilityResolved) {
@@ -73,7 +84,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
-        $this->triggerProductReindexation($product, $scope->getWebsite());
+        $this->triggerProductReindexation($product, $scope->getWebsite(), false);
     }
 
     /**
@@ -87,26 +98,21 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     /**
      * {@inheritdoc}
      */
-    public function productCategoryChanged(Product $product)
+    public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
-        $category = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
-            ->findOneByProduct($product);
-
+        $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
         if ($category) {
             $visibility = $this->getCategoryVisibility($category);
         } else {
             $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
             foreach ($scopes as $scope) {
-                $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\ProductVisibility')
-                    ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
+                $this->doctrine->getRepository(ProductVisibility::class)
                     ->setToDefaultWithoutCategory($this->insertExecutor, $scope, $product);
             }
             $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 
-        $repository = $this->getRepository();
+        $repository = $this->getProductRepository();
         $repository->deleteByProduct($product);
         $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
@@ -119,7 +125,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             );
         }
 
-        $this->triggerProductReindexation($product);
+        $this->triggerProductReindexation($product, null, $scheduleReindex);
     }
 
     /**
@@ -127,10 +133,10 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
      */
     public function buildCache(Scope $scope = null)
     {
-        $manager = $this->getManager();
-        $manager->beginTransaction();
+        $repository = $this->getProductRepository();
+        $em = $this->doctrine->getManagerForClass(ProductVisibilityResolved::class);
+        $em->beginTransaction();
         try {
-            $repository = $this->getRepository();
             $repository->clearTable($scope);
             $repository->insertStatic($this->insertExecutor, $scope);
             if ($scope) {
@@ -143,58 +149,21 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
                     $repository->insertByCategory($this->insertExecutor, $scope, $categoryScope);
                 }
             }
-            $manager->commit();
+            $em->commit();
         } catch (\Exception $exception) {
-            $manager->rollback();
+            $em->rollback();
             throw $exception;
         }
     }
 
-    /**
-     * @param int $visibility visible|hidden|config
-     * @return array
-     */
-    protected function getCategoryIdsByVisibility($visibility)
+    private function getCategoryVisibility(Category $category): int
     {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getCategoryIdsByNotResolvedVisibility($visibility);
-    }
-
-    /**
-     * @param Category $category
-     * @return int visible|hidden|config
-     */
-    protected function getCategoryVisibility(Category $category)
-    {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+        return $this->doctrine->getRepository(CategoryVisibilityResolved::class)
             ->getFallbackToAllVisibility($category);
     }
 
-    /**
-     * @return ProductRepository
-     */
-    protected function getRepository()
+    private function getProductRepository(): ProductRepository
     {
-        return $this->repository;
-    }
-
-    /**
-     * @return EntityManagerInterface|null
-     */
-    protected function getManager()
-    {
-        return $this->registry->getManagerForClass($this->cacheClass);
-    }
-
-    /**
-     * @param ScopeManager $scopeManager
-     */
-    public function setScopeManager($scopeManager)
-    {
-        $this->scopeManager = $scopeManager;
+        return $this->doctrine->getRepository(ProductVisibilityResolved::class);
     }
 }

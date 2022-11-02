@@ -57,7 +57,17 @@ Feature: Product attribute many-to-one
     Given I click "NewCategory"
     And I should see "SKU123" product
     And I should see "SKU456" product
+    And I click "Grid Filters Button"
     When I check "Nancy Sallee" in ManyToOneField filter in frontend product grid
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "ManyToOneField" options
+
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "ManyToOneField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should see "Update schema"

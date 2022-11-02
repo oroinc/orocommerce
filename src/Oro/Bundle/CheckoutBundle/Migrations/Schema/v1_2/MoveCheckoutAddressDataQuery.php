@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -55,12 +55,12 @@ class MoveCheckoutAddressDataQuery extends ParametrizedMigrationQuery
                     'id' => $row['id']
                 ],
                 [
-                    'billing_address_id' => Type::INTEGER,
-                    'shipping_address_id' => Type::INTEGER,
-                    'save_billing_address' => Type::BOOLEAN,
-                    'ship_to_billing_address' => Type::BOOLEAN,
-                    'save_shipping_address' => Type::BOOLEAN,
-                    'id' => Type::INTEGER
+                    'billing_address_id' => Types::INTEGER,
+                    'shipping_address_id' => Types::INTEGER,
+                    'save_billing_address' => Types::BOOLEAN,
+                    'ship_to_billing_address' => Types::BOOLEAN,
+                    'save_shipping_address' => Types::BOOLEAN,
+                    'id' => Types::INTEGER
                 ]
             ];
         }
@@ -69,7 +69,7 @@ class MoveCheckoutAddressDataQuery extends ParametrizedMigrationQuery
         foreach ($queries as $val) {
             $this->logQuery($logger, $val[0], $val[1], $val[2]);
             if (!$dryRun) {
-                $this->connection->executeUpdate($val[0], $val[1], $val[2]);
+                $this->connection->executeStatement($val[0], $val[1], $val[2]);
             }
         }
     }

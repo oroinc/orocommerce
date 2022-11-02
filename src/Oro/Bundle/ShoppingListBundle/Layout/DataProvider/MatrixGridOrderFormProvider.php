@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
@@ -11,10 +12,11 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRenderer;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Provides matrix forms and matrix form views which can be used to update configurable products.
+ */
 class MatrixGridOrderFormProvider extends AbstractFormProvider
 {
-    const MATRIX_GRID_ORDER_ROUTE_NAME = 'oro_shopping_list_frontend_matrix_grid_order';
-
     /**
      * @var MatrixGridOrderManager
      */
@@ -33,9 +35,6 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
         $this->matrixOrderManager = $matrixOrderManager;
     }
 
-    /**
-     * @param FormRenderer $twigRenderer
-     */
     public function setTwigRenderer(FormRenderer $twigRenderer)
     {
         $this->twigRenderer = $twigRenderer;
@@ -48,13 +47,27 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
      */
     public function getMatrixOrderForm(Product $product, ShoppingList $shoppingList = null)
     {
-        $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
+        return $this->getForm(
+            MatrixCollectionType::class,
+            $this->matrixOrderManager->getMatrixCollection($product, $shoppingList)
+        );
+    }
+
+    /**
+     * @param Product $product
+     * @param ProductUnit $productUnit
+     * @param ShoppingList $shoppingList
+     * @return FormInterface
+     */
+    public function getMatrixOrderByUnitForm(Product $product, ProductUnit $productUnit, ShoppingList $shoppingList)
+    {
+        $collection = $this->matrixOrderManager->getMatrixCollectionForUnit($product, $productUnit, $shoppingList);
 
         return $this->getForm(MatrixCollectionType::class, $collection);
     }
 
     /**
-     * @param Product           $product
+     * @param Product|null      $product
      * @param ShoppingList|null $shoppingList
      * @return FormView
      */
@@ -63,6 +76,7 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
         if (!$product) {
             return $this->getFormView(MatrixCollectionType::class);
         }
+
         $collection = $this->matrixOrderManager->getMatrixCollection($product, $shoppingList);
 
         return $this->getFormView(
@@ -75,6 +89,24 @@ class MatrixGridOrderFormProvider extends AbstractFormProvider
 
     /**
      * @param Product $product
+     * @param ProductUnit $productUnit
+     * @param ShoppingList $shoppingList
+     * @return FormView
+     */
+    public function getMatrixOrderByUnitFormView(Product $product, ProductUnit $productUnit, ShoppingList $shoppingList)
+    {
+        $collection = $this->matrixOrderManager->getMatrixCollectionForUnit($product, $productUnit, $shoppingList);
+
+        return $this->getFormView(
+            MatrixCollectionType::class,
+            $collection,
+            [],
+            ['cacheKey' => md5(serialize($collection))]
+        );
+    }
+
+    /**
+     * @param Product|null $product
      * @param ShoppingList|null $shoppingList
      * @return string
      */

@@ -1,0 +1,27 @@
+data:
+    -
+        type: customerproductvisibilities
+        attributes:
+            visibility: visible
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer.level_1.1->id)>'
+    -
+        type: customerproductvisibilities
+        attributes:
+            visibility: hidden
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer.level_1_1->id)>'

@@ -18,7 +18,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
     const VIEW_INVENTORY_THRESHOLD_XPATH =
     "//label[text() = 'Inventory Threshold']/following-sibling::div/div[contains(@class,  'control-label')]";
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadCategoryProductData::class]);
@@ -59,7 +59,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
         $inventoryThresholdValue = $form->get('oro_catalog_category[inventoryThreshold][scalarValue]')->getValue();
         $this->assertEmpty($inventoryThresholdValue);
 
-        $form['input_action'] = 'save';
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $form['oro_catalog_category[inventoryThreshold][useFallback]'] = false;
         $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = $newCategoryFallbackValue;
         $this->client->followRedirects(true);
@@ -75,9 +75,8 @@ class InventoryThresholdFallbackTest extends WebTestCase
 
     /**
      * @param Product $product
-     * @param mixed $ownValue
-     * @param bool $useFallbackValue
-     * @param mixed $fallbackValue
+     * @param mixed   $ownValue
+     * @param mixed   $fallbackValue
      * @return Crawler
      */
     protected function setProductInventoryThresholdField($product, $ownValue, $fallbackValue)
@@ -86,7 +85,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['input_action'] = 'save_and_close';
+        $form['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
 
         $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'inventoryThreshold');
 

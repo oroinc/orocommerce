@@ -9,26 +9,24 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroTaxExtension extends Extension
 {
-    const ALIAS = 'oro_tax';
-
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
         $container->prependExtensionConfig($this->getAlias(), $config);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('services_api.yml');
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
-    }
+        $loader->load('controllers.yml');
+        $loader->load('controllers_api.yml');
 
-    /** {@inheritdoc} */
-    public function getAlias()
-    {
-        return self::ALIAS;
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $loader->load('services_test.yml');
+        }
     }
 }

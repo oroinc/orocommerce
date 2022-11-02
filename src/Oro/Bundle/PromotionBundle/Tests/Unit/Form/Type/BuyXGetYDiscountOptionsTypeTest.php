@@ -4,9 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -17,7 +16,6 @@ use Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -27,12 +25,10 @@ use Symfony\Component\Validator\Validation;
 
 class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var BuyXGetYDiscountOptionsType
-     */
+    /** @var BuyXGetYDiscountOptionsType */
     private $formType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->formType = new BuyXGetYDiscountOptionsType();
@@ -55,10 +51,6 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $existingData
-     * @param array $submittedData
-     * @param array $expectedData
      */
     public function testSubmit(array $existingData, array $submittedData, array $expectedData)
     {
@@ -66,13 +58,11 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'create new buy x get y discount' => [
@@ -133,7 +123,6 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->any())
             ->method('setDefault')
@@ -150,9 +139,8 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject $productUnitsProvider */
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $productUnitsProvider->expects($this->any())
             ->method('getAvailableProductUnits')
@@ -161,27 +149,20 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
                 'oro.product_unit.set.label.full' => 'set',
             ]);
 
-        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
-        $localeSettings = $this->createMock(LocaleSettings::class);
-        /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject $numberFormatter */
-        $numberFormatter = $this->createMock(NumberFormatter::class);
-
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
-        $configProvider = $this->createMock(ConfigProvider::class);
-        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
-        $translator = $this->createMock(Translator::class);
-
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitsType::class => new ProductUnitsType($productUnitsProvider),
-                    DiscountOptionsType::class => new DiscountOptionsType(),
-                    MultiCurrencyType::class => new MultiCurrencyType(),
+                    new ProductUnitsType($productUnitsProvider),
+                    new DiscountOptionsType(),
+                    new MultiCurrencyType(),
+                    new OroMoneyType(
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(NumberFormatter::class)
+                    ),
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
-                    OroMoneyType::class => new OroMoneyType($localeSettings, $numberFormatter),
                 ],
                 [
-                    FormType::class => [new TooltipFormExtension($configProvider, $translator)],
+                    FormType::class => [new TooltipFormExtensionStub($this)]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator()),

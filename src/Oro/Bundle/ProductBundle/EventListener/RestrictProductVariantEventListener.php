@@ -33,9 +33,6 @@ class RestrictProductVariantEventListener
         $this->configPath = $configPath;
     }
 
-    /**
-     * @param RestrictProductVariantEvent $event
-     */
     public function onRestrictProductVariantEvent(RestrictProductVariantEvent $event)
     {
         $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);

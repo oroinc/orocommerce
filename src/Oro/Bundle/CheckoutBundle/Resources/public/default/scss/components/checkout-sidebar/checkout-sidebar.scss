@@ -1,12 +1,7 @@
 //@theme: default;
 
 .checkout-sidebar {
-    padding-right: 15px;
-
-    &--inner-invader {
-        float: left;
-        width: 220px;
-    }
+    margin-top: $offset-x-m;
 }
 
 @include breakpoint('tablet') {

@@ -2,85 +2,83 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductControllerTest extends WebTestCase
 {
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
+    use ConfigManagerAwareTestTrait;
 
-    /** @var Client */
-    protected $client;
+    private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
-    /** @var Translator $translator*/
-    protected $translator;
-
-    /** @var ConfigManager $configManager */
-    protected $configManager;
-
-    /** @var ConfigManager $globalConfigManager */
-    protected $globalConfigManager;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-
         $this->loadFixtures([LoadProductData::class]);
+    }
 
-        $this->translator = $this->getContainer()->get('translator');
-
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
-        $this->configManager->flush();
+    private function getTranslator(): TranslatorInterface
+    {
+        return self::getContainer()->get('translator');
     }
 
     public function testViewProductWithRequestQuoteAvailable()
     {
-        $this->assertContains(
-            $this->translator->trans('oro.frontend.product.view.request_a_quote'),
-            $this->viewProduct()->getContent()
-        );
+        $configManager = self::getConfigManager();
+        $originalRfpProductVisibility = $configManager->get(self::RFP_PRODUCT_VISIBILITY_KEY);
+        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
+        $configManager->flush();
+        try {
+            self::assertStringContainsString(
+                $this->getTranslator()->trans('oro.frontend.product.view.request_a_quote'),
+                $this->viewProduct()->getContent()
+            );
+        } finally {
+            $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $originalRfpProductVisibility);
+            $configManager->flush();
+        }
     }
 
     public function testViewProductWithoutRequestQuoteAvailable()
     {
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->configManager->flush();
-
-        $this->globalConfigManager = $this->getContainer()->get('oro_config.global');
-        $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->globalConfigManager->flush();
-
-        $this->assertNotContains(
-            $this->translator->trans('oro.frontend.product.view.request_a_quote'),
-            $this->viewProduct()->getContent()
-        );
+        $configManager = self::getConfigManager();
+        $originalRfpProductVisibility = $configManager->get(self::RFP_PRODUCT_VISIBILITY_KEY);
+        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
+        $configManager->flush();
+        try {
+            self::assertStringNotContainsString(
+                $this->getTranslator()->trans('oro.frontend.product.view.request_a_quote'),
+                $this->viewProduct()->getContent()
+            );
+        } finally {
+            $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $originalRfpProductVisibility);
+            $configManager->flush();
+        }
     }
 
-    /**
-     * @return null|\Symfony\Component\HttpFoundation\Response
-     */
-    protected function viewProduct()
+    private function viewProduct(): Response
     {
         $product = $this->getReference(LoadProductData::PRODUCT_3);
 
-        $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
+        $this->assertInstanceOf(Product::class, $product);
 
-        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()]));
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
+        );
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($product->getSku(), $result->getContent());
-        $this->assertContains($product->getDefaultName()->getString(), $result->getContent());
+        self::assertStringContainsString($product->getSku(), $result->getContent());
+        self::assertStringContainsString($product->getDefaultName()->getString(), $result->getContent());
 
         return $result;
     }

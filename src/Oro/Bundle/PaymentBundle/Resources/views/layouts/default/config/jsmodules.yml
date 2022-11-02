@@ -1,0 +1,11 @@
+aliases:
+    oropayment/js/lib/jquery-credit-card-validator$: '@oroinc/jquery-creditcardvalidator/jquery.creditCardValidator'
+dynamic-imports:
+    commons:
+        - oropayment/js/validator/credit-card-expiration-date
+        - oropayment/js/validator/credit-card-expiration-date-not-blank
+        - oropayment/js/validator/credit-card-number
+        - oropayment/js/validator/credit-card-type
+    oropayment:
+        - oropayment/js/app/components/payment-method-component
+        - oropayment/js/app/components/payment-method-selector-component

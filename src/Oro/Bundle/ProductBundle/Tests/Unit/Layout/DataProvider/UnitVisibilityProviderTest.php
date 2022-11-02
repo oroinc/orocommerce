@@ -1,7 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\ProductBundle\Layout\DataProvider\UnitVisibilityProvider;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
 class UnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
@@ -16,7 +17,7 @@ class UnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(UnitVisibilityInterface::class);
         $this->provider = new UnitVisibilityProvider($this->unitVisibility);

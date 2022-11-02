@@ -1,13 +1,17 @@
 oro:
     menu:
         sales_tab.label: 'Sales'
+
     sale:
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
             qid.label: 'Quote #'
+            guest_access_id.label: 'Guest Access Id'
+            unique_guest_link.label: 'Unique Guest Link'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
@@ -95,6 +99,11 @@ oro:
                 quote.approve.success: 'Quote #%id% approved'
                 quote.decline_by_reviewer.success: 'Quote #%id% declined'
 
+            feature:
+                user_settings:
+                    label: Sales Representative`s Contact Information
+                    description: Enables access to user configuration settings to set up how the sales rep`s contact details are displayed in the storefront footer links.
+
             form:
                 address:
                     choose: Select an address
@@ -106,6 +115,7 @@ oro:
                 shipping_options.label: 'Shipping Options'
                 error:
                     price_override: 'Price overriding allowed by tier price only'
+                    free_form_price_override: 'Price overriding allowed by tier price only'
 
             datagrid:
                 customer.label: 'Quotes'
@@ -115,6 +125,9 @@ oro:
             groups:
                 sale_contact_info.title: 'Contacts'
                 customer_visible_contact_info.title: 'Customer Visible Contact Info'
+                quotes.title: 'Quotes'
+                guest_quote.title: 'Guest Quote'
+                general_quote.title: 'General'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
                 contact_info_source_display.label: 'Display'
@@ -124,6 +137,8 @@ oro:
                 contact_info_user_option.label: 'Customer Visible Contact Info'
                 contact_info_manual_text.label: 'Enter Contact Info'
                 guest_contact_info_text.label: 'Guest Contact'
+                enable_guest_quote.label: 'Enable Guest Quote'
+                quote_frontend_feature_enabled.label: 'Enable Quote (Store Front)'
 
         privilege:
             category.quotes.label: 'Quotes'
@@ -131,6 +146,7 @@ oro:
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
@@ -166,6 +182,7 @@ oro:
             item_bundled: '{0}{units}, {price} for every {units}|{1}{units} or more, {price} for every {units}'
             entity_label: 'Quote Product Offer'
             entity_plural_label: 'Quote Product Offers'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             add_label: 'Add Offer'
             id.label: 'ID'
             quantity.label: 'Quantity'
@@ -189,6 +206,7 @@ oro:
             item: '{units}, {price} per {unit}'
             entity_label: 'Quote Product Request'
             entity_plural_label: 'Quote Product Requests'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             add_label: 'Add Request'
             id.label: 'ID'
             quantity.label: 'Requested Qty'
@@ -206,6 +224,7 @@ oro:
         quoteaddress:
             entity_label: Quote Address
             entity_plural_label: Quote Addresses
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             customer_address.label: Customer address
             customer_user_address.label: Customer user address
@@ -224,12 +243,17 @@ oro:
             street.label: Street
             street2.label: Street 2
             phone.label: Phone
+            country_name.label: Country name
+            country_iso2_code.label: Country ISO2 code
+            country_iso3_code.label: Country ISO3 code
+            region_name.label: State name
 
             no_exist: No shipping address found
 
         quotedemand:
             entity_label: 'Quote Demand'
             entity_plural_label: 'Quote Demands'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'Id'
             quote.label: 'Quote'
             total.label: 'Total'
@@ -237,6 +261,8 @@ oro:
             total_currency.label: 'Total Currency'
             customer.label: 'Customer'
             customer_user.label: 'Customer User'
+            visitor.label: 'Customer Visitor'
+            demand_products.label: 'Demand Products'
 
         controller:
             quote:
@@ -262,33 +288,51 @@ oro:
                 quote_prices_override: "Override quote prices"
                 quote_review_and_approve: "Review and approve quotes"
                 add_free_form_items: "Add free-form items"
+
+        feature:
+            quote:
+                label: Back-Office Quotes
+                description: Enables back-office quote management, allows access to configuration option Can Be Added To Quotes under System > Configuration > Commerce > Inventory > Allowed Statuses, enables access to operations Expire Quote, Notify Customer by Email, Accept Quote, and provides access to quotes via API.
+            guest_quote:
+                label: Guest Quote
+                description: Enables the Guest Quote configuration feature that controls whether to generate unique links for sending quotes to guest users. Make sure to enable Guest Website Access to let guests view the quotes, and Guest Checkout to enable guests to accept the quotes.
+            quote_frontend:
+                label: Storefront Quotes
+                description: Enables quotes for the storefront and adds the Quotes section under the Account menu for registered customers.
+
         form:
             tooltip:
-                  allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
-                  guest_contact_info_text: 'You may use this setting to enter the sales contact information that will be shown to non-authenticated visitors.'
+                  allow_user_configuration: 'Select the option to let sales reps configure the appearance of their contact information in the storefront. The options that are selected below will be enabled for the sales reps in their user configuration settings.'
+                  guest_contact_info_text: 'Provide the sales contact information to be shown to guest customers in the storefront.'
+                  enable_guest_quote: 'Enable the option to generate unique links for sending quotes to guest users. Make sure to enable Guest Website Access to let guests view the quotes, and Guest Checkout to enable guests to accept the quotes.'
+
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
                 customer_user_owner.label: 'Customer User Owner'
                 customer_owner.label: 'Customer Owner'
                 pre_configured.label: 'Pre-Configured'
+
         available_user_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
                 user_profile_data.label: 'Use User Profile Data'
                 enter_manually.label: 'Enter Manually'
+
         contact_info_user_options:
             type:
                 dont_display.label: "Don't Display Contact Info"
                 user_profile_data.label: 'Use My Profile Data'
                 enter_manually.label: 'Enter Manually'
                 use_system.label: 'Use System'
+
     frontend:
         sale:
             menu:
                 label: 'Sales'
             quote:
                 entity_plural_label: Quotes
+                entity_grid_all_view_label: All %entity_plural_label%
                 qid.label: 'Quote #'
                 customer_user.label: 'Owner'
                 customer_status.label: 'Status'
@@ -302,6 +346,7 @@ oro:
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'
+                    back_to_quote.label: 'Back to Quote'
                     quote_products:
                         label: 'Line Items'
                         columns:
@@ -316,6 +361,8 @@ oro:
                 toolbar-actions:
                     btn:
                         print: 'Print Quote'
+                action:
+                    view.aria_label: 'View #%qid% quote'
 
             quoteproduct:
                 product_sku.label: 'SKU #:'

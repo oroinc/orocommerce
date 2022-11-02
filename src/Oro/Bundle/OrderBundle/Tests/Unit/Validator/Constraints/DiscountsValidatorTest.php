@@ -4,168 +4,110 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Tests\Unit\Validator\Stub\ConstraintViolationStub;
+use Oro\Bundle\OrderBundle\Validator\Constraints\Discounts;
 use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountsValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Context\ExecutionContext;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class DiscountsValidatorTest extends \PHPUnit\Framework\TestCase
+class DiscountsValidatorTest extends ConstraintValidatorTestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ExecutionContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
-
-    /**
-     * @var DiscountsValidator
-     */
-    private $discountsValidator;
-
-    protected function setUp()
+    protected function createValidator(): DiscountsValidator
     {
-        $this->context = $this->createMock(ExecutionContext::class);
-
-        $this->discountsValidator = new DiscountsValidator();
-        $this->discountsValidator->initialize($this->context);
+        return new DiscountsValidator();
     }
 
-    public function testValidateWithNull()
+    public function testUnsupportedConstraint(): void
     {
-        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
-        $constraint = $this->createMock(Constraint::class);
-
-        $this->context
-            ->expects($this->never())
-            ->method('getViolations');
-
-        $this->discountsValidator->validate(null, $constraint);
+        $this->expectException(UnexpectedTypeException::class);
+        $this->validator->validate(new Order(), $this->createMock(Constraint::class));
     }
 
-    public function testValidateWithNotOrderValue()
+    public function testNullValueIsValid(): void
     {
-        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
-        $constraint = $this->createMock(Constraint::class);
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'Value must be instance of "Oro\Bundle\OrderBundle\Entity\Order", "stdClass" given'
-        );
-
-        $this->discountsValidator->validate(new \stdClass(), $constraint);
+        $this->validator->validate(null, new Discounts());
+        $this->assertNoViolation();
     }
 
-    /**
-     * @dataProvider orderDataProvider
-     * @param Order $order
-     */
-    public function testValidate(Order $order)
+    public function testUnsupportedValue(): void
     {
-        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
-        $constraint = $this->getMockBuilder(Constraint::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->context
-            ->expects($this->never())
-            ->method('getViolations');
-
-        $this->discountsValidator->validate($order, $constraint);
+        $this->expectException(UnexpectedTypeException::class);
+        $this->validator->validate(new \stdClass(), new Discounts());
     }
 
-    /**
-     * @return array
-     */
-    public function orderDataProvider()
+    public function testNoTotalDiscounts(): void
     {
-        return [
-            'no total discounts set' => [
-                'order' => (new Order())->setSubtotal(100)
-            ],
-            'no subtotal set' => [
-                'order' => (new Order())->setTotalDiscounts(Price::create(101, 'USD'))
-            ],
-            'subtotal is equal to total discounts' => [
-                'order' => (new Order())->setSubtotal(101)->setTotalDiscounts(Price::create(101, 'USD'))
-            ],
-            'subtotal is greater than total discounts' => [
-                'order' => (new Order())->setSubtotal(102)->setTotalDiscounts(Price::create(101, 'USD'))
-            ],
-        ];
+        $value = new Order();
+        $value->setSubtotal(100);
+        $this->validator->validate($value, new Discounts());
+        $this->assertNoViolation();
     }
 
-    public function testValidateFailsWhenNoSuchErrorsPreviously()
+    public function testNoSubtotal(): void
     {
-        $value = (new Order())
-            ->setSubtotal(100)
-            ->setTotalDiscounts(Price::create(101, 'USD'));
-
-        $this->setContextValue($value);
-
-        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
-        $constraint = $this->createMock(Constraint::class);
-
-        $violationsList = new ConstraintViolationList();
-        $this->context
-            ->expects($this->once())
-            ->method('getViolations')
-            ->willReturn($violationsList);
-
-        $violationBuilder = $this->createMock(ConstraintViolationBuilder::class);
-        $violationBuilder
-            ->expects($this->once())
-            ->method('atPath')
-            ->with('totalDiscountsAmount')
-            ->willReturnSelf();
-
-        $violationBuilder
-            ->expects($this->once())
-            ->method('addViolation');
-
-        $this->context
-            ->expects($this->once())
-            ->method('buildViolation')
-            ->willReturn($violationBuilder);
-
-        $this->discountsValidator->validate($value, $constraint);
+        $value = new Order();
+        $value->setTotalDiscounts(Price::create(101, 'USD'));
+        $this->validator->validate($value, new Discounts());
+        $this->assertNoViolation();
     }
 
-    public function testValidateFailsWhenWasErrorPreviously()
+    public function testSubtotalIsEqualToTotalDiscounts(): void
     {
-        $value = (new Order())
-            ->setSubtotal(100)
-            ->setTotalDiscounts(Price::create(101, 'USD'));
-
-        $this->setContextValue($value);
-
-        /** @var Constraint|\PHPUnit\Framework\MockObject\MockObject $constraint **/
-        $constraint = $this->createMock(Constraint::class);
-
-        $violationsList = new ConstraintViolationList([new ConstraintViolationStub($constraint, $value)]);
-        $this->context
-            ->expects($this->once())
-            ->method('getViolations')
-            ->willReturn($violationsList);
-
-        $this->context
-            ->expects($this->never())
-            ->method('buildViolation');
-
-        $this->discountsValidator->validate($value, $constraint);
+        $value = new Order();
+        $value->setSubtotal(101);
+        $value->setTotalDiscounts(Price::create(101, 'USD'));
+        $this->validator->validate($value, new Discounts());
+        $this->assertNoViolation();
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function setContextValue($value)
+    public function testSubtotalIsGreaterThanTotalDiscounts(): void
     {
-        $this->context
-            ->expects($this->any())
+        $value = new Order();
+        $value->setSubtotal(102);
+        $value->setTotalDiscounts(Price::create(101, 'USD'));
+        $this->validator->validate($value, new Discounts());
+        $this->assertNoViolation();
+    }
+
+    public function testValidateFailsWhenNoSuchErrorsPreviously(): void
+    {
+        $value = new Order();
+        $value->setSubtotal(100);
+        $value->setTotalDiscounts(Price::create(101, 'USD'));
+
+        $constraint = new Discounts();
+        $this->setValue($value);
+        $this->validator->validate($value, $constraint);
+        $this->buildViolation($constraint->errorMessage)
+            ->setInvalidValue($value)
+            ->atPath('property.path.totalDiscountsAmount')
+            ->assertRaised();
+    }
+
+    public function testValidateFailsWhenWasErrorPreviously(): void
+    {
+        $value = new Order();
+        $value->setSubtotal(100);
+        $value->setTotalDiscounts(Price::create(101, 'USD'));
+
+        $constraint = new Discounts();
+
+        $context = $this->createMock(ExecutionContext::class);
+        $context->expects(self::any())
             ->method('getValue')
             ->willReturn($value);
+        $context->expects(self::once())
+            ->method('getViolations')
+            ->willReturn(new ConstraintViolationList([
+                new ConstraintViolation('msg', null, [], null, null, $value, null, null, $constraint)
+            ]));
+        $context->expects(self::never())
+            ->method('buildViolation');
+
+        $this->validator->initialize($context);
+        $this->validator->validate($value, $constraint);
     }
 }

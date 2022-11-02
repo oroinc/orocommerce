@@ -4,10 +4,12 @@
     &--splited &__inner-left,
     &--splited &__inner-right {
         margin-bottom: $main-menu-column-splited-inner-left-offset-bottom;
+        list-style: none;
     }
 
     &__inner {
         margin-bottom: $main-menu-column-inner-offset-bottom;
+        list-style: none;
     }
 }
 

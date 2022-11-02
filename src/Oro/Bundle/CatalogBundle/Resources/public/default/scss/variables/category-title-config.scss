@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+$category-title-font-size: 24px !default;
+$category-title-line-height: 1.8 !default;
+$category-title-text-align: center !default;
+$category-title-offset-top: $offset-x-m !default;
+
+$category-title-divide-content-width: 100% !default;
+$category-title-divide-content-offset: $offset-x 0 !default;
+$category-title-divide-content-inner-offset: $offset-x-m 0 !default;
+$category-title-divide-content-border-bottom: 1px solid get-color('additional', 'middle') !default;

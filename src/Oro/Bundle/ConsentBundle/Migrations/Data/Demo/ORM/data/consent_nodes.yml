@@ -1,0 +1,24 @@
+"Terms and Conditions":
+    defaultTitle: "Terms and Conditions"
+    defaultSlugPrototype: "terms_and_conditions"
+    contentVariants:
+        -
+            type: cms_page
+            params:
+                title: "Terms and Conditions"
+            isDefault: true
+    parentScopeUsed: true
+    children: ~
+    setReference: "terms-and-conditions-node"
+"Email subscription":
+    defaultTitle: "Email subscription"
+    defaultSlugPrototype: "email_subscription"
+    contentVariants:
+        -
+            type: cms_page
+            params:
+                title: "Email subscription"
+            isDefault: true
+    parentScopeUsed: true
+    children: ~
+    setReference: "email-subscription-node"

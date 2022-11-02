@@ -15,7 +15,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
  */
 class VisibilityCacheBuildCommandTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);
@@ -29,9 +29,6 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
 
     /**
      * @dataProvider executeDataProvider
-     * @param array $params
-     * @param array $expectedMessages
-     * @param array $expectedRecordsCount
      */
     public function testExecute(array $params, array $expectedMessages, array $expectedRecordsCount)
     {
@@ -47,9 +44,9 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
         $this->assertEquals(0, $this->getCustomerProductVisibilityResolvedCount());
 
         // Run command and check result messages
-        $result = $this->runCommand(VisibilityCacheBuildCommand::NAME, $params);
+        $result = $this->runCommand(VisibilityCacheBuildCommand::getDefaultName(), $params);
         foreach ($expectedMessages as $message) {
-            $this->assertContains($message, $result);
+            static::assertStringContainsString($message, $result);
         }
 
         // Check that all resolved tables are filled
@@ -235,9 +232,6 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
             ->getSingleScalarResult();
     }
 
-    /**
-     * @param EntityRepository $repository
-     */
     protected function deleteAllEntities(EntityRepository $repository)
     {
         $repository->createQueryBuilder('entity')

@@ -10,17 +10,11 @@ class ResolverEventConnector
     /** @var ResolverInterface */
     protected $resolver;
 
-    /**
-     * @param ResolverInterface $resolver
-     */
     public function __construct(ResolverInterface $resolver)
     {
         $this->resolver = $resolver;
     }
 
-    /**
-     * @param ResolveTaxEvent $event
-     */
     public function onResolve(ResolveTaxEvent $event)
     {
         try {

@@ -1,0 +1,9 @@
+/* @theme: default; */
+
+.product-price-hint-btn {
+    &:hover {
+        text-decoration: $product-price-hint-btn-text-decoration;
+    }
+
+    @include fa-icon($product-price-hint-btn-icon);
+}

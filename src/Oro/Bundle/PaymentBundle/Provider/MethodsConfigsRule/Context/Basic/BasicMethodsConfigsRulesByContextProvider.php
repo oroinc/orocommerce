@@ -19,10 +19,6 @@ class BasicMethodsConfigsRulesByContextProvider implements MethodsConfigsRulesBy
      */
     private $repository;
 
-    /**
-     * @param MethodsConfigsRulesFiltrationServiceInterface $filtrationService
-     * @param PaymentMethodsConfigsRuleRepository          $repository
-     */
     public function __construct(
         MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
         PaymentMethodsConfigsRuleRepository $repository

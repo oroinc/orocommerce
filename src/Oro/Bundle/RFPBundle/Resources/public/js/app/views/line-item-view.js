@@ -1,23 +1,22 @@
 define(function(require) {
     'use strict';
 
-    var LineItemView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var routing = require('routing');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const routing = require('routing');
 
     /**
      * @export ororfp/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemView
      */
-    LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
@@ -25,11 +24,9 @@ define(function(require) {
             ftid: '',
             selectors: {
                 quantitySelector: '[data-name="field__quantity"]',
-                unitSelector: '[data-name="field__product-unit"]',
-                priceSelector: '[data-role="lineitem-price"]',
-                currencySelector: '[data-role="lineitem-currency"]'
+                unitSelector: '[data-name="field__product-unit"]'
             },
-            unitLoaderRouteName: 'oro_pricing_frontend_units_by_pricelist',
+            syncClass: 'synchronized',
             unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
             compactUnits: false,
             itemsContainer: '[data-role="lineitems"]',
@@ -81,10 +78,10 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LineItemView() {
-            LineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemView(options) {
+            LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -103,15 +100,15 @@ define(function(require) {
             this.$addItemButton = this.$el.find(this.options.addItemButton);
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.$el.on('content:changed', _.bind(this.onContentChanged, this));
+            this.$el.on('content:changed', this.onContentChanged.bind(this));
 
             this.initModel(options);
             this.initializeElements(options);
             this.model.set('product_units', this.options.units[this.model.get('productId')] || []);
 
-            this.$el.on('options:set:lineItemModel', _.bind(function(e, options) {
+            this.$el.on('options:set:lineItemModel', (e, options) => {
                 options.lineItemModel = this.model;
-            }, this));
+            });
 
             this.initializeSubviews({
                 lineItemModel: this.model
@@ -150,7 +147,11 @@ define(function(require) {
         /**
          * Handle change
          */
-        onProductChanged: function() {
+        onProductChanged: function(data) {
+            if (data !== void 0 && data.event) {
+                this.model.set('sku', data.event.added.sku);
+            }
+
             this.checkAddButton();
             if (this.model.get('productId') && !this.$itemsContainer.children().length) {
                 this.$addItemButton.click();
@@ -173,14 +174,14 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateContent: function(force) {
-            var productId = this.model.get('productId');
-            var productUnits = this.units[productId];
+            const productId = this.model.get('productId');
+            const productUnits = this.units[productId];
 
             if (!productId || productUnits) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
-                var self = this;
-                var routeParams = {id: productId};
+                const self = this;
+                const routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
                     routeParams.short = true;
@@ -213,13 +214,13 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateProductUnits: function(units, force) {
-            var self = this;
+            const self = this;
 
             this.model.set('product_units', units);
 
-            var widgets = self.$el.find(self.options.itemWidget);
+            const widgets = self.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
-                var $select = $(widget).find(self.options.selectors.unitSelector);
+                const $select = $(widget).find(self.options.selectors.unitSelector);
 
                 if (!force && $select.hasClass(self.options.syncClass)) {
                     return;
@@ -235,7 +236,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

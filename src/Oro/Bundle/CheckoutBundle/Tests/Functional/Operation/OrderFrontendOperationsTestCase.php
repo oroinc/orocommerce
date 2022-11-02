@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
@@ -25,7 +25,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -38,7 +38,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
 
         $this->loadFixtures($this->getFixtures());
 
-        /* @var $configManager ConfigManager */
+        /* @var ConfigManager $configManager */
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();
@@ -72,7 +72,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
         $checkoutsInGridAfterReorder = $this->getOpenOrdersGridData();
         $this->assertCount($checkoutsInGridCnt + 2, $checkoutsInGridAfterReorder);
         $lastCheckoutData = array_pop($checkoutsInGridAfterReorder);
-        $this->assertContains(
+        static::assertStringContainsString(
             sprintf('Order #%s', $order->getIdentifier()),
             trim($lastCheckoutData['startedFrom'])
         );

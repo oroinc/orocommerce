@@ -26,7 +26,7 @@ class PriceListDefaultValueProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->priceListProvider = $this->createMock(PriceListProvider::class);

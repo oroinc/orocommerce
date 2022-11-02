@@ -12,7 +12,7 @@ class CustomerControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -32,11 +32,11 @@ class CustomerControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $urlCustomerCustomerView);
         $gridAttr = $crawler->filter('[id^=grid-customer-view-quote-grid]')
             ->first()->attr('data-page-component-options');
-        $this->assertContains($quote->getOwner()->getFullName(), $gridAttr);
-        $this->assertContains($quote->getCustomerUser()->getFullName(), $gridAttr);
-        $gridJsonElements = json_decode(html_entity_decode($gridAttr), true);
-        $this->assertCount(
-            count(LoadQuoteData::getQuotesFor('customer', $customer->getName())),
+        static::assertStringContainsString($quote->getOwner()->getFullName(), $gridAttr);
+        static::assertStringContainsString($quote->getCustomerUser()->getFullName(), $gridAttr);
+        $gridJsonElements = \json_decode(\html_entity_decode($gridAttr), true);
+        static::assertCount(
+            \count(LoadQuoteData::getQuotesFor('customer', $customer->getName())),
             $gridJsonElements['data']['data']
         );
     }

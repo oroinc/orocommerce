@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductUnitFieldsSettingsProvider;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 
 class ProductUnitFieldsSettingsProviderTest extends \PHPUnit\Framework\TestCase
@@ -17,7 +18,7 @@ class ProductUnitFieldsSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(ProductUnitFieldsSettingsInterface::class);
         $this->provider = new ProductUnitFieldsSettingsProvider($this->unitVisibility);

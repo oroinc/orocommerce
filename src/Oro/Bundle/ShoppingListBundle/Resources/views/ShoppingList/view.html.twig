@@ -1,5 +1,5 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%label%": entity.label }}) %}
 
@@ -25,7 +25,7 @@
     {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
 
     {% set subtotals %}
-        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+        {% include '@OroPricing/Totals/totals.html.twig' with {
             options: {
                 route: 'oro_pricing_entity_totals',
                 method: 'GET',

@@ -15,7 +15,7 @@ class NotBlankOneOf extends Constraint
      * @var array
      */
     public $fields = [];
-    
+
     /**
      * {@inheritdoc}
      */

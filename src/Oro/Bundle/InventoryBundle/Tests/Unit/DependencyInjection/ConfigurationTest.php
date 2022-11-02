@@ -56,6 +56,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'scope' => 'app',
                     'value' => Configuration::DEFAULT_MAXIMUM_QUANTITY_TO_ORDER,
                 ],
+                'hide_labels_past_availability_date' => [
+                    'scope' => 'app',
+                    'value' => true
+                ]
             ],
         ];
 

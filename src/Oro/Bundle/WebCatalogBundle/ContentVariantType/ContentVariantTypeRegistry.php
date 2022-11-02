@@ -5,20 +5,25 @@ namespace Oro\Bundle\WebCatalogBundle\ContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-class ContentVariantTypeRegistry
+/**
+ * The registry of content variant types.
+ */
+class ContentVariantTypeRegistry implements ResetInterface
 {
-    /**
-     * @var ContentVariantTypeInterface[]
-     */
-    private $contentVariantTypes = [];
+    /** @var iterable|ContentVariantTypeInterface[] */
+    private $contentVariantTypes;
+
+    /** @var ContentVariantTypeInterface[]|null [name => content variant type, ...] */
+    private $initializedContentVariantTypes;
 
     /**
-     * @param ContentVariantTypeInterface $contentVariantType
+     * @param iterable|ContentVariantTypeInterface[] $contentVariantTypes
      */
-    public function addContentVariantType(ContentVariantTypeInterface $contentVariantType)
+    public function __construct($contentVariantTypes)
     {
-        $this->contentVariantTypes[$contentVariantType->getName()] = $contentVariantType;
+        $this->contentVariantTypes = $contentVariantTypes;
     }
 
     /**
@@ -27,13 +32,14 @@ class ContentVariantTypeRegistry
      */
     public function getContentVariantType($contentVariantTypeName)
     {
-        if (!array_key_exists($contentVariantTypeName, $this->contentVariantTypes)) {
+        $contentVariantTypes = $this->getContentVariantTypes();
+        if (!isset($contentVariantTypes[$contentVariantTypeName])) {
             throw new InvalidArgumentException(
                 sprintf('Content variant type "%s" is not known.', $contentVariantTypeName)
             );
         }
 
-        return $this->contentVariantTypes[$contentVariantTypeName];
+        return $contentVariantTypes[$contentVariantTypeName];
     }
 
     /**
@@ -46,11 +52,18 @@ class ContentVariantTypeRegistry
     }
 
     /**
-     * @return ContentVariantTypeInterface[]
+     * @return ContentVariantTypeInterface[] [name => content variant type, ...]
      */
     public function getContentVariantTypes()
     {
-        return $this->contentVariantTypes;
+        if (null === $this->initializedContentVariantTypes) {
+            $this->initializedContentVariantTypes = [];
+            foreach ($this->contentVariantTypes as $type) {
+                $this->initializedContentVariantTypes[$type->getName()] = $type;
+            }
+        }
+
+        return $this->initializedContentVariantTypes;
     }
 
     /**
@@ -59,7 +72,8 @@ class ContentVariantTypeRegistry
     public function getAllowedContentVariantTypes()
     {
         $types = [];
-        foreach ($this->contentVariantTypes as $name => $type) {
+        $contentVariantTypes = $this->getContentVariantTypes();
+        foreach ($contentVariantTypes as $name => $type) {
             if ($type->isAllowed()) {
                 $types[$name] = $type;
             }
@@ -83,5 +97,13 @@ class ContentVariantTypeRegistry
         throw new InvalidArgumentException(
             sprintf('Content variant type "%s" is not known.', $type)
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function reset()
+    {
+        $this->initializedContentVariantTypes = null;
     }
 }

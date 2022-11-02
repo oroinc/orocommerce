@@ -17,9 +17,6 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
     /** @var MethodTypeConfigCollectionSubscriber */
     protected $subscriber;
 
-    /**
-     * @param MethodTypeConfigCollectionSubscriber $subscriber
-     */
     public function __construct(MethodTypeConfigCollectionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;
@@ -33,9 +30,6 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
         $builder->addEventSubscriber($this->subscriber);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -47,11 +41,6 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
         ]);
     }
 
-    /**
-     * @param FormView $view
-     * @param FormInterface $form
-     * @param array $options
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['is_grouped'] = $options['is_grouped'];

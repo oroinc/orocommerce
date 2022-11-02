@@ -6,7 +6,7 @@ layout:
             namespace: related
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/related_products.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/related_products.html.twig'
         - '@setOption':
             id: related_products
             optionName: items
@@ -24,15 +24,7 @@ layout:
             optionName: use_slider
             optionValue: '=data["oro_product_related_products"].isSliderEnabled()'
         - '@setOption':
-            id: related_product_line_item_form_fields
-            optionName: instance_name
-            optionValue: related_products
-        - '@setOption':
-            id: related_product_line_item_form_start
-            optionName: instance_name
-            optionValue: related_products
-        - '@setOption':
-            id: related_product_line_item_form_end
+            id: related_product_line_item_form
             optionName: instance_name
             optionValue: related_products
         - '@setOption':
@@ -47,6 +39,10 @@ layout:
             id: product_view_related_products_container
             optionName: visible
             optionValue: '=data["oro_product_related_products"].getRelatedItems(data["product"])'
+        - '@setOption':
+            id: related_products
+            optionName: attr.data-page-component-name
+            optionValue: 'related-products-list'
         - '@add':
             id: product_view_related_products_container
             parentId: product_view_container

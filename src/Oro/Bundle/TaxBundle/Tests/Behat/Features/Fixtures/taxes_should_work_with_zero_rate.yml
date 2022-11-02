@@ -1,0 +1,35 @@
+include:
+    - '@OroTaxBundle:products_and_shopping_lists.yml'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    tax_code_taxable_items:
+        code: 'taxable_items'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code_non_exempt:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'non_exempt'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_zero:
+        code: 'tax_zero'
+        rate: 0
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule_zero:
+        productTaxCode: '@tax_code_taxable_items'
+        customerTaxCode: '@customer_tax_code_non_exempt'
+        tax: '@tax_zero'
+        taxJurisdiction: '@tax_jurisdiction_berlin'
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_berlin:
+        code: 'tax_jurisdiction_berlin'
+        country: '@germany'
+        region: '@berlin'
+
+Oro\Bundle\TaxBundle\Entity\ZipCode:
+    tax_zip_code:
+        taxJurisdiction: '@tax_jurisdiction_berlin'
+        zipCode: '10115'

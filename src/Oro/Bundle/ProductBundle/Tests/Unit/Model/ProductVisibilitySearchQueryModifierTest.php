@@ -13,7 +13,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
      */
     protected $modifier;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->modifier = new ProductVisibilitySearchQueryModifier();
     }
@@ -49,7 +49,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
 
         $criteria = $this->createMock(Criteria::class);
 
-        $expression = Criteria::expr()->in('inventory_status', $statuses);
+        $expression = Criteria::expr()->in('inv_status', $statuses);
 
         $criteria->expects($this->once())
             ->method('andWhere')

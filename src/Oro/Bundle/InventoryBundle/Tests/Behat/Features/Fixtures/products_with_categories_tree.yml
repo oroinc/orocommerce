@@ -3,13 +3,14 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
         name: 'Common Business Unit'
         organization: '@organization'
 
-Oro\Bundle\CurrencyBundle\Entity\Price(local):
-    price:
-        value: '10'
-        currency: 'USD'
-
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision{1..3}:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+    precision3:
         unit: '@item'
         precision: '1'
 
@@ -17,40 +18,50 @@ Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'SKU1'
         type: 'simple'
-        primaryUnitPrecision: '@precision1'
-        addName: ['@locValue1']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
+        __calls:
+            - addName: ['@locValue1']
+            - setPrimaryUnitPrecision: ['@precision1']
     product2:
         sku: 'SKU2'
         type: 'simple'
-        primaryUnitPrecision: '@precision2'
-        addName: ['@locValue2']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
+        __calls:
+            - addName: ['@locValue2']
+            - setPrimaryUnitPrecision: ['@precision2']
     product3:
         sku: 'SKU3'
         type: 'simple'
-        primaryUnitPrecision: '@precision3'
-        addName: ['@locValue3']
         attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
         organization: '@organization'
         owner: '@businessUnit'
         status: 'enabled'
+        __calls:
+            - addName: ['@locValue3']
+            - setPrimaryUnitPrecision: ['@precision3']
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist_shipping'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelistShipping'
+        website: '@website1'
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     priceListToCustomer:
@@ -59,6 +70,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         website: '@website1'
         sortOrder: 200
 
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation{1..3}:
+        product: '@product<current()>'
+        priceList: '@pricelistShipping'
+
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:
         pricelist: '@pricelistShipping'
@@ -66,7 +82,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU1'
         quantity: 5
         unit: '@item'
-        value: 5
+        value: 2
         currency: 'USD'
     productPrice2:
         pricelist: '@pricelistShipping'
@@ -74,7 +90,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU2'
         quantity: 5
         unit: '@item'
-        value: 5
+        value: 2
         currency: 'USD'
     productPrice3:
         pricelist: '@pricelistShipping'
@@ -82,69 +98,66 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU3'
         quantity: 5
         unit: '@item'
-        value: 5
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice1:
-        pricelist: '@combinedPriceList'
-        product: '@product1'
-        productSku: 'SKU1'
-        quantity: 5
-        unit: '@item'
         value: 2
         currency: 'USD'
-   combinedProductPrice2:
-        pricelist: '@combinedPriceList'
-        product: '@product2'
-        productSku: 'SKU2'
-        quantity: 5
-        unit: '@item'
-        value: 2
-        currency: 'USD'
-   combinedProductPrice3:
-        pricelist: '@combinedPriceList'
-        product: '@product3'
-        productSku: 'SKU3'
-        quantity: 5
-        unit: '@item'
-        value: 2
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category1:
-        addTitle: ['@localNewCategory']
-        addProduct: ['@product1']
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+        organization: '@organization'
     category2:
-        addTitle: ['@localNewCategory2']
-        setParentCategory: ['@category1']
-        addProduct: ['@product2']
+        __calls:
+            - addTitle: ['@localNewCategory2']
+            - setParentCategory: ['@category1']
+            - addProduct: ['@product2']
+        organization: '@organization'
     category3:
-        addTitle: ['@localNewCategory3']
-        setParentCategory: ['@category2']
-        addProduct: ['@product3']
+        __calls:
+            - addTitle: ['@localNewCategory3']
+            - setParentCategory: ['@category2']
+            - addProduct: ['@product3']
+        organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locValue1:
         string: 'Product1'
     locValue2:
         string: 'Product2'
     locValue3:
         string: 'Product3'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     localNewCategory:
         string: 'NewCategory'
     localNewCategory2:
         string: 'NewCategory2'
     localNewCategory3:
         string: 'NewCategory3'
+
+Oro\Bundle\RFPBundle\Entity\Request:
+    request1:
+        po_number: '0111'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    requestproduct1:
+        request: '@request1'
+        product: '@product3'
+        product_sku: 'SKU3'
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    requestproductitem1:
+        request_product: '@requestproduct1'
+        quantity: 1
+        productUnit: '@item'
+        value: 2
+        currency: 'USD'

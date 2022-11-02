@@ -1,0 +1,68 @@
+{% block _content_widget_image_slider_widget %}
+    {% set slideToShow = pageComponentOptions.slidesToShow %}
+    {% set slidesToScroll = pageComponentOptions.slidesToScroll %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        responsive: [{
+            breakpoint: 991,
+            settings: {
+                slidesToShow: slideToShow > 3 ? 3 : slideToShow,
+                slidesToScroll: slidesToScroll > 3 ? 3 : slidesToScroll
+            }
+        }, {
+            breakpoint: 641,
+            settings: {
+                slidesToShow: slideToShow > 2 ? 2 : slideToShow,
+                slidesToScroll: slidesToScroll > 2 ? 2 : slidesToScroll
+            }
+        }, {
+            breakpoint: 415,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }]
+    }) %}
+    <div class="promo-slider{{ pageComponentOptions.arrows ? ' promo-slider--has-arrows' : '' }}"
+         data-page-component-name="{{ pageComponentName }}"
+         data-page-component-module="orofrontend/js/app/components/list-slider-component"
+         data-page-component-options="{{ pageComponentOptions|merge({
+             itemSelector: '.slick-slide',
+             itemLinkSelector: '[data-role="slide-item-link"]',
+             processClick: '[data-role="slide-content"]'
+         })|json_encode }}">
+        {% apply spaceless %}
+            {% for imageSlide in imageSlides %}
+                {% set windowTarget = imageSlide.displayInSameWindow ? '_self' : '_blank' %}
+                <div class="promo-slider__item promo-slider__item--fraction-{{ pageComponentOptions.slidesToShow }}">
+                    <a href="{{ imageSlide.url|strip_dangerous_protocols }}" target="{{ windowTarget }}" data-role="slide-item-link">
+                        <div class="promo-slider__picture">
+                            {% set imageVariantSettings = {
+                                smallImage: { filter: 'original', fallback_filter: 'max_width_414', media: '(max-width: 414px)' },
+                                mediumImage: { filter: 'original', fallback_filter: 'max_width_992', media: '(max-width: 992px)' },
+                                mainImage: { filter: 'original' },
+                            } %}
+                            {% include '@OroAttachment/Twig/picture.html.twig' with {
+                                sources: oro_cms_image_slide_sources(imageSlide, imageVariantSettings),
+                                img_attrs: {
+                                    src: product_filtered_image(imageSlide.mainImage, 'original'),
+                                    alt: imageSlide.title,
+                                    loading: 'eager',
+                                    class: 'promo-slider__img',
+                                    width: '1322',
+                                    height: '460'
+                                }
+                            } %}
+                        </div>
+                    </a>
+                    {% if imageSlide.text %}
+                        <div class="promo-slider__info promo-slider__info--{{ imageSlide.textAlignment }}"
+                             data-role="slide-content"
+                             data-url="{{ imageSlide.url|strip_dangerous_protocols }}"
+                             data-target="{{ windowTarget }}"
+                        >{{ imageSlide.text|raw }}</div>
+                    {% endif %}
+                </div>
+            {%- endfor -%}
+        {% endapply %}
+    </div>
+{% endblock %}

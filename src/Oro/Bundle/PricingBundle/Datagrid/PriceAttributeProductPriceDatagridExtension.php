@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -35,22 +36,22 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
     /** @var SelectedFieldsProviderInterface */
     private $selectedFieldsProvider;
 
+    /** @var AclHelper */
+    private $aclHelper;
+
     /** @var array */
     private $enabledPriceColumns;
 
-    /**
-     * @param PriceListRequestHandler $priceListRequestHandler
-     * @param DoctrineHelper $doctrineHelper
-     * @param SelectedFieldsProviderInterface $selectedFieldsProvider
-     */
     public function __construct(
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
-        SelectedFieldsProviderInterface $selectedFieldsProvider
+        SelectedFieldsProviderInterface $selectedFieldsProvider,
+        AclHelper $aclHelper
     ) {
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
         $this->selectedFieldsProvider = $selectedFieldsProvider;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -101,9 +102,6 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     private function addColumns(DatagridConfiguration $config): void
     {
         $attributesWithCurrencies = $this->getAttributesWithCurrencies();
@@ -139,9 +137,6 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @return array
-     */
     private function getAttributesWithCurrencies(): array
     {
         $priceList = $this->priceListRequestHandler->getPriceList();
@@ -156,17 +151,11 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
 
         /** @var PriceAttributePriceListRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PriceAttributePriceList::class);
-        $attributesWithCurrencies = $repository->getAttributesWithCurrencies($currencies);
+        $qb = $repository->getAttributesWithCurrenciesQueryBuilder($currencies);
 
-        return $attributesWithCurrencies;
+        return $this->aclHelper->apply($qb)->getResult();
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param string $priceAttributeName
-     */
     private function addColumnToConfig(
         DatagridConfiguration $config,
         string $columnName,
@@ -176,7 +165,7 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         $columnConfig = [
             'label' => sprintf('%s (%s)', $priceAttributeName, $currencyIsoCode),
             'type' => 'twig',
-            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
             'frontend_type' => 'html',
             'renderable' => true,
         ];
@@ -198,11 +187,6 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         return sprintf('price_attribute_price_column_%s_%s', strtolower($currencyIsoCode), $priceAttributeId);
     }
 
-    /**
-     * @param string $columnName
-     *
-     * @return string
-     */
     private function getJoinAlias(string $columnName): string
     {
         QueryBuilderUtil::checkIdentifier($columnName);
@@ -210,12 +194,6 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         return $columnName . '_table';
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param int $priceAttributeId
-     */
     private function addColumnToQueryConfig(
         DatagridConfiguration $config,
         string $columnName,
@@ -265,11 +243,6 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @param ResultRecord $record
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     */
     private function unpackPrices(ResultRecord $record, string $columnName, string $currencyIsoCode): void
     {
         $rawPrices = $record->getValue($columnName);
@@ -279,12 +252,6 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string $rawPrices
-     * @param string $currencyIsoCode
-     *
-     * @return array
-     */
     private function unpackPriceFromRaw(string $rawPrices, string $currencyIsoCode): array
     {
         $prices = [];

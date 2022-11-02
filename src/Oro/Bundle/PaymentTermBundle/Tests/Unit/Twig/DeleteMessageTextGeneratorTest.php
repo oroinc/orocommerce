@@ -9,6 +9,7 @@ use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
 use Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\RouterInterface;
+use Twig\Environment;
 
 class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +24,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermManager */
     protected $paymentTermManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
         $this->router->expects($this->any())
@@ -35,8 +36,8 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder('\Twig_Environment')
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
+        $twig = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
         $twig->expects($this->any())
@@ -97,12 +98,11 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage PaymentTerm #1 not found
-     */
     public function testGetDeleteMessageTextForDataGridWithoutPaymentTerm()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('PaymentTerm #1 not found');
+
         $this->paymentTermManager->expects($this->once())->method('getReference')->willReturn(null);
 
         $this->extension->getDeleteMessageTextForDataGrid(1);

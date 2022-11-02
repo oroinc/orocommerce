@@ -30,7 +30,7 @@ class IntegrationRemovalListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->channelType = 'shipping_method';
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\InventoryBundle\CacheWarmer;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
+use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -14,6 +16,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Ensures that extend entity cache can be built after the changes made to some inventory-related entities.
+ */
 class EntityConfigRelationsMigration
 {
     const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
@@ -30,27 +35,27 @@ class EntityConfigRelationsMigration
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var bool */
-    private $applicationInstalled;
+    /** @var ApplicationState */
+    private $applicationState;
 
     /**
      * @param ManagerRegistry $managerRegistry
      * @param LoggerInterface $logger
-     * @param bool $applicationInstalled
+     * @param ApplicationState $applicationState
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         LoggerInterface $logger,
-        $applicationInstalled
+        ApplicationState $applicationState
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
-        $this->applicationInstalled = (bool)$applicationInstalled;
+        $this->applicationState = $applicationState;
     }
 
     public function migrate()
     {
-        if (!$this->applicationInstalled) {
+        if (!$this->applicationState->isInstalled()) {
             return;
         }
 
@@ -62,8 +67,8 @@ class EntityConfigRelationsMigration
 
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
-        $tables = $configConnection->getSchemaManager()->listTableNames();
-        if (!in_array('oro_entity_config', $tables, true)) {
+
+        if (!SafeDatabaseChecker::tablesExist($configConnection, 'oro_entity_config')) {
             return;
         }
 
@@ -115,10 +120,6 @@ class EntityConfigRelationsMigration
         );
     }
 
-    /**
-     * @param ParametrizedMigrationQuery $query
-     * @param Connection $connection
-     */
     protected function executeUpdateRelationsQuery(ParametrizedMigrationQuery $query, Connection $connection)
     {
         $query->setConnection($connection);

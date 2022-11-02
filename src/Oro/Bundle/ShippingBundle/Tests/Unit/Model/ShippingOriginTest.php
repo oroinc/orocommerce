@@ -14,12 +14,12 @@ class ShippingOriginTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOrigin */
     protected $shippingOrigin;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingOrigin = new ShippingOrigin();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->shippingOrigin);
     }

@@ -1,0 +1,120 @@
+api:
+    entity_aliases:
+        Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+            alias: shoppinglistitem
+            plural_alias: shoppinglistitems
+
+    entities:
+        Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+            documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list.md'
+            fields:
+                name:
+                    property_path: label
+                default:
+                    data_type: boolean
+                    property_path: _
+                items:
+                    property_path: lineItems
+                    max_results: -1
+                currency:
+                    data_type: string
+                    form_options:
+                        mapped: false
+                total:
+                    data_type: money
+                    form_options:
+                        mapped: false
+                subTotal:
+                    data_type: money
+                    # set "ignore" (_) property path to avoid collisions with ShoppingList::getSubtotal()
+                    property_path: _
+                    form_options:
+                        mapped: false
+            actions:
+                update:
+                    fields:
+                        customer:
+                            form_options:
+                                mapped: false
+                        customerUser:
+                            form_options:
+                                mapped: false
+            subresources:
+                items:
+                    actions:
+                        add_subresource:
+                            description: Add or Update Items
+                            form_options:
+                                validation_groups: [create, api]
+                            fields:
+                                id:
+                                    direction: output-only
+                                shoppingList:
+                                    exclude: true
+                        # changing the list of shopping list items via relationships does not make sense,
+                        # because it is not possible to create a shopping list item that does not belong
+                        # to any shopping list
+                        # moving items from one shopping list to another can be achieved
+                        # via the shopping list item API
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+                customer:
+                    actions:
+                        update_relationship: false
+                customerUser:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+            documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list_item.md'
+            form_options:
+                constraints:
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
+                        path: unit
+                        sell: true
+                        groups: [api]
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                        path: quantity
+                        groups: [api]
+            fields:
+                customerUser:
+                    exclude: true
+                shoppingList:
+                    form_options:
+                        constraints:
+                            - Oro\Bundle\ApiBundle\Validator\Constraints\AccessGranted:
+                                permission: EDIT
+                                groups: [api]
+                currency:
+                    data_type: string
+                    form_options:
+                        mapped: false
+                    depends_on: [product, quantity, unit]
+                value:
+                    data_type: money
+                    form_options:
+                        mapped: false
+                    depends_on: [product, quantity, unit]
+            actions:
+                create:
+                    acl_resource: oro_shopping_list_frontend_update
+                    form_options:
+                        validation_groups: [create, api]
+                update:
+                    acl_resource: oro_shopping_list_frontend_update
+                    form_options:
+                        validation_groups: [update, api]
+                get:
+                    acl_resource: oro_shopping_list_frontend_view
+                get_list:
+                    acl_resource: oro_shopping_list_frontend_view
+                delete:
+                    acl_resource: oro_shopping_list_frontend_update
+                delete_list:
+                    acl_resource: oro_shopping_list_frontend_update
+                get_subresource: false
+                get_relationship: false
+                update_relationship: false
+                add_relationship: false
+                delete_relationship: false

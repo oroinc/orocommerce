@@ -1,44 +1,58 @@
 define(function(require) {
     'use strict';
 
-    var TotalsComponent;
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
-    var BaseComponent = require('oropricing/js/app/components/totals-component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const PricingTotalsComponent = require('oropricing/js/app/components/totals-component');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     /**
      * @export oroorder/js/app/components/totals-component
      * @extends oropricing.app.components.TotalsComponent
      * @class oroorder.app.components.TotalsComponent
      */
-    TotalsComponent = BaseComponent.extend({
+    const TotalsComponent = PricingTotalsComponent.extend({
         /**
          * @property {Object}
          */
         currentTotals: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function TotalsComponent() {
-            TotalsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function TotalsComponent(options) {
+            TotalsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
+            this._deferredInit();
+            $.when(..._.compact(options._subPromises)).then(() => {
+                this.handleSubLayoutInit();
+                this._resolveDeferredInit();
+            });
+
             this.options = _.defaults(options || {}, this.options);
+        },
+
+        /**
+         * Handles sub-layout initialization
+         */
+        handleSubLayoutInit: function() {
             this.currentTotals = this._getDefaultTotals();
 
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.setTotals, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
+            this.listenTo(mediator, {
+                'entry-point:order:load:before': this.showLoadingMask,
+                'entry-point:order:load': this.setTotals,
+                'entry-point:order:load:after': this.hideLoadingMask,
 
-            mediator.on('line-items-totals:update', this.updateTotals, this);
-            mediator.on('shipping-cost:updated', this.setTotals, this);
-            mediator.on('order:totals:get:current', this.getCurrentTotals, this);
+                'line-items-totals:update': this.updateTotals,
+                'shipping-cost:updated': this.setTotals,
+                'order:totals:get:current': this.getCurrentTotals
+            });
 
             this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
 
@@ -46,7 +60,7 @@ define(function(require) {
 
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
-            this.setTotals(options);
+            this.setTotals(this.options);
         },
 
         _getDefaultTotals: function() {
@@ -74,25 +88,10 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         updateTotals: function() {
             mediator.trigger('entry-point:order:trigger');
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.setTotals, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
-
-            TotalsComponent.__super__.dispose.call(this);
         }
     });
 

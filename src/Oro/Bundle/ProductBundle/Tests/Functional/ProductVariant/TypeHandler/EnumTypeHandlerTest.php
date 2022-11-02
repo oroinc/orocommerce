@@ -6,6 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -23,12 +24,12 @@ class EnumTypeHandlerTest extends WebTestCase
     /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $qb;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
 
         $container = $this->getContainer();
-        $class = $container->getParameter('oro_product.entity.product.class');
+        $class = Product::class;
 
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->configManager->expects($this->any())

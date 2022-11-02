@@ -6,40 +6,40 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
+/**
+ * Class subscribed to oro_website_search.event.restrict_index_entity.product
+ * and adds inventory status restriction based on passed website
+ */
 class RestrictIndexProductsEventListener
 {
-    /** @var ConfigManager */
-    protected $configManager;
+    protected ConfigManager $configManager;
+    protected ProductVisibilityQueryBuilderModifier $modifier;
+    protected WebsiteContextManager $websiteContextManager;
+    protected string $configPath;
 
-    /** @var ProductVisibilityQueryBuilderModifier */
-    protected $modifier;
-
-    /** @var string */
-    protected $configPath;
-
-    /**
-     * @param ConfigManager $configManager
-     * @param ProductVisibilityQueryBuilderModifier $modifier
-     * @param string $configPath
-     */
     public function __construct(
         ConfigManager $configManager,
         ProductVisibilityQueryBuilderModifier $modifier,
-        $configPath
+        WebsiteContextManager $websiteContextManager,
+        string $configPath
     ) {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
+        $this->websiteContextManager = $websiteContextManager;
         $this->configPath = $configPath;
     }
 
-    /**
-     * @param RestrictIndexEntityEvent $event
-     */
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
         $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
-        $inventoryStatuses = $this->configManager->get($this->configPath);
+        $inventoryStatuses = $this->configManager->get(
+            $this->configPath,
+            false,
+            false,
+            $this->websiteContextManager->getWebsite($event->getContext())
+        );
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
     }
 }

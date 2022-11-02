@@ -4,18 +4,36 @@ namespace Oro\Bundle\TaxBundle\OrderTax\Mapper;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
-use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Model\Taxable;
+use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 
+/**
+ * Creates Taxable object from Order entity.
+ */
 class OrderMapper extends AbstractOrderMapper
 {
-    /**
-     * @var OrderLineItemMapper
-     */
+    /** @var TaxMapperInterface */
     protected $orderLineItemMapper;
+
+    /** @var PreloadingManager */
+    private $preloadingManager;
+
+    public function __construct(
+        ContextEventDispatcher $contextEventDispatcher,
+        TaxationAddressProvider $addressProvider,
+        TaxMapperInterface $orderLineItemMapper,
+        PreloadingManager $preloadingManager
+    ) {
+        parent::__construct($contextEventDispatcher, $addressProvider);
+
+        $this->orderLineItemMapper = $orderLineItemMapper;
+        $this->preloadingManager = $preloadingManager;
+    }
 
     /**
      * {@inheritdoc}
@@ -25,7 +43,7 @@ class OrderMapper extends AbstractOrderMapper
     {
         $taxable = (new Taxable())
             ->setIdentifier($order->getId())
-            ->setClassName(ClassUtils::getClass($order))
+            ->setClassName(Order::class)
             ->setOrigin($this->addressProvider->getOriginAddress())
             ->setDestination($this->getDestinationAddress($order))
             ->setTaxationAddress($this->getTaxationAddress($order))
@@ -50,23 +68,25 @@ class OrderMapper extends AbstractOrderMapper
      */
     protected function mapLineItems($lineItems)
     {
+        $lineItems = $lineItems->toArray();
+        $this->preloadingManager->preloadInEntities(
+            $lineItems,
+            [
+                'product' => [
+                    'taxCode' => [],
+                ],
+            ]
+        );
+
         $storage = new \SplObjectStorage();
 
-        $lineItems
-            ->map(
-                function (OrderLineItem $item) use ($storage) {
-                    $storage->attach($this->orderLineItemMapper->map($item));
-                }
-            );
+        array_walk(
+            $lineItems,
+            function (OrderLineItem $item) use ($storage) {
+                $storage->attach($this->orderLineItemMapper->map($item));
+            }
+        );
 
         return $storage;
-    }
-
-    /**
-     * @param TaxMapperInterface $orderLineItemMapper
-     */
-    public function setOrderLineItemMapper(TaxMapperInterface $orderLineItemMapper)
-    {
-        $this->orderLineItemMapper = $orderLineItemMapper;
     }
 }

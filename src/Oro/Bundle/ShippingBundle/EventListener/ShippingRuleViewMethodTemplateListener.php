@@ -27,9 +27,6 @@ class ShippingRuleViewMethodTemplateListener
         $this->provider = $provider;
     }
 
-    /**
-     * @param ShippingMethodConfigDataEvent $event
-     */
     public function onGetConfigData(ShippingMethodConfigDataEvent $event)
     {
         if ($this->provider->hasShippingMethod($event->getMethodIdentifier())) {

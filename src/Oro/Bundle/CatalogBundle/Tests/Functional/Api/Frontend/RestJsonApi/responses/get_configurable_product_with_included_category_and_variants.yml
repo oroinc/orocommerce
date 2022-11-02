@@ -1,0 +1,47 @@
+data:
+    type: products
+    id: '<toString(@configurable_product1->id)>'
+    attributes:
+        name: 'Configurable Product 1'
+    relationships:
+        category:
+            data:
+                type: mastercatalogcategories
+                id: '<toString(@category1->id)>'
+        variantProducts:
+            data:
+                - { type: products, id: '<toString(@configurable_product1_variant1->id)>' }
+                - { type: products, id: '<toString(@configurable_product1_variant2->id)>' }
+        parentProducts:
+            data: []
+included:
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1->id)>'
+        attributes:
+            title: 'Category 1'
+    -
+        type: products
+        id: '<toString(@configurable_product1_variant1->id)>'
+        attributes:
+            name: 'Variant 1 for Configurable Product 1'
+        relationships:
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category1->id)>'
+    -
+        type: products
+        id: '<toString(@configurable_product1_variant2->id)>'
+        attributes:
+            name: 'Variant 2 for Configurable Product 1'
+        relationships:
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category1->id)>'
+            variantProducts:
+                data: []
+            parentProducts:
+                data:
+                    - { type: products, id: '<toString(@configurable_product1->id)>' }

@@ -5,77 +5,69 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Asset\Context\ContextInterface;
 
 class TextContentVariantTypeTest extends FormIntegrationTestCase
 {
+    use WysiwygAwareTestTrait;
+
     /**
      * @return array
      */
     protected function getExtensions()
     {
-        /**
-         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager
-         */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $htmlTagProvider = $this->createMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
-        $htmlTagProvider->expects($this->any())
-            ->method('getAllowedElements')
-            ->willReturn(['br', 'a']);
-
-        $context = $this->createMock(ContextInterface::class);
-
         return [
             new PreloadedExtension(
                 [
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    OroRichTextType::class => new OroRichTextType($configManager, $htmlTagProvider, $context),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 []
             )
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(TextContentVariantType::class);
 
-        $this->assertTrue($form->has('scopes'));
-        $this->assertTrue($form->has('content'));
-        $this->assertTrue($form->has('default'));
+        self::assertTrue($form->has('scopes'));
+        self::assertTrue($form->has('content'));
+        self::assertTrue($form->has('default'));
+        self::assertEquals(
+            ['contentStyle' => 'content_style'],
+            $form->getConfig()->getOption('error_mapping')
+        );
     }
 
     /**
      * @dataProvider submitDataProvider
      *
-     * @param ContentBlock $existingData
+     * @param TextContentVariant $existingData
      * @param array $submittedData
-     * @param ContentBlock $expectedData
+     * @param TextContentVariant $expectedData
      */
-    public function testSubmit($existingData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        TextContentVariant $existingData,
+        array $submittedData,
+        TextContentVariant $expectedData
+    ): void {
         $form = $this->factory->create(TextContentVariantType::class, $existingData);
 
-        $this->assertEquals($existingData, $form->getData());
+        self::assertEquals($existingData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
 
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new entity' => [

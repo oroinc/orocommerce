@@ -33,8 +33,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
      */
     private $requestDataStorage;
 
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->storage = $this->createMock(ProductDataStorage::class);
         $this->requestDataStorage = new RequestToQuoteDataStorage($this->storage);
@@ -42,10 +41,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider saveToStorageDataProvider
-     *
-     * @param array $rfpRequestData
-     * @param array $entityData
-     * @param array $entityItemData
      */
     public function testSaveToStorage(
         array $rfpRequestData,
@@ -69,9 +64,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         $this->requestDataStorage->saveToStorage($rfpRequest);
     }
 
-    /**
-     * @return array
-     */
     public function saveToStorageDataProvider(): array
     {
         $rfpRequestData = [
@@ -104,10 +96,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider saveToStorageDataProviderWhenNoTargetPrice
-     *
-     * @param array $rfpRequestData
-     * @param array $entityData
-     * @param array $entityItemData
      */
     public function testSaveToStorageWhenNoTargetPriceSet(
         array $rfpRequestData,
@@ -130,9 +118,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         $this->requestDataStorage->saveToStorage($rfpRequest);
     }
 
-    /**
-     * @return array
-     */
     public function saveToStorageDataProviderWhenNoTargetPrice(): array
     {
         $rfpRequestData = [
@@ -163,11 +148,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $rfpRequestData
-     *
-     * @return RFPRequest
-     */
     protected function createRFPRequest(array $rfpRequestData): RFPRequest
     {
         /** @var Customer $customer */
@@ -211,12 +191,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         return $rfpRequest;
     }
 
-
-    /**
-     * @param array $requestProductData
-     *
-     * @return RequestProduct
-     */
     private function createRequestProduct(array $requestProductData): RequestProduct
     {
         $product = $this->getEntity(
@@ -250,11 +224,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         return $requestProduct;
     }
 
-    /**
-     * @param $rfpRequestData
-     *
-     * @return array
-     */
     private function getExpectedEntityData($rfpRequestData): array
     {
         $entityData = [
@@ -270,11 +239,6 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         return $entityData;
     }
 
-    /**
-     * @param array $rfpRequestData
-     *
-     * @return array
-     */
     private function getExpectedEntityItemData(array $rfpRequestData): array
     {
         $entityItemData = [

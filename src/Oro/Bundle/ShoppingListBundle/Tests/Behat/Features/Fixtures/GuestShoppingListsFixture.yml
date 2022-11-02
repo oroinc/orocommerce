@@ -1,0 +1,34 @@
+include:
+    - '@OroShoppingListBundle:ProductFixture.yml'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        default: true
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite1:
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 100
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice{1..3}:
+        pricelist: '@pricelist'
+        product: '@product<current()>'
+        productSku: '@product<current()>->getSku'
+        quantity: 1
+        unit: '@each'
+        value: '<current()>'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToSimpleProduct:
+        product: '@simpleProduct1'
+        pricelist: '@pricelist'
+    priceListToProduct{1..3}:
+        product: '@product<current()>'
+        pricelist: '@pricelist'

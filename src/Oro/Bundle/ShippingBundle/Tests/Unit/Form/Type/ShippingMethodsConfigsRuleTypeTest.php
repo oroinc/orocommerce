@@ -10,8 +10,6 @@ use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntax;
-use Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -28,60 +26,43 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollec
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var MethodTypeConfigCollectionSubscriberProxy
-     */
-    protected $methodTypeConfigCollectionSubscriber;
+    /** @var MethodTypeConfigCollectionSubscriberProxy */
+    private $methodTypeConfigCollectionSubscriber;
 
-    /**
-     * @var MethodConfigCollectionSubscriberProxy
-     */
-    protected $methodConfigCollectionSubscriber;
+    /** @var MethodConfigCollectionSubscriberProxy */
+    private $methodConfigCollectionSubscriber;
 
-    /**
-     * @var MethodConfigSubscriberProxy
-     */
-    protected $methodConfigSubscriber;
+    /** @var MethodConfigSubscriberProxy */
+    private $methodConfigSubscriber;
 
-    /**
-     * @var CompositeShippingMethodProvider
-     */
-    protected $shippingMethodProvider;
+    /** @var CompositeShippingMethodProvider */
+    private $shippingMethodProvider;
 
-    /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $choicesProvider;
+    /** @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $choicesProvider;
 
-    /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $iconProvider;
+    /** @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $iconProvider;
 
-    /**
-     * @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $assetHelper;
+    /** @var AssetHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $assetHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->shippingMethodProvider = new CompositeShippingMethodProvider();
-        $this->shippingMethodProvider->addProvider(new ShippingMethodProviderStub());
+        $this->shippingMethodProvider = new CompositeShippingMethodProvider([new ShippingMethodProviderStub()]);
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
@@ -101,13 +82,12 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
-        /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects(static::any())
+        $translator->expects(self::any())
             ->method('trans')
-            ->will(static::returnCallback(function ($message) {
-                return $message.'_translated';
-            }));
+            ->willReturnCallback(function ($message) {
+                return $message . '_translated';
+            });
     }
 
     public function testGetBlockPrefix()
@@ -118,10 +98,8 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array|null $data
      */
-    public function testSubmit($data)
+    public function testSubmit(ShippingMethodsConfigsRule $data)
     {
         $form = $this->factory->create(ShippingMethodsConfigsRuleType::class, $data);
 
@@ -131,12 +109,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             'rule' => [
                 'name' => 'new rule',
                 'sortOrder' => '1',
+                'enabled' => false
             ],
             'currency' => 'USD',
             'methodConfigs' => [
                 [
                     'method' => ShippingMethodProviderStub::METHOD_IDENTIFIER,
-                    'options' => [],
+                    'options' => ['option' => 1],
                     'typeConfigs' => [
                         [
                             'enabled' => true,
@@ -144,6 +123,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                             'options' => [
                                 'price' => 12,
                                 'type' => 'per_item',
+                                'handling_fee' => 100
                             ],
                         ]
                     ]
@@ -162,7 +142,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->addMethodConfig(
                 (new ShippingMethodConfig())
                     ->setMethod(ShippingMethodProviderStub::METHOD_IDENTIFIER)
-                    ->setOptions([])
+                    ->setOptions(['option' => 1])
                     ->addTypeConfig(
                         (new ShippingMethodTypeConfig())
                             ->setEnabled(true)
@@ -170,18 +150,17 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                             ->setOptions([
                                 'price' => 12,
                                 'type' => 'per_item',
+                                'handling_fee' => 100
                             ])
                     )
             );
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($shippingRule, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [new ShippingMethodsConfigsRule()],
@@ -191,6 +170,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                         (new Rule())
                             ->setName('old name')
                             ->setSortOrder(0)
+                            ->setEnabled(false)
                     )
                     ->setCurrency('EUR')
             ],
@@ -200,23 +180,20 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getValidators()
+    protected function getValidators(): array
     {
-        $enabledTypeConfigsValidationGroup = new EnabledTypeConfigsValidationGroup();
-        $shippingRuleEnable = new ShippingRuleEnable();
-        $expressionLanguageSyntax = new ExpressionLanguageSyntax();
-
         return [
-            $enabledTypeConfigsValidationGroup->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
-            $shippingRuleEnable->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
-            $expressionLanguageSyntax->validatedBy() => $this->createMock(ExpressionLanguageSyntaxValidator::class),
+            'oro_shipping_enabled_type_config_validation_group_validator' =>
+                new EnabledTypeConfigsValidationGroupValidator(),
+            ShippingRuleEnableValidator::class => $this->createMock(ShippingRuleEnableValidator::class),
+            ExpressionLanguageSyntaxValidator::class => $this->createMock(ExpressionLanguageSyntaxValidator::class),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getExtensions()
+    protected function getExtensions(): array
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
@@ -226,15 +203,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['configureOptions', 'buildForm'])
+        $translatableEntity = $this->getMockBuilder(TranslatableEntityType::class)
+            ->onlyMethods(['configureOptions', 'buildForm'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -249,8 +224,8 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
-                        $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
-                        $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(CurrencyNameHelper::class)
                     ),
                     ShippingMethodsConfigsRuleDestinationType::class => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
@@ -264,7 +239,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                 ],
                 [FormType::class => [
                     new AdditionalAttrExtension(),
-                    new StripTagsExtensionStub($this->createMock(HtmlTagHelper::class))
+                    new StripTagsExtensionStub($this)
                 ]]
             ),
             $this->getValidatorExtension(true)

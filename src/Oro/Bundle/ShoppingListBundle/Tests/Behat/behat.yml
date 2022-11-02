@@ -2,27 +2,28 @@ oro_behat_extension:
   elements:
     ShoppingList:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
-      selector: '#shopping_list_view_container_content'
+      selector: '.responsive-shopping-list-layout'
 
     ShoppingListWidgetContainer:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-widget__container'
 
     ShoppingListWidgetItemName:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-dropdown__item span.shopping-list-dropdown__name-inner'
 
     ShoppingListTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: 'h1.cart-order-title span'
+      selector: 'h1.page-title span.page-title__text'
 
     ShoppingListEdit:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.shopping-lists__area-trigger'
 
     ShoppingListAdd:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.add-to-shopping-list-button'
+
+    ShoppingListButtonGroup:
+      selector: '[data-product-dropdown-root]'
+
+    ShoppingListButtonGroupMenu:
+      selector: '[data-product-dropdown-root] .dropdown-menu.show'
 
     ShoppingListForm:
       selector: '.shopping-lists-popup__item'
@@ -33,76 +34,190 @@ oro_behat_extension:
           Quantity: 'oro_product_frontend_line_item[quantity]'
           Unit: 'oro_product_frontend_line_item[unit]'
 
+    ShoppingListOwnerForm:
+      selector: '.shopping-list-owner'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Customer: 'oro_customer_frontend_owner_select'
+
+    ShoppingListFirstRowForm:
+      selector: '.shopping-lists-popup .shopping-lists-units form'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'quantity'
+          Unit: 'unit'
+
+    ShoppingListEditPopupRows:
+      selector: '.shopping-lists-popup'
+
+    FirstRowAcceptButton:
+      selector: '.shopping-lists-popup .btn'
+
     NewShoppingListNameField:
       selector: '[name="oro_shopping_list_type[label]"]'
 
     ItemAdd:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="add-form-accept"]'
 
     ItemEdit:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="edit"]'
 
     ItemEditUnit:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '.shopping-lists-modify .select2-choice'
 
     ItemDisabled:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#select2-drop .select2-disabled .select2-result-label:contains("set")'
 
     Edit Shopping List Label:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: '[data-role="start-editing"]'
+      selector:
+        locator: '//button[@data-title="Edit Shopping List Label"]'
+        type: xpath
+
+    ShoppingListProductTableRow:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTableRow
+      selector: '.grid-row'
+
+    Shopping List Label Input:
+      selector: '#title-inline-editable .inline-view-editor__input-wrap > input'
 
     Shopping List Line Items Table:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: '#shopping_list_view_container_content > div.cart-table .shopping-list-line-items'
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ProductTable
+      selector: 'div[id^="grid-frontend-customer-user-shopping-list"]'
+
+    Shopping List Line Item Product Attribute:
+      selector:
+        type: 'xpath'
+        locator: '//td[contains(@class, "grid-body-cell-item")]'
 
     ShoppingListLineItemsTableHeaderLabel:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div.shopping-list-line-items__header-label'
 
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
-      selector: '.shopping-list-line-items__item-wrapper'
+      selector: '.grid-row'
 
-    Shopping List Line Item 1 Form:
-      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
-      selector:
-        locator: '(//div[@class=" shopping-list-line-items__item"])[1]//form'
-        type: xpath
-      options:
-        mapping:
-          Quantity: 'product_qty'
-          Unit: 'product_unit'
-
-    Shopping List Line Item 1 Quantity:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    Shopping List Line Item Error:
       selector:
         type: css
-        locator: 'form.product__qty-container:first-child input[name=product_qty]'
+        locator: 'div.shopping-list-line-items__error'
+
+    Shopping List Line Item Form:
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      selector: 'form.shoppinglist-line-item-frontend-type-editor'
+      options:
+        mapping:
+          Quantity:
+            locator: 'input[name="quantity"]'
+            type: css
+          Unit:
+            locator: 'select'
+            type: css
+            element: Select
+
+    Shopping List Line Item Quantity:
+      selector: 'div.input-qty'
+
+    Shopping List Line Item 1:
+      selector: '.grid-body .grid-row:first-child'
+
+    Shopping List Line Item 1 Quantity:
+      selector: '.grid-body .grid-row:first-child div.input-qty'
+
+    Shopping List Line Item 1 Quantity Input:
+      selector: '.grid-body .grid-row:first-child form input[name="quantity"]'
+
+    Shopping List Line Item 1 Unit Select:
+      selector: '.grid-body .grid-row:first-child form select'
+
+    Shopping List Line Item 1 Save Changes Button:
+      selector: '.grid-body .grid-row:first-child form button[type="submit"]'
+
+    Shopping List Line Item 1 Cancel Button:
+      selector: '.grid-body .grid-row:first-child form button[data-action="cancel"]'
+
+    Shopping List Line Item 2 Quantity:
+      selector: '.grid-body .grid-row:nth-child(2) div.input-qty'
+
+    Shopping List Line Item 2 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(2) form input[name="quantity"]'
+
+    Shopping List Line Item 2 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(2) form select'
+
+    Shopping List Line Item 2 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(2) form button[type="submit"]'
+
+    Shopping List Line Item 2 Cancel Button:
+      selector: '.grid-body .grid-row:nth-child(2) form button[data-action="cancel"]'
+
+    Shopping List Line Item 3 Quantity:
+      selector: '.grid-body .grid-row:nth-child(3) div.input-qty'
+
+    Shopping List Line Item 3 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(3) form input[name="quantity"]'
+
+    Shopping List Line Item 3 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(3) form select'
+
+    Shopping List Line Item 3 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(3) form button[type="submit"]'
+
+    Shopping List Line Item 3 Cancel Button:
+      selector: '.grid-body .grid-row:nth-child(3) form button[data-action="cancel"]'
+
+    Shopping List Line Item 4 Quantity:
+      selector: '.grid-body .grid-row:nth-child(4) div.input-qty'
+
+    Shopping List Line Item 4 Quantity Input:
+      selector: '.grid-body .grid-row:nth-child(4) form input[name="quantity"]'
+
+    Shopping List Line Item 4 Unit Select:
+      selector: '.grid-body .grid-row:nth-child(4) form select'
+
+    Shopping List Line Item 4 Save Changes Button:
+      selector: '.grid-body .grid-row:nth-child(4) form button[type="submit"]'
+
+    Shopping List Line Item 4 Cancel Button:
+      selector: '.grid-body .grid-row:nth-child(4) form button[data-action="cancel"]'
 
     ShoppingListLineItemProductSku:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
           type: 'xpath'
-          locator: '//span[@class="product-item__sku-value"]'
+          locator: '//td[contains(@class, "grid-body-cell-sku")]'
+
+    Shopping List Line Item Product View Link:
+      selector: 'h3.grid-line-items__title a'
+
+    Shopping List Line Item Product Price:
+      selector: 'div.line-item-price span[data-name="price-value"]'
 
     Shopping List Dropdown:
       selector:
         type: 'xpath'
-        locator: '//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
+        locator: '//button[contains(@class, "add-to-shopping-list-button")]/following-sibling::a[contains(@class, "dropdown-toggle")]'
 
     Create New Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
+      selector: '.add-to-shopping-list-button[title="Create New Shopping List"]'
 
     Update Product B Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Update Product B Shopping List"]'
+      selector: '.add-to-shopping-list-button[title="Update Product B Shopping List"]'
 
     Remove From Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Remove From Shopping list"]'
+      selector: '.add-to-shopping-list-button[title="Remove From Shopping list"]'
+
+    Shopping List Quick Search:
+      selector: '.dropdown-menu [data-role="quick-search"]'
+
+    Shopping List Quick Search Clear:
+      selector: '.dropdown-search-container .clear-search-button'
+
+    Shopping List Quick Search Clear in Mass Menu:
+      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
+
+    Shopping List Quick Search Clear in Dialog:
+      selector: '[role="dialog"] .dropdown-search-container .clear-search-button'
 
     FrontendLineItemForm:
       selector: 'form[id^="oro_product_frontend_line_item"]'
@@ -117,20 +232,23 @@ oro_behat_extension:
             type: css
             locator: 'select[name="oro_product_frontend_line_item[unit]"]'
 
-    ConfigurableProductForm:
+    Configurable Product Form:
       selector: 'form[id^="oro_product_product_variant_frontend_variant_field"]'
       class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
       options:
         mapping:
           Attributes_1:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_1]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_1")]'
           Attributes_2:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_2]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_2")]'
           Attributes_3:
             type: 'xpath'
-            locator: '//select[@name= "oro_product_product_variant_frontend_variant_field[Attribute_3]"]'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_3")]'
+          Color:
+            type: 'xpath'
+            locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Color")]'
 
     LineItemQuantity:
       selector:
@@ -148,7 +266,7 @@ oro_behat_extension:
     Shopping Cart:
       selector:
         type: xpath
-        locator: '//div[@class="cart-widget__content"]'
+        locator: '//span[@class="cart-widget__content"]'
 
     Shopping List Limit Form:
       selector: 'form[name="shopping_list"]'
@@ -159,24 +277,33 @@ oro_behat_extension:
 
     Subtotals:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
-      selector: '.order-checkout-widget__container'
+      selector: '.order-checkout-widget__container, .order-checkout-widget__table'
 
     In Shopping List:
-      selector: 'a.shopping-lists__area-trigger'
+      selector: 'button.shopping-lists__area-trigger'
 
     Add to Shopping List:
-      selector: 'a.add-to-shopping-list-button[title="Add to Shopping List"]'
+      selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'
 
     Add a Note to This Shopping List:
-      selector: 'input[name=addANote]+.custom-checkbox__icon'
+      selector: 'input[name=addANote]'
+
+    Shopping List Notes:
+      selector: 'form[data-role="edit-notes-form"] textarea[name="oro_shopping_list_notes_type[notes]"]'
+
+    Shopping List Notes in Modal:
+      selector: 'div.modal textarea[name="notes"]'
+
+    Save Shopping List Notes:
+      selector: 'form[data-role="edit-notes-form"] button[data-role="apply"]'
 
     Create Order:
-      selector: 'a[title="Create Order"]'
+      selector: '.order-checkout-widget a:contains("Create Order")'
 
     ShoppingListEditTitleField:
       selector: '#title-inline-editable input[name="value"]'
 
-    EditShopppingListLabel:
+    EditShoppingListLabel:
       selector: '#title-inline-editable [data-role="start-editing"]'
 
     View Shopping List Details:
@@ -193,7 +320,7 @@ oro_behat_extension:
           Green Yes Quantity: 'matrix_collection[rows][0][columns][1][quantity]'
 
     Remove Line Item:
-      selector: 'button.item-remove'
+      selector: 'a[aria-label="Delete row action"]'
 
     Shopping list Line items Grid:
       selector: 'div[data-page-component-name="shopping-list-line-items-grid"]'
@@ -203,26 +330,263 @@ oro_behat_extension:
       selector: 'input[name="shopping_list[oro_shopping_list___default_guest_shopping_list_owner][value]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
+    Customer Field:
+      selector: '.shopping-list-owner .select2-container .select2-choice'
+
+    Customer Select Field:
+      selector: 'select[name="oro_customer_frontend_owner_select"]'
+
+    Shopping List Product Note:
+      selector: '[name="notes"]'
+
+    Customer Shopping lists Grid:
+      selector: 'div[data-page-component-name="customer-shopping-lists-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Customer User Shopping lists Grid:
+      selector: 'div[data-page-component-name="customer-user-shopping-lists-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Duplicated Matrix Order Widget:
+      selector: '.matrix-order-widget__totals div.matrix-order-widget__totals'
+
+    Matrix Order Widget:
+      selector: '.matrix-order-widget__totals'
+
+    # The FileField element must be defined in the same bundle with files to upload
+    ShoppingListImportFileField:
+      selector: ".import-widget-content .tab-pane.active input[id^='oro_importexport_import_file']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
+    Add 1 More Variants:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "grid")]/descendant::button[contains(., "And 1 more")]'
+
+    Add 2 More Variants:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "grid")]/descendant::button[contains(., "And 2 more")]'
+
+    Shopping List Actions:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "btn-group")]/button[contains(@aria-label, "Actions of ")]'
+
+    Shopping List Rename Action Form:
+      selector: 'form[name="oro_action_operation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label: 'oro_action_operation[label]'
+
+    Shopping List Action Submit:
+      selector: 'div.form-actions button[type="submit"]'
+
+    Frontend Shopping List Edit Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Shopping List Action Reassign Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Action Reassign GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Shopping List Action Reassign GridToolbarActions:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Shopping List Action Reassign GridFiltersState:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] .filters-state'
+
+    Shopping List Action Reassign Radio:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] input[name="assigned"]'
+
+    Shopping List Widget Set Current Radio:
+      selector: '.shopping-list-widget label[data-role="shopping-list-current-label"]'
+
+    Shopping List Widget Set Current Radio 1:
+      selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(2) label[data-role="shopping-list-current-label"]'
+
+    Shopping List Widget Set Current Radio 2:
+      selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(3) label[data-role="shopping-list-current-label"]'
+
+    Shopping List Widget Set Current Radio 3:
+      selector: '.shopping-list-widget .shopping-list-dropdown__item:nth-child(4) label[data-role="shopping-list-current-label"]'
+
+    Shopping List Action Move Radio:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] input[name="selected"]'
+
+    Shopping List Action Move Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Shopping List Action Move GridFilters:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    First Line Item Row Checkbox:
+      selector: '.grid-body .grid-row:first-child input[type=checkbox]'
+
+    Shopping Lists Navigation Link:
+      selector:
+        type: xpath
+        locator: '//a[text()="Shopping Lists" and contains(@class,"primary-menu__link")]'
+
+    Frontend Customer User Shopping Lists Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Customer User Shopping Lists Grid Edited Label:
+      selector:
+        type: xpath
+        locator: '//div[@data-page-component-name="frontend-customer-user-shopping-lists-grid"]//span[contains(text(),"Edited") and contains(@class, "grid-views__edit-label")]'
+
+    Frontend Customer User Shopping List Edit Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Customer User Shopping List View Grid:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Shopping List Edit Grid Header Input:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="1"]/*[@aria-colindex="1"]//input'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Input:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "select-row-cell")]//input'
+        type: 'xpath'
+
+    Shopping List Edit Grid Edit Note:
+      selector:
+        locator: '// tr[@aria-rowindex="2"]//a[@title="Edit Shopping List item Note"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Delete:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[contains(@class, "action-cell")]//a[@title="Delete"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Header Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="1"]/th[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 2 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="3"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 3 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="4"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 4 Mass Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/td[@aria-colindex="1"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Sku:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="3"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Item:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="4"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Status:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="5"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Qty:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="6"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Price:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="8"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Subtotal:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="9"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 1 Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/td[@aria-colindex="10"]'
+        type: 'xpath'
+
+    Shopping List Edit Grid Select Row 25 Action:
+      selector:
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="26"]/td[@aria-colindex="10"]'
+        type: 'xpath'
+
+    In Shopping Lists:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.shopping-lists-popup'
+
+    Attributes_1:
+      selector:
+        type: 'xpath'
+        locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_1")]'
+    Attributes_2:
+      selector:
+        type: 'xpath'
+        locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_2")]'
+    Attributes_3:
+      selector:
+        type: 'xpath'
+        locator: '//*[starts-with(@id,"oro_product_product_variant_frontend_variant_field_Attribute_3")]'
+
+    Shopping List Line Item Owner Form Field:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@id, "oro_action_operation_lineItem_owner")]'
+
   suites:
     OroShoppingListBundle:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroProductBundle::FrontendProductGridContext
-        - OroProductBundle::QuickOrderFormContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroShoppingListBundle::FeatureContext
-        - OroNavigationBundle::FeatureContext
-        - OroCustomerBundle::ACLContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroCustomerBundle::RegistrationInstructionFeatureContext
-        - OroLocaleBundle::LocalizationContext
-        - OroFrontendLocalizationBundle::LocalizationSwitcherContext
+        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\RegistrationInstructionFeatureContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

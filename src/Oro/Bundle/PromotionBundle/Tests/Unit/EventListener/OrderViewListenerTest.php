@@ -7,7 +7,8 @@ use Oro\Bundle\PromotionBundle\EventListener\OrderViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +18,7 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderViewListener */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->listener = new OrderViewListener($this->translator);
@@ -25,8 +26,8 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnViewWhenNoDiscountBlockExist()
     {
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
+        $environment = $this->createMock(Environment::class);
         $environment
             ->expects($this->never())
             ->method('render');
@@ -47,12 +48,12 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $existingTemplate = 'Existing View template';
         $template = 'View template';
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
+        $environment = $this->createMock(Environment::class);
         $environment
             ->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:AppliedPromotion:applied_promotions_view_table.html.twig', ['entity' => $order])
+            ->with('@OroPromotion/AppliedPromotion/applied_promotions_view_table.html.twig', ['entity' => $order])
             ->willReturn($template);
 
         $scrollData = new ScrollData();
@@ -78,8 +79,8 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
     {
         $formView = $this->createMock(FormView::class);
 
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
+        $environment = $this->createMock(Environment::class);
         $environment
             ->expects($this->never())
             ->method('render');
@@ -105,11 +106,11 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $formView = $this->createMock(FormView::class);
 
-        /** @var \Twig_Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
+        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $environment */
+        $environment = $this->createMock(Environment::class);
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:Order:applied_promotions_and_coupons.html.twig', ['form' => $formView])
+            ->with('@OroPromotion/Order/applied_promotions_and_coupons.html.twig', ['form' => $formView])
             ->willReturn($template);
 
         $event = new BeforeListRenderEvent($environment, $scrollData, new Order(), $formView);

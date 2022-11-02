@@ -1,0 +1,19 @@
+<table class="grid grid-main-container table-hover table table-bordered">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th><%- _.__('oro.cms.wysiwyg.dialog.picture_settings.type') %></th>
+            <th>
+                <%- _.__('oro.cms.wysiwyg.dialog.picture_settings.media') %>
+                <button class="btn-link" type="button" data-content="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.media_hint', {url: 'https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries'}) %>" data-toggle="popover">
+                    <span class="fa-info-circle"></span>
+                </button>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="sortable-wrapper"></tbody>
+</table>
+
+<button type="button" class="btn" data-action="add-source"><%- _.__('oro.cms.wysiwyg.dialog.picture_settings.add') %></button>

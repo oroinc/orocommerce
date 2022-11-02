@@ -5,19 +5,22 @@ namespace Oro\Bundle\PaymentTermBundle\Method;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class PaymentTerm implements PaymentMethodInterface
+/**
+ * Implements Payment Term payment method
+ */
+class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * @var PaymentTermProvider
+     * @var PaymentTermProviderInterface
      */
     protected $paymentTermProvider;
 
@@ -36,14 +39,8 @@ class PaymentTerm implements PaymentMethodInterface
      */
     protected $config;
 
-    /**
-     * @param PaymentTermProvider            $paymentTermProvider
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param DoctrineHelper                 $doctrineHelper
-     * @param PaymentTermConfigInterface     $config
-     */
     public function __construct(
-        PaymentTermProvider $paymentTermProvider,
+        PaymentTermProviderInterface $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         DoctrineHelper $doctrineHelper,
         PaymentTermConfigInterface $config
@@ -55,9 +52,20 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
+    {
+        if (!method_exists($this, $action)) {
+            throw new \InvalidArgumentException(
+                sprintf('"%s" payment method "%s" action is not supported', $this->getIdentifier(), $action)
+            );
+        }
+
+        return $this->$action($paymentTransaction);
+    }
+
+    protected function assignPaymentTerm(PaymentTransaction $paymentTransaction): bool
     {
         $entity = $this->doctrineHelper->getEntityReference(
             $paymentTransaction->getEntityClass(),
@@ -65,13 +73,13 @@ class PaymentTerm implements PaymentMethodInterface
         );
 
         if (!$entity) {
-            return [];
+            return false;
         }
 
         $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
 
         if (!$paymentTerm) {
-            return [];
+            return false;
         }
 
         try {
@@ -89,14 +97,54 @@ class PaymentTerm implements PaymentMethodInterface
                 );
             }
 
-            return [];
+            return false;
         }
 
-        $paymentTransaction
-            ->setSuccessful(true)
-            ->setActive(false);
+        return true;
+    }
 
-        return [];
+    /**
+     * {@inheritdoc}
+     */
+    public function capture(PaymentTransaction $paymentTransaction): array
+    {
+        $paymentTransaction
+            ->setAction(self::CAPTURE)
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        return ['successful' => true];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSourceAction(): string
+    {
+        return self::PENDING;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function useSourcePaymentTransaction(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purchase(PaymentTransaction $paymentTransaction): array
+    {
+        $assigned = $this->assignPaymentTerm($paymentTransaction);
+
+        $paymentTransaction
+            ->setAction($this->getSourceAction())
+            ->setSuccessful($assigned)
+            ->setActive($assigned);
+
+        return ['successful' => $assigned];
     }
 
     /**
@@ -120,10 +168,10 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($actionName)
     {
-        return $actionName === self::PURCHASE;
+        return \in_array($actionName, [self::PURCHASE, self::CAPTURE], true);
     }
 }

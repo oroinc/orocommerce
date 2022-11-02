@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\DataGridBundle\Extension\GridViews\View;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\EnumFilterType;
 use Oro\Bundle\OrderBundle\Datagrid\OrdersViewList;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrdersViewListTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,7 +16,7 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
     /** @var OrdersViewList */
     protected $viewList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())

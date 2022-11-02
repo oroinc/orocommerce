@@ -6,14 +6,14 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
+/**
+ * Provides functionality to replace placeholders with their values in field names in all parts of a search query.
+ */
 class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 {
     /** @var PlaceholderInterface */
     private $placeholder;
 
-    /**
-     * @param PlaceholderInterface $placeholder
-     */
     public function __construct(PlaceholderInterface $placeholder)
     {
         $this->placeholder = $placeholder;
@@ -27,11 +27,9 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         $this->replaceInSelect($query);
         $this->replaceInFrom($query);
         $this->replaceInCriteria($query);
+        $this->replaceInAggregations($query);
     }
 
-    /**
-     * @param Query $query
-     */
     private function replaceInSelect(Query $query)
     {
         $selectAliases = $query->getSelectAliases();
@@ -67,9 +65,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         return $query->from($newEntities);
     }
 
-    /**
-     * @param Query $query
-     */
     private function replaceInCriteria(Query $query)
     {
         $criteria = $query->getCriteria();
@@ -89,5 +84,22 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
             }
             $criteria->orderBy($orderings);
         }
+    }
+
+    private function replaceInAggregations(Query $query)
+    {
+        $aggregations = $query->getAggregations();
+        if (!$aggregations) {
+            return;
+        }
+
+        $newAggregations = [];
+        foreach ($aggregations as $name => $item) {
+            $newAggregations[$name] = [
+                'field'    => $this->placeholder->replaceDefault($item['field']),
+                'function' => $item['function']
+            ];
+        }
+        $query->setAggregations($newAggregations);
     }
 }

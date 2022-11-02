@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
@@ -79,6 +79,6 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
      */
     public function getDependencies()
     {
-        return ['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'];
+        return [LoadPriceLists::class, LoadCombinedPriceListWithCustomerRelation::class];
     }
 }

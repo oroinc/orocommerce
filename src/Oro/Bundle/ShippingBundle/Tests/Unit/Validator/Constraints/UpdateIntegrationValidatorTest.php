@@ -13,142 +13,107 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\ShippingMethodValida
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 // @codingStandardsIgnoreEnd
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class UpdateIntegrationValidatorTest extends TestCase
+class UpdateIntegrationValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingMethodFactory;
+    private IntegrationShippingMethodFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $shippingMethodFactory;
 
-    /**
-     * @var ShippingMethodValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingMethodValidator;
+    private ShippingMethodValidatorInterface|\PHPUnit\Framework\MockObject\MockObject $shippingMethodValidator;
 
-    /**
-     * @var string
-     */
-    private $violationPath;
+    private string $violationPath;
 
-    /**
-     * @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $context;
-
-    /**
-     * @var Constraint|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $constraint;
-
-    /**
-     * @var UpdateIntegrationValidator
-     */
-    private $validator;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
         $this->shippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);
         $this->violationPath = 'path';
 
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint = $this->createMock(Constraint::class);
+        parent::setUp();
+    }
 
-        $this->validator = new UpdateIntegrationValidator(
+    protected function createValidator()
+    {
+        return new UpdateIntegrationValidator(
             $this->shippingMethodFactory,
             $this->shippingMethodValidator,
             $this->violationPath
         );
-        $this->validator->initialize($this->context);
     }
 
-    public function testValidateNotIntegrationTransport()
+    public function testValidateNotIntegrationTransport(): void
     {
-        $this->context
-            ->expects(static::never())
-            ->method('buildViolation');
-
         $this->validator->validate(null, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateNoChannel()
+    public function testValidateNoChannel(): void
     {
         $transport = $this->createMock(Transport::class);
 
-        $this->context
-            ->expects(static::never())
-            ->method('buildViolation');
-
         $this->validator->validate($transport, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateNoErrors()
+    public function testValidateNoErrors(): void
     {
         $channel = new Channel();
 
         $transport = $this->createMock(Transport::class);
         $transport
-            ->expects(static::any())
+            ->expects(self::any())
             ->method('getChannel')
             ->willReturn($channel);
 
         $shippingMethod = $this->createMock(ShippingMethodInterface::class);
 
         $this->shippingMethodFactory
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('create')
             ->with($channel)
             ->willReturn($shippingMethod);
 
         $errorsCollection = $this->createMock(ShippingMethodValidatorResultErrorCollectionInterface::class);
         $errorsCollection
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('isEmpty')
             ->willReturn(true);
 
         $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
         $result
-            ->expects(static::any())
+            ->expects(self::any())
             ->method('getErrors')
             ->willReturn($errorsCollection);
 
         $this->shippingMethodValidator
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('validate')
             ->with($shippingMethod)
             ->willReturn($result);
 
-        $this->context
-            ->expects(static::never())
-            ->method('buildViolation');
-
         $this->validator->validate($transport, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
-    public function testValidateWithErrors()
+    public function testValidateWithErrors(): void
     {
         $channel = new Channel();
 
         $transport = $this->createMock(Transport::class);
         $transport
-            ->expects(static::any())
+            ->expects(self::any())
             ->method('getChannel')
             ->willReturn($channel);
 
         $shippingMethod = $this->createMock(ShippingMethodInterface::class);
 
         $this->shippingMethodFactory
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('create')
             ->with($channel)
             ->willReturn($shippingMethod);
@@ -157,7 +122,7 @@ class UpdateIntegrationValidatorTest extends TestCase
 
         $error = $this->createMock(ShippingMethodValidatorResultErrorInterface::class);
         $error
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('getMessage')
             ->willReturn($errorMessage);
 
@@ -166,32 +131,20 @@ class UpdateIntegrationValidatorTest extends TestCase
 
         $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
         $result
-            ->expects(static::any())
+            ->expects(self::any())
             ->method('getErrors')
             ->willReturn($errorsCollection);
 
         $this->shippingMethodValidator
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('validate')
             ->with($shippingMethod)
             ->willReturn($result);
 
-        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder
-            ->expects(static::once())
-            ->method('setTranslationDomain')
-            ->willReturn($violationBuilder);
-        $violationBuilder
-            ->expects(static::once())
-            ->method('atPath')
-            ->with($this->violationPath)
-            ->willReturn($violationBuilder);
-
-        $this->context->expects(static::once())
-            ->method('buildViolation')
-            ->with($errorMessage)
-            ->willReturn($violationBuilder);
-
         $this->validator->validate($transport, $this->constraint);
+
+        $this->buildViolation($errorMessage)
+            ->atPath($this->propertyPath . '.' . $this->violationPath)
+            ->assertRaised();
     }
 }

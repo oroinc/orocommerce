@@ -1,0 +1,32 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node11->id)>'
+    attributes:
+        createdAt: '@catalog1_node11->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@catalog1_node11->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        title: 'Web Catalog 1 Node 1.1'
+        order: 3
+        url: '/catalog1_node11'
+        urls:
+            - { url: '/catalog1_node11_en_CA', localizationId: '<toString(@en_CA->id)>' }
+            - { url: '/catalog1_node11_es', localizationId: '<toString(@es->id)>' }
+        metaTitle: 'Web Catalog 1 Node 1.1 Meta Title'
+        metaDescription: 'Web Catalog 1 Node 1.1 Meta Description'
+        metaKeywords: 'Web Catalog 1 Node 1.1 Meta Keywords'
+    relationships:
+        parent:
+            data:
+                type: webcatalogtree
+                id: '<toString(@catalog1_node1->id)>'
+        path:
+            data:
+                -
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_rootNode->id)>'
+                -
+                    type: webcatalogtree
+                    id: '<toString(@catalog1_node1->id)>'
+        content:
+            data:
+                type: mastercatalogcategories
+                id: '<toString(@category1->id)>'

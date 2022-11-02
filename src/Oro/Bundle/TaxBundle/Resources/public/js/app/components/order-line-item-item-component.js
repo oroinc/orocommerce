@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var OrderLineItemItemComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var TaxFormatter = require('orotax/js/formatter/tax');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const TaxFormatter = require('orotax/js/formatter/tax');
 
     /**
      * @export orotax/js/app/components/order-line-item-item-component
      * @extends oroui.app.components.base.Component
      * @class orotax.app.components.OrderLineItemItemComponent
      */
-    OrderLineItemItemComponent = BaseComponent.extend({
+    const OrderLineItemItemComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -39,30 +38,32 @@ define(function(require) {
         $valueContainer: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function OrderLineItemItemComponent() {
-            OrderLineItemItemComponent.__super__.constructor.apply(this, arguments);
+        constructor: function OrderLineItemItemComponent(options) {
+            OrderLineItemItemComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            var attr = this.getAttribute();
+            const attr = this.getAttribute();
             this.options._sourceElement.attr(attr, $('[' + attr + ']').length);
 
             this.template = _.template($(this.getTemplateName()).html());
 
             this.$valueContainer = this.options._sourceElement.find(this.options.selectors.valueContainer);
 
-            mediator.on('entry-point:order:load', this.setItemValue, this);
-            mediator.on('entry-point:order:load:before', this.initializeAttribute, this);
+            this.listenTo(mediator, {
+                'entry-point:order:load': this.setItemValue,
+                'entry-point:order:load:before': this.initializeAttribute
+            });
         },
 
         initializeAttribute: function() {
-            var attr = this.getAttribute();
+            const attr = this.getAttribute();
             $('[' + attr + ']').each(function(index) {
                 $(this).attr(attr, index);
             });
@@ -80,14 +81,14 @@ define(function(require) {
          * @param {Object} response
          */
         setItemValue: function(response) {
-            var result = _.defaults(response, {taxItems: {}});
-            var itemId = this.options._sourceElement.attr(this.getAttribute());
+            const result = _.defaults(response, {taxItems: {}});
+            const itemId = this.options._sourceElement.attr(this.getAttribute());
 
             if (!_.has(result.taxItems, itemId)) {
                 return;
             }
 
-            var itemData = _.defaults(response.taxItems[itemId], {});
+            const itemData = _.defaults(response.taxItems[itemId], {});
 
             if (!_.has(itemData, this.options.type)) {
                 return;
@@ -97,26 +98,12 @@ define(function(require) {
                 return;
             }
 
-            var value = TaxFormatter.formatElement(
+            const value = TaxFormatter.formatElement(
                 itemData[this.options.type][this.options.value],
                 itemData[this.options.type][this.options.currencyProp]
             );
 
             this.$valueContainer.html(this.template({value: value}));
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load', this.setItemValue, this);
-            mediator.off('entry-point:order:load:before', this.initializeAttribute, this);
-
-            OrderLineItemItemComponent.__super__.dispose.call(this);
         }
     });
 

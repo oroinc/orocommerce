@@ -6,15 +6,23 @@
 
 Retrieve a product price record.
 
+{@inheritdoc}
+
 ### get_list
 
 Retrieve a collection of product price records.
 
-**Note:** It is required to provide priceList filter with request.
+{@inheritdoc}
+
+**Note:** It is required to provide the **priceList** filter with request.
 
 ### create
 
-Create a new product price.
+Create a new product price record.
+
+The created record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -30,7 +38,7 @@ Example:
         },
         "relationships": {
             "priceList": {
-                "data":{
+                "data": {
                     "type": "pricelists",
                     "id": "1"
                 }
@@ -50,13 +58,16 @@ Example:
         }
     }
 }
-
 ```
 {@/request}
 
 ### update
 
-Update product price record.
+Edit a specific product price record.
+
+The updated record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -94,112 +105,110 @@ Example:
 
 Delete a specific product price record.
 
+{@inheritdoc}
+
 ### delete_list
 
 Delete a collection of product price records.
 
-**Note:** It is required to provide priceList filter with request.
+{@inheritdoc}
+
+**Note:** It is required to provide the **priceList** filter with request.
 
 ## FIELDS
 
 ### currency
 
-The product price currency
+The product price currency.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### quantity
 
-The product quantity
+The product quantity.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### value
 
-The product price
+The product price.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### priceList
 
-Price list related to a product price
+Price list related to a product price.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**The read-only field. A passed value will be ignored.**
 
 ### product
 
-The product of a product price
+The product of a product price.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### unit
 
-The unit of a product
+The unit of a product.
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**

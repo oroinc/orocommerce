@@ -1,0 +1,24 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_name{10..40}:
+        string: 'Product current()'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    product_description{10..40}:
+        wysiwyg: 'Product current() Description'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{10..40}:
+        type: 'simple'
+        sku: 'product-<current()>'
+        inventoryStatus: '@in_stock'
+        status: 'enabled'
+        organization: '@organization'
+        __calls:
+            - addName: ['@product_name<current()>']
+            - addDescription: ['@product_description<current()>']

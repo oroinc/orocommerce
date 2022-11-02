@@ -35,7 +35,7 @@ class EstimatedArrivalFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->estimatedArrivalFactory = new EstimatedArrivalFactory();
     }

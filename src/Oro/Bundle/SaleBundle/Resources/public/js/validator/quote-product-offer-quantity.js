@@ -3,14 +3,14 @@ define([
 ], function($, _, __) {
     'use strict';
 
-    var defaultParam = {
-        blankOfferMessage: 'Please enter valid quantity'
+    const defaultParam = {
+        blankOfferMessage: 'oro.sale.quoteproductoffer.configurable.offer.blank'
     };
 
     return [
         'AllowedQuoteDemandQuantity',
         function(value, element) {
-            var valid = $(element).data('valid');
+            const valid = $(element).data('valid');
 
             if (valid === undefined) {
                 return true;

@@ -1,0 +1,26 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\RFPBundle\Controller\RequestController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\RFPBundle\Controller\OrderController:
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_rfp.storage.offers_data_storage, key: Oro\Bundle\RFPBundle\Storage\OffersDataStorage }
+            - { name: container.service_subscriber, id: oro_product.storage.product_data_storage, key: Oro\Bundle\ProductBundle\Storage\ProductDataStorage }
+
+    Oro\Bundle\RFPBundle\Controller\Frontend\RequestController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_rfp.request.manager, key: Oro\Bundle\RFPBundle\Model\RequestManager }
+            - { name: container.service_subscriber, id: oro_rfp.service.request_update_handler, key: Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler }
+            - { name: container.service_subscriber, id: oro_rfp.layout.data_provider.request_form, key: Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider }

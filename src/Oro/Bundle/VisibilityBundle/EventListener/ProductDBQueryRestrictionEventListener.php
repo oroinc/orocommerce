@@ -19,19 +19,12 @@ class ProductDBQueryRestrictionEventListener
      */
     private $modifier;
 
-    /**
-     * @param FrontendHelper                $frontendHelper
-     * @param QueryBuilderModifierInterface $modifier
-     */
     public function __construct(FrontendHelper $frontendHelper, QueryBuilderModifierInterface $modifier)
     {
         $this->frontendHelper = $frontendHelper;
         $this->modifier       = $modifier;
     }
 
-    /**
-     * @param ProductDBQueryRestrictionEvent $event
-     */
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         if ($this->frontendHelper->isFrontendRequest()) {

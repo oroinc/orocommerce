@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -59,19 +60,14 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
         $result = $this->connection->fetchAssoc($selectQuery, $selectQueryParameters, $selectQueryTypes);
 
-        $arrayType = Type::getType(Type::TARRAY);
+        $arrayType = Type::getType(Types::ARRAY);
         $platform = $this->connection->getDatabasePlatform();
-        
+
         $defaultPriceLists = $arrayType->convertToPHPValue($result['array_value'], $platform);
 
         // Change priority only if already existing several default price lists
         if (count($defaultPriceLists) > 1) {
-            usort(
-                $defaultPriceLists,
-                function ($a, $b) {
-                    return ($a['priority'] < $b['priority']) ? -1 : 1;
-                }
-            );
+            usort($defaultPriceLists, static fn ($a, $b) => $a['priority'] <=> $b['priority']);
 
             $priceListsCount = count($defaultPriceLists);
             for ($i = 0; $i < (int)($priceListsCount/2); $i++) {
@@ -93,7 +89,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
 
             $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
             if (!$dryRun) {
-                $this->connection->executeUpdate($updateQuery, $updateQueryParameters, $updateQueryTypes);
+                $this->connection->executeStatement($updateQuery, $updateQueryParameters, $updateQueryTypes);
             }
         }
     }

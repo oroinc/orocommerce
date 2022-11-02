@@ -8,23 +8,25 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const FEATURE_ENABLED = 'feature_enabled';
-    const DISCOUNT_STRATEGY = 'discount_strategy';
+    public const FEATURE_ENABLED = 'feature_enabled';
+    public const DISCOUNT_STRATEGY = 'discount_strategy';
+    public const CASE_INSENSITIVE_COUPON_SEARCH = 'case_insensitive_coupon_search';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('oro_promotion');
 
-        $rootNode = $treeBuilder->root('oro_promotion');
+        $rootNode = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
             $rootNode,
             [
                 self::FEATURE_ENABLED => ['type' => 'boolean', 'value' => true],
-                self::DISCOUNT_STRATEGY => ['type' => 'string', 'value' => 'apply_all']
+                self::DISCOUNT_STRATEGY => ['type' => 'string', 'value' => 'apply_all'],
+                self::CASE_INSENSITIVE_COUPON_SEARCH => ['type' => 'boolean', 'value' => false]
             ]
         );
 

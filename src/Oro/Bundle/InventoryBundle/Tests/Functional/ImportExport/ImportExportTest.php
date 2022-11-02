@@ -40,7 +40,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         'Unit',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -284,7 +284,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->client->submit($form);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('url', $response);
-        $this->assertContains('.csv', $response['url']);
+        static::assertStringContainsString('.csv', $response['url']);
 
         $fileContent = $this->downloadFile($response['url']);
         $this->assertEquals($fileContent[0], $expectedHeader);
@@ -381,7 +381,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $errors = array_filter(
             $jobResult->getContext()->getErrors(),
             function ($error) {
-                return strpos($error, 'owner: This value should not be blank.') === false;
+                return !str_contains($error, 'owner: This value should not be blank.');
             }
         );
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
@@ -399,8 +399,6 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     /**
      * @param string $fileName
-     * @param array $configuration
-     *
      * @dataProvider inventoryStatusDataProvider
      */
     public function testImportInventoryStatuses($fileName)
@@ -444,8 +442,6 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     /**
      * @param string $fileName
-     * @param array $configuration
-     *
      * @dataProvider inventoryLevelsDataProvider
      */
     public function testImportInventoryLevels($fileName)

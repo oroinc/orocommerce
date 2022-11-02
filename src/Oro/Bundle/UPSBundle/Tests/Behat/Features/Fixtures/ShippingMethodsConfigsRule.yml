@@ -15,7 +15,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     upsShippingMethodConfig:
-        method: '<("ups_".@upsIntegration->id)>'
+        method: '<("ups_".@upsIntegration->getId())>'
         typeConfigs: ['@upsShippingMethodTypeConfig']
         options:
             surcharge: 1000

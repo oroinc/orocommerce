@@ -1,4 +1,5 @@
 @regression
+@elasticsearch
 @fixture-OroProductBundle:Products_view_page_templates.yml
 Feature: Mass Product Actions for not enabled products
   In order to be able to add only enabled products with help of mass actions
@@ -30,11 +31,11 @@ Feature: Mass Product Actions for not enabled products
     Then I should see "Product has been saved" flash message
 
     When I proceed as the Buyer
-    Then I click "Create New Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    Then I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     And I click "Create and Add"
     Then I should see "No products were added"
     And I reload the page
-    And I should not see "rtsh_m"
+    And there is no records in "Product Frontend Grid"
 
   Scenario: Not enabled products can not be added with mass actions
     Given I proceed as the Buyer
@@ -53,7 +54,7 @@ Feature: Mass Product Actions for not enabled products
     Then I should see "Product has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "Add to Shopping List" link from mass action dropdown in "Product Frontend Grid"
+    And I click "Add to Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     Then I should see "No products were added"
     And I reload the page
-    And I should not see "gtsh_l"
+    And there is no records in "Product Frontend Grid"

@@ -4,40 +4,25 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\PaymentTermBundle\DependencyInjection\OroPaymentTermExtension;
 
+/**
+ * The config to move payment term settings.
+ */
 class PaymentTermConfig
 {
-    const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
-    const PAYMENT_TERM_SHORT_LABEL_KEY = 'payment_term_short_label';
+    public const PAYMENT_TERM_LABEL_KEY = 'payment_term_label';
+    public const PAYMENT_TERM_SHORT_LABEL_KEY = 'payment_term_short_label';
 
-    const PAYMENT_TERM_LABEL = 'Payment Terms';
+    private const PAYMENT_TERM_LABEL = 'Payment Terms';
 
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private ConfigManager $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getPaymentExtensionAlias()
-    {
-        return OroPaymentTermExtension::ALIAS;
-    }
-
-    /**
-     * @return LocalizedFallbackValue
-     */
-    public function getLabel()
+    public function getLabel(): LocalizedFallbackValue
     {
         return $this->getLocalizedFallbackValueFromConfig(
             self::PAYMENT_TERM_LABEL_KEY,
@@ -45,10 +30,7 @@ class PaymentTermConfig
         );
     }
 
-    /**
-     * @return LocalizedFallbackValue
-     */
-    public function getShortLabel()
+    public function getShortLabel(): LocalizedFallbackValue
     {
         return $this->getLocalizedFallbackValueFromConfig(
             self::PAYMENT_TERM_SHORT_LABEL_KEY,
@@ -56,55 +38,28 @@ class PaymentTermConfig
         );
     }
 
-    /**
-     * @return bool
-     */
-    public function isAllRequiredFieldsSet()
+    public function isAllRequiredFieldsSet(): bool
     {
-        $fields = [
-            $this->getLabel(),
-            $this->getShortLabel(),
-        ];
-
-        foreach ($fields as $field) {
-            if (empty($field)) {
-                return false;
-            }
+        if (!$this->getLabel()) {
+            return false;
+        }
+        if (!$this->getShortLabel()) {
+            return false;
         }
 
         return true;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    private function getConfigValue($key)
+    private function getConfigValue(string $key):? bool
     {
-        return $this->configManager->get($this->getFullConfigKey($key));
+        return $this->configManager->get('oro_payment_term' . ConfigManager::SECTION_MODEL_SEPARATOR . $key);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
-    private function getFullConfigKey($key)
+    private function getLocalizedFallbackValueFromConfig(string $key, string $default): LocalizedFallbackValue
     {
-        return OroPaymentTermExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
-    }
+        $localizedFallbackValue = new LocalizedFallbackValue();
+        $localizedFallbackValue->setString($this->getConfigValue($key) ?: $default);
 
-    /**
-     * @param string $key
-     * @param string $default
-     *
-     * @return LocalizedFallbackValue
-     */
-    private function getLocalizedFallbackValueFromConfig($key, $default)
-    {
-        $creditCardLabel = $this->getConfigValue($key);
-
-        return (new LocalizedFallbackValue())->setString($creditCardLabel ?: $default);
+        return $localizedFallbackValue;
     }
 }

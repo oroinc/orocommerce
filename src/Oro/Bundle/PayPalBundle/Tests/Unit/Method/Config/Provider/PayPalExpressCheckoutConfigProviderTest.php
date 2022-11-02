@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
@@ -17,71 +17,55 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit\Framework\TestCas
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrine;
+    private const TYPE = 'paypal_payflow_gateway';
 
-    /**
-     * @var string
-     */
-    protected $type;
+    /** @var PayPalExpressCheckoutConfigProvider */
+    private $payPalConfigProvider;
 
-    /**
-     * @var PayPalSettings[]
-     */
-    protected $settings;
-
-    /**
-     * @var PayPalExpressCheckoutConfigProvider
-     */
-    protected $payPalConfigProvider;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->type = 'paypal_payflow_gateway';
-
-        $channel1 = $this->getEntity(Channel::class, ['id' => 1, 'type' => $this->type]);
-        $channel2 = $this->getEntity(Channel::class, ['id' => 2, 'type' => $this->type]);
-
-        $this->settings[] = $this->getEntity(PayPalSettings::class, ['id' => 1, 'channel' => $channel1]);
-        $this->settings[] = $this->getEntity(PayPalSettings::class, ['id' => 2, 'channel' => $channel2]);
+        $channel1 = $this->getEntity(Channel::class, ['id' => 1, 'type' => self::TYPE]);
+        $channel2 = $this->getEntity(Channel::class, ['id' => 2, 'type' => self::TYPE]);
 
         $config = $this->createMock(PayPalExpressCheckoutConfig::class);
-        $config->expects(static::at(0))
+        $config->expects(self::exactly(2))
             ->method('getPaymentMethodIdentifier')
-            ->willReturn('paypal_payments_pro_express_checkout_1');
-        $config->expects(static::at(1))
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn('paypal_payments_pro_express_checkout_2');
-
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
+            ->willReturnOnConsecutiveCalls(
+                'paypal_payments_pro_express_checkout_1',
+                'paypal_payments_pro_express_checkout_2'
+            );
 
         $objectRepository = $this->createMock(PayPalSettingsRepository::class);
-        $objectRepository->expects(static::once())
+        $objectRepository->expects(self::once())
             ->method('getEnabledSettingsByType')
-            ->with($this->type)
-            ->willReturn($this->settings);
+            ->with(self::TYPE)
+            ->willReturn([
+                $this->getEntity(PayPalSettings::class, ['id' => 1, 'channel' => $channel1]),
+                $this->getEntity(PayPalSettings::class, ['id' => 2, 'channel' => $channel2])
+            ]);
 
         $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
+        $objectManager->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($objectRepository);
 
-        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->willReturn($objectManager);
 
-        /** @var PayPalExpressCheckoutConfigFactory|\PHPUnit\Framework\MockObject\MockObject $factory */
         $factory = $this->createMock(PayPalExpressCheckoutConfigFactory::class);
-        $factory->expects(static::exactly(2))
+        $factory->expects(self::exactly(2))
             ->method('createConfig')
             ->willReturn($config);
 
-        /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->payPalConfigProvider = new PayPalExpressCheckoutConfigProvider(
-            $this->doctrine,
+            $doctrine,
             $logger,
             $factory,
-            $this->type
+            self::TYPE
         );
     }
 

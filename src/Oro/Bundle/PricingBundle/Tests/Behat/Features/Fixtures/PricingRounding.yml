@@ -3,11 +3,6 @@ include:
   - '@OroCheckoutBundle:Shipping.yml'
   - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
 
-Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
-  businessUnit:
-    name: 'Common Business Unit'
-    organization: '@organization'
-
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision1:
     unit: '@item'
@@ -15,12 +10,24 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision2:
     unit: '@item'
     precision: '1'
+  precision3:
+    unit: '@item'
+    precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: 'Common Business Unit'
+    organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
   locValue1:
     string: 'Phone'
   locValue2:
     string: 'Light'
+  locValue3:
+    string: 'TV'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
   localNewCategory:
     string: 'NewCategory'
 
@@ -28,30 +35,55 @@ Oro\Bundle\ProductBundle\Entity\Product:
   product1:
     sku: 'SKU123'
     type: 'simple'
-    primaryUnitPrecision: '@precision1'
-    addName: ['@locValue1']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
     owner: '@businessUnit'
     status: 'enabled'
+    __calls:
+      - addName: ['@locValue1']
+      - setPrimaryUnitPrecision: ['@precision1']
   product2:
     sku: 'SKU456'
     type: 'simple'
-    primaryUnitPrecision: '@precision2'
-    addName: ['@locValue2']
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
     owner: '@businessUnit'
     status: 'enabled'
+    __calls:
+      - addName: ['@locValue2']
+      - setPrimaryUnitPrecision: ['@precision2']
+  product3:
+    sku: 'SKU789'
+    type: 'simple'
+    attributeFamily: '@defaultProductFamily'
+    inventoryStatus: '@enumInventoryStatuses'
+    organization: '@organization'
+    owner: '@businessUnit'
+    status: 'enabled'
+    __calls:
+      - addName: ['@locValue3']
+      - setPrimaryUnitPrecision: ['@precision3']
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
   products:
     __construct: [['@product1','@product2']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
   categoryLightingProducts:
-    addTitle: ['@localNewCategory']
-    setParentCategory: [1]
-    setProducts: ['@products']
+    organization: '@organization'
+    __calls:
+        - addTitle: ['@localNewCategory']
+        - setParentCategory: ['@root_category']
+        - setProducts: ['@products']
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+  inventoryLevel1:
+    product: '@product1'
+    productUnitPrecision: '@precision1'
+    quantity: 100
+  inventoryLevel2:
+    product: '@product2'
+    productUnitPrecision: '@precision2'
+    quantity: 100

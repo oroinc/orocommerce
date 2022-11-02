@@ -2,31 +2,46 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxQuoteProductController extends Controller
+/**
+ * Returns product offer by given quote product and quote demand via ajax.
+ */
+class AjaxQuoteProductController extends AbstractController
 {
     /**
      * @Route(
-     *      "/match-offer/{id}",
+     *      "/match-offer/{id}/{demandId}",
      *      name="oro_sale_quote_frontend_quote_product_match_offer",
-     *      requirements={"id"="\d+"}
+     *      requirements={"id"="\d+", "demandId"="\d+"}
      * )
-     * @AclAncestor("oro_sale_quote_frontend_view")
+     * @ParamConverter("quoteDemand", class="OroSaleBundle:QuoteDemand", options={"id" = "demandId"})
      *
      * @param QuoteProduct $quoteProduct
+     * @param QuoteDemand $quoteDemand
      * @param Request $request
+     *
      * @return JsonResponse
      */
-    public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, Request $request)
+    public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, QuoteDemand $quoteDemand, Request $request)
     {
-        $matcher = $this->get('oro_sale.service.quote_product_offer_matcher');
+        $authorizationChecker = $this->get('security.authorization_checker');
+        if (!$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
+            $quoteDemand->getQuote()->getId() !== $quoteProduct->getQuote()->getId()
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $matcher = $this->get(QuoteProductOfferMatcher::class);
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
         return new JsonResponse($this->createResponseData($offer));
@@ -48,7 +63,7 @@ class AjaxQuoteProductController extends Controller
             return [];
         }
 
-        $formatter = $this->get('oro_locale.formatter.number');
+        $formatter = $this->get(NumberFormatter::class);
 
         return [
             'id' => $offer->getId(),
@@ -56,5 +71,19 @@ class AjaxQuoteProductController extends Controller
             'qty' => $offer->getQuantity(),
             'price' => $formatter->formatCurrency($price->getValue(), $price->getCurrency()),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                QuoteProductOfferMatcher::class,
+                NumberFormatter::class,
+            ]
+        );
     }
 }

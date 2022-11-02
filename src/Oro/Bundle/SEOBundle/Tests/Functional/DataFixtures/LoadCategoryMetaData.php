@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 
@@ -12,13 +13,10 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
 {
     use SEOMetaDataFieldsTrait;
 
-    const META_DESCRIPTIONS = 'metaDescriptions';
-    const META_KEYWORDS = 'metaKeywords';
+    public const META_DESCRIPTIONS = 'metaDescriptions';
+    public const META_KEYWORDS = 'metaKeywords';
 
-    /**
-     * @var array
-     */
-    public static $metadata = [
+    public static array $metadata = [
         LoadCategoryData::FIRST_LEVEL => [
             self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
             self::META_KEYWORDS => self::META_KEYWORDS,
@@ -29,10 +27,7 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach (self::$metadata as $entityReference => $metadataFields) {
             $entity = $this->getReference($entityReference);
@@ -42,10 +37,7 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCategoryProductData::class,

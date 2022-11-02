@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Tax;
+use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
+use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
@@ -17,46 +22,49 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxRule';
+    /** @var TaxType */
+    private $formType;
+
+    protected function setUp(): void
+    {
+        $this->formType = new TaxRuleType();
+        $this->formType->setDataClass(TaxRule::class);
+        parent::setUp();
+    }
 
     /**
-     * @var TaxType
+     * {@inheritDoc}
      */
-    protected $formType;
-
-    /**
-     * @return array
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $productTaxCodeAutocomplete = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1]),
-                2 => $this->getEntity('\Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 2])
+                1 => $this->getEntity(ProductTaxCode::class, ['id' => 1]),
+                2 => $this->getEntity(ProductTaxCode::class, ['id' => 2])
             ],
             ProductTaxCodeAutocompleteType::NAME
         );
 
         $customerTaxCodeAutocomplete = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => 1]),
-                2 => $this->getEntity('\Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => 2])
+                1 => $this->getEntity(CustomerTaxCode::class, ['id' => 1]),
+                2 => $this->getEntity(CustomerTaxCode::class, ['id' => 2])
             ],
             CustomerTaxCodeAutocompleteType::NAME
         );
 
         $taxSelect = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\TaxBundle\Entity\Tax', ['id' => 1]),
-                2 => $this->getEntity('\Oro\Bundle\TaxBundle\Entity\Tax', ['id' => 2])
+                1 => $this->getEntity(Tax::class, ['id' => 1]),
+                2 => $this->getEntity(Tax::class, ['id' => 2])
             ],
             TaxSelectType::NAME
         );
 
         $taxJurisdictionSelect = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 1]),
-                2 => $this->getEntity('\Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 2])
+                1 => $this->getEntity(TaxJurisdiction::class, ['id' => 1]),
+                2 => $this->getEntity(TaxJurisdiction::class, ['id' => 2])
             ],
             TaxJurisdictionSelectType::NAME
         );
@@ -75,26 +83,6 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        $this->formType = new TaxRuleType();
-        $this->formType->setDataClass(static::DATA_CLASS);
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
-    }
-
     public function testBuildForm()
     {
         $form = $this->factory->create(TaxRuleType::class);
@@ -107,29 +95,25 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param array   $options
-     * @param mixed  $defaultData
-     * @param mixed  $viewData
-     * @param array  $submittedData
-     * @param array  $expectedData
      */
     public function testSubmit(
-        $options,
-        $defaultData,
-        $viewData,
+        array $options,
+        mixed $defaultData,
+        mixed $viewData,
         array $submittedData,
-        $expectedData
+        array $expectedData
     ) {
         $form = $this->factory->create(TaxRuleType::class, $defaultData, $options);
 
         $formConfig = $form->getConfig();
-        $this->assertEquals(static::DATA_CLASS, $formConfig->getOption('data_class'));
+        $this->assertEquals(TaxRule::class, $formConfig->getOption('data_class'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         foreach ($expectedData as $field => $data) {
             $this->assertTrue($form->has($field));
@@ -138,10 +122,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'set customer tax code' => [
@@ -157,11 +138,11 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'description' => 'description',
-                    'customerTaxCode' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => 1]),
+                    'customerTaxCode' => $this->getEntity(CustomerTaxCode::class, ['id' => 1]),
                     'productTaxCode' => null,
-                    'tax' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\Tax', ['id' => 1]),
+                    'tax' => $this->getEntity(Tax::class, ['id' => 1]),
                     'taxJurisdiction' =>
-                        $this->getEntity('Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 1]),
+                        $this->getEntity(TaxJurisdiction::class, ['id' => 1]),
                 ]
             ],
             'set product tax code' => [
@@ -178,10 +159,10 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     'description' => 'description product tax code',
                     'customerTaxCode' => null,
-                    'productTaxCode' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1]),
-                    'tax' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\Tax', ['id' => 2]),
+                    'productTaxCode' => $this->getEntity(ProductTaxCode::class, ['id' => 1]),
+                    'tax' => $this->getEntity(Tax::class, ['id' => 2]),
                     'taxJurisdiction' =>
-                        $this->getEntity('Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 2]),
+                        $this->getEntity(TaxJurisdiction::class, ['id' => 2]),
                 ]
             ]
         ];

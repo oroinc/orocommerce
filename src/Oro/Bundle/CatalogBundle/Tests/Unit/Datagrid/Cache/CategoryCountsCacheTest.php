@@ -2,41 +2,87 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Datagrid\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CatalogBundle\Datagrid\Cache\CategoryCountsCache;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
+    use EntityTrait;
+
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $cacheProvider;
+
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $cacheItem;
 
     /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteManager;
+
     /** @var CategoryCountsCache */
     protected $cache;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->cacheProvider = $this->createMock(CacheProvider::class);
+        $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);
+        $this->cacheItem = $this->createMock(CacheItemInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessor::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
 
-        $this->cache = new CategoryCountsCache($this->cacheProvider, $this->tokenAccessor);
+        $this->cache = new CategoryCountsCache($this->cacheProvider, $this->tokenAccessor, $this->websiteManager);
     }
 
     public function testGetCountsWithoutData()
     {
         $key = 'some_key';
         $userId = 42;
+        $website = $this->getEntity(Website::class, ['id' => 33]);
 
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
             ->willReturn($userId);
 
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
-            ->with($key . '|42')
+            ->method('getItem')
+            ->with($key . '|33|42')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(false);
+
+        $this->assertNull($this->cache->getCounts($key));
+    }
+
+    public function testGetCountsWithoutDataWithoutWebsiteAndWithoutCustomerUser()
+    {
+        $key = 'some_key';
+        $userId = null;
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUserId')
+            ->willReturn($userId);
+
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn(null);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('getItem')
+            ->with($key . '|0|0')
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
             ->willReturn(false);
 
         $this->assertNull($this->cache->getCounts($key));
@@ -52,15 +98,27 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
     public function testGetCounts($key, $userId, $expectedKey)
     {
         $data = ['cache' => 'data'];
+        $website = $this->getEntity(Website::class, ['id' => 33]);
 
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
             ->willReturn($userId);
 
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
         $this->cacheProvider->expects($this->once())
-            ->method('fetch')
+            ->method('getItem')
             ->with($expectedKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('isHit')
+            ->willReturn(true);
+        $this->cacheItem->expects(self::once())
+            ->method('get')
             ->willReturn($data);
+
 
         $this->assertSame($data, $this->cache->getCounts($key));
     }
@@ -76,14 +134,31 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
     {
         $data = ['cache' => 'data'];
         $lifeTime = 100500;
+        $website = $this->getEntity(Website::class, ['id' => 33]);
 
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
             ->willReturn($userId);
 
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
+
+        $this->cacheProvider->expects($this->once())
+            ->method('getItem')
+            ->with($expectedKey)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('set')
+            ->with($data)
+            ->willReturn($this->cacheItem);
+        $this->cacheItem->expects(self::once())
+            ->method('expiresAfter')
+            ->with($lifeTime)
+            ->willReturn($this->cacheItem);
         $this->cacheProvider->expects($this->once())
             ->method('save')
-            ->with($expectedKey, $data, $lifeTime);
+            ->with($this->cacheItem);
 
         $this->cache->setCounts($key, $data, $lifeTime);
     }
@@ -97,22 +172,22 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
             'empty key and userId' => [
                 'key' => '',
                 'userId' => null,
-                'expectedKey' => '|0'
+                'expectedKey' => '|33|0'
             ],
             'empty key' => [
                 'key' => '',
                 'userId' => 42,
-                'expectedKey' => '|42'
+                'expectedKey' => '|33|42'
             ],
             'empty userId' => [
                 'gridName' => 'some_key',
                 'userId' => null,
-                'expectedKey' => 'some_key|0'
+                'expectedKey' => 'some_key|33|0'
             ],
             'with all arguments' => [
                 'gridName' => 'some_key',
                 'userId' => 42,
-                'expectedKey' => 'some_key|42'
+                'expectedKey' => 'some_key|33|42'
             ],
         ];
     }

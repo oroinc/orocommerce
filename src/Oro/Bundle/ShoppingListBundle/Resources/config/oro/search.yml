@@ -1,12 +1,11 @@
 search:
     Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         alias:                          oro_shopping_list
-        title_fields:                   [label]
         route:
             name:                       oro_shopping_list_view
             parameters:
                 id:                     id
-        search_template:                OroShoppingListBundle:ShoppingList:searchResult.html.twig
+        search_template:                '@OroShoppingList/ShoppingList/searchResult.html.twig'
         fields:
             -
                 name:                   label

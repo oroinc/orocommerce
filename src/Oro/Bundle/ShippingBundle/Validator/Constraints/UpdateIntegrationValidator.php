@@ -11,6 +11,10 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * Validates if shipping integration can be deleted.
+ * Checks if integration does not have shipping methods using it.
+ */
 class UpdateIntegrationValidator extends ConstraintValidator
 {
     /**
@@ -28,11 +32,6 @@ class UpdateIntegrationValidator extends ConstraintValidator
      */
     private $violationPath;
 
-    /**
-     * @param IntegrationShippingMethodFactoryInterface $shippingMethodFactory
-     * @param ShippingMethodValidatorInterface          $shippingMethodValidator
-     * @param string                                    $violationPath
-     */
     public function __construct(
         IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
         ShippingMethodValidatorInterface $shippingMethodValidator,
@@ -63,9 +62,6 @@ class UpdateIntegrationValidator extends ConstraintValidator
         $this->handleValidationResult($shippingMethodValidatorResult);
     }
 
-    /**
-     * @param ShippingMethodValidatorResultInterface $shippingMethodValidatorResult
-     */
     private function handleValidationResult(ShippingMethodValidatorResultInterface $shippingMethodValidatorResult)
     {
         if ($shippingMethodValidatorResult->getErrors()->isEmpty()) {
@@ -78,7 +74,6 @@ class UpdateIntegrationValidator extends ConstraintValidator
         foreach ($shippingMethodValidatorResult->getErrors() as $error) {
             $context
                 ->buildViolation($error->getMessage())
-                ->setTranslationDomain(null)
                 ->atPath($this->violationPath)
                 ->addViolation();
         }

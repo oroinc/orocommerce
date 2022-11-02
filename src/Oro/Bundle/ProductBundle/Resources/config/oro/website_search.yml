@@ -2,50 +2,83 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
         -
-            name: product_id
-            type: integer
-        -
             name: sku_uppercase
             type: text
         -
             name: status
             type: text
+            fulltext: false
         -
             name: type
             type: text
-        -
-            name: inventory_status
-            type: text
+            fulltext: false
         -
             name: is_variant
             type: integer
         -
-            name:  all_text
+            name:  all_text_LOCALIZATION_ID
             type:  text
             store: false
             default_search_field: true
         -
-            name:  all_text_LOCALIZATION_ID
-            type:  text
-            store: false
-        -
-            name: assigned_to_ASSIGN_TYPE_ASSIGN_ID
+            name: assigned_to.ASSIGN_TYPE_ASSIGN_ID
             type: integer
         -
             name: image_product_large
             type: text
+            fulltext: false
+            group: image
         -
             name: image_product_medium
             type: text
+            fulltext: false
+            group: image
+        -
+            name: image_product_small
+            type: text
+            fulltext: false
+            group: image
         -
             name: product_units
             type: text
+            fulltext: false
         -
             name: primary_unit
             type: text
+            fulltext: false
         -
             name: attribute_family_id
             type: integer
+        -
+            name: manually_added_to.ASSIGN_TYPE_ASSIGN_ID
+            type: integer
+        -
+            name: variant_fields_count
+            type: integer
+            fulltext: false
+        -
+            name: image_product_large_webp
+            type: text
+            fulltext: false
+            group: image
+        -
+            name: image_product_medium_webp
+            type: text
+            fulltext: false
+            group: image
+        -
+            name: image_product_small_webp
+            type: text
+            fulltext: false
+            group: image
+        -
+            name: schema_org_description_LOCALIZATION_ID
+            type: text
+            fulltext: false
+        -
+            name: schema_org_brand_name_LOCALIZATION_ID
+            type: text
+            fulltext: false
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

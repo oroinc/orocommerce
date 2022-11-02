@@ -1,5 +1,0 @@
-config:
-    paths:
-        'oro/datagrid/action/payment-delete-action': 'bundles/oropayment/js/datagrid/action/payment-delete-action.js'
-        'oropayment/js/app/components/config-hide-fields-component': 'bundles/oropayment/js/app/components/config-hide-fields-component.js'
-        'oropayment/js/app/views/payment-rule-method-view': 'bundles/oropayment/js/app/views/payment-rule-method-view.js'

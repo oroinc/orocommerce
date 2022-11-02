@@ -4,8 +4,11 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides an array of the shipping methods.
+ */
 class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProviderInterface
 {
     /**
@@ -18,10 +21,6 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
      */
     protected $translator;
 
-    /**
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     * @param TranslatorInterface             $translator
-     */
     public function __construct(
         ShippingMethodProviderInterface $shippingMethodProvider,
         TranslatorInterface $translator

@@ -5,15 +5,21 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Entity to store prices combined from price list chain by merge strategy.
+ *
  * @ORM\Table(
  *      name="oro_price_product_combined",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_combined_price_unq_idx",
- *              columns={"combined_price_list_id", "product_id", "currency", "unit_code", "quantity"}
- *          )
- *      },
  *     indexes={
+ *         @ORM\Index(
+ *              name="oro_combined_price_idx",
+ *              columns={
+ *                  "combined_price_list_id",
+ *                  "product_id",
+ *                  "currency",
+ *                  "unit_code",
+ *                  "quantity"
+ *              }
+ *         ),
  *         @ORM\Index(
  *              name="oro_cmb_price_mrg_idx",
  *              columns={
@@ -45,9 +51,51 @@ class CombinedProductPrice extends BaseProductPrice
     protected $priceList;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
      */
     protected $mergeAllowed = true;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="origin_price_id", type="guid", nullable=true)
+     */
+    protected $originPriceId;
+
+    /**
+     * @return string|null
+     */
+    public function getOriginPriceId()
+    {
+        return $this->originPriceId;
+    }
+
+    /**
+     * @param string $originPriceId
+     * @return CombinedProductPrice
+     */
+    public function setOriginPriceId($originPriceId)
+    {
+        $this->originPriceId = $originPriceId;
+
+        return $this;
+    }
+
+    public function isMergeAllowed(): bool
+    {
+        return $this->mergeAllowed;
+    }
+
+    /**
+     * @param bool $mergeAllowed
+     * @return CombinedProductPrice
+     */
+    public function setMergeAllowed($mergeAllowed)
+    {
+        $this->mergeAllowed = $mergeAllowed;
+
+        return $this;
+    }
 }

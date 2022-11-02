@@ -2,29 +2,31 @@
 
 namespace Oro\Bundle\PricingBundle\Sharding;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Schema\Constraint;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Manage shards for given class.
+ * CRUD operation for shards tables, reorganize existing table to use shards.
+ *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShardManager implements \Serializable
+class ShardManager
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $registry;
 
@@ -48,9 +50,6 @@ class ShardManager implements \Serializable
      */
     protected $enableSharding;
 
-    /**
-     * @param array $shardList
-     */
     public function __construct(array $shardList = [])
     {
         $this->shardList = $shardList;
@@ -110,7 +109,7 @@ class ShardManager implements \Serializable
             $column = $connection->getDatabasePlatform()->quoteIdentifier($this->getDiscriminationColumn($className));
             $columnsStr = $this->getColumnsPlaceholder($className);
             $sql = "INSERT INTO $shardName ($columnsStr) SELECT $columnsStr FROM $baseTableName WHERE $column = :value";
-            $connection->executeUpdate($sql, ["value" => $discriminationValue]);
+            $connection->executeStatement($sql, ["value" => $discriminationValue]);
         }
         $connection->exec("DELETE FROM $baseTableName");
     }
@@ -130,7 +129,7 @@ class ShardManager implements \Serializable
             }
             $columnsStr = $this->getColumnsPlaceholder($class);
             $sql = "INSERT INTO $baseTableName ($columnsStr) SELECT $columnsStr FROM $shardName";
-            $connection->executeUpdate($sql);
+            $connection->executeStatement($sql);
             $this->delete($shardName);
         }
     }
@@ -224,7 +223,6 @@ class ShardManager implements \Serializable
     /**
      * @param string $className
      * @param string $shardName
-     *
      */
     public function create($className, $shardName)
     {
@@ -251,7 +249,7 @@ class ShardManager implements \Serializable
         }
 
         $createQueries = $this->getCreateTableQueries($table);
-        foreach ($createQueries as $key => $query) {
+        foreach ($createQueries as $query) {
             $query = str_replace($search, $replace, $query);
             $connection->executeQuery($query);
         }
@@ -301,7 +299,7 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @return EntityManager|ObjectManager
+     * @return EntityManager
      */
     public function getEntityManager()
     {
@@ -396,27 +394,17 @@ class ShardManager implements \Serializable
         return $metadata->getSingleAssociationJoinColumnName($fieldName);
     }
 
-    /**
-     * @return string
-     */
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize($this->shardList);
+        return $this->shardList;
     }
 
-    /**
-     * @param string $serialized
-     */
-    public function unserialize($serialized)
+    public function __unserialize(array $serialized): void
     {
-        $shardList = unserialize($serialized);
-        $this->shardList = $shardList;
+        $this->shardList = $serialized;
     }
 
-    /**
-     * @param RegistryInterface $registry
-     */
-    public function setRegistry(RegistryInterface $registry)
+    public function setRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
@@ -449,11 +437,11 @@ class ShardManager implements \Serializable
         $createQueries = $connection->getDatabasePlatform()->getCreateTableSQL($table, $createFlags);
 
         //create single create table query
-        if ($connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
+        if ($connection->getDatabasePlatform() instanceof MySqlPlatform) {
             $createQuery = $createQueries[0];
             $constraints = [];
             foreach ($createQueries as $query) {
-                if (strpos($query, 'ALTER TABLE') === 0) {
+                if (str_starts_with($query, 'ALTER TABLE')) {
                     $constraints[] = substr($query, strpos($query, 'CONSTRAINT'));
                 }
             }

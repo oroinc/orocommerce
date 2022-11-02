@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Model\Builder;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Reader\Common\Creator\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
@@ -13,10 +14,14 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Creates QuickAddRowCollection based on either request, file or text.
+ */
 class QuickAddRowCollectionBuilder
 {
     /**
@@ -40,21 +45,22 @@ class QuickAddRowCollectionBuilder
     protected $quickAddRowInputParser;
 
     /**
-     * @param EntityRepository $productRepository
-     * @param ProductManager $productManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param QuickAddRowInputParser $quickAddRowInputParser
+     * @var AclHelper
      */
+    private $aclHelper;
+
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
         EventDispatcherInterface $eventDispatcher,
-        QuickAddRowInputParser $quickAddRowInputParser
+        QuickAddRowInputParser $quickAddRowInputParser,
+        AclHelper $aclHelper
     ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->quickAddRowInputParser = $quickAddRowInputParser;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -103,7 +109,9 @@ class QuickAddRowCollectionBuilder
         $reader->open($file->getRealPath());
 
         foreach ($reader->getSheetIterator() as $sheet) {
+            /** @var Row $row */
             foreach ($sheet->getRowIterator() as $row) {
+                $row = $row->toArray();
                 if (0 === $lineNumber || empty($row[0])) {
                     $lineNumber++;
                     continue;
@@ -156,18 +164,17 @@ class QuickAddRowCollectionBuilder
 
         // Configurable products require additional option selection is not implemented yet
         // Thus we need to hide configurable products from the product drop-downs
-        // @TODO remove after configurable products require additional option selection implementation
         $restricted->andWhere($restricted->expr()->neq('product.type', ':configurable_type'))
             ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
 
-        $query = $restricted->getQuery();
+        $query = $this->aclHelper->apply($restricted);
 
         /** @var Product[] $products */
         $products = $query->execute();
         $productsBySku = [];
 
         foreach ($products as $product) {
-            $productsBySku[strtoupper($product->getSku())] = $product;
+            $productsBySku[mb_strtoupper($product->getSku())] = $product;
         }
 
         return $productsBySku;
@@ -182,19 +189,16 @@ class QuickAddRowCollectionBuilder
     {
         switch ($file->getClientOriginalExtension()) {
             case 'csv':
-                return ReaderFactory::create(Type::CSV);
+                return ReaderFactory::createFromType(Type::CSV);
             case 'ods':
-                return ReaderFactory::create(Type::ODS);
+                return ReaderFactory::createFromType(Type::ODS);
             case 'xlsx':
-                return ReaderFactory::create(Type::XLSX);
+                return ReaderFactory::createFromType(Type::XLSX);
         }
 
         throw new UnsupportedTypeException();
     }
 
-    /**
-     * @param QuickAddRowCollection $collection
-     */
     private function mapProducts(QuickAddRowCollection $collection)
     {
         $products = $this->getRestrictedProductsBySkus($collection->getSkus());

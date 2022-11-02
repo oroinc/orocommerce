@@ -1,0 +1,48 @@
+services:
+    oro_product.tests.importexport.file_manager.product_images:
+        alias: oro_product.importexport.file_manager.product_images
+        public: true
+
+    oro_product.tests.migration_listener:
+        class: Oro\Bundle\ProductBundle\Tests\Functional\Environment\TestEntitiesMigrationListener
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp }
+
+    oro_product.tests.helper.product_collection_segment:
+        class: Oro\Bundle\ProductBundle\Tests\Functional\Stub\ProductCollectionSegmentHelperStub
+        decorates: oro_product.helper.product_collection_segment
+        parent: oro_product.helper.product_collection_segment
+        public: true
+        arguments:
+            index_1: '@.inner'
+
+    oro_product.tests.api.skipped_entity_provider:
+        class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
+        decorates: oro_api.tests.skipped_entity_provider
+        arguments:
+            - '@.inner'
+        calls:
+            - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\Brand', ['create']]]
+
+    oro_product.tests.skipped_file_systems:
+        class: Oro\Bundle\GaufretteBundle\Tests\Functional\Environment\SkippedGaufretteFileSystemProvider
+        decorates: oro_gaufrette.tests.skipped_file_systems
+        arguments:
+            - '@.inner'
+            - ['import_product_images']
+
+    oro_product.tests.related_item.related_product.config_provider:
+        parent: 'oro_product.related_item.related_product.config_provider'
+        decorates: 'oro_product.related_item.related_product.config_provider'
+        public: true
+
+    oro_product.tests.related_item.related_product.data_provider:
+        parent: 'oro_product.related_item.related_product.data_provider'
+        decorates: 'oro_product.related_item.related_product.data_provider'
+        public: true
+
+    oro_product.tests.product_list_builder:
+        parent: 'oro_product.product_list_builder'
+        decorates: 'oro_product.product_list_builder'
+        public: true

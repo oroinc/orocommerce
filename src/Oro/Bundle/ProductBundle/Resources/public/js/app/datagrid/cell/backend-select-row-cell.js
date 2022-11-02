@@ -1,12 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var BackendSelectRowCell;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var template = require('tpl!oroproduct/templates/datagrid/backend-select-row-cell.html');
-    var SelectRowCell = require('oro/datagrid/cell/select-row-cell');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
+    const SelectRowCell = require('oro/datagrid/cell/select-row-cell');
+    const viewportManager = require('oroui/js/viewport-manager');
+
+    const modes = {
+        DROPDOWN: 'Dropdown',
+        SIMPLE: 'Simple'
+    };
 
     /**
      * Renders a checkbox for row selection.
@@ -15,7 +20,7 @@ define(function(require) {
      * @class   oro.datagrid.cell.SelectRowCell
      * @extends BaseView
      */
-    BackendSelectRowCell = SelectRowCell.extend({
+    const BackendSelectRowCell = SelectRowCell.extend({
         /** @property */
         autoRender: true,
 
@@ -31,25 +36,29 @@ define(function(require) {
         /** @property */
         text: __('oro.product.grid.select_product'),
 
-        /**
-         * @inheritDoc
-         */
-        constructor: function BackendSelectRowCell() {
-            BackendSelectRowCell.__super__.constructor.apply(this, arguments);
+        listen: {
+            'viewport:change mediator': 'defineRenderingStrategy'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function BackendSelectRowCell(options) {
+            BackendSelectRowCell.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
-            var o = {};
+            const data = {};
             if (options.productModel) {
                 this.model = options.productModel;
             }
 
-            this.model.trigger('backgrid:hasMassActions', o);
+            this.model.trigger('backgrid:hasMassActions', data);
 
-            if (!o.hasMassActions) {
+            if (!data.hasMassActions) {
                 this.dispose();
 
                 return;
@@ -58,46 +67,79 @@ define(function(require) {
             this.$container = $(options._sourceElement);
             this.template = this.getTemplateFunction();
 
-            this.model.on('backgrid:select', _.bind(function(model, checked) {
+            this.listenTo(this, 'render-mode:changed', state => this.render());
+            this.model.on('backgrid:select', (model, checked) => {
                 this.$(':checkbox').prop('checked', checked).change();
-            }, this));
+            });
+            this.model.on('backgrid:canSelected', checked => {
+                this.hideView(!checked && this._isSimple());
+            });
+        },
 
-            this.model.on('backgrid:canSelected', _.bind(function(checked) {
-                this.hideView(checked);
-            }, this));
+        defineRenderingStrategy() {
+            const prevRenderMode = this.renderMode;
+
+            if (this._isSimple()) {
+                this.renderMode = modes.SIMPLE;
+            } else {
+                this.renderMode = modes.DROPDOWN;
+            }
+
+            if (prevRenderMode !== this.renderMode) {
+                this.trigger('render-mode:changed', {
+                    prevRenderMode,
+                    renderMode: this.renderMode
+                });
+            }
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
-            var visibleState = {};
-            var hide = !_.isMobile();
-            var state = {selected: false};
+            const visibleState = {};
+            let hideCheckboxes = this._isSimple();
+            const state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
             this.model.trigger('backgrid:getVisibleState', visibleState);
             if (!_.isEmpty(visibleState)) {
-                hide = visibleState.visible;
+                // Mobile view row selection is turned on
+                hideCheckboxes = !visibleState.visible;
             }
 
             this.$el.html(this.template({
                 checked: state.selected,
-                text: this.text
+                text: this.text,
+                isSimple: this._isSimple()
             }));
 
             this.$checkbox = this.$el.find(this.checkboxSelector);
             this.$container.append(this.$el);
-            this.hideView(hide);
+            this.hideView(hideCheckboxes);
 
             return this;
         },
 
+        _isSimple() {
+            let screen = 'tablet';
+
+            try {
+                const resolution = this.model.collection.options.optimizedScreenSize;
+
+                if (resolution) {
+                    screen = resolution;
+                }
+            } catch (e) {}
+
+            return viewportManager.isApplicable({maxScreenType: screen});
+        },
+
         /**
-         * @param {Boolean} bool
+         * @param {Boolean} isHidden
          */
-        hideView: function(bool) {
-            this.$el.toggleClass('hidden', !bool);
+        hideView: function(isHidden) {
+            this.$el.toggleClass('hidden', isHidden);
         },
 
         dispose: function() {
@@ -110,7 +152,7 @@ define(function(require) {
             if (this.model) {
                 this.model.off(null, null, this);
             }
-            BackendSelectRowCell.__super__.dispose.apply(this, arguments);
+            BackendSelectRowCell.__super__.dispose.call(this);
         }
     });
 

@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendLocalizationBundle\Acl\Voter\LocalizationVoter;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\Repository\LocalizationRepository;
+use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
@@ -16,55 +17,34 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ENTITY_CLASS = Localization::class;
-
     /** @var LocalizationRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $repository;
+    private $repository;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var LocalizationVoter */
-    protected $voter;
+    private $voter;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->repository = $this->getMockBuilder(ConfigValueRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(ConfigValueRepository::class);
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->willReturnCallback(
-                function ($object) {
-                    return get_class($object);
-                }
-            );
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
-            ->willReturnCallback(
-                function ($object) {
-                    return method_exists($object, 'getId') ? $object->getId() : null;
-                }
-            );
+            ->willReturnCallback(function ($object) {
+                return method_exists($object, 'getId') ? $object->getId() : null;
+            });
 
         $this->voter = new LocalizationVoter($this->doctrineHelper);
-        $this->voter->setClassName(self::ENTITY_CLASS);
+        $this->voter->setClassName(Localization::class);
     }
 
     /**
      * @dataProvider voteDataProvider
-     *
-     * @param bool $isUsed
-     * @param bool $isCached
-     * @param object $object
-     * @param string $attribute
-     * @param int $expected
      */
-    public function testVote($isUsed, $isCached, $object, $attribute, $expected)
+    public function testVote(bool $isUsed, bool $isCached, object $object, string $attribute, int $expected)
     {
         $currentId = $object->getId();
         $notCurrentId = $currentId + 1;
@@ -84,13 +64,13 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
             ->method('findBy')
             ->willReturn($isUsed ? [$configValue1, $configValue2] : [$configValue2]);
 
-        $this->assertEquals($expected, $this->voter->vote($this->getToken(), $object, [$attribute]));
+        $this->assertSame(
+            $expected,
+            $this->voter->vote($this->createMock(TokenInterface::class), $object, [$attribute])
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function voteDataProvider()
+    public function voteDataProvider(): array
     {
         $localization = $this->getEntity(Localization::class, ['id' => 42]);
 
@@ -105,14 +85,14 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
             'abstain when not supported class' => [
                 'isUsed' => true,
                 'isCached' => true,
-                'object' => $this->getEntity('Oro\Bundle\TestFrameworkBundle\Entity\Item', ['id' => 42]),
+                'object' => $this->getEntity(Item::class, ['id' => 42]),
                 'attribute' => 'DELETE',
                 'expected' => VoterInterface::ACCESS_ABSTAIN,
             ],
             'abstain when new entity' => [
                 'isUsed' => true,
                 'isCached' => true,
-                'object' => $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization'),
+                'object' => $this->getEntity(Localization::class),
                 'attribute' => 'DELETE',
                 'expected' => VoterInterface::ACCESS_ABSTAIN,
             ],
@@ -138,15 +118,5 @@ class LocalizationVoterTest extends \PHPUnit\Framework\TestCase
                 'expected' => VoterInterface::ACCESS_DENIED,
             ]
         ];
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|TokenInterface
-     */
-    protected function getToken()
-    {
-        return $this->getMockBuilder(TokenInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
 
@@ -23,11 +23,6 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
      */
     protected $systemOption;
 
-    /**
-     * @param $entityName
-     * @param $fieldName
-     * @param $systemOption
-     */
     public function __construct($entityName, $fieldName, $systemOption)
     {
         $this->entityName = $entityName;
@@ -52,7 +47,6 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
     }
 
     /**
-     * @param LoggerInterface $logger
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function updateEntityConfig(LoggerInterface $logger)
@@ -68,11 +62,11 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql, $parameters);
 
         $id = $row['id'];
-        $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Type::TARRAY) : [];
+        $data = isset($row['data']) ? $this->connection->convertToPHPValue($row['data'], Types::ARRAY) : [];
 
         $data['fallback']['fallbackList']['systemConfig']['configName'] = $this->systemOption;
 
-        $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
+        $data = $this->connection->convertToDatabaseValue($data, Types::ARRAY);
 
         $sql        = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
         $parameters = [$data, $id];

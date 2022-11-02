@@ -2,65 +2,44 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Search\ProductRepository;
-use Oro\Component\Cache\Layout\DataProviderCacheTrait;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
+/**
+ * Layout data provider which provides count of products per category.
+ */
 class CategoriesProductsProvider
 {
-    use DataProviderCacheTrait;
+    private ManagerRegistry $doctrine;
+    private ProductRepository $searchRepository;
+    private CacheInterface $cache;
+    private int $cacheLifeTime;
 
-    /**
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * @var ProductRepository
-     */
-    protected $searchRepository;
-
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
-
-    /**
-     * @param CategoryRepository $categoryRepository
-     * @param ProductRepository  $searchRepository
-     */
-    public function __construct(
-        CategoryRepository $categoryRepository,
-        ProductRepository $searchRepository
-    ) {
+    public function __construct(ManagerRegistry $doctrine, ProductRepository $searchRepository)
+    {
+        $this->doctrine = $doctrine;
         $this->searchRepository = $searchRepository;
-        $this->categoryRepository = $categoryRepository;
     }
 
-    /**
-     * @param array $categoriesIds
-     *
-     * @return array
-     */
-    public function getCountByCategories($categoriesIds)
+    public function setCache(CacheInterface $cache, $lifeTime = 0) : void
     {
-        $this->initCache(['categories_products', implode('_', $categoriesIds)]);
+        $this->cache = $cache;
+        $this->cacheLifeTime = $lifeTime;
+    }
 
-        $useCache = $this->isCacheUsed();
-        if (true === $useCache) {
-            $result = $this->getFromCache();
-            if ($result) {
-                return $result;
-            }
-        }
+    public function getCountByCategories(array $categoriesIds) : array //[category id => number of products, ...]
+    {
+        $cacheKey = 'categories_products_' . implode('_', $categoriesIds);
 
-        $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
-        $result = $this->searchRepository->getCategoriesCounts($categories);
-
-        if (true === $useCache) {
-            $this->saveToCache($result);
-        }
-
-        return $result;
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($categoriesIds) {
+            $item->expiresAfter($this->cacheLifeTime);
+            $categories = $this->doctrine->getManagerForClass(Category::class)
+                ->getRepository(Category::class)
+                ->findBy(['id' => $categoriesIds]);
+            return $this->searchRepository->getCategoriesCounts($categories);
+        });
     }
 }

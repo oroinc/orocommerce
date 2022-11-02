@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider;
@@ -29,7 +29,7 @@ class QuickAddCollectionProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $request;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->quickAddHandler = $this->getMockBuilder(QuickAddHandler::class)->disableOriginalConstructor()->getMock();
         $this->requestStack = $this->getMockBuilder(RequestStack::class)->disableOriginalConstructor()->getMock();

@@ -23,10 +23,6 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
      */
     private $currencyManager;
 
-    /**
-     * @param FrontendHelper      $frontendHelper
-     * @param UserCurrencyManager $currencyManager
-     */
     public function __construct(FrontendHelper $frontendHelper, UserCurrencyManager $currencyManager)
     {
         $this->frontendHelper = $frontendHelper;
@@ -69,8 +65,8 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
     /**
      * {@inheritDoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PriceType::class;
+        return [PriceType::class];
     }
 }

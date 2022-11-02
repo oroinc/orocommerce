@@ -9,27 +9,21 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class DataGridThemeHelperTest extends \PHPUnit\Framework\TestCase
 {
-    const GRID_NAME = 'test-grid-name';
+    private const GRID_NAME = 'test-grid-name';
 
-    /**
-     * @var DataGridThemeHelper
-     */
-    protected $helper;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /**
-     * @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $session;
+    /** @var DataGridThemeHelper */
+    private $helper;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->session = $this->createMock(SessionInterface::class);
 
         $this->helper = new DataGridThemeHelper($this->requestStack, $this->session);
     }
@@ -46,11 +40,8 @@ class DataGridThemeHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getThemeDataProvider
-     * @param string $requestValue
-     * @param string $sessionValue
-     * @param string $expectedValue
      */
-    public function testGetTheme($requestValue, $sessionValue, $expectedValue)
+    public function testGetTheme(?string $requestValue, ?string $sessionValue, string $expectedValue)
     {
         $gridName = self::GRID_NAME;
 
@@ -64,7 +55,7 @@ class DataGridThemeHelperTest extends \PHPUnit\Framework\TestCase
             $this->session->expects($this->once())
                 ->method('has')
                 ->with(DataGridThemeHelper::SESSION_KEY)
-                ->willReturn($sessionValue ? true : false);
+                ->willReturn((bool)$sessionValue);
 
             if ($sessionValue) {
                 $this->session->expects($this->once())
@@ -82,10 +73,7 @@ class DataGridThemeHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $actualValue);
     }
 
-    /**
-     * @return array
-     */
-    public function getThemeDataProvider()
+    public function getThemeDataProvider(): array
     {
         return [
             [

@@ -1,0 +1,61 @@
+data:
+    -
+        type: 'pricelistcustomerfallbacks'
+        id: '<toString(@US_customer_1_1_price_list_fallback->id)>'
+        attributes:
+            fallback: 0
+        relationships:
+            customer:
+                data:
+                    id: '<toString(@customer.level_1_1->id)>'
+                    type: 'customers'
+    -
+        type: 'pricelistcustomerfallbacks'
+        id: '<toString(@US_customer_1_3_price_list_fallback->id)>'
+        attributes:
+            fallback: 0
+        relationships:
+            customer:
+                data:
+                    id: '<toString(@customer.level_1.3->id)>'
+                    type: 'customers'
+    -
+        type: 'pricelistcustomerfallbacks'
+        id: '<toString(@US_customer_1_2_price_list_fallback->id)>'
+        attributes:
+            fallback: 1
+        relationships:
+            customer:
+                data:
+                    id: '<toString(@customer.level_1.2->id)>'
+                    type: 'customers'
+    -
+        type: 'pricelistcustomerfallbacks'
+        id: '<toString(@Canada_customer_1_1_price_list_fallback->id)>'
+        attributes:
+            fallback: 1
+        relationships:
+            customer:
+                data:
+                    id: '<toString(@customer.level_1_1->id)>'
+                    type: 'customers'
+    -
+        type: 'pricelistcustomerfallbacks'
+        id: '<toString(@Canada_customer_1_3_price_list_fallback->id)>'
+        attributes:
+            fallback: 0
+        relationships:
+            customer:
+                data:
+                    id: '<toString(@customer.level_1.3->id)>'
+                    type: 'customers'
+    -
+        type: 'pricelistcustomerfallbacks'
+        id: '<toString(@Canada_customer_1_2_price_list_fallback->id)>'
+        attributes:
+            fallback: 1
+        relationships:
+            customer:
+                data:
+                    id: '<toString(@customer.level_1.2->id)>'
+                    type: 'customers'

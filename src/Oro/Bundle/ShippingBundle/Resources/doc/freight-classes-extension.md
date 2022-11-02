@@ -38,7 +38,7 @@ The extension must be registered in the "services.yml" file with the "*oro_shipp
 ```yml
 services:
     oro_shipping_demo.extension.shipping_freight_classes:
-        class: 'Oro\Bundle\ShippingDemoBundle\Extension\Shipping\FreightClassesExtension'
+        class: Oro\Bundle\ShippingDemoBundle\Extension\Shipping\FreightClassesExtension
         tags:
             - { name: oro_shipping.extension.freight_classes }
 

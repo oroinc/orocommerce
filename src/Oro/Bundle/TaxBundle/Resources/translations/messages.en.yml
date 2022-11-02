@@ -3,12 +3,18 @@ oro.tax:
     description.label: 'Description'
     entity_label: 'Tax'
     entity_plural_label: 'Taxes'
+    entity_grid_all_view_label: 'All %entity_plural_label%'
     id.label: 'id'
     rate.label: 'Rate'
     taxcode.label: 'Tax Code'
     taxcode.customergroup.label: 'Customer Group Tax Code'
 
     subtotals.tax: 'Tax'
+
+    feature:
+        manage:
+            label: Tax Management
+            description: Enables creating and managing product and customer tax codes, tax rates, tax rules, and tax jurisdictions.
 
     form:
         choose: 'Choose a tax'
@@ -17,6 +23,7 @@ oro.tax:
     producttaxcode:
         entity_label:         'Product Tax Code'
         entity_plural_label:  'Product Tax Codes'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         entity_description:   Product tax code is an identifier that labels the products that taxed in a particular way (e.g. Medical Products, Non-Taxable Prodcuts, Taxable Products, etc.)
         list:
             description:      'List of Product Tax Codes'
@@ -28,23 +35,38 @@ oro.tax:
         description:
             label:            'Description'
             description:      The description of the tax
+        organization:
+            label: Organization
+            description: An organization that the product tax code belongs to.
 
     customertaxcode:
         entity_label: 'Customer Tax Code'
         entity_plural_label: 'Customer Tax Codes'
-        description: 'List of Customer Tax Codes'
+        entity_description: Customer Tax Code is a label that is assigned to a customer and indicates the tax obligations and exemptions a customer has. The customer tax obligations are taken into account when a customer (user) submits an order.
+        entity_grid_all_view_label: 'All %entity_plural_label%'
+        list:
+            description: List of Customer Tax Codes
         customers.label: 'Customers'
         customer_groups.label: 'Customer Groups'
         id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
+        code:
+            label: Code
+            description: The code of the tax
+        description:
+            label: Description
+            description: The description of the tax
         customer_group.view.label: 'Defined for Customer Group'
-        organization.label: 'Organization'
-        owner.label: 'Owner'
+        organization:
+            label: Organization
+            description: An organization that the customer tax code belongs to.
+        owner:
+            label: Owner
+            description: A user who owns the customer tax code.
 
     taxrule:
         entity_label: 'Tax Rule'
         entity_plural_label: 'Tax Rules'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Rules'
         description.label: 'Description'
         id.label: 'ID'
@@ -56,6 +78,7 @@ oro.tax:
     taxjurisdiction:
         entity_label: 'Tax Jurisdiction'
         entity_plural_label: 'Tax Jurisdictions'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Jurisdictions'
         id.label: 'ID'
         code.label: 'Code'
@@ -69,6 +92,7 @@ oro.tax:
     zipcode:
         entity_label: 'Zip Code'
         entity_plural_label: 'Zip Codes'
+        entity_grid_all_view_label: 'All %entity_plural_label%'
         id.label: 'ID'
         zip_code.label: 'Zip Code'
         zip_range_start.label: 'Range start'
@@ -106,6 +130,7 @@ oro.tax:
             origin_address.title: 'Origin'
             shipping.title: 'Shipping'
             shipping_tax.title: 'Shipping Tax'
+            promotions.title: 'Promotions'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'
@@ -132,14 +157,18 @@ oro.tax:
             digital_products_eu.label: 'Digital Products Tax Codes'
             origin_address.label: 'Origin Address'
             shipping_tax_code.label: 'Tax Code'
-            shipping_tax_code.tooltip: 'A tax code is a tax identifier that in combination with tax rules defines the tax rate that is applied to the shipping tax calculation.'
+            shipping_tax_code.tooltip: 'A tax code is a tax identifier that in combination with tax rules defines the tax rate that is applied for the shipping tax calculation.'
             shipping_rates_include_tax.label: 'Shipping Rates Include Tax'
-            shipping_rates_include_tax.tooltip: 'Select the box to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the management console already include tax.'
+            shipping_rates_include_tax.tooltip: 'Select the option to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the back-office already include tax.'
             address_resolver_granularity:
                 label: 'Address Resolver Granularity'
-                country.label: 'Country'
-                region.label: 'Region'
-                zip.label: 'Zip code'
+                country.label: 'Only Country'
+                region.label: 'Only Country and Region'
+                country_and_zip.label: 'Only Country and Zip'
+                zip.label: 'Country, Region and Zip'
+            calculate_taxes_after_promotions:
+                label: 'Calculate Taxes After Promotions'
+                tooltip: 'Enable the option to calculate taxes on the reduced price (subtotal) after discounts are applied. Otherwise the taxes are calculated on the full price (subtotal) before discounts.'
 
     providers:
         built_in.label: Built-In Table Rates
@@ -179,4 +208,17 @@ oro.tax:
     import_export:
         tax_code_doesnt_exist: Unable to find related tax code for customer "%customer_name%".
 
-oro.product.taxcode.description: Tax code
+oro.product:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the product.
+
+oro.customer:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the customer.
+
+oro.customer.customergroup:
+    tax_code:
+        label: Tax Code
+        description: The tax code for the customer group.

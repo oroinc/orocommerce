@@ -1,0 +1,21 @@
+data:
+    type: 'pricerules'
+    id: '<toString(@price_list_1_price_rule_1->id)>'
+    attributes:
+        currency: 'USD'
+        currencyExpression: null
+        quantity: 2
+        quantityExpression: null
+        productUnitExpression: null
+        ruleCondition: 'product.category.id == 1 and product.status == "enabled"'
+        rule: 'pricelist[1].prices.value + 10'
+        priority: 1
+    relationships:
+        productUnit:
+            data:
+                type: 'productunits'
+                id: '<toString(@product_unit.milliliter->code)>'
+        priceList:
+            data:
+                type: 'pricelists'
+                id: '<toString(@price_list_1->id)>'

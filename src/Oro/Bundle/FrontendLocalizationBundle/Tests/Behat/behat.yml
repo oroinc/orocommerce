@@ -7,8 +7,8 @@ oro_behat_extension:
             - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
             - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
             - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
-            - OroConfigBundle::FeatureContext
-            - OroTranslationBundle::FeatureContext
+            - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+            - Oro\Bundle\TranslationBundle\Tests\Behat\Context\FeatureContext
           paths:
             - '@OroFrontendLocalizationBundle/Tests/Behat/Features'
     elements:
@@ -17,11 +17,9 @@ oro_behat_extension:
             selector: 'div.oro-localization-switcher .oro-toolbar__content'
 
         LocalizationSwitcherOptions:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'div.oro-localization-switcher ul'
 
         LocalizationSwitcherActiveOption:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'div.oro-localization-switcher .oro-toolbar__link--active'
 
         CreateLocalizationForm:

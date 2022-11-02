@@ -22,6 +22,9 @@ oro:
                     lb.label: 'Pound'
                 labels.label: 'Label'
                 shipping_services.label: 'Shipping Services'
+                ignore_package_dimensions:
+                    label:  Ignore Package Dimensions
+                    tooltip: This shipping integration does not perform dimension-based package distribution optimizations ("box packing optimization") prior to requesting shipping estimates from FedEx. This may lead to over-inflated FedEx shipping estimates if the order contains multiple bulky items. You may turn this option on to ignore package dimensions and use only weight-based FedEx shipping estimates.
         shipping_method_options:
             surcharge.label: Surcharge
             surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.

@@ -57,7 +57,7 @@ class OroWebCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -95,8 +95,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog table
-     *
-     * @param Schema $schema
      */
     protected function createOroWebCatalogTable(Schema $schema)
     {
@@ -115,8 +113,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_variant table
-     *
-     * @param Schema $schema
      */
     protected function createOroContentVariantTable(Schema $schema)
     {
@@ -125,6 +121,7 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('node_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('system_page_route', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('override_variant_configuration', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['node_id']);
         $table->addColumn('is_default', 'boolean', ['default' => false]);
@@ -132,8 +129,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_content_node table
-     *
-     * @param Schema $schema
      */
     protected function createOroContentNodeTable(Schema $schema)
     {
@@ -157,8 +152,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_node_slug_prot table
-     *
-     * @param Schema $schema
      */
     protected function createOroContentNodeSlugPrototypeTable(Schema $schema)
     {
@@ -172,8 +165,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_node_title table
-     *
-     * @param Schema $schema
      */
     protected function createOroContentNodeTitleTable(Schema $schema)
     {
@@ -186,8 +177,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_node_title table
-     *
-     * @param Schema $schema
      */
     protected function createOroContentNodeUrlTable(Schema $schema)
     {
@@ -200,8 +189,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_variant_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroWebCatalogVariantSlugTable(Schema $schema)
     {
@@ -215,8 +202,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_node_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroWebCatalogNodeScopeTable(Schema $schema)
     {
@@ -228,8 +213,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Create oro_web_catalog_variant_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroWebCatalogVariantScopeTable(Schema $schema)
     {
@@ -241,8 +224,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroWebCatalogForeignKeys(Schema $schema)
     {
@@ -263,8 +244,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog_content_node foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroContentNodeForeignKeys(Schema $schema)
     {
@@ -285,8 +264,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog_node_title foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroContentNodeTitleForeignKeys(Schema $schema)
     {
@@ -307,8 +284,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog_node_title foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroContentNodeUrlForeignKeys(Schema $schema)
     {
@@ -329,8 +304,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog_variant foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroContentVariantForeignKeys(Schema $schema)
     {
@@ -345,8 +318,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog_node_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroWebCatalogNodeScopeForeignKeys(Schema $schema)
     {
@@ -367,8 +338,6 @@ class OroWebCatalogBundleInstaller implements
 
     /**
      * Add oro_web_catalog_variant_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroWebCatalogVariantScopeForeignKeys(Schema $schema)
     {

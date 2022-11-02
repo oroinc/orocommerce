@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\CouponGeneration;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
-use Symfony\Component\Form\FormInterface;
 
 class CouponGenerationHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +18,7 @@ class CouponGenerationHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $couponGenerationHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->couponGenerator = $this->createMock(CouponGeneratorInterface::class);
         $this->couponGenerationHandler = new CouponGenerationHandler($this->couponGenerator);

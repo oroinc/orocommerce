@@ -1,25 +1,41 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/update.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
 {% set formAction = entity.id ? path('oro_product_update', { 'id': entity.id }) : path('oro_product_create')  %}
 
 {% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_product_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
+
+    {% if updateRoute is not defined %}
+        {% set updateRoute = 'oro_product_update' %}
+    {% endif %}
+
+    {% set html = '' %}
+    {% if is_granted('oro_product_view') %}
+        {% set html = html ~ UI.saveAndCloseButton({
+            'route' : 'oro_product_view',
+            'params' : {'id': '$id'}
+        }) %}
+    {% endif %}
     {% if is_granted('oro_product_create') %}
-        {% set saveAndDuplicateButton = UI.saveActionButton({
+        {% set html = html ~ UI.saveActionButton({
             'label': 'oro.product.ui.save_and_duplicate'|trans,
             'action': 'save_and_duplicate'
         }) %}
-        {% set html = html ~ saveAndDuplicateButton %}
     {% endif %}
-    {% if entity.id or is_granted('oro_product_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+    {% if is_granted(updateRoute) %}
+        {% set html = html ~ UI.saveAndStayButton({
+            'route' : updateRoute,
+            'params': {'id': '$id'}
+        }) %}
     {% endif %}
+
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
@@ -34,13 +50,13 @@
         {{ parent() }}
     {% else %}
         {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.product.entity_label'|trans}) %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+        {% include '@OroUI/page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
 
 {% block content %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <div {{ UI.renderPageComponentAttributes({
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <div class="scrollable-container" {{ UI.renderPageComponentAttributes({
         view: 'oroform/js/app/views/form-loading-view',
         layout: 'separate'
     }) }} data-skip-input-widgets>
@@ -58,7 +74,7 @@
     {% if entity.isConfigurable %}
         {% set productsVariantSelector %}
             <div data-page-component-module="oroproduct/js/app/components/product-variant-component">
-              {{ form_row(form.variantFields) }}
+                {{ form_row(form.variantFields) }}
             </div>
         {% endset %}
         {% set generalData = generalData|merge([
@@ -70,13 +86,16 @@
         form_row(form.slugPrototypesWithRedirect),
         form_row(form.status),
         form_row(form.featured),
-        form_row(form.newArrival),
-        form_row(form.brand),
-        form_row(form.primaryUnitPrecision)
+        form_row(form.newArrival)
     ]) %}
 
+    {% set additionalGeneralData = [
+        form_row(form.brand),
+        form_row(form.primaryUnitPrecision)
+    ] %}
+
     {% if oro_is_product_primary_unit_visible(entity) %}
-        {% set generalData = generalData|merge([
+        {% set additionalGeneralData = additionalGeneralData|merge([
             form_row(form.additionalUnitPrecisions)
         ]) %}
     {% endif %}
@@ -89,39 +108,35 @@
         },
         {
             'title': '',
-            'data': {
-                'descriptions': form_row(form.descriptions),
-                'shortDescriptions': form_row(form.shortDescriptions),
-            },
+            'data': additionalGeneralData,
             'spanClass': 'responsive-cell'
-        },
+        }
     ]} %}
 
     {% set dataBlocks = {
-        'general': generalBlock
-    } %}
-
-    {% set additionalData = [] %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% if child.vars.name not in entity.variantFields %}
-            {% set additionalData = additionalData|merge([form_row(child)]) %}
-        {% endif %}
-    {% endfor %}
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.product.sections.additional'|trans,
+        'general': generalBlock,
+        'short_description': {
+            'title': 'oro.product.short_descriptions.label'|trans,
             'subblocks': [{
                 'title': '',
-                'useSpan': false,
-                'data' : additionalData
+                'data': [form_widget(form.shortDescriptions)],
             }]
-        }] ) %}
-    {% endif %}
+        },
+        'description': {
+            'title': 'oro.product.descriptions.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [form_widget(form.descriptions)],
+            }]
+        }
+    } %}
+
+    {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.product.sections.additional'|trans)) %}
 
     {% set dataBlocks = dataBlocks|merge({
         'inventory': {
             'title': 'oro.product.sections.inventory'|trans,
-            'priority': 5,
+            'priority': 1400,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -134,7 +149,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'images': {
             'title': 'oro.product.sections.images'|trans,
-            'priority': 0,
+            'priority': 100,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -147,7 +162,7 @@
     {% set dataBlocks = dataBlocks|merge({
         'design': {
             'title': 'oro.product.sections.design'|trans,
-            'priority': 0,
+            'priority': 200,
             'subblocks': [{
                 'title': '',
                 'data': {
@@ -181,9 +196,13 @@
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
                     dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })
                 ]
-            }]
+            }],
+            'options': {
+                'initSectionInstantly': true
+            }
         }] ) %}
     {% endif %}
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

@@ -17,9 +17,6 @@ class ProductStatusType extends AbstractType
      */
     protected $productStatusProvider;
 
-    /**
-     * @param ProductStatusProvider $productStatusProvider
-     */
     public function __construct(ProductStatusProvider $productStatusProvider)
     {
         $this->productStatusProvider = $productStatusProvider;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\ORM\Walker;
 
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalkerHintProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
@@ -13,6 +13,9 @@ class PriceShardWalkerHintProviderTest extends \PHPUnit\Framework\TestCase
         /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject $shardManager */
         $shardManager = $this->createMock(ShardManager::class);
         $provider = new PriceShardWalkerHintProvider($shardManager);
-        $this->assertEquals([PriceShardWalker::ORO_PRICING_SHARD_MANAGER => $shardManager], $provider->getHints([]));
+        $this->assertEquals(
+            [PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER => $shardManager],
+            $provider->getHints([])
+        );
     }
 }

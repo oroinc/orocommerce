@@ -2,79 +2,90 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
+    /** @var ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitsProvider;
 
-    /**
-     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productUnitRepository;
-
-    /**
-     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productRepository;
 
-    /**
-     * @var QuickAddRowInputParser
-     */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
+    /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
-    public function setUp()
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
+
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitRepository = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productRepository = $this->createMock(ProductRepository::class);
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         $this->registry->method('getRepository')->willReturnMap([
             [Product::class, null, $this->productRepository],
-            [ProductUnit::class, null, $this->productUnitRepository]
         ]);
 
-        $this->productUnitRepository->method('findOneBy')
-            ->willReturnCallback(function ($where) {
-                if (isset($where['code'])) {
-                    $unit = new ProductUnit();
-                    $unit->setCode($where['code']);
+        $this->productUnitsProvider->method('getAvailableProductUnits')
+            ->willReturn(
+                [
+                    'Element' => 'item',
+                    'Stunde' => 'hour',
+                ]
+            );
 
-                    return $unit;
-                }
-
-                return null;
-            });
-
-        $this->productRepository->method('getPrimaryUnitPrecisionCode')
-            ->willReturn('item');
-
-        $this->quickAddRowInputParser = new QuickAddRowInputParser($this->registry);
+        $this->quickAddRowInputParser = new QuickAddRowInputParser(
+            $this->registry,
+            $this->productUnitsProvider,
+            $this->aclHelper,
+            $this->numberFormatter
+        );
     }
 
     /**
      * @param array $input
      * @param array $expected
      *
-     * @dataProvider exampleRow
+     * @dataProvider exampleRowFile
      */
     public function testCreateFromFileLine($input, $expected)
     {
+        $this->numberFormatter->expects($this->once())
+            ->method('parseFormattedDecimal')
+            ->willReturnCallback(function ($value) {
+                if (str_contains($value, ',')) {
+                    return (float)str_replace(',', '.', $value);
+                }
+
+                if (str_contains($value, '.')) {
+                    return false;
+                }
+
+                return $value;
+            });
+
         $index = 0;
+        $input = array_values($input);
+        if (!array_key_exists(2, $input)) {
+            $this->assertProductRepository();
+        }
 
         $result = $this->quickAddRowInputParser->createFromFileLine($input, $index++);
 
@@ -86,16 +97,88 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $input
-     * @param $expected
-     *
+     * @return array
+     */
+    public function exampleRowFile()
+    {
+        return [
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'item '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                    'productUnit' => 'liter'
+                ],
+                'expected' => [
+                    'ss2',
+                    6,
+                    null
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                ],
+                'expected' => [
+                    'ss2',
+                    '6',
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4,5',
+                    'productUnit' => 'Stunde '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'hour'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'ELEMENT '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'item'
+                ]
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider exampleRow
      */
     public function testCreateFromRequest($input, $expected)
     {
+        $this->numberFormatter->expects($this->never())
+            ->method('parseFormattedDecimal');
+
         $index = 0;
 
-        $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index++);
+        if (!array_key_exists('productUnit', $input)) {
+            $this->assertProductRepository();
+        }
+
+        $result = $this->quickAddRowInputParser->createFromRequest($input, $index++);
 
         $this->assertEquals($expected[0], $result->getSku());
         $this->assertEquals($expected[1], $result->getQuantity());
@@ -105,14 +188,19 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $input
-     * @param $expected
-     *
      * @dataProvider exampleRow
      */
     public function testCreateFromPasteTextLine($input, $expected)
     {
+        $this->numberFormatter->expects($this->never())
+            ->method('parseFormattedDecimal');
+
         $index = 0;
+        $input = array_values($input);
+
+        if (!array_key_exists(2, $input)) {
+            $this->assertProductRepository();
+        }
 
         $result = $this->quickAddRowInputParser->createFromCopyPasteTextLine($input, $index++);
 
@@ -131,9 +219,56 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'input' => [
-                    ' SKU5  ',
-                    ' 4.5',
-                    'item '
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'item '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                    'productUnit' => 'liter'
+                ],
+                'expected' => [
+                    'ss2',
+                    6,
+                    null
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => 'ss2',
+                    'productQuantity' => '   6 ',
+                ],
+                'expected' => [
+                    'ss2',
+                    '6',
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'Stunde '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'hour'
+                ]
+            ],
+            [
+                'input' => [
+                    'productSku' => ' SKU5  ',
+                    'productQuantity' => ' 4.5',
+                    'productUnit' => 'ELEMENT '
                 ],
                 'expected' => [
                     'SKU5',
@@ -141,29 +276,27 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
                     'item'
                 ]
             ],
-            [
-                'input' => [
-                    'ss2',
-                    '   6 ',
-                    'liter'
-                ],
-                'expected' => [
-                    'ss2',
-                    '6',
-                    'liter'
-                ]
-            ],
-            [
-                'input' => [
-                    'ss2',
-                    '   6 ',
-                ],
-                'expected' => [
-                    'ss2',
-                    '6',
-                    'item'
-                ]
-            ]
         ];
+    }
+
+    private function assertProductRepository()
+    {
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
+            ->method('getOneOrNullResult')
+            ->with(AbstractQuery::HYDRATE_SINGLE_SCALAR)
+            ->willReturn('item');
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->productRepository
+            ->expects($this->once())
+            ->method('getPrimaryUnitPrecisionCodeQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($queryBuilder)
+            ->willReturn($query);
     }
 }

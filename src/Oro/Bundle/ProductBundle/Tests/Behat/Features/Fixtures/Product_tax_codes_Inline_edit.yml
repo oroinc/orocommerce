@@ -22,7 +22,7 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product1'
     locvalue2:
@@ -44,7 +44,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         taxCode: '@taxCode1'
@@ -55,7 +56,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 
@@ -63,6 +65,8 @@ Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
     taxCode1:
         code: 'TaxCode1'
         description: 'Tax Code 1'
+        organization: '@organization'
     taxCode2:
         code: 'TaxCode2'
         description: 'Tax Code 2'
+        organization: '@organization'

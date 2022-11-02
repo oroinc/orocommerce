@@ -1,0 +1,37 @@
+{% block _tabbed_content_content_widget_accordion_widget %}
+    {% set parentId = 'content-widget-'|uniqid %}
+
+    {% set attr = attr|merge({
+        id: parentId,
+        class: attr.class|default('') ~ "tabbed-content tabbed-content--accordion accordion-group"
+    }) %}
+
+    {% set context = {
+        parentId: parentId
+    } %}
+
+    {% do block|merge_context(context) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _tabbed_content_content_widget_accordion_items_widget %}
+    {% for key, item in tabbedContentItems %}
+        {% set itemId = 'content-widget-item-'|uniqid %}
+        <div class="accordion-group__item">
+            <h4>
+                <button class="accordion-group__trigger btn--link btn--no-offset {{ key != 0 ? 'collapsed' : '' }}" type="button" data-toggle="collapse" data-target="#{{ itemId }}" aria-expanded="{{ key != 0 }}" aria-controls="{{ itemId }}">
+                    <span class="accordion-group__trigger-icon fa-caret-right" aria-hidden="true"></span>
+                    <span class="accordion-group__trigger-text">{{ item.title }}</span>
+                </button>
+            </h4>
+
+            <div class="collapse {{ key == 0 ? 'show' : '' }}" id="{{ itemId }}" data-parent="#{{ parentId }}">
+                {%- import '@OroCMS/macros.html.twig' as CMS -%}
+                {{ CMS.renderWysiwygContent(item.content, item.contentStyle|default('')) }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

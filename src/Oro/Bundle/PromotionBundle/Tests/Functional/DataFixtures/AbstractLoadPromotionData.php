@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -32,9 +32,6 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
         $this->container = $container;
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $userRepository = $manager->getRepository(User::class);
@@ -45,7 +42,6 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
             $rule->setName($promotionData['rule']['name']);
             $rule->setSortOrder($promotionData['rule']['sortOrder']);
             $rule->setEnabled($promotionData['rule']['enabled']);
-
 
             $promotion = new Promotion();
             $promotion->setOwner($user);

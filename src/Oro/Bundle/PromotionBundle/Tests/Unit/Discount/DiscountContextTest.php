@@ -117,7 +117,7 @@ class DiscountContextTest extends \PHPUnit\Framework\TestCase
         $lineItem2 = $this->createMock(DiscountLineItem::class);
         $lineItem2->expects($this->once())
             ->method('getDiscountTotal')
-            ->willReturn(20);
+            ->willReturn(20.0);
 
         $context = new DiscountContext();
         $context->addLineItem($lineItem1);
@@ -178,5 +178,17 @@ class DiscountContextTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $discounts);
         $this->assertContains($discount1, $discounts);
         $this->assertContains($discount2, $discounts);
+    }
+
+    public function testCloneCreatesNewLineItemInstances()
+    {
+        $originalContext = new DiscountContext();
+        $originalLineItem = new DiscountLineItem();
+        $originalContext->addLineItem($originalLineItem);
+
+        $clonedContext = clone $originalContext;
+
+        $this->assertEquals($originalContext->getLineItems(), $clonedContext->getLineItems());
+        $this->assertNotSame($originalContext->getLineItems(), $clonedContext->getLineItems());
     }
 }

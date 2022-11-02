@@ -16,9 +16,6 @@ class StrategyRegister
      */
     protected $strategies = [];
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;

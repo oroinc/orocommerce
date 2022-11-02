@@ -1,4 +1,4 @@
-{% extends 'OroActionBundle:Operation:form.html.twig' %}
+{% extends '@OroAction/Operation/form.html.twig' %}
 {% set formAction = path('oro_promotion_coupon_mass_edit_widget', {gridName: 'promotion-coupons-grid', actionName: 'edit', inset: inset, values: values }) %}
 {% block form %}
     <form id="{{ form.vars.id }}"

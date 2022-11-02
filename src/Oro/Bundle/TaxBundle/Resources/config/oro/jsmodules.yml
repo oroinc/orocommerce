@@ -1,0 +1,6 @@
+dynamic-imports:
+    orosale:
+        - orotax/js/app/components/order-line-item-item-component
+        - orotax/js/app/components/order-line-item-taxes-component
+        - orotax/js/app/components/order-taxes-component
+        - orotax/js/app/views/editor/product-tax-code-editor-view

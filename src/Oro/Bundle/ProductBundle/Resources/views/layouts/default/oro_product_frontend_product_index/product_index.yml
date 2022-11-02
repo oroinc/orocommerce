@@ -1,0 +1,29 @@
+layout:
+    imports:
+        - oro_product_grid
+
+    actions:
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_name
+            optionValue: frontend-product-search-grid
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: current_row_view
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")'
+
+        - '@setOption':
+            id: product_datagrid_toolbar_display_options
+            optionName: current_row_view
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new
+            optionName: visible
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")!="no-image-view"'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new_text
+            optionName: visible
+            optionValue: '=data["oro_product_datagrid_row_view"].getThemeByGridName("frontend-product-search-grid")=="no-image-view"'

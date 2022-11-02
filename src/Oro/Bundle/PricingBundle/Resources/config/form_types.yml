@@ -62,7 +62,7 @@ services:
     oro_pricing.form.type.price_attribute_price_list:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType'
         calls:
-            - [setDataClass, ['%oro_pricing.entity.price_attribute_price_list.class%']]
+            - [setDataClass, ['Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList']]
         tags:
             - { name: form.type, alias: oro_pricing_price_attribute_price_list }
 
@@ -76,8 +76,8 @@ services:
         arguments:
             - "@doctrine"
         calls:
-            - [setDataClass, ['%oro_pricing.entity.product_price.class%']]
-            - [setPriceListClass, ['%oro_pricing.entity.price_list.class%']]
+            - [setDataClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
+            - [setPriceListClass, ['Oro\Bundle\PricingBundle\Entity\PriceList']]
         tags:
             - { name: form.type, alias: oro_pricing_product_price_collection }
 
@@ -86,7 +86,7 @@ services:
         tags:
             - { name: form.type, alias: oro_pricing_product_price }
         calls:
-            - [setDataClass, ['%oro_pricing.entity.product_price.class%']]
+            - [setDataClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
 
     oro_pricing.form.type.price_type_selector:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType'
@@ -98,7 +98,12 @@ services:
         tags:
             - { name: form.type, alias: oro_pricing_price_list_product_price }
         calls:
-            - [setDataClass, ['%oro_pricing.entity.product_price.class%']]
+            - [setDataClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
+
+    oro_pricing.form.price_list_relation:
+        class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListRelationType'
+        tags:
+            - { name: form.type }
 
     oro_pricing.form.price_list_collection:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType'
@@ -128,6 +133,23 @@ services:
             - "@oro_pricing.entity_listener.customer"
         tags:
             - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_pricing.form.extension.customer_type.flat_pricing:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerFormFlatPricingExtension'
+        arguments:
+            - "@oro_pricing.entity_listener.customer.flat_pricing"
+        tags:
+            - { name: form.type_extension, alias: oro_customer_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.form.extension.customer_group_type.flat_pricing:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormFlatPricingExtension'
+        arguments:
+            - "@oro_pricing.entity_listener.customer_group.flat_pricing"
+        tags:
+            - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
     oro_pricing.form.extension.customer_group_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension'
@@ -135,6 +157,7 @@ services:
             - "@oro_pricing.entity_listener.customer_group"
         tags:
             - { name: form.type_extension, alias: oro_customer_group_type, extended_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.form.extension.product_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
@@ -145,11 +168,13 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.form.extension.product_type.price_attributes:
         class: Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension
         arguments:
             - '@doctrine'
+            - '@oro_security.acl_helper'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
@@ -197,7 +222,7 @@ services:
             - '@translator'
             - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'
-            - '%oro_pricing.entity.price_list.class%'
+            - 'Oro\Bundle\PricingBundle\Entity\PriceList'
         tags:
             - { name: form.type, alias: oro_type_default_price_list_filter }
 

@@ -1,12 +1,21 @@
-{% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+{% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
 
 {% set buttonOptions = {
     dataUrl: false,
-    dataAttributes: {}
+    dataAttributes: {},
+    aCss: 'btn--info ',
+    iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
+    labelInIcon: false
 } %}
 
+{% set newOptions = buttonOptions|merge({
+    ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
+    iCss: 'fa fa-plus fa--fw fa--as-line',
+    labelInIcon: false
+}) %}
+
 {% set buttonsOptions = {
-    new: buttonOptions,
+    new: newOptions,
     current: buttonOptions,
     existing: buttonOptions,
     singleButtonACss : 'btn--info',
@@ -19,9 +28,9 @@
 
 <div class="widget-content btn-group">
     <div class="mass-action-controls">
-        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {% import '@OroUI/macros.html.twig' as UI %}
         {{ UI.pinnedDropdownButton({
-            'html': buttons.getButtonsHtml(buttonsOptions),
+            'html': buttons.getQuickSearchHtml(quickSearchOptions|default({})) ~ buttons.getButtonsHtml(buttonsOptions),
             'mobileEnabled': true,
             'dataAttributes': {
                 'layout': 'deferred-initialize'

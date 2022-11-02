@@ -10,3 +10,4 @@ Feature: About page availability
     Given I am on the homepage
     When I follow "About"
     Then Page title equals to "About"
+    And image "About Page Image" is loaded

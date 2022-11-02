@@ -1,0 +1,6 @@
+{% block _registration_consent_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid-col-12 register-form-consent-wrapper'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

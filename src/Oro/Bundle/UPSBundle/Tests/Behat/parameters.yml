@@ -9,3 +9,10 @@ services:
             - [setCacheDir, ['%kernel.cache_dir%']]
         tags:
             - { name: oro_integration.transport, type: '%oro_ups.integration.transport.type%', channel_type: '%oro_ups.integration.channel.type%' }
+
+    oro_ups.client.factory_basic:
+        class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Client\Factory\Basic\BasicUpsClientFactory'
+        arguments:
+            - !service
+                class: Oro\Bundle\IntegrationBundle\Test\FakeRestClientFactory
+            - '@oro_ups.client.url_provider_basic'

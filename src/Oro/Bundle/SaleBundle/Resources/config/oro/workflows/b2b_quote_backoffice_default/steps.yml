@@ -13,6 +13,7 @@ workflows:
                 allowed_transitions:
                     - cancel_transition
                     - expire_transition
+                    - auto_expire_transition
                     - delete_transition
                     - create_new_quote_transition
                     - accept_transition

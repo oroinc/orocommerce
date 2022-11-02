@@ -12,7 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 class ShoppingListActionsTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -26,10 +26,6 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testCreateOrder()
     {
-        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
-            $this->markTestSkipped('OrderBundle disabled');
-        }
-
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
@@ -52,17 +48,17 @@ class ShoppingListActionsTest extends ActionTestCase
 
         $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+            static::assertStringContainsString($lineItem->getProduct()->getSku(), $content);
         }
     }
 
     public function testLineItemCreate()
     {
-        /* @var $shoppingList ShoppingList */
+        /* @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        /* @var $unit ProductUnit */
+        /* @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
-        /* @var $product2 Product */
+        /* @var Product $product2 */
         $product = $this->getReference('product-2');
 
         $crawler = $this->assertOperationForm(
@@ -85,7 +81,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testLineItemCreateDuplicate()
     {
-        /* @var $lineItem LineItem  */
+        /* @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
         $shoppingList = $lineItem->getShoppingList();

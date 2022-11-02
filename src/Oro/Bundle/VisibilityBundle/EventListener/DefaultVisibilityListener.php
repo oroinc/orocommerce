@@ -8,9 +8,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 class DefaultVisibilityListener
 {
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();

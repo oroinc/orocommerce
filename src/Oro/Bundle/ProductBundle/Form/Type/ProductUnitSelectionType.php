@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Extends AbstractProductAwareType behavior by:
@@ -42,10 +42,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      */
     protected $entityClass;
 
-    /**
-     * @param UnitLabelFormatterInterface $productUnitFormatter
-     * @param TranslatorInterface $translator
-     */
     public function __construct(UnitLabelFormatterInterface $productUnitFormatter, TranslatorInterface $translator)
     {
         $this->productUnitFormatter = $productUnitFormatter;
@@ -61,9 +57,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setAcceptableUnits(FormEvent $event)
     {
         $form = $event->getForm();
@@ -89,9 +82,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $formParent->add($form->getName(), static::class, $options);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function validateUnits(FormEvent $event)
     {
         $form = $event->getForm();
@@ -113,6 +103,37 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 $this->translator->trans('oro.product.productunit.invalid', [], 'validators')
             )
         );
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product|null $product
+     * @return array
+     */
+    protected function getUnitPrecisions(FormInterface $form, Product $product = null)
+    {
+        if (!$product) {
+            return [];
+        }
+
+        $options = $form->getConfig()->getOptions();
+        $sell = $options['sell'];
+        $precisions = [];
+
+        foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
+            if ($sell === null) {
+                $precisions[$unitPrecision->getProductUnitCode()] = $unitPrecision->getPrecision();
+            } elseif ($sell === $unitPrecision->isSell()) {
+                $precisions[$unitPrecision->getProductUnitCode()] = $unitPrecision->getPrecision();
+            }
+        }
+
+        $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
+        if ($primaryUnitPrecision) {
+            $precisions[$primaryUnitPrecision->getProductUnitCode()] = $primaryUnitPrecision->getPrecision();
+        }
+
+        return $precisions;
     }
 
     /**
@@ -189,12 +210,14 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $productUnitHolder = $formParent->getData();
         if (!$productUnitHolder) {
             $this->formatChoiceViews($view, $options);
+
             return;
         }
 
         $productHolder = $productUnitHolder->getProductHolder();
         if (!$productHolder || !$productHolder->getProduct()) {
             $this->formatChoiceViews($view, $options);
+
             return;
         }
 
@@ -205,15 +228,18 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $productUnit = $productUnitHolder->getProductUnit();
 
         if ($this->isProductUnitRemoved($productUnitHolder, $product, $choices, $productUnit)) {
-            $removedValue = $this->translator->trans($productUnitHolder->getProductUnitCode());
+            $productUnitCode = (string) $productUnitHolder->getProductUnitCode();
+            $removedValue = $this->translator->trans($productUnitCode);
             $removedValueTitle = $this->translator->trans(
-                $options['empty_label'],
-                ['{title}' => $productUnitHolder->getProductUnitCode()]
+                (string) $options['empty_label'],
+                ['{title}' => $productUnitCode]
             );
             $view->vars['choices'][] = new ChoiceView(null, $removedValue, $removedValueTitle, ['selected' => true]);
         }
 
         $this->setChoicesViews($view, $choices, $options);
+
+        $view->vars['attr']['data-unit-precisions'] = json_encode($this->getUnitPrecisions($form, $product));
     }
 
     /**
@@ -231,13 +257,9 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         ProductUnit $productUnit = null
     ) {
         return (!$productUnit && $productUnitHolder->getEntityIdentifier())
-        || ($product && $productUnit && !in_array($productUnit, $choices, true));
+            || ($product && $productUnit && !in_array($productUnit, $choices, true));
     }
 
-    /**
-     * @param FormView $view
-     * @param array $options
-     */
     protected function formatChoiceViews(FormView $view, array $options)
     {
         /**
@@ -248,11 +270,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         }
     }
 
-    /**
-     * @param FormView $view
-     * @param array $choices
-     * @param array $options
-     */
     protected function setChoicesViews(FormView $view, array $choices, array $options)
     {
         $choices = $this->productUnitFormatter->formatChoices($choices, $options['compact']);

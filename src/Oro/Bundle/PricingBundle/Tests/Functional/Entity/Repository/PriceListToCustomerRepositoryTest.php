@@ -7,7 +7,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Model\DTO\CustomerWebsiteDTO;
@@ -18,12 +17,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PriceListToCustomerRepositoryTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures(
@@ -36,14 +36,12 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider restrictByPriceListDataProvider
-     * @param $priceList
-     * @param array $expectedCustomers
      */
     public function testRestrictByPriceList($priceList, array $expectedCustomers)
     {
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:Customer')
-            ->getRepository('OroCustomerBundle:Customer')
+            ->getManagerForClass(Customer::class)
+            ->getRepository(Customer::class)
             ->createQueryBuilder('customer');
 
         /** @var BasePriceList $priceList */
@@ -184,17 +182,15 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
      * @param string $customerGroup
      * @param string $website
      * @param array $expectedCustomers
-     * @param int $fallback
      */
-    public function testGetCustomerIteratorByFallback($customerGroup, $website, $expectedCustomers, $fallback = null)
+    public function testGetCustomerIteratorWithDefaultFallback($customerGroup, $website, $expectedCustomers)
     {
-        /** @var $customerGroup  CustomerGroup */
+        /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->getReference($customerGroup);
-        /** @var $website Website */
+        /** @var Website $website */
         $website = $this->getReference($website);
 
-        $iterator = $this->getRepository()
-            ->getCustomerIteratorByDefaultFallback($customerGroup, $website, $fallback);
+        $iterator = $this->getRepository()->getCustomerIteratorWithDefaultFallback($customerGroup, $website);
 
         $actualSiteMap = [];
         foreach ($iterator as $customer) {
@@ -209,40 +205,17 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
     public function getPriceListIteratorDataProvider()
     {
         return [
-            'with fallback group1' => [
+            'group1' => [
                 'customerGroup' => 'customer_group.group1',
                 'website' => 'US',
                 'expectedCustomers' => [
-                    'customer.level_1',
-                    'customer.level_1.3',
-                ],
-                'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP
-            ],
-            'without fallback group1' => [
-                'customerGroup' => 'customer_group.group1',
-                'website' => 'US',
-                'expectedCustomers' => [
-                    'customer.level_1',
-                    'customer.level_1.3',
+                    'customer.level_1.3'
                 ]
             ],
-            'with fallback group2' => [
+            'group2' => [
                 'customerGroup' => 'customer_group.group2',
                 'website' => 'US',
-                'expectedCustomers' => [
-                    'customer.level_1.2.1',
-                    'customer.level_1.2.1.1'
-                ],
-                'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP
-            ],
-            'without fallback group2' => [
-                'customerGroup' => 'customer_group.group2',
-                'website' => 'US',
-                'expectedCustomers' => [
-                    'customer.level_1.2',
-                    'customer.level_1.2.1',
-                    'customer.level_1.2.1.1'
-                ],
+                'expectedCustomers' => []
             ],
         ];
     }
@@ -291,55 +264,20 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
         $this->assertSame($result1, $result2);
     }
 
-    public function testGetCustomerWebsitePairsByCustomer()
-    {
-        /** @var Customer $customer */
-        $customer = $this->getReference('customer.level_1_1');
-
-        /** @var CustomerWebsiteDTO[] $result */
-        $result = $this->getRepository()->getCustomerWebsitePairsByCustomer($customer);
-        $this->assertCount(2, $result);
-
-        $expected = [
-            $customer->getId() => [
-                $this->getReference('US')->getId(),
-                $this->getReference('Canada')->getId()
-            ]
-        ];
-
-        $actual = [];
-        foreach ($result as $item) {
-            $actual[$item->getCustomer()->getId()][] = $item->getWebsite()->getId();
-        }
-
-        foreach ($actual as $customerId => $websites) {
-            $this->assertEquals($customer->getId(), $customerId);
-            foreach ($websites as $website) {
-                $this->assertContains($website, $expected[$customerId]);
-            }
-        }
-    }
-
-    public function testGetAllCustomerWebsitePairs()
+    public function testGetAllCustomerWebsitePairsWithSelfFallback()
     {
         /** @var CustomerWebsiteDTO[] $result */
-        $result = $this->getRepository()->getAllCustomerWebsitePairs();
-        $this->assertCount(5, $result);
+        $result = $this->getRepository()->getAllCustomerWebsitePairsWithSelfFallback();
+        $this->assertCount(3, $result);
 
         $expected = [
-            $this->getReference('customer.level_1.3')->getId() => [
-                $this->getReference('US')->getId(),
-            ],
             $this->getReference('customer.level_1_1')->getId() => [
                 $this->getReference('Canada')->getId(),
-                $this->getReference('US')->getId(),
             ],
             $this->getReference('customer.level_1.2')->getId() => [
                 $this->getReference('US')->getId(),
+                $this->getReference('Canada')->getId()
             ],
-            $this->getReference('customer.level_1.1.1')->getId() => [
-                $this->getReference('Canada')->getId(),
-            ]
         ];
 
         $actual = [];
@@ -365,8 +303,6 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider dataProviderRelationsByCustomer
-     * @param $customers
-     * @param $expectsResult
      */
     public function testGetRelationsByHolders($customers, $expectsResult)
     {
@@ -415,6 +351,119 @@ class PriceListToCustomerRepositoryTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceListToCustomer');
+        return $this->getContainer()->get('doctrine')->getRepository(PriceListToCustomer::class);
+    }
+
+    /**
+     * @dataProvider assignedPriceListsDataProvider
+     * @param string $websiteReference
+     * @param string $customerReference
+     * @param bool $expected
+     */
+    public function testHasAssignedPriceLists($websiteReference, $customerReference, $expected)
+    {
+        /** @var Website $website */
+        $website = $this->getReference($websiteReference);
+        /** @var Customer $customerGroup */
+        $customer = $this->getReference($customerReference);
+
+        $this->assertEquals($expected, $this->getRepository()->hasAssignedPriceLists($website, $customer));
+    }
+
+    public function assignedPriceListsDataProvider(): array
+    {
+        return [
+            ['US', 'customer.level_1_1', true],
+            ['CA', 'customer.level_1_1', false]
+        ];
+    }
+
+    public function testGetAllCustomersWithEmptyGroupAndDefaultFallback()
+    {
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        $customers = iterator_to_array(
+            $this->getRepository()->getAllCustomersWithEmptyGroupAndDefaultFallback($website)
+        );
+
+        $this->assertCount(1, $customers);
+        $this->assertEquals('customer.level_1_1', $customers[0]->getName());
+    }
+
+    public function testGetCustomersWithAssignedPriceListsNoGroup()
+    {
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        /** @var Customer $expectedCustomer */
+        $expectedCustomer = $this->getReference('customer.level_1_1');
+
+        $customers = $this->getRepository()->getCustomersWithAssignedPriceLists($website);
+        $this->assertCount(1, $customers);
+        $this->assertArrayHasKey($expectedCustomer->getId(), $customers);
+        $this->assertTrue($customers[$expectedCustomer->getId()]);
+    }
+
+    public function testGetCustomersWithAssignedPriceListsWithGroup()
+    {
+        /** @var Website $website */
+        $website = $this->getReference('US');
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference('customer_group.group1');
+        /** @var Customer $expectedCustomer */
+        $expectedCustomer = $this->getReference('customer.level_1.3');
+
+        $customers = $this->getRepository()->getCustomersWithAssignedPriceLists($website, $customerGroup);
+        $this->assertCount(1, $customers);
+        $this->assertArrayHasKey($expectedCustomer->getId(), $customers);
+        $this->assertTrue($customers[$expectedCustomer->getId()]);
+    }
+
+    public function testGetFirstRelation()
+    {
+        $customer = $this->getReference('customer.level_1_1');
+        $website = $this->getReference('US');
+        $expectedPriceList = $this->getReference('price_list_2');
+
+        $priceListRelation = $this->getRepository()->getFirstRelation($website, $customer);
+        $this->assertInstanceOf(PriceListToCustomer::class, $priceListRelation);
+        $this->assertEquals($expectedPriceList->getId(), $priceListRelation->getPriceList()->getId());
+    }
+
+    public function testGetCustomerIteratorWithSelfFallback()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference('customer_group.group2');
+
+        $customers = $this->getRepository()->getCustomerIteratorWithSelfFallback($customerGroup, $website);
+
+        $customerIds = [];
+        foreach ($customers as $customer) {
+            $customerIds[] = $customer->getId();
+        }
+
+        $expected = [
+            $this->getReference('customer.level_1.2')->getId()
+        ];
+        $this->assertEqualsCanonicalizing($expected, $customerIds);
+    }
+
+    public function testGetAllCustomersWithEmptyGroupAndSelfFallback()
+    {
+        /** @var Website $website */
+        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
+
+        $customers = $this->getRepository()->getAllCustomersWithEmptyGroupAndSelfFallback($website);
+
+        $customerIds = [];
+        foreach ($customers as $customer) {
+            $customerIds[] = $customer->getId();
+        }
+
+        $expected = [
+            $this->getReference('customer.level_1_1')->getId()
+        ];
+        $this->assertEqualsCanonicalizing($expected, $customerIds);
     }
 }

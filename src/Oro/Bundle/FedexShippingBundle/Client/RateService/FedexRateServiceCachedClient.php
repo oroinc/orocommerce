@@ -25,11 +25,6 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
      */
     private $cacheKeyFactory;
 
-    /**
-     * @param FedexRateServiceBySettingsClientInterface $rateServiceClient
-     * @param FedexResponseCacheInterface               $cache
-     * @param FedexResponseCacheKeyFactoryInterface     $cacheKeyFactory
-     */
     public function __construct(
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
         FedexResponseCacheInterface $cache,

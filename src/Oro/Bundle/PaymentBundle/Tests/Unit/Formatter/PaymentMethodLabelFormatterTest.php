@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
@@ -23,7 +23,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
      */
     protected $formatter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodViewProvider = $this
             ->getMockBuilder(CompositePaymentMethodViewProvider::class)
@@ -36,23 +36,34 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
         $this->formatter = new PaymentMethodLabelFormatter($this->paymentMethodViewProvider);
     }
 
-    public function testFormatPaymentMethodLabel()
+    public function testFormatPaymentMethodLabelWithExistingPaymentMethodAndShortLabel()
     {
-        $label = 'label';
+        $label = 'short_label';
         $paymentMethodConstant = 'payment_method';
-        $paymentMethodNotExistsConstant = 'not_exists_method';
         $this->paymentMethodViewProvider
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('getPaymentMethodView')
             ->with($paymentMethodConstant)
             ->willReturn($this->paymentMethodView);
+
+        $this->paymentMethodView
+            ->expects($this->never())
+            ->method('getLabel');
+
+        $this->paymentMethodView
+            ->expects($this->once())
+            ->method('getShortLabel')
+            ->willReturn($label);
+
+        $this->assertEquals($this->formatter->formatPaymentMethodLabel($paymentMethodConstant), $label);
+    }
+
+    public function testFormatPaymentMethodLabelWithExistingPaymentMethodAndNonShortLabel()
+    {
+        $label = 'label';
+        $paymentMethodConstant = 'payment_method';
         $this->paymentMethodViewProvider
-            ->expects($this->at(1))
-            ->method('getPaymentMethodView')
-            ->with($paymentMethodNotExistsConstant)
-            ->willThrowException(new \InvalidArgumentException());
-        $this->paymentMethodViewProvider
-            ->expects($this->at(2))
+            ->expects($this->once())
             ->method('getPaymentMethodView')
             ->with($paymentMethodConstant)
             ->willReturn($this->paymentMethodView);
@@ -63,13 +74,31 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
             ->willReturn($label);
 
         $this->paymentMethodView
-            ->expects($this->once())
-            ->method('getShortLabel')
-            ->willReturn($label);
+            ->expects($this->never())
+            ->method('getShortLabel');
 
-        $this->assertEquals($this->formatter->formatPaymentMethodLabel($paymentMethodConstant), $label);
-        $this->assertEquals($this->formatter->formatPaymentMethodLabel($paymentMethodNotExistsConstant), '');
         $this->assertEquals($this->formatter->formatPaymentMethodLabel($paymentMethodConstant, false), $label);
+    }
+
+    public function testFormatPaymentMethodLabelWithNotExistinigPaymentMethod()
+    {
+        $paymentMethodNotExistsConstant = 'not_exists_method';
+
+        $this->paymentMethodViewProvider
+            ->expects($this->once())
+            ->method('getPaymentMethodView')
+            ->with($paymentMethodNotExistsConstant)
+            ->willThrowException(new \InvalidArgumentException());
+
+        $this->paymentMethodView
+            ->expects($this->never())
+            ->method('getLabel');
+
+        $this->paymentMethodView
+            ->expects($this->never())
+            ->method('getShortLabel');
+
+        $this->assertEquals($this->formatter->formatPaymentMethodLabel($paymentMethodNotExistsConstant), '');
     }
 
     public function testFormatPaymentMethodAdminLabel()

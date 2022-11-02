@@ -12,23 +12,13 @@ abstract class AbstractSurchargeListener
     /** @var SubtotalProviderInterface */
     protected $subtotalProvider;
 
-    /**
-     * @param Surcharge $model
-     * @param $amount
-     */
     abstract protected function setAmount(Surcharge $model, $amount);
 
-    /**
-     * @param SubtotalProviderInterface $provider
-     */
     public function __construct(SubtotalProviderInterface $provider)
     {
         $this->subtotalProvider = $provider;
     }
 
-    /**
-     * @param CollectSurchargeEvent $event
-     */
     public function onCollectSurcharge(CollectSurchargeEvent $event)
     {
         $entity = $event->getEntity();

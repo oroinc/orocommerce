@@ -2,41 +2,48 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
-use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
 class ProductImageResizeEventTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_IMAGE_ID = 1;
+    private const PRODUCT_IMAGE_ID = 1;
 
-    /**
-     * @var ProductImageResizeEvent
-     */
-    protected $event;
+    private ProductImageResizeEvent $event;
 
-    /**
-     * @var ProductImage
-     */
-    protected $productImageId;
-
-    public function setUp()
+    protected function setUp(): void
     {
         $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID);
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $expectedData = [
             'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force' => false
+            'force' => false,
+            'dimensions' => null
         ];
 
-        $this->assertEquals($expectedData, $this->event->getData());
+        self::assertEquals($expectedData, $this->event->getData());
     }
 
-    public function testForceSetCorrect()
+    public function testForceSetCorrect(): void
     {
-        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, true);
-        $this->assertTrue($this->event->getData()['force']);
+        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, true, []);
+
+        self::assertTrue($this->event->getData()['force']);
+    }
+
+    public function testDimensionsSetCorrect(): void
+    {
+        $dimensions = ['small', 'large'];
+        $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID, false, $dimensions);
+
+        self::assertSame($dimensions, $this->event->getData()['dimensions']);
+    }
+
+    public function testGetTopicName(): void
+    {
+        self::assertEquals(ResizeProductImageTopic::getName(), $this->event->getTopicName());
     }
 }

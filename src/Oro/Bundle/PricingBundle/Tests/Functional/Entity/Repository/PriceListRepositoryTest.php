@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Migrations\Data\ORM\LoadPriceListData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -18,18 +19,19 @@ class PriceListRepositoryTest extends WebTestCase
      */
     protected $defaultPriceList;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([
             LoadPriceRules::class,
             LoadProductPrices::class,
+            LoadPriceListRelations::class
         ]);
 
         $this->defaultPriceList = $this->getDefaultPriceList();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->getRepository()->setDefault($this->defaultPriceList);
         parent::tearDown();
@@ -118,12 +120,46 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertFalse($priceList->isActual());
     }
 
+    public function testGetActivePriceListById()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $this->assertSame($priceList, $this->getRepository()->getActivePriceListById($priceList->getId()));
+    }
+
+    public function testGetActivePriceListByIdForInactive()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+        $this->assertNull($this->getRepository()->getActivePriceListById($priceList->getId()));
+    }
+
+    public function testGetPriceListByCustomer()
+    {
+        $customer = $this->getReference('customer.level_1_1');
+        $website = $this->getReference('US');
+
+        $priceList = $this->getRepository()->getPriceListByCustomer($customer, $website);
+        $expectedPriceList = $this->getReference('price_list_2');
+
+        $this->assertSame($expectedPriceList->getId(), $priceList->getId());
+    }
+
+    public function testGetPriceListByCustomerGroup()
+    {
+        $customerGroup = $this->getReference('customer_group.group1');
+        $website = $this->getReference('US');
+
+        $priceList = $this->getRepository()->getPriceListByCustomerGroup($customerGroup, $website);
+        $expectedPriceList = $this->getReference('price_list_5');
+
+        $this->assertSame($expectedPriceList->getId(), $priceList->getId());
+    }
+
     /**
      * @return PriceListRepository
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceList');
+        return $this->getContainer()->get('doctrine')->getRepository(PriceList::class);
     }
 
     /**
@@ -131,6 +167,6 @@ class PriceListRepositoryTest extends WebTestCase
      */
     protected function getManager()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceList');
+        return $this->getContainer()->get('doctrine')->getManagerForClass(PriceList::class);
     }
 }

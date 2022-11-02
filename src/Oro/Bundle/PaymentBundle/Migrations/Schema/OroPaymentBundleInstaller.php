@@ -24,7 +24,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**
@@ -50,8 +50,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create table for PaymentTransaction entity
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentTransactionTable(Schema $schema)
     {
@@ -85,8 +83,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_payment_method_config table
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentMethodConfigTable(Schema $schema)
     {
@@ -100,8 +96,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_payment_mtds_cfgs_rl table
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentMethodsConfigsRuleTable(Schema $schema)
     {
@@ -121,8 +115,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_payment_mtds_cfgs_rl_d table
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentMethodsConfigsRuleDestinationTable(Schema $schema)
     {
@@ -137,8 +129,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_payment_mtdscfgsrl_dst_pc table
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentMethodsConfigsRuleDestinationPostalCodeTable(Schema $schema)
     {
@@ -151,8 +141,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_payment_transaction foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentTransactionForeignKeys(Schema $schema)
     {
@@ -185,8 +173,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_payment_method_config foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentMethodConfigForeignKeys(Schema $schema)
     {
@@ -201,8 +187,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_payment_mtds_cfgs_rl foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentMethodsConfigsRuleForeignKeys(Schema $schema)
     {
@@ -224,8 +208,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_payment_mtds_cfgs_rl_d foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentMethodsConfigsRuleDestinationForeignKeys(Schema $schema)
     {
@@ -252,8 +234,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_payment_mtdscfgsrl_dst_pc foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentMethodsConfigsRuleDestinationPostalCodeForeignKeys(Schema $schema)
     {
@@ -268,8 +248,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_payment_status
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentStatusTable(Schema $schema)
     {
@@ -284,8 +262,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Create oro_payment_mtds_rule_website table
-     *
-     * @param Schema $schema
      */
     protected function createOroPaymentMtdsRuleWebsiteTable(Schema $schema)
     {
@@ -298,8 +274,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Add oro_payment_mtds_rule_website foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroPaymentMtdsRuleWebsiteForeignKeys(Schema $schema)
     {
@@ -320,8 +294,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
 
     /**
      * Sets the ActivityExtension
-     *
-     * @param ActivityExtension $activityExtension
      */
     public function setActivityExtension(ActivityExtension $activityExtension)
     {

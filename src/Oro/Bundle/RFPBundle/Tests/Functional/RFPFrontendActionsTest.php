@@ -15,7 +15,7 @@ class RFPFrontendActionsTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -92,7 +92,7 @@ class RFPFrontendActionsTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Request has been saved', $crawler->html());
+        static::assertStringContainsString('Request has been saved', $crawler->html());
     }
 
     /**
@@ -106,9 +106,9 @@ class RFPFrontendActionsTest extends WebTestCase
         $basePath = 'input[name="oro_rfp_frontend_request[requestProducts]';
 
         for ($i = 0; $i < $count; $i++) {
-            $value = $crawler->filter($basePath.'['.$i.'][product]"]')->extract('value');
+            $value = $crawler->filter($basePath.'['.$i.'][product]"]')->extract(['value']);
             $quantity = $crawler->filter($basePath.'['.$i.'][requestProductItems][0][quantity]"]')
-                ->extract('value');
+                ->extract(['value']);
 
             $this->assertNotEmpty($value, 'Product is empty');
             $this->assertNotEmpty($quantity, 'Quantity is empty');

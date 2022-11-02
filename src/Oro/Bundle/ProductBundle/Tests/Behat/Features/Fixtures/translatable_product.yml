@@ -1,0 +1,152 @@
+include:
+  - '@OroLocaleBundle:ZuluLocalization.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@each'
+    precision: '1'
+    sell: true
+  precision2:
+    unit: '@each'
+    precision: '1'
+    sell: true
+  precision3:
+    unit: '@each'
+    precision: '1'
+    sell: true
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  locValue1:
+    string: 'Product1'
+  zuluLocValue1:
+    string: '\<script\>alert("Product1_ZU");\</script\>'
+    localization: '@localization_zulu'
+  locValue2:
+    string: 'Product2'
+  zuluLocValue2:
+    string: 'Product2_ZU'
+    localization: '@localization_zulu'
+  locValue3:
+    string: 'Product3'
+  zuluLocValue3:
+    string: 'Product3_ZU'
+    localization: '@localization_zulu'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  slugPrototype{1..3}:
+    string: 'product<current()>'
+  zuluSlugPrototype{1..3}:
+    string: 'product_zulu<current()>'
+    localization: '@localization_zulu'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+  slug1:
+    url: '/product1'
+    slugPrototype: 'product1'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: {'id': '@product1->id'}
+  slug2:
+    url: '/product2'
+    slugPrototype: 'product2'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product2->id' }
+  slug3:
+    url: '/product3'
+    slugPrototype: 'product3'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product3->id' }
+  zuluSlug1:
+    url: '/product_zulu1'
+    slugPrototype: 'product_zulu1'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product1->id' }
+    localization: '@localization_zulu'
+  zuluSlug2:
+    url: '/product_zulu2'
+    slugPrototype: 'product_zulu2'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product2->id' }
+    localization: '@localization_zulu'
+  zuluSlug3:
+    url: '/product_zulu3'
+    slugPrototype: 'product_zulu3'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: { 'id': '@product3->id' }
+    localization: '@localization_zulu'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'SKU1'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setNames: [['@locValue1', '@zuluLocValue1']]
+    slugPrototypes: ['@slugPrototype1', '@zuluSlugPrototype1']
+    slugs: ['@slug1', '@zuluSlug1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+    featured: true
+  product2:
+    sku: 'SKU2'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision2'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setNames: [['@locValue2', '@zuluLocValue2']]
+    slugPrototypes: ['@slugPrototype2', '@zuluSlugPrototype2']
+    slugs: ['@slug2', '@zuluSlug2']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+    featured: true
+  product3:
+    sku: 'SKU3'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision3'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setNames: [['@locValue3', '@zuluLocValue3']]
+    slugPrototypes: ['@slugPrototype3', '@zuluSlugPrototype3']
+    slugs: ['@slug3', '@zuluSlug3']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+    featured: true
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+  relatedProduct1_1:
+    product: '@product1'
+    relatedItem: '@product1'
+  relatedProduct1_2:
+    product: '@product1'
+    relatedItem: '@product2'
+  relatedProduct1_3:
+    product: '@product1'
+    relatedItem: '@product3'
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct:
+  upsellItem1_1:
+    product: '@product1'
+    relatedItem: '@product1'
+  upsellItem1_2:
+    product: '@product1'
+    relatedItem: '@product2'
+  upsellItem1_3:
+    product: '@product1'
+    relatedItem: '@product3'

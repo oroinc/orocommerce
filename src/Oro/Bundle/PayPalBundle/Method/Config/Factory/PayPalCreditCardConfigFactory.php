@@ -5,6 +5,9 @@ namespace Oro\Bundle\PayPalBundle\Method\Config\Factory;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 
+/**
+ * Config factory for PayPal Payflow Gateway / Payments Pro payment method
+ */
 class PayPalCreditCardConfigFactory extends AbstractPayPalConfigFactory implements
     PayPalCreditCardConfigFactoryInterface
 {
@@ -38,8 +41,8 @@ class PayPalCreditCardConfigFactory extends AbstractPayPalConfigFactory implemen
             $settings->getAuthorizationForRequiredAmount();
 
         $params[PayPalCreditCardConfig::USE_PROXY_KEY] = $settings->getUseProxy();
-        $params[PayPalCreditCardConfig::PROXY_HOST_KEY] = $this->getDecryptedValue($settings->getProxyHost());
-        $params[PayPalCreditCardConfig::PROXY_PORT_KEY] = $this->getDecryptedValue($settings->getProxyPort());
+        $params[PayPalCreditCardConfig::PROXY_HOST_KEY] = $settings->getProxyHost();
+        $params[PayPalCreditCardConfig::PROXY_PORT_KEY] = $settings->getProxyPort();
         $params[PayPalCreditCardConfig::ENABLE_SSL_VERIFICATION_KEY] = $settings->getEnableSSLVerification();
 
         return new PayPalCreditCardConfig($params);

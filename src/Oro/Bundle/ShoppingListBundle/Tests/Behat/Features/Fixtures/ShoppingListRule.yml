@@ -16,7 +16,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
        confirmed: '1'
        customer: '@customer1'
        organization: '@organization'
-       role: ['@buyer']
+       userRoles: ['@buyer']
        owner: '@admin'
        website: '@website1'
 
@@ -28,16 +28,19 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
       unit: '@set'
       precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'product1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
    product1:
        sku: 'AA1'
+       attributeFamily: '@defaultProductFamily'
+       organization: '@organization'
        primaryUnitPrecision: '@precision1'
        additionalUnitPrecisions: ['@precision2']
-       addName: ['@locvalue1']
+       __calls:
+            - addName: ['@locvalue1']
        inventoryStatus: '@enumInventoryStatuses'
        status: 'enabled'
        featured: true

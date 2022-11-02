@@ -73,10 +73,6 @@ class AddProductsMassActionArgsParserTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedUnitsAndQuantities, $parser->getUnitsAndQuantities());
     }
 
-    /**
-     * @param array $data
-     * @return MassActionHandlerArgs
-     */
     private function createHandlerArgsWithData(array $data): MassActionHandlerArgs
     {
         /** @var MassActionInterface $massAction */

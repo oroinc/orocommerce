@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener;
@@ -47,7 +47,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolvePaymentTermListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->event = new ResolvePaymentTermEvent();
         $this->requestStack = $this->createMock(RequestStack::class);
@@ -146,9 +146,6 @@ class ResolvePaymentTermListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($paymentTerm, $this->event->getPaymentTerm());
     }
 
-    /**
-     * @param Checkout|null $checkout
-     */
     protected function mockGetCurrentCheckout(Checkout $checkout = null)
     {
         $request = new Request();

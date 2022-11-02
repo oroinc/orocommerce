@@ -17,10 +17,6 @@ class PaymentMethodObject
      */
     private $options;
 
-    /**
-     * @param string $label
-     * @param array $options
-     */
     public function __construct(string $label, array $options)
     {
         $this->label = $label;

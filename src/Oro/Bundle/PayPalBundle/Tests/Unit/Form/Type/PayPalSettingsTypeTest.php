@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PayPalSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -33,11 +31,6 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $encoder;
-
-    /**
      * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $translator;
@@ -50,7 +43,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 
@@ -71,10 +64,8 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
                 'charge',
             ]);
 
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
         $this->formType = new PayPalSettingsType(
             $this->translator,
-            $this->encoder,
             $creditCardTypesDataProvider,
             $this->paymentActionsDataProvider
         );
@@ -94,7 +85,6 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
                 [
                     PayPalSettingsType::class => $this->formType,
                     LocalizedFallbackValueCollectionType::class => $localizedType,
-                    OroEncodedPlaceholderPasswordType::class => new OroEncodedPlaceholderPasswordType($this->encoder),
                 ],
                 []
             ),
@@ -133,18 +123,6 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'enableSSLVerification' => false,
         ];
 
-        $this->encoder
-            ->expects(static::any())
-            ->method('encryptData')
-            ->willReturnMap([
-                [$submitData['vendor'], $submitData['vendor']],
-                [$submitData['partner'], $submitData['partner']],
-                [$submitData['user'], $submitData['user']],
-                [$submitData['password'], $submitData['password']],
-                [$submitData['proxyHost'], $submitData['proxyHost']],
-                [$submitData['proxyPort'], $submitData['proxyPort']],
-            ]);
-
         $payPalSettings = new PayPalSettings();
 
         $form = $this->factory->create(PayPalSettingsType::class, $payPalSettings);
@@ -152,6 +130,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $form->submit($submitData);
 
         static::assertTrue($form->isValid());
+        static::assertTrue($form->isSynchronized());
         static::assertEquals($payPalSettings, $form->getData());
     }
 
@@ -211,7 +190,6 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
         $formType = new PayPalSettingsType(
             $this->translator,
-            $this->encoder,
             $creditCardTypesDataProvider,
             $this->paymentActionsDataProvider
         );

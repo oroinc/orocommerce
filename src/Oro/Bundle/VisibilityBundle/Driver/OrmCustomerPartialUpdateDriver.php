@@ -26,12 +26,6 @@ class OrmCustomerPartialUpdateDriver extends AbstractCustomerPartialUpdateDriver
      */
     private $itemEntityManager;
 
-    /**
-     * @param PlaceholderProvider $placeholderProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param ProductVisibilityProvider $productVisibilityProvider
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
     public function __construct(
         PlaceholderProvider $placeholderProvider,
         ProductVisibilityProvider $productVisibilityProvider,

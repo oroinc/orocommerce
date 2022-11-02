@@ -1,31 +1,62 @@
+{% block _body_widget %}
+    {% if selected_currency is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' currency--' ~ selected_currency|lower
+        }) %}
+    {% endif %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block currency_switcher_widget %}
     {% if currencies|length > 1 %}
-    <div class="oro-toolbar"
-         data-page-component-module="oropricing/js/app/components/currency-switcher-component"
-         data-page-component-options="{{ {
-             'selectedCurrency': selected_currency,
-             'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
-         }|json_encode }}">
+    <div class="oro-toolbar">
         {% set togglerId = 'dropdown-'|uniqid %}
-        <div class="oro-toolbar__content" data-toggle="dropdown" data-popper="false" role="button" id="{{ togglerId }}"
+        <div class="oro-toolbar__content currency-switcher currency-switcher--{{ selected_currency|lower }}" data-toggle="dropdown" data-popper="false" role="button" data-currency="{{ selected_currency|lower }}" id="{{ togglerId }}"
              aria-haspopup="true" aria-expanded="false"
              aria-label="{{ 'oro.pricing.productprice.currency.label'|trans }}">
-            {{ oro_currency_symbol(selected_currency) }}
+            {{- oro_currency_symbol(selected_currency) -}}
             <span class="oro-toolbar__icon" aria-hidden="true">
                 <span class="fa-angle-down"></span>
             </span>
         </div>
 
         <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
-            <ul class="oro-toolbar__list">
-                {% for currency in currencies %}
-                <li class="oro-toolbar__list-item">
-                    <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
-                        <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>{{ oro_currency_name(currency) }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+            <div data-page-component-module="oropricing/js/app/components/currency-switcher-component"
+                 data-page-component-options="{{ {
+                     'selectedCurrency': selected_currency,
+                     'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
+                 }|json_encode }}"
+                 data-dom-relocation-options="{{ {
+                     responsive: [
+                         {
+                             viewport: {
+                                 maxScreenType: 'tablet',
+                             },
+                             moveTo: '[data-switcher-currency-target]'
+                         }
+                     ]
+                 }|json_encode }}">
+                <ul class="oro-toolbar__list">
+                    {% for currency in currencies %}
+                    <li class="oro-toolbar__list-item currency-switcher__item currency-switcher__item--{{ currency|lower }}">
+                        {% if selected_currency == currency %}
+                            <span class="oro-toolbar__link oro-toolbar__link--active">
+                                {%- apply spaceless -%}
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
+                                {%- endapply -%}
+                            </span>
+                        {% else %}
+                            <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
+                                {%- apply spaceless -%}
+                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
+                                {%- endapply -%}
+                            </a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
     {% endif %}
@@ -38,20 +69,37 @@
         entityClassName: oro_url_class_name(entityClassName),
         entityId: entityId,
         skipMaskView: skipMaskView,
-        data: totals
+        data: totals,
     }%}
     {% if selectors is defined %}
         {% set options = options|merge({selectors: selectors}) %}
     {% endif %}
     {% placeholder oro_pricing_totals_before %}
 
+    {% if totalsConainerClassName is not defined %}
+        {% set totalsConainerClassName = 'order-checkout-widget__container order-checkout-widget__container--fixed-width' %}
+    {% endif %}
+
     {% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}
     <div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|default({})|json_encode }}">
         <div class="totals-container">
             {% block data_totals_container %}
-                <div class="order-checkout-widget__container">
+                <div{% if totalsConainerClassName|length %} class="{{ totalsConainerClassName }}"{% endif %}>
                     <div class="totals-container">
-                        <table class="order-checkout-widget__table pull-right">
+                        <table class="order-checkout-widget__table">
+                            {% if itemsCount is defined %}
+                            <tbody>
+                                <tr>
+                                    <th class="order-checkout-widget__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
+                                    <td>{{ 'oro.pricing.frontend.summary_count'|trans({'%count%': itemsCount}) }}</td>
+                                </tr>
+                                <tr aria-hidden="true" class="order-checkout-widget__table-presentation">
+                                    <td colspan="2">
+                                        <hr class="order-checkout-widget__divider">
+                                    </td>
+                                </tr>
+                            </tbody>
+                            {% endif %}
                             <tbody data-totals-container></tbody>
                         </table>
                     </div>
@@ -75,28 +123,28 @@
         <tbody>
         <% var addNewLine = false %>
         <% var modelPrices = _.sortBy(model.prices, 'quantity'); %>
-        <% _.each(model.product_units, function(key) { %>
-        <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
+        <% _.each(model.product_units, function(val, unit) { %>
+        <% var prices = _.filter(modelPrices, function(price){return price.unit === unit}); %>
         <% if (prices.length) { %>
         <tr>
-            <td colspan="2" class="text-capitalize">
-                <%= addNewLine ? '<br/>' : '' %>
-                <b><%= _.__('oro.product.product_unit.' + key + '.label.full') %></b>
+            <td colspan="2">
+                <% if (addNewLine) { %><br/><% } %>
+                <%- _.__('oro.product.product_unit.' + unit + '.label.full') %>
             </td>
         </tr>
         <% addNewLine = true %>
         <% _.each(prices, function(price) { %>
         <tr class="<% if (!_.isEmpty(matchedPrice) && price.unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
-            <td><%= price.quantity %></td>
+            <td><%- price.quantity %></td>
             <td>
                 <% if (clickable) { %>
                 <a
-                        href="javascript: void(0);"
-                        data-price="<%= parseFloat(price.price) %>"
-                        data-unit="<%= price.unit %>"
-                ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                        href="#"
+                        data-price="<%- parseFloat(price.price) %>"
+                        data-unit="<%- price.unit %>"
+                ><%- formatter.formatCurrency(price.price, price.currency) %></a>
                 <% } else { %>
-                <%= formatter.formatCurrency(price.price, price.currency) %>
+                <%- formatter.formatCurrency(price.price, price.currency) %>
                 <% } %>
             </td>
         </tr>
@@ -107,12 +155,25 @@
     </table>
 {% endblock %}
 
-{% block product_price_hint_js_widget %}
-    <span class="product-tier-prices"
+{% block product_price_hint_trigger_js_widget %}
+    {% set productTierClass = productTierClass|default('btn btn--default btn--size-s product-tier-prices') %}
+    {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
+    {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
+
+    <button class="{{ productTierClass }}"
+          data-role="price-hint-trigger"
           data-toggle="popover"
           data-placement="bottom"
           data-close="false"
-          data-class="prices-hint-content">
-        <i class="popover-trigger"></i>
-    </span>
+          data-class="prices-hint-content"
+          title="{{ 'oro.pricing.view_all_prices'|trans }}"
+          aria-label="{{ productAriaLabel }}"
+          type="button"
+    ><span class="popover-trigger {{ productTierIcon }}" aria-hidden="true"></span></button>
+{% endblock %}
+
+{% block product_price_hint_trigger_info_js_widget %}
+    {% set productTierIcon = 'link link--none-decoration fa-info-circle fa--no-offset' %}
+
+    {{ block('product_price_hint_trigger_js_widget') }}
 {% endblock %}

@@ -1,7 +1,23 @@
 /* @theme: custom; */
 
 .collapse-mode {
+    .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+
+        > :first-child {
+            width: 100%;
+        }
+
+        .filter-items {
+            display: $filter-collapse-mode-items-display;
+            grid-template-columns: $filter-collapse-mode-items-grid-template-columns;
+            padding: $filter-collapse-mode-items-padding;
+        }
+    }
+
     .filter-items-hint {
+        min-width: 100%;
         padding: $filter-collapse-mode-items-hint-offset-inner;
 
         line-height: $filter-collapse-mode-items-hint-line-height;
@@ -29,16 +45,15 @@
 
     .filter-item {
         flex-basis: auto;
-        width: $filter-collapse-mode-filter-item-width;
-        margin: $filter-collapse-mode-filter-item-offset;
-        padding: $filter-collapse-mode-filter-item-inner-offset;
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .collapse-mode {
-        .filter-item {
-            width: $filter-collapse-mode-filter-item-tablet-small-width;
+        .filter-container {
+            .filter-items {
+                grid-template-columns: $filter-collapse-mode-items-tablet-grid-template-columns;
+            }
         }
     }
 }

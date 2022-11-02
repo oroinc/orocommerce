@@ -25,7 +25,7 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestC
      */
     protected $converter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->converter = new LineItemsToDiscountLineItemsConverter($this->productPricesDataProvider);
@@ -33,9 +33,6 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider converterDataProvider
-     * @param array $lineItems
-     * @param array $matchedPrices
-     * @param array $expected
      */
     public function testConvert(array $lineItems, array $matchedPrices, array $expected)
     {

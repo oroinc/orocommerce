@@ -1,0 +1,255 @@
+data:
+    -
+        type: products
+        attributes:
+            sku: 'test-api-01'
+            status: 'enabled'
+        relationships:
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: 'names-01-1'
+                    -   type: productnames
+                        id: 'names-01-2'
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: 'short-descriptions-01-1'
+                    -
+                        type: productshortdescriptions
+                        id: 'short-descriptions-01-2'
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: 'descriptions-01-1'
+                    -
+                        type: productdescriptions
+                        id: 'descriptions-01-2'
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: 'slug-01-1'
+                    -
+                        type: localizedfallbackvalues
+                        id: 'slug-01-2'
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_family->getId())>'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'product-unit-precision-bottle-01'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: 'product-unit-precision-box-01'
+                    -
+                        type: productunitprecisions
+                        id: 'product-unit-precision-bottle-01'
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: 'out_of_stock'
+    -
+        type: products
+        attributes:
+            sku: 'test-api-02'
+            status: 'enabled'
+        relationships:
+            names:
+                data:
+                    -
+                        type: productnames
+                        id: 'names-02-1'
+            shortDescriptions:
+                data:
+                    -
+                        type: productshortdescriptions
+                        id: 'short-descriptions-02-1'
+            descriptions:
+                data:
+                    -
+                        type: productdescriptions
+                        id: 'descriptions-02-1'
+            slugPrototypes:
+                data:
+                    -   type: localizedfallbackvalues
+                        id: 'slug-02-1'
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: '<toString(@default_family->getId())>'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: 'product-unit-precision-box-02'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: 'product-unit-precision-bottle-02'
+                    -
+                        type: productunitprecisions
+                        id: 'product-unit-precision-box-02'
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: 'out_of_stock'
+included:
+    -
+        type: productnames
+        id: 'names-01-1'
+        attributes:
+            fallback: null
+            string: 'Test product 1'
+    -
+        type: productnames
+        id: 'names-01-2'
+        attributes:
+            fallback: null
+            string: 'Test product 1 es'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->getId())>'
+    -   type: productnames
+        id: 'names-02-1'
+        attributes:
+            fallback: null
+            string: 'Test product 2'
+    -
+        type: productshortdescriptions
+        id: 'short-descriptions-01-1'
+        attributes:
+            fallback: null
+            text: 'Test product short description'
+    -
+        type: productshortdescriptions
+        id: 'short-descriptions-01-2'
+        attributes:
+            fallback: null
+            text: 'Test product short description es'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->getId())>'
+    -
+        type: productshortdescriptions
+        id: 'short-descriptions-02-1'
+        attributes:
+            fallback: null
+            text: 'Test product 2 short description'
+    -
+        type: productdescriptions
+        id: 'descriptions-01-1'
+        attributes:
+            fallback: null
+            wysiwyg:
+                value: 'Test product description'
+                style: null
+                properties: null
+    -
+        type: productdescriptions
+        id: 'descriptions-01-2'
+        attributes:
+            fallback: null
+            wysiwyg:
+                value: 'Test product description es'
+                style: null
+                properties: null
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->getId())>'
+    -
+        type: productdescriptions
+        id: 'descriptions-02-1'
+        attributes:
+            fallback: null
+            wysiwyg:
+                value: 'Test product 2 description'
+                style: null
+                properties: null
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-bottle-02'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-box-02'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-bottle-01'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-box-01'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->getCode())>'
+    -
+        type: localizedfallbackvalues
+        id: 'slug-01-1'
+        attributes:
+            fallback: null
+            string: 'test-prod-slug'
+            text: null
+    -
+        type: localizedfallbackvalues
+        id: 'slug-01-2'
+        attributes:
+            fallback: null
+            string: 'test-prod-slug-es'
+            text: null
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->getId())>'
+    -
+        type: localizedfallbackvalues
+        id: 'slug-02-1'
+        attributes:
+            fallback: null
+            string: 'test-prod-slug-2'
+            text: null

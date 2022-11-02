@@ -1,0 +1,28 @@
+data:
+    type: customerusers
+    attributes:
+        email: test2341@test.com
+        firstName: John
+        lastName: Smith
+    relationships:
+        addresses:
+            data:
+                - { type: customeruseraddresses, id: addr1 }
+included:
+    -
+        type: customeruseraddresses
+        id: addr1
+        attributes:
+            organization: "Guest 1"
+            street: "Guest Street 1"
+            city: "Los Angeles"
+            postalCode: "90001"
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: "<toString(@country_usa->iso2Code)>"
+            region:
+                data:
+                    type: regions
+                    id: "<toString(@region_usa_california->combinedCode)>"

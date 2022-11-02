@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Config;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -12,17 +12,7 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ShippingOriginEventListener */
-    protected $listener;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingOriginModelFactory */
-    protected $shippingOriginModelFactory;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
-    protected $configManager;
-
-    /** @var array */
-    protected static $defaultData = [
+    private static array $defaultData = [
         'region_text' => 'Alabama',
         'postalCode' => '35004',
         'country' => 'US',
@@ -32,24 +22,34 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
         'street2' => 'Street2',
     ];
 
-    protected function setUp()
+    /** @var ShippingOriginModelFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingOriginFactory;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var ShippingOriginEventListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        $this->shippingOriginModelFactory = $this->createMock(ShippingOriginModelFactory::class);
+        $this->shippingOriginFactory = $this->createMock(ShippingOriginModelFactory::class);
         $this->configManager = $this->createMock(ConfigManager::class);
 
-        $this->listener = new ShippingOriginEventListener($this->shippingOriginModelFactory);
+        $this->listener = new ShippingOriginEventListener($this->shippingOriginFactory);
     }
 
-    protected function tearDown()
+    private function getEvent(array $settings): ConfigSettingsUpdateEvent
     {
-        unset($this->shippingOriginModelFactory, $this->configManager, $this->listener);
+        return new ConfigSettingsUpdateEvent($this->configManager, $settings);
     }
 
     public function testFormPreSetWithoutKey()
     {
-        $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
+        $this->shippingOriginFactory->expects($this->never())
+            ->method($this->anything());
 
-        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
+        $event = $this->getEvent([]);
 
         $this->listener->formPreSet($event);
 
@@ -62,7 +62,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
             ->setCountry(new Country('US'))
             ->setRegion(new Region('US-AL'));
 
-        $settings = [
+        $event = $this->getEvent([
             'oro_shipping___shipping_origin' => [
                 'value' => [
                     'region_text' => 'Alabama',
@@ -74,11 +74,9 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
                     'street2' => 'Street2',
                 ],
             ],
-        ];
+        ]);
 
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
-
-        $this->shippingOriginModelFactory->expects($this->once())
+        $this->shippingOriginFactory->expects($this->once())
             ->method('create')
             ->willReturn($shippingOrigin);
 
@@ -89,9 +87,10 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testBeforeSaveWithoutKey()
     {
-        $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
+        $this->shippingOriginFactory->expects($this->never())
+            ->method($this->anything());
 
-        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
+        $event = $this->getEvent([]);
 
         $this->listener->beforeSave($event);
 
@@ -100,10 +99,11 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testBeforeSaveNotModel()
     {
-        $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
+        $this->shippingOriginFactory->expects($this->never())
+            ->method($this->anything());
 
         $settings = ['value' => null];
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent($settings);
 
         $this->listener->beforeSave($event);
 
@@ -118,10 +118,10 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
         $shippingOrigin->setCountry($country);
         $shippingOrigin->setRegion($region);
 
-        $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
+        $this->shippingOriginFactory->expects($this->never())
+            ->method($this->anything());
 
-        $settings = ['value' => $shippingOrigin];
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent(['value' => $shippingOrigin]);
 
         $this->listener->beforeSave($event);
 
@@ -131,10 +131,12 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testBeforeSaveNoAddress()
     {
         $address = 'some_value';
-        $settings = ['value' => $address];
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
-        $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
+        $settings = ['value' => $address];
+        $event = $this->getEvent($settings);
+
+        $this->shippingOriginFactory->expects($this->never())
+            ->method($this->anything());
         $this->listener->beforeSave($event);
 
         $this->assertEquals($settings, $event->getSettings());

@@ -16,9 +16,6 @@ class CheckoutManager
      */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -40,9 +37,6 @@ class CheckoutManager
         }
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     */
     public function reassignCustomerUser(CustomerUser $customerUser)
     {
         /** @var Checkout $checkout */
@@ -65,10 +59,6 @@ class CheckoutManager
         return $this->getRepository()->find($checkoutId);
     }
 
-    /**
-     * @param Checkout $checkout
-     * @param CustomerUser $customerUser
-     */
     public function updateCheckoutCustomerUser(Checkout $checkout, CustomerUser $customerUser)
     {
         $checkout->setCustomerUser($customerUser);

@@ -2,39 +2,41 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Controller;
 
+use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ValidateConnectionController extends Controller
+/**
+ * FedEx Validate Connection Controller
+ */
+class ValidateConnectionController extends AbstractController
 {
     /**
-     * @Route("/validate-connection/{channelId}/", name="oro_fedex_validate_connection")
+     * @Route("/validate-connection/{channelId}/", name="oro_fedex_validate_connection", methods={"POST"})
      * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
-     * @Method("POST")
-     *
-     * @param Request      $request
-     * @param Channel|null $channel
-     *
-     * @return JsonResponse
+     * @CsrfProtection()
      *
      * @throws \InvalidArgumentException
      */
     public function validateConnectionAction(Request $request, Channel $channel = null): JsonResponse
     {
+        $translator = $this->get(TranslatorInterface::class);
         if (!$this->isShippingOriginProvided()) {
             return new JsonResponse([
                 'success' => false,
-                'message' => $this
-                    ->get('translator')
+                'message' => $translator
                     ->trans('oro.fedex.connection_validation.result.no_shipping_origin_error.message'),
             ]);
         }
@@ -53,28 +55,23 @@ class ValidateConnectionController extends Controller
         $settings = $channel->getTransport();
 
         $request = $this
-            ->get('oro_fedex_shipping.client.rate_service.connection_validate_request.factory')
+            ->get(FedexRateServiceValidateConnectionRequestFactory::class)
             ->create($settings);
-        $response = $this->get('oro_fedex_shipping.client.rate_service')->send($request, $settings);
+        $response = $this->get(FedexRateServiceSoapClient::class)->send($request, $settings);
 
         if (!empty($response->getPrices())) {
             return new JsonResponse([
                 'success' => true,
-                'message' => $this->get('translator')->trans('oro.fedex.connection_validation.result.success.message'),
+                'message' => $translator->trans('oro.fedex.connection_validation.result.success.message'),
             ]);
         }
 
         return new JsonResponse([
             'success' => false,
-            'message' => $this->get('translator')->trans($this->getErrorMessageTranslation($response)),
+            'message' => $translator->trans($this->getErrorMessageTranslation($response)),
         ]);
     }
 
-    /**
-     * @param FedexRateServiceResponseInterface $response
-     *
-     * @return string
-     */
     private function getErrorMessageTranslation(FedexRateServiceResponseInterface $response): string
     {
         if ($response->getSeverityCode() === FedexRateServiceResponse::AUTHORIZATION_ERROR) {
@@ -88,13 +85,26 @@ class ValidateConnectionController extends Controller
         return 'oro.fedex.connection_validation.result.connection_error.message';
     }
 
-    /**
-     * @return bool
-     */
     private function isShippingOriginProvided(): bool
     {
-        $shippingOrigin = $this->get('oro_shipping.shipping_origin.provider')->getSystemShippingOrigin();
+        $shippingOrigin = $this->get(ShippingOriginProvider::class)->getSystemShippingOrigin();
 
         return $shippingOrigin->getCountry() !== null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                FedexRateServiceSoapClient::class,
+                ShippingOriginProvider::class,
+                FedexRateServiceValidateConnectionRequestFactory::class,
+            ]
+        );
     }
 }

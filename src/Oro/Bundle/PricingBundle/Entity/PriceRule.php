@@ -8,8 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
+ * This entity represents price rule for price list
+ *
  * @ORM\Table(name="oro_price_rule")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository")
  */
 class PriceRule
 {
@@ -54,7 +56,7 @@ class PriceRule
      * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL", nullable=true)
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="CASCADE", nullable=true)
      */
     protected $productUnit;
 
@@ -312,7 +314,7 @@ class PriceRule
     public function setCurrencyExpression($currencyExpression)
     {
         $this->currencyExpression = $currencyExpression;
-        
+
         return $this;
     }
 
@@ -331,7 +333,7 @@ class PriceRule
     public function setQuantityExpression($quantityExpression)
     {
         $this->quantityExpression = $quantityExpression;
-        
+
         return $this;
     }
 
@@ -350,7 +352,7 @@ class PriceRule
     public function setProductUnitExpression($productUnitExpression)
     {
         $this->productUnitExpression = $productUnitExpression;
-        
+
         return $this;
     }
 }

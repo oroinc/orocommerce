@@ -6,146 +6,104 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class QuoteProductValidatorTest extends \PHPUnit\Framework\TestCase
+class QuoteProductValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var Constraints\QuoteProduct
-     */
-    protected $constraint;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var Constraints\QuoteProductValidator
-     */
-    protected $validator;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function createValidator(): Constraints\QuoteProductValidator
     {
-        $this->context      = $this->createMock(ExecutionContextInterface::class);
-        $this->constraint   = new Constraints\QuoteProduct();
-        $this->validator    = new Constraints\QuoteProductValidator();
-        $this->validator->initialize($this->context);
+        return new Constraints\QuoteProductValidator();
     }
 
-    public function testConfiguration()
+    public function testGetTargets()
     {
-        static::assertEquals(
-            'oro_sale.validator.quote_product',
-            $this->constraint->validatedBy()
-        );
-
-        static::assertEquals([Constraint::CLASS_CONSTRAINT], $this->constraint->getTargets());
+        $constraint = new Constraints\QuoteProduct();
+        self::assertEquals([Constraint::CLASS_CONSTRAINT], $constraint->getTargets());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testNotQuoteProduct()
     {
-        $this->validator->validate(new \stdClass(), $this->constraint);
+        $this->expectException(UnexpectedTypeException::class);
+
+        $constraint = new Constraints\QuoteProduct();
+        $this->validator->validate(new \stdClass(), $constraint);
     }
 
     /**
-     * @param mixed $data
-     * @param boolean $valid
-     * @param string $fieldPath
      * @dataProvider validateProvider
      */
-    public function testValidate($data, $valid, $fieldPath = 'product')
+    public function testValidate(QuoteProduct $value, bool $valid, string $fieldPath = 'product')
     {
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $this->context->expects($valid ? static::never() : static::once())
-            ->method('buildViolation')
-            ->with($this->constraint->message)
-            ->willReturn($builder);
-        $builder->expects($valid ? static::never() : static::once())
-            ->method('atPath')
-            ->with($fieldPath)
-            ->willReturnSelf();
-        $builder->expects($valid ? static::never() : static::once())
-            ->method('addViolation');
-        $this->validator->validate($data, $this->constraint);
+        $constraint = new Constraints\QuoteProduct();
+        $this->validator->validate($value, $constraint);
+
+        if ($valid) {
+            $this->assertNoViolation();
+        } else {
+            $this->buildViolation($constraint->message)
+                ->atPath('property.path.' . $fieldPath)
+                ->assertRaised();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function validateProvider()
+    public function validateProvider(): array
     {
         $product = new Product();
 
         $item1 = new QuoteProduct();
-        $item2 = $this->createQuoteProduct($product, null, QuoteProduct::TYPE_NOT_AVAILABLE);
-        $item3 = $this->createQuoteProduct($product, null, QuoteProduct::TYPE_OFFER, 'free form product');
-        $item4 = $this->createQuoteProduct(null, $product, QuoteProduct::TYPE_NOT_AVAILABLE, '', 'free form product');
-        $item5 = $this->createQuoteProduct($product, null, QuoteProduct::TYPE_OFFER, 'free form product');
-        $item6 = $this->createQuoteProduct(null, $product, QuoteProduct::TYPE_NOT_AVAILABLE, '', 'free form product');
+        $item2 = $this->getQuoteProduct($product, null, QuoteProduct::TYPE_NOT_AVAILABLE);
+        $item3 = $this->getQuoteProduct($product, null, QuoteProduct::TYPE_OFFER, 'free form product');
+        $item4 = $this->getQuoteProduct(null, $product, QuoteProduct::TYPE_NOT_AVAILABLE, '', 'free form product');
+        $item5 = $this->getQuoteProduct($product, null, QuoteProduct::TYPE_OFFER, 'free form product');
+        $item6 = $this->getQuoteProduct(null, $product, QuoteProduct::TYPE_NOT_AVAILABLE, '', 'free form product');
 
         return [
             'empty product & empty free form' => [
-                'data'      => $item1,
-                'valid'     => false,
+                'value' => $item1,
+                'valid' => false,
             ],
             'empty product replacement & empty free form replacement' => [
-                'data'      => $item2,
-                'valid'     => false,
+                'value' => $item2,
+                'valid' => false,
                 'fieldPath' => 'productReplacement',
             ],
             'empty product & filled free form' => [
-                'data'      => $item3,
-                'valid'     => true,
+                'value' => $item3,
+                'valid' => true,
             ],
             'empty product replacement & filled free form replacement' => [
-                'data'      => $item4,
-                'valid'     => true,
+                'value' => $item4,
+                'valid' => true,
                 'fieldPath' => 'product',
             ],
             'filled product' => [
-                'data'      => $item5,
-                'valid'     => true,
+                'value' => $item5,
+                'valid' => true,
                 'fieldPath' => 'product',
             ],
             'filled product replacement' => [
-                'data'      => $item6,
-                'valid'     => true,
+                'value' => $item6,
+                'valid'=> true,
                 'fieldPath' => 'product',
             ],
         ];
     }
 
-    /**
-     * @param Product $product
-     * @param Product $replacement
-     * @param int $type
-     * @param string $freeFormProduct
-     * @param string $freeFormProductReplacement
-     * @return QuoteProduct
-     */
-    protected function createQuoteProduct(
+    private function getQuoteProduct(
         Product $product = null,
         Product $replacement = null,
-        $type = QuoteProduct::TYPE_OFFER,
-        $freeFormProduct = '',
-        $freeFormProductReplacement = ''
-    ) {
+        int $type = QuoteProduct::TYPE_OFFER,
+        string $freeFormProduct = '',
+        string $freeFormProductReplacement = ''
+    ): QuoteProduct {
         $quoteProduct = new QuoteProduct();
         $quoteProduct
             ->setType($type)
             ->setProduct($product)
             ->setProductReplacement($replacement)
             ->setFreeFormProduct($freeFormProduct)
-            ->setFreeFormProductReplacement($freeFormProductReplacement)
-        ;
+            ->setFreeFormProductReplacement($freeFormProductReplacement);
 
         return $quoteProduct;
     }

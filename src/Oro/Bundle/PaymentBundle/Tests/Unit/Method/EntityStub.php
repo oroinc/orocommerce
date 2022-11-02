@@ -13,7 +13,6 @@ class EntityStub implements LineItemsAwareInterface
 
     /**
      * Fill shippingAddress field with dummy object
-     * @param AbstractAddress $abstractAddress
      */
     public function __construct(AbstractAddress $abstractAddress)
     {

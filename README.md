@@ -36,3 +36,10 @@ phpunit
 ```
 
 [1]: https://github.com/orocrm/orocommerce-application
+
+Resources
+---------
+
+  * [OroCommerce Documentation](https://doc.oroinc.com)
+  * [Contributing](https://doc.oroinc.com/community/contribute/)
+  * [Reporting a Security Issue](https://doc.oroinc.com/community/report-issues/security/)

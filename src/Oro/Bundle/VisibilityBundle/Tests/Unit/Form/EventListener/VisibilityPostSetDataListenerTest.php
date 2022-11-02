@@ -30,7 +30,7 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $fieldDataProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->fieldDataProvider = $this->getMockBuilder(VisibilityFormFieldDataProvider::class)
             ->disableOriginalConstructor()
@@ -81,7 +81,6 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
                     ]
                 ]
             );
-
 
         $allForm = $this->createMock(FormInterface::class);
         $customerForm = $this->createMock(FormInterface::class);

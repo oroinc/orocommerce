@@ -32,7 +32,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -72,7 +72,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         /** @var TransitionManager $transitionManager */
         $transitionManager = $workflow->getTransitionManager();
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             static::TRANSITIONS,
             array_keys($transitionManager->getTransitions()->toArray())
         );
@@ -197,7 +197,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $form = $crawler->selectButton('Submit')->form();
         $this->client->submit($form);
 
-        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
     }
 
     /**
@@ -234,12 +234,12 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     {
         $crawler = $this->openQuoteWorkflowWidget();
 
-        $this->assertContains(static::WORKFLOW_TITLE, $crawler->html());
+        static::assertStringContainsString(static::WORKFLOW_TITLE, $crawler->html());
         $link = $this->selectExactLink($linkTitle, $crawler);
         $this->assertNotEmpty($link, 'Transit button not found ' . $linkTitle);
 
-        $this->client->request(
-            'GET',
+        $this->ajaxRequest(
+            'POST',
             $link->attr('data-transition-url'),
             [],
             [],
@@ -274,14 +274,11 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
 
         $this->assertNotEmpty($crawler->html());
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(static::WORKFLOW_TITLE, $crawler->html());
+        static::assertStringContainsString(static::WORKFLOW_TITLE, $crawler->html());
 
         return $crawler;
     }
 
-    /**
-     * @param array $buttonTitles
-     */
     protected function assertButtonsAvailable(array $buttonTitles)
     {
         $crawler = $this->openQuoteWorkflowWidget();
@@ -325,7 +322,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $this->client->submit($form);
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('transitionSuccess', $this->client->getResponse()->getContent());
+        static::assertStringContainsString('transitionSuccess', $this->client->getResponse()->getContent());
     }
 
     protected function assertSendToCustomer()
@@ -350,7 +347,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     {
         $link = $crawler->selectLink($title);
         for ($i = 0; $i < $link->count(); $i++) {
-            if (trim($link->eq($i)->attr('title')) === $title) {
+            if (trim($link->eq($i)->attr('data-transition-label')) === $title) {
                 return $link->eq($i);
             }
         }

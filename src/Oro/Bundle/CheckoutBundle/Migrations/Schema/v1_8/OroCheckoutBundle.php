@@ -4,8 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\Type;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Doctrine\DBAL\Types\Types;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -38,24 +38,22 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
                 [
                     'isValid' => false,
                     'deleted' => false,
-                    'completed' => false
+                    'completed' => false,
                 ],
                 [
-                    'isValid' => Type::BOOLEAN,
-                    'deleted' => Type::BOOLEAN,
-                    'completed' => Type::BOOLEAN
+                    'isValid' => Types::BOOLEAN,
+                    'deleted' => Types::BOOLEAN,
+                    'completed' => Types::BOOLEAN,
                 ]
             )
         );
 
         $this->container->get('oro_message_queue.client.message_producer')
-            ->send(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, new Message());
+            ->send(RecalculateCheckoutSubtotalsTopic::getName(), new Message());
     }
 
     /**
      * Update oro_checkout_subtotal table
-     *
-     * @param Schema $schema
      */
     private function updateOroCheckoutSubtotalTable(Schema $schema)
     {
@@ -66,8 +64,6 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
 
     /**
      * Add oro_checkout_subtotal foreign keys.
-     *
-     * @param Schema $schema
      */
     private function addOroCheckoutSubtotalForeignKeys(Schema $schema)
     {

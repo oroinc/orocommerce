@@ -2,49 +2,40 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Get product variants by configurable products.
+ * Get products fields availability for given configurable products.
+ */
 class ProductVariantAvailabilityProvider
 {
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
+    private ManagerRegistry $doctrine;
+    private CustomFieldProvider $customFieldProvider;
+    private PropertyAccessorInterface $propertyAccessor;
+    private EventDispatcherInterface $eventDispatcher;
+    private ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry;
 
-    /** @var CustomFieldProvider */
-    private $customFieldProvider;
+    /** @var array [entity class => [field name => field data (array), ...], ...] */
+    private array $customFieldsByEntity = [];
+    /** @var array [cache key => data, ...] */
+    private array $productsByVariantFieldsCache = [];
 
-    /** @var PropertyAccessor */
-    private $propertyAccessor;
-
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
-
-    /** @var array */
-    private $customFieldsByEntity = [];
-
-    /** @var ProductVariantFieldValueHandlerRegistry */
-    private $fieldValueHandlerRegistry;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param CustomFieldProvider $customFieldProvider
-     * @param PropertyAccessor $propertyAccessor
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
-     */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
+        ManagerRegistry $doctrine,
         CustomFieldProvider $customFieldProvider,
-        PropertyAccessor $propertyAccessor,
+        PropertyAccessorInterface $propertyAccessor,
         EventDispatcherInterface $eventDispatcher,
         ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
     ) {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
         $this->customFieldProvider = $customFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->eventDispatcher = $eventDispatcher;
@@ -79,10 +70,13 @@ class ProductVariantAvailabilityProvider
             $fieldValues = $this->getVariantFieldValues($variantField);
 
             // All fields are not available by default
-            $variantsAvailability[$variantField] = array_fill_keys(array_values($fieldValues), false);
+            $variantsAvailability[$variantField] = array_fill_keys(array_keys($fieldValues), false);
 
             foreach ($availableSimpleProducts as $simpleProduct) {
                 $variantFieldValue = $this->getVariantFieldScalarValue($simpleProduct, $variantField);
+                if ($variantFieldValue === null) {
+                    continue;
+                }
                 $variantsAvailability[$variantField][$variantFieldValue] = true;
             }
         }
@@ -114,7 +108,7 @@ class ProductVariantAvailabilityProvider
     {
         $customFields = $this->getCustomFieldsByEntity(Product::class);
 
-        return array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
+        return \array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
     }
 
     /**
@@ -130,20 +124,37 @@ class ProductVariantAvailabilityProvider
      */
     public function getSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters = [])
     {
-        $this->ensureProductTypeIsConfigurable($configurableProduct);
+        $cacheKey = $this->getProductsByVariantsCacheKey($configurableProduct->getId(), $variantParameters);
+        if (!isset($this->productsByVariantFieldsCache[$cacheKey])) {
+            $result = $this->getSimpleProductsByVariantFieldsQB($configurableProduct, $variantParameters)
+                ->getQuery()
+                ->getResult();
+            $this->productsByVariantFieldsCache[$cacheKey] = $result;
+        }
 
-        /** @var ProductRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(Product::class);
+        return $this->productsByVariantFieldsCache[$cacheKey];
+    }
 
-        $qb = $repository->getSimpleProductsByVariantFieldsQueryBuilder($configurableProduct, $variantParameters);
-
-        $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
-        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
-
-        return $restrictProductVariantEvent
-            ->getQueryBuilder()
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * $variantParameters = [
+     *     'size' => 'm',
+     *     'color' => 'red',
+     *     'slim_fit' => true
+     * ]
+     * Value is extended field id for select field and true or false for boolean field
+     * @return bool
+     */
+    public function hasSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters = [])
+    {
+        $count = (int)$this->getSimpleProductsByVariantFieldsQB($configurableProduct, $variantParameters)
+            ->resetDQLPart('select')
+            ->select('COUNT(p.id)')
             ->getQuery()
-            ->getResult();
+            ->getSingleScalarResult();
+
+        return $count > 0;
     }
 
     /**
@@ -169,6 +180,32 @@ class ProductVariantAvailabilityProvider
     }
 
     /**
+     * @param int[] $configurableProductIds
+     *
+     * @return array [configurable product id => [simple product id, ...], ...]
+     */
+    public function getSimpleProductIdsByVariantFieldsGroupedByConfigurable(array $configurableProductIds): array
+    {
+        if (!$configurableProductIds) {
+            throw new \InvalidArgumentException('The list of configurable product IDs must not be empty.');
+        }
+
+        $qb = $this->getProductRepository()
+            ->getSimpleProductIdsByParentProductsQueryBuilder($configurableProductIds)
+            ->select('p.id AS productId, IDENTITY(l.parentProduct) AS parentProductId');
+        $rows = $this->modifyRestrictProductVariantQueryBuilder($qb)
+            ->getQuery()
+            ->getArrayResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int)$row['parentProductId']][] = (int)$row['productId'];
+        }
+
+        return $result;
+    }
+
+    /**
      * @param Product $configurableProduct
      * @param Product $variantProduct
      * @return array
@@ -189,21 +226,93 @@ class ProductVariantAvailabilityProvider
      * Get value of variant field from product
      *
      * @param Product $product
-     * @param string $variantField
+     * @param string  $variantField
+     *
      * @return mixed
+     *
      * @throws \InvalidArgumentException
      */
     public function getVariantFieldScalarValue(Product $product, $variantField)
     {
-        $variantValue = $this->propertyAccessor->getValue($product, $variantField);
-        $fieldType = $this->getCustomFieldType($variantField);
-        $handler = $this->fieldValueHandlerRegistry->getVariantFieldValueHandler($fieldType);
+        $handler = $this->fieldValueHandlerRegistry->getVariantFieldValueHandler(
+            $this->getCustomFieldType($variantField)
+        );
 
-        return $handler->getScalarValue($variantValue);
+        return $handler->getScalarValue($this->propertyAccessor->getValue($product, $variantField));
     }
 
     /**
-     * @param Product $product
+     * Returns a list of simple products grouped by configurable product IDs for given configurable products.
+     *
+     * @param int[] $configurableProductIds
+     *
+     * @return array [configurable product id => [simple product id, ...], ...]
+     */
+    public function getSimpleProductIdsGroupedByConfigurable(array $configurableProductIds): array
+    {
+        if (!$configurableProductIds) {
+            throw new \InvalidArgumentException('The list of configurable product IDs must not be empty.');
+        }
+
+        $simpleProductIds = $this->getSimpleProductIdsByConfigurable($configurableProductIds);
+        if (!$simpleProductIds) {
+            return [];
+        }
+
+        $mapping = $this->getProductRepository()->getVariantsMapping($configurableProductIds);
+        $simpleByConfigurable = [];
+        foreach ($simpleProductIds as $simpleProductId) {
+            if (empty($mapping[$simpleProductId])) {
+                continue;
+            }
+            foreach ($mapping[$simpleProductId] as $parentId) {
+                $simpleByConfigurable[$parentId][] = $simpleProductId;
+            }
+        }
+
+        return $simpleByConfigurable;
+    }
+
+    /**
+     * Return array of simple products by given configurable products.
+     *
+     * @param int[] $configurableProductIds
+     *
+     * @return int[]
+     */
+    public function getSimpleProductIdsByConfigurable(array $configurableProductIds): array
+    {
+        $qb = $this->getProductRepository()->getSimpleProductIdsByParentProductsQueryBuilder($configurableProductIds);
+        $rows = $this->modifyRestrictProductVariantQueryBuilder($qb)
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($rows, 'id');
+    }
+
+    private function getProductsByVariantsCacheKey(int $configurableProductId, array $variantParameters = []): string
+    {
+        return md5($configurableProductId . json_encode($variantParameters, JSON_THROW_ON_ERROR));
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function getSimpleProductsByVariantFieldsQB(Product $configurableProduct, array $variantParameters = [])
+    {
+        $this->ensureProductTypeIsConfigurable($configurableProduct);
+
+        $qb = $this->getProductRepository()->getSimpleProductsByVariantFieldsQueryBuilder(
+            $configurableProduct,
+            $variantParameters
+        );
+
+        return $this->modifyRestrictProductVariantQueryBuilder($qb);
+    }
+
+    /**
      * @throws \InvalidArgumentException
      */
     private function ensureProductTypeIsConfigurable(Product $product)
@@ -221,10 +330,23 @@ class ProductVariantAvailabilityProvider
      */
     private function getCustomFieldsByEntity($entityName)
     {
-        if (!array_key_exists($entityName, $this->customFieldsByEntity)) {
+        if (!\array_key_exists($entityName, $this->customFieldsByEntity)) {
             $this->customFieldsByEntity[$entityName] = $this->customFieldProvider->getEntityCustomFields($entityName);
         }
 
         return $this->customFieldsByEntity[$entityName];
+    }
+
+    private function modifyRestrictProductVariantQueryBuilder(QueryBuilder $qb): QueryBuilder
+    {
+        $event = new RestrictProductVariantEvent($qb);
+        $this->eventDispatcher->dispatch($event, RestrictProductVariantEvent::NAME);
+
+        return $event->getQueryBuilder();
+    }
+
+    private function getProductRepository(): ProductRepository
+    {
+        return $this->doctrine->getRepository(Product::class);
     }
 }

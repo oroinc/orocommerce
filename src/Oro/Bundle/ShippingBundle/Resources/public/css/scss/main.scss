@@ -1,6 +1,6 @@
 /* @theme: admin.oro; */
 
-@import "oroui/css/scss/variables";
-
-@import "./shipping-methods-grid";
-@import "./style";
+@import 'product-shipping-options';
+@import 'shipping-methods-grid';
+@import 'style';
+@import 'mobile/main';

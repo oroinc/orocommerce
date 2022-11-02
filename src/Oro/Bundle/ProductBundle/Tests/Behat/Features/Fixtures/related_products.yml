@@ -1,0 +1,20 @@
+include:
+    - '@OroProductBundle:related_items_products.yml'
+    - '@OroProductBundle:related_items_system_users.yml'
+
+Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+    relatedProduct2_1:
+        product: '@product2'
+        relatedItem: '@product1'
+
+    relatedProduct2_3:
+        product: '@product2'
+        relatedItem: '@product3'
+
+    relatedProduct2_4:
+        product: '@product2'
+        relatedItem: '@product4'
+
+    relatedProduct2_5:
+        product: '@product2'
+        relatedItem: '@product5'

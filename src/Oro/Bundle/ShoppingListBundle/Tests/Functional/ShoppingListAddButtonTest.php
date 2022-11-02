@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ShoppingListAddButtonTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -20,8 +19,8 @@ class ShoppingListAddButtonTest extends WebTestCase
     public function testCreateNewShoppingList()
     {
         $shoppingListRepo = $this->getContainer()->get('doctrine')
-            ->getRepository('OroShoppingListBundle:ShoppingList');
-        
+            ->getRepository(ShoppingList::class);
+
         $shoppingListsCount = count($shoppingListRepo->findAll());
 
         $crawler = $this->client->request(
@@ -38,7 +37,7 @@ class ShoppingListAddButtonTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Shopping List Name', $result->getContent());
+        self::assertStringContainsString('Shopping List Name', $result->getContent());
 
         $form = $crawler->selectButton('Create')->form();
         $form['oro_shopping_list_type[label]'] = 'TestShoppingList';
@@ -59,13 +58,5 @@ class ShoppingListAddButtonTest extends WebTestCase
 
         $shoppingLists = $shoppingListRepo->findBy([], ['id' => 'DESC']);
         $this->assertCount($shoppingListsCount + 1, $shoppingLists);
-    }
-
-    /**
-     * @return ShoppingListRepository
-     */
-    protected function getShoppingListRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getRepository('OroShoppingListBundle:ShoppingList');
     }
 }

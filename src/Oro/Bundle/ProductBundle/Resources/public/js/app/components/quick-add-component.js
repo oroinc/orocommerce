@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var QuickAddComponent;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    QuickAddComponent = BaseComponent.extend({
+    const QuickAddComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -24,27 +23,27 @@ define(function(require) {
         $form: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function QuickAddComponent() {
-            QuickAddComponent.__super__.constructor.apply(this, arguments);
+        constructor: function QuickAddComponent(options) {
+            QuickAddComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$form = this.options._sourceElement;
 
-            this.$form.on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
+            this.$form.on('click', this.options.componentButtonSelector, this.fillComponentData.bind(this));
 
             mediator.on(this.options.componentPrefix + ':submit', this.submit, this);
         },
 
         fillComponentData: function(e) {
-            var $element = $(e.target);
+            const $element = $(e.target);
             this.submit($element.data('component-name'), $element.data('component-additional'));
         },
 
@@ -59,7 +58,7 @@ define(function(require) {
         },
 
         /**
-         * {@inheritDoc}
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

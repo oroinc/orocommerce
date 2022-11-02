@@ -2,28 +2,31 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Form\Type\TaxType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaxController extends Controller
+/**
+ * CRUD for tax rates.
+ */
+class TaxController extends AbstractController
 {
     /**
      * @Route("/", name="oro_tax_index")
      * @Template
      * @AclAncestor("oro_tax_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.tax.class')
+            'entity_class' => Tax::class
         ];
     }
 
@@ -36,11 +39,8 @@ class TaxController extends Controller
      *      class="OroTaxBundle:Tax",
      *      permission="VIEW"
      * )
-     *
-     * @param Tax $tax
-     * @return array
      */
-    public function viewAction(Tax $tax)
+    public function viewAction(Tax $tax): array
     {
         return [
             'entity' => $tax
@@ -49,17 +49,15 @@ class TaxController extends Controller
 
     /**
      * @Route("/create", name="oro_tax_create")
-     * @Template("OroTaxBundle:Tax:update.html.twig")
+     * @Template("@OroTax/Tax/update.html.twig")
      * @Acl(
      *      id="oro_tax_create",
      *      type="entity",
      *      class="OroTaxBundle:Tax",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new Tax());
     }
@@ -73,37 +71,32 @@ class TaxController extends Controller
      *      class="OroTaxBundle:Tax",
      *      permission="EDIT"
      * )
-     *
-     * @param Tax $tax
-     * @return array
      */
-    public function updateAction(Tax $tax)
+    public function updateAction(Tax $tax): array|RedirectResponse
     {
         return $this->update($tax);
     }
 
-    /**
-     * @param Tax $tax
-     * @return array|RedirectResponse
-     */
-    protected function update(Tax $tax)
+    protected function update(Tax $tax): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $tax,
             $this->createForm(TaxType::class, $tax),
-            function (Tax $tax) {
-                return [
-                    'route' => 'oro_tax_update',
-                    'parameters' => ['id' => $tax->getId()]
-                ];
-            },
-            function (Tax $tax) {
-                return [
-                    'route' => 'oro_tax_view',
-                    'parameters' => ['id' => $tax->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.tax.controller.tax.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.tax.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
         );
     }
 }

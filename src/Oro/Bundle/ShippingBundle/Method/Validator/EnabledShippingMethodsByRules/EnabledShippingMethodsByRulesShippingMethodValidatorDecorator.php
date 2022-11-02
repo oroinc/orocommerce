@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements ShippingMethodValidatorInterface
 {
@@ -45,14 +45,6 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
      */
     private $logger;
 
-    /**
-     * @param ShippingMethodValidatorInterface                                $parentShippingMethodValidator
-     * @param Common\CommonShippingMethodValidatorResultErrorFactoryInterface $errorFactory
-     * @param NonDeletableMethodTypeIdentifiersProviderInterface              $nonDeletableTypeIdentifiersProvider
-     * @param MethodTypeLabelsProviderInterface                               $methodTypeLabelsProvider
-     * @param TranslatorInterface                                             $translator
-     * @param LoggerInterface                                                 $logger
-     */
     public function __construct(
         ShippingMethodValidatorInterface $parentShippingMethodValidator,
         Common\CommonShippingMethodValidatorResultErrorFactoryInterface $errorFactory,

@@ -1,18 +1,18 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection as QuickAddRowCollectionConstraint;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollectionValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
+class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 {
     /**
      * @var QuickAddRowCollection|\PHPUnit\Framework\MockObject\MockObject
@@ -29,9 +29,8 @@ class QuickAddRowCollectionValidatorTest extends AbstractConstraintValidatorTest
      */
     protected $validatorInterface;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        \PHPUnit\Framework\Error\Warning::$enabled = false;
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

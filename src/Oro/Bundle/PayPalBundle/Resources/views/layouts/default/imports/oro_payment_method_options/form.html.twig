@@ -1,12 +1,16 @@
 {% block _oro_paypal_credit_card_payment_credit_card_cvv_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' input input--short',
-        'autocomplete': 'off'
+        'autocomplete': 'off',
+        'minlength': 3,
+        'maxlength': 4,
+        'data-page-component-view': 'orofrontend/default/js/app/views/fake-masked-input-view',
+        'data-page-component-name': id,
     }) %}
 
-    {%- set type = type|default('password') -%}
+    {%- set type = type|default('text') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    <a href="javascript: void(0);"
+    <a href="#"
        data-toggle="tooltip"
        data-title="{{ 'oro.paypal.credit_card.tooltip'|trans }}"
        data-html="true"
@@ -31,7 +35,7 @@
                 <p>
                     {{ 'oro.paypal.payflow.authorized_card'|trans({'{{ last4 }}': creditCardComponentOptions.acct}) }}
                 </p>
-                <a href="javascript: void(0);" class="{{ class_prefix }}-form__payment-methods-different-card-handle" data-different-card-handle>
+                <a href="#" class="{{ class_prefix }}-form__payment-methods-different-card-handle" data-different-card-handle>
                     {{ 'oro.paypal.payflow.use_different_card'|trans }}
                 </a>
             </div>
@@ -39,14 +43,16 @@
         <div {% if isAuthorizedCard %} style="display: none;" data-different-card{% endif %}>
             {% if isAuthorizedCard %}
                 <div class="{{ class_prefix }}-form__payment-methods-different-card">
-                    <a href="javascript: void(0);" class="{{ class_prefix }}-form__payment-methods-authorized-card-handle" data-authorized-card-handle>
+                    <a href="#" class="{{ class_prefix }}-form__payment-methods-authorized-card-handle" data-authorized-card-handle>
                         {{ 'oro.paypal.payflow.use_authorized_card'|trans }}
                     </a>
                 </div>
             {% endif %}
-            <ul class="{{ class_prefix }}-form__payment-methods-list">
+            <ul class="{{ class_prefix }}-form__payment-methods-list" aria-label="{{ 'oro_frontend.avaliable_credit_cards.aria_label'|trans }}">
                 {% for cc_name in options.creditCardComponentOptions.allowedCreditCards %}
-                    <li class="{{ class_prefix }}-form__payment-methods-item"><i class="credit-card-icon credit-card-icon_{{ cc_name }}"></i></li>
+                    <li class="{{ class_prefix }}-form__payment-methods-item" aria-label="{{ cc_name }}">
+                        <span class="credit-card-icon credit-card-icon_{{ cc_name }}" aria-hidden="true"></span>
+                    </li>
                 {% endfor %}
             </ul>
             <div class="{{ class_prefix }}-form__payment-methods-form" data-credit-card-form="data-credit-card-form">

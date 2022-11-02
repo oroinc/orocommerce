@@ -1,5 +1,6 @@
 /* @theme: admin.oro; */
 
+/* stylelint-disable no-descending-specificity */
 .grid-container {
     .table-bordered {
         tbody {
@@ -19,9 +20,14 @@
     }
 }
 
+.quote-lineitem td {
+    vertical-align: top;
+}
+
 .quote-lineitem-requested-quantity,
 .quote-lineitem-offers-quantity {
-    input[type="text"] {
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
         width: 40px !important;
     }
 }
@@ -29,36 +35,35 @@
 .sale-quoteproductitem-widget-productunit,
 .quote-lineitem-requested-unit,
 .quote-lineitem-offers-unit {
-    select {
-        width: 60px !important;
-    }
+    @include selector-width(65px);
 }
 
 .quote-lineitem-requested-price,
 .quote-lineitem-offers-price {
-    input[type="text"] {
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
         width: 40px !important;
     }
 }
 
 .sale-quoteproductitem-widget-price,
 .quote-lineitem-offers-price {
-    select {
-        width: 80px !important;
-    }
+    @include selector-width(65px);
 }
 
 .quote-lineitem-offers-price {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-
     table {
         position: relative;
     }
 
-    input[type="text"] {
+    td {
+        &:first-child {
+            padding-left: 0;
+        }
+    }
+
+    input[type='text'] {
         text-align: right;
-        padding-left: 17px;
     }
 }
 
@@ -69,17 +74,21 @@
 }
 
 .oro-item-collection {
-    .sale-quoteproductitem-widget-price {
-        input[type="text"] {
-            width: 40px;
+    table.quote-lineitem-offers {
+        td {
+            vertical-align: top;
         }
     }
 
-    .quote-lineitem-offers-remove {
-        .removeRow {
-            &:after {
-                color: #666;
-            }
+    tbody {
+        .quote-lineitem-remove {
+            padding: $content-padding-small;
+        }
+    }
+
+    .sale-quoteproductitem-widget-price {
+        input[type='text'] {
+            width: 40px;
         }
     }
 }
@@ -89,13 +98,29 @@ td.quote-lineitem-notes {
     width: 330px;
 }
 
+.quote-lineitem-notes-seller-textarea {
+    display: none;
+}
+
 .quote-lineitems {
+    &__offers {
+        width: 100%;
+    }
+
+    table.grid {
+        overflow: auto;
+    }
+
     .add-list-item {
-        margin-top: 10px;
+        margin-top: $content-padding-small;
     }
 }
 
 .quote-lineitem-offers {
+    &-remove {
+        text-align: right;
+    }
+
     .add-list-item {
         margin-left: 0;
     }
@@ -110,18 +135,45 @@ td.quote-lineitem-notes {
         margin-top: 4px;
     }
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
         margin-top: 0;
+    }
+}
+
+table.quote-lineitem-offers {
+    width: 500px;
+
+    td {
+        &:last-child {
+            padding: $content-padding-small;
+        }
+    }
+
+    .quote-lineitem-offers-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .quote-lineitem-offers-group-item {
+        &:not(:last-child) {
+            padding-right: $content-padding-small;
+        }
+    }
+
+    .quote-lineitem-offers-quantity-cell,
+    .quote-lineitem-offers-price {
+        padding-right: 0;
     }
 }
 
 .quote-lineitem-offers-items {
     .quote-lineitem-offers-item {
         .quote-lineitem-offers-price {
-            input[type="text"] {
+            input[type='text'] {
                 float: left;
             }
 
+            // stylelint-disable-next-line selector-max-compound-selectors
             table td {
                 border: 0;
                 padding: 0;
@@ -130,40 +182,21 @@ td.quote-lineitem-notes {
     }
 }
 
-.quote-lineitem-offers-price {
-    td {
-        &:first-child {
-            padding-left: 0;
-        }
-    }
-}
-
-table.quote-lineitem-offers {
-    width: 560px;
-}
-
-.quote-lineitem-offers-remove {
-    .removeRow {
-        i {
-            margin-left: 3px;
-        }
-    }
-}
-
 .quote-lineitem-notes-customer {
     label {
-        font-weight: bold;
+        font-weight: font-weight('bold');
+        display: block;
     }
+
     textarea {
         max-height: 100px;
+        width: 100%;
     }
 }
 
 .quote-lineitem-notes-seller-active {
-    margin: 20px 0 15px;
-
     label {
-        font-weight: bold;
+        font-weight: font-weight('bold');
     }
 
     .quote-lineitem-notes-seller {
@@ -180,6 +213,7 @@ td.quote-product-offer-product-name,
 td.quote-product-offer-customer-notes,
 td.quote-product-offer-seller-notes,
 td.quote-product-offer-price {
+    // stylelint-disable-next-line declaration-no-important
     padding-top: 11px !important;
 }
 
@@ -195,7 +229,9 @@ td.quote-product-offer-select-offer {
 
         &.quote-product-offer-select-offer-choice {
             width: 16px;
+            // stylelint-disable-next-line declaration-no-important
             padding: 5px 0 !important;
+            // stylelint-disable-next-line declaration-no-important
             vertical-align: middle !important;
         }
 
@@ -206,6 +242,7 @@ td.quote-product-offer-select-offer {
         }
 
         input {
+            // stylelint-disable-next-line declaration-no-important
             margin-top: 0 !important;
         }
     }
@@ -228,20 +265,25 @@ span.quote-product-offer-quantity-unit {
     margin-left: 5px;
 }
 
-.quote-lineitems {
-    table.grid {
-        overflow: auto;
-    }
+td.quote-lineitem-product-sku {
+    width: 100px;
 }
 
-td.quote-lineitem-product-sku {
-    width: 160px;
+.quote-lineitem-remove {
+    text-align: right;
 }
 
 .quote-lineitem-product-sku-row {
+    .quote-lineitem-product-form {
+        .quote-lineitem-product-sku-label {
+            width: 70px;
+            word-break: break-word;
+        }
+    }
+
     .quote-lineitem-product-free-form {
-        input[type="text"] {
-            width: 120px;
+        input[type='text'] {
+            width: 70px;
         }
     }
 }
@@ -253,8 +295,9 @@ td.quote-lineitem-product-sku {
 }
 
 .quote-lineitem-product-row {
-    input[type="text"] {
-        width: 275px !important;
+    input[type='text'] {
+        // stylelint-disable-next-line declaration-no-important
+        width: $field-width !important;
     }
 }
 

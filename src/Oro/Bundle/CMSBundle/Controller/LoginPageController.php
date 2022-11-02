@@ -4,26 +4,29 @@ namespace Oro\Bundle\CMSBundle\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 use Oro\Bundle\CMSBundle\Form\Type\LoginPageType;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class LoginPageController extends Controller
+/**
+ * CRUD controller for the LoginPage entity.
+ */
+class LoginPageController extends AbstractController
 {
     /**
      * @Route("/", name="oro_cms_loginpage_index")
-     * @Template("OroCMSBundle:LoginPage:index.html.twig")
+     * @Template("@OroCMS/LoginPage/index.html.twig")
      * @AclAncestor("oro_cms_loginpage_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_cms.entity.loginpage.class')
+            'entity_class' => LoginPage::class
         ];
     }
 
@@ -36,30 +39,26 @@ class LoginPageController extends Controller
      *      class="OroCMSBundle:LoginPage",
      *      permission="VIEW"
      * )
-     *
-     * @param LoginPage $loginPage
-     * @return array
      */
-    public function viewAction(LoginPage $loginPage)
+    public function viewAction(LoginPage $loginPage): array
     {
         return [
-            'entity' => $loginPage
+            'entity' => $loginPage,
+            'loginPageCssField' => $this->getParameter('oro_cms.direct_editing.login_page_css_field')
         ];
     }
 
     /**
      * @Route("/create", name="oro_cms_loginpage_create")
-     * @Template("OroCMSBundle:LoginPage:update.html.twig")
+     * @Template("@OroCMS/LoginPage/update.html.twig")
      * @Acl(
      *      id="oro_cms_loginpage_create",
      *      type="entity",
      *      class="OroCMSBundle:LoginPage",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new LoginPage());
     }
@@ -73,37 +72,32 @@ class LoginPageController extends Controller
      *      class="OroCMSBundle:LoginPage",
      *      permission="EDIT"
      * )
-     *
-     * @param LoginPage $loginPage
-     * @return array
      */
-    public function updateAction(LoginPage $loginPage)
+    public function updateAction(LoginPage $loginPage): array|RedirectResponse
     {
         return $this->update($loginPage);
     }
 
-    /**
-     * @param LoginPage $loginPage
-     * @return array|RedirectResponse
-     */
-    protected function update(LoginPage $loginPage)
+    protected function update(LoginPage $loginPage): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $loginPage,
             $this->createForm(LoginPageType::class, $loginPage),
-            function (LoginPage $loginPage) {
-                return [
-                    'route' => 'oro_cms_loginpage_update',
-                    'parameters' => ['id' => $loginPage->getId()]
-                ];
-            },
-            function (LoginPage $loginPage) {
-                return [
-                    'route' => 'oro_cms_loginpage_view',
-                    'parameters' => ['id' => $loginPage->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.cms.loginpage.save.message')
+            $this->get(TranslatorInterface::class)->trans('oro.cms.loginpage.save.message')
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
         );
     }
 }

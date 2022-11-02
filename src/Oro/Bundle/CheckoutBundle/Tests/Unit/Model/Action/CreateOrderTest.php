@@ -7,46 +7,37 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder;
+use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateOrderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContextAccessor
-     */
-    protected $contextAccessor;
+    /** @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $mapper;
 
-    /**
-     * @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mapper;
+    /** @var EntityPaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodsProvider;
 
-    /**
-     * @var CreateOrder
-     */
-    protected $action;
+    /** @var CreateOrder */
+    private $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->contextAccessor = new ContextAccessor();
         $this->mapper = $this->createMock(MapperInterface::class);
+        $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
 
-        /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher */
-        $eventDispatcher = $this
-            ->getMockBuilder(EventDispatcherInterface::class)
-            ->getMock();
-
-        $this->action = new CreateOrder($this->contextAccessor, $this->mapper);
-        $this->action->setDispatcher($eventDispatcher);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->action);
+        $this->action = new CreateOrder(
+            new ContextAccessor(),
+            $this->mapper,
+            $this->paymentMethodsProvider
+        );
+        $this->action->setDispatcher($this->createMock(EventDispatcherInterface::class));
     }
 
     public function testInitialize()
@@ -57,32 +48,21 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
             CreateOrder::OPTION_KEY_DATA => ['billingAddress' => new PropertyPath('billingAddress')],
         ];
 
-        $this->assertInstanceOf(
-            'Oro\Component\Action\Action\ActionInterface',
-            $this->action->initialize($options)
-        );
-
-        $this->assertAttributeEquals($options, 'options', $this->action);
+        self::assertInstanceOf(ActionInterface::class, $this->action->initialize($options));
+        self::assertEquals($options, ReflectionUtil::getPropertyValue($this->action, 'options'));
     }
 
     /**
      * @dataProvider initializeExceptionDataProvider
-     *
-     * @param array $options
-     * @param string $exception
-     * @param string $exceptionMessage
      */
-    public function testInitializeException(array $options, $exception, $exceptionMessage)
+    public function testInitializeException(array $options, string $exception, string $exceptionMessage)
     {
         $this->expectException($exception);
         $this->expectExceptionMessage($exceptionMessage);
         $this->action->initialize($options);
     }
 
-    /**
-     * @return array
-     */
-    public function initializeExceptionDataProvider()
+    public function initializeExceptionDataProvider(): array
     {
         return [
             [
@@ -123,6 +103,7 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
     {
         $expected = new Order();
         $checkout = new Checkout();
+        $checkout->setPaymentMethod('pm1');
         $data = [
             'lineItems' => new ArrayCollection([new PropertyPath('lineItems')]),
         ];
@@ -148,6 +129,10 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
             ->method('map')
             ->with($checkout, $data)
             ->willReturn($expected);
+
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('storePaymentMethodsToEntity')
+            ->with($expected, ['pm1']);
 
         $this->action->execute($context);
 

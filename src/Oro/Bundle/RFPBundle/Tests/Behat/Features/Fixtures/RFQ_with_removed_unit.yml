@@ -1,25 +1,48 @@
 include:
     - '@OroRFPBundle:RFQCustomer.yml'
 
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue:
+        string: 'product1'
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision:
+    itemPrecision:
         unit: '@item'
+        precision: '1'
+    setPrecision:
+        unit: '@set'
         precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
-        primaryUnitPrecision: '@precision'
-        addName: ['@locValue']
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@itemPrecision'
+        unitPrecisions: ['@setPrecision']
+        __calls:
+            - addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
         name: 'pricelist'
         default: true
-        setCurrencies: [['USD']]
+        __calls:
+            - setCurrencies: [['USD']]
         active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListProductRelation:
+        product: '@product'
+        priceList: '@pricelistShipping'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelistShipping'
+        website: '@website1'
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     priceListToCustomer:
@@ -35,29 +58,8 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         productSku: 'SKU123'
         quantity: 5
         unit: '@item'
-        value: 5
-        currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-   combinedProductPrice:
-        pricelist: '@combinedPriceList'
-        product: '@product'
-        productSku: 'SKU123'
-        quantity: 5
-        unit: '@item'
         value: 2
         currency: 'USD'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-    combinedPriceListToCustomer:
-        pricelist: '@combinedPriceList'
-        customer: '@customer'
-        website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-    combinedPriceListToWebsite:
-        pricelist: '@combinedPriceList'
-        website: '@website1'
 
 Oro\Bundle\RFPBundle\Entity\Request:
     request1:

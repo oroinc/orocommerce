@@ -20,8 +20,8 @@ class SlugTypeTest extends FormIntegrationTestCase
      * @var SlugType
      */
     protected $formType;
-    
-    protected function setUp()
+
+    protected function setUp(): void
     {
         parent::setUp();
 

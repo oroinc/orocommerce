@@ -27,7 +27,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@item'
         precision: '1'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     name_product1:
         string: 'Product1'
     name_product2:
@@ -36,6 +36,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product3'
     name_product4:
         string: 'Product4'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     name_category:
         string: 'NewCategory'
 
@@ -47,10 +49,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'AAA1'
         primaryUnitPrecision: '@first_precision_product1'
-        addName: ['@name_product1']
+        __calls:
+            - addName: ['@name_product1']
+            - addAdditionalUnitPrecision: ['@second_precision_product1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
-        addAdditionalUnitPrecision: ['@second_precision_product1']
     product2:
         type: 'simple'
         organization: '@organization'
@@ -58,10 +61,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'BBB2'
         primaryUnitPrecision: '@first_precision_product2'
-        addName: ['@name_product2']
+        __calls:
+            - addName: ['@name_product2']
+            - addAdditionalUnitPrecision: ['@second_precision_product2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
-        addAdditionalUnitPrecision: ['@second_precision_product2']
     product3:
         type: 'simple'
         organization: '@organization'
@@ -69,7 +73,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'CCC3'
         primaryUnitPrecision: '@first_precision_product3'
-        addName: ['@name_product3']
+        __calls:
+            - addName: ['@name_product3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
     product4:
@@ -79,19 +84,35 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         sku: 'DDD4'
         primaryUnitPrecision: '@first_precision_product4'
-        addName: ['@name_product4']
+        __calls:
+            - addName: ['@name_product4']
         inventoryStatus: '@enumInventoryStatusOutOfStock'
         status: 'enabled'
 
-Doctrine\Common\Collections\ArrayCollection(local):
+Doctrine\Common\Collections\ArrayCollection:
     products:
         __construct: [['@product1', '@product2', '@product3', '@product4']]
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category:
-        addTitle: ['@name_category']
-        setParentCategory: [1]
-        setProducts: ['@products']
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@name_category']
+            - setParentCategory: ['@root_category']
+            - setProducts: ['@products']
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer1'
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     product1ItemPrice:
@@ -138,79 +159,9 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 10
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
-    priceRelationRpoduct1DefaultPriceList:
-        product: '@product1'
+    priceRelationDefaultPriceListToProduct{1..4}:
+        product: '@product<current()>'
         priceList: '@defaultPriceList'
-    priceRelationRpoduct2DefaultPriceList:
-        product: '@product2'
-        priceList: '@defaultPriceList'
-    priceRelationRpoduct3DefaultPriceList:
-        product: '@product3'
-        priceList: '@defaultPriceList'
-    priceRelationRpoduct4DefaultPriceList:
-        product: '@product4'
-        priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    product1ItemCombined:
-        unit: '@item'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 11
-        currency: 'USD'
-        productSku: 'AAA1'
-    product1PieceCombined:
-        unit: '@piece'
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 201
-        currency: 'USD'
-        productSku: 'AAA1'
-    product2ItemCombined:
-        unit: '@item'
-        product: '@product2'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 22
-        currency: 'USD'
-        productSku: 'BBB2'
-    product2PieceCombined:
-        unit: '@piece'
-        product: '@product2'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 404
-        currency: 'USD'
-        productSku: 'BBB2'
-    product3ItemCombined:
-        unit: '@item'
-        product: '@product3'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'
-        productSku: 'CCC3'
-    product4ItemCombined:
-        unit: '@item'
-        product: '@product4'
-        priceList: '@combinedPriceList'
-        quantity: 1
-        value: 10
-        currency: 'USD'
-        productSku: 'DDD4'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
-  combinedPriceListToCustomer:
-    pricelist: '@combinedPriceList'
-    customer: '@customer1'
-    website: '@website1'
-
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
-  combinedPriceListToWebsite:
-    pricelist: '@combinedPriceList'
-    website: '@website1'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:

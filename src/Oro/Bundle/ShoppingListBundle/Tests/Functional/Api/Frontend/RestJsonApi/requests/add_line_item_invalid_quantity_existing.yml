@@ -1,0 +1,16 @@
+data:
+    -
+        type: shoppinglistitems
+        attributes:
+            quantity: 'not_number'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

@@ -1,0 +1,7 @@
+services:
+    oro_website_search.tests.engine.index_data:
+        alias: oro_website_search.engine.index_data
+        public: true
+    oro_website_search.tests.provider.search_mapping:
+        alias: oro_website_search.provider.search_mapping
+        public: true

@@ -11,6 +11,8 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 /**
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
+ *
+ * The base class for the family of classes of tax codes
  */
 abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
 {
@@ -26,7 +28,7 @@ abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

@@ -1,17 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ButtonComponent = require('oroworkflow/js/app/components/button-component');
-    var StandardConfirmation = require('oroui/js/standart-confirmation');
-    var __ = require('orotranslation/js/translator');
-    var ShoppingListCreateOrderButtonComponent;
+    const ButtonComponent = require('oroworkflow/js/app/components/button-component');
+    const StandardConfirmation = require('oroui/js/standart-confirmation');
+    const __ = require('orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
 
-    ShoppingListCreateOrderButtonComponent = ButtonComponent.extend({
+    const ShoppingListCreateOrderButtonComponent = ButtonComponent.extend({
         hasEmptyMatrix: null,
 
         shoppingListCollection: null,
-
-        lineItemsCount: null,
 
         /**
          * @type {Object}
@@ -23,68 +21,61 @@ define(function(require) {
             cancelText: __('oro.shoppinglist.create_order_confirmation.cancel_button_title')
         },
 
-        listen: {
-            'line-items-init mediator': '_onLineItemsInit'
-        },
-
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ShoppingListCreateOrderButtonComponent() {
-            ShoppingListCreateOrderButtonComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ShoppingListCreateOrderButtonComponent(options) {
+            ShoppingListCreateOrderButtonComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.hasEmptyMatrix = options.hasEmptyMatrix;
-            return ShoppingListCreateOrderButtonComponent.__super__.initialize.apply(this, arguments);
+            return ShoppingListCreateOrderButtonComponent.__super__.initialize.call(this, options);
         },
 
         /**
-         * Listen line items init process
-         *
-         * @param {Array} lineItems
-         * @private
-         */
-        _onLineItemsInit: function(lineItems) {
-            this.lineItemsCount = lineItems.filter(function(lineItem) {
-                return lineItem.$el.attr('class').indexOf('--configurable') === -1;
-            }).length;
-        },
-
-        /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickButtonExecutor: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
-                ._onClickButtonExecutor.bind(this, arguments));
+                ._onClickButtonExecutor.bind(this, clickedButton));
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _onClickButtonRedirect: function(clickedButton) {
             this.showConfirmation(ShoppingListCreateOrderButtonComponent.__super__
                 ._onClickButtonRedirect
-                .bind(this, arguments));
+                .bind(this, clickedButton));
         },
 
         showConfirmation: function(callback) {
-            if (
-                (this.hasEmptyMatrix && this.lineItemsCount === 0) || // empty matrix only
-                (!this.hasEmptyMatrix) // not empty matrix or it doesn't exist in SL
-            ) {
+            if (this.isConfirmationNeeded()) {
                 callback();
                 return;
             }
 
-            var confirmModal = new StandardConfirmation(this.messages);
+            const confirmModal = new StandardConfirmation(this.messages);
             confirmModal
                 .off('ok')
                 .on('ok')
                 .open(callback);
+        },
+
+        isConfirmationNeeded: function() {
+            let skipConfirm;
+
+            try {
+                skipConfirm = !mediator.execute('shoppinglist:hasEmptyMatrix');
+            } catch (e) {
+                skipConfirm = !this.hasEmptyMatrix;
+            }
+
+            return skipConfirm;
         }
     });
 

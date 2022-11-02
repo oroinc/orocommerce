@@ -8,6 +8,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+/**
+ * Adds scroll blocks with price list data on customer group view page
+ */
 class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
 {
     /**
@@ -19,12 +22,13 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
         PriceListCustomerGroupFallback::WEBSITE =>
             'oro.pricing.fallback.website.label',
     ];
-    
-    /**
-     * @param BeforeListRenderEvent $event
-     */
+
     public function onCustomerGroupView(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;
@@ -35,7 +39,7 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
             'OroCustomerBundle:CustomerGroup',
             (int)$request->get('id')
         );
-        
+
         /** @var PriceListToCustomerGroup[] $priceLists */
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroPricingBundle:PriceListToCustomerGroup')
@@ -43,7 +47,7 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
                 ['customerGroup' => $customerGroup, 'website' => $this->websiteProvider->getWebsites()],
                 ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]
             );
-        
+
         /** @var PriceListCustomerGroupFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
             ->getEntityRepository('OroPricingBundle:PriceListCustomerGroupFallback')
@@ -52,7 +56,7 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
         $fallback = $fallbackEntity
             ? $this->fallbackChoices[$fallbackEntity->getFallback()]
             : $this->fallbackChoices[PriceListCustomerGroupFallback::WEBSITE];
-        
+
         $this->addPriceListInfo($event, $priceLists, $fallback);
     }
 }

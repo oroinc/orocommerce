@@ -11,8 +11,7 @@ class AbstractProductPricesRemoveEventTest extends \PHPUnit\Framework\TestCase
         $args = [
             'product' => new \stdClass()
         ];
-        /** @var AbstractProductPricesRemoveEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\PricingBundle\Event\AbstractProductPricesRemoveEvent')
+        $event = $this->getMockBuilder(AbstractProductPricesRemoveEvent::class)
             ->setConstructorArgs([$args])
             ->getMockForAbstractClass();
         $this->assertEquals($args, $event->getArgs());

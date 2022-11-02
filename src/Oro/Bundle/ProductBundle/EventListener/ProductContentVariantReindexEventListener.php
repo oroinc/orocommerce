@@ -19,6 +19,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Triggers Product re-indexation when some fields of ContentNode entity changed.
+ */
 class ProductContentVariantReindexEventListener implements ContentNodeFieldsChangesAwareInterface
 {
     use ChangedEntityGeneratorTrait;
@@ -43,12 +46,6 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
      */
     protected $fieldsChangesListenTo = ['titles'];
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param FieldUpdatesChecker $fieldUpdatesChecker
-     * @param ProductCollectionVariantReindexMessageSendListener $messageSendListener
-     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         FieldUpdatesChecker $fieldUpdatesChecker,
@@ -81,9 +78,6 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         return $this->fieldsChangesListenTo;
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
@@ -106,7 +100,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array            &$productIds
+     * @param array            $productIds
      */
     private function collectProductIds($entities, array &$productIds)
     {
@@ -141,7 +135,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array            &$productIds
+     * @param array            $productIds
      * @param UnitOfWork       $unitOfWork
      */
     private function collectChangedProductIds($entities, array &$productIds, UnitOfWork $unitOfWork)
@@ -169,7 +163,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array|null &$websitesId
+     * @param array|null $websitesId
      */
     private function collectWebsiteIds($entities, &$websitesId)
     {
@@ -250,24 +244,16 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         return true;
     }
 
-    /**
-     * @param array $productIds
-     * @param array $websiteIds
-     */
     private function triggerReindex(array $productIds, array $websiteIds)
     {
         if (count($productIds) === 0 || count($websiteIds) === 0) {
             return;
         }
 
-        $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
-        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds, true, ['main']);
+        $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 
-    /**
-     * @param Product $product
-     * @param array &$productIds
-     */
     private function addProduct(Product $product, array &$productIds)
     {
         $productId = $product->getId();

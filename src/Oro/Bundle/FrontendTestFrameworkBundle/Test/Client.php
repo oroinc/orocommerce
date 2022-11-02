@@ -6,19 +6,24 @@ use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Handle backend prefix for application with front store
+ */
 class Client extends BaseClient
 {
+    private const BACKOFFICE_THEME_PATH = 'build/admin';
+
     /**
      * {@inheritdoc}
      */
     public function request(
-        $method,
-        $uri,
+        string $method,
+        string $uri,
         array $parameters = [],
         array $files = [],
         array $server = [],
-        $content = null,
-        $changeHistory = true
+        string $content = null,
+        bool $changeHistory = true
     ) {
         $crawler = parent::request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
 
@@ -48,14 +53,20 @@ class Client extends BaseClient
     }
 
     /**
-     * @param $uri string
-     * @param $crawler
+     * Response from frontend must not contain backend url prefix
      */
     protected function checkForBackendUrls($uri, Crawler $crawler)
     {
         if ($this->isFrontendUri($uri)) {
             $backendPrefix = $this->getBackendPrefix();
-            if (count($crawler) && strpos($crawler->html(), $backendPrefix) !== false) {
+            if (!count($crawler)) {
+                return;
+            }
+            $html = $crawler->html();
+
+            $backofficeThemePathOccurrences = substr_count($html, self::BACKOFFICE_THEME_PATH);
+
+            if (substr_count($html, $backendPrefix) > $backofficeThemePathOccurrences) {
                 throw new \PHPUnit\Framework\AssertionFailedError(
                     sprintf('Page "%s" contains backend prefix "%s".', $uri, $backendPrefix)
                 );

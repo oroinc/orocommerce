@@ -12,7 +12,7 @@ class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
     /** @var WorkflowAwareManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $workflowAwareManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->workflowAwareManager = $this->getMockBuilder(WorkflowAwareManager::class)
             ->disableOriginalConstructor()
@@ -21,7 +21,7 @@ class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->workflowAwareManager);

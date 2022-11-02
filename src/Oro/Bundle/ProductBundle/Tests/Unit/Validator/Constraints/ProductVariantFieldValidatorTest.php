@@ -7,27 +7,20 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
+class ProductVariantFieldValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ProductVariantFieldValidator */
-    protected $service;
+    /** @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $customFieldProvider;
 
-    /** @var  CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $customFieldProvider;
-
-    /** @var ExecutionContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $context;
-
-    /** @var array */
-    protected $variantFields = [
+    private array $variantFields = [
         'field_first',
         'field_second'
     ];
 
-    /** @var array  */
-    protected $incorrectCustomVariantFields = [
+    private array $incorrectCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',
             'type' => 'string',
@@ -40,8 +33,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
         ]
     ];
 
-    /** @var array  */
-    protected $correctCustomVariantFields = [
+    private array $correctCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',
             'type' => 'string',
@@ -54,31 +46,21 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-
-        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->service = new ProductVariantFieldValidator($this->customFieldProvider);
-        $this->service->initialize($this->context);
+        $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
+        parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    protected function createValidator(): ProductVariantFieldValidator
     {
-        unset(
-            $this->context,
-            $this->customFieldProvider,
-            $this->service
-        );
+        return new ProductVariantFieldValidator($this->customFieldProvider);
+    }
+
+    public function testGetTargets()
+    {
+        $constraint = new ProductVariantField();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
     public function testDoesNothingIfEmptyProductCustomFields()
@@ -91,9 +73,10 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($productClass)
             ->willReturn([]);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new ProductVariantField();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantField());
+        $this->assertNoViolation();
     }
 
     public function testAddViolationIfProductDoesNotHaveFields()
@@ -106,9 +89,15 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($productClass)
             ->willReturn([]);
 
-        $this->context->expects($this->exactly(count($this->variantFields)))->method('addViolation');
+        $constraint = new ProductVariantField();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantField());
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameter('{{ field }}', 'field_first')
+            ->buildNextViolation($constraint->message)
+            ->setParameter('{{ field }}', 'field_second')
+            ->assertRaised();
     }
 
     public function testDoesNotAddViolationIfVariantFieldsExistInCustomFields()
@@ -121,9 +110,10 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($productClass)
             ->willReturn($this->correctCustomVariantFields);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $constraint = new ProductVariantField();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantField());
+        $this->assertNoViolation();
     }
 
     public function testAddViolationIfVariantFieldDoesNotExistInCustomField()
@@ -137,18 +127,15 @@ class ProductVariantFieldValidatorTest extends \PHPUnit\Framework\TestCase
             ->with($productClass)
             ->willReturn($this->incorrectCustomVariantFields);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with((new ProductVariantField())->message);
+        $constraint = new ProductVariantField();
+        $this->validator->validate($product, $constraint);
 
-        $this->service->validate($product, new ProductVariantField());
+        $this->buildViolation($constraint->message)
+            ->setParameter('{{ field }}', 'field_second')
+            ->assertRaised();
     }
 
-    /**
-     * @param array $variantFields
-     * @return Product
-     */
-    private function prepareProductWithVariantFields(array $variantFields)
+    private function prepareProductWithVariantFields(array $variantFields): Product
     {
         $product = new Product();
         $product->setType(Product::TYPE_CONFIGURABLE);

@@ -5,13 +5,16 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Event\AfterReindexEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeReindexEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Abstract indexer for website search engine
@@ -20,12 +23,16 @@ abstract class AbstractIndexer implements IndexerInterface
 {
     use ContextTrait;
 
+    const CONTEXT_ENTITY_CLASS_KEY = 'entityClass';
     const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
     const CONTEXT_WEBSITE_IDS = 'websiteIds';
 
     // generated automatically based on list of passed websites (see CONTEXT_WEBSITE_IDS)
     // must not be passed to indexer public methods outside via the context
     const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
+
+    // list of field groups that have to be reindexed, empty value means that all fields have to be reindexed
+    const CONTEXT_FIELD_GROUPS = 'fieldGroups';
 
     /** @var EntityDependenciesResolverInterface */
     protected $entityDependenciesResolver;
@@ -39,30 +46,32 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var WebsiteSearchMappingProvider */
+    /** @var SearchMappingProvider */
     protected $mappingProvider;
 
     /** @var IndexerInputValidator */
     protected $inputValidator;
 
+    /** @var EventDispatcherInterface */
+    protected $eventDispatcher;
+
+    /**
+     * @var PlaceholderInterface
+     */
+    protected $regexPlaceholder;
+
     /** @var int */
     private $batchSize = 100;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
-     * @param EntityDependenciesResolverInterface $entityDependenciesResolver
-     * @param IndexDataProvider $indexDataProvider
-     * @param PlaceholderInterface $placeholder
-     * @param IndexerInputValidator $indexerInputValidator
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
+        SearchMappingProvider $mappingProvider,
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
         PlaceholderInterface $placeholder,
-        IndexerInputValidator $indexerInputValidator
+        IndexerInputValidator $indexerInputValidator,
+        EventDispatcherInterface $eventDispatcher,
+        PlaceholderInterface $regexPlaceholder
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
@@ -70,6 +79,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->indexDataProvider = $indexDataProvider;
         $this->placeholder = $placeholder;
         $this->inputValidator = $indexerInputValidator;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->regexPlaceholder = $regexPlaceholder;
     }
 
     /**
@@ -86,6 +97,30 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityAliasTemp,
         array $context
     );
+
+    /**
+     * Saves partial index data for batch of entities
+     * @param string $entityClass
+     * @param array $entitiesData
+     * @param string $entityAliasTemp
+     * @param array $context
+     * @return array
+     */
+    abstract protected function savePartialIndexData(
+        $entityClass,
+        array $entitiesData,
+        $entityAliasTemp,
+        array $context
+    );
+
+    /**
+     * Define which of the passed entities present in the website search index
+     * @param string $entityClass
+     * @param object[] $entities
+     * @param array $context
+     * @return object[]
+     */
+    abstract protected function getIndexedEntities($entityClass, array $entities, array $context);
 
     /**
      * Rename old index by aliases to new index
@@ -107,13 +142,19 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
-        list($entityClassesToIndex, $websiteIdsToIndex) =
+        [$entityClassesToIndex, $websiteIdsToIndex] =
             $this->inputValidator->validateRequestParameters(
                 $classOrClasses,
                 $context
             );
 
         $entityClassesToIndex = $this->getClassesForReindex($entityClassesToIndex);
+        if (empty($context['skip_pre_processing'])) {
+            $this->eventDispatcher->dispatch(
+                new BeforeReindexEvent($classOrClasses, $context),
+                BeforeReindexEvent::EVENT_NAME
+            );
+        }
 
         $handledItems = 0;
 
@@ -213,7 +254,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
         if ($contextEntityIds) {
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
-                ->setParameter('contextEntityIds', $contextEntityIds);
+                ->setParameter('contextEntityIds', array_values($contextEntityIds));
         }
 
         $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
@@ -255,6 +296,14 @@ abstract class AbstractIndexer implements IndexerInterface
         } else {
             $this->renameIndex($temporaryAlias, $currentAlias);
         }
+
+        $afterReindexEvent = new AfterReindexEvent(
+            $entityClass,
+            $context,
+            $indexedContextEntityIds ?? $indexedEntityIds ?? [],
+            $removedContextEntityIds ?? []
+        );
+        $this->eventDispatcher->dispatch($afterReindexEvent, AfterReindexEvent::EVENT_NAME);
 
         return $indexedItemsNum;
     }
@@ -305,14 +354,64 @@ abstract class AbstractIndexer implements IndexerInterface
         }
 
         $entityConfig = $this->mappingProvider->getEntityConfig($entityClass);
-        $entitiesData = $this->indexDataProvider->getEntitiesData(
-            $entityClass,
-            $restrictedEntities,
-            $context,
-            $entityConfig
-        );
 
-        return $this->saveIndexData($entityClass, $entitiesData, $aliasToSave, $context);
+        // if partial reindexation is requested
+        if (null !== $this->getContextFieldGroups($context)) {
+            $indexedEntities = $this->getIndexedEntities($entityClass, $restrictedEntities, $context);
+            $notIndexedEntities = array_diff_key($restrictedEntities, $indexedEntities);
+
+            $result = [];
+
+            // for presented entities only partial data can be collected
+            if ($indexedEntities) {
+                $existingEntityIds = array_keys($indexedEntities);
+                $entitiesData = $this->indexDataProvider->getEntitiesData(
+                    $entityClass,
+                    $indexedEntities,
+                    $context,
+                    $entityConfig
+                );
+                $actualEntityIds = array_keys($entitiesData);
+                // Fill entity data with empty data to be able to process removal of fields from the index for
+                // existing entities when actual data has no such data anymore for a given field group.
+                // Example: all product prices were removed for a product, and now prices must be removed from the index
+                foreach (array_diff($existingEntityIds, $actualEntityIds) as $notPresentId) {
+                    $entitiesData[$notPresentId] = [];
+                }
+
+                $this->savePartialIndexData($entityClass, $entitiesData, $aliasToSave, $context);
+                // All indexed entities should be returned as entities present in the index to prevent documents removal
+                // for cases when result set for fields group is empty (no images for product for example)
+                $result = $existingEntityIds;
+            }
+
+            // for not presented entities all field groups have to be collected and indexed
+            if ($notIndexedEntities) {
+                $allFieldGroupsContext = $context;
+                unset($allFieldGroupsContext[self::CONTEXT_FIELD_GROUPS]);
+
+                $entitiesData = $this->indexDataProvider->getEntitiesData(
+                    $entityClass,
+                    $notIndexedEntities,
+                    $allFieldGroupsContext,
+                    $entityConfig
+                );
+                $result = array_merge(
+                    $result,
+                    $this->saveIndexData($entityClass, $entitiesData, $aliasToSave, $context)
+                );
+            }
+        } else {
+            $entitiesData = $this->indexDataProvider->getEntitiesData(
+                $entityClass,
+                $restrictedEntities,
+                $context,
+                $entityConfig
+            );
+            $result = $this->saveIndexData($entityClass, $entitiesData, $aliasToSave, $context);
+        }
+
+        return $result;
     }
 
     /**
@@ -343,7 +442,15 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $queryBuilder->setParameter('entityIds', $entityIds);
 
-        return $queryBuilder->getQuery()->getResult();
+        $entities = $queryBuilder->getQuery()->getResult();
+
+        $result = [];
+        foreach ($entities as $entity) {
+            $entityId = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+            $result[$entityId] = $entity;
+        }
+
+        return $result;
     }
 
     /**
@@ -379,12 +486,25 @@ abstract class AbstractIndexer implements IndexerInterface
 
         //Tries to reset index for not existing website
         if (!$website) {
-            $context = $this->setContextCurrentWebsite([], $websiteId);
+            $context = $this->setContextWebsiteIds([], [$websiteId]);
             $this->resetIndex(null, $context);
 
             return false;
         }
 
         return true;
+    }
+
+    protected function getFieldsForGroup(string $entityClass, array $context): array
+    {
+        $fieldGroups = $this->getContextFieldGroups($context);
+        $fields = $this->mappingProvider->getMappingConfig()[$entityClass]['fields'] ?? [];
+
+        return array_filter(
+            $fields,
+            static function (array $field) use ($fieldGroups) {
+                return !empty($field['group']) && in_array($field['group'], $fieldGroups, true);
+            }
+        );
     }
 }

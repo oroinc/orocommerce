@@ -1,0 +1,23 @@
+services:
+    oro_frontend_localization.api_doc.documentation_provider.frontend_x_localization_id_header:
+        class: Oro\Bundle\ApiBundle\ApiDoc\DocumentationProvider
+        arguments:
+            - '@@OroFrontendLocalizationBundle/Resources/doc/api_frontend/x_localization_id_header.md'
+            - '@file_locator'
+        tags:
+            - { name: oro.api.documentation_provider, requestType: frontend, priority: 230 }
+
+    oro_frontend_localization.api.update_localization_query:
+        class: Oro\Bundle\FrontendLocalizationBundle\Api\Processor\UpdateLocalizationQuery
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro.api.processor, action: get, group: build_query, requestType: frontend, class: Oro\Bundle\LocaleBundle\Entity\Localization, priority: -150 }
+            - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Oro\Bundle\LocaleBundle\Entity\Localization, priority: -150 }
+
+    oro_frontend_localization.api.compute_localization_default_field:
+        class: Oro\Bundle\FrontendLocalizationBundle\Api\Processor\ComputeLocalizationDefaultField
+        arguments:
+            - '@oro_locale.manager.localization'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\LocaleBundle\Entity\Localization }

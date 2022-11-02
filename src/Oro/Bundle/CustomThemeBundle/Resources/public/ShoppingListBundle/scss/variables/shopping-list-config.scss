@@ -1,0 +1,19 @@
+/* @theme: custom; */
+
+$shopping-list-content-border: 1px solid get-color('additional', 'light');
+
+$shopping-list-dropdown-background: #ededed;
+$shopping-list-dropdown-box-shadow:
+    inset 0 1px 0 0 get-color('additional', 'light'),
+    inset -1px 0 0 0 get-color('additional', 'light'),
+    -1px 0 0 0 #d9d9d9,0 1px 0 0 #d9d9d9;
+
+$shopping-list-dropdown-icon-color: get-color('additional', 'dark');
+
+$shopping-list-dropdown-nav-box-shadow: 0 2px 4px 0 rgba(0 0 0 / 30%);
+$shopping-list-dropdown-nav-border: 1px solid get-color('additional', 'light');
+$shopping-list-dropdown-nav-background: get-color('additional', 'ultra');
+
+$shopping-list-dropdown-show-border: get-color('additional', 'light');
+$shopping-list-dropdown-show-box-shadow: inset 0 2px 3px rgba(0 0 0 / 8%),
+    -1px 0 0 0 #d9d9d9;

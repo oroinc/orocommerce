@@ -12,10 +12,10 @@ trait InventoryFallbackTrait
     /** @var EntityFieldFallbackValue */
     protected $maximumQuantityToOrder;
 
-    /** @var EntityFieldFallbackValue  */
+    /** @var EntityFieldFallbackValue */
     protected $highlightLowInventory;
 
-    /** @var EntityFieldFallbackValue  */
+    /** @var EntityFieldFallbackValue */
     protected $backOrder;
 
     /** @var EntityFieldFallbackValue */
@@ -76,9 +76,6 @@ trait InventoryFallbackTrait
         return $this;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $highlightLowInventory
-     */
     public function setHighlightLowInventory(EntityFieldFallbackValue $highlightLowInventory)
     {
         $this->highlightLowInventory = $highlightLowInventory;
@@ -92,9 +89,6 @@ trait InventoryFallbackTrait
         return $this->highlightLowInventory;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $backOrder
-     */
     public function setBackOrder(EntityFieldFallbackValue $backOrder)
     {
         $this->backOrder = $backOrder;
@@ -108,9 +102,6 @@ trait InventoryFallbackTrait
         return $this->backOrder;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $decrementQuantity
-     */
     public function setDecrementQuantity(EntityFieldFallbackValue $decrementQuantity)
     {
         $this->decrementQuantity = $decrementQuantity;
@@ -124,9 +115,6 @@ trait InventoryFallbackTrait
         return $this->decrementQuantity;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $inventoryThreshold
-     */
     public function setInventoryThreshold(EntityFieldFallbackValue $inventoryThreshold)
     {
         $this->inventoryThreshold = $inventoryThreshold;
@@ -140,9 +128,6 @@ trait InventoryFallbackTrait
         return $this->inventoryThreshold;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $lowInventoryThreshold
-     */
     public function setLowInventoryThreshold(EntityFieldFallbackValue $lowInventoryThreshold)
     {
         $this->lowInventoryThreshold = $lowInventoryThreshold;
@@ -156,9 +141,6 @@ trait InventoryFallbackTrait
         return $this->lowInventoryThreshold;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $manageInventory
-     */
     public function setManageInventory(EntityFieldFallbackValue $manageInventory)
     {
         $this->manageInventory = $manageInventory;
@@ -172,9 +154,6 @@ trait InventoryFallbackTrait
         return $this->manageInventory;
     }
 
-    /**
-     * @param EntityFieldFallbackValue $isUpcoming
-     */
     public function setIsUpcoming(EntityFieldFallbackValue $isUpcoming)
     {
         $this->isUpcoming = $isUpcoming;

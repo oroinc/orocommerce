@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Gateway\Host\HostAddressProviderMock;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -35,11 +35,6 @@ class PayPalOuterRedirectEventListener
      */
     private $httpKernel;
 
-    /**
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param HttpKernelInterface $httpKernel
-     */
     public function __construct(
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
@@ -50,10 +45,7 @@ class PayPalOuterRedirectEventListener
         $this->httpKernel = $httpKernel;
     }
 
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         if (strpos($request->getUri(), HostAddressProviderMock::PAYPAL_FORM_ACTION_MOCK) !== false) {
@@ -100,9 +92,10 @@ class PayPalOuterRedirectEventListener
             $request->request->set($key, $value);
         }
 
+        // Master request is required because we need to emulate the real notify request like it is done by paypal
         $this->httpKernel->handle(
             $request,
-            HttpKernelInterface::SUB_REQUEST
+            HttpKernelInterface::MASTER_REQUEST
         );
     }
 
@@ -119,7 +112,7 @@ class PayPalOuterRedirectEventListener
      * @param bool $transactionResult
      * @return string
      */
-    protected function getRedirectRoute($transactionResult)
+    protected function getRedirectRoute(bool $transactionResult): string
     {
         return $transactionResult ? self::SUCCESS_REDIRECT_ROUTE : self::FAILURE_REDIRECT_ROUTE;
     }
@@ -129,7 +122,7 @@ class PayPalOuterRedirectEventListener
      * @param array $params
      * @return string
      */
-    protected function generateUrl($route, $params)
+    protected function generateUrl(string $route, array $params): string
     {
         return $this->router->generate(
             $route,

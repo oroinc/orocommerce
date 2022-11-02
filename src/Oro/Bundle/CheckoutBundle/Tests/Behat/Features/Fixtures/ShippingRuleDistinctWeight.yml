@@ -1,0 +1,45 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRule1:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+        expression: '(lineItems.sum(lineItem.weight.value * lineItem.quantity) >= 0.0 and lineItems.sum(lineItem.weight.value * lineItem.quantity) < 3.0)'
+    shippingRule2:
+        name: 'Default'
+        enabled: true
+        sortOrder: 2
+        expression: '(lineItems.sum(lineItem.weight.value * lineItem.quantity) >= 3.0 and lineItems.sum(lineItem.weight.value * lineItem.quantity) <= 50.0)'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig10:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 10
+            type: 'per_order'
+    shippingMethodTypeConfig100:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 100
+            type: 'per_order'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig10:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfig10']
+    shippingMethodConfig100:
+        method: '<("flat_rate_".@flatRateIntegration->getId())>'
+        typeConfigs: ['@shippingMethodTypeConfig100']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule10:
+        rule: '@shippingRule1'
+        methodConfigs: ['@shippingMethodConfig10']
+        currency: 'USD'
+        organization: '@organization'
+    shippingMethodsConfigsRule100:
+        rule: '@shippingRule2'
+        methodConfigs: ['@shippingMethodConfig100']
+        currency: 'USD'
+        organization: '@organization'

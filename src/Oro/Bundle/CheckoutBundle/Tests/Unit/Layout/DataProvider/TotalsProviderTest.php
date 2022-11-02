@@ -20,7 +20,7 @@ class TotalsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->checkoutTotalsProvider = $this->getMockBuilder(CheckoutTotalsProvider::class)
             ->disableOriginalConstructor()->getMock();

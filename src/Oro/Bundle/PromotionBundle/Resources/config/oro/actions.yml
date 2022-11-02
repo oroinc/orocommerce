@@ -74,7 +74,7 @@ operations:
             - create_coupon_buttons
         acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
         frontend_options:
-            template: OroPromotionBundle:Coupon:generate.html.twig
+            template: '@OroPromotion/Coupon/generate.html.twig'
             title: oro.promotion.coupon.generation.label
             options:
                 width: 550
@@ -114,7 +114,7 @@ operations:
     oro_promotion_add_coupon_form:
         label: oro.promotion.ui.add_coupon_code.label
         frontend_options:
-            template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
+            template: '@OroPromotion/Coupon/addCouponDialog.html.twig'
             options:
                 okText: oro.promotion.ui.apply_button.label
         attributes:
@@ -175,6 +175,13 @@ operations:
                         service: oro_promotion.applied_promotion_manager
                         method: createAppliedPromotions
                         method_parameters: [$.data]
+                    - '@call_service_method':
+                        conditions:
+                            '@instanceof': [$.data, Oro\Bundle\OrderBundle\Entity\Order]
+                        parameters:
+                            service: oro_order.order.total.total_helper
+                            method: fillTotal
+                            method_parameters: [$.data]
                     - '@flush_entity': $.data
                     - '@flash_message':
                         message: oro.promotion.ui.order_add_coupon.added.message
@@ -184,6 +191,8 @@ operations:
                     '@eq': [$.addedCouponsCount, 0]
                 message: oro.promotion.ui.order_add_coupon.not_added.message
                 type: 'success'
+        preconditions:
+            '@neq': [$.data.disablePromotions, true]
 
     oro_promotion_coupon_unassign:
         label: oro.promotion.ui.unassign_coupon.label
@@ -276,7 +285,7 @@ action_groups:
                     - [[shallowCopy], [propertyName, [discountConfiguration]]]
                     - [[shallowCopy], [propertyName, [productsSegment]]]
                     - [[collection], [propertyName, [schedules]]]
-                    - [[keep], [property, ["%oro_locale.entity.localized_fallback_value.class%", localization]]]
+                    - [[keep], [property, ['Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue', localization]]]
                     - [[collection], [propertyName, [labels]]]
                     - [[collection], [propertyName, [descriptions]]]
             - '@assign_value': [$.promotionCopy.rule.enabled, false]

@@ -10,9 +10,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class CreatePaymentTermShortLabelTable implements Migration
 {
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
@@ -20,10 +17,7 @@ class CreatePaymentTermShortLabelTable implements Migration
         $this->createOroPaymentTermShortLabelTable($schema);
         $this->addOroPaymentTermShortLabelForeignKeys($schema);
     }
-    
-    /**
-     * @param Schema $schema
-     */
+
     private function createOroPaymentTermShortLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_payment_term_short_label');
@@ -33,10 +27,8 @@ class CreatePaymentTermShortLabelTable implements Migration
         $table->addIndex(['transport_id'], 'oro_payment_term_short_label_transport_id', []);
         $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_short_label_localized_value_id', []);
     }
-    
+
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroPaymentTermShortLabelForeignKeys(Schema $schema)

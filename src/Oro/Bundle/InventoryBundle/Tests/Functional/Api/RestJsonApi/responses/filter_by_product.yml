@@ -1,0 +1,128 @@
+data:
+    -
+        type: inventorylevels
+        id: '<toString(@inventory_level.product_unit_precision.product-1.primary_unit->id)>'
+        attributes:
+            quantity: '10'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+    -
+        type: inventorylevels
+        id: '<toString(@inventory_level.product_unit_precision.product-1.liter->id)>'
+        attributes:
+            quantity: '10'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.liter->id)>'
+    -
+        type: inventorylevels
+        id: '<toString(@inventory_level.product_unit_precision.product-1.bottle->id)>'
+        attributes:
+            quantity: '99'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+included:
+    -
+        type: products
+        id: '<toString(@product-1->id)>'
+        attributes:
+            sku: product-1
+            status: enabled
+            variantFields: {  }
+            productType: simple
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '<toString(@business_unit->id)>'
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@organization->id)>'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-1.liter->id)>'
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: in_stock
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.liter->id)>'
+        attributes:
+            precision: 3
+            conversionRate: 5
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+        attributes:
+            precision: 2
+            conversionRate: 3
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'
+    -
+        type: productunitprecisions
+        id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        attributes:
+            precision: 0
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

@@ -4,15 +4,22 @@ namespace Oro\Bundle\CatalogBundle\ContentVariantType;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Component\Routing\RouteData;
+use Oro\Component\WebCatalog\ContentVariantEntityProviderInterface;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class CategoryPageContentVariantType implements ContentVariantTypeInterface
+/**
+ * The content variant type for a master catalog category.
+ */
+class CategoryPageContentVariantType implements ContentVariantTypeInterface, ContentVariantEntityProviderInterface
 {
-    const TYPE = 'category_page';
+    public const TYPE = 'category_page';
+    public const CATEGORY_CONTENT_VARIANT_ID_KEY = 'categoryContentVariantId';
+    public const OVERRIDE_VARIANT_CONFIGURATION_KEY = 'overrideVariantConfiguration';
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
@@ -20,10 +27,6 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
     /** @var PropertyAccessor */
     private $propertyAccessor;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param PropertyAccessor              $propertyAccessor
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         PropertyAccessor $propertyAccessor
@@ -70,14 +73,41 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Category $category */
-        $category = $this->propertyAccessor->getValue($contentVariant, 'categoryPageCategory');
+        $category = $this->getAttachedEntity($contentVariant);
 
         return new RouteData(
             'oro_product_frontend_product_index',
             [
-                'categoryId' => $category->getId(),
-                'includeSubcategories' => !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories')
+                self::CATEGORY_CONTENT_VARIANT_ID_KEY => $contentVariant->getId(),
+                RequestProductHandler::CATEGORY_ID_KEY => $category->getId(),
+                RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY =>
+                    !$this->propertyAccessor->getValue($contentVariant, 'excludeSubcategories'),
+                self::OVERRIDE_VARIANT_CONFIGURATION_KEY => $contentVariant->isOverrideVariantConfiguration(),
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceClassName()
+    {
+        return Category::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResourceIdentifierDqlExpression($alias)
+    {
+        return sprintf('IDENTITY(%s.category_page_category)', $alias);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttachedEntity(ContentVariantInterface $contentVariant)
+    {
+        return $this->propertyAccessor->getValue($contentVariant, 'categoryPageCategory');
     }
 }

@@ -2,212 +2,128 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlRemoveProcessor;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic;
+use Oro\Bundle\RedirectBundle\Async\Topic\RemoveDirectUrlForEntityTypeTopic;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Psr\Log\LoggerInterface;
 
 class DirectUrlRemoveProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
+    use LoggerAwareTraitTestTrait;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $logger;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $producer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
 
-    /**
-     * @var DirectUrlRemoveProcessor
-     */
-    private $processor;
+    private DirectUrlRemoveProcessor $processor;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
 
-        $this->processor = new DirectUrlRemoveProcessor($this->registry, $this->logger, $this->producer);
+        $this->processor = new DirectUrlRemoveProcessor($this->registry, $this->producer);
+        $this->setUpLoggerMock($this->processor);
     }
 
-    public function testProcessExceptionOutsideTransaction()
+    public function testProcessExceptionInTransaction(): void
     {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $messageData = \stdClass::class;
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($messageBody);
-        $exception = new \Exception('Test');
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with(Slug::class)
-            ->willThrowException($exception);
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with($messageData)
-            ->willReturn($em);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                'Unexpected exception occurred during Direct URL removal',
-                ['exception' => $exception]
-            );
-
-        $this->producer->expects($this->never())->method('send');
-
-        $this->assertEquals(DirectUrlRemoveProcessor::REJECT, $this->processor->process($message, $session));
-    }
-
-    public function testProcessExceptionInTransaction()
-    {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $messageData = \stdClass::class;
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
+        $messageBody = \stdClass::class;
+        $message->expects(self::any())
             ->method('getBody')
             ->willReturn($messageBody);
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('rollback');
 
         $exception = new \Exception('Test');
-        $repository = $this->getMockBuilder(SlugRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())
+        $repository = $this->createMock(SlugRepository::class);
+        $repository->expects(self::once())
             ->method('deleteSlugAttachedToEntityByClass')
-            ->with($messageData)
+            ->with($messageBody)
             ->willThrowException($exception);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(Slug::class)
             ->willReturn($repository);
-        $this->registry->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getManagerForClass')
-            ->with($messageData)
+            ->with($messageBody)
             ->willReturn($em);
 
-        $this->logger->expects($this->once())
+        $this->loggerMock->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during Direct URL removal',
                 ['exception' => $exception]
             );
 
-        $this->producer->expects($this->never())->method('send');
+        $this->producer->expects(self::never())->method('send');
 
-        $this->assertEquals(DirectUrlRemoveProcessor::REJECT, $this->processor->process($message, $session));
+        self::assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }
 
-    public function testProcessNoEntityManagerFound()
+    public function testProcess(): void
     {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
-        $session = $this->createMock(SessionInterface::class);
-
-        $messageData = \stdClass::class;
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
+        $messageBody = \stdClass::class;
+        $message->expects(self::any())
             ->method('getBody')
             ->willReturn($messageBody);
 
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with($messageData)
-            ->willReturn(null);
-
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(sprintf('Entity manager is not defined for class: "%s"', $messageData));
-
-        $this->producer->expects($this->never())->method('send');
-
-        $this->assertEquals(DirectUrlRemoveProcessor::REJECT, $this->processor->process($message, $session));
-    }
-
-    public function testProcess()
-    {
-        /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $messageData = \stdClass::class;
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($messageBody);
-
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('beginTransaction');
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('commit');
 
-        $repository = $this->getMockBuilder(SlugRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())
+        $repository = $this->createMock(SlugRepository::class);
+        $repository->expects(self::once())
             ->method('deleteSlugAttachedToEntityByClass')
-            ->with($messageData);
+            ->with($messageBody);
 
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(Slug::class)
             ->willReturn($repository);
-        $this->registry->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getManagerForClass')
-            ->with($messageData)
+            ->with($messageBody)
             ->willReturn($em);
 
         $this->producer
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('send')
-            ->with(Topics::CALCULATE_URL_CACHE_MASS, '');
+            ->with(
+                CalculateSlugCacheMassTopic::getName(),
+                [DirectUrlMessageFactory::ENTITY_CLASS_NAME => $messageBody, DirectUrlMessageFactory::ID => []]
+            );
 
-        $this->assertEquals(DirectUrlRemoveProcessor::ACK, $this->processor->process($message, $session));
+        self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
-    public function testGetSubscribedTopics()
+    public function testGetSubscribedTopics(): void
     {
-        $this->assertEquals(
-            [Topics::REMOVE_DIRECT_URL_FOR_ENTITY_TYPE],
+        self::assertEquals(
+            [RemoveDirectUrlForEntityTypeTopic::getName()],
             DirectUrlRemoveProcessor::getSubscribedTopics()
         );
     }

@@ -17,8 +17,6 @@ class RuleTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param RuleInterface $rule
      */
     public function testSubmitValid(RuleInterface $rule)
     {
@@ -42,6 +40,7 @@ class RuleTypeTest extends FormIntegrationTestCase
         ;
 
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($newRule, $form->getData());
     }
 

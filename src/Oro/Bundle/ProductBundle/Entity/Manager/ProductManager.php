@@ -16,9 +16,6 @@ class ProductManager
      */
     protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -34,7 +31,7 @@ class ProductManager
         array $dataParameters
     ) {
         $event = new ProductDBQueryRestrictionEvent($queryBuilder, new ParameterBag($dataParameters));
-        $this->eventDispatcher->dispatch(ProductDBQueryRestrictionEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ProductDBQueryRestrictionEvent::NAME);
 
         return $event->getQueryBuilder();
     }
@@ -46,7 +43,7 @@ class ProductManager
     public function restrictSearchQuery(Query $query)
     {
         $productSearchQueryEvent = new ProductSearchQueryRestrictionEvent($query);
-        $this->eventDispatcher->dispatch(ProductSearchQueryRestrictionEvent::NAME, $productSearchQueryEvent);
+        $this->eventDispatcher->dispatch($productSearchQueryEvent, ProductSearchQueryRestrictionEvent::NAME);
 
         return $productSearchQueryEvent->getQuery();
     }

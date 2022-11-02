@@ -3,14 +3,10 @@ layout:
         -
             id: oro_product_quick_add_validation
             root: widget_content
-        -
-            id: oro_product_quick_add_form
-            root: quick_add_validation
-            namespace: quick_add_import
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add_import/dialog/quick_add_import_result.html.twig'
+            themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add_import/dialog/quick_add_import_result.html.twig'
         - '@setOption':
             id: widget_content
             optionName: 'attr.data-page-component-module'

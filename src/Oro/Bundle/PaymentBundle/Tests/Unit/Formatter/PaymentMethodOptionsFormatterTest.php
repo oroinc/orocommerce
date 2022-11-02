@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\PaymentBundle\Event\CollectFormattedPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodOptionsFormatter;
@@ -10,29 +10,20 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $paymentMethodViewProvider;
+    private PaymentMethodViewProviderInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethodViewProvider;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /**
-     * @var PaymentMethodOptionsFormatter
-     */
-    private $formatter;
+    private PaymentMethodOptionsFormatter $formatter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->paymentMethodViewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->formatter = new PaymentMethodOptionsFormatter($this->paymentMethodViewProvider, $this->eventDispatcher);
     }
 
-    public function testFormatPaymentMethodOptionsWhenThrowsException()
+    public function testFormatPaymentMethodOptionsWhenThrowsException(): void
     {
         $paymentMethod = 'test_payment_method';
         $this->paymentMethodViewProvider->expects($this->once())
@@ -46,7 +37,7 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
         self::assertCount(0, $result);
     }
 
-    public function testFormatPaymentMethodOptions()
+    public function testFormatPaymentMethodOptions(): void
     {
         $paymentMethod = 'test_payment_method';
         $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
@@ -58,12 +49,14 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                CollectFormattedPaymentOptionsEvent::EVENT_NAME,
-                $this->isInstanceOf(CollectFormattedPaymentOptionsEvent::class)
+                $this->isInstanceOf(CollectFormattedPaymentOptionsEvent::class),
+                CollectFormattedPaymentOptionsEvent::EVENT_NAME
             )
             ->willReturnCallback(
-                function (string $eventName, CollectFormattedPaymentOptionsEvent $event) use ($option) {
+                function (CollectFormattedPaymentOptionsEvent $event) use ($option) {
                     $event->addOption($option);
+
+                    return $event;
                 }
             );
 

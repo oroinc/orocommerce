@@ -3,11 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -17,19 +20,19 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class AjaxEntityTotalsControllerTest extends WebTestCase
 {
-    protected function setUp()
+    use ConfigManagerAwareTestTrait;
+
+    protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-            ]
-        );
+        $this->loadFixtures([
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
+        ]);
     }
 
     public function testEntityTotalsActionForShoppingList()
@@ -38,7 +41,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         // set customer user not default currency
-        $manager = $this->getContainer()->get('oro_config.manager');
+        $manager = self::getConfigManager('global');
         $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
 
         $user = $this->getCurrentUser();
@@ -63,11 +66,11 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
 
         $this->assertArrayHasKey('total', $data);
-        $this->assertEquals($data['total']['amount'], 282.43);
-        $this->assertEquals($data['total']['currency'], 'EUR');
+        $this->assertEquals(282.43, $data['total']['amount']);
+        $this->assertEquals('EUR', $data['total']['currency']);
 
         $this->assertArrayHasKey('subtotals', $data);
         $this->assertEquals(282.43, $data['subtotals'][0]['amount']);
@@ -83,28 +86,22 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 
     public function testRecalculateTotalsAction()
     {
-        $this->client->request('POST', $this->getUrl('oro_pricing_frontend_recalculate_entity_totals'));
+        $this->ajaxRequest('POST', $this->getUrl('oro_pricing_frontend_recalculate_entity_totals'));
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    /**
-     * @return CustomerUser
-     */
-    protected function getCurrentUser()
+    private function getCurrentUser(): CustomerUser
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCustomerBundle:CustomerUser')
+            ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
-    /**
-     * @return Website
-     */
-    protected function getCurrentWebsite()
+    private function getCurrentWebsite(): Website
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
+            ->getRepository(Website::class)
             ->find(1);
     }
 }

@@ -13,14 +13,15 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var PriceRuleLexemeTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceRuleLexemeTriggerHandler;
+    private $priceRuleLexemeTriggerHandler;
 
     /** @var DependentPriceListProvider */
-    protected $dependentPriceListProvider;
+    private $dependentPriceListProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->priceRuleLexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);
+
         $this->dependentPriceListProvider = new DependentPriceListProvider($this->priceRuleLexemeTriggerHandler);
     }
 
@@ -37,12 +38,12 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceRuleLexemeTriggerHandler->expects($this->exactly(4))
             ->method('findEntityLexemes')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [PriceList::class, [], 1, [$lexeme1, $lexeme2]],
                 [PriceList::class, [], 2, [$lexeme3]],
                 [PriceList::class, [], 3, []],
                 [PriceList::class, [], 4, []],
-            ]));
+            ]);
 
         $this->assertEquals(
             [2 => $dependentPriceList1, 3 => $dependentPriceList2, 4 => $dependentPriceList3],
@@ -66,13 +67,13 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceRuleLexemeTriggerHandler->expects($this->exactly(6))
             ->method('findEntityLexemes')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [PriceList::class, [], 1, [$lexeme1, $lexeme2]],
                 [PriceList::class, [], 2, [$lexeme3, $lexeme4]],
                 [PriceList::class, [], 3, []],
                 [PriceList::class, [], 4, []],
                 [PriceList::class, [], 5, []],
-            ]));
+            ]);
 
         $this->assertEquals(
             [

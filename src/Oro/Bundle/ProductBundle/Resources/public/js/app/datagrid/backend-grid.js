@@ -1,25 +1,24 @@
-define(function(require) {
+define(function(require, exports, module) {
     'use strict';
 
-    var BackendGrid;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
-    var Grid = require('orodatagrid/js/datagrid/grid');
-    var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
-    var BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
-    var BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
-    var SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const __ = require('orotranslation/js/translator');
+    const mediator = require('oroui/js/mediator');
+    const pageStateChecker = require('oronavigation/js/app/services/page-state-checker');
+    const Grid = require('orodatagrid/js/datagrid/grid');
+    const BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
+    const BackendSelectAllHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-select-all-header-cell');
+    const BackendActionHeaderCell = require('oroproduct/js/app/datagrid/header-cell/backend-action-header-cell');
+    const SelectState = require('oroproduct/js/app/datagrid/products-select-state-model');
 
-    var config = require('module').config();
+    let config = require('module-config').default(module.id);
     config = _.extend({
-        massActionsInSticky: _.isMobile(),
-        massActionsContainer: $('[data-mass-actions-container]'),
-        massActionsStickyContainer: $('[data-mass-actions-sticky-container]')
+        massActionsContainer: '[data-mass-actions-container]',
+        massActionsStickyContainer: '[data-mass-actions-sticky-container]'
     }, config);
 
-    BackendGrid = Grid.extend({
+    const BackendGrid = Grid.extend({
         /** @property */
         toolbar: BackendToolbar,
 
@@ -39,40 +38,41 @@ define(function(require) {
             visible: null
         },
 
-        /** @property */
-        massActionsInSticky: config.massActionsInSticky,
-
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function BackendGrid() {
-            BackendGrid.__super__.constructor.apply(this, arguments);
+        constructor: function BackendGrid(options) {
+            BackendGrid.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.header = null;
             this.footer = null;
             this.body = null;
             this.multiSelectRowEnabled = options.multiSelectRowEnabled;
+            this.optimizedScreenSize = options.metadata.options.optimizedScreenSize || 'tablet';
 
             mediator.on('grid-content-loaded', function(params) {
                 this.updateGridContent(params);
             }, this);
 
-            BackendGrid.__super__.initialize.apply(this, arguments);
+            BackendGrid.__super__.initialize.call(this, options);
 
             mediator.on('widget:notFound', function() {
                 $(window).off('beforeunload');
             });
 
+            this.hasSelections = this.hasSelections.bind(this);
+            pageStateChecker.registerChecker(this.hasSelections);
+
             this._listenToDocumentEvents();
         },
 
         _listenToDocumentEvents: function() {
-            $(window).on('beforeunload.' + this.cid, _.bind(this.onWindowUnload, this));
+            $(window).on('beforeunload.' + this.cid, this.onWindowUnload.bind(this));
         },
 
         /**
@@ -91,7 +91,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         backgridInitialize: function() {
             if (this.selectState === null) {
@@ -112,11 +112,10 @@ define(function(require) {
                 'backgrid:checkUnSavedData': this.checkUnSavedData,
                 'backgrid:hasMassActions': this.hasMassActions
             });
-            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.showStickyContainer, 50), this));
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             this.$grid = this.$(this.selectors.grid);
@@ -136,7 +135,7 @@ define(function(require) {
 
             this.initLayout({
                 collection: this.collection
-            }).always(_.bind(function() {
+            }).always(() => {
                 this.rendered = true;
                 /**
                  * Backbone event. Fired when the grid has been successfully rendered.
@@ -150,10 +149,10 @@ define(function(require) {
                  */
                 mediator.trigger('grid_render:complete', this.$el);
                 this._resolveDeferredRender();
-            }, this));
+            });
 
             this.rendered = true;
-            var self = this;
+            const self = this;
 
             this.switchAppearanceClass(_.result(this.metadata.state, 'appearanceType'));
 
@@ -164,23 +163,23 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _afterRequest: function(jqXHR) {
             if (this.requestsCount === 1) {
                 this.initLayout({collection: this.collection});
             }
-            BackendGrid.__super__._afterRequest.apply(this, arguments);
+            BackendGrid.__super__._afterRequest.call(this, jqXHR);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         undelegateEvents: function() {
             this.collection.off('gridContentUpdate');
             mediator.off('grid-content-loaded');
 
-            BackendGrid.__super__.undelegateEvents.apply(this, arguments);
+            BackendGrid.__super__.undelegateEvents.call(this);
         },
 
         renderActionsArea: function() {
@@ -191,37 +190,25 @@ define(function(require) {
 
             this.selectAllHeaderCell = new BackendSelectAllHeaderCell({
                 collection: this.collection,
-                selectState: this.selectState
+                selectState: this.selectState,
+                optimizedScreenSize: this.optimizedScreenSize
             });
+
+            $(this.massActionsContainer).append(this.selectAllHeaderCell.$el);
 
             this.selectHeaderActionCell = new BackendActionHeaderCell({
                 collection: this.collection,
                 column: this.columns.findWhere('massActions'),
                 selectState: this.selectState,
-                massActionsInSticky: this.massActionsInSticky
+                optimizedScreenSize: this.optimizedScreenSize
             });
 
-            this.massActionsContainer.append(this.selectAllHeaderCell.$el);
-            if (this.massActionsInSticky) {
-                this.additionalSelectAllHeaderCell = new BackendSelectAllHeaderCell({
-                    collection: this.collection,
-                    selectState: this.selectState,
-                    additionalTpl: true
-                });
-
-                this.massActionsStickyContainer.append(this.additionalSelectAllHeaderCell.$el);
-                this.massActionsStickyContainer.append(this.selectHeaderActionCell.$el);
-            } else {
-                this.massActionsContainer.append(this.selectHeaderActionCell.$el);
-            }
-        },
-
-        showStickyContainer: function(selectState) {
-            this.massActionsStickyContainer[selectState.isEmpty() ? 'addClass' : 'removeClass']('hidden');
+            $(this.massActionsStickyContainer).append(this.selectHeaderActionCell.$el);
         },
 
         setVisibleState: function(state) {
             this.visibleState.visible = state;
+            this.$el.toggleClass('row-selection-enabled', state);
         },
 
         /**
@@ -251,18 +238,22 @@ define(function(require) {
         },
 
         onWindowUnload: function() {
-            if (!this.selectState.isEmpty()) {
+            if (this.hasSelections()) {
                 return __('oro.ui.leave_page_with_unsaved_data_confirm');
             }
         },
 
+        hasSelections: function() {
+            return !this.selectState.isEmpty();
+        },
+
         checkUnSavedData: function(obj) {
-            var live = true;
-            var self = this;
+            let live = true;
+            const self = this;
 
             if (!this.selectState.isEmpty()) {
-                var confirm = function() {
-                    var answer = window.confirm(__('oro.ui.leave_page_with_unsaved_data_confirm'));
+                const confirm = function() {
+                    const answer = window.confirm(__('oro.ui.leave_page_with_unsaved_data_confirm'));
                     if (answer) {
                         // Clear Selected State
                         self.collection.trigger('backgrid:selectNone');
@@ -279,11 +270,19 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
-            BackendGrid.__super__.dispose.apply(this, arguments);
+            pageStateChecker.removeChecker(this.hasSelections);
+            BackendGrid.__super__.dispose.call(this);
             $(window).off('.' + this.cid);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        setGridAriaAttrs() {
+            // Nothing to reuse
         }
     });
 

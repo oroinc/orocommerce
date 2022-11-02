@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\EventListener;
 
-use Oro\Bundle\RFPBundle\EventListener\AbstractCustomerViewListener;
+use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 
+/**
+ * Adds additional block with quotes grid on the Customer and CustomerUser view pages.
+ */
 class CustomerViewListener extends AbstractCustomerViewListener
 {
     /**
@@ -11,13 +14,13 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroSaleBundle:Customer:quote_view.html.twig';
+        return '@OroSale/Customer/quote_view.html.twig';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer.label';
     }
@@ -27,13 +30,13 @@ class CustomerViewListener extends AbstractCustomerViewListener
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+        return '@OroSale/CustomerUser/quote_view.html.twig';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer_user.label';
     }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Event;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Component\Website\WebsiteInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class RestrictSitemapEntitiesEventTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +28,7 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit\Framework\TestCase
 
         $event = new RestrictSitemapEntitiesEvent($qb, $version, $website);
 
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $event);
+        $this->assertInstanceOf(Event::class, $event);
         $this->assertEquals($qb, $event->getQueryBuilder());
         $this->assertEquals($version, $event->getVersion());
         $this->assertEquals($website, $event->getWebsite());
@@ -44,7 +45,7 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit\Framework\TestCase
 
         $event = new RestrictSitemapEntitiesEvent($qb, $version);
 
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $event);
+        $this->assertInstanceOf(Event::class, $event);
         $this->assertEquals($qb, $event->getQueryBuilder());
         $this->assertEquals($version, $event->getVersion());
         $this->assertNull($event->getWebsite());

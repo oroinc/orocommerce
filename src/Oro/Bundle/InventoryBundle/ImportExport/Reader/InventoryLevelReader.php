@@ -9,6 +9,9 @@ use Oro\Bundle\InventoryBundle\ORM\Query\ResultIterator\InventoryLevelIteratorSt
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Inventory data reader for export
+ */
 class InventoryLevelReader extends EntityReader
 {
     /** @var  string */
@@ -23,9 +26,6 @@ class InventoryLevelReader extends EntityReader
         parent::setSourceEntityName($entityName, $organization, $ids);
     }
 
-    /**
-     * @param ContextInterface $context
-     */
     protected function initializeFromContext(ContextInterface $context)
     {
         parent::initializeFromContext($context);
@@ -37,13 +37,14 @@ class InventoryLevelReader extends EntityReader
      */
     protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
     {
-        $qb = parent::createSourceEntityQueryBuilder($entityName, $organization);
-
+        $qb = parent::createSourceEntityQueryBuilder($entityName, $organization, $ids);
         switch ($this->currentEntityName) {
             case Product::class:
                 $qb->orderBy('o.sku', 'ASC');
                 break;
             case InventoryLevel::class:
+                $qb->addSelect('_product');
+                $qb->leftJoin('o.' . 'product', '_product');
                 $qb->orderBy('_product.sku', 'ASC');
                 break;
             default:

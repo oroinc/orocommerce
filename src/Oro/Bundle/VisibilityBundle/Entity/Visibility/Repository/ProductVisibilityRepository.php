@@ -12,10 +12,6 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     /**
      * Update to 'config' ProductVisibility for products without category with fallback to 'category'.
-     *
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Scope $scope
-     * @param Product|null $product
      */
     public function setToDefaultWithoutCategory(
         InsertFromSelectQueryExecutor $insertExecutor,

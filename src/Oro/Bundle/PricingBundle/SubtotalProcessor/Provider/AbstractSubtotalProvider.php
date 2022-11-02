@@ -22,9 +22,6 @@ abstract class AbstractSubtotalProvider
      */
     protected $websiteCurrencyProvider;
 
-    /**
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(SubtotalProviderConstructorArguments $arguments)
     {
         $this->currencyManager = $arguments->getCurrencyManager();

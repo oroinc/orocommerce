@@ -1,0 +1,124 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &cv-canvas {
+        &.desktop {
+            border: $canvas-border;
+        }
+
+        &:not(.desktop) {
+            background-color: transparent;
+            background-image: $canvas-pattern;
+            background-size: $canvas-pattern-size;
+            background-position: $canvas-pattern-position;
+
+            box-shadow: $canvas-box-shadow;
+            border: none;
+
+            .#{$app-prefix}cv-canvas__tools {
+                overflow: hidden;
+                position: relative;
+            }
+        }
+
+        &.tablet,
+        &.tablet-small,
+        &.mobile,
+        &.mobile-big,
+        &.mobile-landscape {
+            overflow: auto;
+
+            .gjs-frame-wrapper {
+                background: $primary-800;
+                margin: 8px auto;
+                border: solid $primary-800;
+                border-radius: 55px;
+                border-width: 47px 12px 67px;
+                box-sizing: content-box;
+            }
+
+            #gjs-tools,
+            .gjs-tools {
+                transform: translate(-6px, -6px);
+            }
+
+            .#{$app-prefix}cv-canvas__tools {
+                height: 100%;
+            }
+        }
+
+        &.mobile-landscape {
+            .gjs-frame-wrapper {
+                border-width: 12px 67px 12px 47px;
+            }
+
+            .#{$app-prefix}cv-canvas__tools {
+                height: 100%;
+            }
+        }
+
+        &__frames {
+            // stylelint-disable-next-line declaration-no-important
+            background-color: transparent !important;
+            z-index: 1;
+        }
+    }
+
+    &pn-commands {
+        box-shadow: none;
+        padding: 0;
+        display: none;
+    }
+
+    &pn-devices-c {
+        opacity: 0;
+
+        &.init {
+            opacity: 1;
+        }
+
+        .gjs-pn-btn {
+            font-family: $fa-font-family;
+
+            &.desktop {
+                &::before {
+                    content: $fa-var-desktop;
+                }
+            }
+
+            &.tablet {
+                font-size: $base-font-size--l + 2px;
+            }
+
+            &.tablet,
+            &.tablet-small {
+                &::before {
+                    content: $fa-var-tablet;
+                }
+            }
+
+            &.mobile-big {
+                font-size: $base-font-size--l + 2px;
+            }
+
+            &.mobile {
+                font-size: $base-font-size--l;
+            }
+
+            &.mobile,
+            &.mobile-big {
+                &::before {
+                    content: $fa-var-mobile;
+                }
+            }
+
+            &.mobile-landscape {
+                transform: rotate(90deg);
+
+                &::before {
+                    content: $fa-var-mobile;
+                }
+            }
+        }
+    }
+}

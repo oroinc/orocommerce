@@ -1,0 +1,69 @@
+{% block _line_item_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'line-item-form-container'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _line_item_form_fields_widget %}
+    {% if not isProductUnitSelectionVisible %}
+        <div class="form__col">
+            {{ form_label(form.quantity) }}
+            {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
+            {# unit field is also handled in single unit mode, but set as a default one from config #}
+            {{ form_widget(form.unit) }}
+
+            {% if isUnitVisible %}
+                <span class="label">
+                    {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}
+                </span>
+            {% endif %}
+            {{ form_errors(form.quantity) }}
+        </div>
+    {% else %}
+        <div class="product-view-quantity fields-row">
+            <div class="product-view-quantity__unit{% if form.unit.vars.choices|length == 1 %} product-view-quantity__unit--half{% endif %}">
+                {% if form.unit.vars.choices|length > 1 %}
+                    {{ form_widget(form.unit) }}
+                {% else %}
+                    <div class="product-view-quantity__unit-label" data-role="unit-label">
+                        {{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}
+                    </div>
+                    <div class="hidden">
+                        <input type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
+                    </div>
+                {% endif %}
+            </div>
+            <div class="product-view-quantity__value{% if form.unit.vars.choices|length == 1 %} product-view-quantity__value--half{% endif %}">
+                {{ form_widget(form.quantity, { 'attr': {'aria-label': 'oro.product.quantity.aria_label'|trans }}) }}
+            </div>
+            <div class="fields-row-error"></div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_line_item_form_buttons_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col"
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _line_item_form_start_widget %}
+    {% set attr = attr|merge({
+        'data-prevent-submit': ''
+    }) %}
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _line_item_form_end_widget %}
+    {{ form_widget(form._token) }}
+    {{ block_widget(block) }}
+{% endblock %}

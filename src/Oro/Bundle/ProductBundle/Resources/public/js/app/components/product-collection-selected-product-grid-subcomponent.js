@@ -1,14 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var SelectedProductGridSubComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const mediator = require('oroui/js/mediator');
+    const routing = require('routing');
+    require('jquery-ui/effects/effect-highlight');
 
-    SelectedProductGridSubComponent = BaseComponent.extend({
+    const SelectedProductGridSubComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -74,14 +74,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function SelectedProductGridSubComponent() {
-            SelectedProductGridSubComponent.__super__.constructor.apply(this, arguments);
+        constructor: function SelectedProductGridSubComponent(options) {
+            SelectedProductGridSubComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
@@ -97,33 +97,33 @@ define(function(require) {
             mediator.on(this.options.applyQueryEventName, this.onUpdateFilteredGrid, this);
             this.$excluded.on(
                 'change' + this.eventNamespace(),
-                _.throttle(_.bind(this.onChangeExcluded, this), this.options.wait)
+                _.throttle(this.onChangeExcluded.bind(this), this.options.wait)
             );
             this.$included.on(
                 'change' + this.eventNamespace(),
-                _.throttle(_.bind(this.onChangeIncluded, this), this.options.wait)
+                _.throttle(this.onChangeIncluded.bind(this), this.options.wait)
             );
 
-            this.reloadMainGrid = _.debounce(_.bind(this.triggerApplyQueryEvent, this), this.options.wait);
+            this.reloadMainGrid = _.debounce(this.triggerApplyQueryEvent.bind(this), this.options.wait);
         },
 
         _initializeTabElements: function() {
             this.tabs = {
                 filtered: {
                     tab: this.options._sourceElement.find(this.options.selectors.tabFiltered),
-                    loadCounter: _.debounce(_.bind(this._loadCounter, this), this.options.wait),
+                    loadCounter: _.debounce(this._loadCounter.bind(this), this.options.wait),
                     request: null,
                     update: 0
                 },
                 included: {
                     tab: this.options._sourceElement.find(this.options.selectors.tabIncluded),
-                    loadCounter: _.debounce(_.bind(this._loadCounter, this), this.options.wait),
+                    loadCounter: _.debounce(this._loadCounter.bind(this), this.options.wait),
                     request: null,
                     update: 0
                 },
                 excluded: {
                     tab: this.options._sourceElement.find(this.options.selectors.tabExcluded),
-                    loadCounter: _.debounce(_.bind(this._loadCounter, this), this.options.wait),
+                    loadCounter: _.debounce(this._loadCounter.bind(this), this.options.wait),
                     request: null,
                     update: 0
                 }
@@ -139,9 +139,9 @@ define(function(require) {
          * @param {Object} gridElement
          */
         onGridLoadComplete: function(collection, gridElement) {
-            var type = this._getGridType(collection.inputName);
+            const type = this._getGridType(collection.inputName);
             if (!_.isUndefined(type) && this.tabs[type].update > 0) {
-                var foundGrid = this.options._sourceElement.find(gridElement);
+                const foundGrid = this.options._sourceElement.find(gridElement);
                 if (foundGrid.length) {
                     this.tabs[type].loadCounter(collection, type);
                 }
@@ -154,7 +154,7 @@ define(function(require) {
          * @private
          */
         _getGridType: function(gridName) {
-            for (var i = 0; i < this.options.grids.length; i++) {
+            for (let i = 0; i < this.options.grids.length; i++) {
                 if (gridName.indexOf(this.options.grids[i].name) !== -1) {
                     return this.options.grids[i].type;
                 }
@@ -169,30 +169,32 @@ define(function(require) {
          * @private
          */
         _loadCounter: function(collection, type) {
-            var tabData = this.tabs[type];
-            var originalUrl = collection.url;
-            var query = originalUrl.substring(originalUrl.indexOf('?'), originalUrl.length);
-            var url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
+            const tabData = this.tabs[type];
+            const originalUrl = collection.url;
+            const query = originalUrl.substring(originalUrl.indexOf('?'), originalUrl.length);
+            const url = routing.generate(this.options.counterRoute, {gridName: collection.inputName});
+            const tabType = `tab${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            const $tab = this.options._sourceElement.find(this.options.selectors[tabType]);
 
             if (tabData.request) {
                 tabData.request.abort();
             }
             tabData.request = $.getJSON(
                 url + query,
-                _.bind(tabData.counter.html, tabData.counter)
+                count => {
+                    $tab.find(this.options.selectors.counter).each((i, el) => {
+                        $(el).html(count);
+                    });
+                }
             );
             tabData.request
-                .done(
-                    _.bind(function() {
-                        tabData.tab.effect('highlight', {color: this.options.highlightColor}, 1000);
-                    }, this)
-                )
-                .always(
-                    function() {
-                        tabData.update--;
-                        tabData.request = null;
-                    }
-                );
+                .done(() => {
+                    $tab.effect('highlight', {color: this.options.highlightColor}, 1000);
+                })
+                .always(() => {
+                    tabData.update--;
+                    tabData.request = null;
+                });
         },
 
         /**
@@ -210,15 +212,15 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = _.filter(this.requiredOptions, _.bind(function(option) {
+            const requiredMissed = _.filter(this.requiredOptions, option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
 
-            var requiredSelectors = [];
-            _.each(this.options.selectors, function(selector, selectorName) {
+            const requiredSelectors = [];
+            _.each(this.options.selectors, (selector, selectorName) => {
                 if (!selector) {
                     requiredSelectors.push(selectorName);
                 }
@@ -284,7 +286,7 @@ define(function(require) {
          * @private
          */
         _refreshGrid: function(controlsBlockAlias, gridName, value, reload) {
-            var parameters = {
+            const parameters = {
                 updateUrl: false,
                 reload: reload,
                 params: {}

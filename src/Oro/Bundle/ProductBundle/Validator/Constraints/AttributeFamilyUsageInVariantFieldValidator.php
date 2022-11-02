@@ -6,12 +6,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeGroupRelationRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates that attributes which are going to be deleted are not used in any product belonging to the product
+ * attribute family.
+ */
 class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_attribute_family_usage_in_variant_field';
@@ -22,14 +27,17 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
-    /**
-     * @param AttributeManager $attributeManager
-     * @param DoctrineHelper $doctrineHelper
-     */
-    public function __construct(AttributeManager $attributeManager, DoctrineHelper $doctrineHelper)
-    {
+    /** @var ConfigManager */
+    private $configManager;
+
+    public function __construct(
+        AttributeManager $attributeManager,
+        DoctrineHelper $doctrineHelper,
+        ConfigManager $configManager
+    ) {
         $this->attributeManager = $attributeManager;
         $this->doctrineHelper = $doctrineHelper;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -59,7 +67,7 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
         }
 
         $entityConfigNames = $this->getDeletedEntityConfigNames($toDeleteIds);
-        $errors = $this->validateConfigProducts($entityConfigNames);
+        $errors = $this->validateConfigProducts($entityConfigNames, $value);
 
         if ($errors) {
             $this->context->addViolation(
@@ -119,21 +127,28 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
 
     /**
      * @param array $entityConfigNames
+     * @param AttributeFamily $attributeFamily
      * @return array
      */
-    private function validateConfigProducts(array $entityConfigNames)
+    private function validateConfigProducts(array $entityConfigNames, AttributeFamily $attributeFamily)
     {
+        $attributeConfigProvider = $this->configManager->getProvider('attribute');
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $products = $productRepository->findBy(['type' => Product::TYPE_CONFIGURABLE]);
+        $products = $productRepository->findBy([
+            'type' => Product::TYPE_CONFIGURABLE,
+            'attributeFamily' => $attributeFamily
+        ]);
 
         $errors = [];
-
         /** @var Product $product */
         foreach ($products as $product) {
+            $className = get_class($product);
             foreach ($entityConfigNames as $name) {
+                $attributeConfig = $attributeConfigProvider->getConfig($className, $name);
+                $fieldName = $attributeConfig->get('field_name', false, $name);
                 if (in_array($name, $product->getVariantFields())) {
                     $errors['products'][] = $product->getSku();
-                    $errors['names'][] = $name;
+                    $errors['names'][] = $fieldName;
                 }
             }
         }

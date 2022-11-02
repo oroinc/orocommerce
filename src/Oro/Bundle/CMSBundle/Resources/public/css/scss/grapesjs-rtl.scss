@@ -1,0 +1,57 @@
+/* rtl:raw:
+.CodeMirror-code {
+    text-align: left;
+    direction: ltr;
+}
+.CodeMirror-gutter-filler, .CodeMirror-hscrollbar {
+    left: 0;
+    right: auto;
+}
+.CodeMirror-scrollbar-filler, .CodeMirror-vscrollbar {
+    right: 0;
+    left: auto;
+}
+.CodeMirror-scroll {
+    margin-right: -50px;
+    margin-left: -10px;
+    padding-right: 10px;
+}
+.CodeMirror-gutters {
+    left: 0 !important;
+    right: auto;
+}
+.CodeMirror-sizer {
+    border-left: none;
+    border-right: 50px solid transparent;
+}
+.CodeMirror-gutter-wrapper {
+    margin-left: 15px;
+}
+
+.gjs-cv-canvas {
+    right: 0;
+    left: auto;
+}
+
+.gjs-cv-canvas.mobile #gjs-tools,
+.gjs-cv-canvas.mobile-big #gjs-tools,
+.gjs-cv-canvas.mobile-big .gjs-tools,
+.gjs-cv-canvas.mobile .gjs-tools,
+.gjs-cv-canvas.tablet #gjs-tools,
+.gjs-cv-canvas.tablet-small #gjs-tools,
+.gjs-cv-canvas.tablet-small .gjs-tools,
+.gjs-cv-canvas.tablet .gjs-tools {
+    transform: translate(-14px,-6px);
+}
+
+.gjs-cv-canvas.mobile-landscape #gjs-tools,
+.gjs-cv-canvas.mobile-landscape .gjs-tools {
+    transform: translate(-6px, -6px);
+}
+
+.gjs-cv-canvas .gjs-highlighter,
+.gjs-cv-canvas .gjs-highlighter-sel {
+    margin-left: 0;
+    margin-right: 2px;
+}
+*/

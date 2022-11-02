@@ -17,13 +17,4 @@ class OroValidationExtensionTest extends ExtensionTestCase
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
-
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
-    {
-        $extension = new OroValidationExtension();
-        $this->assertEquals(OroValidationExtension::ALIAS, $extension->getAlias());
-    }
 }

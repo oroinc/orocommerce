@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
@@ -9,7 +10,6 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTestCase
 {
@@ -25,10 +25,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
     /** @var Workflow */
     protected $workflow;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -36,7 +33,6 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
         $this->loadFixtures([LoadRequestData::class]);
 
         $this->updateCustomerUserSecurityToken($this->getCustomerUserEmail());
-        $this->getContainer()->get('request_stack')->push(new HttpRequest());
 
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
         $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
@@ -47,6 +43,8 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
 
         $this->workflow = $this->manager->getWorkflow($this->getWorkflowName());
         $this->request = $this->getReference(LoadRequestData::REQUEST2);
+
+        $this->ensureSessionIsAvailable();
     }
 
     /**
@@ -77,7 +75,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
     {
-        /* @var $wi WorkflowItem */
+        /* @var WorkflowItem $wi */
         $wi = $this->systemManager->getWorkflowItem($entity, $workflowName);
         $this->assertNotNull($wi);
         $wi->getData()->add($transitionData);
@@ -102,7 +100,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
             $this->client->followRedirects(true);
             $this->client->submit($form);
         } else {
-            $this->client->request('GET', $transitionUrl, [], [], $this->getWsseAuthHeader());
+            $this->ajaxRequest('POST', $transitionUrl, [], [], $this->getWsseAuthHeader());
             $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
         }
 
@@ -138,7 +136,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function getTransitionLinkId($workflowName, $transitionName)
     {
-        return sprintf('transition-%s-%s', $workflowName, $transitionName);
+        return sprintf('[id^="transition-%s-%s"]', $workflowName, $transitionName);
     }
 
     /**
@@ -149,7 +147,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function getTransitionLink(Crawler $crawler, $transitionLinkId)
     {
-        return $crawler->filter(sprintf('a#%s', $transitionLinkId));
+        return $crawler->filter(sprintf('a%s', $transitionLinkId));
     }
 
     /**
@@ -167,9 +165,11 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
      */
     protected function refreshEntity($entity)
     {
-        $dh = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $entityClass = ClassUtils::getClass($entity);
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass($entityClass);
+        $entityId = $em->getClassMetadata($entityClass)->getIdentifierValues($entity);
 
-        return $this->getEntity($dh->getEntityClass($entity), $dh->getEntityIdentifier($entity));
+        return $this->getEntity($entityClass, $entityId);
     }
 
     /**

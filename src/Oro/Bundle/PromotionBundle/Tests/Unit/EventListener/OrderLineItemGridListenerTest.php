@@ -20,7 +20,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $orderLineItemGridListener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->orderLineItemGridListener = new OrderLineItemGridListener($this->taxationSettingsProvider);
@@ -71,7 +71,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'twig',
                                 'frontend_type' => 'html',
                                 'data_name' => 'discountAmount',
-                                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalDiscountAmount.html.twig',
+                                'template' => '@OroPromotion/Datagrid/Order/rowTotalDiscountAmount.html.twig',
                                 'renderable' => false,
                             ],
                         'rowTotalAfterDiscountIncludingTax' =>
@@ -81,7 +81,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'twig',
                                 'frontend_type' => 'html',
                                 'data_name' => 'discountAmount',
-                                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscountInclu'
+                                'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscountInclu'
                                     . 'dingTax.html.twig',
                                 'renderable' => false,
                             ],
@@ -92,7 +92,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'twig',
                                 'frontend_type' => 'html',
                                 'data_name' => 'discountAmount',
-                                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscoun'
+                                'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscoun'
                                     . 'tExcludingTax.html.twig',
                                 'renderable' => false,
                             ],
@@ -147,7 +147,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'twig',
                                 'frontend_type' => 'html',
                                 'data_name' => 'discountAmount',
-                                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalDiscountAmount.html.twig',
+                                'template' => '@OroPromotion/Datagrid/Order/rowTotalDiscountAmount.html.twig',
                                 'renderable' => false,
                             ],
                         'rowTotalAfterDiscount' =>
@@ -156,7 +156,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'twig',
                                 'frontend_type' => 'html',
                                 'data_name' => 'discountAmount',
-                                'template' => 'OroPromotionBundle:Datagrid:Order/rowTotalAfterDiscount.html.twig',
+                                'template' => '@OroPromotion/Datagrid/Order/rowTotalAfterDiscount.html.twig',
                                 'renderable' => false,
                             ],
                     ],

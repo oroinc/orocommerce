@@ -1,13 +1,15 @@
 layout:
     imports:
         -
+            id: oro_customer_page
+        -
             id: oro_customer_toolbar_actions
             root: rfp_request_view_page
             namespace: rfp_request_view_toolbar
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_view/layout.html.twig'
+            themes: '@OroRFP/layouts/default/oro_rfp_frontend_request_view/layout.html.twig'
         - '@setOption':
             id: title
             optionName: params

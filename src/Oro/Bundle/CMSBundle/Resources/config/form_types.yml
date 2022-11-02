@@ -1,6 +1,6 @@
 services:
     oro_cms.form.type.page:
-        class: 'Oro\Bundle\CMSBundle\Form\Type\PageType'
+        class: Oro\Bundle\CMSBundle\Form\Type\PageType
         arguments:
             - '@router'
         tags:
@@ -12,7 +12,9 @@ services:
             - { name: form.type, alias: oro_cms_page_select }
 
     oro_cms.form.type.loginpage:
-        class: 'Oro\Bundle\CMSBundle\Form\Type\LoginPageType'
+        class: Oro\Bundle\CMSBundle\Form\Type\LoginPageType
+        arguments:
+            - '%oro_cms.direct_editing.login_page_css_field%'
         tags:
             - { name: form.type, alias: oro_cms_login_page }
 
@@ -22,16 +24,109 @@ services:
             - { name: form.type, alias: oro_cms_page_variant }
 
     oro_cms.form.type.text_content_variant:
-        class: 'Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType'
+        class: Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType
         tags:
             - { name: form.type}
 
     oro_cms.form.type.text_content_variant_collection:
-        class: 'Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType'
+        class: Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType
         tags:
             - { name: form.type}
 
     oro_cms.form.type.content_block:
-        class: 'Oro\Bundle\CMSBundle\Form\Type\ContentBlockType'
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentBlockType
+        arguments:
+            - '@oro_cms.content_block.default_content_variant_scopes_resolver'
         tags:
             - { name: form.type }
+
+    oro_cms.form.type.content_widget:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType
+        arguments:
+            - '@translator'
+            - '@form.factory'
+            - '@oro_cms.content_widget.type_registry'
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.type.content_widget_type_select:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentWidgetTypeSelectType
+        arguments:
+            - '@oro_cms.provider.content_widget_type'
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.type.content_widget_layout_select:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentWidgetLayoutSelectType
+        arguments:
+            - '@oro_cms.provider.content_widget_layout'
+            - '@translator'
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.type.wysiwyg:
+        class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType
+        arguments:
+            - '@oro_form.provider.html_tag_provider'
+            - '@oro_cms.provider.html_purifier_scope_provider'
+            - '@oro_cms.form.event_subscriber.digital_asset_twig_tags'
+            - '@assets.packages'
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.type.wysiwyg_styles:
+        class: Oro\Bundle\CMSBundle\Form\Type\WYSIWYGStylesType
+        arguments:
+            - '@oro_cms.form.event_subscriber.digital_asset_twig_tags'
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.handler.content_widget:
+        class: Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler
+        arguments:
+            - '@doctrine'
+            - '@oro_form.event.event_dispatcher'
+
+    Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler:
+        alias: oro_cms.form.handler.content_widget
+
+    oro_cms.form.extension.wysiwyg_field:
+        class: Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGFieldExtension
+        tags:
+            - { name: form.type_extension }
+
+    oro_cms.form.handler.create_update_config_field_handler:
+        class: Oro\Bundle\CMSBundle\Form\Handler\CreateUpdateConfigFieldHandler
+        decorates: oro_entity_config.form.handler.create_update_config_field_handler
+        arguments:
+            - '@oro_entity_config.form.handler.config_helper_handler'
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity_config.config.config_helper'
+            - '@oro_entity_extend.form.util.field_session_storage'
+
+    oro_cms.form.type.content_template:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType
+        tags:
+            - { name: form.type }
+
+    oro_cms.form.handler.content_template:
+        class: 'Oro\Bundle\CMSBundle\Form\Handler\ContentTemplateHandler'
+        arguments:
+            - '@oro_tag.tag.manager'
+            - '@doctrine'
+        tags:
+            - { name: oro_form.form.handler, alias: content_template_handler }
+
+    oro_cms.form.extension.content_templates_in_wysiwyg_form:
+        class: Oro\Bundle\CMSBundle\Form\Extension\ContentTemplatesInWysiwygFormExtension
+        arguments:
+            - '@oro_cms.provider.content_templates_for_wysiwyg_preview_provider'
+            - '@oro_security.authorization_checker'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: form.type_extension }
+
+    oro_cms.form.event_subscriber.digital_asset_twig_tags:
+        class: Oro\Bundle\CMSBundle\Form\EventSubscriber\DigitalAssetTwigTagsEventSubscriber
+        arguments:
+            - '@oro_cms.tools.digital_asset_twig_tags_converter'

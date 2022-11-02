@@ -1,7 +1,8 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-{% import 'OroCronBundle::macros.html.twig' as cronSchedulIntervals %}
-{% import 'OroScopeBundle::macros.html.twig' as scopeMacros %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroCron/macros.html.twig' as cronSchedulIntervals %}
+{% import '@OroScope/macros.html.twig' as scopeMacros %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {"%name%": entity.rule.name }}) %}
 
@@ -16,17 +17,21 @@
 {% endblock pageHeader %}
 
 {% block breadcrumbs %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {{ parent() }}
-    <div class="pull-left">
+    <span class="page-title__status">
         {% if entity.rule.enabled %}
-            <div class="badge badge-pill badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.promotion.rule.enabled.active'|trans }}</div>
+            {{ UI.badge('oro.promotion.rule.enabled.active'|trans, 'enabled') }}
         {% else %}
-            <div class="badge badge-pill badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.promotion.rule.enabled.inactive'|trans }}</div>
+            {{ UI.badge('oro.promotion.rule.enabled.inactive'|trans, 'disabled') }}
         {% endif %}
-    </div>
+    </span>
 {% endblock breadcrumbs %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% if entity.schedules.isEmpty() %}
         {% set schedulesBlock = 'N/A'|trans %}
     {% else %}
@@ -45,6 +50,21 @@
         {% placeholder render_discount_information with {entity: entity} %}
     {% endset %}
 
+    {%- set promotionInformation -%}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name) }}
+                {{ UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder) }}
+                {{ UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans) }}
+                {{ UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock) }}
+                {{ UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans) }}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.sections.general.label'|trans,
@@ -52,13 +72,7 @@
                 {
                     'title': 'oro.promotion.sections.general.subsection.general_info.label'|trans,
                     'useSpan': false,
-                    'data': [
-                        UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name),
-                        UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder),
-                        UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans),
-                        UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock),
-                        UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans)
-                    ]
+                    'data': [promotionInformation]
                 },
                 {
                     'title': 'oro.promotion.sections.general.subsection.discount_options.label'|trans,

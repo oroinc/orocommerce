@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var FrontendLineItemView;
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
 
-    FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             lineItem: '[data-role="line-item"]',
             editView: '[data-role="line-item-edit"]',
@@ -37,18 +36,22 @@ define(function(require) {
 
         formState: null,
 
+        events: {
+            'content:remove [data-role="lineitem"]': 'onSubCollectionItemRemove'
+        },
+
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function FrontendLineItemView() {
-            FrontendLineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function FrontendLineItemView(options) {
+            FrontendLineItemView.__super__.constructor.call(this, options);
         },
 
         /**
          * @param {Object} options
          */
         initialize: function(options) {
-            FrontendLineItemView.__super__.initialize.apply(this, arguments);
+            FrontendLineItemView.__super__.initialize.call(this, options);
             this.initializeElements(options);
             this.onInit();
             this.template = _.template(this.getElement('template').text());
@@ -78,7 +81,7 @@ define(function(require) {
         },
 
         render: function() {
-            var viewContent = this.template(this.getData());
+            const viewContent = this.template(this.getData());
             this.getElement('viewContent').html(viewContent);
         },
 
@@ -131,16 +134,23 @@ define(function(require) {
             this.getElement('remove').click();
         },
 
+        onSubCollectionItemRemove(e) {
+            if ($(e.target).siblings(e.target).length === 0) {
+                // gives time to remove last item of sub-collection before removing product line item
+                _.delay(this.remove.bind(this));
+            }
+        },
+
         getData: function() {
             this.clearElementsCache();
-            var data = {
+            const data = {
                 formatter: NumberFormatter
             };
 
-            var $quantities = this.getElement('fieldQuantity');
-            var $units = this.getElement('fieldUnit');
-            var $prices = this.getElement('fieldPrice');
-            var $currencies = this.getElement('fieldCurrency');
+            const $quantities = this.getElement('fieldQuantity');
+            const $units = this.getElement('fieldUnit');
+            const $prices = this.getElement('fieldPrice');
+            const $currencies = this.getElement('fieldCurrency');
 
             data.product = this.getProduct();
             data.comment = this.getComment() || '';
@@ -150,7 +160,7 @@ define(function(require) {
                 data.lines.push({
                     quantity: $quantities[i].value,
                     unit: $units[i].value,
-                    price: $prices[i].value,
+                    price: NumberFormatter.unformatStrict($prices[i].value),
                     currency: $currencies[i].value,
                     found_price: $($prices[i]).data('found_price')
                 });
@@ -160,7 +170,7 @@ define(function(require) {
         },
 
         getComment: function() {
-            var commentChecked = this.getElement('fieldCommentCheckbox').prop('checked');
+            const commentChecked = this.getElement('fieldCommentCheckbox').prop('checked');
 
             if (!commentChecked) {
                 this.getElement('fieldComment').val('');
@@ -171,14 +181,14 @@ define(function(require) {
         },
 
         getProduct: function() {
-            var $fieldProduct = this.getElement('fieldProduct');
-            var selectedData = $fieldProduct.data('selected-data') || {};
+            const $fieldProduct = this.getElement('fieldProduct');
+            const selectedData = $fieldProduct.data('selected-data') || {};
             return $fieldProduct.inputWidget('data') || selectedData || null;
         },
 
         validate: function() {
-            var isValid = !_.isEmpty(this.getProduct());
-            var validator = this.$el.closest('form').validate();
+            let isValid = !_.isEmpty(this.getProduct());
+            const validator = this.$el.closest('form').validate();
             if (!isValid && validator) {
                 validator.showLabel(this.getElement('fieldProduct')[0], _.__('oro.rfp.requestproduct.product.blank'));
                 return isValid;
@@ -196,22 +206,22 @@ define(function(require) {
 
         saveFormState: function() {
             this.formState = {};
-            this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
+            this.$el.find(':input[data-name]').each((i, el) => {
                 this.formState[el.name] = el.value;
-            }, this));
+            });
         },
 
         revertChanges: function() {
             if (!this.formState) {
                 return;
             }
-            this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
-                var value = this.formState[el.name];
+            this.$el.find(':input[data-name]').each((i, el) => {
+                const value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {
                     el.value = value;
                     $(el).change();
                 }
-            }, this));
+            });
         }
     }));
 

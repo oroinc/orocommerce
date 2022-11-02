@@ -10,33 +10,26 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
+    private ProductVisibilityQueryBuilderModifier $modifier;
+    private QueryBuilder $queryBuilder;
 
-    /**
-     * @var QueryBuilder
-     */
-    protected $queryBuilder;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
+        $this->loadFixtures([LoadProductData::class]);
 
         $this->modifier = new ProductVisibilityQueryBuilderModifier();
 
         $this->queryBuilder = $this->getContainer()->get('doctrine')
-            ->getRepository('OroProductBundle:Product')->createQueryBuilder('p')->orderBy('p.id');
+            ->getRepository(Product::class)
+            ->createQueryBuilder('p')
+            ->orderBy('p.id');
     }
 
     /**
      * @dataProvider modifyByStatusDataProvider
-     * @param array $statuses
-     * @param array $expected
      */
     public function testModifyByStatus(array $statuses, array $expected)
     {
@@ -45,10 +38,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->assertEquals($expected, $this->getProductSkus($this->queryBuilder->getQuery()->getArrayResult()));
     }
 
-    /**
-     * @return array
-     */
-    public function modifyByStatusDataProvider()
+    public function modifyByStatusDataProvider(): array
     {
         return [
             'enabled products' => [
@@ -96,8 +86,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     /**
      * @dataProvider modifyByInventoryStatusDataProvider
-     * @param array $statuses
-     * @param array $expected
      */
     public function testModifyByInventoryStatus(array $statuses, array $expected)
     {
@@ -106,10 +94,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->assertEquals($expected, $this->getProductSkus($this->queryBuilder->getQuery()->getArrayResult()));
     }
 
-    /**
-     * @return array
-     */
-    public function modifyByInventoryStatusDataProvider()
+    public function modifyByInventoryStatusDataProvider(): array
     {
         return [
             'products in_stock' => [
@@ -163,11 +148,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $products
-     * @return array
-     */
-    protected function getProductSkus(array $products)
+    private function getProductSkus(array $products): array
     {
         return array_map(function ($product) {
             return $product['sku'];

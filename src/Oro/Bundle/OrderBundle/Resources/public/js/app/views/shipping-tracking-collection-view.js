@@ -1,37 +1,35 @@
 define(function(require) {
     'use strict';
 
-    var ShippingTrackingCollectionView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oroorder/js/app/views/shipping-tracking-collection-view
      * @extends oroui.app.views.base.View
      */
-    ShippingTrackingCollectionView = BaseView.extend({
+    const ShippingTrackingCollectionView = BaseView.extend({
         /**
          * @property {Object}
          */
         options: {},
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ShippingTrackingCollectionView() {
-            ShippingTrackingCollectionView.__super__.constructor.apply(this, arguments);
+        constructor: function ShippingTrackingCollectionView(options) {
+            ShippingTrackingCollectionView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.$el
-                .on('content:changed', _.bind(this.toggleTableVisibility, this))
-                .on('content:remove', _.bind(this.toggleTableVisibility, this));
+                .on('content:changed', this.toggleTableVisibility.bind(this))
+                .on('content:remove', this.toggleTableVisibility.bind(this));
             this.$el.trigger('content:changed');
         },
 
@@ -41,8 +39,8 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         toggleTableVisibility: function(e) {
-            var table = this.$el.find('table');
-            var elements = this.$el.find('table tr[data-content*="shippingTrackings"]');
+            const table = this.$el.find('table');
+            const elements = this.$el.find('table tr[data-content*="shippingTrackings"]');
 
             if (elements.length < 1 || (elements.length === 1 && e.type === 'content:remove')) {
                 table.hide();

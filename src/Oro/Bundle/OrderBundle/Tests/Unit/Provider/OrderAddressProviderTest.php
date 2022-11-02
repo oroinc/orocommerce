@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
 {
@@ -14,7 +15,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,21 +29,19 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: billing, shipping
-     */
     public function testGetCustomerAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: billing, shipping');
+
         $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown type "test", known types are: billing, shipping
-     */
     public function testGetCustomerUserAddressesUnsupportedType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown type "test", known types are: billing, shipping');
+
         $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 
@@ -53,9 +52,9 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
     {
         return [
             ['shipping', 'oro_order_address_shipping_customer_use_any', new CustomerUser()],
-            ['shipping', 'oro_order_address_shipping_customer_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_order_address_shipping_customer_use_any_backend', new User()],
             ['billing', 'oro_order_address_billing_customer_use_any', new CustomerUser()],
-            ['billing', 'oro_order_address_billing_customer_use_any_backend', new \stdClass()],
+            ['billing', 'oro_order_address_billing_customer_use_any_backend', new User()],
         ];
     }
 
@@ -132,7 +131,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -141,7 +140,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'shipping',
@@ -151,7 +150,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'billing',
@@ -161,7 +160,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new \stdClass()
+                new User()
             ],
             [
                 'billing',
@@ -170,7 +169,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ],
             [
                 'billing',
@@ -180,7 +179,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new \stdClass()
+                new User()
             ]
         ];
     }

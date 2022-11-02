@@ -19,16 +19,13 @@ class AppliedCouponTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param AppliedCoupon $defaultData
-     * @param array $submittedData
-     * @param AppliedCoupon $expectedData
      */
     public function testSubmit(AppliedCoupon $defaultData, array $submittedData, AppliedCoupon $expectedData)
     {
         $form = $this->factory->create(AppliedCouponType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -73,9 +70,7 @@ class AppliedCouponTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(AppliedCouponType::class);
 
-        $this->assertArraySubset([
-            'data_class' => AppliedCoupon::class,
-        ], $form->getConfig()->getOptions());
+        $this->assertSame(AppliedCoupon::class, $form->getConfig()->getOptions()['data_class']);
     }
 
     public function testGetName()

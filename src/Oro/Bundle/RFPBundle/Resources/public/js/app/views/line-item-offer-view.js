@@ -1,15 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var LineItemOfferView;
-    var BaseProductView = require('oroproduct/js/app/views/base-product-view');
+    const BaseProductView = require('oroproduct/js/app/views/base-product-view');
 
-    LineItemOfferView = BaseProductView.extend({
+    const _ = require('underscore');
+
+    const LineItemOfferView = BaseProductView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LineItemOfferView() {
-            LineItemOfferView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemOfferView(options) {
+            LineItemOfferView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -24,14 +25,20 @@ define(function(require) {
             this.lineItemModel = options.lineItemModel;
             this.lineItemModel.on('change', this.updateModel, this);
             this.updateModel();
-            LineItemOfferView.__super__.initialize.apply(this, arguments);
+
+            options.modelAttr = _.defaults(options.modelAttr || {}, {
+                sku: this.lineItemModel.get('sku')
+            });
+
+            LineItemOfferView.__super__.initialize.call(this, options);
         },
 
         updateModel: function() {
             if (this.model) {
                 this.model.set({
                     id: this.lineItemModel.get('productId'),
-                    product_units: this.lineItemModel.get('product_units')
+                    product_units: this.lineItemModel.get('product_units'),
+                    sku: this.lineItemModel.get('sku')
                 });
             } else {
                 this.modelAttr.id = this.lineItemModel.get('productId');

@@ -8,13 +8,11 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
-use Oro\Bundle\PricingBundle\Async\NotificationMessages;
+use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
@@ -22,8 +20,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @group CommunityEdition
@@ -32,12 +29,13 @@ use Symfony\Component\Intl\Intl;
  */
 class PriceListControllerTest extends WebTestCase
 {
-    const PRICE_LIST_NAME = 'oldPriceList';
-    const PRICE_LIST_NAME_EDIT = 'newPriceList';
-    const CURRENCY = 'USD';
-    const ADD_NOTE_BUTTON_NAME = 'Add note';
+    private const PRICE_LIST_NAME = 'oldPriceList';
+    private const PRICE_LIST_NAME_EDIT = 'newPriceList';
+    private const ADD_NOTE_BUTTON_NAME = 'Add note';
 
-    protected function setUp()
+    protected const CURRENCY = 'USD';
+
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -59,21 +57,19 @@ class PriceListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('pricing-price-list-grid', $crawler->html());
+        self::assertStringContainsString('pricing-price-list-grid', $crawler->html());
 
-        $this->assertContains($this->getPriceList('price_list_1')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_2')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_3')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_4')->getName(), $crawler->html());
-        $this->assertContains($this->getPriceList('price_list_5')->getName(), $crawler->html());
+        self::assertStringContainsString($this->getPriceList('price_list_1')->getName(), $crawler->html());
+        self::assertStringContainsString($this->getPriceList('price_list_2')->getName(), $crawler->html());
+        self::assertStringContainsString($this->getPriceList('price_list_3')->getName(), $crawler->html());
+        self::assertStringContainsString($this->getPriceList('price_list_4')->getName(), $crawler->html());
+        self::assertStringContainsString($this->getPriceList('price_list_5')->getName(), $crawler->html());
     }
 
     /**
      * @dataProvider dataGridFiltersDataProvider
-     * @param string $activity
-     * @param string[] $priceLists
      */
-    public function testDataGridFilters($activity, $priceLists)
+    public function testDataGridFilters(string $activity, array $priceLists)
     {
         $grid = $this->client->requestGrid(
             ['gridName' => 'pricing-price-list-grid'],
@@ -81,17 +77,14 @@ class PriceListControllerTest extends WebTestCase
                 'pricing-price-list-grid[_filter][activity][value]' => $activity
             ]
         );
-        $data = json_decode($grid->getContent(), true)['data'];
+        $data = self::jsonToArray($grid->getContent())['data'];
         $this->assertCount(count($priceLists), $data);
         foreach ($data as $priceList) {
             $this->assertContains($priceList['name'], $priceLists);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function dataGridFiltersDataProvider()
+    public function dataGridFiltersDataProvider(): array
     {
         return [
             'active' => [
@@ -111,7 +104,7 @@ class PriceListControllerTest extends WebTestCase
             ['gridName' => 'pricing-price-list-grid'],
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_ASC]
         );
-        $data = json_decode($grid->getContent(), true)['data'];
+        $data = self::jsonToArray($grid->getContent())['data'];
         $this->assertCount(7, $data);
         $this->assertEquals('Active', $data[0]['activity']);
 
@@ -119,15 +112,12 @@ class PriceListControllerTest extends WebTestCase
             ['gridName' => 'pricing-price-list-grid'],
             ['pricing-price-list-grid[_sort_by][activity]' => OrmSorterExtension::DIRECTION_DESC]
         );
-        $data = json_decode($grid->getContent(), true)['data'];
+        $data = self::jsonToArray($grid->getContent())['data'];
         $this->assertCount(7, $data);
         $this->assertEquals('Inactive', $data[0]['activity']);
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_list_create'));
         $result = $this->client->getResponse();
@@ -140,6 +130,8 @@ class PriceListControllerTest extends WebTestCase
                 'oro_pricing_price_list[schedules][0][deactivateAt]' => '2016-03-15T22:00:00Z'
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -148,12 +140,11 @@ class PriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Price List has been saved', $html);
+        self::assertStringContainsString('Price List has been saved', $html);
 
         /** @var PriceList $priceList */
         $priceList = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroPricingBundle:PriceList')
-            ->getRepository('OroPricingBundle:PriceList')
+            ->getRepository(PriceList::class)
             ->findOneBy(['name' => self::PRICE_LIST_NAME]);
         $this->assertNotEmpty($priceList);
 
@@ -161,12 +152,9 @@ class PriceListControllerTest extends WebTestCase
     }
 
     /**
-     * @param $id int
-     * @return int
-     *
      * @depends testCreate
      */
-    public function testView($id)
+    public function testView(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -176,8 +164,8 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::PRICE_LIST_NAME, $crawler->html());
-        $this->assertContains(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
+        self::assertStringContainsString(self::PRICE_LIST_NAME, $crawler->html());
+        self::assertStringContainsString(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
 
         return $id;
     }
@@ -194,16 +182,11 @@ class PriceListControllerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        // Create notification message for price list
-        $expectedErrorMessage = 'Test error notification message';
-        $this->getContainer()->get('oro_pricing.notification_message.messenger')->send(
-            NotificationMessages::CHANNEL_PRICE_LIST,
-            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
-            Message::STATUS_ERROR,
-            $expectedErrorMessage,
-            PriceList::class,
-            $priceList->getId()
+        // Create notification alert for price list
+        $this->getContainer()->get('oro_pricing.notification_alert_manager')->addNotificationAlert(
+            PriceListCalculationNotificationAlert::createForPriceRulesBuildError($priceList->getId())
         );
+        $expectedErrorMessage = 'Error occurred during price rule build';
 
         $crawler = $this->client->request(
             'GET',
@@ -212,8 +195,8 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains($priceListName, $crawler->html());
-        $this->assertContains($expectedErrorMessage, $crawler->html());
+        self::assertStringContainsString($priceListName, $crawler->html());
+        self::assertStringContainsString($expectedErrorMessage, $crawler->html());
     }
 
     public function testPriceGeneration()
@@ -222,8 +205,7 @@ class PriceListControllerTest extends WebTestCase
             'There is no solution for the moment to run this test'
         );
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceList = $this->getPriceList(LoadPriceLists::PRICE_LIST_1);
 
         //Create rules for product prices
         $container = $this->getContainer();
@@ -237,8 +219,9 @@ class PriceListControllerTest extends WebTestCase
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+
         $filesData = $form->getFiles();
         $submittedData = $form->getPhpValues();
 
@@ -264,6 +247,7 @@ class PriceListControllerTest extends WebTestCase
             ]
         ];
         $submittedData['oro_pricing_price_list']['priceRules'] = $rules;
+        $submittedData['input_action'] = $action;
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData, $filesData);
@@ -305,12 +289,9 @@ class PriceListControllerTest extends WebTestCase
     }
 
     /**
-     * @param int $id
-     * @return int
-     *
      * @depends testView
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -323,6 +304,8 @@ class PriceListControllerTest extends WebTestCase
                 'oro_pricing_price_list[currencies]' => self::CURRENCY,
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -330,15 +313,14 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
+        self::assertStringContainsString(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->checkCurrenciesOnPage($crawler);
 
         return $id;
     }
 
-    protected function checkCurrenciesOnPage($crawler)
+    protected function checkCurrenciesOnPage(Crawler $crawler): void
     {
-        return true;
     }
 
     public function testUpdateCurrenciesError()
@@ -355,6 +337,8 @@ class PriceListControllerTest extends WebTestCase
                 'oro_pricing_price_list[currencies]' => ['USD'],
             ]
         );
+        $action = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $action]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -369,15 +353,13 @@ class PriceListControllerTest extends WebTestCase
                 'validators'
             );
 
-        $this->assertContains($message, $crawler->html());
+        self::assertStringContainsString($message, $crawler->html());
     }
 
     /**
-     * @param int $id
-     *
      * @depends testUpdate
      */
-    public function testInfo($id)
+    public function testInfo(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -387,46 +369,11 @@ class PriceListControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
+        self::assertStringContainsString(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->checkCurrenciesOnPage($crawler);
     }
 
-    /**
-     * @param string $reference
-     *
-     * @return PriceList
-     */
-    protected function getPriceList($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @param string $reference
-     *
-     * @return Customer
-     */
-    protected function getCustomer($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @param string $reference
-     *
-     * @return CustomerGroup
-     */
-    protected function getCustomerGroup($reference)
-    {
-        return $this->getReference($reference);
-    }
-
-    /**
-     * @param string $reference
-     *
-     * @return Website
-     */
-    protected function getWebsite($reference)
+    private function getPriceList(string $reference): PriceList
     {
         return $this->getReference($reference);
     }

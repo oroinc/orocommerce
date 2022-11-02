@@ -12,6 +12,9 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 
+/**
+ * Prepare and save price rule lexemes based on price list expressions stored in price rules and product assignment rule
+ */
 class PriceRuleLexemeHandler
 {
     /**
@@ -29,11 +32,6 @@ class PriceRuleLexemeHandler
      */
     protected $priceRuleProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ExpressionParser $parser
-     * @param FieldsProviderInterface $priceRuleProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ExpressionParser $parser,
@@ -44,10 +42,7 @@ class PriceRuleLexemeHandler
         $this->priceRuleProvider = $priceRuleProvider;
     }
 
-    /**
-     * @param PriceList $priceList
-     */
-    public function updateLexemes(PriceList $priceList)
+    public function updateLexemesWithoutFlush(PriceList $priceList)
     {
         $assignmentRule = $priceList->getProductAssignmentRule();
 
@@ -64,26 +59,33 @@ class PriceRuleLexemeHandler
         $priceRules = $priceList->getPriceRules();
 
         $lexemes = [];
-
         if ($assignmentRule) {
             $assignmentRuleLexemes = $this->parser->getUsedLexemes($assignmentRule, true);
-            $lexemes = $this->prepareLexemes($assignmentRuleLexemes, $priceList, null);
+            $lexemes[] = $this->prepareLexemes($assignmentRuleLexemes, $priceList, null);
         }
 
         foreach ($priceRules as $rule) {
             $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition(), true);
             $priceRules = $this->parser->getUsedLexemes($rule->getRule(), true);
             $uniqueLexemes = $this->mergeLexemes($conditionRules, $priceRules);
-            $lexemes = array_merge($this->prepareLexemes($uniqueLexemes, $priceList, $rule), $lexemes);
+            $lexemes[] = $this->prepareLexemes($uniqueLexemes, $priceList, $rule);
         }
 
+        if ($lexemes) {
+            $lexemes = array_merge(...$lexemes);
+        }
         foreach ($lexemes as $lexeme) {
             $em->persist($lexeme);
         }
+    }
 
+    public function updateLexemes(PriceList $priceList)
+    {
+        $this->updateLexemesWithoutFlush($priceList);
+        $em = $this->doctrineHelper->getEntityManager(PriceRuleLexeme::class);
         $em->flush();
     }
-    
+
     /**
      * @param array $lexemes
      *  [
@@ -102,12 +104,12 @@ class PriceRuleLexemeHandler
          */
         foreach ($lexemes as $class => $fieldNames) {
             $containerId = null;
-            if (strpos($class, '|') !== false) {
-                list($class, $containerId) = explode('|', $class);
+            if (str_contains($class, '|')) {
+                [$class, $containerId] = explode('|', $class);
             }
 
-            if (strpos($class, '::') !== false) {
-                list($containerClass, $fieldName) = explode('::', $class);
+            if (str_contains($class, '::')) {
+                [$containerClass, $fieldName] = explode('::', $class);
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);
                 $lexeme->setPriceList($priceList);

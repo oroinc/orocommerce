@@ -6,11 +6,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds inventory threshold information to the product view and edit pages.
+ */
 class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductView(BeforeListRenderEvent $event)
     {
         $product = $this->getEntityFromRequest(Product::class);
@@ -20,20 +20,17 @@ class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFo
 
         $this->addBlockToEntityView(
             $event,
-            'OroInventoryBundle:Product:inventoryThreshold.html.twig',
+            '@OroInventory/Product/inventoryThreshold.html.twig',
             $product,
             'oro.product.sections.inventory'
         );
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Product:inventoryThresholdFormWidget.html.twig',
+            '@OroInventory/Product/inventoryThresholdFormWidget.html.twig',
             'oro.product.sections.inventory'
         );
     }

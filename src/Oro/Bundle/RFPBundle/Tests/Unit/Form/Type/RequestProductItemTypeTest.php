@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -11,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
@@ -22,25 +24,19 @@ class RequestProductItemTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var RequestProductItemType
-     */
+    /** @var RequestProductItemType */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new RequestProductItemType();
-        $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
+        $this->formType->setDataClass(RequestProductItem::class);
         parent::setUp();
     }
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -49,16 +45,12 @@ class RequestProductItemTypeTest extends AbstractTest
                 $this->assertArrayHasKey('csrf_token_id', $options);
 
                 return true;
-            }))
-        ;
+            }));
 
         $this->formType->configureOptions($resolver);
     }
 
     /**
-     * @param RequestProductItem $inputData
-     * @param array $expectedData
-     *
      * @dataProvider postSetDataProvider
      */
     public function testPostSetData(RequestProductItem $inputData, array $expectedData = [])
@@ -70,10 +62,7 @@ class RequestProductItemTypeTest extends AbstractTest
         }
     }
 
-    /**
-     * @return array
-     */
-    public function postSetDataProvider()
+    public function postSetDataProvider(): array
     {
         return [
             'empty values' => [
@@ -92,9 +81,9 @@ class RequestProductItemTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty form' => [
@@ -112,7 +101,7 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(2, 1, 'kg', $this->createPrice(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(2, 1, 'kg', Price::create(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(2),
             ],
             'empty product unit' => [
@@ -124,7 +113,7 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(3, 10, null, $this->createPrice(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(3, 10, null, Price::create(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(3),
             ],
             'empty price' => [
@@ -157,7 +146,7 @@ class RequestProductItemTypeTest extends AbstractTest
                         'value' => 10,
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(10, null)),
+                'expectedData'  => $this->getRequestProductItem(2, 10, 'kg', Price::create(10, null)),
                 'defaultData'   => $this->getRequestProductItem(2),
             ],
             'empty request product' => [
@@ -170,7 +159,7 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', $this->createPrice(20, 'USD'))
+                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', Price::create(20, 'USD'))
                     ->setRequestProduct(null),
                 'defaultData'   => $this->getRequestProductItem(5)
                     ->setRequestProduct(null),
@@ -185,53 +174,48 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', $this->createPrice(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', Price::create(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(5),
             ],
         ];
     }
 
     /**
-     * @param int $id
-     * @param array|ProductUnit[] $productUnits
-     * @param string $unitCode
-     * @return \PHPUnit\Framework\MockObject\MockObject|RequestProductItem
+     * @param int           $id
+     * @param ProductUnit[] $productUnits
+     * @param string        $unitCode
+     *
+     * @return RequestProductItem
      */
-    protected function createRequestProductItem($id, array $productUnits = [], $unitCode = null)
-    {
+    protected function createRequestProductItem(
+        int $id,
+        array $productUnits = [],
+        string $unitCode = null
+    ): RequestProductItem {
         $productUnit = null;
 
         $product = new Product();
         foreach ($productUnits as $unit) {
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
 
-            if ($unitCode && $unit->getCode() == $unitCode) {
+            if ($unitCode && $unit->getCode() === $unitCode) {
                 $productUnit = $unit;
             }
         }
 
-        /* @var $item \PHPUnit\Framework\MockObject\MockObject|RequestProductItem */
-        $item = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
-        $item
-            ->expects($this->any())
+        $item = $this->createMock(RequestProductItem::class);
+        $item->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue($id))
-        ;
-        $item
-            ->expects($this->any())
+            ->willReturn($id);
+        $item->expects($this->any())
             ->method('getRequestProduct')
-            ->will($this->returnValue((new RequestProduct())->setProduct($product)))
-        ;
-        $item
-            ->expects($this->any())
+            ->willReturn((new RequestProduct())->setProduct($product));
+        $item->expects($this->any())
             ->method('getProductUnit')
-            ->will($this->returnValue($productUnit))
-        ;
-        $item
-            ->expects($this->any())
+            ->willReturn($productUnit);
+        $item->expects($this->any())
             ->method('getProductUnitCode')
-            ->will($this->returnValue($unitCode))
-        ;
+            ->willReturn($unitCode);
 
         return $item;
     }
@@ -239,17 +223,16 @@ class RequestProductItemTypeTest extends AbstractTest
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $priceType                  = $this->preparePriceType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+        $priceType = $this->preparePriceType();
+        $currencySelectionType = new CurrencySelectionTypeStub();
+        $productUnitSelectionType = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
                     RequestProductItemType::class   => $this->formType,
-                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(),
                     PriceType::class                => $priceType,
                     CurrencySelectionType::class    => $currencySelectionType,
                     ProductUnitSelectionType::class => $productUnitSelectionType,
@@ -258,6 +241,23 @@ class RequestProductItemTypeTest extends AbstractTest
                 []
             ),
             $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getValidators(): array
+    {
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($quantity) {
+                return (float)$quantity;
+            });
+
+        return [
+            'oro_product_quantity_unit_precision' => new QuantityUnitPrecisionValidator($roundingService),
         ];
     }
 }

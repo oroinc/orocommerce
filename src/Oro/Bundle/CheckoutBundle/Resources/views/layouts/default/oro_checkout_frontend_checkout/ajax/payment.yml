@@ -5,11 +5,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes:
-                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/payment.html.twig'
-        - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 4
+                - '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/payment.html.twig'
 
         - '@add':
             id: payment_methods
@@ -18,7 +14,7 @@ layout:
             prepend: true
             options:
                 attr:
-                    class: 'grid__column grid__column--offset-y grid__column--6'
+                    class: 'grid-col-6 grid-col-mobile-landscape-12'
                 class_prefix: 'checkout'
                 views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                 currentPaymentMethod: '=data["checkout"].getPaymentMethod()'

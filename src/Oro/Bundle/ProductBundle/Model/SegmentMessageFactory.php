@@ -2,62 +2,79 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic as Topic;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Factory for creating MQ messages with segment and website ids, and getting data from them.
  */
 class SegmentMessageFactory
 {
-    const ID = 'id';
-    const WEBSITE_IDS = 'website_ids';
-    const DEFINITION = 'definition';
-    const IS_FULL = 'is_full';
+    private ManagerRegistry $registry;
+    private ?SegmentRepository $segmentRepository = null;
 
-    /**
-     * @var OptionsResolver
-     */
-    private $resolver;
-
-    /**
-     * @var RegistryInterface
-     */
-    private $registry;
-
-    /**
-     * @var SegmentRepository
-     */
-    private $segmentRepository;
-
-    /**
-     * @param RegistryInterface $registry
-     */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
+    public function createMessage(
+        int $jobId,
+        array $websiteIds,
+        Segment $segment = null,
+        string $definition = null,
+        bool $isFull = true,
+        array $additionalProducts = []
+    ): array {
+        return [
+            Topic::OPTION_NAME_JOB_ID => $jobId,
+            Topic::OPTION_NAME_ID => $segment?->getId(),
+            Topic::OPTION_NAME_WEBSITE_IDS => $websiteIds,
+            Topic::OPTION_NAME_DEFINITION => $definition,
+            Topic::OPTION_NAME_IS_FULL => $isFull,
+            Topic::OPTION_NAME_ADDITIONAL_PRODUCTS => $additionalProducts,
+        ];
+    }
+
+    public function createMessageFromJobIdAndPartialMessage(
+        int $jobId,
+        array $partialMessageData
+    ): array {
+        return \array_merge(
+            [
+                Topic::OPTION_NAME_JOB_ID => $jobId
+            ],
+            $partialMessageData
+        );
+    }
+
     /**
-     * @param array $websiteIds
-     * @param Segment|null $segment
-     * @param string|null $definition
-     * @param bool $isFull
-     * @return array
+     * Allows creating of intermediate message data to have possibility collect data about unique messages
+     * till root job with child jobs for this type of messages will be created
      */
-    public function createMessage(array $websiteIds, Segment $segment = null, $definition = null, $isFull = true)
+    public function getPartialMessageData(
+        array $websiteIds,
+        Segment $segment = null,
+        string $definition = null,
+        bool $isFull = true,
+        array $additionalProducts = []
+    ): array {
+        return [
+            Topic::OPTION_NAME_ID => $segment?->getId(),
+            Topic::OPTION_NAME_WEBSITE_IDS => $websiteIds,
+            Topic::OPTION_NAME_DEFINITION => $definition,
+            Topic::OPTION_NAME_IS_FULL => $isFull,
+            Topic::OPTION_NAME_ADDITIONAL_PRODUCTS => $additionalProducts,
+        ];
+    }
+
+    public function getJobIdFromMessage(array $data): int
     {
-        return $this->getResolvedData([
-            self::ID => $segment ? $segment->getId() : null,
-            self::WEBSITE_IDS => $websiteIds,
-            self::DEFINITION => $definition,
-            self::IS_FULL => $isFull,
-        ]);
+        return $data[Topic::OPTION_NAME_JOB_ID];
     }
 
     /**
@@ -65,22 +82,25 @@ class SegmentMessageFactory
      * @return Segment
      * @throws InvalidArgumentException
      */
-    public function getSegmentFromMessage($data)
+    public function getSegmentFromMessage(array $data): Segment
     {
-        $data = $this->getResolvedData($data);
-
-        if (!empty($data[self::ID])) {
-            $segment = $this->getSegmentRepository()->find($data[self::ID]);
+        if (!empty($data[Topic::OPTION_NAME_ID])) {
+            $segment = $this->getSegmentRepository()->find($data[Topic::OPTION_NAME_ID]);
             if (!$segment) {
-                throw new InvalidArgumentException(sprintf('No segment exists with id "%d"', $data[self::ID]));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'No segment exists with id "%d"',
+                        $data[Topic::OPTION_NAME_ID]
+                    )
+                );
             }
-        } elseif (array_key_exists(self::DEFINITION, $data) && $data[self::DEFINITION]) {
-            $segment = new Segment();
-            $segment->setEntity(Product::class);
-            $segment->setDefinition($data[self::DEFINITION]);
-        } else {
-            throw new InvalidArgumentException('Segment Id or Segment Definition should be present in message.');
+
+            return $segment;
         }
+
+        $segment = new Segment();
+        $segment->setEntity(Product::class);
+        $segment->setDefinition($data[Topic::OPTION_NAME_DEFINITION]);
 
         return $segment;
     }
@@ -89,73 +109,35 @@ class SegmentMessageFactory
      * @param array $data
      * @return array
      */
-    public function getWebsiteIdsFromMessage(array $data)
+    public function getWebsiteIdsFromMessage(array $data): array
     {
-        $data = $this->getResolvedData($data);
-
-        return $data[self::WEBSITE_IDS];
+        return $data[Topic::OPTION_NAME_WEBSITE_IDS];
     }
 
     /**
      * @param array $data
      * @return bool
      */
-    public function getIsFull(array $data)
+    public function getIsFull(array $data): bool
     {
-        $data = $this->getResolvedData($data);
-
-        return $data[self::IS_FULL];
-    }
-
-    /**
-     * @return OptionsResolver
-     */
-    private function getOptionsResolver()
-    {
-        if (null === $this->resolver) {
-            $resolver = new OptionsResolver();
-
-            $resolver->setRequired([
-                self::WEBSITE_IDS,
-                self::IS_FULL,
-            ]);
-
-            $resolver->setDefined([
-                self::ID,
-                self::DEFINITION
-            ]);
-
-            $resolver->setAllowedTypes(self::WEBSITE_IDS, 'array');
-            $resolver->setAllowedTypes(self::ID, ['null','int']);
-            $resolver->setAllowedTypes(self::DEFINITION, ['null', 'string']);
-            $resolver->setAllowedTypes(self::IS_FULL, ['boolean']);
-
-            $this->resolver = $resolver;
-        }
-
-        return $this->resolver;
+        return $data[Topic::OPTION_NAME_IS_FULL];
     }
 
     /**
      * @param array $data
      * @return array
-     * @throws InvalidArgumentException
      */
-    private function getResolvedData(array $data)
+    public function getAdditionalProductsFromMessage(array $data): array
     {
-        try {
-            return $this->getOptionsResolver()->resolve($data);
-        } catch (ExceptionInterface $e) {
-            throw new InvalidArgumentException($e->getMessage());
-        }
+        return $data[Topic::OPTION_NAME_ADDITIONAL_PRODUCTS] ?? [];
     }
 
     /**
      * @return SegmentRepository
      */
-    private function getSegmentRepository()
+    private function getSegmentRepository(): SegmentRepository
     {
-        if (!$this->segmentRepository) {
+        if (null === $this->segmentRepository) {
             $this->segmentRepository = $this->registry->getRepository(Segment::class);
         }
 

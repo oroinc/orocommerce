@@ -12,26 +12,16 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
+/**
+ * Provides methods to calculate totals, subtotals and discounts for an order and its line items.
+ */
 class TotalHelper
 {
-    /** @var TotalProcessorProvider */
-    protected $totalProvider;
+    private TotalProcessorProvider $totalProvider;
+    private LineItemSubtotalProvider $lineItemSubtotalProvider;
+    private DiscountSubtotalProvider $discountSubtotalProvider;
+    private RateConverterInterface $rateConverter;
 
-    /** @var LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
-
-    /** @var DiscountSubtotalProvider */
-    protected $discountSubtotalProvider;
-
-    /** @var RateConverterInterface */
-    protected $rateConverter;
-
-    /**
-     * @param TotalProcessorProvider $totalProvider
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param DiscountSubtotalProvider $discountSubtotalProvider
-     * @param RateConverterInterface $rateConverter
-     */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
@@ -44,10 +34,14 @@ class TotalHelper
         $this->rateConverter = $rateConverter;
     }
 
-    /**
-     * @param Order $order
-     */
-    public function fillSubtotals(Order $order)
+    public function fill(Order $order): void
+    {
+        $this->fillDiscounts($order);
+        $this->fillSubtotals($order);
+        $this->fillTotal($order);
+    }
+
+    public function fillSubtotals(Order $order): void
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
 
@@ -65,10 +59,7 @@ class TotalHelper
         }
     }
 
-    /**
-     * @param Order $order
-     */
-    public function fillDiscounts(Order $order)
+    public function fillDiscounts(Order $order): void
     {
         $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
 
@@ -82,10 +73,7 @@ class TotalHelper
         $order->setTotalDiscounts($discountSubtotalAmount);
     }
 
-    /**
-     * @param Order $order
-     */
-    public function fillTotal(Order $order)
+    public function fillTotal(Order $order): void
     {
         $total = $this->totalProvider->enableRecalculation()->getTotal($order);
         $totalObject = MultiCurrency::create($total->getAmount(), $total->getCurrency());
@@ -94,12 +82,7 @@ class TotalHelper
         $order->setTotalObject($totalObject);
     }
 
-    /**
-     * @param Subtotal $subtotal
-     * @param OrderDiscount $discount
-     * @return int
-     */
-    protected function calculatePercent($subtotal, $discount)
+    private function calculatePercent(Subtotal $subtotal, OrderDiscount $discount): float
     {
         return (float) ($discount->getAmount() / $subtotal->getAmount() * 100);
     }

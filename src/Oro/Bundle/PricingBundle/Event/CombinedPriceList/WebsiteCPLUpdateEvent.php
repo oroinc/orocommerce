@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Event\CombinedPriceList;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class WebsiteCPLUpdateEvent extends Event
 {
@@ -13,9 +13,6 @@ class WebsiteCPLUpdateEvent extends Event
      */
     protected $websiteIds;
 
-    /**
-     * @param array $websiteIds
-     */
     public function __construct(array $websiteIds)
     {
         $this->websiteIds = $websiteIds;

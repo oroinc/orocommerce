@@ -1,5 +1,5 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
 
@@ -16,6 +16,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% set orderInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
@@ -41,7 +43,7 @@
     ] %}
 
     {% set orderTotals %}
-        {% include 'OroPricingBundle:Totals:totals.html.twig' with {
+        {% include '@OroPricing/Totals/totals.html.twig' with {
             pageComponent: 'oroorder/js/app/components/totals-component',
             options: {totals: totals}
         } only %}
@@ -60,10 +62,15 @@
         {% else %}
             {{ UI.renderProperty('oro.order.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
-        {% if entity.shippingTrackings is defined %}
-            {{ UI.renderHtmlProperty('oro.order.shipping_tracking.entity_label'|trans, dataGrid.renderGrid('order-shipping-trackings-grid', { order_id: entity.id }, { cssClass: 'inner-grid order-shipping-trackings-grid' })) }}
-        {% endif %}
     {% endset %}
+
+    {% set shippingSubBlocks = [{'data' : [shippingInformation]}] %}
+
+    {% if entity.shippingTrackings is defined %}
+        {% set shippingSubBlocks = shippingSubBlocks|merge([{'data' : [
+            oro_order_get_template_content('@OroOrder/Order/shipping_tracking.html.twig', {entity: entity})
+        ]}]) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.order_line_items'|trans,
@@ -74,7 +81,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.shipping_information'|trans,
         'priority': -100,
-        'subblocks': [{'data' : [shippingInformation]}]
+        'subblocks': shippingSubBlocks
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge({
@@ -82,7 +89,7 @@
             'title': 'oro.order.sections.discounts'|trans,
             'priority': -75,
             'subblocks': [{'data' : [
-                oro_order_get_template_content('OroOrderBundle:Discount:order_discount_view_collection.html.twig', {entity: entity})
+                oro_order_get_template_content('@OroOrder/Discount/order_discount_view_collection.html.twig', {entity: entity})
             ]}]
         }
     }) %}

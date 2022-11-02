@@ -7,16 +7,16 @@ use Oro\Bundle\PaymentTermBundle\DependencyInjection\Compiler\TwigSandboxConfigu
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * Bundle enables the OroCommerce management console administrator to configure and activate
- * the Payment Term payment methods for customer orders
- */
 class OroPaymentTermBundle extends Bundle
 {
-    /** {@inheritdoc} */
-    public function build(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new ClassMigrationPass())
-            ->addCompilerPass(new TwigSandboxConfigurationPass());
+        parent::build($container);
+
+        $container->addCompilerPass(new ClassMigrationPass());
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 }

@@ -22,7 +22,7 @@ class UpdateAclsForProductAndFamily implements Migration
             'category',
             'catalog'
         ));
-        
+
         $queries->addQuery(new UpdateEntityConfigEntityValueQuery(
             AttributeFamily::class,
             'security',

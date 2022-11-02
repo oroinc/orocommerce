@@ -5,100 +5,20 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class DatesChainValidatorTest extends \PHPUnit\Framework\TestCase
+class DatesChainValidatorTest extends ConstraintValidatorTestCase
 {
-    const FIRST_LABEL = 'First';
-    const SECOND_LABEL = 'Second';
-    const THIRD_LABEL = 'Third';
-    const MESSAGE = '{{ later }} date should follow after {{ earlier }}';
+    private const FIRST_LABEL = 'First';
+    private const SECOND_LABEL = 'Second';
+    private const THIRD_LABEL = 'Third';
 
-    /**
-     * @dataProvider validateDataProvider
-     *
-     * @param object $value
-     * @param array $violations
-     */
-    public function testValidate($value, array $violations)
+    protected function createValidator()
     {
-        $constraint = new DatesChain();
-        $constraint->chain = [
-            'first' => self::FIRST_LABEL,
-            'second' => self::SECOND_LABEL,
-            'third' => self::THIRD_LABEL,
-        ];
-
-        $context = $this->getContextMock();
-
-        if (!$violations) {
-            $context->expects($this->never())
-                ->method('buildViolation');
-        } else {
-            $builder = $this->getBuilderMock();
-
-            $builder->expects($this->any())
-                ->method('atPath')
-                ->willReturn($builder);
-
-            foreach ($violations as $order => $violation) {
-                $context->expects($this->at($order))
-                    ->method('buildViolation')
-                    ->with(self::MESSAGE, $violation)
-                    ->willReturn($builder);
-            }
-        }
-
-        $validator = new DatesChainValidator(new PropertyAccessor());
-        $validator->initialize($context);
-        $validator->validate($value, $constraint);
+        return new DatesChainValidator(new PropertyAccessor());
     }
 
-    /**
-     * @return array
-     */
-    public function validateDataProvider()
-    {
-        $first = new \DateTime('2016-01-01');
-        $second = new \DateTime('2016-01-02');
-        $third = new \DateTime('2016-01-03');
-
-        return [
-            'valid chain' => [
-                'value' => $this->createTestObject($first, $second, $third),
-                'violations' => []
-            ],
-            'valid chain with null' => [
-                'value' => $this->createTestObject($first, null, $third),
-                'violations' => []
-            ],
-            'valid chain first null' => [
-                'value' => $this->createTestObject(null, $second, $third),
-                'violations' => []
-            ],
-            'not valid' => [
-                'value' => $this->createTestObject($third, $second, $first),
-                'violations' => [
-                    ['later' => self::SECOND_LABEL, 'earlier' => self::FIRST_LABEL],
-                    ['later' => self::THIRD_LABEL, 'earlier' => self::SECOND_LABEL]
-                ]
-            ],
-            'not valid with null' => [
-                'value' => $this->createTestObject($second, null, $first),
-                'violations' => [
-                    ['later' => self::THIRD_LABEL, 'earlier' => self::FIRST_LABEL]
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * @param null|\DateTime $first
-     * @param null|\DateTime $second
-     * @param null|\DateTime $third
-     * @return \stdClass
-     */
-    protected function createTestObject($first, $second, $third)
+    private function createTestObject(?\DateTime $first, ?\DateTime $second, ?\DateTime $third): \stdClass
     {
         $result = new \stdClass();
         $result->first = $first;
@@ -108,23 +28,95 @@ class DatesChainValidatorTest extends \PHPUnit\Framework\TestCase
         return $result;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getBuilderMock()
+    private function createConstraint(): DatesChain
     {
-        return $this->getMockBuilder('Symfony\Component\Validator\Violation\ConstraintViolationBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $constraint = new DatesChain();
+        $constraint->chain = [
+            'first'  => self::FIRST_LABEL,
+            'second' => self::SECOND_LABEL,
+            'third'  => self::THIRD_LABEL
+        ];
+
+        return $constraint;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ExecutionContext $context
-     */
-    protected function getContextMock()
+    public function testValidateForValidChain(): void
     {
-        return $this->getMockBuilder('Symfony\Component\Validator\Context\ExecutionContext')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $value = $this->createTestObject(
+            new \DateTime('2016-01-01'),
+            new \DateTime('2016-01-02'),
+            new \DateTime('2016-01-03')
+        );
+
+        $constraint = $this->createConstraint();
+        $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateForValidChainWithNull(): void
+    {
+        $value = $this->createTestObject(
+            new \DateTime('2016-01-01'),
+            null,
+            new \DateTime('2016-01-03')
+        );
+
+        $constraint = $this->createConstraint();
+        $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateForValidChainWithFirstNull(): void
+    {
+        $value = $this->createTestObject(
+            null,
+            new \DateTime('2016-01-02'),
+            new \DateTime('2016-01-03')
+        );
+
+        $constraint = $this->createConstraint();
+        $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateForNotValid(): void
+    {
+        $value = $this->createTestObject(
+            new \DateTime('2016-01-03'),
+            new \DateTime('2016-01-02'),
+            new \DateTime('2016-01-01')
+        );
+
+        $constraint = $this->createConstraint();
+        $this->validator->validate($value, $constraint);
+
+        $this
+            ->buildViolation($constraint->message)
+            ->setParameters(['later' => self::SECOND_LABEL, 'earlier' => self::FIRST_LABEL])
+            ->atPath('property.path.second')
+            ->buildNextViolation($constraint->message)
+            ->setParameters(['later' => self::THIRD_LABEL, 'earlier' => self::SECOND_LABEL])
+            ->atPath('property.path.third')
+            ->assertRaised();
+    }
+
+    public function testValidateForNotValidWithNull(): void
+    {
+        $value = $this->createTestObject(
+            new \DateTime('2016-01-02'),
+            null,
+            new \DateTime('2016-01-01')
+        );
+
+        $constraint = $this->createConstraint();
+        $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->setParameters(['later' => self::THIRD_LABEL, 'earlier' => self::FIRST_LABEL])
+            ->atPath('property.path.third')
+            ->assertRaised();
     }
 }

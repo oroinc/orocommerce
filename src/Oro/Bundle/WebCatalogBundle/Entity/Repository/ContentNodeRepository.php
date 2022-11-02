@@ -10,6 +10,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
 /**
+ * The repository for ContentNode entity.
+ *
  * @method $this persistAsFirstChild($node)
  * @method $this persistAsFirstChildOf($node, $parent)
  * @method $this persistAsLastChild($node)
@@ -28,7 +30,7 @@ class ContentNodeRepository extends NestedTreeRepository
     public function getRootNodeByWebCatalog(WebCatalog $webCatalog)
     {
         // Root node fetches without children because
-        // in Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface implementations
+        // in Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolver implementations
         // they will be fetched from cache
 
         $qb = $this->getRootNodesQueryBuilder();
@@ -46,14 +48,11 @@ class ContentNodeRepository extends NestedTreeRepository
      */
     public function getContentVariantQueryBuilder(WebCatalog $webCatalog)
     {
-        $qb = $this->createQueryBuilder('node');
-        $qb->select('node.id as nodeId, variant.id as variantId')
-            ->innerJoin(
-                ContentVariant::class,
-                'variant',
-                Join::WITH,
-                $qb->expr()->isMemberOf('variant', 'node.contentVariants')
-            )
+        $qb = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('node.id as nodeId', 'variant.id as variantId')
+            ->from(ContentVariant::class, 'variant')
+            ->innerJoin(ContentNode::class, 'node', Join::WITH, 'variant.node = node')
             ->andWhere('node.webCatalog = :webCatalog')
             ->setParameter('webCatalog', $webCatalog);
 
@@ -86,5 +85,31 @@ class ContentNodeRepository extends NestedTreeRepository
         ->setParameter('parentScopeUsed', true);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param ContentNode|null $parentNode Use null for root level nodes (no parent)
+     * @param ContentNode|null $skipNode Use null to get all slug prototypes on the same level
+     * @return array|string[]
+     */
+    public function getSlugPrototypesByParent(?ContentNode $parentNode = null, ?ContentNode $skipNode = null): array
+    {
+        $qb = $this->createQueryBuilder('node')
+            ->select('LOWER(slugPrototype.string) as slug_prototype')
+            ->join('node.slugPrototypes', 'slugPrototype');
+
+        if ($parentNode) {
+            $qb->where('node.parentNode = :parentNode')
+                ->setParameter('parentNode', $parentNode);
+        } else {
+            $qb->where($qb->expr()->isNull('node.parentNode'));
+        }
+
+        if ($skipNode) {
+            $qb->andWhere('node != :skipNode')
+                ->setParameter('skipNode', $skipNode);
+        }
+
+        return array_column($qb->getQuery()->getArrayResult(), 'slug_prototype');
     }
 }

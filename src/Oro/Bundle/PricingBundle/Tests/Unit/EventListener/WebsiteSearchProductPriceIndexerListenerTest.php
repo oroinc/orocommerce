@@ -3,17 +3,24 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener;
 use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
      * @var WebsiteSearchProductPriceIndexerListener
      */
@@ -25,7 +32,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
     private $websiteContextManager;
 
     /**
-     * @var RegistryInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
      */
     private $doctrine;
 
@@ -35,55 +42,105 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
     private $configManager;
 
     /**
-     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $manager;
+    private $featureChecker;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrine = $this->createMock(RegistryInterface::class);
-
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->manager = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->method('getManagerForClass')->willReturn($this->manager);
+        $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->listener = new WebsiteSearchProductPriceIndexerListener(
             $this->websiteContextManager,
             $this->doctrine,
-            $this->configManager
+            $this->configManager,
+            new DecimalFlatValueFormatter()
         );
+        $this->listener->setFeatureChecker($this->featureChecker);
+        $this->listener->addFeature('feature1');
+    }
+
+    public function testOnWebsiteSearchIndexFeatureDisabled()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(false);
+
+        $event = $this->createMock(IndexEntityEvent::class);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn([]);
+
+        $this->websiteContextManager->expects($this->never())->method('getWebsiteId');
+
+        $this->listener->onWebsiteSearchIndex($event);
+    }
+
+    public function testOnWebsiteSearchIndexUnsupportedFieldGroup()
+    {
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled');
+
+        $event = $this->createMock(IndexEntityEvent::class);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn([AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]);
+
+        $this->websiteContextManager->expects($this->never())->method($this->anything());
+
+        $this->listener->onWebsiteSearchIndex($event);
     }
 
     public function testOnWebsiteSearchIndexWithoutWebsite()
     {
-        $event = $this->getMockBuilder(IndexEntityEvent::class)->disableOriginalConstructor()->getMock();
-        $event->method('getContext')->willReturn([]);
-        $this->websiteContextManager->expects($this->once())->method('getWebsiteId')->willReturn(null);
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $event = $this->createMock(IndexEntityEvent::class);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn([]);
+        $this->websiteContextManager->expects($this->once())
+            ->method('getWebsiteId')
+            ->willReturn(null);
 
         $event->expects($this->once())->method('stopPropagation');
         $this->listener->onWebsiteSearchIndex($event);
     }
 
-    public function testOnWebsiteSearchIndex()
+    /**
+     * @dataProvider contextDataProvider
+     */
+    public function testOnWebsiteSearchIndex(array $context)
     {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->method('getManagerForClass')->willReturn($em);
         $products = [new Product()];
-        $event = $this->getMockBuilder(IndexEntityEvent::class)->disableOriginalConstructor()->getMock();
-        $event->method('getContext')->willReturn([]);
+        $event = $this->createMock(IndexEntityEvent::class);
+        $event->method('getContext')->willReturn($context);
         $event->method('getEntities')->willReturn($products);
         $this->websiteContextManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
         $this->configManager->expects($this->once())->method('get')->willReturn(2);
 
-        $repo = $this->getMockBuilder(CombinedProductPriceRepository::class)->disableOriginalConstructor()->getMock();
-        $this->manager->method('getRepository')->with(CombinedProductPrice::class)->willReturn($repo);
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
+        $em->expects($this->once())
+            ->method('getReference')
+            ->with(CombinedPriceList::class, 2)
+            ->willReturn($cpl);
+
+        $repo = $this->createMock(CombinedProductPriceRepository::class);
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
+            ->with(CombinedProductPrice::class)
+            ->willReturn($repo);
         $repo->method('findMinByWebsiteForFilter')
-            ->with(1, $products, 2)
+            ->with(1, $products, $cpl)
             ->willReturn(
                 [
                     [
@@ -103,7 +160,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
                 ]
             );
         $repo->method('findMinByWebsiteForSort')
-            ->with(1, $products, 2)
+            ->with(1, $products, $cpl)
             ->willReturn(
                 [
                     [
@@ -124,44 +181,41 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
         $event->expects($this->exactly(4))->method('addPlaceholderField')->withConsecutive(
             [
                 1,
-                'minimal_price_CPL_ID_CURRENCY_UNIT',
+                'minimal_price.CPL_ID_CURRENCY_UNIT',
                 '10.0000',
-                [
-                    'CPL_ID' => 1,
-                    'CURRENCY' => 'USD',
-                    'UNIT' => 'liter'
-                ],
+                ['CPL_ID' => 1, 'CURRENCY' => 'USD', 'UNIT' => 'liter']
             ],
             [
                 2,
-                'minimal_price_CPL_ID_CURRENCY_UNIT',
+                'minimal_price.CPL_ID_CURRENCY_UNIT',
                 '11.0000',
-                [
-                    'CPL_ID' => 1,
-                    'CURRENCY' => 'EUR',
-                    'UNIT' => 'box'
-                ],
+                ['CPL_ID' => 1, 'CURRENCY' => 'EUR', 'UNIT' => 'box']
             ],
             [
                 1,
-                'minimal_price_CPL_ID_CURRENCY',
+                'minimal_price.CPL_ID_CURRENCY',
                 '10.0000',
-                [
-                    'CPL_ID' => 1,
-                    'CURRENCY' => 'USD',
-                ],
+                ['CPL_ID' => 1, 'CURRENCY' => 'USD']
             ],
             [
                 2,
-                'minimal_price_CPL_ID_CURRENCY',
+                'minimal_price.CPL_ID_CURRENCY',
                 '11.0000',
-                [
-                    'CPL_ID' => 1,
-                    'CURRENCY' => 'EUR',
-                ],
+                ['CPL_ID' => 1, 'CURRENCY' => 'EUR']
             ]
         );
 
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
         $this->listener->onWebsiteSearchIndex($event);
+    }
+
+    public function contextDataProvider()
+    {
+        yield [[]];
+        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']]];
     }
 }

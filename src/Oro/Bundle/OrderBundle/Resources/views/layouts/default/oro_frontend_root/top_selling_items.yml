@@ -1,0 +1,31 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: top_selling_items_container
+            namespace: top_selling
+    actions:
+        - '@setOption':
+            id: top_selling_products
+            optionName: items
+            optionValue: '=data["top_selling_items"].getProducts()'
+        - '@setOption':
+            id: top_selling_products
+            optionName: items_data.stickers
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["top_selling_items"].getProducts())'
+        - '@setOption':
+            id: top_selling_products
+            optionName: label
+            optionValue: oro.order.top_selling_items.label
+        - '@setOption':
+            id: top_selling_product_line_item_form
+            optionName: instance_name
+            optionValue: top_selling_products
+        - '@add':
+            id: top_selling_items_container
+            parentId: page_content
+            blockType: container
+        - '@setOption':
+            id: top_selling_products
+            optionName: attr.data-page-component-name
+            optionValue: 'top-selling-list'

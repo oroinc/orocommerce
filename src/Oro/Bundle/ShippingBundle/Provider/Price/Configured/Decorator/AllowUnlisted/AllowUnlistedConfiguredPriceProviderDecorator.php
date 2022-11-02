@@ -15,10 +15,6 @@ class AllowUnlistedConfiguredPriceProviderDecorator extends AbstractShippingConf
      */
     private $shippingMethodViewFactory;
 
-    /**
-     * @param ShippingMethodViewFactory $shippingMethodViewFactory
-     * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
-     */
     public function __construct(
         ShippingMethodViewFactory $shippingMethodViewFactory,
         ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider

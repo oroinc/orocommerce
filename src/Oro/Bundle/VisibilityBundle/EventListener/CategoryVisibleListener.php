@@ -2,17 +2,20 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Restricts access to the category based on its visibility settings.
+ */
 class CategoryVisibleListener
 {
     // listener should run only on this route
@@ -24,9 +27,9 @@ class CategoryVisibleListener
     private $categoryVisibilityResolver;
 
     /**
-     * @var CategoryRepository
+     * @var ManagerRegistry
      */
-    private $categoryRepository;
+    private $registry;
 
     /**
      * @var CustomerUserRelationsProvider
@@ -38,29 +41,22 @@ class CategoryVisibleListener
      */
     private $tokenStorage;
 
-    /**
-     * @param CategoryRepository                  $categoryRepository
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param CustomerUserRelationsProvider        $customerUserRelationsProvider
-     * @param TokenStorageInterface               $tokenStorage
-     */
     public function __construct(
-        CategoryRepository $categoryRepository,
+        ManagerRegistry $registry,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
         CustomerUserRelationsProvider $customerUserRelationsProvider,
         TokenStorageInterface $tokenStorage
     ) {
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-        $this->categoryRepository = $categoryRepository;
+        $this->registry = $registry;
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
         $this->tokenStorage = $tokenStorage;
     }
 
     /**
-     * @param FilterControllerEvent $event
      * @throws NotFoundHttpException
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -69,7 +65,9 @@ class CategoryVisibleListener
         }
 
         /** @var Category $category */
-        $category = $this->categoryRepository->find((int)$request->get(RequestProductHandler::CATEGORY_ID_KEY));
+        $category = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->find((int)$request->get(RequestProductHandler::CATEGORY_ID_KEY));
 
         if (!$category || !$this->isCategoryVisible($category)) {
             $this->throwCategoryNotFound($request);
@@ -134,7 +132,6 @@ class CategoryVisibleListener
     }
 
     /**
-     * @param $request
      * @throws NotFoundHttpException
      */
     private function throwCategoryNotFound($request)

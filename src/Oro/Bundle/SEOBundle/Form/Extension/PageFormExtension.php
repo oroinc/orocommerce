@@ -9,9 +9,9 @@ class PageFormExtension extends BaseMetaFormExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PageType::class;
+        return [PageType::class];
     }
 
     /**

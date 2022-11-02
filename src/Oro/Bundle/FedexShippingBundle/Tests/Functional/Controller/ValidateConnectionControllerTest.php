@@ -4,20 +4,23 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FedexShippingBundle\Tests\Functional\Stub\SoapClientStub;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ValidateConnectionControllerTest extends WebTestCase
 {
-    protected function setUp()
+    use ConfigManagerAwareTestTrait;
+
+    protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
     }
 
     public function testValidateConnectionActionNoShippingOptions()
     {
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => 0])
         );
@@ -33,7 +36,7 @@ class ValidateConnectionControllerTest extends WebTestCase
     {
         $this->setConfigShippingOrigin();
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
             $this->getRequestFormData(SoapClientStub::AUTHORIZATION_ERROR_OPTION)
@@ -46,7 +49,7 @@ class ValidateConnectionControllerTest extends WebTestCase
     {
         $this->setConfigShippingOrigin();
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
             $this->getRequestFormData(SoapClientStub::CONNECTION_ERROR_OPTION)
@@ -59,7 +62,7 @@ class ValidateConnectionControllerTest extends WebTestCase
     {
         $this->setConfigShippingOrigin();
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
             $this->getRequestFormData(SoapClientStub::NO_SERVICES_OPTION)
@@ -75,7 +78,7 @@ class ValidateConnectionControllerTest extends WebTestCase
     {
         $this->setConfigShippingOrigin();
 
-        $this->client->request(
+        $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
             $this->getRequestFormData(SoapClientStub::OK_OPTION)
@@ -90,11 +93,6 @@ class ValidateConnectionControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $key
-     *
-     * @return array
-     */
     private function getRequestFormData(string $key): array
     {
         return [
@@ -120,7 +118,7 @@ class ValidateConnectionControllerTest extends WebTestCase
 
     private function setConfigShippingOrigin()
     {
-        $configManager = static::getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
 
         $configManager->set(
             'oro_shipping.shipping_origin',
@@ -134,9 +132,6 @@ class ValidateConnectionControllerTest extends WebTestCase
         $configManager->flush();
     }
 
-    /**
-     * @param string $message
-     */
     private function assertResponseHasErrorMessage(string $message)
     {
         $result = static::getJsonResponseContent($this->client->getResponse(), 200);

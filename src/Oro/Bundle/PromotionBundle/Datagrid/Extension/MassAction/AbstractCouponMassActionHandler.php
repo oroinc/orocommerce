@@ -9,9 +9,13 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Exception\UnexpectedTypeException;
 
+/**
+ * The base class for datagrid mass actions for Coupon entity.
+ */
 abstract class AbstractCouponMassActionHandler implements MassActionHandlerInterface
 {
     const FLUSH_BATCH_SIZE = 100;
@@ -26,10 +30,6 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
      */
     protected $aclHelper;
 
-    /**
-     * @param DoctrineHelper $helper
-     * @param AclHelper $aclHelper
-     */
     public function __construct(
         DoctrineHelper $helper,
         AclHelper $aclHelper
@@ -51,7 +51,7 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
 
         $qb = clone $datasource->getQueryBuilder();
         if (!$args->getDatagrid()->getConfig()->isDatasourceSkipAclApply()) {
-            $this->aclHelper->apply($qb, 'EDIT');
+            $this->aclHelper->apply($qb, BasicPermission::EDIT);
         }
 
         $manager = $this->doctrineHelper->getEntityManagerForClass(Coupon::class);
@@ -80,10 +80,6 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
         return $this->getResponse($iteration);
     }
 
-    /**
-     * @param Coupon $coupon
-     * @param MassActionHandlerArgs $args
-     */
     abstract protected function execute(Coupon $coupon, MassActionHandlerArgs $args);
 
     /**

@@ -7,18 +7,24 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
+/**
+ * Commons implementation of diff mapper for addresses.
+ */
 abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInterface
 {
     /**
-     * @param Checkout $checkout
-     * @return array
+     * {@inheritdoc}
      */
     public function getCurrentState($checkout)
     {
+        if (!$checkout instanceof Checkout) {
+            return null;
+        }
+
         $address = $this->getAddress($checkout);
 
         if (!$address) {
-            return [];
+            return null;
         }
 
         if ($address->getCustomerAddress()) {

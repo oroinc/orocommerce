@@ -7,15 +7,16 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Handles logic related to quick order process
@@ -30,13 +31,16 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     /** @var ShoppingListLimitManager */
     protected $shoppingListLimitManager;
 
+    /** @var CurrentShoppingListManager */
+    protected $currentShoppingListManager;
+
     /** @var ActionGroupRegistry */
     protected $actionGroupRegistry;
 
     /** @var TranslatorInterface */
     protected $translator;
 
-    /** @var DateTimeFormatter */
+    /** @var DateTimeFormatterInterface */
     protected $dateFormatter;
 
     /** @var string */
@@ -68,6 +72,17 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
+     * @param CurrentShoppingListManager $currentShoppingListManager
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setCurrentShoppingListManager(CurrentShoppingListManager $currentShoppingListManager)
+    {
+        $this->currentShoppingListManager = $currentShoppingListManager;
+
+        return $this;
+    }
+
+    /**
      * @param ActionGroupRegistry $actionGroupRegistry
      * @return QuickAddCheckoutProcessor
      */
@@ -90,10 +105,10 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param DateTimeFormatter $dateFormatter
+     * @param DateTimeFormatterInterface $dateFormatter
      * @return QuickAddCheckoutProcessor
      */
-    public function setDateFormatter(DateTimeFormatter $dateFormatter)
+    public function setDateFormatter(DateTimeFormatterInterface $dateFormatter)
     {
         $this->dateFormatter = $dateFormatter;
 
@@ -136,7 +151,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
         if ($this->shoppingListLimitManager->isReachedLimit()) {
             $shoppingList = $this->shoppingListManager->edit(
-                $this->shoppingListManager->getCurrent($create = true),
+                $this->currentShoppingListManager->getCurrent(true),
                 $this->getShoppingListLabel()
             );
             $this->shoppingListManager->removeLineItems($shoppingList);

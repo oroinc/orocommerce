@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelectTypeTest
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var \Oro\Bundle\ConfigBundle\Config\ConfigManager */
     protected $configManager;
 
@@ -15,21 +18,23 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     /**
      * @var int|object|null
      */
-    protected $configScope;
+    protected $configScopeIdentifier;
 
-    public function setUp()
+    protected string $configScopeName = 'global';
+
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = self::getConfigManager($this->configScopeName);
     }
 
     public function setUpBeforeRestriction()
     {
-        list($availableInventoryStatuses) = func_get_args();
+        [$availableInventoryStatuses] = func_get_args();
 
-        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->configScope);
-        $this->configManager->flush($this->configScope);
+        $this->configManager->set($this->configPath, $availableInventoryStatuses, $this->configScopeIdentifier);
+        $this->configManager->flush($this->configScopeIdentifier);
     }
 
     /**
@@ -40,11 +45,20 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],
@@ -65,7 +79,6 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_7,
                 ]
             ]
         ];
@@ -79,11 +92,22 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         return [
             [
                 ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_3_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['in_stock']],
-                'expectedProducts' => LoadProductData::PRODUCTS_1_2_6_7
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                ]
             ],
             [
                 ['availableInventoryStatuses' => ['out_of_stock']],

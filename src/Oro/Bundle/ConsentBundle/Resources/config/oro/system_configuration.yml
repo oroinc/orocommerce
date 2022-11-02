@@ -1,0 +1,22 @@
+system_configuration:
+    groups:
+        consents:
+            title: oro.consent.system_configuration.groups.consents.title
+            icon: 'fa-check-square'
+
+    fields:
+        oro_consent.consent_feature_enabled:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 20
+            page_reload: true
+            options:
+                required: false
+                label: oro.consent.system_configuration.fields.consent.feature_enabled.label
+        oro_consent.enabled_consents:
+            data_type: array
+            type: Oro\Bundle\ConsentBundle\Form\Type\ConsentCollectionType
+            options:
+                required: false
+                label: oro.consent.system_configuration.fields.consent.enabled_consents.label
+                tooltip: oro.consent.system_configuration.fields.consent.enabled_consents.tooltip

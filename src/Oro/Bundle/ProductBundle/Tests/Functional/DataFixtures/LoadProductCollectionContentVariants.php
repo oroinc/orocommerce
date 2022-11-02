@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -60,9 +60,6 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function createContentVariantWithProductSegment(ObjectManager $manager)
     {
         $this->createProductSegment($manager);
@@ -76,9 +73,6 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $manager->persist($testContentVariant);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function createContentVariantWithoutSegment(ObjectManager $manager)
     {
         $testContentVariant = new TestContentVariant();
@@ -86,9 +80,6 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $manager->persist($testContentVariant);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function createProductSegment(ObjectManager $manager)
     {
         $organization = $manager->getRepository(Organization::class)->getFirst();
@@ -120,9 +111,6 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $manager->persist($entity);
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     private function createProductSegmentSnapshot(ObjectManager $manager)
     {
         /** @var Segment $segment */

@@ -11,6 +11,6 @@ placeholders:
 
     items:
         rfp_view_buttons:
-            template: OroRFPBundle:Request:block/viewButtons.html.twig
+            template: '@@OroRFP/Request/block/viewButtons.html.twig'
             applicable: "@oro_ui.widget_provider.view_actions->supports($entity$)"
             data: "@oro_ui.widget_provider.view_actions->getWidgets($entity$)"

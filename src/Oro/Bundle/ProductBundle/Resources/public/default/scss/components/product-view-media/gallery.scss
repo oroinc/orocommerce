@@ -1,0 +1,146 @@
+/* @theme: default; */
+
+.product-view-media-gallery-container {
+    position: $product-view-media-gallery-container-position;
+
+    .tab-content__wrapper & {
+        max-width: $product-view-media-gallery-container-tab-content-max-width;
+    }
+}
+
+.product-view-media-gallery {
+    max-height: $product-view-media-gallery-max-height;
+    border: $product-view-media-gallery-border;
+    z-index: $product-view-media-gallery-z-index;
+
+    .tab-content__wrapper & {
+        max-width: $product-view-media-gallery-tab-content-max-width;
+    }
+
+    &__picture,
+    &__image {
+        max-width: 100%;
+        max-height: $product-view-media-gallery-image-max-height;
+    }
+
+    &__image {
+        &[data-lazy] {
+            display: none;
+        }
+    }
+
+    &__image-item {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+
+        height: 378px;
+    }
+
+    &.slick-initialized {
+        overflow: visible;
+
+        .product-view-media-gallery__image-item {
+            //Should for reset slick display value
+            display: flex;
+        }
+    }
+
+    &__nav {
+        position: relative;
+
+        max-height: $product-view-media-gallery-nav-max-height;
+        margin: $product-view-media-gallery-nav-offset;
+
+        opacity: 0;
+        transition: opacity .4s;
+        visibility: hidden;
+        overflow: hidden;
+
+        > * {
+            transition: opacity .4s;
+        }
+
+        &.loading {
+            opacity: 1;
+            visibility: visible;
+            background: $product-view-media-gallery-nav-loading-url;
+            transition: opacity .4s;
+
+            > * {
+                display: none;
+            }
+
+            &::before {
+                content: '';
+                display: block;
+            }
+
+            @for $i from 1 to 9 {
+                &.slides-to-show-#{$i}:before {
+                    margin-top: calc(100% / #{$i} - #{$product-view-media-gallery-nav-item-offset-h * 2});
+                }
+            }
+        }
+
+        &.slick-initialized {
+            margin: $product-view-media-gallery-nav-offset;
+
+            opacity: 1;
+            visibility: visible;
+
+            .tab-content__wrapper & {
+                max-width: $product-view-media-gallery-nav-tab-content-max-width;
+            }
+        }
+
+        &__item {
+            display: block;
+            float: left;
+            padding: $product-view-media-gallery-nav-item-offset-inner;
+
+            &.slick-current img {
+                border-color: $product-view-media-gallery-nav-image-current-border-color;
+            }
+        }
+
+        &__image {
+            width: 100%;
+            max-height: $product-view-media-gallery-nav-max-height;
+
+            border: $product-view-media-gallery-nav-image-border-color;
+            transition: border-color .5s;
+        }
+
+        @include slick-arrow(
+            $slick-arrow-top: 0,
+            $slick-arrow-transform: null,
+            $slick-arrow-z-index: z('base') + 1,
+            $slick-arrow-width: $product-view-media-gallery-nav-arrow-width,
+            $slick-arrow-height: $product-view-media-gallery-nav-arrow-height,
+            $slick-arrow-color: null,
+            $slick-arrow-background: $product-view-media-gallery-nav-arrow-bg,
+            $slick-arrow-border: $product-view-media-gallery-nav-arrow-border,
+            $slick-arrow-icon-size: $product-view-media-gallery-nav-arrow-icon-size,
+            $slick-arrow-icon-color: null,
+            $slick-arrow-prev-icon: $product-view-media-gallery-nav-arrow-icon-prev,
+            $slick-arrow-next-icon: $product-view-media-gallery-nav-arrow-icon-next,
+            $slick-arrow-next-right: $product-view-media-gallery-nav-arrow-side-position,
+            $slick-arrow-prev-left: $product-view-media-gallery-nav-arrow-side-position
+        );
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-view-media-gallery {
+        &__image-item,
+        &__image {
+            height: auto;
+        }
+
+        .slick-track {
+            display: flex;
+        }
+    }
+}

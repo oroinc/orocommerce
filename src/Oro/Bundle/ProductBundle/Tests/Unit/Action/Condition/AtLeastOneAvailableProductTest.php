@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductHolderStub;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -17,8 +18,8 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject */
-    private $query;
+    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    private $queryBuilder;
 
     /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
@@ -26,27 +27,27 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
     /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
     private $productManager;
 
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclHelper;
+
     /** @var AtLeastOneAvailableProduct */
     private $condition;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->query = $this->getMockForAbstractClass(AbstractQuery::class, [], '', false, false, true, ['getResult']);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder->expects($this->any())
-            ->method('getQuery')
-            ->willReturn($this->query);
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
 
         $this->repository = $this->createMock(ProductRepository::class);
         $this->repository->expects($this->any())
             ->method('getProductsQueryBuilder')
-            ->willReturn($queryBuilder);
+            ->willReturn($this->queryBuilder);
 
         $this->productManager = $this->createMock(ProductManager::class);
-        $this->condition = new AtLeastOneAvailableProduct($this->repository, $this->productManager);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->condition = new AtLeastOneAvailableProduct($this->repository, $this->productManager, $this->aclHelper);
         $this->condition->setContextAccessor(new ContextAccessor());
     }
 
@@ -84,9 +85,34 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
         $options = [new PropertyPath('path.products')];
         $this->condition->initialize($options);
 
-        $this->query->expects($this->once())
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('resetDQLPart')
+            ->with('select')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->with('p.id')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('setMaxResults')
+            ->with('1')
+            ->willReturnSelf();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
             ->method('getResult')
+            ->with(AbstractQuery::HYDRATE_ARRAY)
             ->willReturn([]);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($this->queryBuilder)
+            ->willReturn($query);
 
         $this->assertFalse($this->condition->evaluate(['path' => ['products' => $productsHolders]]));
     }
@@ -100,9 +126,34 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
         $options = [new PropertyPath('path.products')];
         $this->condition->initialize($options);
 
-        $this->query->expects($this->once())
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('resetDQLPart')
+            ->with('select')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('select')
+            ->with('p.id')
+            ->willReturnSelf();
+
+        $this->queryBuilder
+            ->expects($this->once())
+            ->method('setMaxResults')
+            ->with('1')
+            ->willReturnSelf();
+
+        $query = $this->createMock(AbstractQuery::class);
+        $query->expects($this->once())
             ->method('getResult')
-            ->willReturn([$productHolderOne]);
+            ->with(AbstractQuery::HYDRATE_ARRAY)
+            ->willReturn(['id' => 1]);
+        $this->aclHelper
+            ->expects($this->once())
+            ->method('apply')
+            ->with($this->queryBuilder)
+            ->willReturn($query);
 
         $this->assertTrue($this->condition->evaluate(['path' => ['products' => $productsHolders]]));
     }

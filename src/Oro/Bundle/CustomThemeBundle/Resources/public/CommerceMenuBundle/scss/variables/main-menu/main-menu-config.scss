@@ -1,0 +1,11 @@
+/* @theme: custom; */
+
+$sidebar-menu-background: get-color('additional', 'base') !default;
+
+$sidebar-menu-link-color: get-color('additional', 'dark') !default;
+
+$sidebar-menu-collapsible-background-color: get-color('additional', 'base');
+
+// Tablet
+
+$main-menu-tablet-border: 1px solid get-color('additional', 'light') !default;

@@ -12,21 +12,24 @@ use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxQuoteController extends Controller
+/**
+ * Provides supportive actions for ajax calls during quote creation and editing.
+ */
+class AjaxQuoteController extends AbstractController
 {
     /**
      * Get order related data
      *
-     * @Route("/related-data", name="oro_quote_related_data")
-     * @Method({"GET"})
+     * @Route("/related-data", name="oro_quote_related_data", methods={"GET"})
      * @AclAncestor("oro_quote_update")
      *
      * @return JsonResponse
@@ -52,22 +55,25 @@ class AjaxQuoteController extends Controller
             }
         }
 
-        $orderForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
+        $quoteForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
 
-        return new JsonResponse(
-            [
-                'shippingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
-                ),
-                'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
-                'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null,
-            ]
-        );
+        $responseData = [
+            'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
+            'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null
+        ];
+        if ($quoteForm->has(AddressType::TYPE_SHIPPING . 'Address')) {
+            $responseData['shippingAddress'] = $this->renderFormView(
+                $quoteForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
+            );
+        }
+
+        return new JsonResponse($responseData);
     }
 
     /**
-     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
-     * @AclAncestor("oro_order_update")
+     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0}, methods={"POST"})
+     * @AclAncestor("oro_quote_update")
+     * @CsrfProtection()
      *
      * @param Request    $request
      * @param Quote|null $quote
@@ -87,19 +93,14 @@ class AjaxQuoteController extends Controller
         $form->submit($submittedData);
 
         $event = new QuoteEvent($form, $form->getData(), $submittedData);
-        $this->get('event_dispatcher')->dispatch(QuoteEvent::NAME, $event);
+        $this->get(EventDispatcherInterface::class)->dispatch($event, QuoteEvent::NAME);
 
         return new JsonResponse($event->getData());
     }
 
-    /**
-     * @param FormView $formView
-     *
-     * @return string
-     */
-    protected function renderForm(FormView $formView)
+    protected function renderFormView(FormView $formView): string
     {
-        return $this->renderView('OroSaleBundle:Form:customerAddressSelector.html.twig', ['form' => $formView]);
+        return $this->renderView('@OroSale/Form/customerAddressSelector.html.twig', ['form' => $formView]);
     }
 
     /**
@@ -120,9 +121,6 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @param CustomerUser $customerUser
-     * @param Customer $customer
-     *
      * @throws BadRequestHttpException
      */
     protected function validateRelation(CustomerUser $customerUser, Customer $customer)
@@ -140,7 +138,7 @@ class AjaxQuoteController extends Controller
      */
     protected function getPaymentTermProvider()
     {
-        return $this->get('oro_payment_term.provider.payment_term');
+        return $this->get(PaymentTermProvider::class);
     }
 
     /**
@@ -151,11 +149,23 @@ class AjaxQuoteController extends Controller
         return QuoteType::class;
     }
 
-    /**
-     * @return QuoteRequestHandler
-     */
-    protected function getQuoteRequestHandler()
+    protected function getQuoteRequestHandler(): QuoteRequestHandler
     {
-        return $this->get('oro_sale.service.quote_request_handler');
+        return $this->get(QuoteRequestHandler::class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                EventDispatcherInterface::class,
+                PaymentTermProvider::class,
+                QuoteRequestHandler::class,
+            ]
+        );
     }
 }

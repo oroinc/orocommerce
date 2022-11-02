@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Provides functionality to create slugs with redirect.
+ */
 class SlugWithRedirectType extends AbstractType
 {
     const NAME = 'oro_redirect_slug_with_redirect';
@@ -24,9 +27,6 @@ class SlugWithRedirectType extends AbstractType
      */
     private $confirmSlugChangeFormHelper;
 
-    /**
-     * @param ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper
-     */
     public function __construct(ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper)
     {
         $this->confirmSlugChangeFormHelper = $confirmSlugChangeFormHelper;
@@ -53,7 +53,7 @@ class SlugWithRedirectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $constraints = [new UrlSafe()];
+        $constraints = [new UrlSafe(['allowSlashes' => $options['allow_slashes']])];
         if (!empty($options['required'])) {
             $constraints[] = new NotBlank();
         }
@@ -89,6 +89,7 @@ class SlugWithRedirectType extends AbstractType
             'create_redirect_enabled' => true,
             'slug_suggestion_enabled' => true,
             'data_class' => TextSlugPrototypeWithRedirect::class,
+            'allow_slashes' => false,
         ]);
         $resolver->setRequired('source_field');
     }

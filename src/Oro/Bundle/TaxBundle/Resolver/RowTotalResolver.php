@@ -28,14 +28,17 @@ class RowTotalResolver
      */
     protected $calculator;
 
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param TaxCalculatorInterface   $calculator
-     */
-    public function __construct(TaxationSettingsProvider $settingsProvider, TaxCalculatorInterface $calculator)
-    {
+    /** @var RoundingResolver */
+    protected $roundingResolver;
+
+    public function __construct(
+        TaxationSettingsProvider $settingsProvider,
+        TaxCalculatorInterface $calculator,
+        RoundingResolver $roundingResolver
+    ) {
         $this->settingsProvider = $settingsProvider;
         $this->calculator = $calculator;
+        $this->roundingResolver = $roundingResolver;
     }
 
     /**
@@ -46,33 +49,50 @@ class RowTotalResolver
      */
     public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount, $quantity = 1)
     {
-        $taxRate = BigDecimal::zero();
+        $totalTaxRate = BigDecimal::zero();
+        foreach ($taxRules as $taxRule) {
+            $totalTaxRate = $totalTaxRate->plus($taxRule->getTax()->getRate());
+        }
+
+        $totalResultElement = $this->getRowTotalResult($taxableAmount, $totalTaxRate, $quantity);
 
         $taxResults = [];
-
-        foreach ($taxRules as $taxRule) {
-            $taxRate = $taxRate->plus($taxRule->getTax()->getRate());
-        }
-
-        $resultElementStartWith = $this->getRowTotalResult($taxableAmount, $taxRate, $quantity);
-
         foreach ($taxRules as $taxRule) {
             $currentTaxRate = BigDecimal::of($taxRule->getTax()->getRate());
-            $taxResults[] = TaxResultElement::create(
-                $taxRule->getTax(),
-                $currentTaxRate,
-                $resultElementStartWith->getExcludingTax(),
-                BigDecimal::of($resultElementStartWith->getTaxAmount())
+
+            if (BigDecimal::zero()->isEqualTo($totalTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))) {
+                $currentTaxAmount = BigDecimal::zero();
+            } else {
+                // Gets tax amount of current tax rule from total tax amount using proportion to avoid possible
+                // tolerance errors when getting each tax amount separately, as (pseudocode):
+                // sum((taxableAmount * currentTaxRate[N]).round(2))!=(taxableAmount * sum(currentTaxRate[N])).round(2)
+                $currentTaxAmount = BigDecimal::of($totalResultElement->getTaxAmount())
                     ->multipliedBy($currentTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE))
                     ->dividedBy(
-                        $taxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
+                        $totalTaxRate->toScale(TaxationSettingsProvider::CALCULATION_SCALE),
                         TaxationSettingsProvider::CALCULATION_SCALE,
                         RoundingMode::HALF_UP
-                    )
+                    );
+            }
+
+            $taxResult = TaxResultElement::create(
+                $taxRule->getTax(),
+                $currentTaxRate,
+                $totalResultElement->getExcludingTax(),
+                $currentTaxAmount
             );
+
+            if ($this->settingsProvider->isStartCalculationOnItem()) {
+                $this->roundingResolver->round($taxResult);
+            }
+
+            $taxResults[] = $taxResult;
+        }
+        if ($this->settingsProvider->isCalculateAfterPromotionsEnabled()) {
+            $totalResultElement->setDiscountsIncluded(true);
         }
 
-        $result->offsetSet(Result::ROW, $resultElementStartWith);
+        $result->offsetSet(Result::ROW, $totalResultElement);
         $result->offsetSet(Result::TAXES, $taxResults);
     }
 

@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
+use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+/**
+ * Adds additional block with RFP grid on the Customer and CustomerUser view page.
+ */
 class CustomerViewListener extends AbstractCustomerViewListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
@@ -37,13 +41,13 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroRFPBundle:Customer:rfp_view.html.twig';
+        return '@OroRFP/Customer/rfp_view.html.twig';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.rfp.datagrid.customer.label';
     }
@@ -53,13 +57,13 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroRFPBundle:CustomerUser:rfp_view.html.twig';
+        return '@OroRFP/CustomerUser/rfp_view.html.twig';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.rfp.datagrid.customer_user.label';
     }

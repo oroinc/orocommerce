@@ -11,7 +11,7 @@ class DiscountFormTypeProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $discountFormTypeRegistry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->discountFormTypeRegistry = new DiscountFormTypeProvider();
     }

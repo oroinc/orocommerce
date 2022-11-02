@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 
+/**
+ * Abstract implementation reusable by visibility resolve functionality.
+ */
 abstract class AbstractSubtreeCacheBuilder
 {
     /**
@@ -18,7 +21,7 @@ abstract class AbstractSubtreeCacheBuilder
     protected $excludedCategories = [];
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -37,14 +40,8 @@ abstract class AbstractSubtreeCacheBuilder
      */
     protected $scopeManager;
 
-    /**
-     * @param Registry $registry
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
-     */
     public function __construct(
-        Registry $registry,
+        ManagerRegistry $registry,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
         ConfigManager $configManager,
         ScopeManager $scopeManager
@@ -119,8 +116,7 @@ abstract class AbstractSubtreeCacheBuilder
     protected function getChildCategoriesWithFallbackStatic(Category $category, $target)
     {
         $qb = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->getChildrenQueryBuilderPartial($category);
 
         $qb = $this->joinCategoryVisibility($qb, $target);
@@ -141,8 +137,7 @@ abstract class AbstractSubtreeCacheBuilder
         $target
     ) {
         $qb = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->getChildrenQueryBuilder($category)
             ->select('partial node.{id}');
 
@@ -156,7 +151,7 @@ abstract class AbstractSubtreeCacheBuilder
          * Also excluded final leaf of category tree
          * To optimize performance exclude nodes whose parents are already processed
          */
-        foreach ($categoriesWithStaticFallback as $node) {
+        foreach ($categoriesWithStaticFallback as $idx => $node) {
             $this->excludedCategories[] = $node;
             if ($this->isExcludedByParent($node)) {
                 continue;
@@ -166,12 +161,15 @@ abstract class AbstractSubtreeCacheBuilder
                 $qb->andWhere(
                     $qb->expr()->not(
                         $qb->expr()->andX(
-                            $qb->expr()->gte('node.level', $node['level']),
-                            $qb->expr()->gte('node.left', $node['left']),
-                            $qb->expr()->lte('node.right', $node['right'])
+                            $qb->expr()->gte('node.level', ':nodeLevel' . $idx),
+                            $qb->expr()->gte('node.left', ':nodeLeft' . $idx),
+                            $qb->expr()->lte('node.right', ':nodeRight' . $idx)
                         )
                     )
                 );
+                $qb->setParameter('nodeLevel' . $idx, $node['level']);
+                $qb->setParameter('nodeLeft' . $idx, $node['left']);
+                $qb->setParameter('nodeRight' . $idx, $node['right']);
             }
         }
 

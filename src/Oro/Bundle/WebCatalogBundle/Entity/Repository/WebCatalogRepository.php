@@ -3,11 +3,18 @@
 namespace Oro\Bundle\WebCatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
+/**
+ * This class represents a custom repository for the WebCatalog entity
+ * It contains useful methods to access data in the Database
+ */
 class WebCatalogRepository extends EntityRepository
 {
     /**
@@ -32,8 +39,37 @@ class WebCatalogRepository extends EntityRepository
     public function getUsedScopes(WebCatalog $webCatalog)
     {
         $qb = $this->getUsedScopesQueryBuilder($webCatalog);
+        $qb->innerJoin(
+            ContentVariant::class,
+            'variant',
+            Join::WITH,
+            $qb->expr()->isMemberOf('scope', 'variant.scopes')
+        );
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     *
+     * @return int[]
+     */
+    public function getUsedScopesIds(WebCatalog $webCatalog): array
+    {
+        $qb = $this->getUsedScopesQueryBuilder($webCatalog);
+
+        $qb->select('scope.id as scopeId');
+
+        $query = $qb->getQuery();
+
+        $identifierHydrationMode = 'IdentifierHydrator';
+        $query
+            ->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+        $scopeIds = $qb->getQuery()->getResult($identifierHydrationMode);
+
+        return $scopeIds;
     }
 
     /**

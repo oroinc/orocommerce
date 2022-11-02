@@ -24,7 +24,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $paymentMethodProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
@@ -32,7 +32,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new RedirectListener($this->session, $this->paymentMethodProvider);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener, $this->session);
     }
@@ -167,10 +167,6 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
 
-    /**
-     * @param Response $expectedResponse
-     * @param Response $actualResponse
-     */
     private function assertResponses(Response $expectedResponse, Response $actualResponse)
     {
         // Hack response datetime because of requests might have different datetime

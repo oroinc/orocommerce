@@ -4,11 +4,13 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 
 class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureInterface
 {
@@ -19,6 +21,8 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
     const CHECKOUT_SUBTOTAL_5 = 'checkout.subtotal.5';
     const CHECKOUT_SUBTOTAL_6 = 'checkout.subtotal.6';
     const CHECKOUT_SUBTOTAL_7 = 'checkout.subtotal.7';
+    const CHECKOUT_SUBTOTAL_8 = 'checkout.subtotal.8';
+    const CHECKOUT_SUBTOTAL_9 = 'checkout.subtotal.9';
 
     /** @var array */
     protected static $data = [
@@ -41,9 +45,30 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
             'amount' => 100,
             'valid' => true,
         ],
+        self::CHECKOUT_SUBTOTAL_4 => [
+            'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_4,
+            'currency' => 'USD',
+            'amount' => 300,
+            'valid' => true,
+        ],
         self::CHECKOUT_SUBTOTAL_7 => [
             'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_7,
             'currency' => 'USD',
+            'amount' => 200,
+            'priceList' => 'price_list_1',
+            'valid' => true,
+        ],
+        self::CHECKOUT_SUBTOTAL_8 => [
+            'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_8,
+            'currency' => 'USD',
+            'amount' => 200,
+            'priceList' => 'price_list_1',
+            'valid' => true,
+        ],
+        self::CHECKOUT_SUBTOTAL_9 => [
+            'checkout' => LoadShoppingListsCheckoutsData::CHECKOUT_9,
+            'currency' => 'USD',
+            'combinedPriceList' => '1f',
             'amount' => 200,
             'valid' => true,
         ],
@@ -66,7 +91,12 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
             if (isset($item['combinedPriceList'])) {
                 /** @var CombinedPriceList $combinedPriceList */
                 $combinedPriceList = $this->getReference($item['combinedPriceList']);
-                $subtotal->setCombinedPriceList($combinedPriceList);
+                $subtotal->setPriceList($combinedPriceList);
+            }
+            if (isset($item['priceList'])) {
+                /** @var PriceList $priceList */
+                $priceList = $this->getReference($item['priceList']);
+                $subtotal->setPriceList($priceList);
             }
 
             $checkoutSubtotal
@@ -86,6 +116,7 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
     {
         return [
             LoadShoppingListsCheckoutsData::class,
+            LoadCombinedPriceLists::class
         ];
     }
 }

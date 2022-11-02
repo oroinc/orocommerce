@@ -30,7 +30,7 @@ class VendorTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "VENDOR" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['VENDOR' => 'username'], ['VENDOR' => 'username']],

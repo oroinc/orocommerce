@@ -4,26 +4,30 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class FrontendProductListModifier
+/**
+ * Adds query builder limitation subquery based on currency and price list
+ */
+class FrontendProductListModifier implements FeatureCheckerAwareInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var TokenStorageInterface
      */
     protected $tokenStorage;
 
     /**
-     * @var PriceListTreeHandler
+     * @var CombinedPriceListTreeHandler
      */
     protected $priceListTreeHandler;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param PriceListTreeHandler $priceListTreeHandler
-     */
-    public function __construct(TokenStorageInterface $tokenStorage, PriceListTreeHandler $priceListTreeHandler)
+    public function __construct(TokenStorageInterface $tokenStorage, CombinedPriceListTreeHandler $priceListTreeHandler)
     {
         $this->tokenStorage = $tokenStorage;
         $this->priceListTreeHandler = $priceListTreeHandler;
@@ -39,6 +43,10 @@ class FrontendProductListModifier
         $currency = null,
         BasePriceList $priceList = null
     ) {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
         /** @var CustomerUser $user */
         if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
@@ -54,7 +62,7 @@ class FrontendProductListModifier
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
-                $limitationQb->from('OroPricingBundle:CombinedProductPrice', $productPriceAlias)
+                $limitationQb->from(CombinedProductPrice::class, $productPriceAlias)
                     ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
                     ->where($limitationQb->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'priceList'),

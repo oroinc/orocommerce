@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,7 +32,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -47,7 +47,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->expectException(ForbiddenException::class);
+        $this->expectException(AccessDeniedException::class);
 
         $this->handler->handleRemove($entity, $appliedCoupon);
     }
@@ -64,7 +64,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->expectException(ForbiddenException::class);
+        $this->expectException(AccessDeniedException::class);
 
         $this->handler->handleRemove($entity, $appliedCoupon);
     }

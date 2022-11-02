@@ -2,28 +2,32 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaxJurisdictionController extends Controller
+/**
+ * CRUD for tax jurisdictions.
+ */
+class TaxJurisdictionController extends AbstractController
 {
     /**
      * @Route("/", name="oro_tax_jurisdiction_index")
      * @Template
-     * @AclAncestor("oro_tax_jurisdiction_view")
-     *
-     * @return array
+     * @AclAncestor("oro_tax_jurisdiction_view")     *
+     * @return
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.tax_jurisdiction.class')
+            'entity_class' => TaxJurisdiction::class
         ];
     }
 
@@ -36,11 +40,8 @@ class TaxJurisdictionController extends Controller
      *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="VIEW"
      * )
-     *
-     * @param TaxJurisdiction $taxJurisdiction
-     * @return array
      */
-    public function viewAction(TaxJurisdiction $taxJurisdiction)
+    public function viewAction(TaxJurisdiction $taxJurisdiction): array
     {
         return [
             'entity' => $taxJurisdiction
@@ -49,17 +50,15 @@ class TaxJurisdictionController extends Controller
 
     /**
      * @Route("/create", name="oro_tax_jurisdiction_create")
-     * @Template("OroTaxBundle:TaxJurisdiction:update.html.twig")
+     * @Template("@OroTax/TaxJurisdiction/update.html.twig")
      * @Acl(
      *      id="oro_tax_jurisdiction_create",
      *      type="entity",
      *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new TaxJurisdiction());
     }
@@ -73,37 +72,32 @@ class TaxJurisdictionController extends Controller
      *      class="OroTaxBundle:TaxJurisdiction",
      *      permission="EDIT"
      * )
-     *
-     * @param TaxJurisdiction $taxJurisdiction
-     * @return array
      */
-    public function updateAction(TaxJurisdiction $taxJurisdiction)
+    public function updateAction(TaxJurisdiction $taxJurisdiction): array|RedirectResponse
     {
         return $this->update($taxJurisdiction);
     }
 
-    /**
-     * @param TaxJurisdiction $taxJurisdiction
-     * @return array|RedirectResponse
-     */
-    protected function update(TaxJurisdiction $taxJurisdiction)
+    protected function update(TaxJurisdiction $taxJurisdiction): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $taxJurisdiction,
             $this->createForm(TaxJurisdictionType::class, $taxJurisdiction),
-            function (TaxJurisdiction $taxJurisdiction) {
-                return [
-                    'route' => 'oro_tax_jurisdiction_update',
-                    'parameters' => ['id' => $taxJurisdiction->getId()]
-                ];
-            },
-            function (TaxJurisdiction $taxJurisdiction) {
-                return [
-                    'route' => 'oro_tax_jurisdiction_view',
-                    'parameters' => ['id' => $taxJurisdiction->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.tax.controller.tax_jurisdiction.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.tax_jurisdiction.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
         );
     }
 }

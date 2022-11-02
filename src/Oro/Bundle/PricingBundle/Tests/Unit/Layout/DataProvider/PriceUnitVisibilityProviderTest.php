@@ -2,130 +2,146 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\PriceUnitVisibilityProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
 class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UnitVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $unitVisibility;
 
-    /**
-     * @var PriceUnitVisibilityProvider
-     */
+    /** @var PriceUnitVisibilityProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(UnitVisibilityInterface::class);
+
         $this->provider = new PriceUnitVisibilityProvider($this->unitVisibility);
+    }
+
+    private function getProductView(int $id, array $units): ProductView
+    {
+        $product = new ProductView();
+        $product->set('id', $id);
+        $product->set('product_units', array_fill_keys($units, 0));
+
+        return $product;
+    }
+
+    private function getProduct(array $unitPrecisions): Product
+    {
+        $product = new Product();
+        foreach ($unitPrecisions as $unitPrecision) {
+            $product->addUnitPrecision($unitPrecision);
+        }
+
+        return $product;
+    }
+
+    private function getUnitPrecision(string $unitCode, bool $sell): ProductUnitPrecision
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setSell($sell);
+        $unitPrecision->setUnit($unit);
+
+        return $unitPrecision;
     }
 
     public function testIsPriceUnitsVisibleByProduct()
     {
-        $unitPrecision1 = $this->createUnitPrecisionMock('item');
+        $unitPrecision1 = $this->getUnitPrecision('item', true);
+        $unitPrecision2 = $this->getUnitPrecision('set', true);
 
-        $product = $this->createProductMock([$unitPrecision1]);
+        $product = $this->getProduct([$unitPrecision1, $unitPrecision2]);
+
+        $this->unitVisibility->expects($this->exactly(2))
+            ->method('isUnitCodeVisible')
+            ->willReturnMap([
+                ['item', false],
+                ['set', true]
+            ]);
+
+        $this->assertTrue($this->provider->isPriceUnitsVisibleByProduct($product));
+    }
+
+    public function testIsPriceUnitsVisibleByProductWithNotSellUnit()
+    {
+        $unitPrecision1 = $this->getUnitPrecision('item', false);
+        $unitPrecision2 = $this->getUnitPrecision('set', true);
+
+        $product = $this->getProduct([$unitPrecision1, $unitPrecision2]);
 
         $this->unitVisibility->expects($this->once())
             ->method('isUnitCodeVisible')
-            ->with('item')
+            ->with('set')
+            ->willReturn(true);
+
+        $this->assertTrue($this->provider->isPriceUnitsVisibleByProduct($product));
+    }
+
+    public function testIsPriceUnitsVisibleByProductWhenNoVisibleUnits()
+    {
+        $unitPrecision1 = $this->getUnitPrecision('item', true);
+        $unitPrecision2 = $this->getUnitPrecision('set', true);
+
+        $product = $this->getProduct([$unitPrecision1, $unitPrecision2]);
+
+        $this->unitVisibility->expects($this->exactly(2))
+            ->method('isUnitCodeVisible')
             ->willReturn(false);
 
         $this->assertFalse($this->provider->isPriceUnitsVisibleByProduct($product));
     }
 
-    public function testIsPriceUnitsVisibleByProductFalse()
+    public function testIsPriceUnitsVisibleByProductView()
     {
-        $unitPrecision1 = $this->createUnitPrecisionMock('item');
-        $unitPrecision2 = $this->createUnitPrecisionMock('set');
+        $product = $this->getProductView(1, ['item', 'set']);
 
-        $product = $this->createProductMock([$unitPrecision1, $unitPrecision2]);
-
-        $this->unitVisibility->expects($this->at(0))
+        $this->unitVisibility->expects($this->exactly(2))
             ->method('isUnitCodeVisible')
-            ->with('item')
-            ->willReturn(true);
-
-        $this->unitVisibility->expects($this->at(1))
-            ->method('isUnitCodeVisible')
-            ->with('set')
-            ->willReturn(false);
+            ->willReturnMap([
+                ['item', false],
+                ['set', true]
+            ]);
 
         $this->assertTrue($this->provider->isPriceUnitsVisibleByProduct($product));
     }
 
-    public function testGetPriceUnitsVisibilityByProducts()
+    public function testIsPriceUnitsVisibleByProductViewWhenNoVisibleUnits()
     {
-        $unitPrecision1 = $this->createUnitPrecisionMock('item');
-        $unitPrecision2 = $this->createUnitPrecisionMock('set');
+        $product = $this->getProductView(1, ['item', 'set']);
 
-        $product1 = $this->createProductMock([$unitPrecision1]);
-        $product1->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
-        $product2 = $this->createProductMock([$unitPrecision2]);
-        $product2->expects($this->once())
-            ->method('getId')
-            ->willReturn(2);
-
-        $this->unitVisibility->expects($this->at(0))
+        $this->unitVisibility->expects($this->exactly(2))
             ->method('isUnitCodeVisible')
-            ->with('item')
-            ->willReturn(true);
-
-        $this->unitVisibility->expects($this->at(1))
-            ->method('isUnitCodeVisible')
-            ->with('set')
             ->willReturn(false);
 
-        $this->assertEquals([
-            1 => true,
-            2 => false,
-        ], $this->provider->getPriceUnitsVisibilityByProducts([$product1, $product2]));
+        $this->assertFalse($this->provider->isPriceUnitsVisibleByProduct($product));
     }
 
-    /**
-     * @param string $unitCode
-     * @return ProductUnitPrecision|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createUnitPrecisionMock($unitCode)
+    public function testGetPriceUnitsVisibilityByProducts()
     {
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects($this->once())
-            ->method('getCode')
-            ->willReturn($unitCode);
+        $product1 = $this->getProductView(1, ['item', 'set']);
+        $product2 = $this->getProductView(2, ['each', 'item']);
 
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->expects($this->once())
-            ->method('isSell')
-            ->willReturn(true);
+        $this->unitVisibility->expects($this->exactly(4))
+            ->method('isUnitCodeVisible')
+            ->willReturnMap([
+                ['item', false],
+                ['set', true],
+                ['each', false]
+            ]);
 
-        $unitPrecision->expects($this->once())
-            ->method('getUnit')
-            ->willReturn($unit);
-
-        return $unitPrecision;
-    }
-
-    /**
-     * @param array $unitPrecisions
-     * @return Product|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createProductMock(array $unitPrecisions)
-    {
-        $product = $this->createMock(Product::class);
-
-        $product->expects($this->once())
-            ->method('getUnitPrecisions')
-            ->willReturn(new ArrayCollection($unitPrecisions));
-
-        return $product;
+        $this->assertSame(
+            [1 => true, 2 => false],
+            $this->provider->getPriceUnitsVisibilityByProducts([$product1, $product2])
+        );
     }
 }

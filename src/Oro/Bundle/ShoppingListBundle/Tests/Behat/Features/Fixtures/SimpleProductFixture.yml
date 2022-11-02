@@ -1,0 +1,57 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  unitPrecision:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  productName:
+    string: 'Simple product'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+  categoryName:
+    string: 'Category'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+  category:
+    organization: '@organization'
+    __calls:
+      - addTitle: ['@categoryName']
+      - setParentCategory: ['@root_category']
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+  productSlug:
+    url: '/simple-product'
+    slugPrototype: 'simple-product'
+    routeName: 'oro_product_frontend_product_view'
+    routeParameters: {'id': '@product->id'}
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product:
+    type: 'simple'
+    sku: 'simple-product'
+    slugs: ['@productSlug']
+    organization: '@organization'
+    owner: '@business_unit'
+    attributeFamily: '@defaultProductFamily'
+    status: 'enabled'
+    inventoryStatus: '@enumInventoryStatuses'
+    newArrival: true
+    featured: true
+    __calls:
+      - addName: ['@productName']
+      - addUnitPrecision: ['@unitPrecision']
+      - setPrimaryUnitPrecision: ['@unitPrecision']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  productItemPrice1:
+    product: '@product'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@item'
+    value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceRelation:
+    product: '@product'
+    priceList: '@defaultPriceList'

@@ -16,24 +16,21 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class TaxRuleControllerTest extends WebTestCase
 {
-    const TAX_DESCRIPTION = 'description';
-    const TAX_DESCRIPTION_UPDATED = 'description updated';
+    private const TAX_DESCRIPTION = 'description';
+    private const TAX_DESCRIPTION_UPDATED = 'description updated';
+    private const TAX_RULE_SAVE_MESSAGE = 'Tax Rule has been saved';
 
-    const TAX_RULE_SAVE_MESSAGE = 'Tax Rule has been saved';
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions',
-            ]
-        );
+        $this->loadFixtures([
+            LoadCustomerTaxCodes::class,
+            LoadProductTaxCodes::class,
+            LoadTaxes::class,
+            LoadTaxJurisdictions::class,
+        ]);
     }
 
     public function testIndex()
@@ -41,10 +38,10 @@ class TaxRuleControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('tax-taxe-rules-grid', $crawler->html());
+        self::assertStringContainsString('tax-taxe-rules-grid', $crawler->html());
     }
 
-    public function testCreate()
+    public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_tax_rule_create'));
         $result = $this->client->getResponse();
@@ -61,56 +58,37 @@ class TaxRuleControllerTest extends WebTestCase
 
         /** @var TaxRule $taxRule */
         $taxRule = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroTaxBundle:TaxRule')
-            ->getRepository('OroTaxBundle:TaxRule')
+            ->getRepository(TaxRule::class)
             ->findOneBy(['description' => self::TAX_DESCRIPTION]);
         $this->assertNotEmpty($taxRule);
 
         return $taxRule->getId();
     }
 
-    /**
-     * @param string $reference
-     * @return CustomerTaxCode
-     */
-    protected function getCustomerTaxCode($reference)
+    private function getCustomerTaxCode(string $reference): CustomerTaxCode
     {
         return $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . $reference);
     }
 
-    /**
-     * @param string $reference
-     * @return ProductTaxCode
-     */
-    protected function getProductTaxCode($reference)
+    private function getProductTaxCode(string $reference): ProductTaxCode
     {
         return $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . $reference);
     }
 
-    /**
-     * @param string $reference
-     * @return Tax
-     */
-    protected function getTax($reference)
+    private function getTax(string $reference): Tax
     {
         return $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . $reference);
     }
 
-    /**
-     * @param string $reference
-     * @return TaxJurisdiction
-     */
-    protected function getTaxJurisdiction($reference)
+    private function getTaxJurisdiction(string $reference): TaxJurisdiction
     {
         return $this->getReference(LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . $reference);
     }
 
     /**
-     * @param $id int
-     * @return int
      * @depends testCreate
      */
-    public function testUpdate($id)
+    public function testUpdate(int $id): int
     {
         $crawler = $this->client->request(
             'GET',
@@ -133,9 +111,8 @@ class TaxRuleControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView(int $id)
     {
         $crawler = $this->client->request(
             'GET',
@@ -146,7 +123,7 @@ class TaxRuleControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains($id . ' - View - Tax Rules - Taxes', $html);
+        self::assertStringContainsString($id . ' - View - Tax Rules - Taxes', $html);
 
         $this->assertViewPage(
             $html,
@@ -158,22 +135,14 @@ class TaxRuleControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Crawler         $crawler
-     * @param CustomerTaxCode  $customerTaxCode
-     * @param ProductTaxCode  $productTaxCode
-     * @param Tax             $tax
-     * @param TaxJurisdiction $taxJurisdiction
-     * @param string          $description
-     */
-    protected function assertTaxRuleSave(
+    private function assertTaxRuleSave(
         Crawler $crawler,
         CustomerTaxCode $customerTaxCode,
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
-        $description
-    ) {
+        string $description
+    ): void {
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'oro_tax_rule_type[description]' => $description,
@@ -183,6 +152,8 @@ class TaxRuleControllerTest extends WebTestCase
                 'oro_tax_rule_type[taxJurisdiction]' => $taxJurisdiction->getId(),
             ]
         );
+        $redirectAction = $crawler->selectButton('Save and Close')->attr('data-action');
+        $form->setValues(['input_action' => $redirectAction]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -191,30 +162,22 @@ class TaxRuleControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::TAX_RULE_SAVE_MESSAGE, $html);
+        self::assertStringContainsString(self::TAX_RULE_SAVE_MESSAGE, $html);
         $this->assertViewPage($html, $customerTaxCode, $productTaxCode, $tax, $taxJurisdiction, $description);
     }
 
-    /**
-     * @param string          $html
-     * @param CustomerTaxCode  $customerTaxCode
-     * @param ProductTaxCode  $productTaxCode
-     * @param Tax             $tax
-     * @param TaxJurisdiction $taxJurisdiction
-     * @param string          $description
-     */
-    protected function assertViewPage(
-        $html,
+    private function assertViewPage(
+        string $html,
         CustomerTaxCode $customerTaxCode,
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
-        $description
-    ) {
-        $this->assertContains($description, $html);
-        $this->assertContains($customerTaxCode->getCode(), $html);
-        $this->assertContains($productTaxCode->getCode(), $html);
-        $this->assertContains($tax->getCode(), $html);
-        $this->assertContains($taxJurisdiction->getCode(), $html);
+        string $description
+    ): void {
+        self::assertStringContainsString($description, $html);
+        self::assertStringContainsString($customerTaxCode->getCode(), $html);
+        self::assertStringContainsString($productTaxCode->getCode(), $html);
+        self::assertStringContainsString($tax->getCode(), $html);
+        self::assertStringContainsString($taxJurisdiction->getCode(), $html);
     }
 }

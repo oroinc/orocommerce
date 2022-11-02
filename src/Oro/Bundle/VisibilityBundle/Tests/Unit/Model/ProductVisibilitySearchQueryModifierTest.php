@@ -15,6 +15,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -35,7 +36,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
      */
     protected $modifier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenStorage = $this
             ->getMockBuilder(TokenStorageInterface::class)
@@ -67,17 +68,12 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
             ->willReturn('visibility_customer_1');
 
         $customer = new Customer();
-        $reflection = new \ReflectionProperty(Customer::class, 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($customer, 1);
+        ReflectionUtil::setId($customer, 1);
 
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
 
-        $token = $this
-            ->getMockBuilder(TokenInterface::class)
-            ->getMock();
-
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($customerUser);

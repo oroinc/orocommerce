@@ -1,0 +1,35 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: featured_products_container
+            namespace: featured
+    actions:
+        - '@setOption':
+            id: featured_products
+            optionName: items
+            optionValue: '=data["featured_products"].getProducts()'
+        - '@setOption':
+            id: featured_products
+            optionName: items_data.stickers
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getProducts())'
+        - '@appendOption':
+            id: featured_product
+            optionName: attr.class
+            optionValue: featured-product
+        - '@setOption':
+            id: featured_products
+            optionName: label
+            optionValue: oro.product.featured_products.label
+        - '@setOption':
+           id: featured_product_line_item_form
+           optionName: instance_name
+           optionValue: featured_products
+        - '@add':
+            id: featured_products_container
+            parentId: page_content
+            blockType: container
+        - '@setOption':
+            id: featured_products
+            optionName: attr.data-page-component-name
+            optionValue: 'featured-products-list'

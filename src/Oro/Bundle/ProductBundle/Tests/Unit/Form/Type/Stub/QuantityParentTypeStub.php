@@ -29,9 +29,6 @@ class QuantityParentTypeStub extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param array $quantityOptions
-     */
     public function setQuantityOptions(array $quantityOptions = [])
     {
         $this->quantityOptions = $quantityOptions;

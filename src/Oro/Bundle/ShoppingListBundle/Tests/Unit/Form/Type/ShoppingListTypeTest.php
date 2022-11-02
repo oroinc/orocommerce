@@ -4,23 +4,20 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShoppingListTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList';
+    /** @var ShoppingListType */
+    private $type;
 
-    /**
-     * @var ShoppingListType
-     */
-    protected $type;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new ShoppingListType();
-        $this->type->setDataClass(self::DATA_CLASS);
+        $this->type->setDataClass(ShoppingList::class);
         parent::setUp();
     }
 
@@ -63,6 +60,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
         $this->assertEmpty($form->getErrors(true)->count());
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -71,19 +69,16 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $defaultShoppingList = new ShoppingList();
+        $expectedShoppingList = new ShoppingList();
+        $expectedShoppingList->setLabel('new label');
 
-        $expectedShoppingList = clone $defaultShoppingList;
-        $expectedShoppingList
-            ->setLabel('new label');
+        $existingShoppingList = new ShoppingList();
+        ReflectionUtil::setId($existingShoppingList, 1);
+        $existingShoppingList->setLabel('existing label');
 
-        $existingShoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 1);
-        $existingShoppingList
-            ->setLabel('existing label');
-
-        $expectedShoppingList2 = clone $existingShoppingList;
-        $expectedShoppingList2
-            ->setLabel('updated label');
+        $expectedShoppingList2 = new ShoppingList();
+        ReflectionUtil::setId($expectedShoppingList2, 1);
+        $expectedShoppingList2->setLabel('updated label');
 
         return [
             'new shopping list'      => [
@@ -105,30 +100,11 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(['data_class' => self::DATA_CLASS]);
+            ->with(['data_class' => ShoppingList::class]);
 
         $this->type->configureOptions($resolver);
-    }
-
-    /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

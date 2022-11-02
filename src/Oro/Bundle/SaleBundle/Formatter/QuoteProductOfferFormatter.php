@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Formatter;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteProductOfferFormatter
 {
@@ -11,9 +11,6 @@ class QuoteProductOfferFormatter
      */
     protected $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;

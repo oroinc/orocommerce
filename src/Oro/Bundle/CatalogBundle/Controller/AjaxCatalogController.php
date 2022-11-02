@@ -2,21 +2,26 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
+use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxCatalogController extends Controller
+/**
+ * Ajax Catalog Controller
+ */
+class AjaxCatalogController extends AbstractController
 {
     /**
      * @Route(
      *      "/category-move",
-     *      name="oro_catalog_category_move"
+     *      name="oro_catalog_category_move",
+     *      methods={"PUT"}
      * )
-     * @Method({"PUT"})
+     * @CsrfProtection()
      * @AclAncestor("oro_catalog_category_update")
      *
      * @param Request $request
@@ -29,7 +34,17 @@ class AjaxCatalogController extends Controller
         $position = (int)$request->get('position');
 
         return new JsonResponse(
-            $this->get('oro_catalog.category_tree_handler')->moveNode($nodeId, $parentId, $position)
+            $this->get(CategoryTreeHandler::class)->moveNode($nodeId, $parentId, $position)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            CategoryTreeHandler::class,
+        ]);
     }
 }

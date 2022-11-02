@@ -2,16 +2,22 @@
 
 namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
+use Exception;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\OrderBundle\Controller\AbstractOrderController;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
-class OrderController extends AbstractOrderController
+/**
+ * View orders on front store
+ */
+class OrderController extends AbstractController
 {
     /**
      * @Route("/", name="oro_order_frontend_index")
@@ -29,10 +35,10 @@ class OrderController extends AbstractOrderController
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_order.entity.order.class'),
+            'entity_class' => Order::class,
         ];
     }
-    
+
     /**
      * @Route("/view/{id}", name="oro_order_frontend_view", requirements={"id"="\d+"})
      * @AclAncestor("oro_order_frontend_view")
@@ -46,24 +52,33 @@ class OrderController extends AbstractOrderController
         return [
             'data' => [
                 'order' => $order,
-                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
+                'totals' => (object)$this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($order),
             ],
         ];
     }
 
     /**
-     * @return TotalProcessorProvider
+     * {@inheritdoc}
      */
-    protected function getTotalProcessor()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return array_merge(parent::getSubscribedServices(), [
+            TotalProcessorProvider::class,
+            'oro_checkout.helper.check_compare' => CheckoutCompareHelper::class
+        ]);
     }
 
     /**
-     * @return FrontendOrderDataHandler
+     * @Route("/checkout/{id}", name="oro_order_frontend_to_checkout", requirements={"id"="\d+"})
+     * @AclAncestor("oro_order_frontend_view")
+     * @param Checkout $checkout
+     * @return RedirectResponse
+     * @throws Exception
      */
-    protected function getFrontendOrderDataHandler()
+    public function checkoutAction(Checkout $checkout): RedirectResponse
     {
-        return $this->get('oro_order.request_handler.frontend_order_data_handler');
+        $this->get('oro_checkout.helper.check_compare')->compare($checkout);
+
+        return $this->redirectToRoute('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Provider;
 
-use Doctrine\Common\Cache\FlushableCache;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * If human readable URL is not present in cache, read it from DB and save in cache
@@ -15,7 +15,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
 {
     const URL_KEY = 'url';
     const SLUG_PROTOTYPE_KEY = 'slug_prototype';
-    const SLUG_ROUTES_KEY = '__slug_routes__';
+    const SLUG_ROUTES_KEY = UrlCacheInterface::SLUG_ROUTES_KEY;
 
     /**
      * @var ManagerRegistry
@@ -37,11 +37,6 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
      */
     protected $slugRepository;
 
-    /**
-     * @param SluggableUrlCacheAwareProvider $urlCacheAwareProvider
-     * @param UrlCacheInterface $cache
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         SluggableUrlCacheAwareProvider $urlCacheAwareProvider,
         UrlCacheInterface $cache,
@@ -57,22 +52,39 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
      */
     public function getUrl($routeName, $routeParameters, $localizationId)
     {
+        if (!$routeName) {
+            return null;
+        }
+
         // Skip routes that does not have slugs
         $sluggableRoutes = $this->getSluggableRoutes();
-        if (empty($sluggableRoutes[$routeName])) {
+        $isKnownRoute = array_key_exists($routeName, $sluggableRoutes);
+        if ($isKnownRoute && $sluggableRoutes[$routeName] === false) {
             return null;
         }
 
         // Read URL from cache and return it if exists
         $url = $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
 
-        if ($url) {
+        if ($url !== false) {
             return $url;
         }
 
         $this->fillCacheByDatabase($routeName, $routeParameters, $localizationId);
 
-        return $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
+        $url = $this->urlCacheProvider->getUrl($routeName, $routeParameters, $localizationId);
+
+        if (!$isKnownRoute) {
+            $sluggableRoutes[$routeName] = $url || $this->isSlugForRouteExists($routeName);
+
+            $this->updateSluggableRoutes($sluggableRoutes);
+        }
+
+        if ($this->cache instanceof FlushableCacheInterface) {
+            $this->cache->flushAll();
+        }
+
+        return $url;
     }
 
     /**
@@ -104,19 +116,9 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
             $slugData[self::SLUG_PROTOTYPE_KEY],
             $localizationId
         );
-
-        if ($this->cache instanceof FlushableCache) {
-            $this->cache->flushAll();
-        }
     }
 
-    /**
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param int|null $localizationId
-     * @return array|null
-     */
-    protected function getSlugData($routeName, $routeParameters, $localizationId)
+    protected function getSlugData(string $routeName, array $routeParameters, ?int $localizationId): array
     {
         $slugData = $this->getSlugRepository()->getRawSlug(
             $routeName,
@@ -134,21 +136,22 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         return $slugData;
     }
 
+    protected function updateSluggableRoutes(array $sluggableRoutes)
+    {
+        $this->cache->setUrl(self::SLUG_ROUTES_KEY, [], json_encode($sluggableRoutes));
+    }
+
     /**
      * @return array
      */
     protected function getSluggableRoutes()
     {
-        if (!$this->cache->has(self::SLUG_ROUTES_KEY, [])) {
-            $sluggableRoutes = [];
-            foreach ($this->getSlugRepository()->getUsedRoutes() as $usedRoute) {
-                $sluggableRoutes[$usedRoute] = true;
-            }
-
-            $this->cache->setUrl(self::SLUG_ROUTES_KEY, [], json_encode($sluggableRoutes));
+        $encodedSluggableRoutes = $this->cache->getUrl(self::SLUG_ROUTES_KEY, []);
+        if ($encodedSluggableRoutes === false) {
+            return [];
         }
 
-        return json_decode($this->cache->getUrl(self::SLUG_ROUTES_KEY, []), true);
+        return (array)json_decode($encodedSluggableRoutes, true);
     }
 
     /**
@@ -163,5 +166,15 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         }
 
         return $this->slugRepository;
+    }
+
+    /**
+     * @param string $routeName
+     *
+     * @return bool
+     */
+    protected function isSlugForRouteExists($routeName): bool
+    {
+        return $this->getSlugRepository()->isSlugForRouteExists($routeName);
     }
 }

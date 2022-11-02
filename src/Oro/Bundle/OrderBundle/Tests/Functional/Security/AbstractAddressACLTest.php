@@ -24,7 +24,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
             $filter = sprintf('select[name="%s[%s][customerAddress]"]', $formName, $addressType);
             $customerAddressSelector = $crawler->filter($filter)->html();
 
-            $this->assertContains('Enter other address', $customerAddressSelector);
+            static::assertStringContainsString('Enter other address', $customerAddressSelector);
         }
 
         // Check customer addresses
@@ -37,7 +37,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
             $customerAddresses = $crawler->filter($filter)->html();
 
             foreach ($expected['customer'] as $customerAddress) {
-                $this->assertContains($customerAddress, $customerAddresses);
+                static::assertStringContainsString($customerAddress, $customerAddresses);
             }
         }
 
@@ -51,7 +51,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
             $customerUserAddresses = $crawler->filter($filter)->html();
 
             foreach ($expected['customerUser'] as $customerUserAddress) {
-                $this->assertContains($customerUserAddress, $customerUserAddresses);
+                static::assertStringContainsString($customerUserAddress, $customerUserAddresses);
             }
         }
     }

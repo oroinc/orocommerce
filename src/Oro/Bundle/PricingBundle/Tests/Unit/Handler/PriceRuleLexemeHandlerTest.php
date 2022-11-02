@@ -38,7 +38,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $fieldsProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()

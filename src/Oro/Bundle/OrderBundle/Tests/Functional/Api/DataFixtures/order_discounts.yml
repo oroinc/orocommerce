@@ -1,0 +1,94 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomer
+    - Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUser
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    payment_term_net_10:
+        label: 'net 10'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '2'
+    precision2:
+        unit: '@set'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        names: ['@product1_name']
+        primaryUnitPrecision: '@precision1'
+        unitPrecisions: ['@precision2']
+        attributeFamily: '@default_product_family'
+        inventoryStatus: '@in_stock'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        identifier: order1
+        currency: 'USD'
+        poNumber: 'PO1'
+        subtotal: '789.0000'
+        total: '1234.0000'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+    order2:
+        identifier: order2
+        currency: 'USD'
+        poNumber: 'PO2'
+        subtotal: '789.0000'
+        total: '1234.0000'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order_line_item.1:
+        order: '@order1'
+        product: '@product1'
+        quantity: 10
+        productUnit: '@item'
+        value: 20
+        currency: USD
+    order_line_item.2:
+        order: '@order2'
+        product: '@product1'
+        quantity: 1
+        productUnit: '@item'
+        value: 20
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+    order_discount.percent:
+        description: 'Discount 1'
+        type: oro_order_discount_item_type_percent
+        percent: 20.1
+        amount: 40.2
+        order: '@order1'
+    order_discount.amount:
+        description: 'Discount 2'
+        type: oro_order_discount_item_type_amount
+        percent: 20.1
+        amount: 40.2
+        order: '@order1'

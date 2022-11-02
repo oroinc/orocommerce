@@ -1,0 +1,28 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@addTree':
+            items:
+                __shopping_list_actions_container:
+                    blockType: container
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                __shopping_list_action_assign:
+                    blockType: shopping_list_action
+                    options:
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_assign") && data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
+                        shoppingList: '=data["entity"]'
+                __shopping_list_action_list:
+                    blockType: shopping_list_action_list
+                    options:
+                        visible: '=buttons'
+                        shoppingList: '=data["entity"]'
+                        buttons: '=data["buttons"].getByGroup(shoppingList, null, "shopping_list_actions")'
+            tree:
+                __root:
+                    __shopping_list_actions_container:
+                        __shopping_list_action_assign: ~
+                        __shopping_list_action_list: ~

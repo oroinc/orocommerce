@@ -14,9 +14,6 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
     /** @var CheckoutErrorHandler */
     protected $checkoutErrorHandler;
 
-    /**
-     * @param CheckoutErrorHandler $checkoutErrorHandler
-     */
     public function __construct(CheckoutErrorHandler $checkoutErrorHandler)
     {
         $this->checkoutErrorHandler = $checkoutErrorHandler;
@@ -32,8 +29,8 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
     }
 
     /** {@inheritdoc} */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return WorkflowTransitionType::class;
+        return [WorkflowTransitionType::class];
     }
 }

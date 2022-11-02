@@ -4,9 +4,10 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
@@ -15,23 +16,23 @@ class ContentNodeControllerTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([
             LoadContentVariantsData::class,
             LoadPageData::class,
         ]);
     }
 
-    public function testGetPossibleUrlsAction()
+    public function testGetPossibleUrlsAction(): void
     {
         /** @var ContentNode $firstCatalogNode */
         $firstCatalogNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
-        $slugGenerator = $this->getContainer()->get('oro_web_catalog.generator.slug_generator');
+        $slugGenerator = self::getContainer()->get('oro_web_catalog.generator.slug_generator');
         $slugGenerator->generate($firstCatalogNode);
         /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ContentNode::class);
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(ContentNode::class);
         $em->flush();
 
         /** @var ContentNode $contentNode */
@@ -48,7 +49,7 @@ class ContentNodeControllerTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        self::assertJsonResponseStatusCodeEquals($result, 200);
 
         $expected = [
             'Default Value' => [
@@ -57,17 +58,17 @@ class ContentNodeControllerTest extends WebTestCase
             ]
         ];
         $actual = json_decode($result->getContent(), true);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    public function testRedirectCreationDuringMove()
+    public function testRedirectCreationDuringMove(): void
     {
         /** @var ContentNode $contentNode */
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1);
         /** @var ContentNode $newParentContentNode */
         $newParentContentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2);
 
-        $this->client->request(
+        $this->ajaxRequest(
             'PUT',
             $this->getUrl(
                 'oro_content_node_move',
@@ -81,21 +82,22 @@ class ContentNodeControllerTest extends WebTestCase
         );
 
         $expectedMessage = [
-            'topic' => Topics::RESOLVE_NODE_SLUGS,
+            'topic' => WebCatalogResolveContentNodeSlugsTopic::getName(),
             'message' => [
-                'id' => $contentNode->getId(),
-                'createRedirect' => true
+                WebCatalogResolveContentNodeSlugsTopic::ID => $contentNode->getId(),
+                WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT => true
             ]
         ];
 
-        $this->assertContains($expectedMessage, self::getSentMessages());
+        self::assertContains($expectedMessage, self::getSentMessages());
     }
 
-    public function testValidationForLocalizedFallbackValues()
+    public function testValidationForLocalizedFallbackValues(): void
     {
         $rootNodeId = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT)->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_content_node_create', ['id' => $rootNodeId]));
         $form = $crawler->selectButton('Save')->form();
+        $redirectAction = $crawler->selectButton('Save')->attr('data-action');
 
         $bigStringValue = str_repeat('a', 256);
         $formValues = $form->getPhpValues();
@@ -109,18 +111,70 @@ class ContentNodeControllerTest extends WebTestCase
             'cmsPage' => $this->getReference(LoadPageData::PAGE_1)->getId(),
             'type' => 'cms_page',
         ];
+        $formValues['input_action'] = $redirectAction;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertEquals(
+        self::assertEquals(
             2,
             $crawler->filterXPath(
                 "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
             )->count()
         );
+    }
+
+    public function testGetChangedUrlsWhenSlugChanged(): void
+    {
+        $localization = self::getContainer()->get('oro_locale.manager.localization')->getDefaultLocalization(false);
+
+        /** @var ContentNode $contentNodeReference */
+        $contentNodeReference = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+
+        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(ContentNode::class);
+        $contentNode = $entityManager->find(ContentNode::class, $contentNodeReference->getId());
+
+        $contentNode->setDefaultSlugPrototype('old-default-slug');
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('old-english-slug')->setLocalization($localization);
+
+        $contentNode->addSlugPrototype($slugPrototype);
+        $entityManager->flush($contentNode);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_content_node_update', ['id' => $contentNode->getId()])
+        );
+
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+
+        $formValues['oro_web_catalog_content_node']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $localization->getId() => ['value' => 'english-slug']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_content_node_get_changed_urls', ['id' => $contentNode->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English (United States)' => ['before' => '/old-english-slug', 'after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        self::assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
     }
 }

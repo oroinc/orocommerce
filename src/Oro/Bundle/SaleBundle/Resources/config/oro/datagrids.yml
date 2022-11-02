@@ -1,9 +1,9 @@
 datagrids:
     base-quote-grid:
         acl_resource: oro_sale_quote_view
-        extended_entity_name: '%oro_sale.entity.quote.class%'
+        extended_entity_name: 'Oro\Bundle\SaleBundle\Entity\Quote'
         options:
-            entityHint:        quotes
+            entityHint: oro.sale.quote.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -19,7 +19,7 @@ datagrids:
                     - quote.validUntil
                     - quote.expired
                 from:
-                    - { table: '%oro_sale.entity.quote.class%', alias: quote }
+                    - { table: 'Oro\Bundle\SaleBundle\Entity\Quote', alias: quote }
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
@@ -70,7 +70,7 @@ datagrids:
                 validUntil:
                     data_name: quote.validUntil
             default:
-                qid: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                qid: ASC
         actions:
             view:
                 type:          navigate
@@ -186,6 +186,8 @@ datagrids:
                         - { join: quote.customer, alias: quoteCustomer }
                         - { join: quote.internal_status, alias: internalStatus }
                         - { join: quote.customer_status, alias: customerStatus }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             customerUserName:
                 label: oro.sale.quote.customer_user.label
@@ -252,10 +254,10 @@ datagrids:
 
     frontend-quotes-grid:
         acl_resource: oro_sale_quote_frontend_view
-        extended_entity_name: '%oro_sale.entity.quote.class%'
+        extended_entity_name: 'Oro\Bundle\SaleBundle\Entity\Quote'
         options:
             frontend: true
-            entityHint:        quotes
+            entityHint: oro.sale.quote.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -271,11 +273,13 @@ datagrids:
                     - quote.poNumber
                     - quote.shipUntil
                 from:
-                    - { table: '%oro_sale.entity.quote.class%', alias: quote }
+                    - { table: 'Oro\Bundle\SaleBundle\Entity\Quote', alias: quote }
                 join:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
                         - { join: quote.customer_status, alias: customerStatus }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             qid:
                 label:         oro.frontend.sale.quote.qid.label
@@ -301,6 +305,10 @@ datagrids:
                 type:  url
                 route: oro_sale_quote_frontend_view
                 params: [ id ]
+            view_aria_label:
+                type:   translatable
+                key:    oro.frontend.sale.quote.action.view.aria_label
+                params: [qid]
         sorters:
             columns:
                 qid:
@@ -327,10 +335,10 @@ datagrids:
                      type:      string
                      data_name: customerUserName
                 customerStatusName:
-                    type:      enum
-                    data_name: customerStatusId
-                    enum_code: quote_customer_status
-                    enabled: false
+                    type:       enum
+                    data_name:  customerStatusId
+                    enum_code:  quote_customer_status
+                    renderable: false
                 poNumber:
                     type:      string
                     data_name: quote.poNumber
@@ -347,6 +355,7 @@ datagrids:
             view:
                 type:          navigate
                 label:         oro.grid.action.view
+                ariaLabel:     view_aria_label
                 link:          view_link
                 icon:          eye
                 rowAction:     true

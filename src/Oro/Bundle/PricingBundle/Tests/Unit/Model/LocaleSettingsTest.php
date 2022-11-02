@@ -3,46 +3,53 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LayoutBundle\Layout\LayoutContextHolder;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings as BaseLocaleSettings;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\LocaleSettings;
+use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
+class LocaleSettingsTest extends TestCase
 {
-    /** @var BaseLocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-    private $inner;
+    private BaseLocaleSettings|MockObject $inner;
 
-    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $frontendHelper;
+    private FrontendHelper|MockObject $frontendHelper;
 
-    /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationManager;
+    private LocalizationProviderInterface|MockObject $localizationProvider;
 
-    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currencyManager;
+    private UserCurrencyManager|MockObject $currencyManager;
 
-    /** @var LocaleSettings */
-    protected $localeSettings;
+    private LayoutContextHolder|MockObject $layoutContextHolder;
 
-    protected function setUp()
+    private ThemeManager|MockObject $themeManager;
+
+    protected LocaleSettings $localeSettings;
+
+    protected function setUp(): void
     {
         $this->inner = $this->createMock(BaseLocaleSettings::class);
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
-        $this->localizationManager = $this->createMock(UserLocalizationManager::class);
+        $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->layoutContextHolder = $this->createMock(LayoutContextHolder::class);
+        $this->themeManager = $this->createMock(ThemeManager::class);
 
         $this->localeSettings = new LocaleSettings(
             $this->inner,
             $this->frontendHelper,
-            $this->localizationManager,
-            $this->currencyManager
+            $this->localizationProvider,
+            $this->currencyManager,
+            $this->layoutContextHolder,
+            $this->themeManager
         );
     }
 
     public function testGetCurrency()
     {
-        $this->frontendHelper->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(false);
 
@@ -51,11 +58,14 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
             ->willReturn('USD');
 
         $this->assertEquals('USD', $this->localeSettings->getCurrency());
+
+        // Checks local cache.
+        $this->assertEquals('USD', $this->localeSettings->getCurrency());
     }
 
     public function testGetCurrencyWithManager()
     {
-        $this->frontendHelper->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -67,11 +77,14 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
             ->willReturn('EUR');
 
         $this->assertEquals('EUR', $this->localeSettings->getCurrency());
+
+        // Checks local cache.
+        $this->assertEquals('EUR', $this->localeSettings->getCurrency());
     }
 
     public function testGetCurrencyWithoutManager()
     {
-        $this->frontendHelper->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -83,6 +96,9 @@ class LocaleSettingsTest extends \PHPUnit\Framework\TestCase
             ->method('getUserCurrency')
             ->willReturn(null);
 
+        $this->assertEquals('PLN', $this->localeSettings->getCurrency());
+
+        // Checks local cache.
         $this->assertEquals('PLN', $this->localeSettings->getCurrency());
     }
 }

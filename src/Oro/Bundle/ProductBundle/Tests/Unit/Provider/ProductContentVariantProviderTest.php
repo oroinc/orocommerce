@@ -11,7 +11,7 @@ class ProductContentVariantProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductContentVariantProvider */
     private $provider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->provider = new ProductContentVariantProvider();
     }

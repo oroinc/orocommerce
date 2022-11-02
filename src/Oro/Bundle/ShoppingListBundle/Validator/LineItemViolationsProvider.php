@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Validator;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection as LineItemCollectionConstraint;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Provides list of errors and warnings for the given line items.
+ */
 class LineItemViolationsProvider
 {
     /**
@@ -19,9 +23,6 @@ class LineItemViolationsProvider
      */
     protected $violations;
 
-    /**
-     * @param ValidatorInterface $validator
-     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
@@ -69,6 +70,22 @@ class LineItemViolationsProvider
      * @param LineItem[] $lineItems
      * @param mixed $additionalContext
      *
+     * @return array
+     */
+    public function getLineItemViolationLists($lineItems, $additionalContext = null): array
+    {
+        $indexedViolations = [];
+        foreach ($this->getLineItemViolations($lineItems, $additionalContext) as $violation) {
+            $indexedViolations[$violation->getPropertyPath()][] = $violation;
+        }
+
+        return $indexedViolations;
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     * @param mixed $additionalContext
+     *
      * @return ConstraintViolationListInterface
      */
     protected function getLineItemViolations($lineItems, $additionalContext = null)
@@ -76,6 +93,10 @@ class LineItemViolationsProvider
         if (!$this->violations) {
             $constraint = new LineItemCollectionConstraint();
             $constraint->setAdditionalContext($additionalContext);
+
+            if (is_array($lineItems)) {
+                $lineItems = new ArrayCollection($lineItems);
+            }
             $this->violations = $this->validator->validate($lineItems, [$constraint]);
         }
 
@@ -89,6 +110,10 @@ class LineItemViolationsProvider
      */
     public function isLineItemListValid($lineItems)
     {
-        return count($this->validator->validate($lineItems, [new LineItemCollectionConstraint()])) == 0;
+        if (is_array($lineItems)) {
+            $lineItems = new ArrayCollection($lineItems);
+        }
+
+        return count($this->validator->validate($lineItems, [new LineItemCollectionConstraint()])) === 0;
     }
 }

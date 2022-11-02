@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Change payment term in context with a checkout's source entity payment term value.
+ */
 class ResolvePaymentTermListener
 {
     const CHECKOUT_ROUTE = 'oro_checkout_frontend_checkout';
@@ -18,27 +21,19 @@ class ResolvePaymentTermListener
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var PaymentTermProvider */
+    /** @var PaymentTermProviderInterface */
     private $paymentTermProvider;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param PaymentTermProvider $paymentTermProvider
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $registry,
-        PaymentTermProvider $paymentTermProvider
+        PaymentTermProviderInterface $paymentTermProvider
     ) {
         $this->requestStack = $requestStack;
         $this->registry = $registry;
         $this->paymentTermProvider = $paymentTermProvider;
     }
 
-    /**
-     * @param ResolvePaymentTermEvent $event
-     */
     public function onResolvePaymentTerm(ResolvePaymentTermEvent $event)
     {
         $checkout = $this->getCurrentCheckout();

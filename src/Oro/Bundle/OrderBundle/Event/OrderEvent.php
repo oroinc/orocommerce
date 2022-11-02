@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Event;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class OrderEvent extends Event implements EntityDataAwareEventInterface
 {
@@ -23,11 +23,6 @@ class OrderEvent extends Event implements EntityDataAwareEventInterface
     /** @var array|null */
     protected $submittedData;
 
-    /**
-     * @param FormInterface $form
-     * @param Order $order
-     * @param array|null $submittedData
-     */
     public function __construct(FormInterface $form, Order $order, array $submittedData = null)
     {
         $this->form = $form;

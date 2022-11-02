@@ -2,15 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Repository for PriceList ORM entity.
+ */
 class PriceListRepository extends BasePriceListRepository
 {
-    /**
-     * @todo: should be dropped in scope of BB-1858
-     */
     protected function dropDefaults()
     {
         $qb = $this->createQueryBuilder('pl');
@@ -25,10 +31,6 @@ class PriceListRepository extends BasePriceListRepository
             ->execute();
     }
 
-    /**
-     * @todo: should be dropped in scope of BB-1858
-     * @param PriceList $priceList
-     */
     public function setDefault(PriceList $priceList)
     {
         $this->dropDefaults();
@@ -46,7 +48,6 @@ class PriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @todo: should be dropped in scope of BB-1858
      * @return PriceList
      */
     public function getDefault()
@@ -118,9 +119,77 @@ class PriceListRepository extends BasePriceListRepository
             $qb->update($this->_entityName, 'priceList');
             $qb->set('priceList.actual', ':actual')
                 ->where($qb->expr()->in('priceList.id', ':priceLists'))
+                ->andWhere($qb->expr()->neq('priceList.actual', ':actual'))
                 ->setParameter('actual', $actual)
                 ->setParameter('priceLists', $priceLists);
             $qb->getQuery()->execute();
         }
+    }
+
+    /**
+     * @param int $priceListId
+     * @return PriceList|null
+     */
+    public function getActivePriceListById(int $priceListId)
+    {
+        return $this->findOneBy(['id' => $priceListId, 'active' => true]);
+    }
+
+    /**
+     * @param Customer $customer
+     * @param Website $website
+     * @param bool $isActive
+     * @return null|PriceList
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getPriceListByCustomer(Customer $customer, Website $website, $isActive = true)
+    {
+        $qb = $this->createQueryBuilder('priceList');
+        $qb
+            ->innerJoin(
+                PriceListToCustomer::class,
+                'priceListToCustomer',
+                Join::WITH,
+                'priceListToCustomer.priceList = priceList'
+            )
+            ->where($qb->expr()->eq('priceListToCustomer.customer', ':customer'))
+            ->andWhere($qb->expr()->eq('priceListToCustomer.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->setParameter('customer', $customer)
+            ->setParameter('website', $website)
+            ->setParameter('active', $isActive)
+            ->orderBy('priceListToCustomer.sortOrder')
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param CustomerGroup $customerGroup
+     * @param Website $website
+     * @param bool $isActive
+     * @return null|PriceList
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getPriceListByCustomerGroup(CustomerGroup $customerGroup, Website $website, bool $isActive = true)
+    {
+        $qb = $this->createQueryBuilder('priceList');
+        $qb
+            ->innerJoin(
+                PriceListToCustomerGroup::class,
+                'priceListToCustomerGroup',
+                Join::WITH,
+                'priceListToCustomerGroup.priceList = priceList'
+            )
+            ->where($qb->expr()->eq('priceListToCustomerGroup.customerGroup', ':customerGroup'))
+            ->andWhere($qb->expr()->eq('priceListToCustomerGroup.website', ':website'))
+            ->andWhere($qb->expr()->eq('priceList.active', ':active'))
+            ->setParameter('customerGroup', $customerGroup)
+            ->setParameter('website', $website)
+            ->setParameter('active', $isActive)
+            ->orderBy('priceListToCustomerGroup.sortOrder')
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

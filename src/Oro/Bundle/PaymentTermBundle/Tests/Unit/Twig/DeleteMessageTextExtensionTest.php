@@ -12,35 +12,20 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var DeleteMessageTextGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    protected $deleteMessageTextGenerator;
+    private $deleteMessageTextGenerator;
 
     /** @var DeleteMessageTextExtension */
-    protected $extension;
+    private $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->deleteMessageTextGenerator = $this->getMockBuilder(DeleteMessageTextGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->deleteMessageTextGenerator = $this->createMock(DeleteMessageTextGenerator::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_payment_term.payment_term.delete_message_generator', $this->deleteMessageTextGenerator)
             ->getContainer($this);
 
         $this->extension = new DeleteMessageTextExtension($container);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->deleteMessageTextGenerator);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(
-            DeleteMessageTextExtension::DELETE_MESSAGE_TEXT_EXTENSION_NAME,
-            $this->extension->getName()
-        );
     }
 
     public function testGetDeleteMessageText()

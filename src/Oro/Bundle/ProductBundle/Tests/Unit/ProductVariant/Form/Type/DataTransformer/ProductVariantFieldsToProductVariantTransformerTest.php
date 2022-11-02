@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\DataTransformer;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\Form\Type\DataTransformer;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\DataTransformer\ProductVariantFieldsToProductVariantTransformer;
@@ -19,7 +19,7 @@ class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit\Frame
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productVariantAvailabilityProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->parentProduct = new Product();
         $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
@@ -40,11 +40,9 @@ class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit\Frame
         $this->assertSame($value, $actual);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testTransformWithIncorrectValue()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Value to transform of type ' . self::PRODUCT_CLASS . ' expected, but ' . \stdClass::class . ' given'
         );
@@ -79,11 +77,9 @@ class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit\Frame
         $this->assertSame($variant, $actual);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testReverseTransformWithIncorrectValue()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Value to reverse transform of type ' . self::PRODUCT_CLASS .
             ' expected, but ' . \stdClass::class . ' given'

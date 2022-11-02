@@ -115,6 +115,7 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener
         arguments:
             - '@oro_inventory.validator.quantity_to_order_validator'
+            - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: checkout.checkout_validate, method: onCheckoutValidate }
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
@@ -146,6 +147,19 @@ services:
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
 
+    oro_inventory.event_listener.datagrid_line_items_data.inventory:
+        class: Oro\Bundle\InventoryBundle\EventListener\DatagridLineItemsDataInventoryListener
+        arguments:
+            - '@oro_inventory.provider.upcoming_product_provider'
+            - '@oro_inventory.inventory.low_inventory_provider'
+            - '@oro_locale.formatter.date_time'
+            - '@oro_locale.settings'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
+
     oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
         arguments:
@@ -163,7 +177,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
-            - { name: kernel.event_listener, event: extendable_condition.before_order_create, method: onBeforeOrderCreate, priority: 10 }
+            - { name: kernel.event_listener, event: extendable_condition.pre_order_create, method: onBeforeOrderCreate, priority: 10 }
 
     oro_inventory.event_listener.create_order_check_upcoming_listener:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderCheckUpcomingListener
@@ -186,7 +200,7 @@ services:
         parent: oro_product.event_listener.unit_visibility.datagrid_basic
         arguments:
             index_0: 'unit'
-            index_2: 'OroProductBundle:ProductUnit:Datagrid/decimalQuantity.html.twig'
+            index_2: '@@OroProduct/ProductUnit/Datagrid/decimalQuantity.html.twig'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.inventory-grid, method: onBuildBefore }
 
@@ -195,4 +209,13 @@ services:
         arguments:
             - "@oro_inventory.manager.inventory_manager"
         tags:
-            - { name: doctrine.event_listener, event: onFlush, method: onFlush }
+            - { name: doctrine.event_listener, event: onFlush }
+
+    oro_inventory.event_listener.product_product_inventory_fields_changed:
+        class: Oro\Bundle\InventoryBundle\EventListener\Search\ProductInventoryFieldsChangedListener
+        arguments:
+            - '@oro_website.indexation_entities_container'
+            - '@oro_product.search.product_reindex_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue, event: postUpdate}
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }

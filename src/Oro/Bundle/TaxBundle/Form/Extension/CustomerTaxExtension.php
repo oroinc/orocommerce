@@ -9,20 +9,23 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Handles tax code for Customer.
+ */
 class CustomerTaxExtension extends AbstractTaxExtension
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CustomerType::class;
+        return [CustomerType::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function addTaxCodeField(FormBuilderInterface $builder)
+    protected function addTaxCodeField(FormBuilderInterface $builder): void
     {
         $builder
             ->add(
@@ -33,26 +36,27 @@ class CustomerTaxExtension extends AbstractTaxExtension
                     'mapped' => false,
                     'label' => 'oro.tax.taxcode.label',
                     'create_form_route' => null,
+                    'dynamic_fields_ignore_exception' => true,
                 ]
             );
     }
 
     /**
-     * @param Customer $customer
-     * @param CustomerTaxCode|AbstractTaxCode $taxCode
-     * @param CustomerTaxCode|AbstractTaxCode $taxCodeNew
+     * {@inheritDoc}
      */
-    protected function handleTaxCode($customer, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
+    protected function handleTaxCode(object $entity, ?AbstractTaxCode $taxCode, ?AbstractTaxCode $taxCodeNew): void
     {
-        $customer->setTaxCode($taxCodeNew);
+        /** @var Customer $entity */
+        /** @var CustomerTaxCode|null $taxCodeNew */
+        $entity->setTaxCode($taxCodeNew);
     }
 
     /**
-     * @param Customer $object
-     * @return CustomerTaxCode|null
+     * {@inheritDoc}
      */
-    protected function getTaxCode($object)
+    protected function getTaxCode(object $entity): ?AbstractTaxCode
     {
-        return $object->getTaxCode();
+        /** @var Customer $entity */
+        return $entity->getTaxCode();
     }
 }

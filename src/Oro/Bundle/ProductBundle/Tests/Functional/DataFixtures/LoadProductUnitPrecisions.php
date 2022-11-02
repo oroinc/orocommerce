@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -28,8 +28,8 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
         $this->createProductUnitPrecision($manager, 'product-5', 'product_unit.bottle', 1, 5, true);
         $this->createProductUnitPrecision($manager, 'product-6', 'product_unit.box', 1, 5, true);
         $this->createProductUnitPrecision($manager, 'product-6', 'product_unit.bottle', 1, 5, true);
-        $this->createProductUnitPrecision($manager, 'product-7', 'product_unit.box', 1, 5, true);
-        $this->createProductUnitPrecision($manager, 'product-7', 'product_unit.bottle', 1, 5, true);
+        $this->createProductUnitPrecision($manager, 'продукт-7', 'product_unit.box', 1, 5, true);
+        $this->createProductUnitPrecision($manager, 'продукт-7', 'product_unit.bottle', 1, 5, true);
 
         $manager->flush();
     }

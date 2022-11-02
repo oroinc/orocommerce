@@ -11,51 +11,14 @@ use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 
 class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
+    /** @var Dimensions */
+    private $dimensionsUnit;
 
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $lengthConfigEntryName;
+    /** @var Weight */
+    private $weightUnit;
 
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $weightConfigEntryName;
-
-    /**
-     * @var MeasureUnitConversion
-     */
-    protected $measureUnitConversion;
-
-    /**
-     * @var Dimensions
-     */
-    protected $dimensionsUnit;
-
-    /**
-     * @var Weight
-     */
-    protected $weightUnit;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configManager->expects($this->any())->method('get')->willReturn(
-            ['inch', 'foot', 'cm', 'm', 'lbs', 'kg']
-        );
-
-        $this->measureUnitConversion = new MeasureUnitConversion(
-            $this->configManager,
-            $this->lengthConfigEntryName,
-            $this->weightConfigEntryName
-        );
-
         $this->dimensionsUnit = Dimensions::create(
             32.1,
             65.4,
@@ -74,24 +37,35 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param Dimensions|Weight $unit
-     * @param string $shippingUnit
-     * @dataProvider convertDataProvider
-     */
-    public function testConvert($unit, $shippingUnit)
+    private function getMeasureUnitConversion(array $units = null): MeasureUnitConversion
     {
-        /** @var Dimensions $convertedUnit */
-        $convertedUnit = $this->measureUnitConversion->convert($unit, $shippingUnit);
+        $configManager = $this->createMock(ConfigManager::class);
+        if (null !== $units && !$units) {
+            $configManager->expects(self::never())
+                ->method('get');
+        } else {
+            $configManager->expects(self::any())
+                ->method('get')
+                ->willReturn($units ?? ['inch', 'foot', 'cm', 'm', 'lbs', 'kg']);
+        }
 
-        $this->assertTrue(in_array(get_class($convertedUnit), [Dimensions::class, Weight::class], null));
-        $this->assertEquals($shippingUnit, $convertedUnit->getUnit()->getCode());
+        return new MeasureUnitConversion($configManager, Dimensions::class, Weight::class);
     }
 
     /**
-     * @return array
+     * @dataProvider convertDataProvider
      */
-    public function convertDataProvider()
+    public function testConvert(Dimensions|Weight $unit, string $shippingUnit)
+    {
+        $measureUnitConversion = $this->getMeasureUnitConversion();
+        /** @var Dimensions $convertedUnit */
+        $convertedUnit = $measureUnitConversion->convert($unit, $shippingUnit);
+
+        self::assertContains(get_class($convertedUnit), [Dimensions::class, Weight::class]);
+        self::assertEquals($shippingUnit, $convertedUnit->getUnit()->getCode());
+    }
+
+    public function convertDataProvider(): array
     {
         return [
             'dimensions unit' => [
@@ -121,95 +95,61 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertDimensions()
     {
+        $measureUnitConversion = $this->getMeasureUnitConversion();
         /** @var Dimensions $convertedUnit */
-        $convertedUnit = $this->measureUnitConversion->convertDimensions($this->dimensionsUnit, 'inch');
+        $convertedUnit = $measureUnitConversion->convertDimensions($this->dimensionsUnit, 'inch');
 
-        $this->assertInstanceOf(Dimensions::class, $convertedUnit);
-        $this->assertEquals(12.6378021, $convertedUnit->getValue()->getLength());
-        $this->assertEquals(25.7480454, $convertedUnit->getValue()->getWidth());
-        $this->assertEquals(38.8582887, $convertedUnit->getValue()->getHeight());
-        $this->assertEquals('inch', $convertedUnit->getUnit()->getCode());
+        self::assertInstanceOf(Dimensions::class, $convertedUnit);
+        self::assertSame(12.6378021, $convertedUnit->getValue()->getLength());
+        self::assertSame(25.7480454, $convertedUnit->getValue()->getWidth());
+        self::assertSame(38.8582887, $convertedUnit->getValue()->getHeight());
+        self::assertEquals('inch', $convertedUnit->getUnit()->getCode());
     }
 
     public function testConvertWeight()
     {
+        $measureUnitConversion = $this->getMeasureUnitConversion();
         /** @var Weight $convertedUnit */
-        $convertedUnit = $this->measureUnitConversion->convertWeight($this->weightUnit, 'lbs');
+        $convertedUnit = $measureUnitConversion->convertWeight($this->weightUnit, 'lbs');
 
-        $this->assertInstanceOf(Weight::class, $convertedUnit);
-        $this->assertEquals(114.90493095439999, $convertedUnit->getValue());
-        $this->assertEquals('lbs', $convertedUnit->getUnit()->getCode());
+        self::assertInstanceOf(Weight::class, $convertedUnit);
+        self::assertSame(114.90493095439999, $convertedUnit->getValue());
+        self::assertEquals('lbs', $convertedUnit->getUnit()->getCode());
     }
 
     public function testIsDimensionsEnabled()
     {
-        $this->assertTrue($this->measureUnitConversion->isDimensionsEnabled($this->dimensionsUnit));
+        $measureUnitConversion = $this->getMeasureUnitConversion();
+        self::assertTrue($measureUnitConversion->isDimensionsEnabled($this->dimensionsUnit));
     }
 
     public function testIsDimensionsWithEmptyUnit()
     {
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-        $configManager->expects($this->never())
-            ->method($this->anything());
-
-        $measureUnitConversion = new MeasureUnitConversion(
-            $configManager,
-            $this->lengthConfigEntryName,
-            $this->weightConfigEntryName
-        );
-        $this->assertFalse($measureUnitConversion->isDimensionsEnabled(new Dimensions()));
+        $measureUnitConversion = $this->getMeasureUnitConversion([]);
+        self::assertFalse($measureUnitConversion->isDimensionsEnabled(new Dimensions()));
     }
 
     public function testIsDimensionsDisabled()
     {
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configManager->expects($this->any())->method('get')->willReturn(
-            ['inch', 'foot', 'm', 'lbs', 'kg']
-        );
-        $this->measureUnitConversion = new MeasureUnitConversion(
-            $configManager,
-            $this->lengthConfigEntryName,
-            $this->weightConfigEntryName
-        );
-        $this->assertFalse($this->measureUnitConversion->isDimensionsEnabled($this->dimensionsUnit));
+        $measureUnitConversion = $this->getMeasureUnitConversion(['inch', 'foot', 'm', 'lbs', 'kg']);
+        self::assertFalse($measureUnitConversion->isDimensionsEnabled($this->dimensionsUnit));
     }
 
     public function testIsWeightEnabled()
     {
-        $this->assertTrue($this->measureUnitConversion->isWeightEnabled($this->weightUnit));
+        $measureUnitConversion = $this->getMeasureUnitConversion();
+        self::assertTrue($measureUnitConversion->isWeightEnabled($this->weightUnit));
     }
 
     public function testIsWeightWithEmptyUnit()
     {
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-        $configManager->expects($this->never())
-            ->method($this->anything());
-
-        $measureUnitConversion = new MeasureUnitConversion(
-            $configManager,
-            $this->lengthConfigEntryName,
-            $this->weightConfigEntryName
-        );
-        $this->assertFalse($measureUnitConversion->isWeightEnabled(new Weight()));
+        $measureUnitConversion = $this->getMeasureUnitConversion([]);
+        self::assertFalse($measureUnitConversion->isWeightEnabled(new Weight()));
     }
 
     public function testIsWeightDisabled()
     {
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configManager->expects($this->any())->method('get')->willReturn(
-            ['inch', 'foot', 'cm', 'm', 'lbs']
-        );
-        $this->measureUnitConversion = new MeasureUnitConversion(
-            $configManager,
-            $this->lengthConfigEntryName,
-            $this->weightConfigEntryName
-        );
-        $this->assertFalse($this->measureUnitConversion->isWeightEnabled($this->weightUnit));
+        $measureUnitConversion = $this->getMeasureUnitConversion(['inch', 'foot', 'cm', 'm', 'lbs']);
+        self::assertFalse($measureUnitConversion->isWeightEnabled($this->weightUnit));
     }
 }

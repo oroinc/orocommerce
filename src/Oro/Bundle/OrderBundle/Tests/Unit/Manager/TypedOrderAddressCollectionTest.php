@@ -57,7 +57,7 @@ class TypedOrderAddressCollectionTest extends \PHPUnit\Framework\TestCase
                 'group2' => ['id2' => $this->getAddress(new CustomerUser(), 'unknown')],
                 'group3' => ['id3' => $this->getAddress($customerUser, 'unknown')]
             ],
-            'expected' => null
+            'expected' => 'id1'
         ];
 
         yield 'default address' => [
@@ -97,9 +97,6 @@ class TypedOrderAddressCollectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getDefaultAddressDataProvider
-     *
-     * @param array $addresses
-     * @param AbstractDefaultTypedAddress|null $expected
      */
     public function testGetDefaultAddress(array $addresses, AbstractDefaultTypedAddress $expected = null)
     {
@@ -126,7 +123,7 @@ class TypedOrderAddressCollectionTest extends \PHPUnit\Framework\TestCase
                 'group2' => ['id2' => $this->getAddress(new CustomerUser(), 'unknown')],
                 'group3' => ['id3' => $this->getAddress($customerUser, 'unknown')]
             ],
-            'expected' => null
+            'expected' => $this->getAddress(new Customer(), 'unknown')
         ];
 
         yield 'default address' => [

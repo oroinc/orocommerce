@@ -2,36 +2,32 @@ api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
-            form_event_subscriber:
-                - oro_order.form.type.event_listener.subtotals_subscriber
-                - oro_website.form_subscriber.default_website
             fields:
                 paymentTerm:
                     property_path: payment_term_7c4f1e8e
-            actions:
-                create:
+                source:
+                    data_type: nestedAssociation
                     fields:
-                        subtotalValue:
-                            exclude: true
-                        totalValue:
-                            exclude: true
-                        totalDiscountsAmount:
-                            exclude: true
-                        internalStatus:
-                            exclude: true
-
+                        __class__:
+                            property_path: sourceEntityClass
+                        id:
+                            property_path: sourceEntityId
+                subtotalValue:
+                    form_options:
+                        mapped: false
+                totalValue:
+                    form_options:
+                        mapped: false
+                totalDiscountsAmount:
+                    form_options:
+                        mapped: false
+            actions:
                 update:
                     fields:
-                        subtotalValue:
-                            exclude: true
-                        totalValue:
-                            exclude: true
-                        totalDiscountsAmount:
-                            exclude: true
                         currency:
-                            exclude: true
-                        internalStatus:
-                            exclude: true
+                            form_options:
+                                mapped: false
+                update_list: true
 
         Extend\Entity\EV_Order_Internal_Status:
             actions: false
@@ -39,46 +35,53 @@ api:
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_line_item.md'
             fields:
-                # this is added in order to properly handle "price" parameter that is created out of these values
-                # which are not present in validations.yml and so are not handled by api
                 value:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
                 currency:
                     form_options:
                         mapped: false
-                        constraints:
-                            - NotBlank: ~
-            # there is already a productUnit required property in entity
-            actions:
-                create:
-                    fields:
-                        productUnitCode:
-                            exclude: true
-                update:
-                    fields:
-                        productUnitCode:
-                            exclude: true
+                productUnitCode:
+                    form_options:
+                        mapped: false
+            subresources:
+                order:
+                    actions:
+                        update_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderAddress:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_address.md'
+            fields:
+                createdAt:
+                    property_path: created
+                updatedAt:
+                    property_path: updated
+                customRegion:
+                    exclude: false # set manually because this field is marked as excluded in entity.yml
+                    property_path: regionText
             subresources:
                 country:
                     actions:
                         update_relationship: false
-                        add_relationship: false
-                        delete_relationship: false
                 region:
                     actions:
                         update_relationship: false
-                        add_relationship: false
-                        delete_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_discount.md'
-            form_event_subscriber: oro_order.api.form_listener.discount
+            fields:
+                percent:
+                    data_type: percent_100
+            actions:
+                update:
+                    fields:
+                        order:
+                            form_options:
+                                mapped: false
+            subresources:
+                order:
+                    actions:
+                        update_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_shipping_tracking.md'

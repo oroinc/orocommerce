@@ -6,7 +6,7 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfigForPaymentTerm60:
-        type: '<("payment_term_".@paymentTerm60Integration->id)>'
+        type: '<("payment_term_".@paymentTerm60Integration->getId())>'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
     paymentMethodsConfigsRuleDestination:

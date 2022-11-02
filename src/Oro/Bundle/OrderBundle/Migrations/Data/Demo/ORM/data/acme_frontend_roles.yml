@@ -1,0 +1,12 @@
+ACME_BUYER:
+    permissions:
+        entity|Oro\Bundle\OrderBundle\Entity\Order: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC]
+
+ACME_ADMINISTRATOR:
+    permissions:
+        entity|Oro\Bundle\OrderBundle\Entity\Order: [VIEW_DEEP, CREATE_DEEP, EDIT_DEEP, ASSIGN_DEEP]
+
+ACME_ANONYMOUS:
+    permissions:
+        action|oro_order_address_billing_allow_manual: [EXECUTE]
+        action|oro_order_address_shipping_allow_manual: [EXECUTE]

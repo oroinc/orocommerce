@@ -4,45 +4,48 @@ namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Provide access availability decision for customer and customer user addresses for given quote.
+ */
 class QuoteAddressSecurityProvider
 {
-    const MANUAL_EDIT_ACTION = 'oro_quote_address_%s_allow_manual';
+    private const MANUAL_EDIT_ACTION = 'oro_quote_address_%s_allow_manual';
 
     /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
+    /** @var FrontendHelper */
+    private $frontendHelper;
 
     /** @var QuoteAddressProvider */
-    protected $QuoteAddressProvider;
+    private $QuoteAddressProvider;
 
     /** @var string */
-    protected $customerAddressClass;
+    private $customerAddressClass;
 
     /** @var string */
-    protected $customerUserAddressClass;
+    private $customerUserAddressClass;
 
     /**
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param QuoteAddressProvider $quoteAddressProvider
-     * @param string $customerAddressClass
-     * @param string $customerUserAddressClass
+     * @param FrontendHelper                $frontendHelper
+     * @param QuoteAddressProvider          $quoteAddressProvider
+     * @param string                        $customerAddressClass
+     * @param string                        $customerUserAddressClass
      */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenAccessorInterface $tokenAccessor,
+        FrontendHelper $frontendHelper,
         QuoteAddressProvider $quoteAddressProvider,
         $customerAddressClass,
         $customerUserAddressClass
     ) {
         $this->authorizationChecker = $authorizationChecker;
-        $this->tokenAccessor = $tokenAccessor;
+        $this->frontendHelper = $frontendHelper;
         $this->QuoteAddressProvider = $quoteAddressProvider;
         $this->customerAddressClass = $customerAddressClass;
         $this->customerUserAddressClass = $customerUserAddressClass;
@@ -56,8 +59,8 @@ class QuoteAddressSecurityProvider
      */
     public function isAddressGranted(Quote $quote, $type)
     {
-        return $this->isCustomerAddressGranted($type, $quote->getCustomer()) ||
-            $this->isCustomerUserAddressGranted($type, $quote->getCustomerUser());
+        return $this->isCustomerAddressGranted($type, $quote->getCustomer())
+            || $this->isCustomerUserAddressGranted($type, $quote->getCustomerUser());
     }
 
     /**
@@ -81,7 +84,7 @@ class QuoteAddressSecurityProvider
         }
 
         if (!$customer) {
-            return false;
+            return $hasPermissions;
         }
 
         return (bool)$this->QuoteAddressProvider->getCustomerAddresses($customer, $type);
@@ -108,7 +111,7 @@ class QuoteAddressSecurityProvider
         }
 
         if (!$customerUser) {
-            return false;
+            return $hasPermissions;
         }
 
         return (bool)$this->QuoteAddressProvider->getCustomerUserAddresses($customerUser, $type);
@@ -119,7 +122,7 @@ class QuoteAddressSecurityProvider
      *
      * @return string
      */
-    protected function getTypedPermission($type)
+    private function getTypedPermission($type)
     {
         QuoteAddressProvider::assertType($type);
 
@@ -132,7 +135,7 @@ class QuoteAddressSecurityProvider
      *
      * @return string
      */
-    protected function getClassPermission($permission, $className)
+    private function getClassPermission($permission, $className)
     {
         return sprintf('%s;entity:%s', $permission, $className);
     }
@@ -142,9 +145,9 @@ class QuoteAddressSecurityProvider
      *
      * @return string
      */
-    protected function getPermission($permission)
+    private function getPermission($permission)
     {
-        if (!$this->tokenAccessor->getUser() instanceof CustomerUser) {
+        if (!$this->frontendHelper->isFrontendRequest()) {
             $permission .= QuoteAddressProvider::ADMIN_ACL_POSTFIX;
         }
 

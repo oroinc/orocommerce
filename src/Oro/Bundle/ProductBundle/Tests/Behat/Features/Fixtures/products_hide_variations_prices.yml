@@ -1,0 +1,23 @@
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product_price_A_{1..3}:
+        product: '@product_A_<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: <current()>
+    product_price_B_{11..13}:
+        product: '@product_B_<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: <current()>
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    product_price_relation_A_{1..3}:
+        product: '@product_A_<current()>'
+        priceList: '@defaultPriceList'
+    product_price_relation_B_{11..13}:
+        product: '@product_B_<current()>'
+        priceList: '@defaultPriceList'

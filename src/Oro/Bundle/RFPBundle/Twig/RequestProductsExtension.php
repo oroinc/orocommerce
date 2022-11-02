@@ -3,29 +3,21 @@
 namespace Oro\Bundle\RFPBundle\Twig;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class RequestProductsExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to retrieve products from a request for quote:
+ *   - rfp_products
+ */
+class RequestProductsExtension extends AbstractExtension
 {
-    const NAME = 'oro_rfp_request_products';
-
-    /** @var ContainerInterface */
-    protected $container;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getFunctions()
     {
-        return [new \Twig_SimpleFunction('rfp_products', [$this, 'getRequestProducts'])];
+        return [new TwigFunction('rfp_products', [$this, 'getRequestProducts'])];
     }
 
     /**
@@ -44,7 +36,7 @@ class RequestProductsExtension extends \Twig_Extension
 
             $items = [];
             foreach ($requestProduct->getRequestProductItems() as $productItem) {
-                $items[$productItem->getId()] = [
+                $items[] = [
                     'quantity' => $productItem->getQuantity(),
                     'price' => $productItem->getPrice(),
                     'unit' => $productItem->getProductUnitCode(),
@@ -53,17 +45,9 @@ class RequestProductsExtension extends \Twig_Extension
 
             $data['items'] = $items;
 
-            $result[$product->getId()] = $data;
+            $result[] = $data;
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 }

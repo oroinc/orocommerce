@@ -9,8 +9,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Form type for Product select.
+ */
 class ProductSelectType extends AbstractType
 {
     const NAME = 'oro_product_select';
@@ -26,9 +29,6 @@ class ProductSelectType extends AbstractType
      */
     protected $options;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -47,8 +47,8 @@ class ProductSelectType extends AbstractType
                 'empty_label' => 'oro.product.removed',
                 'configs' => [
                     'placeholder' => 'oro.product.form.choose',
-                    'result_template_twig' => 'OroProductBundle:Product:Autocomplete/result.html.twig',
-                    'selection_template_twig' => 'OroProductBundle:Product:Autocomplete/selection.html.twig',
+                    'result_template_twig' => '@OroProduct/Product/Autocomplete/result.html.twig',
+                    'selection_template_twig' => '@OroProduct/Product/Autocomplete/selection.html.twig',
                 ],
             ]
         );
@@ -108,7 +108,7 @@ class ProductSelectType extends AbstractType
 
         if (!$productHolder->getProduct()) {
             $emptyValueTitle = $this->translator->trans(
-                $options['empty_label'],
+                (string) $options['empty_label'],
                 ['{title}' => $productHolder->getProductSku()]
             );
             $view->vars['configs']['placeholder'] = $emptyValueTitle;

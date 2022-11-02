@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Event;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class QuoteEvent extends Event implements EntityDataAwareEventInterface
 {
@@ -23,11 +23,6 @@ class QuoteEvent extends Event implements EntityDataAwareEventInterface
     /** @var array */
     protected $submittedData = [];
 
-    /**
-     * @param FormInterface $form
-     * @param Quote         $quote
-     * @param array|null    $submittedData
-     */
     public function __construct(FormInterface $form, Quote $quote, array $submittedData = null)
     {
         $this->form = $form;

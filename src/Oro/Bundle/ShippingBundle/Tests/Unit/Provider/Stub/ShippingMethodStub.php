@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
+use Oro\Bundle\FormBundle\Form\Type\OroUnstructuredHiddenType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ShippingMethodStub implements ShippingMethodInterface
 {
@@ -30,7 +30,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     /**
      * @var string
      */
-    protected $optionsConfigurationFormType = HiddenType::class;
+    protected $optionsConfigurationFormType = OroUnstructuredHiddenType::class;
 
     /**
      * @var bool
@@ -41,7 +41,7 @@ class ShippingMethodStub implements ShippingMethodInterface
      * @var bool
      */
     protected $isGrouped = false;
-    
+
     /**
      * @return ShippingMethodTypeStub[]
      */
@@ -98,7 +98,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
     }

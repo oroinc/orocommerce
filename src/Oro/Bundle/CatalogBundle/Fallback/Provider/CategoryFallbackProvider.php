@@ -3,13 +3,15 @@
 namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Provides Category Fallback for certain category
+ */
 class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
     const FALLBACK_ID = 'category';
@@ -24,10 +26,6 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
      */
     protected $systemConfigFallbackProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param SystemConfigFallbackProvider $systemConfigFallbackProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SystemConfigFallbackProvider $systemConfigFallbackProvider
@@ -44,9 +42,9 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
         if (!$object instanceof Product) {
             throw new InvalidFallbackArgumentException(get_class($object), get_class($this));
         }
-        /** @var CategoryRepository $categoryRepo */
-        $categoryRepo = $this->doctrineHelper->getEntityRepository(Category::class);
-        $category = $categoryRepo->findOneByProduct($object);
+
+        $category = $object->getCategory();
+
         return $category ?: $this->systemConfigFallbackProvider->getFallbackHolderEntity($object, $objectFieldName);
     }
 

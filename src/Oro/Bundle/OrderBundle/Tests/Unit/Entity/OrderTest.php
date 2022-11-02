@@ -15,6 +15,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -81,15 +82,14 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     {
         $order = new Order();
         $order->setIdentifier('test');
-        static::assertEquals('test', (string)$order);
+        self::assertEquals('test', (string)$order);
     }
 
     public function testLineItemsSetter()
     {
         $lineItems = new ArrayCollection([new OrderLineItem()]);
 
-        /** @var Order $order */
-        $order = $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', ['id' => 42]);
+        $order = $this->getEntity(Order::class, ['id' => 42]);
         $order->setLineItems($lineItems);
 
         $result = $order->getLineItems();
@@ -111,15 +111,27 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($email, $order->getEmail());
     }
 
+    public function testGetEmailHolderName()
+    {
+        $order = new Order();
+        $this->assertEmpty($order->getEmailHolderName());
+
+        $customerUser = new CustomerUser();
+        $customerUser->setFirstName('First');
+        $customerUser->setLastName('Last');
+        $order->setCustomerUser($customerUser);
+
+        $this->assertEquals('First Last', $order->getEmailHolderName());
+    }
+
     public function testCustomerUserToCustomerRelation()
     {
         $order = new Order();
 
-        /** @var Customer|\PHPUnit\Framework\MockObject\MockObject $customer */
-        $customer = $this->createMock('Oro\Bundle\CustomerBundle\Entity\Customer');
+        $customer = $this->createMock(Customer::class);
         $customer->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
 
@@ -132,15 +144,15 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     {
         $order = new Order();
         $order->prePersist();
-        $this->assertInstanceOf('\DateTime', $order->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $order->getCreatedAt());
+        $this->assertInstanceOf(\DateTime::class, $order->getUpdatedAt());
     }
 
     public function testPreUpdate()
     {
         $order = new Order();
         $order->preUpdate();
-        $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $order->getUpdatedAt());
     }
 
     public function testPostLoad()
@@ -151,8 +163,8 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'totalDiscountsAmount', $value);
-        $this->setProperty($item, 'currency', $currency);
+        ReflectionUtil::setPropertyValue($item, 'totalDiscountsAmount', $value);
+        ReflectionUtil::setPropertyValue($item, 'currency', $currency);
 
         $item->postLoad();
 
@@ -164,32 +176,31 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $value = 10;
         $currency = 'USD';
         $item = new Order();
-        static::assertNull($item->getEstimatedShippingCost());
+        self::assertNull($item->getEstimatedShippingCost());
         $item->setCurrency($currency);
         $item->setEstimatedShippingCostAmount($value);
-        static::assertEquals(Price::create($value, $currency), $item->getEstimatedShippingCost());
+        self::assertEquals(Price::create($value, $currency), $item->getEstimatedShippingCost());
     }
 
     /**
      * @dataProvider shippingCostDataProvider
-     * @param $estimated
-     * @param $overridden
-     * @param $expected
      */
-    public function testGetShippingCost($estimated, $overridden, $expected)
+    public function testGetShippingCost(?int $estimated, ?int $overridden, ?int $expected)
     {
         $currency = 'USD';
         $item = new Order();
         $item->setCurrency($currency);
         $item->setEstimatedShippingCostAmount($estimated);
         $item->setOverriddenShippingCostAmount($overridden);
-        static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+
+        if (null !== $expected) {
+            self::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+        } else {
+            self::assertNull($item->getShippingCost());
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function shippingCostDataProvider()
+    public function shippingCostDataProvider(): array
     {
         return [
             [
@@ -206,13 +217,23 @@ class OrderTest extends \PHPUnit\Framework\TestCase
                 'estimated' => 10,
                 'overridden' => 30,
                 'expected' => 30
+            ],
+            [
+                'estimated' => 10,
+                'overridden' => 0,
+                'expected' => 0
+            ],
+            [
+                'estimated' => null,
+                'overridden' => null,
+                'expected' => null
             ]
         ];
     }
 
     public function testGetShippingCostNull()
     {
-        static::assertNull((new Order())->getShippingCost());
+        self::assertNull((new Order())->getShippingCost());
     }
 
     public function testUpdateTotalDiscounts()
@@ -224,7 +245,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $item->updateTotalDiscounts();
 
-        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
+        $this->assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
     }
 
     public function testSetTotalDiscounts()
@@ -238,37 +259,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($price, $item->getTotalDiscounts());
 
-        $this->assertEquals($value, $this->getProperty($item, 'totalDiscountsAmount'));
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     *
-     * @return OrderTest
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
-
-        return $this;
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     *
-     * @return mixed $value
-     */
-    protected function getProperty($object, $property)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-
-        return $reflection->getValue($object);
+        $this->assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
     }
 
     public function testGetProductsFromLineItems()
@@ -276,7 +267,6 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
         $secondProduct = $this->getEntity(Product::class, ['id' => 5]);
 
-        /** @var Order $order */
         $order = $this->getEntity(Order::class, [
             'lineItems' => [
                 $this->getEntity(OrderLineItem::class, ['id' => 1, 'product' => $firstProduct]),

@@ -22,7 +22,4 @@ Feature: Default Checkout From Shopping List Quantity Errors
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then I should see "There is not enough quantity for this product"
-
-    When I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
-    Then I should see "There was an error while processing the order"
-    And I should see "There is not enough quantity for this product"
+    And I should see "Submit Order" button disabled

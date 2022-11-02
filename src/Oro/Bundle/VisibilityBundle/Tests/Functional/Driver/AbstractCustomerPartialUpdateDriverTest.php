@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Driver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -16,6 +17,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
+use PHPUnit\Framework\SyntheticError;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -24,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
+    use ConfigManagerAwareTestTrait;
 
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
@@ -38,30 +41,24 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
      */
     private $driver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
-        if (!$this->isTestSkipped()) {
-            $this->loadFixtures([LoadProductVisibilityScopedData::class]);
+        $this->checkTestToBeSkipped();
 
-            $anonymousGroupId = $this->getContainer()
-                ->get('oro_config.global')
-                ->get('oro_customer.anonymous_customer_group');
+        $this->loadFixtures([LoadProductVisibilityScopedData::class]);
 
-            $this->configManager = $this->getContainer()->get('oro_config.global');
-            $this->configManager->set('oro_customer.anonymous_customer_group', $anonymousGroupId);
-
-            $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');
-            $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
-        }
+        $this->configManager = self::getConfigManager('global');
+        $this->driver = $this->getContainer()->get('oro_website_search.driver.customer_partial_update_driver');
+        $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**
-     * @return bool
+     * @throws SyntheticError
      */
-    abstract protected function isTestSkipped();
+    abstract protected function checkTestToBeSkipped();
 
     /**
      * @param Customer $customer
@@ -69,7 +66,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
      */
     private function getVisibilityCustomerFieldName(Customer $customer)
     {
-        return 'integer.visibility_customer_' . $customer->getId();
+        return 'integer.visibility_customer.' . $customer->getId();
     }
 
     /**
@@ -94,8 +91,8 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
     private function reindexProducts()
     {
         $this->getContainer()->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 

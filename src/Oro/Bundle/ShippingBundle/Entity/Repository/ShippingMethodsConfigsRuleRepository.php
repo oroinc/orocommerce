@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
@@ -10,16 +10,16 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class ShippingMethodsConfigsRuleRepository extends EntityRepository
+/**
+ * Returns shipping method config rules by destination, currency and website
+ */
+class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository
 {
     /**
      * @var AclHelper
      */
     private $aclHelper;
 
-    /**
-     * @param AclHelper $aclHelper
-     */
     public function setAclHelper(AclHelper $aclHelper)
     {
         $this->aclHelper = $aclHelper;
@@ -39,6 +39,8 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     ): array {
         $queryBuilder = $this->getByCurrencyAndWebsiteQueryBuilder($currency, $website)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('methodsConfigsRule.rule', 'rule')
+            ->addSelect('rule', 'destination', 'postalCode')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
             ->andWhere('destination.country = :country or destination.country is null')
@@ -135,6 +137,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     public function getEnabledRulesByMethod($method)
     {
         $qb = $this->getRulesByMethodQueryBuilder($method)
+            ->addSelect('rule')
             ->innerJoin('methodsConfigsRule.rule', 'rule', Expr\Join::WITH, 'rule.enabled = true');
 
         return $this->aclHelper->apply($qb)->getResult();
@@ -158,12 +161,6 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'));
     }
 
-    /**
-     * @param string       $currency
-     * @param Website|null $website
-     *
-     * @return QueryBuilder
-     */
     private function getByCurrencyAndWebsiteQueryBuilder(string $currency, Website $website = null): QueryBuilder
     {
         $queryBuilder = $this->getByCurrencyQueryBuilder($currency);
@@ -172,11 +169,19 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             return $queryBuilder;
         }
 
-        return $queryBuilder
+        $queryBuilder
             ->addSelect('websites')
             ->leftJoin('methodsConfigsRule.websites', 'websites')
             ->andWhere('websites.id is null or websites = :website')
             ->setParameter('website', $website);
+
+        if ($website->getOrganization() === null) {
+            return $queryBuilder;
+        }
+
+        return $queryBuilder
+            ->andWhere($queryBuilder->expr()->eq('methodsConfigsRule.organization', ':organization'))
+            ->setParameter('organization', $website->getOrganization());
     }
 
     /**
@@ -187,7 +192,10 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     private function getRulesByMethodQueryBuilder($method)
     {
         return $this->createQueryBuilder('methodsConfigsRule')
+            ->addSelect('destination', 'postalCode')
             ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('destination.postalCodes', 'postalCode')
             ->where('methodConfigs.method = :method')
             ->setParameter('method', $method);
     }

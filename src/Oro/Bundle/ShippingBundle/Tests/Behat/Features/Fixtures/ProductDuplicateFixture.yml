@@ -1,0 +1,43 @@
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    name:
+        string: 'Product1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addName: ['@name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\ShippingBundle\Model\Weight:
+    weight:
+        unit: 'kg'
+        value: 1
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
+    dimensionsValue:
+        length: 1
+        width: 1
+        height: 1
+
+Oro\Bundle\ShippingBundle\Model\Dimensions:
+    dimensions:
+        value: '@dimensionsValue'
+        unit: 'cm'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions:
+        product: '@product1'
+        productUnit: '@item'
+        weight: '@weight'
+        dimensions: '@dimensions'

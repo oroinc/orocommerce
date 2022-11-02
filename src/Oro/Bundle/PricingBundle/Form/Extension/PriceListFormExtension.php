@@ -18,9 +18,6 @@ class PriceListFormExtension extends AbstractTypeExtension
      */
     protected $configManager;
 
-    /**
-     * @param ConfigManager $configManager
-     */
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
@@ -29,9 +26,9 @@ class PriceListFormExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return PriceListSelectWithPriorityType::class;
+        return [PriceListSelectWithPriorityType::class];
     }
 
     /**

@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var FrontendProductSidebarComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const mediator = require('oroui/js/mediator');
 
-    FrontendProductSidebarComponent = BaseComponent.extend({
+    const FrontendProductSidebarComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -18,21 +17,21 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function FrontendProductSidebarComponent() {
-            FrontendProductSidebarComponent.__super__.constructor.apply(this, arguments);
+        constructor: function FrontendProductSidebarComponent(options) {
+            FrontendProductSidebarComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
-                .on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this))
-                .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
+                .on('change', this.options.currenciesSelector, this.onCurrenciesChange.bind(this))
+                .on('change', this.options.showTierPricesSelector, this.onShowTierPricesChange.bind(this));
         },
 
         onCurrenciesChange: function() {
@@ -47,9 +46,9 @@ define(function(require) {
          * @param {Boolean} widgetReload
          */
         triggerSidebarChanged: function(widgetReload) {
-            var currency = $(this.options.currenciesSelector).val();
+            const currency = $(this.options.currenciesSelector).val();
 
-            var params = {
+            const params = {
                 priceCurrencies: currency,
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked'),
                 saveState: true

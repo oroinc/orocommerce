@@ -12,33 +12,25 @@ use Symfony\Component\Form\FormInterface;
 
 class CategoryUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CategoryUpcomingFormExtension
-     */
-    protected $categoryFormExtension;
+    /** @var CategoryUpcomingFormExtension */
+    private $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
-    protected $builder;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->categoryFormExtension = new CategoryUpcomingFormExtension();
-        $this->builder = $this->createMock(FormBuilderInterface::class);
     }
 
     public function testBuildForm()
     {
-        $this->builder->expects($this->exactly(2))
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->exactly(2))
             ->method('add')
-            ->will($this->returnSelf());
-        $this->builder->expects($this->exactly(2))
+            ->willReturnSelf();
+        $builder->expects($this->exactly(2))
             ->method('addEventListener')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
-        $this->categoryFormExtension->buildForm($this->builder, []);
+        $this->categoryFormExtension->buildForm($builder, []);
     }
 
     public function testOnPreSetData()

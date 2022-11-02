@@ -1,41 +1,45 @@
 define(function(require) {
     'use strict';
 
-    var ProductCollectionPopupAddProductsWidget;
-    var DialogWidget = require('oro/dialog-widget');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
+    const DialogWidget = require('oro/dialog-widget');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
 
     /**
      * This widget is responsible for triggering appropriate event given in options and passing array of products
      * selected in grid to this event.
      */
-    ProductCollectionPopupAddProductsWidget = DialogWidget.extend({
+    const ProductCollectionPopupAddProductsWidget = DialogWidget.extend({
         /**
          * @property {Array}
          */
         requiredOptions: ['gridName', 'hiddenProductsSelector'],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductCollectionPopupAddProductsWidget() {
-            ProductCollectionPopupAddProductsWidget.__super__.constructor.apply(this, arguments);
+        options: _.extend({}, DialogWidget.prototype.options, {triggerEventOnMessagesRemoved: false}),
+
+        /**
+         * @inheritdoc
+         */
+        constructor: function ProductCollectionPopupAddProductsWidget(options) {
+            ProductCollectionPopupAddProductsWidget.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            ProductCollectionPopupAddProductsWidget.__super__.initialize.apply(this, arguments);
+            ProductCollectionPopupAddProductsWidget.__super__.initialize.call(this, options);
 
             this._checkOptions();
 
-            this.getAction('addProducts', 'adopted', _.bind(function(actionElement) {
-                actionElement.on('click', _.bind(this._triggerEvent, this));
-            }, this));
+            this.getAction('addProducts', 'adopted', actionElement => {
+                actionElement.on('click', this._triggerEvent.bind(this));
+            });
 
             mediator.on('product-collection-add-to-excluded', this._closeDialogWidget, this);
             mediator.on('product-collection-add-to-included', this._closeDialogWidget, this);
@@ -45,9 +49,9 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+            const requiredMissed = this.requiredOptions.filter(option => {
                 return _.isUndefined(this.options[option]);
-            }, this));
+            });
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
             }
@@ -71,8 +75,8 @@ define(function(require) {
          * @private
          */
         _getWidgetData: function() {
-            var widgetData = ProductCollectionPopupAddProductsWidget.__super__._getWidgetData.call(this);
-            var val = $(this.options.hiddenProductsSelector).val();
+            const widgetData = ProductCollectionPopupAddProductsWidget.__super__._getWidgetData.call(this);
+            const val = $(this.options.hiddenProductsSelector).val();
 
             if (val) {
                 widgetData.hiddenProducts = val;
@@ -82,13 +86,13 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        loadContent: function() {
-            if (arguments.length) {
-                ProductCollectionPopupAddProductsWidget.__super__.loadContent.apply(this, arguments);
+        loadContent: function(...args) {
+            if (args.length) {
+                ProductCollectionPopupAddProductsWidget.__super__.loadContent.apply(this, args);
             } else {
-                var oldFirstRun = this.firstRun;
+                const oldFirstRun = this.firstRun;
                 this.firstRun = false;
                 ProductCollectionPopupAddProductsWidget.__super__.loadContent.call(this, undefined, 'post');
                 this.firstRun = oldFirstRun;
@@ -96,7 +100,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

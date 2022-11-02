@@ -1,0 +1,85 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    orderPromotionLabelOrder100:
+        string: 'Promotion Order 100 Label'
+    orderPromotionDescOrder100:
+        string: 'Promotion Order 100 Description'
+    orderPromotionLabelShipping100:
+        string: 'Promotion Shipping 100 Label'
+    orderPromotionDescShipping100:
+        string: 'Promotion Shipping 100 Description'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    coupon100Order:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-100-order'
+        promotion: '@orderDiscountPromotionOrder100'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+    coupon100Shipping:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'coupon-100-shipping'
+        promotion: '@orderDiscountPromotionShipping100'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    promotionSegment:
+        name: 'Promotion Matching Products #1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":2}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderDiscountPromotionDiscountConfigurationOrder100:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 1
+    shippingDiscountPromotionDiscountConfigurationShipping100:
+        type: 'shipping'
+        options:
+            discount_type: 'percent'
+            discount_value: 1
+            shipping_options:
+                shipping_method: 'flat_rate_1'
+                shipping_method_type: 'primary'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderDiscountPromotionRuleOrder100:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Promotion'
+    orderDiscountPromotionRuleShipping100:
+        enabled: true
+        sortOrder: 1
+        name: 'Shipping Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderDiscountPromotionOrder100:
+        __calls:
+            - addLabel: ['@orderPromotionLabelOrder100']
+            - addDescription: ['@orderPromotionDescOrder100']
+            - addScope: ['@default_scope']
+        productsSegment: '@promotionSegment'
+        rule: '@orderDiscountPromotionRuleOrder100'
+        discountConfiguration: '@orderDiscountPromotionDiscountConfigurationOrder100'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+    orderDiscountPromotionShipping100:
+        __calls:
+            - addLabel: ['@orderPromotionLabelShipping100']
+            - addDescription: ['@orderPromotionDescShipping100']
+            - addScope: ['@default_scope']
+        productsSegment: '@promotionSegment'
+        rule: '@orderDiscountPromotionRuleShipping100'
+        discountConfiguration: '@shippingDiscountPromotionDiscountConfigurationShipping100'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true

@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -18,6 +18,9 @@ use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDe
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads demo data for order line items.
+ */
 class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -60,9 +63,7 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
                 $lineItem = $this->getOrderLineItem($manager);
                 $order->addLineItem($lineItem);
             }
-            $totalHelper->fillDiscounts($order);
-            $totalHelper->fillSubtotals($order);
-            $totalHelper->fillTotal($order);
+            $totalHelper->fill($order);
 
             $manager->persist($order);
         }

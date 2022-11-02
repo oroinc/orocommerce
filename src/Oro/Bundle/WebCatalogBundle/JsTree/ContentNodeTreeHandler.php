@@ -2,17 +2,20 @@
 
 namespace Oro\Bundle\WebCatalogBundle\JsTree;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
+use Oro\Bundle\WebCatalogBundle\Resolver\UniqueContentNodeSlugPrototypesResolver;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 /**
+ * Handle Content node tree transitions.
+ *
  * @method ContentNodeRepository getEntityRepository()
  */
 class ContentNodeTreeHandler extends AbstractTreeHandler
@@ -28,6 +31,11 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     protected $messageProducer;
 
     /**
+     * @var UniqueContentNodeSlugPrototypesResolver
+     */
+    private $uniqueSlugPrototypesResolver;
+
+    /**
      * @var ResolveNodeSlugsMessageFactory
      */
     private $messageFactory;
@@ -37,25 +45,20 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
      */
     private $createRedirect = false;
 
-    /**
-     * @param string $entityClass
-     * @param ManagerRegistry $managerRegistry
-     * @param LocalizationHelper $localizationHelper
-     * @param MessageProducerInterface $messageProducer
-     * @param ResolveNodeSlugsMessageFactory $messageFactory
-     */
     public function __construct(
-        $entityClass,
+        string $entityClass,
         ManagerRegistry $managerRegistry,
         LocalizationHelper $localizationHelper,
         MessageProducerInterface $messageProducer,
-        ResolveNodeSlugsMessageFactory $messageFactory
+        ResolveNodeSlugsMessageFactory $messageFactory,
+        UniqueContentNodeSlugPrototypesResolver $uniqueSlugPrototypesResolver
     ) {
         parent::__construct($entityClass, $managerRegistry);
 
         $this->localizationHelper = $localizationHelper;
         $this->messageProducer = $messageProducer;
         $this->messageFactory = $messageFactory;
+        $this->uniqueSlugPrototypesResolver = $uniqueSlugPrototypesResolver;
     }
 
     /**
@@ -67,12 +70,12 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     {
         $titleValue = $this->localizationHelper->getFirstNonEmptyLocalizedValue($entity->getTitles());
         return [
-            'id'     => $entity->getId(),
+            'id' => $entity->getId(),
             'parent' => $entity->getParentNode() ? $entity->getParentNode()->getId() : null,
-            'text'   => $titleValue ? $titleValue->getString() : '',
-            'state'  => [
-                'opened' => $entity->getParentNode() === null
-            ]
+            'text' => $titleValue ? $titleValue->getString() : '',
+            'state' => [
+                'opened' => $entity->getParentNode() === null,
+            ],
         ];
     }
 
@@ -108,7 +111,12 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
 
         // Schedule slugs reorganization after node move
         $node->getSlugPrototypesWithRedirect()->setCreateRedirect($this->createRedirect);
-        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($node));
+        $this->uniqueSlugPrototypesResolver
+            ->resolveSlugPrototypeUniqueness($node->getParentNode(), $node);
+        $this->messageProducer->send(
+            WebCatalogResolveContentNodeSlugsTopic::getName(),
+            $this->messageFactory->createMessage($node)
+        );
 
         return $node;
     }

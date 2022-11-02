@@ -13,9 +13,10 @@ Feature: Mass edit of Coupons codes
     And I click "Edit" link from mass action dropdown
     Then I should see "Mass Coupon Edit"
     When I fill form with:
-      |Promotion         | order Discount Promotion |
-      |Uses per Coupon   |77                        |
-      |Uses per Person   |88                        |
+      | Promotion         | order Discount Promotion |
+      | Uses per Coupon   | 77                       |
+      | Uses per Person   | 88                       |
+    And I focus on "Valid From" field
     And I click "Today"
     And I click "Apply"
     Then I should see "2 entities were edited" flash message
@@ -33,8 +34,9 @@ Feature: Mass edit of Coupons codes
     And I click "Edit" link from mass action dropdown
     Then I should see "Mass Coupon Edit"
     When I fill form with:
-      |Uses per Coupon   |88        |
-      |Uses per Person   |99        |
+      | Uses per Coupon  | 88        |
+      | Uses per Person  | 99        |
+    And I focus on "Valid From" field
     And I click "Today"
     And I click "Apply"
     Then I should see "10 entities were edited" flash message
@@ -51,12 +53,11 @@ Feature: Mass edit of Coupons codes
     And I check all records in grid
     And I click "Edit" link from mass action dropdown
     Then I should see "Mass Coupon Edit"
-    When I fill form with:
-      |Uses per Coupon   |99        |
-      |Uses per Person   |100       |
-    And I fill form with:
-      | Valid From  | <DateTime:Jul 09, 2017, 10:00 AM> |
-      | Valid Until | <DateTime:Jul 10, 2017, 10:00 AM> |
+    When I fill "Mass Coupon Edit Form" with:
+      | Uses per Coupon  | 99        |
+      | Uses per Person  | 100       |
+      | Valid From       | <DateTime:Jul 09, 2017, 10:00 AM> |
+      | Valid Until      | <DateTime:Jul 10, 2017, 10:00 AM> |
     And I click "Apply"
     Then I should see "100 entities were edited" flash message
     And I filter Uses per Coupon as equals "99"

@@ -7,9 +7,6 @@ use Oro\Bundle\WorkflowBundle\Datagrid\WorkflowStepColumnListener;
 
 class RFPDatagridColumnListener
 {
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();

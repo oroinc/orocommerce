@@ -1,0 +1,14 @@
+/* @theme: default; */
+
+.order-checkout-widget {
+    page-break-inside: avoid;
+
+    &__quote {
+        // stylelint-disable-next-line declaration-no-important
+        display: none !important;
+    }
+
+    &__container-wrapper {
+        margin-bottom: 0;
+    }
+}

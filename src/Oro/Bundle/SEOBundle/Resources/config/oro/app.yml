@@ -1,0 +1,11 @@
+knp_gaufrette:
+    filesystems:
+        sitemaps:
+            adapter: public
+            alias: sitemaps_filesystem
+        # a temporary private storage that is used during sitemap generation
+        # it is required to be able to replace sitemap related files only when all of them are successfully generated,
+        # to keep data consistent
+        sitemaps_tmp_data:
+            adapter: private
+            alias: sitemaps_tmp_data_filesystem

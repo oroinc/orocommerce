@@ -1,0 +1,54 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &editor {
+        textarea,
+        input[type='text'],
+        input[type='password'],
+        input[type='datetime'],
+        input[type='datetime-local'],
+        input[type='date'],
+        input[type='month'],
+        input[type='time'],
+        input[type='week'],
+        input[type='number'],
+        input[type='email'],
+        input[type='url'],
+        input[type='search'],
+        input[type='tel'],
+        input[type='color'],
+        .uneditable-input,
+        .selector {
+            margin-bottom: 0;
+            height: auto;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        input[type='radio'],
+        input[type='checkbox'] {
+            + label {
+                display: block;
+                margin-left: 0;
+                margin-bottom: 0;
+            }
+        }
+
+        &-cont {
+            padding: $grapesjs-content-editor-offset;
+            background: $primary-inverse;
+
+            .editor-without-offset &,
+            &.editor-without-offset {
+                padding: 0;
+            }
+        }
+    }
+
+    &cm-editor {
+        ##{$app-prefix}cm-title {
+            background: none;
+            color: $secondaryColor;
+        }
+    }
+}

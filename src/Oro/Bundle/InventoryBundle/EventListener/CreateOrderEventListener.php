@@ -42,11 +42,6 @@ class CreateOrderEventListener
      */
     protected $checkoutLineItemsManager;
 
-    /**
-     * @param InventoryQuantityManager $quantityManager
-     * @param InventoryStatusHandler $statusHandler
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         InventoryQuantityManager $quantityManager,
         InventoryStatusHandler $statusHandler,
@@ -60,7 +55,6 @@ class CreateOrderEventListener
     }
 
     /**
-     * @param ExtendableActionEvent $event
      * @throws InventoryLevelNotFoundException
      */
     public function onCreateOrder(ExtendableActionEvent $event)
@@ -89,7 +83,6 @@ class CreateOrderEventListener
     }
 
     /**
-     * @param ExtendableConditionEvent $event
      * @throws InventoryLevelNotFoundException
      */
     public function onBeforeOrderCreate(ExtendableConditionEvent $event)

@@ -16,7 +16,10 @@ class AppliedDiscountsProvider
     /**
      * Returns sum of all discounts amounts for given Order (including line item discounts, etc) without shipping
      *
+     * @see \Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts::getDiscountsAmountByOrder
+     *
      * @param Order|AppliedPromotionsAwareInterface $order
+     *
      * @return float
      */
     public function getDiscountsAmountByOrder(Order $order): float
@@ -36,6 +39,8 @@ class AppliedDiscountsProvider
     /**
      * Returns sum of all shipping discounts amounts for given Order
      *
+     * @see \Oro\Bundle\PromotionBundle\Api\Processor\ComputeOrderPromotionDiscounts::getShippingDiscountsAmountByOrder
+     *
      * @param Order|AppliedPromotionsAwareInterface $order
      * @return float
      */
@@ -53,10 +58,6 @@ class AppliedDiscountsProvider
         return $amount;
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @return float
-     */
     public function getDiscountsAmountByLineItem(OrderLineItem $lineItem): float
     {
         $amount = 0.0;

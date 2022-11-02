@@ -1,0 +1,97 @@
+services:
+    _instanceof:
+        Psr\Log\LoggerAwareInterface:
+            calls:
+                - [ 'setLogger', [ '@logger' ] ]
+            tags:
+                - { name: monolog.logger, channel: oro_pricing }
+
+        Oro\Component\MessageQueue\Consumption\MessageProcessorInterface:
+            tags:
+                - { name: oro_message_queue.client.message_processor }
+
+    oro_pricing.async.price_list_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.combined_price_list_status_handler'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+
+    oro_pricing.async.versioned_price_list_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\VersionedPriceListProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_pricing.combined_price_list_status_handler'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.async.versioned_flat_price_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\VersionedFlatPriceProcessor'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+            - '@oro_product.storage.product_website_reindex_request_data_storage'
+
+    oro_pricing.async.flat_price_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\FlatPriceProcessor'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+
+    oro_pricing.async.single_cpl_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\SingleCplProcessor'
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@doctrine'
+            - '@oro_pricing.builder.combined_price_list_builder_facade'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_pricing.combined_price_list_status_handler'
+            - '@event_dispatcher'
+            - '@oro_pricing.resolver.combined_product_schedule_resolver'
+
+    oro_pricing.async.combined_price_list_post_processing_steps_processor:
+        class: Oro\Bundle\PricingBundle\Async\CombinedPriceListPostProcessingStepsProcessor
+        arguments:
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
+            - '@oro_message_queue.client.message_producer'
+
+    oro_pricing.async.combined_price_list_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor'
+        arguments:
+            - '@oro_pricing.combined_price_list_associations_provider'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@doctrine'
+
+    oro_pricing.async.combined_price_list_currency_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\CombinedPriceListCurrencyProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.combined_price_list'
+
+    oro_pricing.async.price_list_rule_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceRuleProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.builder.product_price_builder'
+            - '@oro_pricing.notification_alert_manager'
+            - '@oro_pricing.price_list_trigger_handler'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.async.price_list_assigned_products_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@oro_pricing.notification_alert_manager'
+            - '@oro_pricing.price_list_trigger_handler'

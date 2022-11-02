@@ -1,0 +1,30 @@
+layout:
+    actions:
+        - '@setFormTheme':
+            themes: '@OroProduct/layouts/default/imports/oro_product_variant_form/oro_product_variant_form.html.twig'
+        - '@addTree':
+            items:
+                __variant_field_form:
+                    blockType: container
+                    options:
+                        visible: '=data["oro_product_variant"].hasProductAnyAvailableVariant(data["product"]) and data["product_view_form_availability_provider"].isSimpleFormAvailable(data["product"])'
+                __variant_field_form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+                __variant_field_form_fields:
+                    blockType: form_fields
+                    options:
+                        form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+                __variant_field_form_end:
+                    blockType: form_end
+                    options:
+                        form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+            tree:
+                __root:
+                    __variant_field_form:
+                        __variant_field_form_start: ~
+                        __variant_field_form_fields: ~
+                        __variant_field_form_end: ~
+
+    conditions: 'context["product_type"] === "configurable"'

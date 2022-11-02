@@ -22,14 +22,13 @@ class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $orderTypeExtension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->orderTypeExtension = new OrderTypeExtension();
     }
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
 
         $builder->expects($this->once())
@@ -55,8 +54,8 @@ class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
         $this->orderTypeExtension->postSetData($event);
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(OrderType::class, $this->orderTypeExtension->getExtendedType());
+        $this->assertEquals([OrderType::class], OrderTypeExtension::getExtendedTypes());
     }
 }

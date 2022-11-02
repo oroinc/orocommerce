@@ -1,0 +1,6 @@
+dynamic-imports:
+    orosale:
+        - ororfp/js/app/components/order-line-item-offers
+        - ororfp/js/app/views/line-item-offer-view
+        - ororfp/js/app/views/line-item-view
+        - ororfp/js/app/views/line-items-view

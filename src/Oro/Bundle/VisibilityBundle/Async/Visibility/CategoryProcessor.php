@@ -2,103 +2,72 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCategoryPositionTopic;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnRemoveCategoryTopic;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
+use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
- * Updates visibility of the Category
+ * Updates visibility of a category.
  */
-class CategoryProcessor implements MessageProcessorInterface
+class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var CategoryMessageFactory
-     */
-    protected $insertFromSelectQueryExecutor;
+    use LoggerAwareTrait;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor;
 
-    /**
-     * @var CategoryMessageFactory
-     */
-    protected $messageFactory;
+    private CacheBuilder $cacheBuilder;
 
-    /**
-     * @var CacheBuilder
-     */
-    protected $cacheBuilder;
+    private ScopeManager $scopeManager;
 
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    /**
-     * @var DatabaseExceptionHelper
-     */
-    protected $databaseExceptionHelper;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
-     * @param LoggerInterface $logger
-     * @param CategoryMessageFactory $messageFactory
-     * @param CacheBuilder $cacheBuilder
-     * @param ScopeManager $scopeManager
-     * @param DatabaseExceptionHelper $databaseExceptionHelper
-     */
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
-        LoggerInterface $logger,
-        CategoryMessageFactory $messageFactory,
         CacheBuilder $cacheBuilder,
-        ScopeManager $scopeManager,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        ScopeManager $scopeManager
     ) {
-        $this->registry = $registry;
-        $this->logger = $logger;
+        $this->doctrine = $doctrine;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
-        $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
         $this->scopeManager = $scopeManager;
-        $this->databaseExceptionHelper = $databaseExceptionHelper;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public static function getSubscribedTopics(): array
     {
+        return [VisibilityOnChangeCategoryPositionTopic::getName(), VisibilityOnRemoveCategoryTopic::getName()];
+    }
+
+    public function process(MessageInterface $message, SessionInterface $session): string
+    {
+        $body = $message->getBody();
+
         /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(CategoryVisibilityResolved::class);
+        $em = $this->doctrine->getManagerForClass(CategoryVisibilityResolved::class);
         $em->beginTransaction();
         try {
-            $messageData = JSON::decode($message->getBody());
-            $category = $this->messageFactory->getCategoryFromMessage($messageData);
+            $category = $this->getCategory($body);
             if ($category) {
                 $this->cacheBuilder->categoryPositionChanged($category);
             } else {
@@ -107,51 +76,63 @@ class CategoryProcessor implements MessageProcessorInterface
                 $this->setToDefaultCustomerProductVisibilityWithoutCategory();
             }
             $em->commit();
-        } catch (InvalidArgumentException $e) {
-            $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
-
-            return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                'Unexpected exception occurred during Category visibility resolve',
+                'Unexpected exception occurred during update Category Visibility.',
                 ['exception' => $e]
             );
 
-            $driverException = $this->databaseExceptionHelper->getDriverException($e);
-            if ($driverException && $this->databaseExceptionHelper->isDeadlock($driverException)) {
+            if ($e instanceof RetryableException) {
                 return self::REQUEUE;
-            } else {
-                return self::REJECT;
             }
+
+            return self::REJECT;
         }
 
         return self::ACK;
     }
 
-    protected function setToDefaultProductVisibilityWithoutCategory()
+    /**
+     * @throws EntityNotFoundException if a category with ID specified in the message body does not exist
+     */
+    public function getCategory(array $body): ?Category
     {
+        if (!isset($body['id'])) {
+            return null;
+        }
+
+        /** @var Category|null $category */
+        $category = $this->doctrine->getManagerForClass(Category::class)
+            ->find(Category::class, $body['id']);
+        if (null === $category) {
+            throw new EntityNotFoundException('Category was not found.');
+        }
+
+        return $category;
+    }
+
+    private function setToDefaultProductVisibilityWithoutCategory(): void
+    {
+        /** @var ProductVisibilityRepository $repository */
+        $repository = $this->doctrine->getRepository(ProductVisibility::class);
         $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
-        $repository = $this->registry->getManagerForClass(ProductVisibility::class)
-            ->getRepository(ProductVisibility::class);
         foreach ($scopes as $scope) {
             $repository->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope);
         }
     }
 
-    protected function setToDefaultCustomerGroupProductVisibilityWithoutCategory()
+    private function setToDefaultCustomerGroupProductVisibilityWithoutCategory(): void
     {
         /** @var CustomerProductVisibilityRepository $repository */
-        $repository = $this->registry->getManagerForClass(CustomerGroupProductVisibility::class)
-            ->getRepository(CustomerGroupProductVisibility::class);
+        $repository = $this->doctrine->getRepository(CustomerGroupProductVisibility::class);
         $repository->setToDefaultWithoutCategory();
     }
 
-    protected function setToDefaultCustomerProductVisibilityWithoutCategory()
+    private function setToDefaultCustomerProductVisibilityWithoutCategory(): void
     {
-        $this->registry->getManagerForClass(CustomerProductVisibility::class)
-            ->getRepository(CustomerProductVisibility::class)
-            ->setToDefaultWithoutCategory();
+        /** @var CustomerProductVisibilityRepository $repository */
+        $repository = $this->doctrine->getRepository(CustomerProductVisibility::class);
+        $repository->setToDefaultWithoutCategory();
     }
 }

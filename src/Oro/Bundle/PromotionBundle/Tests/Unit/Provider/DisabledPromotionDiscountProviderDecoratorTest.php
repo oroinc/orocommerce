@@ -29,7 +29,7 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
      */
     private $providerDecorator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->promotionDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
         $this->providerDecorator = new DisabledPromotionDiscountProviderDecorator($this->promotionDiscountsProvider);

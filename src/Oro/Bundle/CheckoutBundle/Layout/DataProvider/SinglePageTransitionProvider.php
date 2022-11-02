@@ -16,9 +16,6 @@ class SinglePageTransitionProvider implements TransitionProviderInterface
      */
     private $transitionProvider;
 
-    /**
-     * @param TransitionProviderInterface $transitionProvider
-     */
     public function __construct(TransitionProviderInterface $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;

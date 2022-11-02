@@ -2,16 +2,20 @@
 
 namespace Oro\Bundle\PricingBundle\SystemConfig;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Transforms array of {@see PriceListConfig} to a scalar array and back
+ */
 class PriceListConfigConverter
 {
     const MERGE_KEY = 'mergeAllowed';
     const SORT_ORDER_KEY = 'sort_order';
     const PRICE_LIST_KEY = 'priceList';
 
-    /** @var RegistryInterface */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
     /** @var string */
@@ -21,11 +25,10 @@ class PriceListConfigConverter
     protected $managerForPriceList;
 
     /**
-     * PriceListSystemConfigSubscriber constructor.
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param string $priceListClassName
      */
-    public function __construct(RegistryInterface $doctrine, $priceListClassName)
+    public function __construct(ManagerRegistry $doctrine, $priceListClassName)
     {
         $this->doctrine = $doctrine;
         $this->priceListClassName = $priceListClassName;
@@ -76,11 +79,7 @@ class PriceListConfigConverter
 
             usort(
                 $result,
-                function ($a, $b) {
-                    /** @var PriceListConfig $a */
-                    /** @var PriceListConfig $b */
-                    return ($a->getSortOrder() < $b->getSortOrder()) ? -1 : 1;
-                }
+                static fn (PriceListConfig $a, PriceListConfig $b) => $a->getSortOrder() <=> $b->getSortOrder()
             );
         }
 
@@ -111,7 +110,7 @@ class PriceListConfigConverter
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
+     * @return ObjectManager
      */
     protected function getManagerForPriceList()
     {

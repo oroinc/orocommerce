@@ -4,11 +4,10 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerGroupDemoData;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
@@ -68,8 +67,6 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
 
     /**
      * Set fallback to parent category for all products with categories
-     *
-     * @param ObjectManager $manager
      */
     protected function resetVisibilities(ObjectManager $manager)
     {
@@ -100,8 +97,6 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param array $row
      * @throws \Exception
      */
     protected function setProductVisibility(ObjectManager $manager, array $row)

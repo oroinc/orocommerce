@@ -4,9 +4,10 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\UserBundle\Entity\UserManager;
@@ -71,9 +72,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
             $entity = new Channel();
             /** @var Transport $transport */
             $transportId = $this->getReference($data['transport'])->getId();
-            $transport = $manager
-                ->getRepository('OroPaymentTermBundle:PaymentTermSettings')
-                ->findOneBy(['id' => $transportId]);
+            $transport = $manager->getRepository(PaymentTermSettings::class)->findOneBy(['id' => $transportId]);
             $entity->setName($data['name']);
             $entity->setType($data['type']);
             $entity->setOrganization($organization);

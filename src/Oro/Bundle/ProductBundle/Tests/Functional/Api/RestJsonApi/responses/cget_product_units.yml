@@ -1,0 +1,64 @@
+data:
+    -
+        type: productunits
+        id: '<toString(@day->code)>'
+        attributes:
+            defaultPrecision: 1
+            label: day
+            shortLabel: d
+            pluralLabel: days
+            shortPluralLabel: ds
+    -
+        type: productunits
+        id: '<toString(@each->code)>'
+        attributes:
+            defaultPrecision: 0
+            label: each
+            shortLabel: ea
+            pluralLabel: each
+            shortPluralLabel: ea
+    -
+        type: productunits
+        id: '<toString(@hour->code)>'
+        attributes:
+            defaultPrecision: 0
+            label: hour
+            shortLabel: hr
+            pluralLabel: hours
+            shortPluralLabel: hrs
+    -
+        type: productunits
+        id: '<toString(@item->code)>'
+        attributes:
+            defaultPrecision: 0
+            label: item
+            shortLabel: item
+            pluralLabel: items
+            shortPluralLabel: items
+    -
+        type: productunits
+        id: '<toString(@kg->code)>'
+        attributes:
+            defaultPrecision: 3
+            label: kilogram
+            shortLabel: kg
+            pluralLabel: kilograms
+            shortPluralLabel: kgs
+    -
+        type: productunits
+        id: '<toString(@piece->code)>'
+        attributes:
+            defaultPrecision: 0
+            label: piece
+            shortLabel: pc
+            pluralLabel: pieces
+            shortPluralLabel: pcs
+    -
+        type: productunits
+        id: '<toString(@set->code)>'
+        attributes:
+            defaultPrecision: 0
+            label: set
+            shortLabel: set
+            pluralLabel: sets
+            shortPluralLabel: sets

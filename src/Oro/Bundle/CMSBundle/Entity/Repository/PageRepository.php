@@ -7,6 +7,9 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 
+/**
+ * Doctrine repository for Page entity
+ */
 class PageRepository extends EntityRepository
 {
     /**
@@ -32,5 +35,32 @@ class PageRepository extends EntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $pageIds
+     *
+     * @return array
+     */
+    public function getNonExistentPageIds(array $pageIds)
+    {
+        if (empty($pageIds)) {
+            return [];
+        }
+
+        $pageIds = array_unique($pageIds);
+
+        $qb = $this->createQueryBuilder('page');
+        $qb
+            ->select('page.id')
+            ->where($qb->expr()->in('page.id', ':pageIds'));
+
+        $qb->setParameter('pageIds', $pageIds);
+
+        $result = $qb->getQuery()->getArrayResult();
+
+        $existedPageIds = array_column($result, 'id');
+
+        return array_diff($pageIds, $existedPageIds);
     }
 }

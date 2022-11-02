@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ShippingRuleControllerTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);
@@ -26,10 +26,9 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
-        $this->client->request(
-            'GET',
+        $this->client->jsonRequest(
+            'POST',
             $this->getUrl('oro_api_disable_shippingrules', ['id' => $shippingRule->getId()]),
-            [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
         );
@@ -42,10 +41,9 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.3');
-        $this->client->request(
-            'GET',
+        $this->client->jsonRequest(
+            'POST',
             $this->getUrl('oro_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
-            [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
         );

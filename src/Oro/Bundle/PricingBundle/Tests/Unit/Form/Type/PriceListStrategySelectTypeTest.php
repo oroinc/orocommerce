@@ -6,37 +6,25 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|StrategyRegister
-     */
-    protected $strategyRegister;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|StrategyRegister */
+    private $strategyRegister;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
-     */
-    protected $translator;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
+    private $translator;
 
-    /**
-     * @var PriceListStrategySelectType
-     */
-    protected $type;
+    /** @var PriceListStrategySelectType */
+    private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->strategyRegister = $this->getMockBuilder(StrategyRegister::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->strategyRegister = $this->createMock(StrategyRegister::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->type = new PriceListStrategySelectType($this->strategyRegister, $this->translator);
-    }
 
-    protected function tearDown()
-    {
-        unset($this->type, $this->strategyRegister, $this->translator);
+        $this->type = new PriceListStrategySelectType($this->strategyRegister, $this->translator);
     }
 
     public function testGetParent()
@@ -58,24 +46,15 @@ class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($message) {
-                    return $message;
-                }
-            );
+            ->willReturnArgument(0);
         $this->strategyRegister->expects($this->once())
             ->method('getStrategies')
-            ->will($this->returnValue($strategies));
+            ->willReturn($strategies);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMockBuilder(OptionsResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'choices' => $expectedChoices,
-            ]);
+            ->with(['choices' => $expectedChoices]);
 
         $this->type->configureOptions($resolver);
     }

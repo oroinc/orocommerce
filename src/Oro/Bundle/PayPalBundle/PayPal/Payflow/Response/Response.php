@@ -12,9 +12,6 @@ class Response implements ResponseInterface
      */
     protected $values;
 
-    /**
-     * @param array $values
-     */
     public function __construct(array $values = [])
     {
         $this->values = new \ArrayObject($values);

@@ -29,7 +29,7 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->relationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);

@@ -13,7 +13,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected $totalProcessorProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->totalProcessorProvider = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()
@@ -22,7 +22,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

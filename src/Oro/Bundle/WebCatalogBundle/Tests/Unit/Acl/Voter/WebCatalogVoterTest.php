@@ -5,97 +5,76 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Acl\Voter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class WebCatalogVoterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var WebCatalogVoter
-     */
-    protected $voter;
+    /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $webCatalogUsageProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var WebCatalogVoter */
+    private $voter;
 
-    /**
-     * @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $usageProvider;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->usageProvider = $this->getMockBuilder(WebCatalogUsageProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->voter = new WebCatalogVoter($this->doctrineHelper, $this->usageProvider);
-    }
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->webCatalogUsageProvider = $this->createMock(WebCatalogUsageProviderInterface::class);
 
-    protected function tearDown()
-    {
-        unset($this->voter, $this->doctrineHelper);
+        $container = TestContainerBuilder::create()
+            ->add('oro_web_catalog.provider.web_catalog_usage_provider', $this->webCatalogUsageProvider)
+            ->getContainer($this);
+
+        $this->voter = new WebCatalogVoter($this->doctrineHelper, $container);
+        $this->voter->setClassName(WebCatalog::class);
     }
 
     public function testVoteAbstain()
     {
-        $object = $this->getEntity(WebCatalog::class, ['id' => 1]);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(get_class($object)));
-        $this->voter->setClassName(WebCatalog::class);
+        $object = new WebCatalog();
+        ReflectionUtil::setId($object, 1);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
-        $this->usageProvider->expects($this->once())
+        $this->webCatalogUsageProvider->expects($this->once())
             ->method('isInUse')
             ->with($object)
             ->willReturn(false);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
-            WebCatalogVoter::ACCESS_ABSTAIN,
+            VoterInterface::ACCESS_ABSTAIN,
             $this->voter->vote($token, $object, ['DELETE'])
         );
     }
 
     public function testVoteDeny()
     {
-        $object = $this->getEntity(WebCatalog::class, ['id' => 1]);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($object)
-            ->will($this->returnValue(get_class($object)));
-        $this->voter->setClassName(WebCatalog::class);
+        $object = new WebCatalog();
+        ReflectionUtil::setId($object, 1);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
-        $this->usageProvider->expects($this->once())
+        $this->webCatalogUsageProvider->expects($this->once())
             ->method('isInUse')
             ->with($object)
             ->willReturn(true);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TokenInterface $token */
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
-            WebCatalogVoter::ACCESS_DENIED,
+            VoterInterface::ACCESS_DENIED,
             $this->voter->vote($token, $object, ['DELETE'])
         );
     }

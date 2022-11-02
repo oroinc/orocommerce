@@ -1,4 +1,0 @@
-oro_invoice:
-    resource:     "@OroInvoiceBundle/Controller/InvoiceController.php"
-    type:         annotation
-    prefix:       /invoice

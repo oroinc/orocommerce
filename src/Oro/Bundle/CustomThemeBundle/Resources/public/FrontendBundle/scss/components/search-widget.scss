@@ -2,13 +2,14 @@
 
 @include breakpoint('tablet') {
     .search-widget {
-        margin: 0;
-        padding: $offset-y;
+        margin: $search-container-tablet-margin;
+        padding: $search-container-tablet-padding;
 
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $search-container-tablet-border;
 
         &__submit {
-            right: $offset-x;
+            top: $search-widget-input-submit-tablet-top;
+            right: $search-widget-input-submit-tablet-right;
         }
     }
 }

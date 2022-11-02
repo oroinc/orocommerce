@@ -11,7 +11,7 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
      */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +34,6 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fieldsData
      */
     public function testGetDataProviderConfigNumericOnly(array $fieldsData)
     {
@@ -163,7 +162,6 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
                         ]
                     ],
                     [
-
 
                         self::CLASS_NAME => 'UnitClass',
                         self::IS_RELATION => true,

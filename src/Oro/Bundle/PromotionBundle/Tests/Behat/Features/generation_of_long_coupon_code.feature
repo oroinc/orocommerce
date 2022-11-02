@@ -2,14 +2,13 @@
 @ticket-BB-11463
 @regression
 Feature: Generation of long coupon code
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
 
   Scenario: Trying to generate coupons exceeding max length
     Given I login as administrator
     And go to Marketing/Promotions/Coupons
     And click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
       | Uses per Coupon  | 5                                |
@@ -25,12 +24,12 @@ Feature: Generation of long coupon code
     Then I should see "Coupon codes must not be longer than 255 symbols, including prefix, suffix, and dashes. With the current settings, the coupon codes are 256 symbols longer."
     Then I expecting to see numeric coupon of 122 symbols with prefix "prefix" suffix "suffix" and dashes every 1 symbols
     When I close ui dialog
-    And I should see "No records found"
+    And I should see "There are no coupon"
 
   Scenario: Generate coupons with max length
     Given click "Coupons Actions"
     And I click "Generate Multiple Coupons"
-    When I fill form with:
+    When I fill "Generate Multiple Coupons Form" with:
       | Promotion        | order Discount Promotion         |
       | Coupon Quantity  | 10                               |
       | Uses per Coupon  | 5                                |

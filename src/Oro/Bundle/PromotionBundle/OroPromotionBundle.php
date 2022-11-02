@@ -2,48 +2,34 @@
 
 namespace Oro\Bundle\PromotionBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\LayoutBlockOptionsCompilerPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * OroPromotionBundle adds coupon and promotion features to the OroCommerce application
- */
 class OroPromotionBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function build(ContainerBuilder $container): void
     {
-        if (!$this->extension) {
-            $this->extension = new OroPromotionExtension();
-        }
+        parent::build($container);
 
-        return $this->extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new DefaultFallbackExtensionPass([
-            Promotion::class => [
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
+            'Oro\Bundle\PromotionBundle\Entity\Promotion' => [
                 'label' => 'labels',
-                'description' => 'descriptions',
-            ],
+                'description' => 'descriptions'
+            ]
         ]));
-        $container
-            ->addCompilerPass(new PromotionCompilerPass())
-            ->addCompilerPass(new PromotionProductsGridCompilerPass())
-            ->addCompilerPass(new LayoutBlockOptionsCompilerPass())
-            ->addCompilerPass(new TwigSandboxConfigurationPass());
+        $container->addCompilerPass(new PriorityNamedTaggedServiceCompilerPass(
+            'oro_promotion.discount.strategy_registry',
+            'oro_promotion.discount_strategy',
+            'alias'
+        ));
+        $container->addCompilerPass(new PromotionProductsGridCompilerPass());
+        $container->addCompilerPass(new TwigSandboxConfigurationPass());
     }
 }

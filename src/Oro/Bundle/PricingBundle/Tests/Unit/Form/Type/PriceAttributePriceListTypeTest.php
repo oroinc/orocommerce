@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -18,7 +19,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
      */
     protected $priceAttributePriceListType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->priceAttributePriceListType = new PriceAttributePriceListType();
         $this->priceAttributePriceListType->setDataClass(self::DATA_CLASS);
@@ -56,6 +57,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         $submittedData = [
             'name' => 'Test Price Attribute',
             'currencies' => [],
+            'enabledInExport' => 0
         ];
         $expectedData = $submittedData;
 
@@ -66,11 +68,13 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PriceAttributePriceList $result */
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
+        $this->assertEquals($expectedData['enabledInExport'], $result->isEnabledInExport());
     }
 
     public function testSubmitWithDefaultData()
@@ -79,6 +83,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
             'name' => 'Test Price Attribute 01',
             'fieldName' => 'pa01',
             'currencies' => ['EUR', 'USD'],
+            'enabledInExport' => 1
         ];
 
         $expectedData = $submittedData;
@@ -86,13 +91,10 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
             'name' => 'Test Price Attribute',
             'fieldName' => 'pa02',
             'currencies' => ['USD', 'UAH'],
+            'enabledInExport' => 0
         ];
         $existingPriceAttributePriceList = new PriceAttributePriceList();
-        $class = new \ReflectionClass($existingPriceAttributePriceList);
-        $prop = $class->getProperty('id');
-        $prop->setAccessible(true);
-
-        $prop->setValue($existingPriceAttributePriceList, 42);
+        ReflectionUtil::setId($existingPriceAttributePriceList, 42);
         $existingPriceAttributePriceList->setName($defaultData['name']);
 
         foreach ($defaultData['currencies'] as $currency) {
@@ -107,10 +109,12 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         /** @var PriceAttributePriceList $result */
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
+        $this->assertEquals($expectedData['enabledInExport'], $result->isEnabledInExport());
     }
 }

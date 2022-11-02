@@ -6,7 +6,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceListStrategySelectType extends AbstractType
 {
@@ -28,10 +28,6 @@ class PriceListStrategySelectType extends AbstractType
      */
     protected $strategies = [];
 
-    /**
-     * @param StrategyRegister $priceStrategyRegister
-     * @param TranslatorInterface $translator
-     */
     public function __construct(StrategyRegister $priceStrategyRegister, TranslatorInterface $translator)
     {
         $this->strategyRegister = $priceStrategyRegister;

@@ -4,59 +4,68 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider;
+use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentVariantDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $requestStack;
+    /** @var RequestWebContentVariantProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestWebContentVariantProvider;
 
-    protected function setUp()
+    /** @var ContentVariantDataProvider */
+    private $dataProvider;
+
+    protected function setUp(): void
     {
-        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);
+
+        $this->dataProvider = new ContentVariantDataProvider(
+            $this->requestWebContentVariantProvider
+        );
     }
 
-    public function testGetFromRequestWhenNoAttributeSet()
+    public function testGetFromRequestWhenContentVariantIsNull()
     {
-        $request = new Request();
-
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-
-        $dataProvider = new ContentVariantDataProvider($this->requestStack);
-        $this->assertNull($dataProvider->getFromRequest());
-    }
-
-    public function testGetFromRequestWhenRequestIsNull()
-    {
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
             ->willReturn(null);
 
-        $dataProvider = new ContentVariantDataProvider($this->requestStack);
-        $this->assertNull($dataProvider->getFromRequest());
+        $this->assertNull($this->dataProvider->getFromRequest());
     }
 
-    public function testGetFromRequestWhenAttributeSet()
+    public function testGetContentVariantTypeWhenContentVariantIsNull()
     {
-        $contentVariant = new ContentVariant();
-        $request = new Request([], [], ['_content_variant' => $contentVariant]);
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn(null);
 
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
+        $this->assertNull($this->dataProvider->getContentVariantType());
+    }
 
-        $dataProvider = new ContentVariantDataProvider($this->requestStack);
-        $this->assertSame($contentVariant, $dataProvider->getFromRequest());
+    public function testGetFromRequestWhenContentVariantExists()
+    {
+        $contentVariant = $this->createMock(ContentVariant::class);
+
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $this->assertSame($contentVariant, $this->dataProvider->getFromRequest());
+    }
+
+    public function testGetContentVariantTypeWhenContentVariantExists()
+    {
+        $contentVariant = $this->createMock(ContentVariant::class);
+        $contentVariant->expects($this->once())
+            ->method('getType')
+            ->willReturn('content_variant_type');
+
+        $this->requestWebContentVariantProvider->expects($this->once())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $this->assertSame('content_variant_type', $this->dataProvider->getContentVariantType());
     }
 }

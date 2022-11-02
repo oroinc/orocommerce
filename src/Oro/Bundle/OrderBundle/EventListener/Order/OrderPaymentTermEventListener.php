@@ -4,28 +4,25 @@ namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Find customer and customer group payment term values.
+ */
 class OrderPaymentTermEventListener
 {
     const ACCOUNT_PAYMENT_TERM_KEY = 'customerPaymentTerm';
     const ACCOUNT_GROUP_PAYMENT_TERM_KEY = 'customerGroupPaymentTerm';
 
-    /** @var PaymentTermProvider */
+    /** @var PaymentTermProviderInterface */
     protected $provider;
 
-    /**
-     * @param PaymentTermProvider $provider
-     */
-    public function __construct(PaymentTermProvider $provider)
+    public function __construct(PaymentTermProviderInterface $provider)
     {
         $this->provider = $provider;
     }
 
-    /**
-     * @param OrderEvent $event
-     */
     public function onOrderEvent(OrderEvent $event)
     {
         $customerPaymentTerm = null;
@@ -53,7 +50,6 @@ class OrderPaymentTermEventListener
     /**
      * This method left for the BC
      *
-     * @param Order $order
      * @throws BadRequestHttpException
      */
     protected function validateRelation(Order $order)

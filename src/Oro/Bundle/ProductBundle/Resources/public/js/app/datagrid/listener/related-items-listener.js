@@ -5,23 +5,21 @@ define([
 ], function(_, mediator, AbstractListener) {
     'use strict';
 
-    var RelatedItemsListener;
-
     /**
      * @export  oroproduct/js/datagrid/listener/related-product-listener
      * @class   oroproduct.datagrid.listener.RelatedProductListener
      * @extends orodatagrid.datagrid.listener.AbstractListener
      */
-    RelatedItemsListener = AbstractListener.extend({
+    const RelatedItemsListener = AbstractListener.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function RelatedItemsListener() {
-            RelatedItemsListener.__super__.constructor.apply(this, arguments);
+        constructor: function RelatedItemsListener(...args) {
+            RelatedItemsListener.__super__.constructor.apply(this, args);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.grid = options.grid;
@@ -33,28 +31,28 @@ define([
          * Synchronize included and excluded values for grid, respectively by added and removed product ids
          */
         updateRelatedProductsGrid: function(addedProductsIds, removedProductsIds) {
-            var collection = this.grid.collection;
+            const collection = this.grid.collection;
 
             collection.trigger('setState', addedProductsIds, removedProductsIds);
             collection.fetch({reset: true});
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         _processValue: function(id, model) {
             // it's not being used
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {
                 return;
             }
             delete this.grid;
-            RelatedItemsListener.__super__.dispose.apply(this, arguments);
+            RelatedItemsListener.__super__.dispose.call(this);
         }
     });
 
@@ -70,16 +68,16 @@ define([
      * @param {Object} [options.metadata] configuration for the grid
      */
     RelatedItemsListener.init = function(deferred, options) {
-        var gridInitialization = options.gridPromise;
+        const gridInitialization = options.gridPromise;
 
         gridInitialization.done(function(grid) {
-            var listenerOptions = {
+            const listenerOptions = {
                 $gridContainer: grid.$el,
                 gridName: grid.name,
                 grid: grid
             };
 
-            var listener = new RelatedItemsListener(listenerOptions);
+            const listener = new RelatedItemsListener(listenerOptions);
             deferred.resolve(listener);
         }).fail(function() {
             deferred.reject();

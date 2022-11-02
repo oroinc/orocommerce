@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -22,22 +23,19 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class SlugRepositoryTest extends WebTestCase
 {
-    /**
-     * @var SlugRepository
-     */
-    protected $repository;
+    private SlugRepository $repository;
+    private ScopeManager $scopeManager;
 
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(
+                LoadCustomerUserData::AUTH_USER,
+                LoadCustomerUserData::AUTH_PW
+            )
         );
+        $this->loadFixtures([LoadSlugScopesData::class]);
 
         $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
@@ -46,7 +44,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $organization = $this->getContainer()->get('doctrine')
-            ->getRepository('OroOrganizationBundle:Organization')
+            ->getRepository(Organization::class)
             ->getFirst();
         $token = new UsernamePasswordOrganizationToken(
             LoadCustomerUserData::AUTH_USER,
@@ -55,18 +53,15 @@ class SlugRepositoryTest extends WebTestCase
             $organization
         );
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
-
-        $this->loadFixtures(
-            [
-                LoadSlugScopesData::class
-            ]
-        );
     }
 
     public function testGetSlugByUrlAndScopeCriteriaAnonymous()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_ANONYMOUS, $criteria);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(
+            LoadSlugsData::SLUG_URL_ANONYMOUS,
+            $criteria
+        );
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
 
         $this->assertNotEmpty($slug);
@@ -123,8 +118,8 @@ class SlugRepositoryTest extends WebTestCase
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_URL, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_URL);
 
         $this->assertNotEmpty($slug);
         $this->assertSame($expected->getId(), $slug->getId());
@@ -133,24 +128,31 @@ class SlugRepositoryTest extends WebTestCase
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
-
-        $this->assertNotEmpty($slug);
-        $this->assertEquals($expected->getId(), $slug->getId());
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_URL, $criteria);
+        $this->assertEmpty($slug);
     }
 
     public function testFindOneDirectUrlBySlug()
     {
-        $actual = $this->repository->findOneDirectUrlBySlug('/slug/first');
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
+
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder(
+            LoadSlugsData::SLUG_TEST_URL,
+            null,
+            $criteria
+        );
+        $actual = $qb->getQuery()->getOneOrNullResult();
 
         $this->assertNotEmpty($actual);
-        $this->assertEquals($this->getReference('reference:/slug/first')->getId(), $actual->getId());
+        $this->assertEquals($this->getReference(LoadSlugsData::SLUG_TEST_URL)->getId(), $actual->getId());
     }
 
     public function testFindOneDirectUrlBySlugScopedSlug()
     {
-        $actual = $this->repository->findOneDirectUrlBySlug('/slug/page');
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/page');
+        $actual = $qb->getQuery()->getOneOrNullResult();
 
         $this->assertEmpty($actual);
     }
@@ -162,38 +164,40 @@ class SlugRepositoryTest extends WebTestCase
             ->method('getSlugs')
             ->willReturn([$this->getReference('reference:/slug/first')]);
 
-        $actual = $this->repository->findOneDirectUrlBySlug('/slug/first', $restrictedEntity);
+        $qb = $this->repository->getOneDirectUrlBySlugQueryBuilder('/slug/first', $restrictedEntity);
+        $actual = $qb->getQuery()->getOneOrNullResult();
         $this->assertEmpty($actual);
     }
 
     /**
      * @dataProvider findAllByPatternWithoutScopeDataProvider
-     * @param string $pattern
-     * @param array $expected
      */
-    public function testFindAllDirectUrlsByPattern($pattern, array $expected)
+    public function testFindAllDirectUrlsByPattern($pattern, ?array $criteria, array $expected)
     {
-        $actual = $this->repository->findAllDirectUrlsByPattern($pattern);
+        if ($criteria) {
+            array_walk($criteria, fn (&$item) => $item = $this->getReference($item));
+            $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, $criteria);
+        }
+
+        $actual = $this->repository->findAllDirectUrlsByPattern($pattern, null, $criteria);
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function findAllByPatternWithoutScopeDataProvider()
+    public function findAllByPatternWithoutScopeDataProvider(): array
     {
         return [
             [
                 'pattern' => '/slug/f%',
+                'criteriaContext' => ['customer' => LoadCustomers::DEFAULT_ACCOUNT_NAME],
                 'expected' => [
                     '/slug/first'
                 ]
             ],
             [
                 'pattern' => '/slug%',
+                'criteriaContext' => null,
                 'expected' => [
                     '/slug/anonymous',
-                    '/slug/first',
                     '/slug/page2',
                     '/slug/en/page',
                     '/slug/es/page'
@@ -244,8 +248,8 @@ class SlugRepositoryTest extends WebTestCase
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
-        $slug = $this->repository->getSlugBySlugPrototypeAndScopeCriteria('page', $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE);
+        $slug = $this->repository->getSlugBySlugPrototypeAndScopeCriteria('page2', $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE_2);
 
         $this->assertNotEmpty($slug);
         $this->assertSame($expected->getId(), $slug->getId());
@@ -268,7 +272,7 @@ class SlugRepositoryTest extends WebTestCase
                 'routeParameters' => $slug1->getRouteParameters(),
                 'url' => $slug1->getUrl(),
                 'slugPrototype' => $slug1->getSlugPrototype(),
-                'localization_id' => $slug1->getLocalization() ? $slug1->getLocalization()->getId() : null
+                'localization_id' => $slug1->getLocalization()?->getId()
             ]
         ];
         $this->assertEquals($expected, $actual);
@@ -285,20 +289,17 @@ class SlugRepositoryTest extends WebTestCase
     public function testFindMostSuitableUsedScope()
     {
         $scope = $this->getReference(LoadSlugScopesData::SCOPE_KEY);
-        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         /** @var Customer $customer */
         $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
-        $criteria = $scopeManager->getCriteria('web_content', ['customer' => $customer]);
+        $criteria = $this->scopeManager->getCriteria('web_content', ['customer' => $customer]);
         $this->assertSame($scope, $this->repository->findMostSuitableUsedScope($criteria));
     }
 
     public function testFindMostSuitableUsedScopeEmptyResult()
     {
-        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
-
         /** @var Customer $secondCustomer */
         $secondCustomer = $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1);
-        $nonUsedCriteria = $scopeManager->getCriteria('web_content', ['customer' => $secondCustomer]);
+        $nonUsedCriteria = $this->scopeManager->getCriteria('web_content', ['customer' => $secondCustomer]);
         $this->assertNull($this->repository->findMostSuitableUsedScope($nonUsedCriteria));
     }
 
@@ -391,5 +392,58 @@ class SlugRepositoryTest extends WebTestCase
             ],
             $slug
         );
+    }
+
+    public function testGetRawRedirectSlugForDuplicateSlug()
+    {
+        /** @var Slug $expected */
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $slug = $this->repository->getRawSlug(
+            'oro_cms_frontend_page_view',
+            [
+                'id' => $this->getReference(LoadPageData::PAGE_1)->getId()
+            ],
+            null
+        );
+
+        $this->assertNotEmpty($slug);
+        $this->assertEquals(
+            [
+                'url' => $expected->getUrl(),
+                'slug_prototype' => $expected->getSlugPrototype()
+            ],
+            $slug
+        );
+    }
+
+    public function testGetRawRedirectSlugWhenNoSlug()
+    {
+        $slug = $this->repository->getRawSlug(
+            'oro_customer_frontend_customer_user_create',
+            [],
+            null
+        );
+        $this->assertNull($slug);
+    }
+
+    /**
+     * @dataProvider isSlugForRouteExistsDataProvider
+     */
+    public function testIsSlugForRouteExists(string $routeName, bool $expectedResult): void
+    {
+        $actualResult = $this->repository->isSlugForRouteExists($routeName);
+
+        self::assertEquals($expectedResult, $actualResult);
+    }
+
+    public function isSlugForRouteExistsDataProvider(): array
+    {
+        return [
+            ['oro_product_frontend_product_view', true],
+            ['oro_product_frontend_product_index', false],
+            ['oro_cms_frontend_page_view', true],
+            ['oro_rfp_frontend_request_view', false],
+        ];
     }
 }

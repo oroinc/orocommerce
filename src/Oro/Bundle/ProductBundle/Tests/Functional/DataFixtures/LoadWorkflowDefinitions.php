@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
@@ -35,9 +35,6 @@ class LoadWorkflowDefinitions extends AbstractFixture implements ContainerAwareI
         $cache->invalidateActiveRelated();
     }
 
-    /**
-     * @return array
-     */
     private function getConfiguration(): array
     {
         return Yaml::parse(file_get_contents(__DIR__ . '/workflows_fixture.yml'));

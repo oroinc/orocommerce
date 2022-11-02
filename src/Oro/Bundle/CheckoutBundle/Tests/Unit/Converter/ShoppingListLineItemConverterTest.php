@@ -18,7 +18,7 @@ class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->converter = new ShoppingListLineItemConverter();
     }

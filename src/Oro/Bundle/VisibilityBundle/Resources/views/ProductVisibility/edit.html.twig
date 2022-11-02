@@ -1,21 +1,35 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% extends '@OroUI/actions/update.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
 {% set formAction = path('oro_product_visibility_edit', { 'id': entity.id })  %}
 
 {% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {{ UI.cancelButton(path('oro_product_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or is_granted('oro_product_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+
+    {% set html = '' %}
+    {% if is_granted('oro_product_view') %}
+        {% set html = html ~ UI.saveAndCloseButton({
+            'route' : 'oro_product_view',
+            'params' : {'id': '$id'}
+        }) %}
     {% endif %}
+    {% if is_granted('oro_product_visibility_edit') %}
+        {% set html = html ~ UI.saveAndStayButton({
+            'route' : 'oro_product_visibility_edit',
+            'params': {'id': '$id'}
+        }) %}
+    {% endif %}
+
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
 {% block pageHeader %}
     {% if entity.id %}
+        {% import '@OroUI/macros.html.twig' as UI %}
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('oro_product_index'),
@@ -40,7 +54,7 @@
                 {% if scope %}
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
-                        {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                        {% include '@OroVisibility/ProductVisibility/widget/scope.html.twig' with {form: form.children[scope.id]} %}
                     {% endif %}
                 {% endif %}
             {% else %}
@@ -49,12 +63,12 @@
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
                         {% set content %}
-                            {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                            {% include '@OroVisibility/ProductVisibility/widget/scope.html.twig' with {form: form.children[scope.id]} %}
                         {% endset %}
                     {% endif %}
 
                     {% set tab = {
-                        'alias': scope.id,
+                        'alias': 'tab-'|uniqid ~ '-' ~ scope.id,
                         'widgetType': 'block',
                         'label': label,
                         'url': path(
@@ -73,7 +87,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'Product visibility',
+            'title': 'oro.visibility.productvisibility.product_visibility.label'|trans,
             'subblocks': [
                 {'data' : [productVisibilityWidget] }
             ]

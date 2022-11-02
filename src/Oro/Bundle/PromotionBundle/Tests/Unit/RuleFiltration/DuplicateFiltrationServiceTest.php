@@ -18,7 +18,7 @@ class DuplicateFiltrationServiceTest extends AbstractSkippableFiltrationServiceT
      */
     protected $duplicateFiltrationService;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
 

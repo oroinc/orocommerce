@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
@@ -62,11 +62,6 @@ class LoadDependentPriceListRelations extends AbstractFixture implements Depende
         $manager->flush();
     }
 
-    /**
-     * @param BasePriceListRelation $priceListToWebsite
-     * @param Website               $website
-     * @param array                 $priceListData
-     */
     protected function fillRelationData(
         BasePriceListRelation $priceListToWebsite,
         Website $website,

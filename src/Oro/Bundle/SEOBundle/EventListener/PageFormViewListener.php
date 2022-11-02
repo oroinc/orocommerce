@@ -6,17 +6,11 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class PageFormViewListener extends BaseFormViewListener
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onPageView(BeforeListRenderEvent $event)
     {
         $this->addViewPageBlock($event);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onPageEdit(BeforeListRenderEvent $event)
     {
         $this->addEditPageBlock($event);

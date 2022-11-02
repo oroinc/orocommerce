@@ -1,0 +1,6 @@
+services:
+    oro_redirect.duplicator.extension.slug_extension:
+        class: Oro\Bundle\RedirectBundle\Duplicator\Extension\SlugExtension
+        arguments: ['@doctrine']
+        tags:
+            - { name: oro_draft.duplicator.extension, priority: 255 }

@@ -15,13 +15,12 @@ use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Helper\PlaceholderHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var IndexDataProvider */
-    protected $indexDataProvider;
-
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $eventDispatcher;
 
@@ -37,7 +36,10 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $placeholderHelper;
 
-    protected function setUp()
+    /** @var IndexDataProvider */
+    protected $indexDataProvider;
+
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->aliasResolver = $this->createMock(EntityAliasResolver::class);
@@ -47,13 +49,16 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->placeholderHelper = $this->createMock(PlaceholderHelper::class);
         $this->placeholderHelper->expects($this->any())
             ->method('isNameMatch')
-            ->willReturnCallback(
-                function ($name, $nameValue) {
-                    return $name === 'custom_PLACEHOLDER_ID' && $nameValue === 'custom_42';
-                }
-            );
+            ->willReturnCallback(function ($name, $nameValue) {
+                return $name === 'custom_PLACEHOLDER_ID' && $nameValue === 'custom_42';
+            });
 
-        $this->indexDataProvider = new IndexDataProvider(
+        $this->indexDataProvider = $this->createIndexDataProvider();
+    }
+
+    protected function createIndexDataProvider(): IndexDataProvider
+    {
+        return new IndexDataProvider(
             $this->eventDispatcher,
             $this->aliasResolver,
             $this->placeholder,
@@ -62,7 +67,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCollectContextForWebsite()
+    public function testCollectContextForWebsite(): void
     {
         $websiteId = 1;
         $context = [WebsiteIdPlaceholder::NAME => $websiteId];
@@ -72,102 +77,110 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
             AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
         ];
 
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            CollectContextEvent::NAME,
-            $this->logicalAnd(
-                $this->isInstanceOf(CollectContextEvent::class),
-                $this->callback(
-                    function (CollectContextEvent $event) use ($expectedContext) {
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                $this->logicalAnd(
+                    $this->isInstanceOf(CollectContextEvent::class),
+                    $this->callback(function (CollectContextEvent $event) use ($expectedContext) {
                         $this->assertEquals($expectedContext, $event->getContext());
 
                         return true;
-                    }
-                )
-            )
-        );
+                    })
+                ),
+                CollectContextEvent::NAME
+            );
 
-        $this->assertEquals($expectedContext, $this->indexDataProvider->collectContextForWebsite($websiteId, $context));
+        $this->assertEquals(
+            $expectedContext,
+            $this->indexDataProvider->collectContextForWebsite($websiteId, $context)
+        );
     }
 
-    public function testGetRestrictedEntitiesQueryBuilder()
+    public function testGetRestrictedEntitiesQueryBuilder(): void
     {
-        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
+        $this->aliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(\stdClass::class)
+            ->willReturn('std');
 
         $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 
         $this->assertEmpty($qb->getDQLPart('select'));
 
-        $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
             ->withConsecutive(
-                [
-                    RestrictIndexEntityEvent::NAME,
-                    $this->isInstanceOf(RestrictIndexEntityEvent::class),
-                ],
-                [
-                    RestrictIndexEntityEvent::NAME.'.std',
-                    $this->isInstanceOf(RestrictIndexEntityEvent::class),
-                ]
+                [$this->isInstanceOf(RestrictIndexEntityEvent::class), RestrictIndexEntityEvent::NAME],
+                [$this->isInstanceOf(RestrictIndexEntityEvent::class), RestrictIndexEntityEvent::NAME . '.std']
             )
-            ->willReturnCallback(
-                function () use ($qb) {
-                    $qb->select(['something']);
-                }
-            );
+            ->willReturnCallback(function ($event) use ($qb) {
+                $qb->select(['something']);
 
-        $this->assertSame($qb, $this->indexDataProvider->getRestrictedEntitiesQueryBuilder(\stdClass::class, $qb, []));
+                return $event;
+            });
+
+        $this->assertSame(
+            $qb,
+            $this->indexDataProvider->getRestrictedEntitiesQueryBuilder(\stdClass::class, $qb, [])
+        );
         $this->assertNotEmpty($qb->getDQLPart('select'));
     }
 
     /**
      * @dataProvider entitiesDataProvider
-     * @param array $entityConfig
-     * @param array $indexData
-     * @param array $expected
      */
-    public function testGetEntitiesData(array $entityConfig, array $indexData, array $expected)
+    public function testGetEntitiesData(array $entityConfig, array $indexData, array $expected): void
     {
-        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
-        $this->tagHelper->expects($this->any())->method('stripTags')->willReturnCallback(
-            function ($value) {
+        $this->aliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(\stdClass::class)
+            ->willReturn('std');
+        $this->tagHelper->expects($this->any())
+            ->method('stripTags')
+            ->willReturnCallback(function ($value) {
+                self::assertNotSame('', $value, 'The value for stripTags() must not be empty string.');
                 return trim(strip_tags($value));
-            }
-        );
+            });
         $this->tagHelper->expects($this->any())
             ->method('stripLongWords')
-            ->willReturnCallback(
-                function ($value) {
-                    $words = preg_split('/\s+/', $value);
+            ->willReturnCallback(function ($value) {
+                $words = preg_split('/\s+/', $value);
+                $words = array_filter(
+                    $words,
+                    function ($item) {
+                        return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
+                    }
+                );
 
-                    $words = array_filter(
-                        $words,
-                        function ($item) {
-                            return \strlen($item) <= HtmlTagHelper::MAX_STRING_LENGTH;
-                        }
-                    );
-
-                    return implode(' ', $words);
-                }
-            );
-        $this->placeholder->expects($this->any())->method('replace')->willReturnCallback(
-            function ($string, array $values) {
+                return implode(' ', $words);
+            });
+        $this->placeholder->expects($this->any())
+            ->method('replace')
+            ->willReturnCallback(function ($string, array $values) {
                 return str_replace(array_keys($values), array_values($values), $string);
-            }
-        );
+            });
 
-        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
-            ->with(IndexEntityEvent::NAME, $this->isInstanceOf(IndexEntityEvent::class))
-            ->willReturnCallback(
-                function ($name, IndexEntityEvent $event) use ($indexData) {
+        $this->eventDispatcher->expects($this->exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [$this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME],
+                [$this->isInstanceOf(IndexEntityEvent::class), IndexEntityEvent::NAME . '.std']
+            )
+            ->willReturnOnConsecutiveCalls(
+                new ReturnCallback(function (IndexEntityEvent $event) use ($indexData) {
                     foreach ($indexData as $data) {
                         $method = count($data) === 4 ? 'addField' : 'addPlaceholderField';
                         call_user_func_array([$event, $method], $data);
                     }
-                }
-            );
 
-        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
-            ->with(IndexEntityEvent::NAME.'.std', $this->isInstanceOf(IndexEntityEvent::class));
+                    return $event;
+                }),
+                new ReturnCallback(function ($event) {
+                    return $event;
+                }),
+            );
 
         $this->assertEquals(
             $expected,
@@ -176,10 +189,9 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function entitiesDataProvider()
+    public function entitiesDataProvider(): array
     {
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
 
@@ -189,26 +201,32 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'indexData' => [
                     [1, 'sku', 'SKU-01', false],
                 ],
-                'expected' => [1 => ['text' => ['sku' => 'SKU-01']]],
+                'expected' => [1 => ['text' => ['sku' => 'SKU-01'], 'integer' => ['system_entity_id' => 1]]],
             ],
             'simple field with duplicates' => [
                 'entityConfig' => ['fields' => [['name' => 'description', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
                     [1, 'description', 'Handheld Flashlight Handheld', false],
                 ],
-                'expected' => [1 => ['text' => ['description' => 'Handheld Flashlight Handheld']]],
+                'expected' => [1 => [
+                    'text' => ['description' => 'Handheld Flashlight Handheld'],
+                    'integer' => ['system_entity_id' => 1],
+                ]],
             ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
                     [1, 'title', '<p>SKU-01</p>', true],
                 ],
-                'expected' => [1 => ['text' => ['title' => '<p>SKU-01</p>', 'all_text' => 'SKU-01']]],
+                'expected' => [1 => [
+                    'text' => ['title' => '<p>SKU-01</p>'],
+                    'integer' => ['system_entity_id' => 1],
+                ]],
             ],
             'simple field with integer' => [
                 'entityConfig' => ['fields' => [['name' => 'qty', 'type' => Query::TYPE_INTEGER]]],
                 'indexData' => [[1, 'qty', 0, true]],
-                'expected' => [1 => ['integer' => ['qty' => 0]]],
+                'expected' => [1 => ['integer' => ['qty' => 0, 'system_entity_id' => 1]]],
             ],
             'placeholder field' => [
                 'entityConfig' => [
@@ -231,10 +249,10 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p>',
-                            'all_text' => 'SKU-01',
                             'all_text_5' => 'SKU-01',
                         ],
                         'integer' => [
+                            'system_entity_id' => 1,
                             'custom_42' => 42,
                         ]
                     ],
@@ -263,12 +281,14 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
-                            'all_text' => 'SKU-01 en_US SKU-01-gb en_GB',
                             'all_text_5' => 'SKU-01 en_US',
                             'all_text_6' => 'SKU-01-gb en_GB',
                             'descr_5' => '<p>en_US</p>',
                             'descr_6' => '<p>en_GB</p>',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -284,16 +304,11 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'indexData' => [[1, 'qty', 1, true]],
                 'expected' => [
                     1 => [
-                        'integer' => ['qty' => 1],
+                        'integer' => ['qty' => 1, 'system_entity_id' => 1],
                     ],
                 ],
             ],
-            'empty config field' => [
-                'entityConfig' => [],
-                'indexData' => [[1, 'qty', 1, true]],
-                'expected' => [],
-            ],
-            'do not drop value in all_text and all_text_localization fields, like metadata' => [
+            'do not drop value in all_text_localization fields, like metadata' => [
                 'entityConfig' => [
                     'fields' => [
                         [
@@ -315,7 +330,6 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
                     [1, 'descr_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
                     [1, 'descr_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
-                    [1, 'all_text', 'for_all_text', true],
                     [1, 'all_text_LOCALIZATION_ID', 'title5 descr5 keywords5', ['LOCALIZATION_ID' => 5], true],
                     [1, 'all_text_LOCALIZATION_ID', 'title6 descr6 keywords6', ['LOCALIZATION_ID' => 6], true],
                 ],
@@ -323,13 +337,14 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'text' => [
                             'title_1' => '<p>SKU-01</p> <p>SKU-01-gb</p>',
-                            'all_text' => 'for_all_text SKU-01 en_US title5 descr5 keywords5 SKU-01-gb en_GB ' .
-                                'title6 descr6 keywords6',
-                            'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
-                            'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
+                            'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5',
+                            'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6',
                             'descr_5' => '<p>en_US</p>',
                             'descr_6' => '<p>en_GB</p>',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -358,6 +373,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                 'expected' => [
                     1 => [
                         'integer' => [
+                            'system_entity_id' => 1,
                             'integer_1' => 1
                         ],
                         'datetime' => [
@@ -383,16 +399,19 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title', 'The fox', true],
-                    [1, 'description', 'The quick brown fox jumps over the lazy dog', true],
+                    [1, 'title', 'The fox', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'description', 'The quick brown fox jumps over the lazy dog', ['LOCALIZATION_ID' => 5], true],
                 ],
                 'expected' => [
                     1 => [
                         'text' => [
                             'title' => 'The fox',
                             'description' => 'The quick brown fox jumps over the lazy dog',
-                            'all_text' => 'The fox quick brown jumps over the lazy dog',
+                            'all_text_5' => 'The fox quick brown jumps over the lazy dog',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
@@ -410,7 +429,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title', 'The long entry', true],
+                    [1, 'title', 'The long entry', ['LOCALIZATION_ID' => 5], true],
                     [
                         1,
                         'description',
@@ -421,6 +440,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                         'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
                         ' ' .
                         'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                        ['LOCALIZATION_ID' => 5],
                         true
                     ],
                 ],
@@ -436,28 +456,95 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
                                 'QJfPB2teh0ukQN46FehTdiMRMMGGlaNvQvB4ymJq49zUWidBOhT9IzqNyPhYvchY1234' .
                                 ' ' .
                                 'zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
-                            'all_text' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
+                            'all_text_5' => 'The long entry zUWidBOhT9IzqNyPhYvchY QJfPB2teh0ukQ',
                         ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
+                    ],
+                ],
+            ],
+            'single array value without all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'color',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'color', ['red', 'green', 'blue'], ['LOCALIZATION_ID' => 5], false],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'color' => ['red', 'green', 'blue'],
+                            'all_text_5' => 'The fox',
+                        ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
+                    ],
+                ],
+            ],
+            'multiple array values with all_text' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'title',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                        [
+                            'name' => 'color',
+                            'type' => Query::TYPE_TEXT,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'title', 'The fox', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'color', ['Red', 'Green', 'Blue'], ['LOCALIZATION_ID' => 5], true],
+                    [1, 'color', ['Red', 'White', 'Black'], ['LOCALIZATION_ID' => 5], true],
+                ],
+                'expected' => [
+                    1 => [
+                        'text' => [
+                            'title' => 'The fox',
+                            'color' => ['Red', 'Green', 'Blue', 'White', 'Black'],
+                            'all_text_5' => 'The fox Red Green Blue White Black',
+                        ],
+                        'integer' => [
+                            'system_entity_id' => 1,
+                        ]
                     ],
                 ],
             ],
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Missing option "type" for "sku" field
-     */
-    public function testGetEntitiesDataConfigMissing()
+    public function testGetEntitiesDataConfigMissing(): void
     {
-        $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Missing option "type" for "sku" field');
 
-        $this->eventDispatcher->expects($this->atLeastOnce())->method('dispatch')
-            ->willReturnCallback(
-                function ($name, IndexEntityEvent $event) {
-                    $event->addField(1, 'sku', 'SKU-01');
-                }
-            );
+        $this->aliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(\stdClass::class)
+            ->willReturn('std');
+
+        $this->eventDispatcher->expects($this->atLeastOnce())
+            ->method('dispatch')
+            ->willReturnCallback(function (IndexEntityEvent $event) {
+                $event->addField(1, 'sku', 'SKU-01');
+
+                return $event;
+            });
 
         $this->indexDataProvider->getEntitiesData(\stdClass::class, [], [], ['fields' => []]);
     }

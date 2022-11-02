@@ -1,30 +1,40 @@
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeDefaultWebCatalog:
-        addTitle: ['@localValueDefaultWebCatalog']
+        __calls:
+            - addTitle: ['@localValueDefaultWebCatalog']
         webCatalog: '@webCatalog'
 
     nodeProducts:
-        addTitle: ['@localValueProducts']
-        addSlugPrototype: ['@localValueProductsSlug']
+        __calls:
+            - addTitle: ['@localValueProducts']
+            - addSlugPrototype: ['@localValueProductsSlug']
+            - addLocalizedUrl: ['@localValueProductsSlug']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeNewArrivals:
-        addTitle: ['@localValueNewArrivals']
-        addSlugPrototype: ['@localValueNewArrivalsSlug']
+        __calls:
+            - addTitle: ['@localValueNewArrivals']
+            - addSlugPrototype: ['@localValueNewArrivalsSlug']
+            - addLocalizedUrl: ['@localValueNewArrivalsSlug']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeClearance:
-        addTitle: ['@localValueClearance']
-        addSlugPrototype: ['@localValueClearanceSlug']
+        __calls:
+            - addTitle: ['@localValueClearance']
+            - addSlugPrototype: ['@localValueClearanceSlug']
+            - addLocalizedUrl: ['@localValueClearanceSlug']
+            - addContentVariant: ['@clearanceVariant']
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
     nodeByBrand:
-        addTitle: ['@localValueByBrand']
-        addSlugPrototype: ['@localValueByBrandSlug']
-        addContentVariant: ['@systemPageVariant']
+        __calls:
+            - addTitle: ['@localValueByBrand']
+            - addSlugPrototype: ['@localValueByBrandSlug']
+            - addLocalizedUrl: ['@localValueByBrandSlug']
+            - addContentVariant: ['@brandVariant']
         ParentNode: '@nodeClearance'
         webCatalog: '@webCatalog'
 
@@ -65,5 +75,11 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
     systemPageVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'
+    clearanceVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'
+    brandVariant:
         type: 'system_page'
         systemPageRoute: 'oro_customer_frontend_customer_user_index'

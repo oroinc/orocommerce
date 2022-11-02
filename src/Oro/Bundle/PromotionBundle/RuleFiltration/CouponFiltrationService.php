@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -21,10 +21,6 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
      */
     private $registry;
 
-    /**
-     * @param RuleFiltrationServiceInterface $filtrationService
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
         ManagerRegistry $registry

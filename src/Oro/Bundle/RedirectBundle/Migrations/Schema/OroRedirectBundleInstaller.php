@@ -6,6 +6,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * Installer for the RedirectBundle.
+ */
 class OroRedirectBundleInstaller implements Installation
 {
     /**
@@ -13,7 +16,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_7';
     }
 
     /**
@@ -36,13 +39,12 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_redirect_slug table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectSlugTable(Schema $schema)
     {
         $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
         $table->addColumn('url_hash', 'string', ['length' => 32]);
         $table->addColumn('route_name', 'string', ['length' => 255]);
@@ -50,17 +52,26 @@ class OroRedirectBundleInstaller implements Installation
         $table->addColumn('slug_prototype', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('parameters_hash', 'string', ['length' => 32]);
+        $table->addColumn('scopes_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
         $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
         $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug', []);
         $table->addIndex(['parameters_hash'], 'oro_redirect_slug_parameters_hash_idx', []);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addUniqueIndex(
+            ['organization_id', 'url_hash', 'scopes_hash'],
+            'oro_redirect_slug_uidx'
+        );
     }
 
     /**
      * Create oro_slug_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroSlugScopeTable(Schema $schema)
     {
@@ -72,8 +83,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_redirect_scope table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectScopeTable(Schema $schema)
     {
@@ -85,8 +94,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_slug_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSlugScopeForeignKeys(Schema $schema)
     {
@@ -107,8 +114,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_redirect_scope foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectScopeForeignKeys(Schema $schema)
     {
@@ -129,8 +134,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create orob2b_redirect table
-     *
-     * @param Schema $schema
      */
     protected function createOroRedirectTable(Schema $schema)
     {
@@ -150,8 +153,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Create oro_slug_redirect table
-     *
-     * @param Schema $schema
      */
     protected function createOroSlugRedirectTable(Schema $schema)
     {
@@ -165,8 +166,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_slug_redirect foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSlugRedirectForeignKeys(Schema $schema)
     {
@@ -187,8 +186,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_redirect foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectForeignKeys(Schema $schema)
     {
@@ -203,8 +200,6 @@ class OroRedirectBundleInstaller implements Installation
 
     /**
      * Add oro_redirect_slug foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroRedirectSlugForeignKeys(Schema $schema)
     {

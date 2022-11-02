@@ -1,11 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/billing_information.html.twig'
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/billing_information.html.twig'
 
         - '@setOption':
-            id: checkout_information_title
-            optionName: stepOrder
-            optionValue: 1
+            id: checkout_button_back
+            optionName: visible
+            optionValue: '=data["workflowItem"].getData().get("consents_available")'
 
     conditions: 'context["workflowStepName"]=="enter_billing_address"'

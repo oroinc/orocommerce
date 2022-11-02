@@ -33,9 +33,6 @@ class ShippingMethodDisableIntegrationListener
         $this->shippingMethodDisableHandler = $shippingMethodDisableHandler;
     }
 
-    /**
-     * @param ChannelDisableEvent $event
-     */
     public function onIntegrationDisable(ChannelDisableEvent $event)
     {
         $channel = $event->getChannel();

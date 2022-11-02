@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -12,13 +13,12 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
 {
     /**
      * @dataProvider positionChangeDataProvider
-     *
-     * @param string $categoryReference
-     * @param string $newParentCategoryReference
-     * @param array $expectedData
      */
-    public function testPositionChange($categoryReference, $newParentCategoryReference, array $expectedData)
-    {
+    public function testPositionChange(
+        string $categoryReference,
+        string $newParentCategoryReference,
+        array $expectedData
+    ) {
         $container = $this->getContainer();
         $container->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         /** @var Category $category */
@@ -30,7 +30,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
         $category->setParentCategory($newParentCategory);
 
         $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
+            ->getManagerForClass(CategoryVisibility::class)
             ->flush();
         $container->get('oro_visibility.visibility.cache.product.category.cache_builder')
             ->categoryPositionChanged($category);
@@ -38,10 +38,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
         $this->assertProductVisibilityResolvedCorrect($expectedData);
     }
 
-    /**
-     * @return array
-     */
-    public function positionChangeDataProvider()
+    public function positionChangeDataProvider(): array
     {
         $file = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'expected_position_change.yml';
 

@@ -26,12 +26,6 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteD
      */
     private $shippingConfiguredPriceProvider;
 
-    /**
-     * @param ShippingContextFactoryInterface $quoteShippingContextFactory
-     * @param QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
-     * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
-     * @param QuoteDemandSubtotalsCalculatorInterface $quoteDemandSubtotalsCalculator
-     */
     public function __construct(
         ShippingContextFactoryInterface $quoteShippingContextFactory,
         QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory,

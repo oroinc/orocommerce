@@ -31,9 +31,6 @@ class CreateForeignKeysWithNewTable implements Migration, OrderedMigrationInterf
         $this->addOroShippingRuleDestinationForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroShipMethodConfigForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_ship_method_config');
@@ -45,9 +42,6 @@ class CreateForeignKeysWithNewTable implements Migration, OrderedMigrationInterf
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function addOroShippingRuleDestinationForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_shipping_rule_destination');

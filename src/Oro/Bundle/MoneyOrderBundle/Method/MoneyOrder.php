@@ -5,18 +5,18 @@ namespace Oro\Bundle\MoneyOrderBundle\Method;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodWithPostponedCaptureInterface;
 
-class MoneyOrder implements PaymentMethodInterface
+/**
+ * Implements Money Order payment method
+ */
+class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
 {
     /**
      * @var MoneyOrderConfigInterface
      */
     protected $config;
 
-    /**
-     * @param MoneyOrderConfigInterface $config
-     */
     public function __construct(MoneyOrderConfigInterface $config)
     {
         $this->config = $config;
@@ -27,9 +27,55 @@ class MoneyOrder implements PaymentMethodInterface
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setSuccessful(true);
+        if (!method_exists($this, $action)) {
+            throw new \InvalidArgumentException(
+                sprintf('"%s" payment method "%s" action is not supported', $this->getIdentifier(), $action)
+            );
+        }
 
-        return [];
+        return $this->$action($paymentTransaction);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSourceAction(): string
+    {
+        return self::PENDING;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function useSourcePaymentTransaction(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function purchase(PaymentTransaction $paymentTransaction): array
+    {
+        $paymentTransaction
+            ->setAction($this->getSourceAction())
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        return ['successful' => true];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function capture(PaymentTransaction $paymentTransaction): array
+    {
+        $paymentTransaction
+            ->setAction(self::CAPTURE)
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        return ['successful' => true];
     }
 
     /**
@@ -53,6 +99,6 @@ class MoneyOrder implements PaymentMethodInterface
      */
     public function supports($actionName)
     {
-        return $actionName === self::PURCHASE;
+        return \in_array($actionName, [self::PURCHASE, self::CAPTURE], true);
     }
 }

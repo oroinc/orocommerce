@@ -28,7 +28,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_6';
     }
 
     /**
@@ -52,7 +52,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_decimal table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchDecimalTable(Schema $schema)
     {
@@ -69,7 +68,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_integer table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchIntegerTable(Schema $schema)
     {
@@ -86,7 +84,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_datetime table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchDatetimeTable(Schema $schema)
     {
@@ -103,7 +100,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_item table
-     * @param Schema $schema
      */
     protected function createOroWebsiteSearchItemTable(Schema $schema)
     {
@@ -112,8 +108,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('entity', 'string', ['length' => 255]);
         $table->addColumn('alias', 'string', ['length' => 255]);
         $table->addColumn('record_id', 'integer', ['notnull' => false]);
-        $table->addColumn('title', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('weight', 'decimal', ['precision' => 21, 'scale' => 8, 'default' => 1]);
+        $table->addColumn('weight', 'decimal', ['precision' => 8, 'scale' => 4, 'default' => 1]);
         $table->addColumn('changed', 'boolean', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -125,9 +120,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Create oro_website_search_text table
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
     {
@@ -152,7 +144,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_decimal foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchDecimalForeignKeys(Schema $schema)
     {
@@ -167,7 +158,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_integer foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchIntegerForeignKeys(Schema $schema)
     {
@@ -182,7 +172,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_datetime foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchDatetimeForeignKeys(Schema $schema)
     {
@@ -197,7 +186,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
     /**
      * Add oro_website_search_text foreign keys.
-     * @param Schema $schema
      */
     protected function addOroWebsiteSearchTextForeignKeys(Schema $schema)
     {

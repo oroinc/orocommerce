@@ -55,9 +55,6 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
     /**
      * We need only non dirty channels for creating methods.
      * For example if entity was changed on form submit, we will have dirty channel in Unit of work.
-     *
-     * @param Channel            $channel
-     * @param LifecycleEventArgs $event
      */
     public function postLoad(Channel $channel, LifecycleEventArgs $event)
     {
@@ -97,9 +94,6 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
         return array_key_exists($name, $this->getShippingMethods());
     }
 
-    /**
-     * @param Channel $channel
-     */
     private function createMethodFromChannel(Channel $channel)
     {
         $method = $this->methodFactory->create($channel);

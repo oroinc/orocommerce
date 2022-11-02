@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
@@ -18,7 +19,6 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -40,11 +40,11 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     const ANOTHER_ACCOUNT_ADDRESS = 'customer.level_1.address_1';
     const DEFAULT_BILLING_ADDRESS = 'customer.level_1.address_2';
 
-    const SHIPPING_ADDRESS_SIGN = 'SELECT SHIPPING ADDRESS';
-    const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
+    const SHIPPING_ADDRESS_SIGN = 'Select Shipping Address';
+    const BILLING_ADDRESS_SIGN = 'Select Billing Address';
     const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
     const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
-    const ORDER_REVIEW_SIGN = 'Order options';
+    const ORDER_REVIEW_SIGN = 'Do not ship later than';
     const FINISH_SIGN = 'Thank You For Your Purchase!';
     const EDIT_BILLING_SIGN = 'Edit Billing Information';
     const EDIT_SHIPPING_INFO_SIGN = 'Edit Shipping Information';
@@ -57,15 +57,13 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     const TRANSITION_BACK_TO_BILLING_ADDRESS = 'back_to_billing_address';
     const TRANSITION_BACK_TO_SHIPPING_ADDRESS = 'back_to_shipping_address';
 
-    /** @var  ManagerRegistry */
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $checkoutUrl;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -103,9 +101,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         return [UpdateInventoryLevelsQuantities::class];
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
     protected function startCheckout(ShoppingList $shoppingList)
     {
         $this->startCheckoutByData($this->getCheckoutData($shoppingList));
@@ -148,11 +143,11 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         );
         if ($select->filter('option')->count() === 1) {
             return null;
-        } else {
-            $value = $select->filter('optgroup')->filter('option[selected="selected"]')->attr('value');
-
-            return (int)substr($value, strpos($value, '_') + 1);
         }
+
+        $value = $select->filter('optgroup')->filter('option[selected="selected"]')->attr('value');
+
+        return (int)substr($value, strpos($value, '_') + 1);
     }
 
     /**
@@ -189,7 +184,8 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
         foreach ($values as $key => $val) {
-            if (!$pos = strpos($key, '[')) {
+            $pos = strpos($key, '[');
+            if (!$pos) {
                 continue;
             }
             $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
@@ -251,20 +247,20 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         );
     }
 
-    /**
-     * @param array $data
-     */
     protected function startCheckoutByData(array $data)
     {
+        $userManager = $this->getContainer()->get('oro_customer_user.manager');
         $this->setCurrentWebsite('default');
         $user = $this->registry
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
         $user->setCustomer($this->getReference('customer.level_1'));
+        $userManager->updateUser($user);
+
         $organization = $this->registry
             ->getRepository(Organization::class)
             ->getFirst();
-        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getRoles());
+        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getUserRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $action = $this->client->getContainer()->get('oro_action.action.run_action_group');
         $action->initialize($data['options']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
@@ -21,7 +21,7 @@ class RestrictProductVariantEventVisibilityListenerTest extends \PHPUnit\Framewo
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()

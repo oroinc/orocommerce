@@ -12,7 +12,7 @@ Feature: Quote Backoffice Default Workflow
     And I login as administrator and use in "second_session" as "Admin"
     And go to System/Workflows
     And I click "Activate" on row "Quote Management Flow" in grid
-    And I click "Activate"
+    And I click "Activate" in modal window
     Then I should see "Workflow activated" flash message
 
   Scenario: Draft -> Edit, Quote #11. Internal status: Draft, customer status: N/A
@@ -39,10 +39,16 @@ Feature: Quote Backoffice Default Workflow
     And click "Quotes"
     Then there is no "PO11" in grid
 
-  Scenario: Draft -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
+  Scenario: Edit Quote #11. Check that "Cancel" button return to the grid
     Given I operate as the Admin
-    And go to Sales/Quotes
-    And click view PO11 in grid
+    And I go to Sales/Quotes
+    And I filter PO Number as contains "PO11"
+    And I click edit PO11 in grid
+    When I click on page action "Cancel"
+    Then the url should match "/admin/sale/quote"
+
+  Scenario: Draft -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
+    Given click view PO11 in grid
     Then I should see Quote with:
       | Quote # | 11 |
       | PO Number | PO11 |
@@ -376,8 +382,12 @@ Feature: Quote Backoffice Default Workflow
 
   Scenario: Create a Quote #36 from RFQ. Internal status: Draft, customer status: N/A, invisible for customer
     Then I operate as the Buyer
-    And request a quote from shopping list "Shopping List 1" with data:
+    And I open page with shopping list Shopping List 1
+    And I click "More Actions"
+    And I click "Request Quote"
+    And I fill form with:
       | PO Number | PO36 |
+    And I click "Submit Request"
 
     Given I operate as the Admin
     And create a quote from RFQ with PO Number "PO36"

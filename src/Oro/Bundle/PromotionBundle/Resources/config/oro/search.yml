@@ -1,12 +1,11 @@
 search:
     Oro\Bundle\PromotionBundle\Entity\Promotion:
         alias:                          oro_promotion
-        title_fields:                   [ruleName]
         route:
             name:                       oro_promotion_view
             parameters:
                 id:                     id
-        search_template:                OroPromotionBundle:Promotion:searchResult.html.twig
+        search_template:                '@OroPromotion/Promotion/searchResult.html.twig'
         fields:
             -
                 name:                   rule
@@ -19,12 +18,11 @@ search:
 
     Oro\Bundle\PromotionBundle\Entity\Coupon:
         alias:                          oro_coupon
-        title_fields:                   [code]
         route:
             name:                       oro_promotion_coupon_view
             parameters:
                 id:                     id
-        search_template:                OroPromotionBundle:Coupon:searchResult.html.twig
+        search_template:                '@OroPromotion/Coupon/searchResult.html.twig'
         fields:
             -
                 name:                   code

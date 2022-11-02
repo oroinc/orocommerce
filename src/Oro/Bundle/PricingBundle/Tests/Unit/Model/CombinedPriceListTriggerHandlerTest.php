@@ -2,94 +2,75 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorageInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
+class CombinedPriceListTriggerHandlerTest extends TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var Registry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    private ManagerRegistry|MockObject $registry;
+    private EventDispatcher|MockObject $eventDispatcher;
+    private ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage;
 
-    /**
-     * @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $eventDispatcher;
+    private CombinedProductPriceRepository|MockObject $repository;
+    private CombinedPriceListTriggerHandler $triggerHandler;
 
-    /**
-     * @var CombinedPriceListTriggerHandler
-     */
-    protected $triggerHandler;
+    private array $events = [];
 
-    /**
-     * @var CombinedProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $repository;
-
-    /**
-     * @var array
-     */
-    protected $events = [];
-
-    public function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->createMock(CombinedProductPriceRepository::class);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects($this->any())
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->registry->expects($this->any())
             ->method('getRepository')
-            ->with(CombinedProductPrice::class)
             ->willReturn($this->repository);
 
-        $this->registry = $this->createMock(Registry::class);
-        $this->registry
-            ->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-        $this->eventDispatcher->method('dispatch')->willReturnCallback(
-            function ($eventName, $event) {
-                $this->events[$eventName][] = $event;
-            }
-        );
+        $this->eventDispatcher
+            ->method('dispatch')
+            ->willReturnCallback(
+                function ($event, $eventName) {
+                    $this->events[$eventName][] = $event;
 
-        $this->triggerHandler = new CombinedPriceListTriggerHandler($this->registry, $this->eventDispatcher);
+                    return $event;
+                }
+            );
+        $this->websiteReindexRequestDataStorage = $this
+            ->createMock(ProductWebsiteReindexRequestDataStorageInterface::class);
+
+        $this->triggerHandler = new CombinedPriceListTriggerHandler(
+            $this->registry,
+            $this->eventDispatcher,
+            $this->websiteReindexRequestDataStorage
+        );
     }
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testProcess(
         array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
         array $website = null
-    ) {
+    ): void {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
         if ($website) {
             $website = $this->getEntity(Website::class, $website);
         }
 
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('getProductIdsByPriceLists')
             ->willReturn($productIds);
 
@@ -99,25 +80,19 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testProcessWithCommit(
         array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
         array $website = null
-    ) {
+    ): void {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
         if ($website) {
             $website = $this->getEntity(Website::class, $website);
         }
 
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('getProductIdsByPriceLists')
             ->willReturn($productIds);
 
@@ -130,25 +105,19 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testProcessWithNestedCommits(
         array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
         array $website = null
-    ) {
+    ): void {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
         if ($website) {
             $website = $this->getEntity(Website::class, $website);
         }
 
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('getProductIdsByPriceLists')
             ->willReturn($productIds);
         $this->assertEmpty($this->events);
@@ -161,7 +130,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedEvents, $this->events);
     }
 
-    public function testProcessWithRollback()
+    public function testProcessWithRollback(): void
     {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, ['id' => 1001]);
         $website = $this->getEntity(Website::class, ['id' => 1001]);
@@ -179,24 +148,18 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $productIds
-     * @param array $expectedEvents
-     * @param array|null $website
      */
     public function testMassProcess(
         array $combinedPriceList,
         array $productIds,
         array $expectedEvents,
         array $website = null
-    ) {
+    ): void {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
         if ($website) {
             $website = $this->getEntity(Website::class, $website);
         }
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('getProductIdsByPriceLists')
             ->willReturn($productIds);
 
@@ -207,9 +170,32 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * @dataProvider processDataProvider
      */
-    public function processDataProvider()
+    public function testMassProcessWithCollect(
+        array $combinedPriceList,
+        array $productIds,
+        array $expectedEvents,
+        array $website = null
+    ): void {
+        $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
+        if ($website) {
+            $website = $this->getEntity(Website::class, $website);
+        }
+        $this->repository->expects($this->once())
+            ->method('getProductIdsByPriceLists')
+            ->willReturn($productIds);
+
+        $this->websiteReindexRequestDataStorage->expects($this->exactly(count($expectedEvents)))
+            ->method('insertMultipleRequests');
+
+        $this->triggerHandler->startCollect(100);
+        $this->triggerHandler->massProcess([$combinedPriceList], $website);
+        $this->triggerHandler->commit();
+        $this->assertEmpty($this->events);
+    }
+
+    public function processDataProvider(): array
     {
         return [
             [
@@ -235,12 +221,6 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processByProductDataProvider
-     *
-     * @param array $combinedPriceList
-     * @param array $expectedEvents
-     * @param array|null $products
-     * @param array|null $website
-     * @param array $productIds
      */
     public function testProcessByProduct(
         array $combinedPriceList,
@@ -248,7 +228,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         array $products = [],
         array $website = null,
         array $productIds = []
-    ) {
+    ): void {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
         if ($website) {
             $website = $this->getEntity(Website::class, $website);
@@ -264,10 +244,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedEvents, $this->events);
     }
 
-    /**
-     * @return array
-     */
-    public function processByProductDataProvider()
+    public function processByProductDataProvider(): array
     {
         return [
             [
@@ -304,12 +281,11 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testProcessForWebsites()
+    public function testProcessForWebsites(): void
     {
         $cpl1ProductIds = [1, 2];
         $cpl2ProductIds = [1, 3];
-        $this->repository
-            ->expects($this->exactly(2))
+        $this->repository->expects($this->exactly(2))
             ->method('getProductIdsByPriceLists')
             ->willReturnOnConsecutiveCalls($cpl1ProductIds, $cpl2ProductIds);
 
@@ -321,7 +297,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         /** Process CPL for website1 */
         $website1Id = 1;
-        $website1   = $this->getEntity(Website::class, ['id' => $website1Id]);
+        $website1 = $this->getEntity(Website::class, ['id' => $website1Id]);
         $combinedPriceList2 = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
         $this->triggerHandler->process($combinedPriceList2, $website1);
 

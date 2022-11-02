@@ -49,6 +49,7 @@ oro:
         all_label: All Promotions
         entity_label: Promotion
         entity_plural_label: Promotions
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_description: Represents promotion information
         id.label: ID
         coupons.label: Coupons
@@ -65,6 +66,7 @@ oro:
         scopes.label: Scopes
         use_coupons:
             label: Triggered by
+            tooltip: Select Coupons and Conditions if the promotion is going to use either only coupons, or coupons and conditions together. If you need to trigger the promotion solely by conditions, use the Conditions Only option.
             no: Conditions only
             yes: Coupons and Conditions
         rule:
@@ -126,6 +128,7 @@ oro:
         discountconfiguration:
             entity_label: Discount Configuration
             entity_plural_label: Discount Configurations
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             type:
                 label: Type
@@ -139,6 +142,7 @@ oro:
         promotionschedule:
             entity_label: Promotion Schedule
             entity_plural_label: Promotion Schedules
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             promotion.label: Promotion
             active_at.label: Activate At
@@ -152,9 +156,8 @@ oro:
             not_active_now: Is not active now.
 
         feature:
-            promotion:
-                label: Promotion
-                description: Promotion functionality allows admin users to manage promotions for Front Store customers
+            label: Promotions
+            description: Enable promotions and promotion-related functionality, and access to promotions via the API.
 
         system_configuration:
             groups:
@@ -162,6 +165,9 @@ oro:
                 promotion_general.title: General Options
             fields:
                 feature_enabled.label: Enable Promotions
+                case_insensitive_coupon_search:
+                    label: Case-Insensitive Coupon Codes
+                    tooltip: Enable the option to ignore the letter case when applying coupon codes. In this case, "freeship" and "FREESHIP" are considered equal.
                 discount_strategy.label: Discount Strategy
 
         controller:
@@ -184,6 +190,7 @@ oro:
         applieddiscount:
             entity_label: Applied Discount
             entity_plural_label: Applied Discounts
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             applied_promotion.label: Applied Promotion
             amount.label: Amount
@@ -195,10 +202,12 @@ oro:
         coupon:
             entity_label: Coupon
             entity_plural_label: Coupons
+            entity_grid_all_view_label: All %entity_plural_label%
             organization.label: Organization
             owner.label: Owner
             id.label: Id
             code.label: Coupon Code
+            code_uppercase.label: Coupon Code (Uppercase)
             promotion.label: Promotion
             enabled:
                 label: Enabled
@@ -215,6 +224,9 @@ oro:
             sections:
                 general: General
                 additional: Additional
+            feature:
+                label: Coupons
+                description: Enables creating and managing coupons.
             form:
                 title:
                     mass_edit: Mass Coupon Edit
@@ -240,6 +252,7 @@ oro:
                     alphanumeric.label: Alphanumeric
                     alphabetic.label: Alphabetic
                 codePrefix.label: Code Prefix
+                codePreview.label: Code Preview
                 codeSuffix.label: Code Suffix
                 dashesSequence:
                     prefix.label: Add Dashes Every
@@ -254,6 +267,7 @@ oro:
         appliedpromotion:
             entity_label: Applied Promotion
             entity_plural_label: Applied Promotions
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             active:
                 label: Active
@@ -286,6 +300,7 @@ oro:
         appliedcoupon:
             entity_label: Applied Coupon
             entity_plural_label: Applied Coupons
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
             applied_promotion.label: Applied Promotion
             coupon_code.label: Coupon Code
@@ -303,12 +318,13 @@ oro:
             expand_link.label: 'I have a Coupon Code'
             widget:
                 header.label: 'Coupon'
+                input.aria_label: 'Use your coupon code for getting a discount'
                 coupon_input.placeholder: 'Enter Coupon Code here'
                 apply_button.label: 'Apply'
+                apply_button.aria_label: 'Apply Coupon'
                 applied_coupons_header.label: 'Applied Code'
-        shoppinglist:
-            view:
-                discount.label: 'Row Discount:'
+                list.aria_label: 'The list of applied coupon codes'
+                delete: 'Delete applied %counter% coupon: %coupon_name%'
         checkout:
             view:
                 discount.label: 'Row Discount:'
@@ -316,6 +332,10 @@ oro:
         applied_coupons.label: Applied Coupons
         applied_discounts.label: Applied Discounts
         applied_promotions.label: Applied Promotions
+        disable_promotions:
+            label: Disable Promotions
+            description: Allows to disable promotions engine in order to prevent it's execution for the order.
+            disabled_for_oder: Promotions are disabled for the order.
         promotions:
             applied_discount:
                 name: Name

@@ -2,12 +2,38 @@ api:
     entities:
         Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
             documentation_resource: '@OroTaxBundle/Resources/doc/api/product_tax_code.md'
-            actions:
-                create: false
-                delete: false
-                delete_list: false
-                update: false
             fields:
-                taxCode:
-                    description: Tax code
-                    data_type: association:manyToOne
+                organization:
+                    form_options:
+                        mapped: false
+            subresources:
+                organization:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/product.md'
+
+        Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/customer_tax_code.md'
+            fields:
+                owner:
+                    form_options:
+                        mapped: false
+                organization:
+                    form_options:
+                        mapped: false
+            subresources:
+                owner:
+                    actions:
+                        update_relationship: false
+                organization:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\CustomerBundle\Entity\Customer:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/customer.md'
+
+        Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/customer_group.md'
+

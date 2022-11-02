@@ -3,10 +3,13 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnClearEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -23,6 +26,11 @@ class ProductImageListener
     protected $updatedProductImageIds = [];
 
     /**
+     * @var int[]
+     */
+    protected $productIdsToReindex = [];
+
+    /**
      * @var EventDispatcherInterface $eventDispatcher
      */
     protected $eventDispatcher;
@@ -37,11 +45,6 @@ class ProductImageListener
      */
     protected $productImageHelper;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ImageTypeProvider $imageTypeProvider
-     * @param ProductImageHelper $productImageHelper
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         ImageTypeProvider $imageTypeProvider,
@@ -52,16 +55,19 @@ class ProductImageListener
         $this->productImageHelper = $productImageHelper;
     }
 
-    /**
-     * @param ProductImage $newProductImage
-     * @param LifecycleEventArgs $args
-     */
     public function postPersist(ProductImage $newProductImage, LifecycleEventArgs $args)
     {
         $entityManager = $args->getEntityManager();
         $product = $newProductImage->getProduct();
         $productImages = $product->getImages();
         $imagesByTypeCounter = $this->productImageHelper->countImagesByType($productImages);
+
+        $currentTypes = array_map(
+            static function (ProductImageType $productImageType) {
+                return $productImageType->getType();
+            },
+            $newProductImage->getTypes()->toArray()
+        );
 
         // Ensures that maximum number of images per type is not exceeded.
         // Required for API and UI import.
@@ -74,6 +80,10 @@ class ProductImageListener
             // Goes through types, removes a type if maximum number of images is exceeded.
             foreach ($productImage->getTypes() as $type) {
                 $typeName = $type->getType();
+                if (!\in_array($typeName, $currentTypes, true)) {
+                    continue;
+                }
+
                 $maxNumberByType = $this->getMaxNumberByType($typeName);
                 if ($maxNumberByType === null || $imagesByTypeCounter[$typeName] <= $maxNumberByType) {
                     continue;
@@ -81,17 +91,14 @@ class ProductImageListener
 
                 $entityManager->remove($type);
                 $productImage->getTypes()->removeElement($type);
+
+                $imagesByTypeCounter[$typeName]--;
             }
         }
 
         $this->dispatchEvent($newProductImage);
     }
 
-    /**
-     * @param string $typeName
-     *
-     * @return int|null
-     */
     private function getMaxNumberByType(string $typeName): ?int
     {
         $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
@@ -99,10 +106,6 @@ class ProductImageListener
         return $maxNumberByType[$typeName]['max'] ?? null;
     }
 
-    /**
-     * @param ProductImage $productImage
-     * @param LifecycleEventArgs $args
-     */
     public function postUpdate(ProductImage $productImage, LifecycleEventArgs $args)
     {
         if (!in_array($productImage->getId(), $this->updatedProductImageIds)) {
@@ -111,10 +114,6 @@ class ProductImageListener
         }
     }
 
-    /**
-     * @param File $file
-     * @param LifecycleEventArgs $args
-     */
     public function filePostUpdate(File $file, LifecycleEventArgs $args)
     {
         /** @var ProductImage $productImage */
@@ -125,9 +124,6 @@ class ProductImageListener
         }
     }
 
-    /**
-     * @param ProductImage $productImage
-     */
     protected function dispatchEvent(ProductImage $productImage)
     {
         if ($productImage->getTypes()->isEmpty()) {
@@ -136,22 +132,44 @@ class ProductImageListener
 
         $product = $productImage->getProduct();
         if ($product) {
-            $this->eventDispatcher->dispatch(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent(
-                    [
-                        Product::class],
-                    [],
-                    [
-                        $product->getId()
-                    ]
-                )
-            );
+            $productId = $product->getId();
+            $this->productIdsToReindex[$productId] = $productId;
+        }
+
+        if ($productImage->getImage()?->getExternalUrl() !== null) {
+            return;
         }
 
         $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage->getId(), true)
+            new ProductImageResizeEvent($productImage->getId(), true),
+            ProductImageResizeEvent::NAME
         );
+    }
+
+    public function postFlush(PostFlushEventArgs $event)
+    {
+        if ($this->productIdsToReindex) {
+            $this->eventDispatcher->dispatch(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [],
+                    $this->productIdsToReindex,
+                    true,
+                    ['image']
+                ),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+        }
+
+        $this->updatedProductImageIds = [];
+        $this->productIdsToReindex = [];
+    }
+
+    public function onClear(OnClearEventArgs $event)
+    {
+        if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {
+            $this->updatedProductImageIds = [];
+            $this->productIdsToReindex = [];
+        }
     }
 }

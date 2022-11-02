@@ -23,10 +23,12 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
 use Oro\Bundle\ProductBundle\Search\ProductIndexDataModel;
 use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
 use Oro\Bundle\ProductBundle\Search\WebsiteSearchProductIndexDataProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\EnumSearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\ManyToManySearchableAttributeType;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\MultiEnumSearchableAttributeType;
@@ -55,7 +57,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     /** @var WebsiteSearchProductIndexDataProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
@@ -74,12 +76,14 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
             );
 
         $this->filterableAttributeProvider = new ProductIndexFieldsProvider();
+        $searchableProvider = new SearchableInformationProvider($configManager);
 
         $this->provider = new WebsiteSearchProductIndexDataProvider(
             $this->attributeTypeRegistry,
             new AttributeConfigurationProvider($configManager),
             $this->filterableAttributeProvider,
-            new PropertyAccessor()
+            new PropertyAccessor(),
+            $searchableProvider
         );
     }
 
@@ -132,7 +136,8 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $this->extendConfigProvider->expects($this->any())->method('getConfig')->willReturn($extendConfig);
         $this->attributeConfigProvider->expects($this->any())->method('getConfig')->willReturn($attributeConfig);
 
-        $this->assertEquals($expected, $this->provider->getIndexData($product, $attribute, [$locale1, $locale2]));
+        $data = $this->provider->getIndexData($product, $attribute, [$locale1, $locale2]);
+        $this->assertEquals($expected, array_values($data->getArrayCopy()));
     }
 
     /**
@@ -143,12 +148,12 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     public function getIndexDataProvider()
     {
         $enumAttribute = new FieldConfigModel('inventoryStatus');
-        $enumAttribute->setEntity(new EntityConfigModel());
+        $enumAttribute->setEntity(new EntityConfigModel(Product::class));
         $enumAttributeType = new EnumAttributeType();
         $enumSearchAttributeType = new EnumSearchableAttributeType($enumAttributeType);
 
         $stringAttribute = new FieldConfigModel('sku');
-        $stringAttribute->setEntity(new EntityConfigModel());
+        $stringAttribute->setEntity(new EntityConfigModel(Product::class));
         $stringAttributeType = new StringAttributeType();
         $stringSearchAttributeType = new StringSearchableAttributeType($stringAttributeType);
 
@@ -166,13 +171,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $manyToManyAttribute = new FieldConfigModel('descriptions');
-        $manyToManyAttribute->setEntity(new EntityConfigModel())
+        $manyToManyAttribute->setEntity(new EntityConfigModel(Product::class))
             ->fromArray('extend', ['target_entity' => LocalizedFallbackValue::class]);
         $manyToManyAttributeType = new ManyToManyAttributeType($entityNameResolver, $doctrineHelper);
         $manyToManySearchAttributeType = new ManyToManySearchableAttributeType($manyToManyAttributeType);
 
         $multiEnumAttribute = new FieldConfigModel('flags');
-        $multiEnumAttribute->setEntity(new EntityConfigModel());
+        $multiEnumAttribute->setEntity(new EntityConfigModel(Product::class));
         $multiEnumAttributeType = new MultiEnumAttributeType();
         $multiEnumSearchAttributeType = new MultiEnumSearchableAttributeType($multiEnumAttributeType);
 
@@ -209,7 +214,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -236,7 +241,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => false, 'sortable' => false, 'searchable' => true]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable, sortable, not searchable, not localized' => [
@@ -248,7 +253,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
@@ -266,13 +271,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
                         false
                     ),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'not filterable, sortable, searchable, not localized' => [
@@ -284,7 +289,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'expected' => [
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable, sortable, searchable, not localized' => [
@@ -294,14 +299,14 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 'attributeConfig' => $this->getConfig(['filterable' => true, 'sortable' => true, 'searchable' => true]),
                 'expected' => [
                     new ProductIndexDataModel(
-                        'inventoryStatus_' . Product::INVENTORY_STATUS_IN_STOCK,
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
                         1,
                         [],
                         false,
                         false
                     ),
                     new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
-                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
                 ],
             ],
             'filterable equal sortable, not searchable, not localized' => [
@@ -361,13 +366,167 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                     ['filterable' => true, 'sortable' => false, 'searchable' => true]
                 ),
                 'expected' => [
-                    new ProductIndexDataModel('flags_bestseller', 1, [], false, false),
-                    new ProductIndexDataModel('flags_discounts', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.bestseller', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.discounts', 1, [], false, false),
                     new ProductIndexDataModel(
-                        IndexDataProvider::ALL_TEXT_FIELD,
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         'Best Sales New Discounts',
                         [],
                         false,
+                        true
+                    ),
+                ],
+            ],
+            'filterable, sortable, searchable, not localized, with not empty boost' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
+                    new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
+                    new ProductIndexDataModel('inventoryStatus_searchable', 'In Stock', [], false, false),
+                ],
+            ],
+            'filterable, sortable, searchable, not localized, with 0 boost' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => 0.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
+                    new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
+                ],
+            ],
+            'filterable, sortable, searchable, not localized, with null boost' => [
+                'attribute' => $enumAttribute,
+                'attributeType' => $enumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => null]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'inventoryStatus_enum.' . Product::INVENTORY_STATUS_IN_STOCK,
+                        1,
+                        [],
+                        false,
+                        false
+                    ),
+                    new ProductIndexDataModel('inventoryStatus_priority', 42, [], false, false),
+                    new ProductIndexDataModel(IndexDataProvider::ALL_TEXT_L10N_FIELD, 'In Stock', [], false, true),
+                ],
+            ],
+            'filterable, not sortable, searchable, not localized (multi enum), with boost' => [
+                'attribute' => $multiEnumAttribute,
+                'attributeType' => $multiEnumSearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => false, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel('flags_enum.bestseller', 1, [], false, false),
+                    new ProductIndexDataModel('flags_enum.discounts', 1, [], false, false),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'Best Sales New Discounts',
+                        [],
+                        false,
+                        true
+                    ),
+                    new ProductIndexDataModel('flags_searchable', 'Best Sales New Discounts', [], false, false)
+                ],
+            ],
+            'not filterable, not sortable, searchable, localized, with not empty boost' => [
+                'attribute' => $manyToManyAttribute,
+                'attributeType' => $manyToManySearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => false, 'sortable' => false, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        true
+                    ),
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        false
+                    ),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
+                        true
+                    ),
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
+                        false
+                    ),
+                ],
+            ],
+            'filterable, sortable, searchable, localized, with not empty boost (no duplicates)' => [
+                'attribute' => $manyToManyAttribute,
+                'attributeType' => $manyToManySearchAttributeType,
+                'extendConfig' => $this->getConfig(['state' => ExtendScope::STATE_ACTIVE]),
+                'attributeConfig' => $this->getConfig(
+                    ['filterable' => true, 'sortable' => true, 'searchable' => true, 'search_boost' => 1.0]
+                ),
+                'expected' => [
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        false
+                    ),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale1 description',
+                        [LocalizationIdPlaceholder::NAME => 1001],
+                        true,
+                        true
+                    ),
+                    new ProductIndexDataModel(
+                        'descriptions_LOCALIZATION_ID',
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
+                        false
+                    ),
+                    new ProductIndexDataModel(
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        'locale2 description',
+                        [LocalizationIdPlaceholder::NAME => 1002],
+                        true,
                         true
                     ),
                 ],
@@ -406,11 +565,11 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     /**
      * @param string $string
      * @param Localization|null $localization
-     * @return LocalizedFallbackValue
+     * @return ProductDescription
      */
     protected function getLocalizedValue($string, Localization $localization = null)
     {
-        $value = new LocalizedFallbackValue();
+        $value = new ProductDescription();
         $value->setLocalization($localization)->setString($string);
 
         return $value;

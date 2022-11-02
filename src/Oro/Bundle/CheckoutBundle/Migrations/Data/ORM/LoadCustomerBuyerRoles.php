@@ -2,13 +2,19 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainOwnershipMetadataProvider;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface as SID;
 
+/**
+ * Updates checkout related permissions for storefront roles.
+ */
 class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
 {
     /**
@@ -16,14 +22,20 @@ class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
      */
     public function load(ObjectManager $manager)
     {
-        if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {
+        if (!$this->container->get(ApplicationState::class)->isInstalled()) {
             return;
         }
-        
+
         $aclManager = $this->getAclManager();
-        $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
+        if (!$aclManager->isAclEnabled()) {
+            return;
+        }
+
+        $organization = $manager->getRepository(Organization::class)->findOneBy([]);
         $roleData = $this->loadRolesData(['OroCheckoutBundle']);
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+
+        /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */
+        $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
         foreach ($roleData as $roleName => $roleConfigData) {
@@ -32,21 +44,19 @@ class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
                     'role' => sprintf('%s%s', CustomerUserRole::PREFIX_ROLE, $roleName),
                     'organization' => $organization
                 ]);
-            if (!$role) {
+            if (null === $role) {
                 continue;
             }
-            if (!$aclManager->isAclEnabled()) {
-                continue;
-            }
+
             $sid = $aclManager->getSid($role);
-            if (empty($roleConfigData['permissions']) || !is_array($roleConfigData['permissions'])) {
-                continue;
-            }
-            if (!$this->roleHasEntries($roleConfigData['permissions'], $aclManager, $sid)) {
-                $this->setPermissions($aclManager, $sid, $roleConfigData['permissions']);
+            $permissions = $roleConfigData['permissions'] ?? [];
+            if ($permissions && !$this->roleHasEntries($permissions, $aclManager, $sid)) {
+                $this->setPermissions($aclManager, $sid, $permissions);
             }
         }
+
         $chainMetadataProvider->stopProviderEmulation();
+
         $aclManager->flush();
     }
 

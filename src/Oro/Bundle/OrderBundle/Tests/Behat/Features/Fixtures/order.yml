@@ -10,6 +10,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SimpleOrder'
         website: '@website1'
         currency: USD
+        poNumber: 'ORD1'
+        shipUntil: '<(new DateTime("2022-09-26T19:27:00Z"))>'
     secondOrder:
         organization: '@organization'
         owner: '@admin'
@@ -18,8 +20,9 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SecondOrder'
         website: '@website1'
         currency: USD
+        poNumber: 'ORD2'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:
         value: 5
         currency: USD

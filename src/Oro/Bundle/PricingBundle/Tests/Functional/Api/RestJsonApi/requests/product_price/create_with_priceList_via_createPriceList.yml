@@ -1,0 +1,29 @@
+data:
+    type: 'pricelists'
+    id: 'new_price_list'
+    attributes:
+        default: false
+        active: true
+        name: 'New Price List 1'
+        priceListCurrencies: ['CAD']
+included:
+    -
+        type: 'productprices'
+        id: 'new_product_price'
+        attributes:
+            quantity: 250
+            value: '150.0000'
+            currency: 'CAD'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: 'new_price_list'
+            product:
+                data:
+                    type: 'products'
+                    id: '<toString(@product-5->id)>'
+            unit:
+                data:
+                    type: 'productunits'
+                    id: '<toString(@product_unit.milliliter->code)>'

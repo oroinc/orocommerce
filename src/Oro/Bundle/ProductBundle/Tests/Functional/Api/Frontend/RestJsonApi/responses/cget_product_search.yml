@@ -1,0 +1,137 @@
+data:
+    -
+        type: productsearch
+        id: '<toString(@product1->id)>'
+        attributes:
+            sku: PSKU1
+            name: 'Product 1'
+            shortDescription: 'Product 1 Short Description'
+            productType: simple
+            isVariant: false
+            newArrival: true
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, default: true }
+                - { unit: '@set->code', precision: 1, default: false }
+            minimalPrices:
+                - { price: '11.0000', currencyId: 'USD', unit: 'item' }
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productsearch
+        id: '<toString(@product3->id)>'
+        attributes:
+            sku: PSKU3
+            name: 'Product 3'
+            shortDescription: 'Product 3 Short Description'
+            productType: simple
+            isVariant: false
+            newArrival: false
+            unitPrecisions:
+                - { unit: '@item->code', precision: 1, default: true }
+            minimalPrices:
+                - { price: '10.0000', currencyId: 'USD', unit: 'item' }
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@out_of_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productsearch
+        id: '<toString(@configurable_product1->id)>'
+        attributes:
+            sku: CPSKU1
+            productType: configurable
+            isVariant: false
+            newArrival: false
+            name: 'Configurable Product 1'
+            shortDescription: 'Configurable Product 1 Short Description'
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, default: true }
+            images: []
+            minimalPrices: []
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@configurable_product1->id)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productsearch
+        id: '<toString(@configurable_product2->id)>'
+        attributes:
+            sku: CPSKU2
+            productType: configurable
+            isVariant: false
+            newArrival: false
+            name: 'Configurable Product 2'
+            shortDescription: 'Configurable Product 2 Short Description'
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, default: true }
+            images: []
+            minimalPrices: []
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@configurable_product2->id)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'
+    -
+        type: productsearch
+        id: '<toString(@configurable_product3->id)>'
+        attributes:
+            sku: CPSKU3
+            productType: configurable
+            isVariant: false
+            newArrival: false
+            name: 'Configurable Product 3'
+            shortDescription: 'Configurable Product 3 Short Description'
+            unitPrecisions:
+                - { unit: '@item->code', precision: 0, default: true }
+            images: []
+            minimalPrices: []
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@configurable_product3->id)>'
+            inventoryStatus:
+                data:
+                    type: productinventorystatuses
+                    id: '<toString(@in_stock->id)>'
+            productFamily:
+                data:
+                    type: productfamilies
+                    id: '<toString(@default_product_family->id)>'

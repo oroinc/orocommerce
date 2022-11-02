@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Performance\Command;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
@@ -20,10 +21,10 @@ class DisableQuotesProcessTest extends WebTestCase
     /** @var EntityManagerInterface */
     protected $quoteEm;
 
-    /** @var  DoctrineHelper */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -78,7 +79,7 @@ class DisableQuotesProcessTest extends WebTestCase
         if ($onlyNotExpired) {
             $qb->where('q.expired = FALSE')
                 ->andWhere('q.validUntil <= :date')
-                ->setParameter('date', new \DateTime('now', new \DateTimeZone("UTC")));
+                ->setParameter('date', new \DateTime('now', new \DateTimeZone('UTC')), Types::DATETIME_MUTABLE);
         }
 
         return $qb->getQuery()

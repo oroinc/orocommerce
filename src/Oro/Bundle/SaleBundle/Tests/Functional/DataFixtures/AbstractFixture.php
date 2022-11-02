@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture as DoctrineAbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -41,7 +41,7 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
      */
     protected function getUser(ObjectManager $manager)
     {
-        /* @var $user User */
+        /* @var User $user */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
             'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL,
         ]);

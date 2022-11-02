@@ -19,46 +19,40 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $totalsProvider;
+    private $totalsProvider;
 
     /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lineItemSubtotalProvider;
+    private $lineItemSubtotalProvider;
 
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $localizedHelper;
+    private $localizedHelper;
 
     /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityNameResolver;
+    private $entityNameResolver;
 
     /** @var LineItemsExtension */
-    protected $extension;
+    private $extension;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->totalsProvider = self::createMock(TotalProcessorProvider::class);
-        $this->lineItemSubtotalProvider = self::createMock(LineItemSubtotalProvider::class);
-        $this->localizedHelper = self::createMock(LocalizationHelper::class);
-        $this->entityNameResolver = self::createMock(EntityNameResolver::class);
-        $this->entityNameResolver
+        $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+        $this->localizedHelper = $this->createMock(LocalizationHelper::class);
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $this->entityNameResolver->expects($this->any())
             ->method('getName')
             ->willReturnCallback(function ($param) {
                 return $param ? 'Item Sku' : 'Item Name';
             });
 
         $container = self::getContainerBuilder()
-            ->add('oro_pricing.subtotal_processor.total_processor_provider', $this->totalsProvider)
-            ->add('oro_pricing.subtotal_processor.provider.subtotal_line_item', $this->lineItemSubtotalProvider)
-            ->add('oro_locale.helper.localization', $this->localizedHelper)
-            ->add('oro_entity.entity_name_resolver', $this->entityNameResolver)
+            ->add(TotalProcessorProvider::class, $this->totalsProvider)
+            ->add(LineItemSubtotalProvider::class, $this->lineItemSubtotalProvider)
+            ->add(LocalizationHelper::class, $this->localizedHelper)
+            ->add(EntityNameResolver::class, $this->entityNameResolver)
             ->getContainer($this);
 
         $this->extension = new LineItemsExtension($container);
-    }
-
-    public function testGetName()
-    {
-        self::assertEquals('oro_checkout_order_line_items', LineItemsExtension::NAME);
-        self::assertEquals('oro_checkout_order_line_items', $this->extension->getName());
     }
 
     /**
@@ -83,8 +77,12 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
                 ->setCurrency('UAH'),
             (new Subtotal())->setLabel('label1')->setAmount(123)->setCurrency('USD')
         ];
-        $this->totalsProvider->expects($this->once())->method('getSubtotals')->willReturn($subtotals);
-        $this->lineItemSubtotalProvider->expects($this->any())->method('getRowTotal')->willReturn(321);
+        $this->totalsProvider->expects($this->once())
+            ->method('getSubtotals')
+            ->willReturn($subtotals);
+        $this->lineItemSubtotalProvider->expects($this->any())
+            ->method('getRowTotal')
+            ->willReturn(321);
         $order = new Order();
         $order->setCurrency($currency);
 
@@ -175,7 +173,7 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
      * @param Product|null $product
      * @return OrderLineItem
      */
-    protected function createLineItem(
+    private function createLineItem(
         $currency,
         $quantity,
         $priceValue,

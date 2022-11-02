@@ -1,0 +1,73 @@
+features:
+    quote:
+        label: oro.sale.feature.quote.label
+        description: oro.sale.feature.quote.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_sale_quote_index
+            - oro_sale_quote_view
+            - oro_sale_quote_create
+            - oro_sale_quote_update
+            - oro_sale_quote_info
+        operations:
+            - oro_sale_expire_quote
+            - oro_sale_notify_customer_by_email
+            - oro_sale_accept_quote
+        entities:
+            - Oro\Bundle\SaleBundle\Entity\Quote
+            - Oro\Bundle\SaleBundle\Entity\QuoteAddress
+            - Oro\Bundle\SaleBundle\Entity\QuoteProduct
+            - Oro\Bundle\SaleBundle\Entity\QuoteProductOffer
+            - Oro\Bundle\SaleBundle\Entity\QuoteProductRequest
+            - Oro\Bundle\SaleBundle\Entity\QuoteDemand
+            - Oro\Bundle\SaleBundle\Entity\QuoteProductDemand
+            - Extend\Entity\EV_Quote_Customer_Status
+            - Extend\Entity\EV_Quote_Internal_Status
+        api_resources:
+            - Oro\Bundle\SaleBundle\Entity\Quote
+            - Oro\Bundle\SaleBundle\Entity\QuoteAddress
+            - Oro\Bundle\SaleBundle\Entity\QuoteProduct
+            - Oro\Bundle\SaleBundle\Entity\QuoteProductOffer
+            - Oro\Bundle\SaleBundle\Entity\QuoteProductRequest
+            - Oro\Bundle\SaleBundle\Entity\QuoteDemand
+            - Oro\Bundle\SaleBundle\Entity\QuoteProductDemand
+            - Extend\Entity\EV_Quote_Customer_Status
+            - Extend\Entity\EV_Quote_Internal_Status
+        navigation_items:
+            - application_menu.sales_tab.sale_quote_list
+        configuration:
+            - oro_sale.backend_product_visibility
+
+    quote_frontend:
+        label: oro.sale.feature.quote_frontend.label
+        description: oro.sale.feature.quote_frontend.description
+        toggle: oro_sale.quote_frontend_feature_enabled
+        operations:
+            - oro_sale_accept_quote
+            - oro_sale_frontend_quote_submit_to_order
+            - oro_sale_frontend_guest_quote_submit_to_order
+        routes:
+            - oro_sale_quote_frontend_quote_product_match_offer
+            - oro_sale_quote_frontend_view
+            - oro_sale_quote_frontend_view_guest
+            - oro_sale_quote_frontend_index
+            - oro_sale_quote_frontend_choice
+            - oro_sale_quote_frontend_subtotals
+
+    guest_quote:
+        label: oro.sale.feature.guest_quote.label
+        description: oro.sale.feature.guest_quote.description
+        toggle: oro_sale.enable_guest_quote
+        strategy: affirmative
+        routes:
+            - oro_sale_quote_frontend_view_guest
+        operations:
+            - oro_sale_frontend_guest_quote_submit_to_order
+
+    sales_representative_info:
+        label: oro.sale.quote.feature.user_settings.label
+        description: oro.sale.quote.feature.user_settings.description
+        allow_if_all_abstain: true
+        configuration:
+            - oro_sale.contact_info_user_option
+            - oro_sale.contact_info_manual_text

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -12,12 +13,10 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 {
-    /**
-     * @var QuoteToOrderResizeFormSubscriber
-     */
-    protected $subscriber;
+    /** @var QuoteToOrderResizeFormSubscriber */
+    private $subscriber;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -26,8 +25,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
 
     public function testPreSetDataEmpty()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->never())
             ->method('remove');
         $form->expects($this->never())
@@ -54,14 +52,14 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
-     * @expectedExceptionMessage Expected argument of type "array or (\Traversable and \ArrayAccess)", "stdClass" given
-     */
     public function testPreSetDataInvalid()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|FormInterface $form */
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $this->expectException(UnexpectedTypeException::class);
+        $this->expectExceptionMessage(
+            'Expected argument of type "array or (\Traversable and \ArrayAccess)", "stdClass" given'
+        );
+
+        $form = $this->createMock(FormInterface::class);
 
         $this->subscriber->preSetData(new FormEvent($form, new \stdClass()));
     }

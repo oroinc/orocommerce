@@ -2,14 +2,14 @@ datagrids:
     cms-page-select-grid:
         acl_resource: oro_cms_page_view
         options:
-            entityHint: 'landing pages'
+            entityHint: oro.cms.page.entity_plural_label
         source:
             type:         orm
             query:
                 select:
                     - page.id
                 from:
-                    - { table: '%oro_cms.entity.page.class%', alias: page }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\Page', alias: page }
         columns:
             id:
                 label: oro.cms.page.id.label
@@ -27,7 +27,7 @@ datagrids:
                 title:
                     data_name: title
             default:
-                id: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                id: ASC
         filters:
             columns:
                 id:
@@ -38,20 +38,21 @@ datagrids:
                     data_name: title
 
     cms-login-page-grid:
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\LoginPage'
         acl_resource: oro_cms_loginpage_view
         options:
             entity_pagination: true
-            entityHint:        login pages
+            entityHint: oro.cms.loginpage.entity_plural_label
         source:
             type:         orm
             query:
                 select:
                     - loginPage.id
                 from:
-                    - { table: '%oro_cms.entity.loginpage.class%', alias: loginPage }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\LoginPage', alias: loginPage }
         columns:
             id:
-              label: oro.cms.loginpage.id.label
+                label: oro.cms.loginpage.id.label
         properties:
             id: ~
             view_link:
@@ -67,23 +68,23 @@ datagrids:
                 acl_resource:  oro_cms_loginpage_view
                 rowAction:     true
 
-    cms-page-grid:
+    base-cms-page-grid:
         acl_resource: oro_cms_page_view
         options:
             entity_pagination: true
-            entityHint:        landing pages
+            entityHint: oro.cms.page.entity_plural_label
         source:
             type:         orm
             query:
                 select:
                     - page.id
                 from:
-                    - { table: '%oro_cms.entity.page.class%', alias: page }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\Page', alias: page }
         columns:
             id:
-              label: oro.cms.page.id.label
+                label: oro.cms.page.id.label
             title:
-              label: oro.cms.page.titles.singular_label
+                label: oro.cms.page.titles.singular_label
         properties:
             id: ~
             title:
@@ -116,7 +117,14 @@ datagrids:
                     type: string
                     data_name: title
 
-    cms-content-block-grid:
+    cms-page-grid:
+        extends: base-cms-page-grid
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\Page'
+
+    base-cms-content-block-grid:
+        acl_resource: oro_cms_content_block_view
+        options:
+            entityHint: oro.cms.contentblock.entity_plural_label
         source:
             type: orm
             query:
@@ -127,7 +135,7 @@ datagrids:
                     - contentBlock.createdAt
                     - contentBlock.updatedAt
                 from:
-                    - { table: '%oro_cms.entity.content_block.class%', alias: contentBlock }
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\ContentBlock', alias: contentBlock }
         columns:
             alias:
                 label: oro.cms.contentblock.alias.label
@@ -137,8 +145,8 @@ datagrids:
                 label: oro.cms.contentblock.enabled.label
                 frontend_type: select
                 choices:
-                   Disabled: 0
-                   Enabled: 1
+                    Disabled: 0
+                    Enabled: 1
             createdAt:
                 label: oro.cms.contentblock.createdat.label
                 frontend_type: datetime
@@ -173,8 +181,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                Enabled: 1
-                                Disabled: 2
+                                oro.cms.contentblock.filters.disabled: 2
+                                oro.cms.contentblock.filters.enabled: 1
                 createdAt:
                     type: datetime
                     data_name: contentBlock.createdAt
@@ -199,3 +207,312 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_cms_content_block_view
                 rowAction:     true
+
+    cms-content-block-grid:
+        extends: base-cms-content-block-grid
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\ContentBlock'
+
+    cms-content-widget-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - contentWidget.id
+                    - contentWidget.name
+                    - contentWidget.description
+                    - contentWidget.widgetType
+                    - contentWidget.layout
+                    - contentWidget.createdAt
+                    - contentWidget.updatedAt
+                from:
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\ContentWidget', alias: contentWidget }
+        columns:
+            name:
+                label: oro.cms.contentwidget.name.label
+            description:
+                label: oro.cms.contentwidget.description.label
+                type: twig
+                frontend_type: html
+                template: '@OroCMS/ContentWidget/Datagrid/description.html.twig'
+            widgetType:
+                label: oro.cms.contentwidget.widget_type.label
+                frontend_type: select
+                choices: '@oro_cms.provider.content_widget_type->getAvailableContentWidgetTypes()'
+            layout:
+                label: oro.cms.contentwidget.layout.label
+                type: twig
+                frontend_type: html
+                template: '@OroCMS/ContentWidget/Datagrid/layout.html.twig'
+            createdAt:
+                label: oro.cms.contentwidget.created_at.label
+                frontend_type: datetime
+            updatedAt:
+                label: oro.cms.contentwidget.updated_at.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                name:
+                    data_name: contentWidget.name
+                description:
+                    data_name: contentWidget.description
+                widgetType:
+                    data_name: contentWidget.widgetType
+                layout:
+                    data_name: contentWidget.layout
+                createdAt:
+                    data_name: contentWidget.createdAt
+                updatedAt:
+                    data_name: contentWidget.updatedAt
+            default:
+                updatedAt: DESC
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: contentWidget.name
+                description:
+                    type: string
+                    data_name: contentWidget.description
+                widgetType:
+                    type: choice-tree
+                    data_name: contentWidget.widgetType
+                    autocomplete_alias: oro_cms_content_widget_types
+                    renderedPropertyName: 'label'
+                createdAt:
+                    type: datetime
+                    data_name: contentWidget.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: contentWidget.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_cms_content_widget_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_cms_content_widget_view
+                rowAction:     true
+
+    cms-inline-content-widget-grid:
+        extends: cms-content-widget-grid
+        source:
+            query:
+                where:
+                    and:
+                        - contentWidget.widgetType IN (:contentWidgetTypes)
+            bind_parameters:
+                - contentWidgetTypes
+
+    cms-block-content-widget-grid:
+        extends: cms-content-widget-grid
+        source:
+            query:
+                where:
+                    and:
+                        - contentWidget.widgetType IN (:contentWidgetTypes)
+            bind_parameters:
+                - contentWidgetTypes
+
+    cms-content-widget-pages-grid:
+        extends: base-cms-page-grid
+        source:
+            query:
+                join:
+                    inner:
+                        -
+                            join: 'Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage'
+                            alias: contentWidgetUsage
+                            conditionType: WITH
+                            condition: 'contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = ''Oro\Bundle\CMSBundle\Entity\Page'' AND contentWidgetUsage.entityId = page.id'
+            bind_parameters:
+                - content_widget_id
+
+    cms-content-widget-content-blocks-grid:
+        extends: base-cms-content-block-grid
+        source:
+            query:
+                join:
+                    inner:
+                        - { join: contentBlock.contentVariants, alias: contentVariant }
+                        -
+                            join: 'Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage'
+                            alias: contentWidgetUsage
+                            conditionType: WITH
+                            condition: 'contentWidgetUsage.contentWidget = :content_widget_id AND contentWidgetUsage.entityClass = ''Oro\Bundle\CMSBundle\Entity\TextContentVariant'' AND contentWidgetUsage.entityId = contentVariant.id'
+                groupBy: contentBlock.id
+            bind_parameters:
+                - content_widget_id
+        columns:
+            enabled:
+                renderable: false
+            createdAt:
+                renderable: false
+            updatedAt:
+                renderable: false
+        filters:
+            columns:
+                enabled:
+                    renderable: false
+                createdAt:
+                    renderable: false
+                updatedAt:
+                    renderable: false
+
+    cms-page-drafts-grid:
+        extends: base-cms-page-grid
+        source:
+            query:
+                select:
+                    - page.createdAt
+                    - page.updatedAt
+                    - CONCAT(draftOwner.firstName, ' ', draftOwner.lastName) as ownerName
+                join:
+                    left:
+                        - { join: page.draftOwner, alias: draftOwner }
+                where:
+                    and:
+                        - page.draftSource = :draft_source_id
+                        - page.draftUuid IS NOT NULL
+            bind_parameters:
+                - draft_source_id
+        options:
+            entityHint: oro.cms.page.draft.entity_plural_label
+            showDrafts: true
+            gridViews:
+                allLabel: oro.cms.page.draft.entity_grid_all_view_label
+        columns:
+            slug:
+                label: oro.cms.page.slugs.singular_label
+            ownerName:
+                label:         oro.cms.page.draft.owner.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            slug:
+                type: localized_value
+                data_name: slugPrototypes
+        sorters:
+            columns:
+                createdAt:
+                    data_name: page.createdAt
+                updatedAt:
+                    data_name: page.updatedAt
+                slug:
+                    data_name: slug
+            default:
+                id: ASC
+        filters:
+            columns:
+                slug:
+                    type: string
+                    data_name: slug
+                createdAt:
+                    type: datetime
+                    data_name: page.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: page.updatedAt
+
+    content-template-grid:
+        extended_entity_name: 'Oro\Bundle\CMSBundle\Entity\ContentTemplate'
+        acl_resource: oro_cms_content_template_view
+        options:
+            entity_pagination: true
+            entityHint: oro.cms.contenttemplate.entity_plural_label
+        source:
+            type: orm
+            query:
+                select:
+                    - template.id
+                    - template.name
+                    - template.enabled
+                    - template.createdAt
+                    - template.updatedAt
+                    - CONCAT(owner.firstName, ' ', owner.lastName) as ownerName
+                    - preview.id as previewImage
+                from:
+                    - { table: 'Oro\Bundle\CMSBundle\Entity\ContentTemplate', alias: template }
+                join:
+                    left:
+                        - { join: template.owner, alias: owner }
+                        - { join: template.previewImage, alias: preview }
+        columns:
+            name:
+                label: oro.cms.contenttemplate.name.label
+            previewImage:
+                label: oro.cms.contenttemplate.preview_image.label
+                type: twig
+                frontend_type: html
+                template: '@OroCMS/ContentTemplate/Datagrid/previewImage.html.twig'
+            enabled:
+                label: oro.cms.contenttemplate.enabled.label
+                frontend_type: select
+                choices:
+                    oro.cms.contenttemplate.disabled.label: 0
+                    oro.cms.contenttemplate.enabled.label: 1
+            createdAt:
+                frontend_type: datetime
+                label: oro.ui.created_at
+            updatedAt:
+                frontend_type: datetime
+                label: oro.ui.updated_at
+            ownerName:
+                label: oro.cms.contenttemplate.owner.label
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_cms_content_template_view
+                params: [ id ]
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                link: view_link
+                icon: eye
+                rowAction: true
+        sorters:
+            columns:
+                name:
+                    data_name: template.name
+                enabled:
+                    data_name: template.enabled
+                createdAt:
+                    data_name: template.createdAt
+                updatedAt:
+                    data_name: template.updatedAt
+                ownerName:
+                    data_name: ownerName
+            default:
+                createdAt: DESC
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: template.name
+                enabled:
+                    type: boolean
+                    data_name: template.enabled
+                createdAt:
+                    type: datetime
+                    data_name: template.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: template.updatedAt
+                ownerName:
+                    type: choice-tree
+                    data_name: template.owner
+                    autocomplete_alias: assigned_to_organization_users
+                    renderedPropertyName: 'fullName'
+                    className: 'Oro\Bundle\UserBundle\Entity\User'

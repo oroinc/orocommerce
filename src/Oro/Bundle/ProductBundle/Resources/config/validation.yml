@@ -1,7 +1,7 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: [sku]
+            fields: [sku, organization]
             repositoryMethod: findByCaseInsensitive
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks: ~
@@ -9,7 +9,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes:
-            groups: [product_create_step_one]
+            groups: [product_create_step_one, Import]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\PrimaryProductUnitPrecision: ~
     properties:
         sku:
             - NotBlank:
@@ -17,7 +18,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Length:
                 min: 3
                 max: 255
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
+                allowEmptyString: false
+            - Oro\Bundle\ProductBundle\Validator\Constraints\SkuRegex: ~
         unitPrecisions:
             - Count:
                 min: 1
@@ -32,25 +34,58 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
             - Choice: { callback: getTypes }
         names:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+            - Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue:
+                  errorMessage: 'oro.product.names.default.blank'
         shortDescriptions:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         descriptions:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         inventory_status:
             - NotBlank: ~
         variantLinks:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkCollection: ~
         images:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
         attributeFamily:
             - NotBlank: ~
         slugPrototypes:
-            - Valid: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
         pageTemplate:
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate:
                 route: 'oro_product_frontend_product_view'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+        string:
+            - Length:
+                  max: 255
+
+Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    properties:
+        fallback:
+            - Length:
+                  max: 64
+            - Choice: { callback: getFallbacks }
+        wysiwyg:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
+        wysiwygStyle:
+            - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
+            - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
@@ -66,12 +101,21 @@ Oro\Bundle\ProductBundle\Entity\ProductUnit:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks:
+            groups: [ api ]
+            property: parentProduct
+        - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks:
+            groups: [ api ]
+            property: parentProduct
     properties:
         visible:
             - Type:
                 type: boolean
         parentProduct:
             - NotBlank: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                groups: [ api ]
         product:
             - NotBlank: ~
 
@@ -106,6 +150,9 @@ Oro\Bundle\ProductBundle\Entity\ProductImage:
 Oro\Bundle\ProductBundle\Entity\ProductImageType:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageType: ~
+    properties:
+        type:
+            - NotBlank: ~
 
 Oro\Bundle\ProductBundle\Model\ProductRow:
     properties:
@@ -115,13 +162,14 @@ Oro\Bundle\ProductBundle\Model\ProductRow:
             - Range:
                 min: 0
                 max: 999999999
-                minMessage: oro.product.frontend.quick_add.validation.quantity_min
-                maxMessage: oro.product.frontend.quick_add.validation.quantity_max
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                message: oro.product.frontend.quick_add.validation.quantity_min
+                notInRangeMessage: oro.product.frontend.quick_add.validation.not_in_range
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
 Oro\Bundle\ProductBundle\Model\ProductLineItem:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
+            groups: [create, update, add_product]
     properties:
         product:
             - NotBlank:
@@ -154,8 +202,11 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
         - QuantityUnitPrecision
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
+            sell: true
+            message: oro.product.frontend.quick_add.validation.invalid_unit
             groups: [ProductUnit]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            message: oro.product.frontend.quick_add.validation.invalid_precision
             groups: [QuantityUnitPrecision]
     properties:
         sku:
@@ -169,9 +220,17 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
             - Range:
                 min: 0
                 max: 999999999
-                minMessage: oro.product.frontend.quick_add.validation.quantity_min
-                maxMessage: oro.product.frontend.quick_add.validation.quantity_max
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                message: oro.product.frontend.quick_add.validation.quantity_min
+                notInRangeMessage: oro.product.frontend.quick_add.validation.not_in_range
         unit:
             - NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    properties:
+        names:
+            - Valid: ~
+        shortDescriptions:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
+        slugPrototypes:
+            - Valid: ~

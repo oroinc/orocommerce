@@ -1,7 +1,9 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization amount" option
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Create new PayPal PayFlow Gateway Integration
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
     And I login as administrator and use in "second_session" as "Admin"
@@ -48,8 +50,12 @@ Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization a
     And I fill credit card form with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
-      | Year             | 2027             |
       | CVV              | 123              |
+    Then I should not see "Invalid Expiration date."
+    When I click "Continue"
+    Then I should see "Invalid Expiration date."
+    When I fill credit card form with next data:
+      | Year | 2027 |
     And I click "Continue"
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

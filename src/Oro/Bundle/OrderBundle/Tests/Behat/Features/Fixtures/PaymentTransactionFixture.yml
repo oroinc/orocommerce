@@ -1,0 +1,15 @@
+Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
+    paymentTransaction1:
+        owner: '@admin'
+        organization: '@organization'
+        frontendOwner: '@amanda'
+        entityClass: 'Oro\\Bundle\\OrderBundle\\Entity\\Order'
+        entityIdentifier: '@simpleOrder->id'
+        accessIdentifier: '8c4fec37-cb0e-4e18-a106-f3de635d2c62'
+        accessToken: 'd96a5408-95bf-4153-abbb-715064d7c33a'
+        paymentMethod: 'payment_term_1'
+        action: 'purchase'
+        amount: 51.00
+        currency: 'USD'
+        active: false
+        successful: true

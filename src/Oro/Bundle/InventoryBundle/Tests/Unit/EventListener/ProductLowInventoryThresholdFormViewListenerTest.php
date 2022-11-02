@@ -14,7 +14,7 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -25,13 +25,12 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->listener);
 
         parent::tearDown();
     }
-
 
     /**
      * {@inheritdoc}
@@ -46,7 +45,14 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
      */
     protected function getExpectedScrollData()
     {
-        return [ScrollData::DATA_BLOCKS => [1 => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']]];
+        return [
+            ScrollData::DATA_BLOCKS => [
+                1 => [
+                    ScrollData::TITLE => 'oro.product.sections.inventory.trans',
+                    ScrollData::SUB_BLOCKS => [[]]
+                ]
+            ]
+        ];
     }
 
     /**

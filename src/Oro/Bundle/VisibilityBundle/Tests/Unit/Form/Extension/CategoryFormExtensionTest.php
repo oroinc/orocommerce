@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
+use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\WysiwygAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
@@ -34,7 +38,7 @@ use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -44,10 +48,11 @@ use Symfony\Component\Validator\Validation;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
-    /** @var CategoryFormExtension|\PHPUnit\Framework\MockObject\MockObject */
-    protected $categoryFormExtension;
+    use WysiwygAwareTestTrait;
 
-    protected function setUp()
+    private CategoryFormExtension|\PHPUnit\Framework\MockObject\MockObject $categoryFormExtension;
+
+    protected function setUp(): void
     {
         $this->categoryFormExtension = new CategoryFormExtension();
 
@@ -59,40 +64,26 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var ManagerRegistry $registry */
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock(ManagerRegistry::class);
 
-        /** @var VisibilityPostSetDataListener|\PHPUnit\Framework\MockObject\MockObject $postSetDataListener */
-        $postSetDataListener = $this->getMockBuilder(
-            'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $postSetDataListener = $this->createMock(VisibilityPostSetDataListener::class);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
         $visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);
-        $visibilityChoicesProvider->expects($this->any())
+        $visibilityChoicesProvider->expects(self::any())
             ->method('getFormattedChoices')
             ->willReturn([]);
 
-        /** @var CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility */
-        $defaultProductOptionsVisibility = $this
-            ->getMockBuilder(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultProductOptionsVisibility = $this->createMock(
+            CategoryDefaultProductUnitOptionsVisibilityInterface::class
+        );
 
         $defaultProductOptions = new CategoryDefaultProductOptionsType();
-        $defaultProductOptions->setDataClass('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions->setDataClass(CategoryDefaultProductOptions::class);
 
         $categoryUnitPrecision = new CategoryUnitPrecisionType($defaultProductOptionsVisibility);
-        $categoryUnitPrecision->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
+        $categoryUnitPrecision->setDataClass(CategoryUnitPrecision::class);
 
-        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
-        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var RouterInterface $router */
+        $confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
         $router = $this->createMock(RouterInterface::class);
 
         return [
@@ -111,7 +102,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                             'kg' => (new ProductUnit())->setCode('kg')
                         ]
                     ),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub([]),
+                    EntityIdentifierType::class => new EntityType([]),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType($registry),
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
@@ -122,6 +113,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
                     LocalizedSlugWithRedirectType::class
                         => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 [
                     CategoryType::class => [$this->categoryFormExtension],
@@ -132,18 +124,18 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(
             CategoryType::class,
             new CategoryStub(),
             ['data_class' => Category::class]
         );
-        $this->assertTrue($form->has('visibility'));
+        self::assertTrue($form->has('visibility'));
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes(): void
     {
-        $this->assertEquals($this->categoryFormExtension->getExtendedType(), CategoryType::class);
+        self::assertEquals([CategoryType::class], CategoryFormExtension::getExtendedTypes());
     }
 }

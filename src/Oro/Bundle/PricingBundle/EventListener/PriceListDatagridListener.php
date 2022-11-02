@@ -4,11 +4,11 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+/**
+ * Add current time to grid parameters for grid column Active/inactive
+ */
 class PriceListDatagridListener
 {
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $params = $event->getDatagrid()->getParameters();

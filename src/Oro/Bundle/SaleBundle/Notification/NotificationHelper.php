@@ -2,47 +2,57 @@
 
 namespace Oro\Bundle\SaleBundle\Notification;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
-use Oro\Bundle\EmailBundle\Mailer\Processor;
+use Oro\Bundle\EmailBundle\Sender\EmailModelSender;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-class NotificationHelper
+/**
+ * This helper contains useful methods common for working with quote emails.
+ */
+class NotificationHelper implements LoggerAwareInterface
 {
-    /** @var ManagerRegistry */
-    protected $registry;
+    use LoggerAwareTrait;
 
-    /** @var EmailModelBuilder */
-    protected $emailModelBuilder;
+    private ManagerRegistry $registry;
 
-    /** @var Processor */
-    protected $emailProcessor;
+    private EmailModelBuilder $emailModelBuilder;
 
-    /** @var string */
-    protected $quoteClassName;
+    private EmailModelSender $emailModelSender;
 
-    /** @var string */
-    protected $emailTemplateClassName;
+    private FeatureChecker $featureChecker;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EmailModelBuilder $emailModelBuilder
-     * @param Processor $emailProcessor
-     */
+    private ?string $quoteClassName = null;
+
+    private ?string $emailTemplateClassName = null;
+
+    private bool $enabled = true;
+
     public function __construct(
         ManagerRegistry $registry,
         EmailModelBuilder $emailModelBuilder,
-        Processor $emailProcessor
+        EmailModelSender $emailModelSender,
+        FeatureChecker $featureChecker
     ) {
         $this->registry = $registry;
         $this->emailModelBuilder = $emailModelBuilder;
-        $this->emailProcessor = $emailProcessor;
+        $this->emailModelSender = $emailModelSender;
+        $this->featureChecker = $featureChecker;
+        $this->logger = new NullLogger();
+    }
+
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
     }
 
     /**
@@ -76,12 +86,24 @@ class NotificationHelper
         return $this->createEmailModel($quote);
     }
 
-    /**
-     * @param Email $emailModel
-     */
     public function send(Email $emailModel)
     {
-        $this->emailProcessor->process($emailModel);
+        if (!$this->enabled) {
+            return;
+        }
+
+        try {
+            $this->emailModelSender->send($emailModel);
+        } catch (\RuntimeException $exception) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to send email model to %s: %s',
+                    implode(', ', $emailModel->getTo()),
+                    $exception->getMessage()
+                ),
+                ['exception' => $exception, 'emailModel' => $emailModel]
+            );
+        }
     }
 
     /**
@@ -98,14 +120,19 @@ class NotificationHelper
             ->setEntityId($quote->getId())
             ->setTo([$quote->getEmail()])
             ->setContexts([$quote])
-            ->setTemplate($this->getEmailTemplate('quote_email_link'));
+            ->setTemplate(
+                $this->getEmailTemplate(
+                    $this->isGuestAccessTemplateApplicable($quote) ? 'quote_email_link_guest' : 'quote_email_link'
+                )
+            );
+
+        if ($quote->getOrganization()) {
+            $emailModel->setOrganization($quote->getOrganization());
+        }
 
         return $emailModel;
     }
 
-    /**
-     * @param Quote $quote
-     */
     protected function applyEntityContext(Quote $quote)
     {
         // pass entityClass end entityId to request, because no way to set up entityClass and entityId as arguments
@@ -140,5 +167,12 @@ class NotificationHelper
     protected function getRepository($className)
     {
         return $this->getManager($className)->getRepository($className);
+    }
+
+    private function isGuestAccessTemplateApplicable(Quote $quote): bool
+    {
+        return $this->featureChecker &&
+            $this->featureChecker->isFeatureEnabled('guest_quote') &&
+            (!$quote->getCustomerUser() || $quote->getCustomerUser()->isGuest());
     }
 }

@@ -1,0 +1,120 @@
+data:
+    -
+        type: priceattributeproductprices
+        attributes:
+            value: '24.5700'
+            currency: USD
+        relationships:
+            priceList:
+                data:
+                    type: priceattributepricelists
+                    id: "<toString(@price_attribute_price_list_2->id)>"
+            product:
+                data:
+                    type: products
+                    id: customProduct1
+            unit:
+                data:
+                    type: productunits
+                    id: "<toString(@product_unit.liter->code)>"
+    -
+        type: priceattributeproductprices
+        attributes:
+            value: '678.9000'
+            currency: USD
+        relationships:
+            priceList:
+                data:
+                    type: priceattributepricelists
+                    id: "<toString(@price_attribute_price_list_2->id)>"
+            product:
+                data:
+                    type: products
+                    id: customProduct2
+            unit:
+                data:
+                    type: productunits
+                    id: "<toString(@product_unit.box->code)>"
+included:
+    -
+        type: productunitprecisions
+        id: puprecision1
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: "<toString(@product_unit.liter->getCode())>"
+    -
+        type: productunitprecisions
+        id: puprecision2
+        attributes:
+            precision: 1
+            conversionRate: 2
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: "<toString(@product_unit.box->getCode())>"
+    -
+        type: products
+        id: customProduct1
+        attributes:
+            sku: test-api-01
+            status: enabled
+        relationships:
+            names:
+                data:
+                    -   type: productnames
+                        id: names-1
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: "<toString(@default_family->getId())>"
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: puprecision1
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: out_of_stock
+    -
+        type: products
+        id: customProduct2
+        attributes:
+            sku: test-api-02
+            status: enabled
+        relationships:
+            names:
+                data:
+                    -   type: productnames
+                        id: names-2
+            attributeFamily:
+                data:
+                    type: attributefamilies
+                    id: "<toString(@default_family->getId())>"
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: puprecision2
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: out_of_stock
+    -
+        type: productnames
+        id: names-1
+        attributes:
+            fallback:
+            string: Test product 1
+    -
+        type: productnames
+        id: names-2
+        attributes:
+            fallback:
+            string: Test product 2

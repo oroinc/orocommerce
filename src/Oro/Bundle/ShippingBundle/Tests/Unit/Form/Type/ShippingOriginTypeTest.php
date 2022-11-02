@@ -23,7 +23,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
         $this->formType->setDataClass(self::DATA_CLASS);
@@ -32,8 +32,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver|\PHPUnit\Framework\MockObject\MockObject */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
@@ -65,6 +64,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

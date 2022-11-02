@@ -1,0 +1,62 @@
+data:
+    type: products
+    attributes:
+        sku: 'sku-invalid_product_unit'
+        status: 'enabled'
+        variantFields: []
+        productType: 'simple'
+        featured: true
+        newArrival: false
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '<toString(@TestBusinessUnit->getId())>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@TestBusinessUnit->organization->getId())>'
+        names:
+            data:
+                -
+                    type: productnames
+                    id: 'name-1'
+        attributeFamily:
+            data:
+                type: attributefamilies
+                id: '<toString(@default_family->getId())>'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: 'out_of_stock'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: 'product-unit-precision-id-1'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: 'product-unit-precision-id-1'
+included:
+    -
+        type: productnames
+        id: 'name-1'
+        attributes:
+            fallback: null
+            string: 'Test product'
+        relationships:
+            localization:
+                data: null
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-1'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: 'unknown_product_unit'

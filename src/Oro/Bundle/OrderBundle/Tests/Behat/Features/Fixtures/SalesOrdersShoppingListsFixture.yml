@@ -1,0 +1,76 @@
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm:
+        label: net 10
+
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency :
+    subtotal1:
+        value: 50.00
+        baseCurrencyValue: 50.00
+        currency: 'USD'
+    total1:
+        value: 51.00
+        baseCurrencyValue: 51.00
+        currency: 'USD'
+    subtotal2:
+        value: 100.00
+        baseCurrencyValue: 100.00
+        currency: 'USD'
+    total2:
+        value: 102.00
+        baseCurrencyValue: 102.00
+        currency: 'USD'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    simpleOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'FirstOrder'
+        website: '@website1'
+        currency: USD
+        sourceEntityClass: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
+        sourceEntityId: '@shoppinglist1->id'
+        sourceEntityIdentifier: 'Shopping list'
+        poNumber: 'ORD1'
+        payment_term_7c4f1e8e: '@paymentTerm'
+        subtotalObject: '@subtotal1'
+        totalObject: '@total1'
+        estimatedShippingCostAmount: 1.00
+    secondOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'SecondOrder'
+        website: '@website1'
+        currency: USD
+        sourceEntityClass: 'Oro\\Bundle\\ShoppingListBundle\\Entity\\ShoppingList'
+        sourceEntityId: '@shoppinglist1->id'
+        sourceEntityIdentifier: 'Shopping list'
+        poNumber: 'ORD2'
+        payment_term_7c4f1e8e: '@paymentTerm'
+        subtotalObject: '@subtotal2'
+        totalObject: '@total2'
+        estimatedShippingCostAmount: 2.00
+
+Oro\Bundle\CurrencyBundle\Entity\Price :
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    simpleOrderLineItem:
+        product: '@product1'
+        order: '@simpleOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    secondOrderLineItem:
+        product: '@product1'
+        order: '@secondOrder'
+        price: '@price1'
+        quantity: 20
+        productUnit: '@item'
+        productUnitCode: item

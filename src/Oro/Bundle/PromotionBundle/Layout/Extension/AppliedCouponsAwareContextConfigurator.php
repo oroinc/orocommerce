@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Layout\Extension;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Component\Layout\ContextConfiguratorInterface;
 use Oro\Component\Layout\ContextInterface;
 
@@ -19,7 +21,10 @@ class AppliedCouponsAwareContextConfigurator implements ContextConfiguratorInter
     {
         $isAppliedCouponsAware = false;
         if ($context->data()->has('checkout')) {
-            $isAppliedCouponsAware = $context->data()->get('checkout') instanceof AppliedCouponsAwareInterface;
+            $checkout = $context->data()->get('checkout');
+            $isAppliedCouponsAware = $checkout instanceof CheckoutInterface
+                && $checkout instanceof AppliedCouponsAwareInterface
+                && !$checkout->getSourceEntity() instanceof QuoteDemand;
         } elseif ($context->data()->has('entity')) {
             $isAppliedCouponsAware = $context->data()->get('entity') instanceof AppliedCouponsAwareInterface;
         }

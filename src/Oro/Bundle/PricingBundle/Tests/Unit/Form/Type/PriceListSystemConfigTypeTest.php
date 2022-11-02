@@ -37,7 +37,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new PriceListSystemConfigType(
             'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig',
@@ -110,6 +110,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
             ]
         );
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($this->testPriceListConfigs, $form->getData());
     }

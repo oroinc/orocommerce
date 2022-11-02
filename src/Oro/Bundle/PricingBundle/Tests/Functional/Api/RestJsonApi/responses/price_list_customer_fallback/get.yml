@@ -1,0 +1,10 @@
+data:
+    type: 'pricelistcustomerfallbacks'
+    id: '<toString(@US_customer_1_1_price_list_fallback->id)>'
+    attributes:
+        fallback: 0
+    relationships:
+        customer:
+            data:
+                id: '<toString(@customer.level_1_1->id)>'
+                type: 'customers'

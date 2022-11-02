@@ -1,9 +1,9 @@
 datagrids:
     shipping-methods-configs-rule-grid:
         acl_resource: oro_shipping_methods_configs_rule_view
-        extended_entity_name: '%oro_shipping.entity.shipping_methods_configs_rule.class%'
+        extended_entity_name: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
         options:
-            entityHint:        shipping rules
+            entityHint: oro.shipping.shippingmethodsconfigsrule.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -17,7 +17,7 @@ datagrids:
                     - shipping_methods_configs_rule.currency
                     - rule.expression
                 from:
-                    - { table: '%oro_shipping.entity.shipping_methods_configs_rule.class%', alias: shipping_methods_configs_rule }
+                    - { table: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', alias: shipping_methods_configs_rule }
                 join:
                     inner:
                         - { join: shipping_methods_configs_rule.rule, alias: rule }
@@ -42,12 +42,12 @@ datagrids:
                 label:         oro.shipping.shippingmethodsconfigsrule.method_configs.label
                 type:          twig
                 frontend_type: html
-                template:      OroShippingBundle:ShippingMethodsConfigsRule:Datagrid/configurations.html.twig
+                template:      '@OroShipping/ShippingMethodsConfigsRule/Datagrid/configurations.html.twig'
             destinations:
                 label:         oro.shipping.shippingmethodsconfigsrule.destinations.label
                 type:          twig
                 frontend_type: html
-                template:      OroShippingBundle:ShippingMethodsConfigsRule:Datagrid/destinations.html.twig
+                template:      '@OroShipping/ShippingMethodsConfigsRule/Datagrid/destinations.html.twig'
         properties:
             id: ~
             view_link:
@@ -129,12 +129,12 @@ datagrids:
                 acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         check
-                entity_name:  '%oro_shipping.entity.shipping_methods_configs_rule.class%'
+                entity_name:  'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
                 data_identifier: shipping_methods_configs_rule.id
             disable:
                 type:         shippingruledisable
                 acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
-                entity_name:  '%oro_shipping.entity.shipping_methods_configs_rule.class%'
+                entity_name:  'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
                 data_identifier: shipping_methods_configs_rule.id

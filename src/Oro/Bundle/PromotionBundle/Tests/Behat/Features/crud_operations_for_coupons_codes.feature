@@ -71,7 +71,7 @@ Feature: CRUD operations for Coupons codes
     Then I should see "Coupon has been saved" flash message
     And I should see "12345" in grid with following data:
       |Coupon Code       | 12345                 |
-      |Promotion         | N/A                   |
+      |Promotion         |                       |
       |Enabled           | No                    |
       |Uses per Coupon   | 10                    |
       |Uses per Person   | 1                     |
@@ -99,13 +99,13 @@ Feature: CRUD operations for Coupons codes
     Then I should see "Coupon has been saved" flash message
     And I should see "54321" in grid with following data:
       |Coupon Code       | 54321    |
-      |Promotion         | N/A      |
+      |Promotion         |          |
       |Uses per Coupon   | 10       |
       |Uses per Person   | 10       |
       |Valid Until       |          |
     And I should see "12345" in grid with following data:
       |Coupon Code       | 12345                 |
-      |Promotion         | N/A                   |
+      |Promotion         |                       |
       |Uses per Coupon   | 10                    |
       |Uses per Person   | 1                     |
       |Valid Until       | Jul 1, 2018, 12:00 AM |
@@ -130,7 +130,7 @@ Feature: CRUD operations for Coupons codes
     Then I should see "Coupon deleted" flash message
     And I should see "54321" in grid with following data:
       |Coupon Code       | 54321    |
-      |Promotion         | N/A      |
+      |Promotion         |          |
       |Uses per Coupon   | 10       |
       |Uses per Person   | 10       |
       |Valid Until       |          |

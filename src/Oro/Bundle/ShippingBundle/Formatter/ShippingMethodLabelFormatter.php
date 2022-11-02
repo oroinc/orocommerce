@@ -14,14 +14,10 @@ class ShippingMethodLabelFormatter
      */
     protected $shippingMethodProvider;
 
-    /**
-     * @param ShippingMethodProviderInterface $shippingMethodProvider
-     */
     public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
-
 
     /**
      * @param string $shippingMethodName

@@ -8,7 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ValueRenderEventListener
 {
@@ -21,11 +21,6 @@ class ValueRenderEventListener
     /** @var PaymentTermAssociationProvider */
     private $paymentTermAssociationProvider;
 
-    /**
-     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param TranslatorInterface $translator
-     * @param RouterInterface $router
-     */
     public function __construct(
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         TranslatorInterface $translator,

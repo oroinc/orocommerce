@@ -5,16 +5,20 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Helper;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\UserBundle\Tests\Functional\Helper\AdminUserTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 
 trait FedexIntegrationTrait
 {
-    use AdminUserTrait;
+    private function getAdminUser(): User
+    {
+        return self::getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository(User::class)
+            ->findOneBy(['email' => self::AUTH_USER]);
+    }
 
-    /**
-     * @param bool $enabled
-     */
-    protected function createFedexIntegrationSettings(bool $enabled = true)
+    private function createFedexIntegrationSettings(bool $enabled = true): void
     {
         $admin = $this->getAdminUser();
 
@@ -28,7 +32,7 @@ trait FedexIntegrationTrait
             ->setPickupType(FedexIntegrationSettings::PICKUP_TYPE_DROP_BOX)
             ->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
 
-        $services = static::getContainer()
+        $services = self::getContainer()
             ->get('doctrine')
             ->getManager()
             ->getRepository(FedexShippingService::class)
@@ -54,19 +58,16 @@ trait FedexIntegrationTrait
             ->setOrganization($admin->getOrganization())
             ->setTransport($settings);
 
-        static::getContainer()->get('doctrine')->getManager()->persist($channel);
-        static::getContainer()->get('doctrine')->getManager()->flush();
+        self::getContainer()->get('doctrine')->getManager()->persist($channel);
+        self::getContainer()->get('doctrine')->getManager()->flush();
     }
 
-    /**
-     * @return FedexIntegrationSettings|null
-     */
-    protected function getFedexIntegrationSettings()
+    private function getFedexIntegrationSettings(): ?FedexIntegrationSettings
     {
-        $settings = static::getContainer()
+        $settings = self::getContainer()
             ->get('doctrine')
             ->getManager()
-            ->getRepository('OroFedexShippingBundle:FedexIntegrationSettings')
+            ->getRepository(FedexIntegrationSettings::class)
             ->findAll();
 
         if (empty($settings)) {

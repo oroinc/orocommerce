@@ -1,4 +1,43 @@
 features:
+    orders:
+        label: oro.order.feature.label
+        description: oro.order.feature.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_order_index
+            - oro_order_view
+            - oro_order_info
+            - oro_order_create
+            - oro_order_update
+            - oro_order_entry_point
+        entities:
+            - Oro\Bundle\OrderBundle\Entity\Order
+            - Extend\Entity\EV_Order_Internal_Status
+            - Oro\Bundle\OrderBundle\Entity\OrderLineItem
+            - Oro\Bundle\OrderBundle\Entity\OrderAddress
+            - Oro\Bundle\OrderBundle\Entity\OrderDiscount
+            - Oro\Bundle\OrderBundle\Entity\OrderShippingTracking
+        api_resources:
+            - Oro\Bundle\OrderBundle\Entity\Order
+            - Extend\Entity\EV_Order_Internal_Status
+            - Oro\Bundle\OrderBundle\Entity\OrderLineItem
+            - Oro\Bundle\OrderBundle\Entity\OrderAddress
+            - Oro\Bundle\OrderBundle\Entity\OrderDiscount
+            - Oro\Bundle\OrderBundle\Entity\OrderShippingTracking
+        navigation_items:
+            - application_menu.sales_tab.order_list
+        configuration:
+            - oro_order.backend_product_visibility
+
+    create_orders:
+        label: oro.order.feature.create.label
+        description: oro.order.feature.create.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_order_create
+        api_resources:
+            - [Oro\Bundle\OrderBundle\Entity\Order, [create]]
+
     previously_purchased_products:
         label: oro.order.feature.previously_purchased_products.label
         description: oro.order.feature.previously_purchased_products.description

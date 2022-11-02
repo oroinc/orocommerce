@@ -5,10 +5,15 @@ namespace Oro\Bundle\TaxBundle\Calculator;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Component\Math\BigDecimal;
 
-class TaxCalculator implements TaxCalculatorInterface
+/**
+ * ($exclTax * taxRate) + $exclTax
+ */
+class TaxCalculator extends AbstractTaxCalculator
 {
-    /** {@inheritdoc} */
-    public function calculate($amount, $taxRate)
+    /**
+     * {@inheritdoc}
+     */
+    protected function doCalculate(string $amount, string $taxRate): ResultElement
     {
         $exclTax = BigDecimal::of($amount);
         $taxRate = BigDecimal::of($taxRate)->abs();

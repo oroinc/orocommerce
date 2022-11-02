@@ -9,9 +9,6 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 trait CalculateAdjustmentTrait
 {
-    /**
-     * @param ResultElement $resultElement
-     */
     protected function calculateAdjustment(ResultElement $resultElement)
     {
         $taxAmount = BigDecimal::of($resultElement->getTaxAmount());

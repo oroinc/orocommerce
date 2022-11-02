@@ -2,47 +2,42 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
+use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * The main implementation of writing sitemap related data to files.
+ */
 class SitemapFileWriter implements SitemapFileWriterInterface
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
+    /** @var FileManager */
+    private $fileManager;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @param Filesystem $filesystem
-     * @param LoggerInterface $logger
-     */
-    public function __construct(Filesystem $filesystem, LoggerInterface $logger)
+    public function __construct(FileManager $fileManager, LoggerInterface $logger)
     {
-        $this->filesystem = $filesystem;
+        $this->fileManager = $fileManager;
         $this->logger = $logger;
     }
 
     /**
-     * @param string $sitemapContents
-     * @param string $path
-     * @return string $path
-     * @throws SitemapFileWriterException
+     * {@inheritDoc}
      */
-    public function saveSitemap($sitemapContents, $path)
+    public function saveSitemap(string $content, string $path): string
     {
         try {
-            $this->filesystem->dumpFile($path, $sitemapContents);
-        } catch (IOExceptionInterface $e) {
+            $this->fileManager->writeToStorage($content, $path);
+        } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
 
-            throw new SitemapFileWriterException(sprintf('An error occurred while writing sitemap to %s', $path));
+            throw new SitemapFileWriterException(
+                sprintf('An error occurred while writing sitemap to %s', $path),
+                $e->getCode(),
+                $e
+            );
         }
 
         return $path;

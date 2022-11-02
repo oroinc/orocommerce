@@ -1,114 +1,107 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Oro\Bundle\ProductBundle\Command;
 
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
-use Oro\Bundle\ProductBundle\Async\Topics;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener;
+use Oro\Bundle\ProductBundle\Exception\FailedToRunReindexProductCollectionJobException;
+use Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandlerInterface;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * This command class schedules cron based product collection indexation.
+ * Schedules indexation of product collections.
  */
-class ProductCollectionsIndexCronCommand extends ContainerAwareCommand implements CronCommandInterface
+class ProductCollectionsIndexCronCommand extends Command implements CronCommandScheduleDefinitionInterface
 {
-    const NAME = 'oro:cron:product-collections:index';
+    /** @var string */
+    protected static $defaultName = 'oro:cron:product-collections:index';
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $messageProducer;
+    private AsyncReindexProductCollectionHandlerInterface $collectionIndexationHandler;
+    private SegmentMessageFactory $messageFactory;
+    private CronSegmentsProvider $segmentProvider;
+    private ProductCollectionSegmentHelper $productCollectionHelper;
+    private ConfigManager $configManager;
 
-    /**
-     * @var SegmentMessageFactory
-     */
-    private $messageFactory;
+    public function __construct(
+        AsyncReindexProductCollectionHandlerInterface $collectionIndexationHandler,
+        SegmentMessageFactory $segmentMessageFactory,
+        CronSegmentsProvider $cronSegmentsProvider,
+        ProductCollectionSegmentHelper $productCollectionSegmentHelper,
+        ConfigManager $configManager
+    ) {
+        $this->collectionIndexationHandler = $collectionIndexationHandler;
+        $this->messageFactory = $segmentMessageFactory;
+        $this->segmentProvider = $cronSegmentsProvider;
+        $this->productCollectionHelper = $productCollectionSegmentHelper;
+        $this->configManager = $configManager;
 
-    /**
-     * @var CronSegmentsProvider
-     */
-    private $segmentProvider;
-
-    /**
-     * @var ProductCollectionSegmentHelper
-     */
-    private $productCollectionHelper;
-
-    /**
-     * @param MessageProducerInterface $messageProducer
-     */
-    public function setMessageProducer(MessageProducerInterface $messageProducer)
-    {
-        $this->messageProducer = $messageProducer;
+        parent::__construct();
     }
 
-    /**
-     * @param SegmentMessageFactory $messageFactory
-     */
-    public function setMessageFactory(SegmentMessageFactory $messageFactory)
-    {
-        $this->messageFactory = $messageFactory;
-    }
-
-    /**
-     * @param CronSegmentsProvider $segmentProvider
-     */
-    public function setSegmentProvider(CronSegmentsProvider $segmentProvider)
-    {
-        $this->segmentProvider = $segmentProvider;
-    }
-
-    /**
-     * @param ProductCollectionSegmentHelper $productCollectionHelper
-     */
-    public function setProductCollectionHelper(ProductCollectionSegmentHelper $productCollectionHelper)
-    {
-        $this->productCollectionHelper = $productCollectionHelper;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure()
     {
-        $description = <<<DESC
-Add message to queue to index product collections for which filter contains dependencies on other entities.
-DESC;
+        $this->addOption('partial-reindex', null, null, 'Perform indexation only for added or removed products')
+            ->setDescription('Schedules indexation of product collections.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command schedules indexation of product collections.
 
-        $this->setName(self::NAME)
-            ->setDescription($description);
+Such indexation is necessary for the product collections that have filters with dependencies
+on other entities.
+
+This command only schedules the job by adding a message to the message queue, so ensure
+that the message consumer processes (<info>oro:message-queue:consume</info>) are running.
+
+  <info>php %command.full_name%</info>
+
+HELP
+            );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @noinspection PhpMissingParentCallCommonInspection */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $hasSchedules = false;
-        foreach ($this->segmentProvider->getSegments() as $segment) {
-            $websiteIds = $this->productCollectionHelper->getWebsiteIdsBySegment($segment);
-            if (empty($websiteIds)) {
-                continue;
-            }
+        if ($input->getOption('partial-reindex')) {
+            $isFull = false;
+        } else {
+            $isFull = !(bool)$this->configManager->get('oro_product.product_collections_indexation_partial');
+        }
+
+        $rootJobName = sprintf(
+            '%s:%s:%s',
+            ReindexProductCollectionBySegmentTopic::NAME,
+            'cron',
+            $isFull ? 'full' : 'partial'
+        );
+        $partialMessageIterator = $this->getPartialMessageIterator($isFull, $hasSchedules, $output);
+
+        try {
+            $this->collectionIndexationHandler->handle(
+                $partialMessageIterator,
+                $rootJobName,
+                true,
+                ['main']
+            );
+        } catch (FailedToRunReindexProductCollectionJobException $jobException) {
             $output->writeln(
                 sprintf(
-                    '<info>Scheduling indexation of segment id %d for websites: %s</info>',
-                    $segment->getId(),
-                    implode(', ', $websiteIds)
+                    '<error>Can\'t start the process because the same job on %s re-indexation is in progress.</error>',
+                    $isFull ? 'full' : 'partial'
                 )
             );
 
-            $hasSchedules = true;
-            $this->messageProducer->send(
-                Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
-                $this->messageFactory->createMessage($websiteIds, $segment)
-            );
+            return self::FAILURE;
         }
 
         if ($hasSchedules) {
@@ -116,22 +109,41 @@ DESC;
         } else {
             $output->writeln('<info>There are no suitable segments for indexation</info>');
         }
+
+        return self::SUCCESS;
+    }
+
+    private function getPartialMessageIterator(bool $isFull, bool &$hasSchedules, OutputInterface $output): \Generator
+    {
+        foreach ($this->segmentProvider->getSegments() as $segment) {
+            $websiteIds = $this->productCollectionHelper->getWebsiteIdsBySegment($segment);
+            if (empty($websiteIds)) {
+                continue;
+            }
+            $output->writeln(
+                sprintf(
+                    '<info>Scheduling %s indexation of segment id %d for websites: %s</info>',
+                    $isFull ? 'full' : 'partial',
+                    $segment->getId(),
+                    implode(', ', $websiteIds)
+                )
+            );
+
+            $hasSchedules = true;
+            yield $this->messageFactory->getPartialMessageData(
+                $websiteIds,
+                $segment,
+                null,
+                $isFull
+            );
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDefaultDefinition()
+    public function getDefaultDefinition(): string
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        return $configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isActive()
-    {
-        return true;
+        return $this->configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);
     }
 }

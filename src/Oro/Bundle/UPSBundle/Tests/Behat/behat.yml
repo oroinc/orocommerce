@@ -2,13 +2,15 @@ oro_behat_extension:
   suites:
     OroUPSBundle:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroCheckoutBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroSaleBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroUPSBundle::FeatureContext
+        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\UPSBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroUPSBundle/Tests/Behat/Features'
 

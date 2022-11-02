@@ -2,118 +2,72 @@
 
 namespace Oro\Bundle\ProductBundle\Async;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
+use Oro\Bundle\ProductBundle\Storage\ProductWebsiteReindexRequestDataStorageInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Provider\SegmentSnapshotDeltaProvider;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
-use Oro\Component\MessageQueue\Client\Message;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
- * MQ Processor that dispatches search reindexation event for added or removed products from product collection.
+ * MQ Processor that collects information about added or removed products from product collection
+ * to intermediate Product Website Reindex Request storage that will be processed later in dependent job,
+ * to prevent duplicate requests on reindex.
  */
-class ReindexProductCollectionProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ReindexProductCollectionProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
-    /**
-     * @var JobRunner
-     */
-    private $jobRunner;
+    use LoggerAwareTrait;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $producer;
+    private JobRunner $jobRunner;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private SegmentMessageFactory $messageFactory;
 
-    /**
-     * @var ReindexMessageGranularizer
-     */
-    private $reindexMessageGranularizer;
+    private SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider;
 
-    /**
-     * @var SegmentMessageFactory
-     */
-    private $messageFactory;
+    private ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage;
 
-    /**
-     * @var SegmentSnapshotDeltaProvider
-     */
-    private $segmentSnapshotDeltaProvider;
-
-    /**
-     * @param JobRunner $jobRunner
-     * @param MessageProducerInterface $producer
-     * @param LoggerInterface $logger
-     * @param ReindexMessageGranularizer $reindexMessageGranularizer
-     * @param SegmentMessageFactory $messageFactory
-     * @param SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider
-     */
     public function __construct(
         JobRunner $jobRunner,
-        MessageProducerInterface $producer,
-        LoggerInterface $logger,
-        ReindexMessageGranularizer $reindexMessageGranularizer,
         SegmentMessageFactory $messageFactory,
-        SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider
+        SegmentSnapshotDeltaProvider $segmentSnapshotDeltaProvider,
+        ProductWebsiteReindexRequestDataStorageInterface $websiteReindexRequestDataStorage
     ) {
         $this->jobRunner = $jobRunner;
-        $this->producer = $producer;
-        $this->logger = $logger;
-        $this->reindexMessageGranularizer = $reindexMessageGranularizer;
         $this->messageFactory = $messageFactory;
         $this->segmentSnapshotDeltaProvider = $segmentSnapshotDeltaProvider;
+        $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
+        $this->logger = new NullLogger();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): ?string
     {
         try {
-            $body = JSON::decode($message->getBody());
+            $body = $message->getBody();
+            $jobId = $this->messageFactory->getJobIdFromMessage($body);
             $segment = $this->messageFactory->getSegmentFromMessage($body);
             $websiteIds = $this->messageFactory->getWebsiteIdsFromMessage($body);
             $isFull = $this->messageFactory->getIsFull($body);
-            $jobName = $this->getUniqueJobName($segment, $websiteIds);
-            $result = $this->jobRunner->runUnique(
-                $message->getMessageId(),
-                $jobName,
-                function (JobRunner $jobRunner, Job $job) use ($segment, $websiteIds, $isFull) {
-                    $i = 0;
-                    foreach ($this->getAllProductIdsForReindex($segment, $isFull) as $batch) {
-                        $reindexMsgData = $this->reindexMessageGranularizer->process(
-                            [Product::class],
-                            $websiteIds,
-                            [AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $batch]
-                        );
+            $additionalProducts = $this->messageFactory->getAdditionalProductsFromMessage($body) ?? [];
 
-                        foreach ($reindexMsgData as $msgData) {
-                            $jobRunner->createDelayed(
-                                sprintf('%s:reindex:%s', $job->getName(), ++$i),
-                                function (JobRunner $jobRunner, Job $child) use ($msgData) {
-                                    $msgData['jobId'] = $child->getId();
-                                    $message = new Message($msgData, AsyncIndexer::DEFAULT_PRIORITY_REINDEX);
-                                    $this->producer->send(AsyncIndexer::TOPIC_REINDEX, $message);
-                                }
-                            );
-                        }
-                    }
+            $result = $this->jobRunner->runDelayed(
+                $jobId,
+                function (JobRunner $jobRunner, Job $job) use ($segment, $websiteIds, $isFull, $additionalProducts) {
+                    $this->doJob($job, $segment, $websiteIds, $isFull, $additionalProducts);
 
                     return true;
                 }
@@ -131,7 +85,7 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             $this->logger->error(
                 'Unexpected exception occurred during segment product collection reindexation',
                 [
-                    'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                    'topic' => ReindexProductCollectionBySegmentTopic::getName(),
                     'exception' => $e
                 ]
             );
@@ -143,49 +97,57 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedTopics()
+    public static function getSubscribedTopics(): array
     {
-        return [Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT];
+        return [ReindexProductCollectionBySegmentTopic::getName()];
     }
 
-    /**
-     * @param Segment $segment
-     * @param bool $isFull
-     * @return \Generator
-     */
-    private function getAllProductIdsForReindex(Segment $segment, $isFull)
+    private function doJob(
+        Job $childJob,
+        Segment $segment,
+        array $websiteIds,
+        bool $isFull,
+        array $additionalProducts
+    ): void {
+        $relatedJobId = $childJob->getRootJob()->getId();
+        foreach ($this->getAllProductIdsForReindex($segment, $isFull) as $batch) {
+            $batch = array_diff($batch, $additionalProducts);
+            if (empty($batch)) {
+                continue;
+            }
+
+            $this->websiteReindexRequestDataStorage->insertMultipleRequests(
+                $relatedJobId,
+                $websiteIds,
+                $batch
+            );
+        }
+
+        if ($additionalProducts) {
+            $this->websiteReindexRequestDataStorage->insertMultipleRequests(
+                $relatedJobId,
+                $websiteIds,
+                $additionalProducts
+            );
+        }
+    }
+
+    private function getAllProductIdsForReindex(Segment $segment, bool $isFull): \Generator
     {
         if ($isFull) {
             foreach ($this->segmentSnapshotDeltaProvider->getAllEntityIds($segment) as $batch) {
-                yield array_map('reset', $batch);
+                yield array_map(static fn ($batch) => reset($batch), $batch);
             }
         } else {
             foreach ($this->segmentSnapshotDeltaProvider->getAddedEntityIds($segment) as $batch) {
-                yield array_map('reset', $batch);
+                yield array_map(static fn ($batch) => reset($batch), $batch);
             }
         }
 
         if ($segment->getId()) {
             foreach ($this->segmentSnapshotDeltaProvider->getRemovedEntityIds($segment) as $batch) {
-                yield array_map('reset', $batch);
+                yield array_map(static fn ($batch) => reset($batch), $batch);
             }
         }
-    }
-
-    /**
-     * @param Segment $segment
-     * @param array $websiteIds
-     * @return string
-     */
-    private function getUniqueJobName(Segment $segment, $websiteIds): string
-    {
-        sort($websiteIds);
-        $jobKey = sprintf(
-            '%s:%s',
-            Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
-            md5($segment->getDefinition()) . ':' . md5(implode($websiteIds))
-        );
-
-        return $jobKey;
     }
 }

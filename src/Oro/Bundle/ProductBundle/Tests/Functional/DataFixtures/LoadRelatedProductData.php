@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -44,7 +44,7 @@ class LoadRelatedProductData extends AbstractFixture implements DependentFixture
                 $relatedProduct = $productRepository->findOneBySku($relatedProductSku);
 
                 $productRelation = new RelatedProduct();
-                $productRelation->setProduct($product)->setRelatedProduct($relatedProduct);
+                $productRelation->setProduct($product)->setRelatedItem($relatedProduct);
 
                 $manager->persist($productRelation);
 

@@ -27,7 +27,7 @@ The created record is returned in the response.
 | Attribute| Options | Description |
 |----------|---------|-------------|
 | decrementQuantity | 1 / 0 | Yes / No |
-| manageInventory | 1 / 0 | On Order Submission / Defined by Workflow |
+| manageInventory | 1 / 0 | On order submission in the default checkout flow / No (custom) |
 | backOrder | 1 / 0 | Yes / No |
 | productType | "simple" / "configurable" | |
 | status | "enabled" / "disabled" |  |
@@ -41,20 +41,23 @@ When creating a Product entity there are certain relations or associations with 
 which require by default that you specify their type and id so that they are loaded.
 
 But if you need to create a new entity from a relation, you have the option to do so, but you must
-use the **"included"** section. See documentation about this section [here](https://oroinc.com/b2b-ecommerce/doc/current/dev-guide/web-api#create-and-update-related-resources-together-with-a-primary-api-resource)
+use the **included** section. See documentation about this section [here](https://doc.oroinc.com/api/create-update-related-resources/)
 
-For example, if we look at the manageInventory field, in the **"data"** section
+For example, if we look at the manageInventory field, in the **data** section
 
+```JSON
       "manageInventory": {
         "data": {
           "type": "entityfieldfallbackvalues",
           "id": "1abcd"
         }
       }
+```
 
-we have a temporary ID (recomended to be a GUID, as the documentation says) "1abcd" which is
-used to identify the data used for creating this entity, data taken from the **"included"** section :
+we have a temporary ID (recommended to be a GUID, as the documentation says) "1abcd" which is
+used to identify the data used for creating this entity, data taken from the **included** section :
 
+```JSON
     {
       "type": "entityfieldfallbackvalues",
       "id": "1abcd",
@@ -64,10 +67,10 @@ used to identify the data used for creating this entity, data taken from the **"
         "arrayValue": null
       }
     }
+```
 
-The same applies to other relation entities like "localizedfallbackvalues" type, which are used for
-properties like "names", "descriptions", "shortDescriptions", and also meta fields. You can see in
-the detailed example for product creation.
+The same applies to other relation entities like "localizedfallbackvalues" type, which are used for some properties
+like meta fields. You can see in the detailed example for product creation.
 
 #### 3. Using ProductPrecisionUnits:
 
@@ -77,23 +80,22 @@ default precision unit, and it is mandatory.
 
 There are a few restrictions and situations that the API caller should know:
 
-- not sending the **"primaryUnitPrecision"** will make the first item in the **"unitPrecisions"** list become
-the primary unit precision
-
-- when sending the "primaryUnitPrecision" you need to specify the unit code, but it is mandatory that
-this unit code is found between the items of the **"unitPrecisions"**
+- when sending the **primaryUnitPrecision** you need to specify the unit code, but it is mandatory that
+this unit code is found between the items of the **unitPrecisions**
 
 #### 4. Specify Category
 
 The Category is not directly handled by the Product, but you can specify it when creating or updating
-a Product entity, in the **"data"** section. Example:
+a Product entity, in the **data** section. Example:
 
+```JSON
       "category": {
         "data": {
           "type": "categories",
           "id": "4"
         }
       }
+```
 
 #### 5. Creating configurable products
 
@@ -101,38 +103,42 @@ When creating a product , there are two types available : simple and configurabl
 have custom product attributes in the product attribute family specified and a result product variants can be added to a
 configurable product. A product variant is a simple product attached to a parent configurable product.
 
-To create a configurable product type must be specified in the **"attributes"** section of the product.
+To create a configurable product type must be specified in the **attributes** section of the product.
 
 Example:
 
+```JSON
       "attributes": {
         "sku": "test-api-1"
         ...
         "productType": "configurable",
         "variantFields": ["custom-variant-field"],
         ...
-        
       }
+```
 
 The variantFields values must correspond to a custom product attribute within the product attribute family specified in the
-**"relations"** section. Example:
+**relationships** section. Example:
 
+```JSON
       "attributeFamily": {
         "data": {
           "type": "attributefamilies",
           "id": "1"
         }
       },
+```
 
 The above examples are valid if "custom-variant-field" is present in the "attributeFamily" , and the configurable product
 will be created. If the "variantFields" is empty , the configurable product will be created but the variant fields will not be active.
 
 When creating a simple product with a product attribute family that has a configurable attribute, the value of this attribute can be set
-in the **"relations"** section. Example:
+in the **relationships** section. Example:
 
+```JSON
       "relationships": {
-      ...
-        "customvariantfield":{
+       ...
+        "customvariantfield": {
            "data": {
              "type": "productcustomvariantfield",
              "id": "custom-variant-field-id"
@@ -140,9 +146,10 @@ in the **"relations"** section. Example:
         }
       ....
       }
+```
 
 The simple product with custom attribute can now be linked to a configurable product as a product variant.
- 
+
 #### 6. Specify variants (for configurable products only)
 
 When adding a new configurable product you can the variants of that product. To be able to specify
@@ -150,6 +157,7 @@ variants of a product first you have to add a configurable attribute for product
 that will be the variants of the configurable product. After these steps you can specify variants for a new configurable 
 product. Example:
 
+```JSON
       "variantLinks": {
         "data": [
           {
@@ -162,8 +170,11 @@ product. Example:
           }
         ]
       }
+```
+
 and in the included section we specify the variants:
 
+```JSON
     {
       "type": "productvariantlinks",
       "id": "variant-link1",
@@ -206,15 +217,17 @@ and in the included section we specify the variants:
         }
       }
     }
+```
 
 For **parentProduct** id you need to specify any id of an existing product from the system,
 the link between the configurable product that is added on this request and the variants will be handled internally
-by the API. In **product** tag we specify the id of the product that will be a variant of the created product.
-            
+by the API. In **product** tag we specify the ID of the product that will be a variant of the created product.
+
 #### 7. Using product images
 
-Add images definition in the **"data"** section. Example:
+Add images definition in the **data** section. Example:
 
+```JSON
     "images": {
       "data": [
         {
@@ -223,9 +236,11 @@ Add images definition in the **"data"** section. Example:
         }
       ]
     }
+```
 
-In the **"included"** section. Example:
+In the **included** section. Example:
 
+```JSON
     {
       "type": "files",
       "id": "file-1",
@@ -233,7 +248,7 @@ In the **"included"** section. Example:
         "mimeType": "image/jpeg",
         "originalFilename": "onedot.jpg",
         "fileSize": 631,
-        "content":"/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
+        "content": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+f+iiigD/2Q=="
       }
     },
     {
@@ -296,6 +311,7 @@ In the **"included"** section. Example:
         }
       }
     }
+```
 
 The example above also creates product image mandatory subresources : files and types.
 The type attribute of the product image type model ("productImageTypeType") should be a valid type
@@ -306,8 +322,7 @@ Example:
 
 ```JSON
 {
-  "data":
-  {
+  "data": {
     "type": "products",
     "attributes": {
       "sku": "test-api-1",
@@ -316,7 +331,7 @@ Example:
       "productType": "simple",
       "featured": true,
       "newArrival": false,
-      "availability_date": "01-01-2018"
+      "availability_date": "2018-01-01"
     },
     "relationships": {
       "owner": {
@@ -334,12 +349,36 @@ Example:
       "names": {
         "data": [
           {
-            "type": "localizedfallbackvalues",
+            "type": "productnames",
             "id": "names-1"
           },
           {
-            "type": "localizedfallbackvalues",
+            "type": "productnames",
             "id": "names-2"
+          }
+        ]
+      },
+      "shortDescriptions": {
+        "data": [
+          {
+            "type": "productshortdescriptions",
+            "id": "short-descriptions-1"
+          },
+          {
+            "type": "productshortdescriptions",
+            "id": "short-descriptions-2"
+          }
+        ]
+      },
+      "descriptions": {
+        "data": [
+          {
+            "type": "productdescriptions",
+            "id": "descriptions-1"
+          },
+          {
+            "type": "productdescriptions",
+            "id": "descriptions-2"
           }
         ]
       },
@@ -351,19 +390,13 @@ Example:
           }
         ]
       },
-      "taxCode": {
-        "data": {
-          "type": "producttaxcodes",
-          "id": "2"
-        }
-      },
       "attributeFamily": {
         "data": {
           "type": "attributefamilies",
           "id": "1"
         }
       },
-      "primaryUnitPrecision":{
+      "primaryUnitPrecision": {
         "data": {
             "type": "productunitprecisions",
             "id": "product-unit-precision-id-3"
@@ -455,7 +488,7 @@ Example:
       }
     }
   },
-  "included":[
+  "included": [
     {
       "type": "entityfieldfallbackvalues",
       "id": "1xyz",
@@ -547,12 +580,11 @@ Example:
       }
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "names-1",
       "attributes": {
         "fallback": null,
-        "string": "Test product",
-        "text": null
+        "string": "Test product"
       },
       "relationships": {
         "localization": {
@@ -561,18 +593,83 @@ Example:
       }
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "names-2",
       "attributes": {
         "fallback": null,
-        "string": "Product in spanish",
-        "text": null
+        "string": "Product in Spanish"
       },
       "relationships": {
         "localization": {
           "data": {
             "type": "localizations",
-            "id": "6"
+            "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productshortdescriptions",
+      "id": "short-descriptions-1",
+      "attributes": {
+        "fallback": null,
+        "text": "Test product short description"
+      },
+      "relationships": {
+        "localization": {
+          "data": null
+        }
+      }
+    },
+    {
+      "type": "productshortdescriptions",
+      "id": "short-descriptions-2",
+      "attributes": {
+        "fallback": null,
+        "text": "Product Short Description in Spanish"
+      },
+      "relationships": {
+        "localization": {
+          "data": {
+            "type": "localizations",
+            "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "productdescriptions",
+      "id": "descriptions-1",
+      "attributes": {
+        "fallback": null,
+        "wysiwyg": {
+          "value": "Test product description",
+          "style": null,
+          "properties": null
+        }
+      },
+      "relationships": {
+        "localization": {
+          "data": null
+        }
+      }
+    },
+    {
+      "type": "productdescriptions",
+      "id": "descriptions-2",
+      "attributes": {
+        "fallback": null,
+        "wysiwyg": {
+          "value": "Product Short Description in Spanish",
+          "style": null,
+          "properties": null
+        }
+      },
+      "relationships": {
+        "localization": {
+          "data": {
+            "type": "localizations",
+            "id": "1"
           }
         }
       }
@@ -642,10 +739,8 @@ Example:
         }
       }
     }
-
   ]
 }
-
 ```
 {@/request}
 
@@ -656,20 +751,20 @@ Edit a specific product record.
 The updated record is returned in the response.
 
 {@inheritdoc}
- 
+
 #### 1. Using ProductPrecisionUnits:
 
 Besides what it is mentioned in the create Product section above, for the ProductPrecisionUnits
 there are a few more restrictions and situations that the API caller should know:
 
-- inside an item of the **"unitPrecisions"** list, if we have the "id" field, the only mandatory
+- inside an item of the **unitPrecisions** list, if we have the **id** field, the only mandatory
 field remaining mandatory is the "unit_code"
 the primary unit precision
 
-- if we send in the list of **"unitPrecisions"** a new "unit_code" that is not found among the
+- if we send in the list of **unitPrecisions** a new "unit_code" that is not found among the
 list of unit precisions on the Product main entity, then it will be created and added to the list
 
-- if in the **"primaryUnitPrecision"** we send a new "unit_code", other then what it is found on
+- if in the **primaryUnitPrecision** we send a new "unit_code", other then what it is found on
 the current product primary unit precision, then the current primary unit precision will be replaced
 with the newly provided one
 
@@ -678,59 +773,65 @@ with the newly provided one
 - specify all unit precisions for the product (including primary), even though you want to update the attributes for
 only one of them
 
-- in the "included" section specify the product unit that you want to update but don't forget to use the same id as it has in the
-database (id which you use in the "data" section on the field) and specify the "update" field in the "meta" subsection
-of the "included" section (see example below)
-
+- in the **included** section specify the product unit that you want to update but don't forget to use the same id as it has in the
+database (id which you use in the **data** section on the field) and specify the **update** property in the **meta** subsection
+of the **included** section (see example below)
 
 #### 2. Updating "localizedfallbackvalues" (localized fields) and "entityfieldfallbackvalues" (options with fallbacks) types
 
 **Important** - When you want to update existing related entities, it can only be done by using the
-"included" section, the same way it is used in the create section. What is important to mention is:
+**included** section, the same way it is used in the create section. What is important to mention is:
 
 * you must use the real ID of the related entity that you want to update, example:
 
-> - "data" section
+> - **data** section
 
+```JSON
         "manageInventory": {
           "data": {
             "type": "entityfieldfallbackvalues",
             "id": "466"
           }
         }
+```
 
-> - "included" section
+> - **included** section
 
+```JSON
         {
-          "meta":{
+          "meta": {
              "update": true
           },
           "type": "localizedfallbackvalues",
           "id": "807",
           "attributes": {
             "fallback": null,
-            "string": "Test product - updated",
+            "string": "Test value - updated",
             "text": null
           }
         }
+```
 
-* use the update flag to specify it is an update on an existing entity, otherwise it will attempt
+* use the **update** flag to specify it is an update on an existing entity, otherwise it will attempt
 the creation of a new entity of that type
 
-          "meta":{
+```JSON
+          "meta": {
              "update": true
           }
+```
 
 **Important** when wanting to update the current entity by modifying a relation, which is actually
-a'to-many' relationship with another entity, you must specify all of the entities from that list.
+a `to-many` relationship with another entity, you must specify all of the entities from that list.
 If you don't do that, the system will set on that relation the input that has been received. So for
 example if I have the "names" relation which holds a collection of "localizedfallbackvalues" type,
 with 8 entities, and I specify only 2 of these entities in the input, then in the database I will
 have only those 2 saved and all the other (6 entities) will be removed. Example for updating the
 "names" relation with modifying the text for a specific localization:
 
-> - in the "data" section:
+> - in the **data** section:
 
+```JSON
       "names": {
         "data": [
           {
@@ -774,29 +875,31 @@ have only those 2 saved and all the other (6 entities) will be removed. Example 
             "id": "817"
           }
         ]
+```
 
-> - in the "included" section:
+> - in the **included** section:
 
+```JSON
     {
-      "meta":{
+      "meta": {
          "update": true
       },
       "type": "localizedfallbackvalues",
       "id": "807",
       "attributes": {
         "fallback": null,
-        "string": "Test product - updated",
+        "string": "Test value - updated",
         "text": null
       }
     }
+```
 
 {@request:json_api}
 Example:
 
 ```JSON
 {
-  "data":
-  {
+  "data": {
     "type": "products",
     "id": "67",
     "attributes": {
@@ -818,12 +921,6 @@ Example:
         "data": {
           "type": "organizations",
           "id": "1"
-        }
-      },
-      "taxCode": {
-        "data": {
-          "type": "producttaxcodes",
-          "id": "2"
         }
       },
       "attributeFamily": {
@@ -859,48 +956,20 @@ Example:
       "names": {
         "data": [
           {
-            "type": "localizedfallbackvalues",
+            "type": "productnames",
             "id": "807"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "810"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "814"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "812"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "813"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "811"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "808"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "815"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "816"
-          },
-          {
-            "type": "localizedfallbackvalues",
-            "id": "817"
           }
         ]
       },
-      "primaryUnitPrecision":{
+      "slugPrototypes": {
+        "data": [
+          {
+            "type": "localizedfallbackvalues",
+            "id": "907"
+          }
+        ]
+      },
+      "primaryUnitPrecision": {
         "data": {
             "type": "productunitprecisions",
             "id": "453"
@@ -920,9 +989,9 @@ Example:
       }
     }
   },
-  "included":[
+  "included": [
     {
-      "meta":{
+      "meta": {
          "update": true
       },
       "type": "entityfieldfallbackvalues",
@@ -934,14 +1003,14 @@ Example:
       }
     },
     {
-      "meta":{
+      "meta": {
          "update": true
       },
       "type": "localizedfallbackvalues",
-      "id": "807",
+      "id": "907",
       "attributes": {
         "fallback": null,
-        "string": "Test product - updated",
+        "string": "test-prod-slug-updated",
         "text": null
       }
     },
@@ -964,8 +1033,6 @@ Example:
     }
   ]
 }
-
-
 ```
 {@/request}
 
@@ -989,15 +1056,13 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### names
 
@@ -1005,25 +1070,13 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
-### decrementQuantity
-
-#### create
+#### update
 
 {@inheritdoc}
 
-**Required field**
-
-### inventoryThreshold
-
-### lowInventoryThreshold
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
+**This field must not be empty, if it is passed.**
 
 ### inventory_status
 
@@ -1031,25 +1084,13 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
-### manageInventory
-
-### highlightLowInventory
-
-#### create
+#### update
 
 {@inheritdoc}
 
-**Required field**
-
-### backOrder
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
+**This field must not be empty, if it is passed.**
 
 ### status
 
@@ -1057,47 +1098,14 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**Note:**
+If a value for this field is not provided, the `disabled` value will be used.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
-
-### featured
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
-
-#### update
-
-{@inheritdoc}
-
-**Please note:**
-
-*This field is **required** and must remain defined.*
-
-### newArrival
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
-
-#### update
-
-{@inheritdoc}
-
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### productType
 
@@ -1105,15 +1113,14 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**Note:**
+If a value for this field is not provided, the `simple` value will be used.
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### attributeFamily
 
@@ -1121,33 +1128,48 @@ Delete a collection of product records.
 
 {@inheritdoc}
 
-**Required field**
+**The required field.**
 
-### category
+#### update
 
-Specify the category of the product
+{@inheritdoc}
 
-### taxCode
+**This field must not be empty, if it is passed.**
 
-Specify a tax code
+### unitPrecisions
 
 #### create
 
 {@inheritdoc}
 
-### test_variant_field
+**Note:**
+This field is required but when it is not passed, the `primaryUnitPrecision` value is used.
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
+
+### primaryUnitPrecision
 
 #### create
 
 {@inheritdoc}
 
-### pageTemplate
+**The required field.**
 
-Specify the page template for the product
+**Note:**
+The unit code provided for this field will be automatically added to the **unitPrecisions** list.
 
-### images
+#### update
 
-Specify the images for the product
+{@inheritdoc}
+
+**Note:**
+The unit code provided for this field must exist in the **unitPrecisions** list.
+
+**This field must not be empty, if it is passed.**
 
 ## SUBRESOURCES
 
@@ -1155,7 +1177,7 @@ Specify the images for the product
 
 #### get_subresource
 
-Retrieve the attribute family configured for a specific product
+Retrieve the attribute family configured for a specific product.
 
 #### get_relationship
 
@@ -1182,11 +1204,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for backOrder for a specific product
+Retrieve the record of the fallback entity value for backOrder for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the backOrder flag
+Retrieve an ID of the backOrder flag.
 
 #### update_relationship
 
@@ -1209,11 +1231,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the brand for a specific product
+Retrieve the brand for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the brand of the product
+Retrieve an ID of the brand of the product.
 
 #### update_relationship
 
@@ -1229,7 +1251,6 @@ Example:
     "id": "1"
   }
 }
-
 ```
 {@/request}
 
@@ -1237,11 +1258,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for decrementQuantity flag for a specific product
+Retrieve the record of the fallback entity value for decrementQuantity flag for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the decrementQuantity flag for a specific product
+Retrieve an ID of the decrementQuantity flag for a specific product.
 
 #### update_relationship
 
@@ -1264,11 +1285,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for inventoryThreshold for a specific product
+Retrieve the record of the fallback entity value for inventoryThreshold for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the inventoryThreshold for a specific product
+Retrieve an ID of the inventoryThreshold for a specific product.
 
 #### update_relationship
 
@@ -1284,7 +1305,6 @@ Example:
     "id": "115"
   }
 }
-
 ```
 {@/request}
 
@@ -1292,7 +1312,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the service records that store flag if this product will be available later
+Retrieve the service records that store flag if this product will be available later.
 
 #### get_relationship
 
@@ -1301,6 +1321,19 @@ Retrieve an ID of the isUpcoming fallback entity for a specific product.
 #### update_relationship
 
 Replace the isUpcoming entity fallback value for a specific product record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "entityfieldfallbackvalues",
+    "id": "1"
+  }
+}
+```
+{@/request}
 
 ### lowInventoryThreshold
 
@@ -1316,15 +1349,28 @@ Retrieve an ID of the lowInventoryThreshold for a specific product.
 
 Replace the fallback value for lowInventoryThreshold for a specific product.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "entityfieldfallbackvalues",
+    "id": "1"
+  }
+}
+```
+{@/request}
+
 ### inventory_status
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for inventory_status flag for a specific product
+Retrieve the record of the fallback entity value for inventory_status flag for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the inventory_status flag for a specific product
+Retrieve an ID of the inventory_status flag for a specific product.
 
 #### update_relationship
 
@@ -1347,11 +1393,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for manageInventory flag for a specific product
+Retrieve the record of the fallback entity value for manageInventory flag for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the manageInventory flag for a specific product
+Retrieve an ID of the manageInventory flag for a specific product.
 
 #### update_relationship
 
@@ -1384,15 +1430,28 @@ Retrieve an ID of the highlightLowInventory flag for a specific product.
 
 Replace the fallback value for highlightLowInventory for a specific product.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "entityfieldfallbackvalues",
+    "id": "1"
+  }
+}
+```
+{@/request}
+
 ### maximumQuantityToOrder
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for maximumQuantityToOrder for a specific product
+Retrieve the record of the fallback entity value for maximumQuantityToOrder for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the maximumQuantityToOrder for a specific product
+Retrieve an ID of the maximumQuantityToOrder for a specific product.
 
 #### update_relationship
 
@@ -1415,11 +1474,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for minimumQuantityToOrder for a specific product
+Retrieve the record of the fallback entity value for minimumQuantityToOrder for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the minimumQuantityToOrder for a specific product
+Retrieve an ID of the minimumQuantityToOrder for a specific product.
 
 #### update_relationship
 
@@ -1442,11 +1501,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for pageTemplate for a specific product
+Retrieve the record of the fallback entity value for pageTemplate for a specific product.
 
 #### get_relationship
 
-Retrieve an ID of the pageTemplate value used for a specific product
+Retrieve an ID of the pageTemplate value used for a specific product.
 
 #### update_relationship
 
@@ -1523,7 +1582,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the names of a specific product record
+Retrieve the records for the names of a specific product record.
 
 #### get_relationship
 
@@ -1531,7 +1590,7 @@ Retrieve a list of IDs for the names of a specific product record.
 
 #### add_relationship
 
-Set the names of a specific product record
+Set the names of a specific product record.
 
 {@request:json_api}
 Example:
@@ -1540,11 +1599,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "593"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "594"
     }
   ]
@@ -1563,11 +1622,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "593"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "594"
     }
   ]
@@ -1586,11 +1645,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "69"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productnames",
       "id": "592"
     }
   ]
@@ -1602,7 +1661,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the descriptions of a specific product record
+Retrieve the records for the descriptions of a specific product record.
 
 #### get_relationship
 
@@ -1610,7 +1669,7 @@ Retrieve a list of IDs for the descriptions of a specific product record.
 
 #### add_relationship
 
-Set the descriptions of a specific product record
+Set the descriptions of a specific product record.
 
 {@request:json_api}
 Example:
@@ -1619,11 +1678,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "608"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "609"
     }
   ]
@@ -1642,11 +1701,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "608"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "609"
     }
   ]
@@ -1665,11 +1724,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "70"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productdescriptions",
       "id": "601"
     }
   ]
@@ -1681,7 +1740,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the metaDescriptions of a specific product record
+Retrieve the records for the metaDescriptions of a specific product record.
 
 #### get_relationship
 
@@ -1689,7 +1748,7 @@ Retrieve a list of IDs for the metaDescriptions of a specific product record.
 
 #### add_relationship
 
-Set the metaDescriptions of a specific product record
+Set the metaDescriptions of a specific product record.
 
 {@request:json_api}
 Example:
@@ -1760,7 +1819,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the metaKeywords of a specific product record
+Retrieve the records for the metaKeywords of a specific product record.
 
 #### get_relationship
 
@@ -1768,7 +1827,7 @@ Retrieve a list of IDs for the metaKeywords of a specific product record.
 
 #### add_relationship
 
-Set the metaKeywords of a specific product record
+Set the metaKeywords of a specific product record.
 
 {@request:json_api}
 Example:
@@ -1839,7 +1898,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the metaTitles of a specific product record
+Retrieve the records for the metaTitles of a specific product record.
 
 #### get_relationship
 
@@ -1847,7 +1906,7 @@ Retrieve a list of IDs for the metaTitles of a specific product record.
 
 #### add_relationship
 
-Set the metaTitles of a specific product record
+Set the metaTitles of a specific product record.
 
 {@request:json_api}
 Example:
@@ -1918,7 +1977,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the shortDescriptions of a specific product record
+Retrieve the records for the shortDescriptions of a specific product record.
 
 #### get_relationship
 
@@ -1935,11 +1994,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "71"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "610"
     }
   ]
@@ -1947,7 +2006,7 @@ Example:
 ```
 {@/request}
 
-Set the shortDescriptions of a specific product record
+Set the shortDescriptions of a specific product record.
 
 #### update_relationship
 
@@ -1960,11 +2019,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "71"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "610"
     }
   ]
@@ -1983,11 +2042,11 @@ Example:
 {
   "data": [
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "71"
     },
     {
-      "type": "localizedfallbackvalues",
+      "type": "productshortdescriptions",
       "id": "610"
     }
   ]
@@ -1999,7 +2058,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the records for the slugPrototypes of a specific product record
+Retrieve the records for the slugPrototypes of a specific product record.
 
 #### get_relationship
 
@@ -2007,7 +2066,7 @@ Retrieve a list of IDs for the slugPrototypes of a specific product record.
 
 #### add_relationship
 
-Set the slugPrototypes of a specific product record
+Set the slugPrototypes of a specific product record.
 
 {@request:json_api}
 Example:
@@ -2078,7 +2137,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record for the primary unit precision of a specific product record
+Retrieve the record for the primary unit precision of a specific product record.
 
 #### get_relationship
 
@@ -2101,38 +2160,11 @@ Example:
 ```
 {@/request}
 
-### taxCode
-
-#### get_subresource
-
-Retrieve the record for the taxCode of a specific product record
-
-#### get_relationship
-
-Retrieve the ID of the taxCode of a specific product record.
-
-#### update_relationship
-
-Replace the taxCode for a specific product.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "producttaxcodes",
-    "id": "1"
-  }
-}
-```
-{@/request}
-
 ### unitPrecisions
 
 #### get_subresource
 
-Retrieve the records for the unitPrecisions of a specific product record
+Retrieve the records for the unitPrecisions of a specific product record.
 
 #### get_relationship
 
@@ -2140,7 +2172,7 @@ Retrieve a list of IDs for the unitPrecisions of a specific product record.
 
 #### add_relationship
 
-Set the unitPrecisions of a specific product record
+Set the unitPrecisions of a specific product record.
 
 {@request:json_api}
 Example:
@@ -2211,15 +2243,15 @@ Example:
 
 #### get_subresource
 
-Get the related productImages entity for a specific product
+Get the related productImages entity for a specific product.
 
 #### get_relationship
 
-Retrieve the ID of productImages for a specific product
+Retrieve the ID of productImages for a specific product.
 
 #### add_relationship
 
-Set the productImages of a specific product record
+Set the productImages of a specific product record.
 
 {@request:json_api}
 Example:
@@ -2242,7 +2274,7 @@ Example:
 
 #### update_relationship
 
-Replace the productImages for a specific product
+Replace the productImages for a specific product.
 
 {@request:json_api}
 Example:
@@ -2286,39 +2318,11 @@ Example:
 ```
 {@/request}
 
-### test_variant_field
-
-#### get_subresource
-
-Retrieve the record for the test_variant_field of a specific product record
-
-#### get_relationship
-
-Retrieve the ID of the test_variant_field of a specific product record.
-
-#### update_relationship
-
-Replace the test_variant_field for a specific product.
-
-### pageTemplate
-
-#### get_subresource
-
-Get the related pageTemplate entity for a specific product
-
-#### get_relationship
-
-Retrieve the ID of the pageTemplate for a specific product
-
-#### update_relationship
-
-Replace the pageTemplate for a specific product
-
 ### variantLinks
 
 #### get_subresource
 
-Retrieve the variant products of a specific product record
+Retrieve the variant products of a specific product record.
 
 #### get_relationship
 
@@ -2326,15 +2330,64 @@ Retrieve a list of IDs for the variant products of a specific product record.
 
 #### add_relationship
 
-Set the variant products of a specific product record
+Set the variant products of a specific product record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productvariantlinks",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
 
 #### update_relationship
 
 Replace the variant products for a specific product.
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productvariantlinks",
+      "id": "1"
+    },
+    {
+      "type": "productvariantlinks",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
 #### delete_relationship
 
 Remove the variant products of a specific product record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "productvariantlinks",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}
 
 # Extend\Entity\EV_Prod_Inventory_Status
 

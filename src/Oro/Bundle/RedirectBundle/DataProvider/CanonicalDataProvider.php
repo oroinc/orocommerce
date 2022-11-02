@@ -12,9 +12,6 @@ class CanonicalDataProvider
      */
     protected $canonicalUrlGenerator;
 
-    /**
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     */
     public function __construct(CanonicalUrlGenerator $canonicalUrlGenerator)
     {
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;

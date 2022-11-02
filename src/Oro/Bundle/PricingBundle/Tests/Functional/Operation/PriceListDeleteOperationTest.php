@@ -5,16 +5,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Symfony\Component\HttpFoundation\Response;
 
 class PriceListDeleteOperationTest extends ActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures([LoadPriceLists::class]);
     }
 
     public function testDelete()
@@ -24,19 +24,18 @@ class PriceListDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $priceList->getId(),
-            'oro_pricing.entity.price_list.class',
+            PriceList::class,
             'oro_pricing_price_list_index'
         );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, Response::HTTP_OK);
-        $this->assertContains('Price List deleted', $crawler->html());
+        self::assertStringContainsString('Price List deleted', $crawler->html());
     }
 
     public function testDeleteDefault()
     {
-        /** @var PriceList $priceList */
         $priceList = $this->getRepository()->getDefault();
 
         $this->client->followRedirects(true);
@@ -44,7 +43,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $priceList->getId(),
-            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class'),
+            PriceList::class,
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
             Response::HTTP_FORBIDDEN
@@ -58,15 +57,12 @@ class PriceListDeleteOperationTest extends ActionTestCase
                 'refreshGrid' => null,
                 'pageReload' => true
             ],
-            json_decode($this->client->getResponse()->getContent(), true)
+            self::jsonToArray($this->client->getResponse()->getContent())
         );
     }
 
-    /**
-     * @return PriceListRepository
-     */
-    protected function getRepository()
+    private function getRepository(): PriceListRepository
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroPricingBundle:PriceList');
+        return $this->getContainer()->get('doctrine')->getRepository(PriceList::class);
     }
 }

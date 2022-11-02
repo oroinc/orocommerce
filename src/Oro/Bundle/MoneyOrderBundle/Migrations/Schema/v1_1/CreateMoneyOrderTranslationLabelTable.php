@@ -10,9 +10,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class CreateMoneyOrderTranslationLabelTable implements Migration
 {
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
      * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
@@ -21,9 +18,6 @@ class CreateMoneyOrderTranslationLabelTable implements Migration
         $this->addOroMoneyOrderTransportLabelForeignKeys($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     private function createOroMoneyOrderTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_money_order_trans_label');
@@ -36,8 +30,6 @@ class CreateMoneyOrderTranslationLabelTable implements Migration
         $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_trans_label_localized_value_id', []);
     }
     /**
-     * @param Schema $schema
-     *
      * @throws SchemaException
      */
     private function addOroMoneyOrderTransportLabelForeignKeys(Schema $schema)

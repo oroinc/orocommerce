@@ -6,11 +6,11 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 
+/**
+ * Adds inventory backorder information to the category edit page.
+ */
 class CategoryInventoryBackorderFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $category = $this->getEntityFromRequest(Category::class);
@@ -20,7 +20,7 @@ class CategoryInventoryBackorderFormViewListener extends AbstractFallbackFieldsF
 
         $this->addBlockToEntityEdit(
             $event,
-            'OroInventoryBundle:Category:editInventoryBackorder.html.twig',
+            '@OroInventory/Category/editInventoryBackorder.html.twig',
             'oro.catalog.sections.default_options'
         );
     }

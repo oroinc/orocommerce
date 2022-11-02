@@ -76,14 +76,14 @@ product-6:
         reference: product-6.visibility.all
     groups: {}
     customers: {}
-product-7:
+продукт-7:
     all:
         visibility: config
-        reference: product-7.visibility.all
+        reference: продукт-7.visibility.all
     groups:
         customer_group.group1:
             visibility: category
-            reference: product-7.visibility.customer_group.group1
+            reference: продукт-7.visibility.customer_group.group1
     customers: {}
 product-8:
     all:

@@ -34,7 +34,7 @@ class ProductFlushEventListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->inventoryManager = $this->getMockBuilder(InventoryManager::class)
             ->disableOriginalConstructor()

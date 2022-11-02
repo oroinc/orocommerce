@@ -1,0 +1,22 @@
+oro_api:
+    config_files:
+        frontend_sku:
+            file_name: [api_frontend_sku.yml, api_frontend.yml]
+            request_type: ['frontend_sku', 'frontend']
+    api_doc_views:
+        frontend_sku_rest_json_api:
+            label: 'JSON:API (SKU)'
+            underlying_view: frontend_rest_json_api
+            headers:
+                X-Product-ID: sku
+            request_type: ['rest', 'json_api', 'frontend_sku', 'frontend']
+
+oro_frontend:
+    frontend_api:
+        api_doc_views: [frontend_sku_rest_json_api]
+
+knp_gaufrette:
+    filesystems:
+        import_product_images:
+            adapter: import_files
+            alias: import_product_images_filesystem

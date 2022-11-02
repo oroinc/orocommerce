@@ -62,7 +62,7 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     product: '@product2'
     quote: '@quote5'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
   quoteProductPrice1:
     value: 7.45
     currency: USD

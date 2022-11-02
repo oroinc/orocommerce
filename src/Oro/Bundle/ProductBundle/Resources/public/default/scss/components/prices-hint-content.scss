@@ -3,32 +3,46 @@
 .prices-hint-content {
     min-width: 171px;
 
-    &::before, &::after {
-        pointer-events: none;
+    .popover-header {
+        display: none;
     }
 
-    .table {
-        margin-bottom: 0;
-
-        text-align: center;
-
-        th {
-            border-top: 0;
-            border-bottom-width: 1px;
-
-            font-weight: 700;
-            text-align: center;
-        }
-
-        td {
-            width: 50%;
-            padding: 4px 8px;
-        }
+    &::before,
+    &::after {
+        pointer-events: none;
     }
 
     .matched-tier-price {
         > td {
-            font-weight: 700;
+            font-weight: font-weight('bold');
+        }
+    }
+
+    .table {
+        border-top: 0;
+        margin-bottom: 0;
+
+        font-size: $base-font-size;
+        text-align: center;
+
+        thead {
+            th {
+                background: none;
+                padding: 3px 8px;
+                text-align: center;
+            }
+        }
+
+        td {
+            width: 50%;
+            padding: 3px 8px;
+            text-align: center;
+        }
+
+        tr:last-child {
+            td {
+                border-bottom: 0;
+            }
         }
     }
 }

@@ -2,24 +2,27 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class LineItemRepository extends EntityRepository
+/**
+ * Entity repository for Shopping List Line Item entity
+ */
+class LineItemRepository extends ServiceEntityRepository
 {
     /**
-     * Find line item with the same product and unit
-     *
-     * @param LineItem $lineItem
-     *
-     * @return LineItem
+     * Find line item with the same product and unit in the specified shopping list
      */
-    public function findDuplicate(LineItem $lineItem)
+    public function findDuplicateInShoppingList(LineItem $lineItem, ?ShoppingList $shoppingList): ?LineItem
     {
         $qb = $this->createQueryBuilder('li');
         $qb->where('li.product = :product')
@@ -27,8 +30,9 @@ class LineItemRepository extends EntityRepository
             ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
-            ->setParameter('shoppingList', $lineItem->getShoppingList())
-            ->addOrderBy($qb->expr()->asc('li.id'));
+            ->setParameter('shoppingList', $shoppingList)
+            ->addOrderBy($qb->expr()->asc('li.id'))
+            ->setMaxResults(1);
 
         if ($lineItem->getId()) {
             $qb
@@ -42,22 +46,97 @@ class LineItemRepository extends EntityRepository
     /**
      * @param AclHelper $aclHelper
      * @param array|Product $products
+     * @param CustomerUser|null $customerUser
      * @return LineItem[]
      */
-    public function getProductItemsWithShoppingListNames(AclHelper $aclHelper, $products)
-    {
+    public function getProductItemsWithShoppingListNames(
+        AclHelper $aclHelper,
+        $products,
+        ?CustomerUser $customerUser = null
+    ): array {
         $qb = $this->createQueryBuilder('li');
         $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->join('li.product', 'product')
-            ->leftJoin('product.parentVariantLinks', 'parentVariantLinks')
-            ->andWhere('product IN (:products)')
-            ->orWhere('li.parentProduct IN (:products)')
-            ->orWhere('parentVariantLinks.parentProduct IN (:products)')
-            ->setParameter('products', $products)
-            ->addOrderBy($qb->expr()->asc('li.id'));
+            ->leftJoin(
+                'li.product',
+                'productExpr',
+                Join::WITH,
+                'li.product = productExpr AND productExpr IN (:products)'
+            )
+            ->leftJoin(
+                'product.parentVariantLinks',
+                'parentVariantLinksExpr',
+                Join::WITH,
+                'product = parentVariantLinksExpr.parentProduct'.
+                ' AND parentVariantLinksExpr.parentProduct IN (:products)'
+            );
 
-        return $aclHelper->apply($qb, 'EDIT')->getResult();
+        if ($customerUser) {
+            $qb->where($qb->expr()->eq('shoppingList.customerUser', ':customerUser'))
+                ->setParameter('customerUser', $customerUser);
+        }
+
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->isNull('li.parentProduct'),
+            $qb->expr()->in('li.parentProduct', ':products')
+        ))
+        ->orWhere($qb->expr()->isNotNull('productExpr'))
+        ->orWhere($qb->expr()->isNotNull('parentVariantLinksExpr'))
+        ->setParameter('products', $products)
+        ->addOrderBy($qb->expr()->asc('li.id'));
+
+        return $aclHelper->apply($qb, BasicPermission::EDIT)->getResult();
+    }
+
+    public function hasEmptyMatrix(int $shoppingListId): bool
+    {
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li.quantity, p.type, p.id, IDENTITY(li.parentProduct) as parent')
+            ->join('li.product', 'p')
+            ->where($qb->expr()->eq('li.shoppingList', ':shoppingListId'))
+            ->setParameter('shoppingListId', $shoppingListId);
+
+        $configurable = [];
+        $simple = [];
+
+        foreach ($qb->getQuery()->getArrayResult() as $row) {
+            if ($row['type'] === Product::TYPE_CONFIGURABLE) {
+                $configurable[] = $row['id'];
+                continue;
+            }
+
+            if (!$row['parent'] || $row['quantity'] <= 0) {
+                continue;
+            }
+
+            $simple[$row['parent']][] = $row['id'];
+        }
+
+        foreach ($configurable as $id) {
+            if (!isset($simple[$id]) || !count($simple[$id])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function canBeGrouped(int $shoppingListId): bool
+    {
+        $qb = $this->createQueryBuilder('li');
+        $qb->resetDQLPart('select')
+            ->select($qb->expr()->count('li.id'))
+            ->where(
+                $qb->expr()->in('li.shoppingList', ':shopping_list'),
+                $qb->expr()->isNotNull('li.parentProduct')
+            )
+            ->setParameter('shopping_list', $shoppingListId)
+            ->groupBy('li.parentProduct')
+            ->having($qb->expr()->gt($qb->expr()->count('li.id'), 1))
+            ->setMaxResults(1);
+
+        return (bool) $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -135,72 +214,118 @@ class LineItemRepository extends EntityRepository
         $productCount,
         Localization $localization = null
     ) {
-        $dql = <<<DQL
-SELECT li
-FROM OroShoppingListBundle:LineItem AS li
-WHERE li.shoppingList IN (:shoppingLists) AND (
-    SELECT COUNT(li2.id) FROM OroShoppingListBundle:LineItem AS li2
-    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id AND li2.parentProduct IS NULL
-) <= :productCount
-ORDER BY li.shoppingList DESC, li.id DESC
-DQL;
-        $shoppingListIds = array_map(
-            function (ShoppingList $shoppingList) {
-                return $shoppingList->getId();
-            },
-            $shoppingLists
-        );
+        if (!$shoppingLists) {
+            return [];
+        }
 
-        /** @var LineItem[] $lineItems */
-        $lineItems = $this->getEntityManager()
-            ->createQuery($dql)
-            ->setParameter('shoppingLists', $shoppingListIds)
-            ->setParameter('productCount', $productCount)
-            ->getResult();
+        $qb = $this->createQueryBuilder('line_item');
+        $query = $qb
+            ->select('COALESCE(parent_product.id, product.id) as main_product_id')
+            ->innerJoin('line_item.product', 'product')
+            ->leftJoin('line_item.parentProduct', 'parent_product')
+            ->andWhere($qb->expr()->eq('line_item.shoppingList', ':shopping_list'))
+            ->addGroupBy('main_product_id')
+            ->addOrderBy($qb->expr()->desc($qb->expr()->max('line_item.id')))
+            ->setMaxResults($productCount)
+            ->getQuery();
+
+        $productsIdsByShoppingList = [];
+        foreach ($shoppingLists as $shoppingList) {
+            $shoppingListId = $shoppingList->getId();
+
+            $productsIdsByShoppingList[$shoppingListId] = \array_column(
+                $query->execute(['shopping_list' => $shoppingListId], AbstractQuery::HYDRATE_ARRAY),
+                'main_product_id'
+            );
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->select('product', 'names')
+            ->from(Product::class, 'product', 'product.id')
+            ->innerJoin('product.names', 'names')
+            ->where($qb->expr()->in('product', ':product_ids'))
+            ->setParameter('product_ids', \array_merge(...\array_values($productsIdsByShoppingList)));
+
+        /** @var Product[] $products */
+        $products = $qb->getQuery()->getResult();
 
         $result = [];
-
-        $productsIds = array_map(
-            function (LineItem $lineItem) {
-                return $lineItem->getProduct()->getId();
-            },
-            $lineItems
-        );
-        if (count($productsIds) > 0) {
-            $qb = $this->_em->createQueryBuilder();
-            /** @var Product[] $products */
-            $products = $qb->select('product, names')
-                ->from(Product::class, 'product')
-                ->join('product.names', 'names')
-                ->where('product IN (:products)')
-                ->setParameter('products', $productsIds)
-                ->getQuery()
-                ->getResult();
-            $organizedProducts = [];
-            foreach ($products as $product) {
-                $organizedProducts[$product->getId()] = $product;
-            }
-            foreach ($lineItems as $lineItem) {
-                $shoppingListId = $lineItem->getShoppingList()->getId();
-                $product = $organizedProducts[$lineItem->getProduct()->getId()];
-                if ($product !== null) {
-                    if ($lineItem->getParentProduct()) {
-                        $result[$shoppingListId][$lineItem->getParentProduct()->getId()] = [
-                            'name' => $lineItem->getParentProduct()->getName($localization)->getString()
-                        ];
-                    } else {
-                        $result[$shoppingListId][$lineItem->getProduct()->getId()] = [
-                            'name' => $product->getName($localization)->getString()
-                        ];
-                    }
+        foreach ($productsIdsByShoppingList as $shoppingListId => $productsIds) {
+            foreach ($productsIds as $productId) {
+                if (!isset($products[$productId])) {
+                    continue;
                 }
+
+                $result[$shoppingListId][] = [
+                    'name' => $products[$productId]->getName($localization)->getString(),
+                ];
             }
         }
 
-        $result = array_map(function (array $lineItemsByShoppingList) use ($productCount) {
-            return array_slice($lineItemsByShoppingList, 0, $productCount);
-        }, $result);
-
         return $result;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param array $allowedInventoryStatuses
+     * @return int Number of deleted line items
+     */
+    public function deleteNotAllowedLineItemsFromShoppingList(
+        ShoppingList $shoppingList,
+        array $allowedInventoryStatuses
+    ): int {
+        $lineItemsQb = $this->createQueryBuilder('line_item');
+        $lineItemsQuery = $lineItemsQb
+            ->select('line_item.id')
+            ->innerJoin('line_item.product', 'product')
+            ->where(
+                $lineItemsQb->expr()->orX(
+                    $lineItemsQb->expr()->notIn('IDENTITY(product.inventory_status)', ':allowedInventoryStatuses'),
+                    $lineItemsQb->expr()->eq('product.status', ':status')
+                ),
+                $lineItemsQb->expr()->eq('line_item.shoppingList', ':shoppingList')
+            )
+            ->setParameter('allowedInventoryStatuses', $allowedInventoryStatuses)
+            ->setParameter('status', Product::STATUS_DISABLED)
+            ->setParameter('shoppingList', $shoppingList)
+            ->getQuery();
+
+        $identifierHydrationMode = 'IdentifierHydrator';
+
+        $lineItemsQuery->getEntityManager()
+            ->getConfiguration()
+            ->addCustomHydrationMode($identifierHydrationMode, IdentifierHydrator::class);
+
+        $ids = $lineItemsQuery->getResult($identifierHydrationMode);
+        $deletedCount = 0;
+        if ($ids) {
+            $deleteQb = $this->getEntityManager()->createQueryBuilder();
+            $deletedCount = $deleteQb->delete()
+                ->from($this->getEntityName(), 'line_item')
+                ->where($deleteQb->expr()->in('line_item.id', ':ids'))
+                ->getQuery()
+                ->execute(['ids' => $ids]);
+        }
+
+        return $deletedCount;
+    }
+
+    public function findLineItemsByParentProductAndUnit(int $shoppingListId, int $productId, string $unitCode): array
+    {
+        $expr = $this->getEntityManager()->getExpressionBuilder();
+
+        return $this
+            ->createQueryBuilder('line_item')
+            ->where($expr->eq('IDENTITY(line_item.shoppingList)', ':shopping_list_id'))
+            ->andWhere(
+                $expr->orX(
+                    $expr->eq('line_item.parentProduct', ':product_id'),
+                    $expr->eq('line_item.product', ':product_id')
+                )
+            )
+            ->andWhere($expr->eq('line_item.unit', ':unit_code'))
+            ->getQuery()
+            ->execute(['shopping_list_id' => $shoppingListId, 'product_id' => $productId, 'unit_code' => $unitCode]);
     }
 }

@@ -12,7 +12,7 @@ class DiscountContextConverterRegistryTest extends \PHPUnit\Framework\TestCase
     public function testSupports()
     {
         $entity = new \stdClass();
-        $registry = new DiscountContextConverterRegistry();
+        $registry = new DiscountContextConverterRegistry([]);
         $this->assertFalse($registry->supports($entity));
 
         /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
@@ -22,14 +22,13 @@ class DiscountContextConverterRegistryTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn(true);
 
-        $registry->registerConverter($converter);
+        $registry = new DiscountContextConverterRegistry([$converter]);
         $this->assertTrue($registry->supports($entity));
     }
 
     public function testConvert()
     {
         $entity = new \stdClass();
-        $registry = new DiscountContextConverterRegistry();
         $discountContext = new DiscountContext();
 
         /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
@@ -43,14 +42,13 @@ class DiscountContextConverterRegistryTest extends \PHPUnit\Framework\TestCase
             ->with($entity)
             ->willReturn($discountContext);
 
-        $registry->registerConverter($converter);
+        $registry = new DiscountContextConverterRegistry([$converter]);
         $this->assertSame($discountContext, $registry->convert($entity));
     }
 
     public function testConvertWithNotSupportedEntity()
     {
         $entity = new \stdClass();
-        $registry = new DiscountContextConverterRegistry();
 
         /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject $converter */
         $converter = $this->createMock(DiscountContextConverterInterface::class);
@@ -62,7 +60,7 @@ class DiscountContextConverterRegistryTest extends \PHPUnit\Framework\TestCase
             ->method('convert')
             ->with($entity);
 
-        $registry->registerConverter($converter);
+        $registry = new DiscountContextConverterRegistry([$converter]);
 
         $this->expectException(UnsupportedSourceEntityException::class);
         $registry->convert($entity);

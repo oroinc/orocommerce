@@ -24,7 +24,7 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
      */
     private $searchHandler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->productWithPricesSearchHandler = $this->createMock(SearchHandlerInterface::class);
         $this->productVisibilityLimitedSearchHandler = $this->createMock(SearchHandlerInterface::class);
@@ -88,9 +88,6 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
 
     /**
      * @dataProvider searchDataProvider
-     * @param array $result
-     * @param array $pricesResult
-     * @param array $expected
      */
     public function testSearch(array $result, array $pricesResult, array $expected)
     {
@@ -156,18 +153,19 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends TestCase
             'pricing results match' => [
                 [
                     'more' => false,
-                    'results' => [['sku' => 'test', 'name' => 'test name']]
+                    'results' => [['sku' => 'SkuАбв', 'name' => 'test name']]
                 ],
                 [
                     'more' => false,
                     'results' => [
-                        ['sku' => 'test', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
+                        ['sku' => 'Sku1', 'name' => 'Sku1', 'prices' => [['value' => 1, 'unit' => 'item']]],
+                        ['sku' => 'SkuАбв', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
                     ]
                 ],
                 [
                     'more' => false,
                     'results' => [
-                        ['sku' => 'test', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
+                        ['sku' => 'SkuАбв', 'name' => 'test name', 'prices' => [['value' => 10, 'unit' => 'item']]]
                     ]
                 ]
             ],

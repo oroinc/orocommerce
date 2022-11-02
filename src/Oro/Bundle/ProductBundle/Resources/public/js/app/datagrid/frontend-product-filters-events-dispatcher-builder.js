@@ -1,14 +1,14 @@
-define(['jquery'], function($) {
+define(function(require) {
     'use strict';
 
-    var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    var FiltersEventsDispatcher = function() {
-        this.initialize.apply(this, arguments);
-    };
+    const FiltersEventsDispatcher = BaseComponent.extend({
+        constructor: function FiltersEventsDispatcher(options) {
+            FiltersEventsDispatcher.__super__.constructor.call(this, options);
+        },
 
-    _.extend(FiltersEventsDispatcher.prototype, {
         /**
          * @property {Grid}
          */
@@ -21,11 +21,10 @@ define(['jquery'], function($) {
         initialize: function(options) {
             this.datagrid = options.grid;
 
-            this.datagrid.collection.on('sync', $.proxy(this, 'triggerFiltersUpdateEvent'));
+            this.listenTo(this.datagrid.collection, 'sync', this.triggerFiltersUpdateEvent);
+            this.listenTo(this.datagrid, 'filterManager:connected', this.triggerFiltersUpdateEvent);
 
-            // trigger for first rendering
-            // It's not this.triggerFiltersUpdateEvent(); because it will not pass datagrid.filterManager
-            this.datagrid.on('filterManager:connected', this.triggerFiltersUpdateEvent, this);
+            FiltersEventsDispatcher.__super__.initialize.call(this, options);
         },
 
         triggerFiltersUpdateEvent: function() {
@@ -40,7 +39,7 @@ define(['jquery'], function($) {
          */
         init: function(deferred, options) {
             options.gridPromise.done(function(grid) {
-                var validation = new FiltersEventsDispatcher({
+                const validation = new FiltersEventsDispatcher({
                     grid: grid,
                     options: options
                 });

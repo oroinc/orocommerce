@@ -1,0 +1,24 @@
+services:
+    _instanceof:
+        Oro\Component\MessageQueue\Topic\TopicInterface:
+            tags:
+                - { name: oro_message_queue.topic }
+
+    Oro\Bundle\PricingBundle\Async\Topic\CombineSingleCombinedPriceListPricesTopic:
+        arguments:
+            - '@oro_pricing.provider.combined_price_list'
+
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic:
+        arguments:
+            - '@doctrine'
+    Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic:
+        arguments:
+            - '@doctrine'
+    Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByVersionedPriceListTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveVersionedFlatPriceTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic: ~
+    Oro\Bundle\PricingBundle\Async\Topic\RunCombinedPriceListPostProcessingStepsTopic: ~

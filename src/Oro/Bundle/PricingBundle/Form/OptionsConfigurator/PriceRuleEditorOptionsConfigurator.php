@@ -10,9 +10,10 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 /**
- * Provides configuration data for PriceRule expression editor
+ * Configurator for price rule editor autocomplete data.
  */
 class PriceRuleEditorOptionsConfigurator
 {
@@ -27,7 +28,7 @@ class PriceRuleEditorOptionsConfigurator
     private $formFactory;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     private $twig;
 
@@ -36,16 +37,10 @@ class PriceRuleEditorOptionsConfigurator
      */
     private $entityAliasResolver;
 
-    /**
-     * @param AutocompleteFieldsProviderInterface $autocompleteFieldsProvider
-     * @param FormFactoryInterface $formFactory
-     * @param \Twig_Environment $environment
-     * @param EntityAliasResolver $entityAliasResolver
-     */
     public function __construct(
         AutocompleteFieldsProviderInterface $autocompleteFieldsProvider,
         FormFactoryInterface $formFactory,
-        \Twig_Environment $environment,
+        Environment $environment,
         EntityAliasResolver $entityAliasResolver
     ) {
         $this->autocompleteFieldsProvider = $autocompleteFieldsProvider;
@@ -96,7 +91,7 @@ class PriceRuleEditorOptionsConfigurator
                 try {
                     return [
                         $entityAlias => $this->twig->render(
-                            'OroPricingBundle:Form:form_widget.html.twig',
+                            '@OroPricing/Form/form_widget.html.twig',
                             ['form' => $priceListSelectView]
                         )
                     ];
@@ -109,10 +104,6 @@ class PriceRuleEditorOptionsConfigurator
         });
     }
 
-    /**
-     * @param FormView $view
-     * @param array $options
-     */
     public function limitNumericOnlyRules(FormView $view, array $options)
     {
         if ($options['numericOnly']) {

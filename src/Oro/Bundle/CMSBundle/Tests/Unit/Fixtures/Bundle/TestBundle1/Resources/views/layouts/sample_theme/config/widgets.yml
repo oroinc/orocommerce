@@ -1,0 +1,4 @@
+layouts:
+    copyright:
+        template1: 'oro.widget.translatable.label'
+        template2: ~

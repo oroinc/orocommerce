@@ -2,7 +2,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
 ], function(_, __, $) {
     'use strict';
 
-    var defaultParam = {
+    const defaultParam = {
         message: 'oro.payment.validation.month',
         formSelector: '[data-credit-card-form], form',
         monthSelector: '[data-expiration-date-month]',
@@ -16,10 +16,10 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
         'credit-card-expiration-date',
         function(value, element, param) {
             param = _.extend({}, defaultParam, param);
-            var form = $(element).closest(param.formSelector);
-            var year = form.find(param.yearSelector).val();
-            var month = form.find(param.monthSelector).val();
-            var now = new Date();
+            const form = $(element).closest(param.formSelector);
+            const year = form.find(param.yearSelector).val();
+            const month = form.find(param.monthSelector).val();
+            const now = new Date();
 
             if (year.length) {
                 if (parseInt(year, 10) % 100 === now.getFullYear() % 100) {

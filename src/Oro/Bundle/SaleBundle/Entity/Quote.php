@@ -9,6 +9,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
+use Oro\Bundle\EmailBundle\Entity\EmailOwnerAwareInterface;
+use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -16,6 +18,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
@@ -25,7 +28,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * Quote entity
+ * Entity holds information about quote.
  *
  * @ORM\Table(name="oro_sale_quote")
  * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
@@ -37,7 +40,12 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      routeUpdate="oro_sale_quote_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-list-alt"
+ *              "icon"="fa-list-alt",
+ *              "contact_information"={
+ *                  "email"={
+ *                      {"fieldName"="contactInformation"}
+ *                  }
+ *              }
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -70,6 +78,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 class Quote extends ExtendQuote implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
+    EmailOwnerAwareInterface,
     OrganizationAwareInterface,
     MethodLockedShippingMethodConfigurationInterface,
     AllowUnlistedShippingMethodConfigurationInterface,
@@ -119,6 +128,20 @@ class Quote extends ExtendQuote implements
      * )
      */
     protected $qid;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="guest_access_id", type="guid", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $guestAccessId;
 
     /**
      * @var Website
@@ -352,6 +375,7 @@ class Quote extends ExtendQuote implements
         $this->assignedUsers = new ArrayCollection();
         $this->assignedCustomerUsers = new ArrayCollection();
         $this->demands = new ArrayCollection();
+        $this->generateGuestAccessId();
     }
 
     /**
@@ -406,6 +430,25 @@ class Quote extends ExtendQuote implements
     public function getQid()
     {
         return $this->qid;
+    }
+
+    /**
+     * @param string $guestAccessId
+     * @return Quote
+     */
+    public function setGuestAccessId(?string $guestAccessId): Quote
+    {
+        $this->guestAccessId = $guestAccessId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGuestAccessId(): ?string
+    {
+        return $this->guestAccessId;
     }
 
     /**
@@ -518,19 +561,11 @@ class Quote extends ExtendQuote implements
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isPricesChanged(): bool
     {
         return $this->pricesChanged;
     }
 
-    /**
-     * @param bool $pricesChanged
-     *
-     * @return Quote
-     */
     public function setPricesChanged(bool $pricesChanged): Quote
     {
         $this->pricesChanged = (bool)$pricesChanged;
@@ -544,6 +579,11 @@ class Quote extends ExtendQuote implements
     public function __toString()
     {
         return (string)$this->id;
+    }
+
+    public function __clone()
+    {
+        $this->generateGuestAccessId();
     }
 
     /**
@@ -794,7 +834,7 @@ class Quote extends ExtendQuote implements
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
-        if ($this->overriddenShippingCostAmount) {
+        if (null !== $this->overriddenShippingCostAmount) {
             $amount = $this->overriddenShippingCostAmount;
         }
         if ($amount && $this->currency) {
@@ -868,6 +908,16 @@ class Quote extends ExtendQuote implements
     }
 
     /**
+     * @return bool
+     */
+    public function isAvailableOnFrontend()
+    {
+        $status = $this->getInternalStatus();
+
+        return !$status || \in_array($status->getId(), self::FRONTEND_INTERNAL_STATUSES, true);
+    }
+
+    /**
      * @return QuoteDemand[]|ArrayCollection
      */
     public function getDemands()
@@ -921,5 +971,18 @@ class Quote extends ExtendQuote implements
     public function isOverriddenShippingCost()
     {
         return null !== $this->overriddenShippingCostAmount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEmailOwner(): EmailOwnerInterface
+    {
+        return $this->customerUser;
+    }
+
+    private function generateGuestAccessId(): void
+    {
+        $this->setGuestAccessId(UUIDGenerator::v4());
     }
 }

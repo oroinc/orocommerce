@@ -1,0 +1,11 @@
+/* @theme: default; */
+
+.featured-categories {
+    margin: $featured-categories-offset;
+}
+
+@include breakpoint('tablet-small') {
+    .featured-categories {
+        margin: $featured-categories-offset-tablet-small;
+    }
+}

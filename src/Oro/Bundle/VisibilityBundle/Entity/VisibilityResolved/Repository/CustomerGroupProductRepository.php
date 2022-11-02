@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -21,13 +22,104 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
 {
     use BasicOperationRepositoryTrait;
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param ScopeManager $scopeManager
-     * @param Scope|null $scope
-     */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertExecutor,
+        ScopeManager $scopeManager,
+        Scope $scope = null
+    ) {
+        $qb = $this->getCustomerGroupProductVisibilityResolvedQueryBuilder($scopeManager, $scope);
+
+        $insertExecutor->execute(
+            $this->getClassName(),
+            [
+                'sourceProductVisibility',
+                'scope',
+                'product',
+                'visibility',
+                'source',
+                'category',
+            ],
+            $qb
+        );
+    }
+
+    public function insertStatic(
+        InsertFromSelectQueryExecutor $insertExecutor,
+        Scope $scope = null
+    ) {
+        $queryBuilder = $this->getInsertStaticQueryBuilder($scope);
+
+        $insertExecutor->execute(
+            $this->getClassName(),
+            [
+                'sourceProductVisibility',
+                'scope',
+                'product',
+                'visibility',
+                'source',
+            ],
+            $queryBuilder
+        );
+    }
+
+    public function deleteByProduct(Product $product)
+    {
+        $this->createQueryBuilder('resolvedVisibility')
+            ->delete()
+            ->where('resolvedVisibility.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function insertByProduct(
+        InsertFromSelectQueryExecutor $insertExecutor,
+        Product $product,
+        Category $category = null
+    ) {
+        $visibilityMap = [
+            CustomerGroupProductVisibility::HIDDEN => [
+                'visibility' => CustomerGroupProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'source' => CustomerGroupProductVisibilityResolved::SOURCE_STATIC,
+            ],
+            CustomerGroupProductVisibility::VISIBLE => [
+                'visibility' => CustomerGroupProductVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => CustomerGroupProductVisibilityResolved::SOURCE_STATIC,
+            ],
+        ];
+
+        $fields = ['sourceProductVisibility', 'product', 'scope', 'visibility', 'source'];
+
+        foreach ($visibilityMap as $visibility => $productVisibility) {
+            $qb = $this->getInsertByProductVisibilityQueryBuilder($product, $visibility, $productVisibility);
+
+            $insertExecutor->execute($this->getEntityName(), $fields, $qb);
+        }
+
+        if ($category) {
+            $qb = $this->getInsertByProductCategoryQueryBuilder($product, $category);
+
+            $fields[] = 'category';
+            $insertExecutor->execute($this->getEntityName(), $fields, $qb);
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param Scope $scope
+     * @return null|CustomerGroupProductVisibilityResolved
+     */
+    public function findByPrimaryKey(Product $product, Scope $scope)
+    {
+        return $this->findOneBy(['scope' => $scope, 'product' => $product]);
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     * @param Scope|null $scope
+     * @return QueryBuilder
+     */
+    protected function getCustomerGroupProductVisibilityResolvedQueryBuilder(
         ScopeManager $scopeManager,
         Scope $scope = null
     ) {
@@ -70,28 +162,15 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
                 ->setParameter('scope', $scope);
         }
 
-        $insertExecutor->execute(
-            $this->getClassName(),
-            [
-                'sourceProductVisibility',
-                'scope',
-                'product',
-                'visibility',
-                'source',
-                'category',
-            ],
-            $qb
-        );
+        return $qb;
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param Scope|null $scope
+     * @return QueryBuilder
      */
-    public function insertStatic(
-        InsertFromSelectQueryExecutor $insertExecutor,
-        Scope $scope = null
-    ) {
+    protected function getInsertStaticQueryBuilder(Scope $scope = null)
+    {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
             ->createQueryBuilder('agpv')
@@ -115,120 +194,75 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
                 ->setParameter('scope', $scope);
         }
 
-        $insertExecutor->execute(
-            $this->getClassName(),
-            [
-                'sourceProductVisibility',
-                'scope',
-                'product',
-                'visibility',
-                'source',
-            ],
-            $queryBuilder
-        );
+        return $queryBuilder;
     }
 
     /**
      * @param Product $product
+     * @param string $visibility
+     * @param array $productVisibility
+     * @return QueryBuilder
      */
-    public function deleteByProduct(Product $product)
+    protected function getInsertByProductVisibilityQueryBuilder(Product $product, $visibility, array $productVisibility)
     {
-        $this->createQueryBuilder('resolvedVisibility')
-            ->delete()
-            ->where('resolvedVisibility.product = :product')
-            ->setParameter('product', $product)
-            ->getQuery()
-            ->execute();
-    }
+        $qb = $this->getEntityManager()
+            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            ->createQueryBuilder('productVisibility');
+        $qb->select([
+            'productVisibility.id',
+            'IDENTITY(productVisibility.product)',
+            'IDENTITY(productVisibility.scope)',
+            (string)$productVisibility['visibility'],
+            (string)$productVisibility['source'],
+        ])
+        ->where('productVisibility.product = :product')
+        ->andWhere('productVisibility.visibility = :visibility')
+        ->setParameter('product', $product)
+        ->setParameter('visibility', $visibility);
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Product $product
-     * @param Category|null $category
-     */
-    public function insertByProduct(
-        InsertFromSelectQueryExecutor $insertExecutor,
-        Product $product,
-        Category $category = null
-    ) {
-        $visibilityMap = [
-            CustomerGroupProductVisibility::HIDDEN => [
-                'visibility' => CustomerGroupProductVisibilityResolved::VISIBILITY_HIDDEN,
-                'source' => CustomerGroupProductVisibilityResolved::SOURCE_STATIC,
-            ],
-            CustomerGroupProductVisibility::VISIBLE => [
-                'visibility' => CustomerGroupProductVisibilityResolved::VISIBILITY_VISIBLE,
-                'source' => CustomerGroupProductVisibilityResolved::SOURCE_STATIC,
-            ],
-        ];
-
-        $fields = ['sourceProductVisibility', 'product', 'scope', 'visibility', 'source'];
-
-        foreach ($visibilityMap as $visibility => $productVisibility) {
-            $qb = $this->getEntityManager()
-                ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
-                ->createQueryBuilder('productVisibility');
-            $qb->select([
-                'productVisibility.id',
-                'IDENTITY(productVisibility.product)',
-                'IDENTITY(productVisibility.scope)',
-                (string)$productVisibility['visibility'],
-                (string)$productVisibility['source'],
-            ])
-            ->where('productVisibility.product = :product')
-            ->andWhere('productVisibility.visibility = :visibility')
-            ->setParameter('product', $product)
-            ->setParameter('visibility', $visibility);
-
-            $insertExecutor->execute($this->getEntityName(), $fields, $qb);
-        }
-
-        if ($category) {
-            $configValue = CustomerGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
-            $qb = $this->getEntityManager()
-                ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
-                ->createQueryBuilder('productVisibility');
-            $qb->select([
-                'productVisibility.id',
-                'IDENTITY(productVisibility.product)',
-                'IDENTITY(productVisibility.scope)',
-                'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
-                (string)CustomerGroupProductVisibilityResolved::SOURCE_CATEGORY,
-                (string)$category->getId()
-            ])
-            ->join('productVisibility.scope', 'scope')
-            ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
-                'agcvr',
-                'WITH',
-                'agcvr.category = :category'
-            )
-            ->leftJoin('agcvr.scope', 'agcvr_scope')
-            ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.customerGroup = scope.customerGroup')
-            ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                'WITH',
-                'cvr.category = :category'
-            )
-            ->andWhere('productVisibility.product = :product')
-            ->andWhere('productVisibility.visibility = :visibility')
-            ->setParameter('category', $category)
-            ->setParameter('product', $product)
-            ->setParameter('visibility', CustomerGroupProductVisibility::CATEGORY);
-
-            $fields[] = 'category';
-            $insertExecutor->execute($this->getEntityName(), $fields, $qb);
-        }
+        return $qb;
     }
 
     /**
      * @param Product $product
-     * @param Scope $scope
-     * @return null|CustomerGroupProductVisibilityResolved
+     * @param Category $category
+     * @return QueryBuilder
      */
-    public function findByPrimaryKey(Product $product, Scope $scope)
+    protected function getInsertByProductCategoryQueryBuilder(Product $product, Category $category)
     {
-        return $this->findOneBy(['scope' => $scope, 'product' => $product]);
+        $configValue = CustomerGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+        $qb = $this->getEntityManager()
+            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            ->createQueryBuilder('productVisibility');
+        $qb->select([
+            'productVisibility.id',
+            'IDENTITY(productVisibility.product)',
+            'IDENTITY(productVisibility.scope)',
+            'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
+            (string)CustomerGroupProductVisibilityResolved::SOURCE_CATEGORY,
+            (string)$category->getId()
+        ])
+        ->join('productVisibility.scope', 'scope')
+        ->leftJoin(
+            'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            'agcvr',
+            'WITH',
+            'agcvr.category = :category'
+        )
+        ->leftJoin('agcvr.scope', 'agcvr_scope')
+        ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.customerGroup = scope.customerGroup')
+        ->leftJoin(
+            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'cvr',
+            'WITH',
+            'cvr.category = :category'
+        )
+        ->andWhere('productVisibility.product = :product')
+        ->andWhere('productVisibility.visibility = :visibility')
+        ->setParameter('category', $category)
+        ->setParameter('product', $product)
+        ->setParameter('visibility', CustomerGroupProductVisibility::CATEGORY);
+
+        return $qb;
     }
 }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class AbstractFormIntegrationTestCase extends FormIntegrationTestCase
@@ -18,8 +19,8 @@ class AbstractFormIntegrationTestCase extends FormIntegrationTestCase
      */
     protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
     {
-        /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', $productId);
+        $product = new Product();
+        ReflectionUtil::setId($product, $productId);
 
         $unit = new ProductUnit();
         $unit->setCode($unitCode);
@@ -31,23 +32,5 @@ class AbstractFormIntegrationTestCase extends FormIntegrationTestCase
             ->setProduct($product);
 
         return $product->addUnitPrecision($unitPrecision);
-    }
-
-    /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

@@ -44,9 +44,6 @@ class RestrictProductsIndexEventListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    /**
-     * @param RestrictIndexEntityEvent $event
-     */
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());

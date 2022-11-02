@@ -1,0 +1,177 @@
+data:
+    type: orders
+    id: new
+    attributes:
+        identifier: order#1
+        poNumber: poNumber1
+        customerNotes: Some Order
+        shipUntil: null
+        currency: USD
+        subtotalValue: '21.8000'
+        totalValue: '21.8000'
+        shippingCostAmount: null
+        shippingMethod: null
+        paymentStatus:
+            code: pending
+            label: Pending payment
+        paymentMethod:
+            -
+                code: '@payment_term_method_config->type'
+                label: Payment Term
+        paymentTerm: '@payment_term_net_10->label'
+        discounts: []
+        shippingTrackings: []
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: new
+                -
+                    type: orderlineitems
+                    id: new
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+included:
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: item1
+        attributes:
+            productSku: PSKU1
+            productName: 'Product 1'
+            freeFormProduct: null
+            quantity: 10
+            productUnitCode: '<toString(@item->code)>'
+            price: '1.0100'
+            currency: USD
+            shipUntil: null
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: item2
+        attributes:
+            productSku: PSKU2
+            productName: 'Product 2'
+            freeFormProduct: null
+            quantity: 5
+            productUnitCode: '<toString(@item->code)>'
+            price: '2.3400'
+            currency: USD
+            shipUntil: null
+            comment: null
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product2->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: billing1
+        attributes:
+            phone: 123-456
+            label: 'Address 1'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            customerAddress:
+                data:
+                    type: customeraddresses
+                    id: '<toString(@customer_address->id)>'
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: shipping1
+        attributes:
+            phone: 123-456
+            label: Address
+            street: Street
+            street2: null
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: null
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'

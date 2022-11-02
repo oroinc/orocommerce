@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
 
 class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipleUserData
@@ -23,7 +24,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
         return [
             self::ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION => [
                 [
-                    'class' => 'oro_order.entity.order.class',
+                    'class' => Order::class,
                     'acls' => [
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -43,7 +44,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
             ],
             self::ROLE_VIEW_HISTORY => [
                 [
-                    'class' => 'oro_order.entity.order.class',
+                    'class' => Order::class,
                     'acls' => [
                         [
                             AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
@@ -71,7 +72,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
                 'password' => self::USER_WITH_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION,
                 'firstname' => 'User',
                 'lastname' => 'User',
-                'roles' => [self::ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION],
+                'userRoles' => [self::ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION],
             ],
             [
                 'email' => self::USER_PAYMENT_HISTORY_VIEWER.'@test.com',
@@ -79,7 +80,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
                 'password' => self::USER_PAYMENT_HISTORY_VIEWER,
                 'firstname' => 'User',
                 'lastname' => 'User',
-                'roles' => [self::ROLE_VIEW_HISTORY],
+                'userRoles' => [self::ROLE_VIEW_HISTORY],
             ],
         ];
     }

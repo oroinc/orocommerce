@@ -3,66 +3,77 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceListCurrenciesTopic;
+use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceListCurrencyEntityListenerTest extends WebTestCase
 {
-    use MessageQueueTrait;
+    use MessageQueueExtension;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([
-            LoadPriceRules::class
-        ]);
-        $this->cleanScheduledMessages();
+        $this->loadFixtures([LoadPriceRules::class]);
+
+        $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_currency');
+
+        $this->enableMessageBuffering();
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
     }
 
     public function testPostPersist()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
-
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $priceList->addCurrencyByCode('UAH');
-        $em->flush();
-
-        $this->sendScheduledMessages();
+        $this->getEntityManager()->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
+                'product' => [$priceList->getId() => []]
+            ]
+        );
+
+        self::assertMessageSent(
+            ResolveCombinedPriceListCurrenciesTopic::getName(),
+            [
+                'product' => [$priceList->getId() => []]
             ]
         );
     }
 
     public function testPreRemove()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
-
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $priceList->removeCurrencyByCode('USD');
-        $em->flush();
-
-        $this->sendScheduledMessages();
+        $this->getEntityManager()->flush();
 
         self::assertMessageSent(
-            Topics::RESOLVE_PRICE_RULES,
+            ResolvePriceRulesTopic::getName(),
             [
-                PriceListTriggerFactory::PRODUCT => [$priceList->getId() => []]
+                'product' => [$priceList->getId() => []]
+            ]
+        );
+
+        self::assertMessageSent(
+            ResolveCombinedPriceListCurrenciesTopic::getName(),
+            [
+                'product' => [$priceList->getId() => []]
             ]
         );
     }

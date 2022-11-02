@@ -11,7 +11,7 @@ class CouponControllerTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -28,7 +28,7 @@ class CouponControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_coupon_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('promotion-coupons-grid', $crawler->html());
+        static::assertStringContainsString('promotion-coupons-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -36,12 +36,12 @@ class CouponControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_coupon_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Create Coupon', $crawler->html());
+        static::assertStringContainsString('Create Coupon', $crawler->html());
     }
 
     public function testUpdate()
     {
-        /** @var Coupon $coupon*/
+        /** @var Coupon $coupon */
         $coupon = $this->getContainer()->get('doctrine')
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class)
@@ -53,7 +53,7 @@ class CouponControllerTest extends WebTestCase
 
     public function testView()
     {
-        /** @var Coupon $coupon*/
+        /** @var Coupon $coupon */
         $coupon = $this->getContainer()->get('doctrine')
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class)
@@ -70,7 +70,7 @@ class CouponControllerTest extends WebTestCase
                 'codeLength' => 3,
             ],
         ];
-        $this->client->request('POST', $this->getUrl('oro_promotion_coupon_generation_preview'), $request);
+        $this->ajaxRequest('POST', $this->getUrl('oro_promotion_coupon_generation_preview'), $request);
         $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 }

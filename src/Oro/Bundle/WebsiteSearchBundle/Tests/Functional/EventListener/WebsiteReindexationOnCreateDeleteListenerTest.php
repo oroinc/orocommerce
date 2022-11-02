@@ -15,7 +15,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
      */
     private $entityManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
@@ -36,7 +36,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $eventDispatcher->addListener(
             ReindexationRequestEvent::EVENT_NAME,
-            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+            function (ReindexationRequestEvent $event) use (&$triggeredEvent) {
                 $triggeredEvent = $event;
             }
         );
@@ -63,7 +63,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $eventDispatcher->addListener(
             ReindexationRequestEvent::EVENT_NAME,
-            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+            function (ReindexationRequestEvent $event) use (&$triggeredEvent) {
                 $triggeredEvent = $event;
             }
         );
@@ -94,7 +94,7 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $eventDispatcher->addListener(
             ReindexationRequestEvent::EVENT_NAME,
-            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+            function (ReindexationRequestEvent $event) use (&$triggeredEvent) {
                 $triggeredEvent = $event;
             }
         );

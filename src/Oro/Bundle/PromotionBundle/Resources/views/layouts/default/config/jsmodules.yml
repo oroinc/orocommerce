@@ -1,0 +1,3 @@
+dynamic-imports:
+    orocheckout:
+        - oropromotion/js/app/views/frontend-coupon-add-view

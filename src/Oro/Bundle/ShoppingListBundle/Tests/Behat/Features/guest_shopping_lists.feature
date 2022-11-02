@@ -1,6 +1,6 @@
 @regression
 @ticket-BB-10050
-@fixture-OroShoppingListBundle:ProductFixture.yml
+@fixture-OroShoppingListBundle:GuestShoppingListsFixture.yml
 Feature: Guest Shopping Lists
   In order to allow unregistered customers to select goods they want to purchase
   As a Sales rep
@@ -92,12 +92,12 @@ Feature: Guest Shopping Lists
     Given I proceed as the Admin
     And I go to System/Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    Then the "Enable guest shopping list" checkbox should not be checked
-    When uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    Then the "Enable Guest Shopping List" checkbox should not be checked
+    When uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     And I save setting
     Then I should see "Configuration saved" flash message
-    And the "Enable guest shopping list" checkbox should be checked
+    And the "Enable Guest Shopping List" checkbox should be checked
 
   Scenario: Empty shopping list shouldn't be created automatically for unauthorized user
     Given I proceed as the User
@@ -117,20 +117,36 @@ Feature: Guest Shopping Lists
     Then I should see an "Matrix Grid Form" element
     And I should see "Add to Shopping List"
 
+  Scenario: Add empty matrices to the shopping Shopping List
+    When I click "Add to Shopping List"
+    Then should see 'Shopping list "Shopping List" was updated successfully' flash message
+    When I open shopping list widget
+    And I click "View List"
+    Then I should see following grid:
+      | SKU    | Item         | Qty Update All                   | Price | Subtotal |
+      | 1GB83  | Slip-On Clog | Click "edit" to select variants  |       |          |
+    And I should see following actions for 1GB83 in grid:
+      | Edit   |
+      | Delete |
+    When I click Delete 1GB83 in grid
+    Then I should see "Are you sure you want to delete this product?"
+    When click "Delete" in modal window
+    Then I should see 'The "Slip-On Clog" product was successfully deleted' flash message
+
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "Product3"
     When I hover on "Shopping List Widget"
-    And I should see "No Items" in the "Shopping List Widget" element
+    And I should see "Your Shopping List is empty" in the "Shopping List Widget" element
     And I should see "Add to Shopping List"
     When I click "View Details" for "SKU003" product
     Then I should see "Add to Shopping List"
     When I click "Add to Shopping List"
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
-    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
+    And I should see "1 ea | $3.00" in the "Shopping List Widget" element
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"
@@ -143,12 +159,16 @@ Feature: Guest Shopping Lists
     And I click "Search Button"
     Then I should see "In shopping list"
 
+  Scenario: Check shopping list widget
+    When I hover on "Shopping List Widget"
+    Then I should see "10 ea | $3.00" in the "Shopping List Widget" element
+
   Scenario: Add more products to shopping list from list page (search)
     Given I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
     When I click "Add to Shopping List" for "CONTROL1" product
-    Then I should see "Product has been added to" flash message
+    Then I should see "Product has been added to" flash message and I close it
 
   Scenario: Check added products available in Guest Shopping List
     Given I click "Shopping List"
@@ -175,8 +195,8 @@ Feature: Guest Shopping Lists
   Scenario: Disable guest shopping list
     Given I go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I uncheck "Enable guest shopping list"
+    And uncheck "Use default" for "Enable Guest Shopping List" field
+    And I uncheck "Enable Guest Shopping List"
     When I save setting
     And I should see "Configuration saved" flash message
 

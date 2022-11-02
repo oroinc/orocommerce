@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\CatalogTrait;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -10,37 +11,27 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 
 class CategoryVisibilityRepositoryTest extends WebTestCase
 {
-    const ROOT_CATEGORY = 'All Products';
+    use CatalogTrait;
 
-    /**
-     * @var CategoryVisibilityRepository
-     */
-    protected $repository;
+    private const ROOT_CATEGORY = 'All Products';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
         $this->loadFixtures([LoadCategoryVisibilityData::class]);
     }
 
     /**
      * @dataProvider getCategoriesVisibilitiesDataProvider
-     * @param array $expectedData
      */
     public function testGetCategoriesVisibilities(array $expectedData)
     {
-        $categoriesVisibilities = $this->repository->getCategoriesVisibilities();
+        $categoriesVisibilities = $this->getRepository()->getCategoriesVisibilities();
         $this->assertVisibilities($expectedData, $categoriesVisibilities);
     }
 
-    /**
-     * @return array
-     */
-    public function getCategoriesVisibilitiesDataProvider()
+    public function getCategoriesVisibilitiesDataProvider(): array
     {
         return [
             [
@@ -90,12 +81,12 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $expectedData
-     * @param array $actualData
-     * @param array $fields
-     */
-    protected function assertVisibilities(array $expectedData, array $actualData, array $fields = [])
+    private function getRepository(): CategoryVisibilityRepository
+    {
+        return self::getContainer()->get('doctrine')->getRepository(CategoryVisibility::class);
+    }
+
+    private function assertVisibilities(array $expectedData, array $actualData, array $fields = [])
     {
         $expectedData = $this->prepareRawExpectedData($expectedData);
         $this->assertCount(count($expectedData), $actualData);
@@ -111,11 +102,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         }
     }
 
-    /**
-     * @param array $expectedData
-     * @return array
-     */
-    protected function prepareRawExpectedData(array $expectedData)
+    private function prepareRawExpectedData(array $expectedData): array
     {
         foreach ($expectedData as &$item) {
             $item['category_id'] = $this->getCategoryId($item['category']);
@@ -127,15 +114,10 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         return $expectedData;
     }
 
-    /**
-     * @param string $reference
-     * @return integer
-     */
-    protected function getCategoryId($reference)
+    private function getCategoryId(?string $reference): ?int
     {
         if ($reference === self::ROOT_CATEGORY) {
-            return $this->getContainer()->get('doctrine')->getRepository('OroCatalogBundle:Category')
-                ->getMasterCatalogRoot()->getId();
+            return $this->getRootCategory()->getId();
         }
 
         return $reference ? $this->getReference($reference)->getId() : null;

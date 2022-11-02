@@ -1,4 +1,5 @@
 @ticket-BB-12071
+@waf-skip
 @fixture-OroOrderBundle:order.yml
 Feature: Discounts for Order
   In order to give simple discounts for Orders
@@ -9,21 +10,19 @@ Feature: Discounts for Order
     Given I login as administrator
     And go to Sales/Orders
     And click edit SimpleOrder in grid
-    And save form
+    And I save and close form
 
   Scenario: Add special discount from Order view page
-    Given I go to Sales/Orders
-    And click view SimpleOrder in grid
-    And click "Add Special Discount"
+    When click "Add Special Discount"
     And I type "2" in "Discount Value"
     And I type "Amount" in "Discount Description"
-    Then I should see "$2.00 (4.00%)"
+    Then I should see "$2.00 (4%)"
     And I click "Apply"
 
     When I click "Add Special Discount"
     And I type "3" in "Discount Value"
     And I type "<script>alert(1)</script>" in "Discount Description"
-    Then I should see "$3.00 (6.00%)"
+    Then I should see "$3.00 (6%)"
     And I click "Apply"
 
     And I should see next rows in "Discounts" table
@@ -37,9 +36,15 @@ Feature: Discounts for Order
       | Amount (Discount)                    | -$2.00 |
       | Total                                | $45.00 |
 
-  Scenario: Add special discount from Order edit page
+  Scenario: Check whether the discounts have affected the total amount
     Given go to Sales/Orders
-    And click edit SimpleOrder in grid
+    Then I should see SimpleOrder in grid with following data:
+      | Currency  | USD    |
+      | Total     | $45.00 |
+      | Total ($) | $45.00 |
+
+  Scenario: Add special discount from Order edit page
+    Given click edit SimpleOrder in grid
     And click "Promotions and Discounts"
     And click "Add Special Discount"
     And I fill "Order Discount Form" with:
@@ -109,8 +114,9 @@ Feature: Discounts for Order
     When I click "Add Special Discount"
     And I type "51" in "Discount Value"
     And I type "Amount is greater than remaining subtotal" in "Discount Description"
-    Then I should see "This value should be 50 or less."
-    When I click "Cancel"
+    Then I should see "The discount amount cannot exceed the order grand total amount."
+    When I force click on cancel button in discount popup
+    And I should not see a "Discount Popup" element
     Then I should see next rows in "Discounts" table
       | Description               | Discount |
       | <script>alert(1)</script> | -$3.00   |
@@ -124,22 +130,28 @@ Feature: Discounts for Order
 
   Scenario: Check discounts' total sum is less than subtotal
     When I click "Add Special Discount"
-    And I type "50" in "Discount Value"
+    And I type "5" in "Discount Value"
+    And I type "Additional amount" in "Discount Description"
+    And I click "Apply"
+    And I click "Add Special Discount"
+    And I type "45" in "Discount Value"
     And I type "Exceeding amount" in "Discount Description"
-    When I click "Apply"
+    And I click "Apply"
     Then I should see "The sum of all discounts cannot exceed the order grand total amount."
     And I click "Promotions and Discounts"
-    Then I should see next rows in "Discounts" table
+    And I should see next rows in "Discounts" table
       | Description               | Discount |
       | <script>alert(1)</script> | -$3.00   |
       | Amount                    | -$2.00   |
-      | Exceeding amount          | -$50.00  |
+      | Additional amount         | -$5.00   |
+      | Exceeding amount          | -$45.00  |
     And I see next subtotals for "Backend Order":
       | Subtotal                             | Amount  |
       | Subtotal                             | $50.00  |
       | <script>alert(1)</script> (Discount) | -$3.00  |
       | Amount (Discount)                    | -$2.00  |
-      | Exceeding amount (Discount)          | -$50.00 |
+      | Additional amount (Discount)         | -$5.00  |
+      | Exceeding amount (Discount)          | -$45.00 |
       | Total                                | $0.00   |
 
   Scenario: Check discount not blank validation for amount type

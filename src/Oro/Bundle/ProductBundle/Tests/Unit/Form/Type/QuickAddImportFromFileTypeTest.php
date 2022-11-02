@@ -18,7 +18,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->formType = new QuickAddImportFromFileType();
 
@@ -51,6 +51,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 
         $form->submit($data);
         $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -105,7 +106,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->formType);
     }
@@ -116,6 +117,6 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
      */
     private function createUploadedFile($fileName)
     {
-        return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, null, true);
+        return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, true);
     }
 }

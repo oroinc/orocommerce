@@ -1,0 +1,48 @@
+{% block sale_representative_info_widget %}
+    {{ block(blockView.widget) }}
+{% endblock %}
+
+{% block _sales_menu_user_info_widget %}
+    <div class="information-nav" id="sales-contact-info">
+        <h3 class="information-nav__title">{{ 'oro.commercemenu.frontend.navigation.items.sales.label'|trans }}</h3>
+        <ul class=" information-nav__list">
+            {% if blockView.attributes.contactInfo.name %}
+                <li class=" information-nav__item first">
+                    <span class=" information-nav__item-content">{{ blockView.attributes.contactInfo.name }}</span>
+                </li>
+            {% endif %}
+            {% if blockView.attributes.contactInfo.phone %}
+                <li class=" information-nav__item">
+                    <a
+                        href="tel:{{ blockView.attributes.contactInfo.phone }}"
+                        class=" information-nav__item-content"
+                    ><bdo dir="ltr">{{ blockView.attributes.contactInfo.phone }}</bdo></a>
+                </li>
+            {% endif %}
+            {% if blockView.attributes.contactInfo.email %}
+                <li class=" information-nav__item last">
+                    <a href="mailto:{{ blockView.attributes.contactInfo.email }}" class=" information-nav__item-content"><bdo dir="ltr">{{ blockView.attributes.contactInfo.email }}</bdo></a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block _sales_menu_blank_widget %}
+{% endblock %}
+
+{% block _sales_menu_text_info_widget %}
+    <div class="information-nav" id="sales-contact-info">
+        <h3 class="information-nav__title">{{ 'oro.commercemenu.frontend.navigation.items.sales.label'|trans }}</h3>
+        {% if blockView.attributes.contactInfo.manualText %}
+            {% set infoRows = blockView.attributes.contactInfo.manualText|split('\n') %}
+            <ul class=" information-nav__list">
+            {% for row in infoRows %}
+                <li class=" information-nav__item first">
+                    <span class=" information-nav__item-content">{{ row }}</span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,7 @@
+Oro\Bundle\CMSBundle\Entity\ContentWidget:
+    copyrightContentWidget:
+        name: 'copyright'
+        widgetType: 'copyright'
+        organization: '@organization'
+        settings:
+            isShort: false

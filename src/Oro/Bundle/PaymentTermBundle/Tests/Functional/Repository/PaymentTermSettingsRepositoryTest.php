@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Repository;
 
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -11,32 +12,23 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PaymentTermSettingsRepositoryTest extends WebTestCase
 {
-    /**
-     * @var PaymentTermSettingsRepository
-     */
-    protected $repository;
+    private PaymentTermSettingsRepository $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
+        $this->loadFixtures([LoadChannelData::class]);
 
-        $this->loadFixtures(
-            [
-                LoadChannelData::class,
-            ]
-        );
-
-        $this->repository = static::getContainer()
-            ->get('doctrine')
-            ->getRepository('OroPaymentTermBundle:PaymentTermSettings');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(PaymentTermSettings::class);
     }
 
     public function testFindWithEnabledChannel()
     {
         $settingsByEnabledChannel = $this->repository->findWithEnabledChannel();
 
-        static::assertTrue(in_array($this->getReference('payment_term:transport_1'), $settingsByEnabledChannel, true));
-        static::assertTrue(in_array($this->getReference('payment_term:transport_2'), $settingsByEnabledChannel, true));
-        static::assertFalse(in_array($this->getReference('payment_term:transport_3'), $settingsByEnabledChannel, true));
+        self::assertContains($this->getReference('payment_term:transport_1'), $settingsByEnabledChannel);
+        self::assertContains($this->getReference('payment_term:transport_2'), $settingsByEnabledChannel);
+        self::assertNotContains($this->getReference('payment_term:transport_3'), $settingsByEnabledChannel);
     }
 }

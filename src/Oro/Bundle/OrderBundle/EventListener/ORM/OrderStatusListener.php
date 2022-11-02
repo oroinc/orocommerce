@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -16,19 +16,12 @@ class OrderStatusListener
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param OrderConfigurationProviderInterface $configurationProvider
-     * @param ManagerRegistry $registry
-     */
     public function __construct(OrderConfigurationProviderInterface $configurationProvider, ManagerRegistry $registry)
     {
         $this->configurationProvider = $configurationProvider;
         $this->registry = $registry;
     }
 
-    /**
-     * @param Order $entity
-     */
     public function prePersist(Order $entity)
     {
         if (!$entity->getInternalStatus()) {

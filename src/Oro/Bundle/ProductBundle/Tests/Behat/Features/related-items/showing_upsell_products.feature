@@ -1,6 +1,8 @@
 @feature-BB-8715
 @ticket-BB-13978
-@fixture-OroProductBundle:related_items_products.yml
+@ticket-BB-16275
+@feature-BAP-19790
+@fixture-OroProductBundle:showing_related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @fixture-OroProductBundle:related_items_customer_users.yml
 @regression
@@ -24,8 +26,14 @@ Feature: Showing upsell products
     And go to Products/ Products
     And I click Edit "PSKU2" in grid
     And I set Images with:
-      | File     | Main  | Listing | Additional |
-      | cat1.jpg | 1     | 1       | 1          |
+      | Main  | Listing | Additional |
+      | 1     | 1       | 1          |
+    And I click on "Digital Asset Choose"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
     When I save and close form
     Then I should see "Product has been saved" flash message
     # Enable localizations
@@ -36,7 +44,7 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should not see "Up-sell Products"
 
   Scenario: Minimum Items restriction
@@ -63,7 +71,7 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should not see "Up-sell Products"
 
   Scenario: Maximum Items restriction
@@ -80,7 +88,7 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     And I should see "PSKU2"
     And I should see "PSKU3"
@@ -100,7 +108,7 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     And I should see "PSKU2"
     And I should see "PSKU3"
@@ -130,62 +138,37 @@ Feature: Showing upsell products
     And type "PSKU3" in "search"
     And click "Search Button"
     And I should see "PSKU3" product
-    And I click "Product 3"
+    And I click "View Details" for "PSKU3" product
     Then I should see "Up-sell Products"
     And I should see "PSKU2"
     And I should see "PSKU4"
     And I should not see "PSKU5"
 
-    Scenario: "Add to Shopping List" button restrictions
-      Given I proceed as the Buyer
-      And type "PSKU1" in "search"
-      And click "Search Button"
-      And I should see "PSKU1" product
-      And I click "Product 1"
-      And I should see "Up-sell Products"
-      And I should see "Add to Shopping List" in upsell products
-      And I proceed as the Admin
-      And go to System/ Configuration
-      And I follow "Commerce/Catalog/Related Items" on configuration sidebar
-      And I fill "UpsellProductsConfig" with:
-        | Show Add Button Use Default | false |
-        | Show Add Button             | false |
-      And I click "Save settings"
-      And I proceed as the Buyer
-      And type "PSKU1" in "search"
-      And click "Search Button"
-      And I should see "PSKU1" product
-      And I click "Product 1"
-      And I should see "Up-sell Products"
-      Then I should not see "Add to Shopping List" in upsell products
+  Scenario: Check that product name is localized and displayed properly
+    Given I click "Localization Switcher"
+    When I select "Localization 1" localization
+    When type "PSKU1" in "search"
+    And click "Search Button"
+    Then I should see "PSKU1" product
+    When I click "View Details" for "PSKU1" product
+    Then should see the following products in the "Upsell Products Block":
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
 
-    Scenario: Check that product name is localized
-      Given I click "Localization Switcher"
-      When I select "Localization 1" localization
-      Then should see the following products in the "Upsell Products Block":
-        | Title                     |
-        | Product2 (Localization 1) |
+  Scenario: Check that alt attributes are localized and displayed properly
+    Given I open product gallery for "PSKU2" product
+    Then I should see gallery image with alt "Product2Localization1`\"'&йёщ®&reg;>"
+    And I should see picture "Popup Gallery Widget Picture" element
+    When I click "Popup Gallery Widget Close"
+    Then I should see preview image with alt "Product2Localization1`\"'&йёщ®&reg;>" for "PSKU2" product
+    And I should see picture for "PSKU2" product in the "Upsell Products Block"
 
-    Scenario: Check that alt attributes are localized
-      Given I open product gallery for "PSKU2" product
-      Then I should see gallery image with alt "Product2 (Localization 1)"
-      When I click "Popup Gallery Widget Close"
-      Then I should see preview image with alt "Product2 (Localization 1)" for "PSKU2" product
-
-    Scenario: Check that product name is localized in shopping lists widget
-      Given I proceed as the Admin
-      And go to System/ Configuration
-      And I follow "Commerce/Catalog/Related Items" on configuration sidebar
-      And I fill "UpsellProductsConfig" with:
-        | Show Add Button | true |
-      And I click "Save settings"
-      And I proceed as the Buyer
-      And reload the page
-      And click "Add to Shopping List" for "PSKU2" product
-      When click "In Shopping List" for "PSKU2" product
-      Then I should see "UiDialog" with elements:
-        | Title | Product2 (Localization 1) |
-      And I close ui dialog
+  Scenario: Check that product name is localized and displayed properly in shopping lists widget
+    When I click "Add to Shopping List" for "PSKU2" product
+    And I click "In Shopping List" for "PSKU2" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
+    And I close ui dialog
 
 #  Scenario: Check up-sell items are displayed as slider when "use slider on mobile" option is checked
 #  TODO: Fix this check when we will be able to emulate mobile
@@ -230,14 +213,14 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    When I click "Product 1"
+    When I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     Then should see the following products in the "Upsell Products Block":
-      | Title                     |
-      | Product2 (Localization 1) |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2 (Localization 1) |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
 
   Scenario: Verify that "Up-sell Products" block is displayed in "Two columns page" layout view
@@ -252,14 +235,14 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    When I click "Product 1"
+    When I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     Then should see the following products in the "Upsell Products Block":
-      | Title                     |
-      | Product2 (Localization 1) |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2 (Localization 1) |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
 
   Scenario: Verify that "Up-sell Products" block is displayed in "List page" layout view
@@ -274,15 +257,31 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    When I click "Product 1"
+    When I click "View Details" for "PSKU1" product
     Then I should see "Up-sell Products"
     Then should see the following products in the "Upsell Products Block":
-      | Title                     |
-      | Product2 (Localization 1) |
+      | Title                               |
+      | Product2Localization1`"'&йёщ®&reg;> |
     When click "In Shopping List" for "PSKU2" product
     Then I should see "UiDialog" with elements:
-      | Title | Product2 (Localization 1) |
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
     And I close ui dialog
+
+  Scenario: "Add to Shopping List" button restrictions
+    Given I proceed as the Admin
+    And go to System/ Configuration
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
+    And I fill "UpsellProductsConfig" with:
+      | Show Add Button Use Default | false |
+      | Show Add Button             | false |
+    And I click "Save settings"
+    And I proceed as the Buyer
+    And type "PSKU1" in "search"
+    And click "Search Button"
+    And I should see "PSKU1" product
+    And I click "View Details" for "PSKU1" product
+    And I should see "Up-sell Products"
+    Then I should not see "Add to Shopping List" in upsell products
 
   Scenario: Check if Related block is not displayed in case when Upsell feature is enabled but Related is disabled.
     Given I proceed as the Admin
@@ -299,7 +298,7 @@ Feature: Showing upsell products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" product
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     And I should see "Up-sell Products"
     And I should not see "Related Products"
 

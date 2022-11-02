@@ -1,0 +1,17 @@
+data:
+    id: '<toString(@product_shipping_options.1->id)>'
+    type: 'productshippingoptions'
+    attributes:
+        weightValue: 6.6
+        dimensionsLength: 77.77
+        dimensionsWidth: 88.88
+        dimensionsHeight: 99.99
+    relationships:
+        weightUnit:
+            data:
+                id: '<toString(@weight_unit.pound->code)>'
+                type: 'weightunits'
+        dimensionsUnit:
+            data:
+                id: '<toString(@length_unit.meter->code)>'
+                type: 'lengthunits'

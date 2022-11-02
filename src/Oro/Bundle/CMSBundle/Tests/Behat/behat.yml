@@ -17,11 +17,88 @@ oro_behat_extension:
             route: 'oro_cms_page_index'
 
     elements:
+
+        Content Template Form:
+            selector: 'form[name="oro_cms_content_template"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
+        Content Template Form Content:
+            selector: "textarea[name='oro_cms_content_template[content]']"
+
+        Content Template Form Tags:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "control-group") and ./div[contains(@class, "control-label") and .//label[contains(., "Tags")]]]'
+
+        Content Template Tags Field:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "responsive-cell")]//div[contains(@class, "attribute-item") and .//label[contains(., "Tags")]]'
+
+        Content Template Grid:
+            selector: 'div[data-page-component-name="content-template-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+        WysiwygCodeTypeBlockEditor:
+            selector: '.ui-dialog'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor
+
+        WysiwygField:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+
+        WysiwygCodeTypeBlock:
+            selector:
+                type: 'xpath'
+                locator: '//pre[@data-gjs-type="code"]'
+
+        WysiwygFileTypeBlock:
+            selector:
+                type: 'xpath'
+                locator: '//a[@data-gjs-type="file"]'
+
+        WysiwygToolbarActionFileSettings:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="File Settings"]'
+
+        WysiwygToolbarActionSelectParent:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Select Parent"]'
+
+        WysiwygToolbarActionMove:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Move"]'
+
+        WysiwygToolbarActionClone:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Clone"]'
+
+        WysiwygToolbarActionDelete:
+            selector:
+                type: 'xpath'
+                locator: '//div[contains(@class, "gjs-toolbar-item") and @label="Delete"]'
+
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
 
         PageTitle:
             selector: "title"
+
+        CMS Page Form:
+            selector: 'form[name="oro_cms_page"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Titles: 'oro_cms_page[titles][values][default]'
+                    Content:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_page[content]"]'
+                        class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+                    Meta Title: 'oro_cms_page[metaTitles][values][default]'
+                    Meta Description: 'oro_cms_page[metaDescriptions][values][default]'
 
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'
@@ -29,6 +106,14 @@ oro_behat_extension:
             options:
                 mapping:
                     Titles: 'oro_cms_content_block[titles][values][default]'
+                    Content Variant:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][0][content]"]'
+                        class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+                    Content Variant 1:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][1][content]"]'
+                        class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -42,3 +127,319 @@ oro_behat_extension:
 
         Content Field Data:
             selector: 'div.control-group:contains("Content") .controls>.control-label'
+
+        Content Variant Content:
+            selector: "textarea[name='oro_cms_content_block[contentVariants][0][content]']"
+
+        Content Variant 1 Content:
+            selector: "textarea[name='oro_cms_content_block[contentVariants][1][content]']"
+
+        Homepage Slider:
+            selector: 'div.promo-slider'
+
+        CMS Page:
+            selector: 'div.cms-page'
+
+        WysiwygEntity:
+            selector: 'textarea.grapesjs-textarea'
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygEntity
+
+        Content Widget Form:
+            selector: 'form[name="oro_cms_content_widget"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+
+        Slides:
+            selector:
+                locator: '//div[*[contains(text(),"Slides")]]//table'
+                type: xpath
+            class: Oro\Bundle\OrderBundle\Tests\Behat\Element\CollectionTable
+
+        Image Slider Form:
+            selector: 'form[name="oro_cms_content_widget"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Slide Order 1: 'oro_cms_content_widget[settings][imageSlides][0][slideOrder]'
+                    URL 1: 'oro_cms_content_widget[settings][imageSlides][0][url]'
+                    Target 1: 'oro_cms_content_widget[settings][imageSlides][0][displayInSameWindow]'
+                    Title 1: 'oro_cms_content_widget[settings][imageSlides][0][title]'
+                    Text Alignment 1: 'oro_cms_content_widget[settings][imageSlides][0][textAlignment]'
+                    Text 1: 'oro_cms_content_widget[settings][imageSlides][0][text]'
+
+                    Slide Order 2: 'oro_cms_content_widget[settings][imageSlides][1][slideOrder]'
+                    URL 2: 'oro_cms_content_widget[settings][imageSlides][1][url]'
+                    Target 2: 'oro_cms_content_widget[settings][imageSlides][1][displayInSameWindow]'
+                    Title 2: 'oro_cms_content_widget[settings][imageSlides][1][title]'
+                    Text Alignment 2: 'oro_cms_content_widget[settings][imageSlides][1][textAlignment]'
+                    Text 2: 'oro_cms_content_widget[settings][imageSlides][1][text]'
+
+        Choose Main Slider Image 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][mainImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Medium Slider Image 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][mediumImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Small Slider Image 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][smallImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Main Slider Image 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][mainImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Medium Slider Image 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][mediumImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Small Slider Image 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][smallImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        First Dot On Image Slider:
+            selector: 'div.promo-slider .slick-dots li:nth-child(1) button'
+
+        First Image Slide:
+            selector: 'div.promo-slider .slick-track div:nth-child(1)'
+
+        First Image Slide Picture:
+            selector: 'div.promo-slider div:nth-child(1) a div.promo-slider__picture picture'
+
+        Second Dot On Image Slider:
+            selector: 'div.promo-slider .slick-dots li:nth-child(2) button'
+
+        Second Image Slide:
+            selector: 'div.promo-slider .slick-track div:nth-child(2)'
+
+        Content Blocks Content Widget Usages Grid:
+            selector: 'div[data-page-component-name="cms-content-widget-content-blocks-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+        CMS Pages Content Widget Usages Grid:
+            selector: 'div[data-page-component-name="cms-content-widget-pages-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+        CMS Page Content:
+            selector: "textarea[name='oro_cms_page[content]']"
+
+        CMS Page Style:
+            selector: "input[name='oro_cms_page[content_style]']"
+
+        CMS Page Drafts Grid:
+            selector: 'div[data-page-component-name="cms-page-drafts-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+        Digital Asset Image:
+            selector:
+                type: xpath
+                locator: '//img[@id="wysiwyg_img"][contains (@src,"/media/cache/attachment")]'
+
+        About Page Image:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
+        
+        External Mode Button:
+            selector: 'span[data-original-title="External Markup Mode"]'
+            
+        Import Button:
+            selector: 'span[data-original-title="Import"]'
+
+        Example1 svg wysiwyg image:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]'
+
+        Example1 svg wysiwyg picture source:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"example1_svg_wysiwyg_image")]//preceding-sibling::source[@type="image/webp"][last()]'
+
+        Page URL Slug Form:
+            selector: 'form[name="oro_cms_page"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    URL Slug default value: 'oro_cms_page[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+                    URL Slug English (United States) value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slug English (United States) use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "English (United States)"]/following-sibling::div//input[@type="checkbox"]'
+                    URL Slug French value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slug French use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
+
+        Tabbed Content Widget Layout Select:
+            selector: 'select[name="oro_cms_content_widget[layout]"]'
+
+        Clear Tabbed Content Widget Layout Select:
+            selector:
+                type: xpath
+                locator: '//div[contains(@id, "s2id_oro_cms_content_widget_layout-uid")]//abbr[@class="select2-search-choice-close"]'
+
+        Tabbed Content Widget Form:
+            selector: 'form[name="oro_cms_content_widget"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Tab 1 Title: 'oro_cms_content_widget[settings][tabbedContentItems][0][title]'
+                    Tab 1 Order: 'oro_cms_content_widget[settings][tabbedContentItems][0][itemOrder]'
+
+                    Tab 2 Title: 'oro_cms_content_widget[settings][tabbedContentItems][1][title]'
+                    Tab 2 Order: 'oro_cms_content_widget[settings][tabbedContentItems][1][itemOrder]'
+
+        Tabbed Content Widget Tab 1 Content:
+            selector: "textarea[name='oro_cms_content_widget[settings][tabbedContentItems][0][content]']"
+
+        Tabbed Content Widget Tab 2 Content:
+            selector: "textarea[name='oro_cms_content_widget[settings][tabbedContentItems][1][content]']"
+
+        Tabbed Content Widget Tabs Table:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+            selector: 'table#tabbed-content-widget-tabs'
+
+        Tab 1 Accordion Trigger:
+            selector: 'button.accordion-group__trigger span.accordion-group__trigger-text:contains("Tab 1 Title")'
+
+        Tab 2 Accordion Trigger:
+            selector: 'button.accordion-group__trigger span.accordion-group__trigger-text:contains("Tab 2 Title")'
+
+        Tabbed Content Widget Tabs 1:
+            selector: 'div.tabbed-content--tabs:nth-child(1)'
+
+        Tabbed Content Widget Tabs 2:
+            selector: 'div.tabbed-content--tabs:nth-child(2)'
+
+        Tabbed Content Widget Accordion 1:
+            selector: 'div.tabbed-content--accordion:nth-child(1)'
+
+        Tabbed Content Widget Accordion 2:
+            selector: 'div.tabbed-content--accordion:nth-child(2)'
+
+        ContentTemplateWithTags Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        ContentTemplateWithTags Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        ContentTemplateWithTags Preview Original Picture:
+            selector:
+                type: xpath
+                locator: '//img[contains(@class,"images-list__item") and contains(@src,"/filter/content_template_preview_original/")]/parent::picture'
+
+        ContentTemplateWithTags (Copy) Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags (Copy)" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        ContentTemplateWithTags (Copy) Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="ContentTemplateWithTags (Copy)" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        TestName1 Content Template Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestName1" and contains(@src,"/filter/content_template_preview_small/")]'
+                type: xpath
+
+        TestName1 Content Template Preview Small Picture:
+            selector:
+                type: xpath
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestName1" and contains(@src,"/filter/content_template_preview_small/")]/parent::picture'
+
+        TestContentTemplate1 Default Preview Small Image:
+            selector:
+                locator: '//tr[contains(@class,"grid-row")]//img[@alt="TestContentTemplate1" and contains(@src,"/content_template_preview_small/bundles/orocms/images/no_image.png")]'
+                type: xpath
+
+        Content Template Default Preview Original Image:
+            selector:
+                type: xpath
+                locator: '//img[contains(@class,"images-list__item") and contains(@src,"/content_template_preview_original/bundles/orocms/images/no_image.png")]'
+
+        GrapesJs Wysiwyg:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"grapesjs ")]//div[contains(@class,"gjs-cv-canvas ")]//iframe[contains(@class,"gjs-frame")]'
+
+        GrapesJs Wysiwyg Root Area:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"cms-wrapper")]'
+
+        GrapesJs Content Templates Tab:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"gjs-pn-buttons")]//span[contains(@title,"Open Content Templates")]'
+
+        GrapesJs Content Templates Category:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-templates-container")]//div[contains(@class,"gjs-block-categories")]//div[contains(@class,"gjs-block-category")]'
+
+        GrapesJs Content Templates Category Title:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"gjs-title")]'
+
+        GrapesJs Content Template 1:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-templates-container")]//div[contains(@class,"content-template-block") and @title="TestContentTemplate1"]'
+
+        GrapesJs Content Template 3:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-templates-container")]//div[contains(@class,"content-template-block") and @title="TestContentTemplate3"]'
+
+        GrapesJs Content Template:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class,"content-template-block")]'
+
+        CMSPage1 Image:
+            selector:
+                type: 'xpath'
+                locator: '//img[contains(@alt,"CMSPage1 Image")]/parent::picture'
+
+    suites:
+        OroCMSBundle:
+            contexts:
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
+                - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+                - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\CMSBundle\Tests\Behat\Context\ImportExportFeatureContext
+                - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+                - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+                - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ActionBundle\Tests\Behat\Context\OroActionContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
+                - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+            paths:
+                - '@OroCMSBundle/Tests/Behat/Features'

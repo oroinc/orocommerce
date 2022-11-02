@@ -1,0 +1,14 @@
+data:
+    type: webcatalogtree
+    id: '<toString(@catalog1_node111->id)>'
+    relationships:
+        content:
+            data:
+                type: systempages
+                id: 'oro_product_frontend_product_index'
+included:
+    -
+        type: systempages
+        id: 'oro_product_frontend_product_index'
+        attributes:
+            url: '/product/'

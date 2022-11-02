@@ -1,0 +1,91 @@
+services:
+    oro_checkout.api.guest_checkout_checker:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutChecker
+        arguments:
+            - '@security.token_storage'
+            - '@oro_featuretoggle.checker.feature_checker'
+
+    oro_checkout.api.guest_checkout_query_modifier:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_checkout.api.guest_checkout_association_access_exclusion_provider_for_customer_user:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
+            - ['customer', 'userRoles', 'addresses']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_checkout.api.guest_checkout_association_access_exclusion_provider_for_customer_user_address:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutAssociationAccessExclusionProvider
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
+            - ['frontendOwner']
+        tags:
+            - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_checkout.api.initialize_guest_checkout_customer_user:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\InitializeGuestCheckoutCustomerUser
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - '@oro_customer.manager.guest_customer_user'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: -15 }
+
+    oro_checkout.api.disable_guest_checkout_security_check:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DisableGuestCheckoutSecurityCheck
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: 150 }
+            - { name: oro.api.processor, action: get_list, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: 150 }
+            - { name: oro.api.processor, action: get, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: 150 }
+            - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, priority: 150 }
+            - { name: oro.api.processor, action: get_list, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, priority: 150 }
+            - { name: oro.api.processor, action: get, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, priority: 150 }
+
+    oro_checkout.api.configure_guest_checkout_owner_access:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutOwnerAccess
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - '@oro_customer.owner.frontend_ownership_metadata_provider'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, targetAction: create, priority: -250 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, targetAction: create, priority: -250 }
+
+    oro_checkout.api.configure_guest_checkout_readonly_fields_for_customer_user:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutReadonlyFields
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - ['customer', 'userRoles']
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, targetAction: create, priority: -250 }
+
+    oro_checkout.api.disable_guest_checkout_customer_user_name_validation:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DisableGuestCheckoutCustomerUserNameValidation
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate|post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser }
+
+    oro_checkout.api.link_guest_checkout_customer_user_to_visitor:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LinkGuestCheckoutCustomerUserToVisitor
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: -100 }
+
+    oro_checkout.api.validate_guest_checkout_customer_user_address_owner:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ValidateGuestCheckoutCustomerUser
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - 'frontendOwner'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, priority: 100 }

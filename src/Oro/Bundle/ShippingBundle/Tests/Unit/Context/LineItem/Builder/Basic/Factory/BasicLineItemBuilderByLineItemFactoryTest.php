@@ -20,7 +20,7 @@ class BasicLineItemBuilderByLineItemFactoryTest extends AbstractShippingLineItem
      */
     private $factory;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

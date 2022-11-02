@@ -1,0 +1,26 @@
+{% block _checkout_form_fields_widget %}
+    {% if form.customerConsents is defined %}{{ form_widget(form.customerConsents) }}{% endif %}
+    {% if form.consents_available is defined %}{{ form_row(form.consents_available) }}{% endif %}
+    {% if form.state_token is defined %}{{ form_row(form.state_token) }}{% endif %}
+{% endblock %}
+
+{% block _checkout_consent_container_widget %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _checkout_consent_message_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' consent-notification notification notification--success',
+        'role': 'alert'
+    }) %}
+
+    {% if consents is empty %}
+        <div {{ block('block_attributes') }}>
+            <span class="notification__item">
+                <span class="fa-check" aria-hidden="true"></span>
+                {{ 'oro.consent.frontend.checkout.form.messages.all_agreements_accepted'|trans }}
+                {{ parent_block_widget(block) }}
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}

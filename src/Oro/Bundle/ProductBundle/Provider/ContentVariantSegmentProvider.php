@@ -3,11 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
 /**
  * This class provides information based on relation between product collection content variants and segments.
@@ -20,11 +23,18 @@ class ContentVariantSegmentProvider
     private $doctrineHelper;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @var WebCatalogUsageProviderInterface
      */
+    private $webCatalogUsageProvider;
+
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
+    }
+
+    public function setWebCatalogUsageProvider(WebCatalogUsageProviderInterface $webCatalogUsageProvider)
+    {
+        $this->webCatalogUsageProvider = $webCatalogUsageProvider;
     }
 
     /**
@@ -36,13 +46,39 @@ class ContentVariantSegmentProvider
             return new \EmptyIterator();
         }
 
-        $contentVariantQueryBuilder = $this->getContentVariantRepository()
-            ->createQueryBuilder('contentVariant')
-            ->select('IDENTITY(contentVariant.product_collection_segment)');
+        $queryBuilder = $this->getContentVariantSegmentQueryBuilder($this->getContentVariantQueryBuilder());
 
-        $contentVariantQueryBuilder
-            ->where($contentVariantQueryBuilder->expr()->isNotNull('contentVariant.product_collection_segment'));
+        return new BufferedQueryResultIterator($queryBuilder);
+    }
 
+    /**
+     * @param int $websiteId
+     * @return BufferedQueryResultIterator|\Iterator|Segment[]
+     */
+    public function getContentVariantSegmentsByWebsiteId(int $websiteId)
+    {
+        if (!$this->webCatalogUsageProvider || !$this->getContentVariantClass()) {
+            return new \EmptyIterator();
+        }
+
+        $webCatalogAssignments = $this->webCatalogUsageProvider->getAssignedWebCatalogs();
+        if (empty($webCatalogAssignments[$websiteId])) {
+            return new \EmptyIterator();
+        }
+
+        $contentVariantQueryBuilder = $this->getContentVariantQueryBuilder();
+        $contentVariantQueryBuilder->innerJoin('contentVariant.node', 'node');
+        $expr = $contentVariantQueryBuilder->expr();
+        $contentVariantQueryBuilder->where($expr->eq('IDENTITY(node.webCatalog)', ':webCatalog'));
+        $contentVariantQueryBuilder->setParameter('webCatalog', $webCatalogAssignments[$websiteId]);
+
+        $queryBuilder = $this->getContentVariantSegmentQueryBuilder($contentVariantQueryBuilder);
+
+        return new BufferedQueryResultIterator($queryBuilder);
+    }
+
+    private function getContentVariantSegmentQueryBuilder(QueryBuilder $contentVariantQueryBuilder): QueryBuilder
+    {
         $queryBuilder = $this->getSegmentRepository()
             ->createQueryBuilder('segment')
             ->select('DISTINCT segment');
@@ -51,7 +87,28 @@ class ContentVariantSegmentProvider
             ->where($queryBuilder->expr()->in('segment', $contentVariantQueryBuilder->getDQL()))
             ->orderBy('segment.id');
 
-        return new BufferedQueryResultIterator($queryBuilder);
+        /** @var Query\Parameter $parameter */
+        foreach ($contentVariantQueryBuilder->getParameters() as $parameter) {
+            $queryBuilder->setParameter(
+                $parameter->getName(),
+                $parameter->getValue(),
+                $parameter->typeWasSpecified() ? $parameter->getType() : null
+            );
+        }
+
+        return $queryBuilder;
+    }
+
+    private function getContentVariantQueryBuilder(): QueryBuilder
+    {
+        $contentVariantQueryBuilder = $this->getContentVariantRepository()
+            ->createQueryBuilder('contentVariant')
+            ->select('IDENTITY(contentVariant.product_collection_segment)');
+
+        $contentVariantQueryBuilder
+            ->where($contentVariantQueryBuilder->expr()->isNotNull('contentVariant.product_collection_segment'));
+
+        return $contentVariantQueryBuilder;
     }
 
     /**

@@ -1,0 +1,9 @@
+data:
+    type: 'pricelistcustomergroupfallbacks'
+    attributes:
+        fallback: 1
+    relationships:
+        customerGroup:
+            data:
+                id: '<toString(@customer_group.group3->id)>'
+                type: 'customergroups'

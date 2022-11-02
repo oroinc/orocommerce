@@ -2,28 +2,22 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadMoneyOrderChannelData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class MoneyOrderSettingsRepositoryTest extends WebTestCase
 {
-    /**
-     * @var MoneyOrderSettingsRepository
-     */
-    protected $repository;
+    private MoneyOrderSettingsRepository $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
+        $this->loadFixtures([LoadMoneyOrderChannelData::class]);
 
-        $this->loadFixtures([
-            LoadMoneyOrderChannelData::class,
-        ]);
-
-        $this->repository = static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroMoneyOrderBundle:MoneyOrderSettings')
-            ->getRepository('OroMoneyOrderBundle:MoneyOrderSettings');
+        $this->repository = self::getContainer()->get('doctrine')
+            ->getRepository(MoneyOrderSettings::class);
     }
 
     public function testGetEnabledSettings()
@@ -34,7 +28,7 @@ class MoneyOrderSettingsRepositoryTest extends WebTestCase
             $this->getReference('money_order:transport_1'),
             $this->getReference('money_order:transport_2')
         ];
-        static::assertCount(count($fixtureSettingsByEnabledChannel), $settingsByEnabledChannel);
-        static::assertEquals($fixtureSettingsByEnabledChannel, $settingsByEnabledChannel);
+        self::assertCount(count($fixtureSettingsByEnabledChannel), $settingsByEnabledChannel);
+        self::assertEquals($fixtureSettingsByEnabledChannel, $settingsByEnabledChannel);
     }
 }

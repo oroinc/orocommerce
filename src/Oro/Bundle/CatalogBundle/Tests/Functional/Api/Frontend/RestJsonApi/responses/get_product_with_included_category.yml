@@ -1,0 +1,62 @@
+data:
+    type: products
+    id: '<toString(@product1->id)>'
+    attributes:
+        sku: PSKU1
+        variantAttributeNames: {  }
+        createdAt: '@product1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@product1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        productType: simple
+        featured: false
+        newArrival: false
+        name: 'Product 1'
+        shortDescription: null
+        description: null
+        productAttributes: {  }
+        unitPrecisions:
+            -
+                unit: item
+                precision: 0
+                conversionRate: 1
+                default: true
+        url: null
+        urls: {  }
+        prices: {  }
+        lowInventory: true
+        upcoming: true
+        availabilityDate: '2119-01-20T20:30:00Z'
+        metaTitle: null
+        metaDescription: null
+        metaKeywords: null
+    relationships:
+        category:
+            data:
+                type: mastercatalogcategories
+                id: '<toString(@category1->id)>'
+        variantProducts:
+            data: []
+        parentProducts:
+            data: []
+included:
+    -
+        type: mastercatalogcategories
+        id: '<toString(@category1->id)>'
+        attributes:
+            createdAt: '@category1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@category1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Category 1'
+            shortDescription: 'Category 1 Short Description'
+            description: 'Category 1 Description. Twig Expr: "test".'
+            url: '/category1_slug_default'
+            urls:
+                - { url: '/category1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/category1_slug_es', localizationId: '<toString(@es->id)>' }
+            metaTitle: 'Category 1 Meta Title'
+            metaDescription: 'Category 1 Meta Description'
+            metaKeywords: 'Category 1 Meta Keywords'
+        relationships:
+            categoryPath:
+                data:
+                    -
+                        type: mastercatalogcategories
+                        id: '<toString(@root_category->id)>'

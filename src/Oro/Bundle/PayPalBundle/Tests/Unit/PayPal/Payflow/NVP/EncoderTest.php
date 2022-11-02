@@ -9,12 +9,12 @@ class EncoderTest extends \PHPUnit\Framework\TestCase
     /** @var Encoder */
     protected $encoder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->encoder = new Encoder();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->encoder);
     }

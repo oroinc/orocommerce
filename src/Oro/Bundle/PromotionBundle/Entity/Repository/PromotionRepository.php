@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\DBAL\Connection;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class PromotionRepository extends EntityRepository
+/**
+ * Doctrine repository for Promotion entity
+ */
+class PromotionRepository extends ServiceEntityRepository
 {
     /**
      * @param Segment $segment
@@ -37,5 +41,30 @@ class PromotionRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param int[] $promotionIds
+     *
+     * @return array
+     *  [
+     *      42 => 'Promotion name',
+     *      // ...
+     *  ]
+     */
+    public function getPromotionsNamesByIds(array $promotionIds): array
+    {
+        if (!$promotionIds) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('p');
+        $qb
+            ->select('p.id', 'rule.name')
+            ->join('p.rule', 'rule')
+            ->where($qb->expr()->in('p.id', ':ids'))
+            ->setParameter('ids', array_filter($promotionIds), Connection::PARAM_INT_ARRAY);
+
+        return array_column($qb->getQuery()->getArrayResult(), 'name', 'id');
     }
 }

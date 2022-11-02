@@ -3,102 +3,89 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Handler;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
-use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class VisibilityFormDataHandlerTest extends FormHandlerTestCase
+class VisibilityFormDataHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
+
+    /** @var Product */
+    private $entity;
+
+    /** @var VisibilityFormDataHandler */
+    private $handler;
+
+    protected function setUp(): void
     {
-        parent::setUp();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->form = $this->createMock(Form::class);
+        $this->entity = $this->createMock(Product::class);
 
-        $this->entity = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->handler = new VisibilityFormDataHandler(
-            $this->form,
-            $this->request,
-            $this->eventDispatcher
-        );
+        $this->handler = new VisibilityFormDataHandler($this->eventDispatcher);
     }
 
-    /**
-     * {@inheritdoc}
-     * @dataProvider supportedMethods
-     */
-    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
+    public function testProcessUnsupportedRequest(): void
     {
-        $this->form->expects($this->any())
-            ->method('isSubmitted')
-            ->will($this->returnValue(true));
-        $this->form->expects($this->any())
-            ->method('isValid')
-            ->will($this->returnValue($isValid));
+        $request = new Request();
+        $request->setMethod('GET');
 
-        $this->request->setMethod($method);
-
-        $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->request);
-
-        $this->assertEquals($isProcessed, $this->handler->process($this->entity));
-    }
-
-    /**
-     * @return array
-     */
-    public function supportedMethods()
-    {
-        return [
-            'post valid' => [
-                'method' => 'POST',
-                'isValid' => true,
-                'isProcessed' => true
-            ],
-            'invalid' => [
-                'method' => 'POST',
-                'isValid' => false,
-                'isProcessed' => false
-            ],
-        ];
-    }
-
-    public function testProcessValidData()
-    {
-        $this->form->expects($this->once())
+        $this->form->expects(self::once())
             ->method('setData')
             ->with($this->entity);
+        $this->form->expects(self::never())
+            ->method('submit');
 
-        $this->request->setMethod('POST');
+        $this->assertFalse($this->handler->process($this->entity, $this->form, $request));
+    }
 
-        $this->form->expects($this->once())
+    public function testProcessValidData(): void
+    {
+        $request = new Request();
+        $request->setMethod('POST');
+
+        $this->form->expects(self::once())
+            ->method('setData')
+            ->with($this->entity);
+        $this->form->expects(self::once())
             ->method('handleRequest')
-            ->with($this->request);
-        $this->form->expects($this->any())
+            ->with($request);
+        $this->form->expects(self::once())
             ->method('isSubmitted')
-            ->will($this->returnValue(true));
-        $this->form->expects($this->once())
+            ->willReturn(true);
+        $this->form->expects(self::once())
             ->method('isValid')
-            ->will($this->returnValue(true));
-
-        $this->eventDispatcher->expects($this->once())
+            ->willReturn(true);
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
-            ->with('oro_product.product.edit', new AfterFormProcessEvent($this->form, $this->entity));
+            ->with(new AfterFormProcessEvent($this->form, $this->entity), 'oro_product.product.edit');
 
-        $this->assertTrue($this->handler->process($this->entity));
+        self::assertTrue($this->handler->process($this->entity, $this->form, $request));
+    }
+
+    public function testProcessSupportedRequestWithInvalidData(): void
+    {
+        $request = new Request();
+        $request->setMethod('POST');
+
+        $this->form->expects(self::once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $this->form->expects(self::once())
+            ->method('isValid')
+            ->willReturn(false);
+        $this->form->expects(self::once())
+            ->method('handleRequest')
+            ->with($request);
+
+        self::assertFalse($this->handler->process($this->entity, $this->form, $request));
     }
 }

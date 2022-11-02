@@ -1,0 +1,136 @@
+services:
+    oro_web_catalog.api.system_page_repository:
+        class: Oro\Bundle\WebCatalogBundle\Api\Repository\SystemPageRepository
+        arguments:
+            - '@router'
+            - '@oro_frontend.request.frontend_helper'
+
+    oro_web_catalog.api.content_node_repository:
+        class: Oro\Bundle\WebCatalogBundle\Api\Repository\ContentNodeRepository
+        arguments:
+            - '@oro_web_catalog.content_node_provider'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.entity_serializer'
+
+    oro_web_catalog.api.resource_api_url_resolver.system_page:
+        class: Oro\Bundle\WebCatalogBundle\Api\SystemPageResourceResolver
+        arguments:
+            - '@oro_web_catalog.api.system_page_repository'
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro_frontend.api.resource_type_resolver, requestType: rest, priority: -200 }
+            - { name: oro_frontend.api.resource_api_url_resolver, requestType: rest, priority: -200 }
+
+    oro_web_catalog.api.load_system_page:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\LoadSystemPage
+        arguments:
+            - '@oro_web_catalog.api.system_page_repository'
+        tags:
+            - { name: oro.api.processor, action: get, group: load_data, requestType: frontend, class: Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage }
+
+    oro_web_catalog.api.expand_system_page_content_variant:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\ExpandSystemPageContentVariant
+        arguments:
+            - '@oro_api.object_normalizer'
+            - '@oro_web_catalog.api.system_page_repository'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage, priority: 250 }
+
+    oro_web_catalog.api.subresource.load_system_page_content_variant:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\LoadSystemPageContentVariantSubresource
+        arguments:
+            - '@oro_web_catalog.api.system_page_repository'
+        tags:
+            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, contentClass: Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage }
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, contentClass: Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage }
+
+    oro_web_catalog.api.compute_web_catalog_tree:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\ComputeWebCatalogTree
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog }
+
+    oro_web_catalog.api.config_content_metadata:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\CompleteContentFieldMetadata
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+        tags:
+            - { name: oro.api.processor, action: get_metadata, requestType: frontend, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -110 }
+
+    oro_web_catalog.api.load_content_node:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\LoadContentNode
+        arguments:
+            - '@oro_web_catalog.api.content_node_repository'
+        tags:
+            - { name: oro.api.processor, action: get, group: load_data, requestType: frontend, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode }
+
+    oro_web_catalog.api.load_content_nodes:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\LoadContentNodes
+        arguments:
+            - '@oro_web_catalog.api.content_node_repository'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode }
+
+    oro_web_catalog.api.compute_content_node_urls:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\ComputeContentNodeUrlFields
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_locale.helper.localization'
+            - '@oro_config.manager'
+            - '@router'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode }
+
+    oro_web_catalog.api.compute_content_node_path:
+        class: Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\ComputeTreeNodePathField
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode }
+
+    oro_web_catalog.api.compute_content_node_content:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\ComputeContentField
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_web_catalog.content_node_provider'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode }
+
+    oro_web_catalog.api.subresource.find_content_variant:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\FindContentVariantForSubresource
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_web_catalog.content_node_provider'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: normalize_input, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 190 }
+            - { name: oro.api.processor, action: get_relationship, group: normalize_input, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 190 }
+
+    oro_web_catalog.api.subresource.build_content_variant_query:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\BuildContentVariantSubresourceQuery
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -90 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -90 }
+
+    oro_web_catalog.api.subresource.add_parent_content_node_id_to_path_query:
+        class: Oro\Bundle\ApiBundle\Processor\Subresource\Shared\AddParentEntityIdToTreeNodePathQuery
+        arguments:
+            - '@stof_doctrine_extensions.listener.tree'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: path, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -140 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: path, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -140 }
+
+    oro_web_catalog.api.subresource.validate_parent_content_node_access:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\ValidateParentContentNodeAccess
+        arguments:
+            - '@oro_web_catalog.api.content_node_repository'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 105 }
+            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: 105 }

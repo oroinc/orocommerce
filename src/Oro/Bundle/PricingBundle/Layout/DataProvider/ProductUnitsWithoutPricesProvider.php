@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Provides method to return product units
+ */
 class ProductUnitsWithoutPricesProvider
 {
     /**
@@ -15,13 +17,10 @@ class ProductUnitsWithoutPricesProvider
     protected $productUnits = [];
 
     /**
-     * @var PriceListRequestHandler
+     * @var FrontendProductPricesProvider
      */
     protected $pricesProvider;
 
-    /**
-     * @param FrontendProductPricesProvider $pricesProvider
-     */
     public function __construct(FrontendProductPricesProvider $pricesProvider)
     {
         $this->pricesProvider = $pricesProvider;

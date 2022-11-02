@@ -7,7 +7,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadTranslations;
 
 class WorkflowDefinitionControllerTest extends BaseTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([LoadTranslations::class]);

@@ -1,19 +1,26 @@
 define(function(require) {
     'use strict';
 
-    var LineItemView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
-    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
+    const LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
 
     /**
      * @export oroorder/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.LineItemView
      */
-    LineItemView = LineItemProductView.extend({
+    const LineItemView = LineItemProductView.extend({
+        elements: _.extend({}, LineItemProductView.prototype.elements, {
+            isPriceChanged: '[data-name="field__is-price-changed"]'
+        }),
+        listen: {
+            'pricing:product-price:lock mediator': 'lineItemProductPriceLock',
+            'pricing:product-price:unlock mediator': 'lineItemProductPriceUnlock'
+        },
+
         /**
          * @property {Object}
          */
@@ -45,19 +52,19 @@ define(function(require) {
         fieldsByName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function LineItemView() {
-            LineItemView.__super__.constructor.apply(this, arguments);
+        constructor: function LineItemView(options) {
+            LineItemView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            LineItemView.__super__.initialize.apply(this, arguments);
+            LineItemView.__super__.initialize.call(this, options);
 
             this.delegate('click', '.removeLineItem', this.removeRow);
             this.initializeUnitLoader();
@@ -67,7 +74,7 @@ define(function(require) {
          * Initialize unit loader component
          */
         initializeUnitLoader: function() {
-            var defaultOptions = {
+            const defaultOptions = {
                 _sourceElement: this.$el,
                 productSelector: this.options.selectors.productSelector,
                 quantitySelector: this.options.selectors.quantitySelector,
@@ -84,14 +91,14 @@ define(function(require) {
         /**
          * Doing something after loading child components
          */
-        handleLayoutInit: function() {
+        handleLayoutInit: function(options) {
             this.$form = this.$el.closest('form');
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function(i, field) {
+            this.$fields.each((i, field) => {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
-            }, this));
+            });
 
             this.initProduct();
 
@@ -107,33 +114,33 @@ define(function(require) {
 
             this.initTypeSwitcher();
 
-            LineItemView.__super__.handleLayoutInit.apply(this, arguments);
+            LineItemView.__super__.handleLayoutInit.call(this, options);
         },
 
         initTypeSwitcher: function() {
-            var $product = this.$el.find('div' + this.options.selectors.productType);
-            var $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
+            const $product = this.$el.find('div' + this.options.selectors.productType);
+            const $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
 
-            var showFreeFormType = function() {
+            const showFreeFormType = function() {
                 $product.hide();
                 $freeForm.show();
             };
 
-            var showProductType = function() {
+            const showProductType = function() {
                 $freeForm.hide();
                 $product.show();
             };
 
-            $freeForm.find('a' + this.options.selectors.productType).click(_.bind(function() {
+            $freeForm.find('a' + this.options.selectors.productType).click(() => {
                 showProductType();
                 $freeForm.find(':input').val('').change();
-            }, this));
+            });
 
-            $product.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
+            $product.find('a' + this.options.selectors.freeFormType).click(() => {
                 showFreeFormType();
                 this.fieldsByName.product.inputWidget('val', '');
                 this.fieldsByName.product.change();
-            }, this));
+            });
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
                 showFreeFormType();
@@ -147,11 +154,11 @@ define(function(require) {
          * @returns {String}
          */
         formFieldName: function(field) {
-            var name = '';
-            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
-            var namePart;
+            let name = '';
+            const nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            let namePart;
 
-            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+            for (let i = 0, iMax = nameParts.length; i < iMax; i++) {
                 namePart = nameParts[i];
                 if (!namePart.length) {
                     continue;
@@ -193,13 +200,21 @@ define(function(require) {
 
         initProduct: function() {
             if (this.fieldsByName.product) {
-                this.fieldsByName.product.change(_.bind(function() {
+                this.fieldsByName.product.change(() => {
                     this.resetData();
 
-                    var data = this.fieldsByName.product.inputWidget('data') || {};
+                    const data = this.fieldsByName.product.inputWidget('data') || {};
                     this.$el.find(this.options.selectors.productSku).text(data.sku || null);
-                }, this));
+                });
             }
+        },
+
+        lineItemProductPriceLock: function() {
+            this.getElement('isPriceChanged').val(1);
+        },
+
+        lineItemProductPriceUnlock: function() {
+            this.getElement('isPriceChanged').val(0);
         }
     });
 

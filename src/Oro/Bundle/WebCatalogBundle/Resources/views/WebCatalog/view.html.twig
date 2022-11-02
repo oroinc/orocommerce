@@ -1,4 +1,5 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
 
 {% oro_title_set({params : {"%entityLabel%": entity.name } }) %}
 
@@ -14,13 +15,24 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set webCatalogInformation %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('oro.webcatalog.name.label'|trans, entity.name) }}
+                {{ UI.renderSwitchableHtmlProperty('oro.webcatalog.description.label'|trans, entity.description) }}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.webcatalog.sections.general'|trans,
-            'subblocks': [{'data' : [
-                UI.renderProperty('oro.webcatalog.name.label'|trans, entity.name),
-                UI.renderSwitchableHtmlProperty('oro.webcatalog.description.label'|trans, entity.description)
-            ]}]
+            'subblocks': [{'data' : [webCatalogInformation]}]
         }
     ] %}
 

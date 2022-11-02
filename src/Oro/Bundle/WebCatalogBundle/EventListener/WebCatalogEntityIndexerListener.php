@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -11,6 +11,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -19,8 +20,13 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
+/**
+ * This class adds information about web catalog association to website search index
+ */
 class WebCatalogEntityIndexerListener
 {
+    use ContextTrait;
+
     const ASSIGN_TYPE_CONTENT_VARIANT = 'variant';
 
     /**
@@ -53,14 +59,6 @@ class WebCatalogEntityIndexerListener
      */
     private $localizationHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigManager $configManager
-     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param WebsiteContextManager $websiteContextManager
-     * @param ContentVariantProviderInterface $contentVariantProvider
-     * @param LocalizationHelper $localizationHelper
-     */
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -77,11 +75,12 @@ class WebCatalogEntityIndexerListener
         $this->localizationHelper = $localizationHelper;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();
@@ -189,7 +188,7 @@ class WebCatalogEntityIndexerListener
 
             $event->addPlaceholderField(
                 $recordId,
-                'assigned_to_ASSIGN_TYPE_ASSIGN_ID',
+                'assigned_to.ASSIGN_TYPE_ASSIGN_ID',
                 1,
                 [
                     AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,

@@ -13,44 +13,27 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var  TotalHelper */
-    protected $helper;
-
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $totalProvider;
+    private $totalProvider;
 
     /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $lineItemSubtotalProvider;
+    private $lineItemSubtotalProvider;
 
     /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $discountSubtotalProvider;
+    private $discountSubtotalProvider;
 
     /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $rateConverter;
+    private $rateConverter;
 
-    protected function setUp()
+    /** @var TotalHelper */
+    private $helper;
+
+    protected function setUp(): void
     {
-        $this->totalProvider = $this->getMockBuilder(
-            'Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->lineItemSubtotalProvider = $this->getMockBuilder(
-            'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->discountSubtotalProvider = $this->getMockBuilder(
-            'Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->rateConverter = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalProvider = $this->createMock(TotalProcessorProvider::class);
+        $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+        $this->discountSubtotalProvider = $this->createMock(DiscountSubtotalProvider::class);
+        $this->rateConverter = $this->createMock(RateConverterInterface::class);
 
         $this->helper = new TotalHelper(
             $this->totalProvider,

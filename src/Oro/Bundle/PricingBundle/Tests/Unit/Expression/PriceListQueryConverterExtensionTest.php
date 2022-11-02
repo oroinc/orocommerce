@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
+use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
 
 class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +19,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new PriceListQueryConverterExtension();
     }
@@ -61,7 +62,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $source->expects($this->once())
             ->method('getDefinition')
-            ->willReturn(json_encode($definition));
+            ->willReturn(QueryDefinitionUtil::encodeDefinition($definition));
 
         $tableAliasByColumn = $this->extension->convert($source, $qb);
         $expectedAliases = [
@@ -114,7 +115,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $source->expects($this->once())
             ->method('getDefinition')
-            ->willReturn(json_encode($definition));
+            ->willReturn(QueryDefinitionUtil::encodeDefinition($definition));
 
         $tableAliasByColumn = $this->extension->convert($source, $qb);
         $expectedAliases = [

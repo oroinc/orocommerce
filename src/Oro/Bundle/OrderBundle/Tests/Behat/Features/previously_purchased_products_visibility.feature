@@ -22,7 +22,7 @@ Feature: Previously purchased products visibility
     And I proceed as the Customer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage
-    When I click "Account"
+    When I follow "Account"
     And I click "Previously Purchased"
     Then I should see "Product 1"
 
@@ -38,7 +38,7 @@ Feature: Previously purchased products visibility
       | Visibility To Customers First      | Current Product |
     And I save and close form
     And I operate as the Customer
-    And click "Account"
+    And follow "Account"
     And click "Previously Purchased"
     Then I should not see "Product 1"
 
@@ -56,7 +56,7 @@ Feature: Previously purchased products visibility
     And I select "Hidden" from "Visibility to All"
     And I save form
     And I proceed as the Customer
-    And click "Account"
+    And follow "Account"
     And click "Previously Purchased"
     Then I should not see "Product 1"
 
@@ -77,7 +77,7 @@ Feature: Previously purchased products visibility
       |Category Visibility            |hidden |
     And I save setting
     And I proceed as the Customer
-    And click "Account"
+    And follow "Account"
     And click "Previously Purchased"
     Then I should not see "Product 1"
 
@@ -93,7 +93,7 @@ Feature: Previously purchased products visibility
       | Visibility To Customers First      | Customer Group  |
     And I save and close form
     And I proceed as the Customer
-    And click "Account"
+    And follow "Account"
     And click "Previously Purchased"
     Then I should not see "Product 1"
 
@@ -108,6 +108,6 @@ Feature: Previously purchased products visibility
       | Visibility To Customers First      | Hidden  |
     And I save and close form
     And I proceed as the Customer
-    And click "Account"
+    And follow "Account"
     And click "Previously Purchased"
     Then I should not see "Product 1"

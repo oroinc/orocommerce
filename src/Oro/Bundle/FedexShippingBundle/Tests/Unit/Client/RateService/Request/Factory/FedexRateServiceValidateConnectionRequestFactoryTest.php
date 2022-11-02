@@ -41,7 +41,7 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
@@ -73,9 +73,6 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
         );
     }
 
-    /**
-     * @return ShippingOrigin
-     */
     private function createShippingOrigin(): ShippingOrigin
     {
         return new ShippingOrigin([
@@ -87,9 +84,6 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
         ]);
     }
 
-    /**
-     * @return FedexIntegrationSettings
-     */
     private function createSettings(): FedexIntegrationSettings
     {
         $settings = new FedexIntegrationSettings();
@@ -105,9 +99,6 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
         return $settings;
     }
 
-    /**
-     * @return array
-     */
     private function getExpectedAddress(): array
     {
         return [
@@ -123,9 +114,6 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @return FedexRequest
-     */
     private function getExpectedRequest(): FedexRequest
     {
         return new FedexRequest([

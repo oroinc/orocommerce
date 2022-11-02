@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainOwnershipMetadataProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Migrations\Data\Demo\ORM\AbstractLoadEntityWorkflowDemoData;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 
+/**
+ * Loads demo data for workflow steps.
+ */
 class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
 {
     /**
@@ -82,6 +87,20 @@ class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         }
 
         parent::transitWorkflow($workflowItem, $transition);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function generateTransitionsHistory($workflowName, array $entities)
+    {
+        /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */
+        $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
+        $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+
+        parent::generateTransitionsHistory($workflowName, $entities);
+
+        $chainMetadataProvider->stopProviderEmulation();
     }
 
     /**

@@ -2,101 +2,52 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Cache;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Psr\Cache\CacheItemPoolInterface;
 
+/**
+ * Cache adapter for storing responses from FedEx service
+ */
 class FedexResponseCache implements FedexResponseCacheInterface
 {
-    /**
-     * @internal
-     */
-    const NAMESPACE = 'oro_fedex_shipping_price';
+    private const LIFETIME = 86400;
+    private CacheItemPoolInterface $cache;
 
-    /**
-     * @internal 24 hours, 60 * 60 * 24
-     */
-    const LIFETIME = 86400;
-
-    /**
-     * @var CacheProvider
-     */
-    private $cache;
-
-    /**
-     * @param CacheProvider $cache
-     */
-    public function __construct(CacheProvider $cache)
+    public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function has(FedexResponseCacheKeyInterface $key): bool
     {
-        $this->setNamespace($key->getSettings());
-        
-        return $this->cache->contains($key->getCacheKey());
+        return $this->cache->getItem($this->generateCacheKey($key))->isHit();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function get(FedexResponseCacheKeyInterface $key)
+    public function get(FedexResponseCacheKeyInterface $key) : FedexRateServiceResponseInterface|null
     {
-        $this->setNamespace($key->getSettings());
-        
-        $response = $this->cache->fetch($key->getCacheKey());
-        if ($response === false) {
-            return null;
-        }
-
-        return $response;
+        $cacheKey = $this->cache->getItem($this->generateCacheKey($key));
+        return $cacheKey->isHit() ? $cacheKey->get() : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function set(FedexResponseCacheKeyInterface $key, FedexRateServiceResponseInterface $response): bool
     {
-        $this->setNamespace($key->getSettings());
-        
-        $invalidateAt = $this->getInvalidateAt($key->getSettings());
-
-        return $this->cache->save($key->getCacheKey(), $response, $invalidateAt);
+        $cacheItem = $this->cache->getItem($this->generateCacheKey($key));
+        $cacheItem->expiresAfter($this->getInvalidateAt($key->getSettings()))->set($response);
+        return $this->cache->save($cacheItem);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function delete(FedexResponseCacheKeyInterface $key): bool
     {
-        $this->setNamespace($key->getSettings());
-        
-        if (!$this->has($key)) {
-            return false;
-        }
-        
-        return $this->cache->delete($key->getCacheKey());
+        return $this->cache->deleteItem($this->generateCacheKey($key));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function deleteAll(FedexIntegrationSettings $settings): bool
+    public function deleteAll(): bool
     {
-        $this->setNamespace($settings);
-        
-        return $this->cache->deleteAll();
+        return $this->cache->clear();
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return int
-     */
     private function getInvalidateAt(FedexIntegrationSettings $settings): int
     {
         $interval = 0;
@@ -113,11 +64,10 @@ class FedexResponseCache implements FedexResponseCacheInterface
         return $interval;
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     */
-    private function setNamespace(FedexIntegrationSettings $settings)
+    private function generateCacheKey(FedexResponseCacheKeyInterface $key) : string
     {
-        $this->cache->setNamespace(self::NAMESPACE . $settings->getId());
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            $key->getCacheKey() . '_' .  $key->getSettings()->getId()
+        );
     }
 }

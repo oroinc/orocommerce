@@ -12,16 +12,16 @@ use Oro\Bundle\TaxBundle\Model\Address;
 
 class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var AddressModelFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $addressModelFactory;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     /** @var AddressEventListener */
-    protected $listener;
+    private $listener;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|AddressModelFactory */
-    protected $addressModelFactory;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
-    protected $configManager;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -29,9 +29,14 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new AddressEventListener($this->addressModelFactory);
     }
 
+    private function getEvent(array $settings): ConfigSettingsUpdateEvent
+    {
+        return new ConfigSettingsUpdateEvent($this->configManager, $settings);
+    }
+
     public function testFormPreSetWithoutKey()
     {
-        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
+        $event = $this->getEvent([]);
 
         $this->listener->formPreSet($event);
         $this->assertEquals([], $event->getSettings());
@@ -39,7 +44,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testFormPreSet()
     {
-        $settings = [
+        $event = $this->getEvent([
             'oro_tax___origin_address' => [
                 'value' => [
                     'region_text' => 'Alabama',
@@ -48,9 +53,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
                     'region' => 'US-AL',
                 ],
             ],
-        ];
-
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        ]);
 
         $address = (new Address(['region_text' => 'Alabama', 'postal_code' => '35004']))
             ->setCountry(new Country('US'))
@@ -68,7 +71,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testBeforeSaveWithoutKey()
     {
-        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
+        $event = $this->getEvent([]);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 
@@ -79,7 +82,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testBeforeSaveNotModel()
     {
         $settings = ['value' => null];
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent($settings);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 
@@ -95,7 +98,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
         $address->setCountry($country);
         $address->setRegion($region);
 
-        $event = new ConfigSettingsUpdateEvent($this->configManager, ['value' => $address]);
+        $event = $this->getEvent(['value' => $address]);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 
@@ -113,7 +116,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $address ='some_value';
         $settings = ['value' => $address];
-        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
+        $event = $this->getEvent($settings);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 

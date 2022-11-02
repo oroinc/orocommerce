@@ -8,10 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\PromotionBundle\Model\ExtendAppliedPromotion;
 
 /**
+ * Represents applied promotions to the order
+ *
  * @Config()
  * @ORM\Table(name="oro_promotion_applied")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository")
@@ -108,9 +109,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         return $this->id;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return (bool)$this->active;
@@ -207,9 +205,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getConfigOptions(): array
     {
         return $this->configOptions;
@@ -226,9 +221,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getPromotionData(): array
     {
         return $this->promotionData;

@@ -3,125 +3,142 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AttachmentBundle\Entity\Attachment;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const PRODUCT_SKU = 'SKU-1';
+    private const PRODUCT_COPY_SKU = 'SKU-2';
+    private const PRODUCT_STATUS = Product::STATUS_DISABLED;
+    private const UNIT_PRECISION_CODE_1 = 'kg';
+    private const UNIT_PRECISION_DEFAULT_PRECISION_1 = 2;
+    private const UNIT_PRECISION_CODE_2 = 'mg';
+    private const UNIT_PRECISION_DEFAULT_PRECISION_2 = 4;
+    private const NAME_DEFAULT_LOCALE = 'name default';
+    private const NAME_CUSTOM_LOCALE = 'name custom';
+    private const DESCRIPTION_DEFAULT_LOCALE = 'description default';
+    private const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
+    private const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
+    private const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
-    const PRODUCT_SKU = 'SKU-1';
-    const PRODUCT_COPY_SKU = 'SKU-2';
-    const PRODUCT_STATUS = Product::STATUS_DISABLED;
-    const UNIT_PRECISION_CODE_1 = 'kg';
-    const UNIT_PRECISION_DEFAULT_PRECISION_1 = 2;
-    const UNIT_PRECISION_CODE_2 = 'mg';
-    const UNIT_PRECISION_DEFAULT_PRECISION_2 = 4;
-    const NAME_DEFAULT_LOCALE = 'name default';
-    const NAME_CUSTOM_LOCALE = 'name custom';
-    const DESCRIPTION_DEFAULT_LOCALE = 'description default';
-    const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
-    const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
-    const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EntityManager
-     */
-    protected $objectManager;
+    /** @var SkuIncrementorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $skuIncrementor;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var FileManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $fileManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    /** @var AttachmentProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $attachmentProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|SkuIncrementorInterface
-     */
-    protected $skuIncrementor;
+    /** @var Connection|\PHPUnit\Framework\MockObject\MockObject */
+    private $connection;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FileManager
-     */
-    protected $fileManager;
+    /** @var ProductDuplicator */
+    private $duplicator;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AttachmentProvider
-     */
-    protected $attachmentProvider;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Connection
-     */
-    protected $connection;
-
-    /**
-     * @var ProductDuplicator
-     */
-    protected $duplicator;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->skuIncrementor = $this->getMockBuilder('Oro\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\FileManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attachmentProvider = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->skuIncrementor = $this->createMock(SkuIncrementorInterface::class);
+        $this->fileManager = $this->createMock(FileManager::class);
+        $this->attachmentProvider = $this->createMock(AttachmentProvider::class);
+        $this->connection = $this->createMock(Connection::class);
 
-        $this->doctrineHelper->expects($this->any())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getConnection')
+            ->willReturn($this->connection);
+
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->with($this->anything())
-            ->will($this->returnValue($this->objectManager));
-
-        $this->objectManager->expects($this->any())
-            ->method('getConnection')
-            ->will($this->returnValue($this->connection));
+            ->willReturn($em);
 
         $this->duplicator = new ProductDuplicator(
-            $this->doctrineHelper,
+            $doctrineHelper,
             $this->eventDispatcher,
             $this->fileManager,
             $this->attachmentProvider
         );
-
         $this->duplicator->setSkuIncrementor($this->skuIncrementor);
+    }
+
+    private function getFile(int $id): File
+    {
+        $file = new File();
+        ReflectionUtil::setId($file, $id);
+
+        return $file;
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getProductName(?string $string, ?string $text, Localization $localization = null): ProductName
+    {
+        $value = new ProductName();
+        $value->setString($string);
+        $value->setText($text);
+        $value->setLocalization($localization);
+
+        return $value;
+    }
+
+    private function getProductDescription(?string $string, ?string $text): ProductDescription
+    {
+        $value = new ProductDescription();
+        $value->setString($string);
+        $value->setText($text);
+
+        return $value;
+    }
+
+    private function getProductShortDescription(?string $string, ?string $text): ProductShortDescription
+    {
+        $value = new ProductShortDescription();
+        $value->setString($string);
+        $value->setText($text);
+
+        return $value;
+    }
+
+    private function getProductUnitPrecision(string $code, int $defaultPrecision): ProductUnitPrecision
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+        $productUnit->setDefaultPrecision($defaultPrecision);
+
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($productUnit);
+
+        return $productUnitPrecision;
     }
 
     /**
@@ -129,70 +146,71 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
      */
     public function testDuplicate()
     {
-        $image = new File();
-        $imageCopy = new File();
+        $image1 = $this->getFile(1);
+        $image2 = $this->getFile(2);
+        $image1Copy = $this->getFile(3);
 
-        $productImage = new StubProductImage();
-        $productImage->setImage($image);
-        $productImageCopy = new StubProductImage();
-        $productImageCopy->setImage($imageCopy);
+        $productImage1 = new StubProductImage();
+        $productImage1->setId(11);
+        $productImage1->setImage($image1);
+        $productImage2 = new StubProductImage();
+        $productImage2->setId(12);
+        $productImage2->setImage($image2);
+        $productImage1Copy = new StubProductImage();
+        $productImage1Copy->setImage($image1Copy);
 
         $productSlug = new Slug();
         $productSlug->setUrl('/url');
         $productSlug->setRouteName('route_name');
 
-        $attachmentFile1 = new File();
-        $attachmentFileCopy1 = new File();
-        $attachmentFile2 = new File();
-        $attachmentFileCopy2 = new File();
+        $attachmentFile1 = $this->getFile(4);
+        $attachmentFile2 = $this->getFile(5);
+        $attachmentFileCopy2 = $this->getFile(6);
 
         $attachment1 = (new Attachment())
             ->setFile($attachmentFile1);
         $attachment2 = (new Attachment())
             ->setFile($attachmentFile2);
 
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $product = $this->getProduct(42);
         $product->setSku(self::PRODUCT_SKU)
-            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
+            ->setPrimaryUnitPrecision($this->getProductUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
             ))
-            ->addAdditionalUnitPrecision($this->prepareUnitPrecision(
+            ->addAdditionalUnitPrecision($this->getProductUnitPrecision(
                 self::UNIT_PRECISION_CODE_2,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
             ->addSlug($productSlug)
-            ->addName($this->prepareLocalizedValue(self::NAME_DEFAULT_LOCALE))
-            ->addName($this->prepareLocalizedValue(self::NAME_CUSTOM_LOCALE))
-            ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_DEFAULT_LOCALE))
-            ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE))
-            ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
-            ->addShortDescription($this->prepareLocalizedValue(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
-            ->addImage($productImage);
+            ->addName($this->getProductName(self::NAME_DEFAULT_LOCALE, null))
+            ->addName($this->getProductName(self::NAME_CUSTOM_LOCALE, null, new Localization()))
+            ->addDescription($this->getProductDescription(null, self::DESCRIPTION_DEFAULT_LOCALE))
+            ->addDescription($this->getProductDescription(null, self::DESCRIPTION_CUSTOM_LOCALE))
+            ->addShortDescription($this->getProductShortDescription(null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE))
+            ->addShortDescription($this->getProductShortDescription(null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE))
+            ->addImage($productImage1)
+            ->addImage($productImage2);
 
         $this->skuIncrementor->expects($this->once())
             ->method('increment')
             ->with(self::PRODUCT_SKU)
-            ->will($this->returnValue(self::PRODUCT_COPY_SKU));
+            ->willReturn(self::PRODUCT_COPY_SKU);
 
         $this->attachmentProvider->expects($this->once())
             ->method('getEntityAttachments')
             ->with($product)
-            ->will($this->returnValue([$attachment1, $attachment2]));
+            ->willReturn([$attachment1, $attachment2]);
 
-        $this->fileManager->expects($this->any())
+        $this->fileManager->expects($this->exactly(4))
             ->method('cloneFileEntity')
-            ->with($image)
-            ->will($this->returnValue($imageCopy));
-        $this->fileManager->expects($this->any())
-            ->method('cloneFileEntity')
-            ->with($attachmentFile1)
-            ->will($this->returnValue($attachmentFileCopy1));
-        $this->fileManager->expects($this->any())
-            ->method('cloneFileEntity')
-            ->with($attachmentFile2)
-            ->will($this->returnValue($attachmentFileCopy2));
+            ->withConsecutive(
+                [$image1],
+                [$image2],
+                [$attachmentFile1],
+                [$attachmentFile2]
+            )
+            ->willReturnOnConsecutiveCalls($image1Copy, $attachmentFileCopy2);
 
         $this->connection->expects($this->once())
             ->method('beginTransaction');
@@ -231,17 +249,15 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(self::SHORT_DESCRIPTION_DEFAULT_LOCALE, $productCopyShortDescriptions[0]->getText());
         $this->assertEquals(self::SHORT_DESCRIPTION_CUSTOM_LOCALE, $productCopyShortDescriptions[1]->getText());
 
-        $this->assertEquals($imageCopy, $productImageCopy->getImage());
+        $this->assertEquals($image1Copy, $productImage1Copy->getImage());
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testDuplicateFailed()
     {
+        $this->expectException(\Exception::class);
         $product = (new Product())
             ->setSku(self::PRODUCT_SKU)
-            ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
+            ->setPrimaryUnitPrecision($this->getProductUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
             ));
@@ -249,50 +265,21 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         $this->skuIncrementor->expects($this->once())
             ->method('increment')
             ->with(self::PRODUCT_SKU)
-            ->will($this->returnValue(self::PRODUCT_COPY_SKU));
+            ->willReturn(self::PRODUCT_COPY_SKU);
 
         $this->attachmentProvider->expects($this->once())
             ->method('getEntityAttachments')
             ->with($product)
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->connection->expects($this->once())
             ->method('beginTransaction');
         $this->connection->expects($this->once())
             ->method('commit')
-            ->will($this->throwException(new \Exception()));
+            ->willThrowException(new \Exception());
         $this->connection->expects($this->once())
             ->method('rollback');
 
         $this->duplicator->duplicate($product);
-    }
-
-    /**
-     * @param string $code
-     * @param int $defaultPrecision
-     * @return ProductUnitPrecision
-     */
-    protected function prepareUnitPrecision($code, $defaultPrecision)
-    {
-        $productUnit = (new ProductUnit())
-            ->setCode($code)
-            ->setDefaultPrecision($defaultPrecision);
-
-        return (new ProductUnitPrecision())
-            ->setUnit($productUnit);
-    }
-
-    /**
-     * @param string|null $string
-     * @param string|null $text
-     * @return LocalizedFallbackValue
-     */
-    protected function prepareLocalizedValue($string = null, $text = null)
-    {
-        $value = new LocalizedFallbackValue();
-        $value->setString($string)
-            ->setText($text);
-
-        return $value;
     }
 }

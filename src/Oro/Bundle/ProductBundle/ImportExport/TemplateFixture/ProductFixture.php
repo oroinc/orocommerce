@@ -3,22 +3,37 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Provides products sample export template data.
+ */
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
+    /** @var LocalizationManager */
+    private $localizationManager;
+
+    public function __construct(LocalizationManager $localizationManager)
+    {
+        $this->localizationManager = $localizationManager;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getEntityClass()
     {
-        return 'Oro\Bundle\ProductBundle\Entity\Product';
+        return Product::class;
     }
 
     /**
@@ -43,31 +58,28 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      */
     public function fillEntityData($key, $entity)
     {
-        $inventoryStatus = new StubEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock');
+        $localization = $this->localizationManager->getDefaultLocalization();
 
-        $localization = new Localization();
-        $localization->setName('English');
-
-        $name = new LocalizedFallbackValue();
+        $name = new ProductName();
         $name->setString('Product Name');
 
-        $localizedName = new LocalizedFallbackValue();
+        $localizedName = new ProductName();
         $localizedName->setLocalization($localization)
             ->setString('US Product Name')
             ->setFallback('system');
 
-        $description = new LocalizedFallbackValue();
-        $description->setText('Product Description');
+        $description = new ProductDescription();
+        $description->setWysiwyg('Product Description');
 
-        $localizedDescription = new LocalizedFallbackValue();
+        $localizedDescription = new ProductDescription();
         $localizedDescription->setLocalization($localization)
-            ->setText('US Product Description')
+            ->setWysiwyg('US Product Description')
             ->setFallback('system');
 
-        $shortDescription = new LocalizedFallbackValue();
+        $shortDescription = new ProductShortDescription();
         $shortDescription->setText('Product Short Description');
 
-        $localizedShortDescription = new LocalizedFallbackValue();
+        $localizedShortDescription = new ProductShortDescription();
         $localizedShortDescription->setLocalization($localization)
             ->setText('US Product Short Description')
             ->setFallback('system');
@@ -80,16 +92,16 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setCode('item')
             ->setDefaultPrecision(0);
 
-        $primaryProductUnitPrecision = $this
-            ->createEntityWithId('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', 1);
+        $primaryProductUnitPrecision = new ProductUnitPrecision();
+        $this->setEntityId($primaryProductUnitPrecision, 1);
         $primaryProductUnitPrecision
             ->setUnit($primaryProductUnit)
             ->setPrecision($primaryProductUnit->getDefaultPrecision())
             ->setConversionRate(1)
             ->setSell(true);
 
-        $additionalProductUnitPrecision = $this
-            ->createEntityWithId('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', 2);
+        $additionalProductUnitPrecision = new ProductUnitPrecision();
+        $this->setEntityId($additionalProductUnitPrecision, 2);
         $additionalProductUnitPrecision
             ->setUnit($additionalProductUnit)
             ->setPrecision($additionalProductUnit->getDefaultPrecision())
@@ -103,7 +115,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setAttributeFamily($attributeFamily)
             ->setStatus('enabled')
             ->setType(Product::TYPE_SIMPLE)
-            ->setInventoryStatus($inventoryStatus)
+            ->setInventoryStatus($this->createInventoryStatus(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'))
             ->addName($name)
             ->addName($localizedName)
             ->setPrimaryUnitPrecision($primaryProductUnitPrecision)
@@ -114,21 +126,18 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->addShortDescription($localizedShortDescription);
     }
 
-    /**
-     * @param string $className
-     * @param int $id
-     *
-     * @return object
-     */
-    protected function createEntityWithId($className, $id)
+    private function setEntityId(object $entity, int $id): void
     {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
+        $reflectionClass = new \ReflectionClass($entity);
         $method = $reflectionClass->getProperty('id');
         $method->setAccessible(true);
         $method->setValue($entity, $id);
+    }
 
-        return $entity;
+    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    {
+        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+
+        return new $enumValueClassName($id, $name);
     }
 }

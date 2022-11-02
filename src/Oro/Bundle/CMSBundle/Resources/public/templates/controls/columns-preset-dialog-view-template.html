@@ -1,0 +1,12 @@
+<div class="columns-presets">
+    <% _.each(presets, function(preset) { %>
+        <div class="column-preset" data-name="<%- preset.name %>">
+            <div class="column-preset-preview" style="--preview-col-count: <%- preset.count %>">
+                <% _.each(preset.cols, function(col) { %>
+                    <span class="column-preset-preview__col" style="--preview-col-span: <%- col %>"></span>
+                <% }) %>
+            </div>
+            <div class="column-preset__label"><%- preset.label %></div>
+        </div>
+    <% }) %>
+</div>

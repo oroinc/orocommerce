@@ -35,7 +35,7 @@ class ProductImagesDimensionsProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $themeImageType;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
             ->disableOriginalConstructor()

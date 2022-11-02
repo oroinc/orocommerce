@@ -19,12 +19,12 @@ Feature: Guest Checkout
     And login as administrator
     And go to System/ Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    Then the "Enable guest shopping list" checkbox should not be checked
-    When uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
+    Then the "Enable Guest Shopping List" checkbox should not be checked
+    When uncheck "Use default" for "Enable Guest Shopping List" field
+    And I check "Enable Guest Shopping List"
     When I save form
     Then I should see "Configuration saved" flash message
-    And the "Enable guest shopping list" checkbox should be checked
+    And the "Enable Guest Shopping List" checkbox should be checked
 
   Scenario: Set payment term for Non-Authenticated Visitors group
     Given I proceed as the Admin
@@ -48,7 +48,7 @@ Feature: Guest Checkout
     And I click "Search Button"
     And I click "400-Watt Bulb Work Light"
     And I click "Add to Shopping List"
-    And I should see "Product has been added to" flash message
+    And I should see "Product has been added to" flash message and I close it
     When I click "Shopping List"
     And I should see "400-Watt Bulb Work Light"
     Then I should not see following buttons:
@@ -119,8 +119,9 @@ Feature: Guest Checkout
     And I click "Add to Shopping List"
     And I click "Shopping List"
     And I click "Create Order"
-    And I click "Continue as a Guest"
-    And I fill form with:
+    When I click "Continue as a Guest"
+    Then I should not see "Back"
+    When I fill form with:
       | First Name           | Tester1         |
       | Last Name            | Testerson       |
       | Email                | tester@test.com |
@@ -134,7 +135,7 @@ Feature: Guest Checkout
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I uncheck "Save my data and create an account" on the checkout page
-    When I click "Submit Order"
+    And I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"
 
   Scenario: Check guest orders on management console

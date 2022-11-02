@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
@@ -19,7 +19,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
     const EUR = 'EUR';
     const CAD = 'CAD';
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $objectManager;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
@@ -37,9 +37,9 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->objectManager = $this->createMock(ObjectManager::class);
+        $this->objectManager = $this->createMock(EntityManagerInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->subtotalProvider = $this->createMock(CheckoutSubtotalProvider::class);
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
@@ -74,19 +74,27 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
         $this->subtotalProvider->expects($this->exactly(3))
             ->method('getSubtotalByCurrency')
             ->willReturnMap([
-                [$checkout, self::USD, (new Subtotal())
-                    ->setCurrency(self::USD)->setAmount(100)->setCombinedPriceList($combinedPriceList1)],
-                [$checkout, self::EUR, (new Subtotal())
-                    ->setCurrency(self::EUR)->setAmount(80)->setCombinedPriceList($combinedPriceList2)],
+                [
+                    $checkout,
+                    self::USD,
+                    (new Subtotal())
+                        ->setCurrency(self::USD)->setAmount(100)->setPriceList($combinedPriceList1)
+                ],
+                [
+                    $checkout,
+                    self::EUR,
+                    (new Subtotal())
+                        ->setCurrency(self::EUR)->setAmount(80)->setPriceList($combinedPriceList2)
+                ],
                 [$checkout, self::CAD, (new Subtotal())->setCurrency(self::CAD)->setAmount(120)],
             ]);
 
         $this->checkoutSubtotalUpdater->recalculateCheckoutSubtotals($checkout, true);
-        $this->assertSame(100, $totalUsd->getSubtotal()->getAmount());
-        $this->assertSame(80, $totalEur->getSubtotal()->getAmount());
+        $this->assertSame(100.0, $totalUsd->getSubtotal()->getAmount());
+        $this->assertSame(80.0, $totalEur->getSubtotal()->getAmount());
 
-        $this->assertSame('price list 1', $totalUsd->getSubtotal()->getCombinedPriceList()->getName());
-        $this->assertSame('price list 2', $totalEur->getSubtotal()->getCombinedPriceList()->getName());
+        $this->assertSame('price list 1', $totalUsd->getSubtotal()->getPriceList()->getName());
+        $this->assertSame('price list 2', $totalEur->getSubtotal()->getPriceList()->getName());
     }
 
     public function testRecalculateInvalidSubtotals()
@@ -108,6 +116,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManager->expects($this->once())->method('persist');
         $this->objectManager->expects($this->once())->method('flush');
+        $this->objectManager->expects($this->once())->method('clear');
 
         $this->subtotalProvider->expects($this->exactly(3))
             ->method('getSubtotalByCurrency')
@@ -118,8 +127,8 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $this->checkoutSubtotalUpdater->recalculateInvalidSubtotals();
-        $this->assertSame(100, $totalUsd->getSubtotal()->getAmount());
-        $this->assertSame(80, $totalEur->getSubtotal()->getAmount());
+        $this->assertSame(100.0, $totalUsd->getSubtotal()->getAmount());
+        $this->assertSame(80.0, $totalEur->getSubtotal()->getAmount());
     }
 
     public function testRecalculateInvalidSubtotalsNoCheckouts()
@@ -135,6 +144,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
 
         $this->objectManager->expects($this->never())->method('persist');
         $this->objectManager->expects($this->never())->method('flush');
+        $this->objectManager->expects($this->never())->method('clear');
         $this->subtotalProvider->expects($this->never())->method('getSubtotalByCurrency');
 
         $this->checkoutSubtotalUpdater->recalculateInvalidSubtotals();

@@ -1,7 +1,26 @@
 /* @theme: default; */
 
-$product-sticker-icon-top-right-pos-top: update-default($product-sticker-icon-top-right-pos-top, $offset-y);
-$product-sticker-icon-top-right-pos-right: update-default($product-sticker-icon-top-right-pos-right, $offset-x);
+$product-sticker-inner-offset: null !default;
+
+$product-sticker-icon-top-left-pos-top: 0 !default;
+$product-sticker-icon-top-left-pos-left: 0 !default;
+
+$product-sticker-icon-top-right-pos-top: $offset-y !default;
+$product-sticker-icon-top-right-pos-right: $offset-x !default;
+
+$product-sticker-icon-bottom-right-pos-bottom: 0 !default;
+$product-sticker-icon-bottom-right-pos-right: 0 !default;
+
+$product-sticker-icon-bottom-left-pos-bottom: 0 !default;
+$product-sticker-icon-bottom-left-pos-left: 0 !default;
+
+$product-sticker-icon-bottom-right-gallery-pos-bottom: $product-view-media-gallery-nav-offset-top +
+    $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-right-pos-bottom !default;
+$product-sticker-icon-bottom-left-gallery-pos-bottom: $product-view-media-gallery-nav-offset-top +
+    $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-left-pos-bottom !default;
+
+$product-sticker-text-font-weight: font-weight('bold') !default;
+$product-sticker-text-new-arrival-color: get-color('primary', 'dark') !default;
 
 $product-sticker-icon-new-arrival-background: url('#{$global-url}/oroproduct/default/images/sticker-new.svg') 0 0 no-repeat !default;
 $product-sticker-icon-new-arrival-background-size: 100% 100% !default;

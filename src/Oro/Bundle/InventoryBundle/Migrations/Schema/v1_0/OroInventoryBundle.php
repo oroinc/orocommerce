@@ -8,6 +8,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
@@ -115,13 +116,11 @@ class OroInventoryBundle implements
         $this->addOroInventoryLevelForeignKeys($schema);
 
         $queries->addPostQuery(
-            new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
+            new RenameConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
         );
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function renameTablesUpdateRelation(Schema $schema, QueryBag $queries)
@@ -153,9 +152,6 @@ class OroInventoryBundle implements
         $this->addEntityConfigUpdateQueries($queries);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateWarehouseEntityRelations(Schema $schema)
     {
         if (class_exists('Oro\Bundle\WarehouseBundle\Entity\Warehouse')) {
@@ -239,8 +235,6 @@ class OroInventoryBundle implements
 
     /**
      * Create oro_inventory_level table
-     *
-     * @param Schema $schema
      */
     protected function createOroInventoryLevelTable(Schema $schema)
     {
@@ -254,8 +248,6 @@ class OroInventoryBundle implements
 
     /**
      * Add oro_inventory_level foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroInventoryLevelForeignKeys(Schema $schema)
     {
@@ -278,9 +270,6 @@ class OroInventoryBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -298,9 +287,6 @@ class OroInventoryBundle implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
         $this->addFallbackRelation(
@@ -318,9 +304,6 @@ class OroInventoryBundle implements
         );
     }
 
-    /**
-     * @param QueryBag $queries
-     */
     protected function addEntityConfigUpdateQueries(QueryBag $queries)
     {
         $configData = [
@@ -331,7 +314,6 @@ class OroInventoryBundle implements
             'warehouse' => 'oro.inventory.inventorylevel.warehouse.label',
         ];
         $this->addEntityFieldLabelConfigs($queries, InventoryLevel::class, $configData);
-
 
         $configData = ['manageInventory' => 'oro.inventory.manage_inventory.label'];
         $this->addEntityFieldLabelConfigs($queries, Product::class, $configData);
@@ -369,11 +351,6 @@ class OroInventoryBundle implements
         ));
     }
 
-    /**
-     * @param QueryBag $queries
-     * @param $class
-     * @param $data
-     */
     protected function addEntityFieldLabelConfigs(QueryBag $queries, $class, $data)
     {
         foreach ($data as $fieldName => $value) {

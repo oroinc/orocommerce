@@ -7,9 +7,6 @@ class ProductVariantFieldValueHandlerRegistry
     /** @var ProductVariantFieldValueHandlerInterface[] */
     private $variantFieldValueHandlers = [];
 
-    /**
-     * @param ProductVariantFieldValueHandlerInterface $variantFieldValueHandler
-     */
     public function addHandler(ProductVariantFieldValueHandlerInterface $variantFieldValueHandler)
     {
         $this->variantFieldValueHandlers[$variantFieldValueHandler->getType()] = $variantFieldValueHandler;

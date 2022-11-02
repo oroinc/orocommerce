@@ -1,14 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var BackendSelectAllHeaderCell;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var template = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
-    var additionalTpl = require('tpl!oroproduct/templates/datagrid/backend-select-all-header-cell-short.html');
-    var SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
+    const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
+    const viewportManager = require('oroui/js/viewport-manager');
 
-    BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
+    const modes = {
+        DROPDOWN: 'Dropdown',
+        SIMPLE: 'Simple'
+    };
+
+    const BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
         /** @property */
         autoRender: true,
 
@@ -21,38 +25,69 @@ define(function(require) {
         /** @property */
         template: template,
 
-        /**
-         * @inheritDoc
-         */
-        constructor: function BackendSelectAllHeaderCell() {
-            BackendSelectAllHeaderCell.__super__.constructor.apply(this, arguments);
+        listen: {
+            'viewport:change mediator': 'defineRenderingStrategy'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        constructor: function BackendSelectAllHeaderCell(options) {
+            BackendSelectAllHeaderCell.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritdoc
          */
         initialize: function(options) {
+            if (!options.optimizedScreenSize) {
+                throw new Error('The "optimizedScreenSize" option is required.');
+            }
+
+            this.optimizedScreenSize = options.optimizedScreenSize;
             this.collection = options.collection;
             this.selectState = options.selectState;
-
-            if (options.additionalTpl) {
-                this.template = additionalTpl;
-            }
+            this.defineRenderingStrategy();
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
+         */
+        delegateListeners: function() {
+            this.listenTo(this.selectState, 'undo-selection', this.onSelectUnbind.bind(this));
+            this.listenTo(this, 'render-mode:changed', state => this.render());
+
+            return BackendSelectAllHeaderCell.__super__.delegateListeners.call(this);
+        },
+
+
+        /**
+         * @inheritdoc
          */
         delegateEvents: function(events) {
             this.$('[data-checkbox-change-visible]')
-                .on('change' + this.eventNamespace(), _.bind(_.debounce(this.onCheckboxChange, 50), this));
-            this.$('[data-select-unbind]')
-                .on('click' + this.eventNamespace(), _.bind(_.debounce(this.onSelectUnbind, 50), this));
+                .on('change' + this.eventNamespace(), _.debounce(this.onCheckboxChange.bind(this), 50));
+            this.collection.on('backgrid:visible-changed', _.debounce(this.unCheckCheckbox.bind(this), 50));
+            this.listenTo(this.selectState, 'change', _.debounce(this.updateState.bind(this), 50));
 
-            this.collection.on('backgrid:visible-changed', _.bind(_.debounce(this.unCheckCheckbox, 50), this));
-            this.listenTo(this.selectState, 'change', _.bind(_.debounce(this.updateState, 50), this));
+            return BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
+        },
 
-            BackendSelectAllHeaderCell.__super__.delegateEvents.call(this, events);
+        defineRenderingStrategy() {
+            const prevRenderMode = this.renderMode;
+
+            if (this._isSimple()) {
+                this.renderMode = modes.SIMPLE;
+            } else {
+                this.renderMode = modes.DROPDOWN;
+            }
+
+            if (prevRenderMode !== this.renderMode) {
+                this.trigger('render-mode:changed', {
+                    prevRenderMode,
+                    renderMode: this.renderMode
+                });
+            }
         },
 
         onCheckboxClick: function(e) {
@@ -65,16 +100,23 @@ define(function(require) {
         },
 
         onCheckboxChange: function(event) {
-            var checked = $(event.currentTarget).is(':checked');
+            this.updateVisibleState($(event.currentTarget).is(':checked'));
+        },
 
-            if (!checked) {
+        updateVisibleState(state = true) {
+            if (!state) {
                 this.collection.trigger('backgrid:selectNone');
             }
 
             this.collection.trigger('backgrid:selectNone');
-            this.collection.trigger('backgrid:setVisibleState', checked);
+            this.collection.trigger('backgrid:setVisibleState', state);
 
-            this.canSelect(checked);
+            this.canSelect(state);
+
+            this.$('[data-checkbox-change-visible]')
+                .prop('checked', state)
+                .parent()
+                .toggleClass('checked', state);
         },
 
         onSelectUnbind: function() {
@@ -94,6 +136,36 @@ define(function(require) {
                 .prop('checked', false)
                 .parent()
                 .removeClass('checked');
+        },
+
+        _isSimple() {
+            return viewportManager.isApplicable({maxScreenType: this.optimizedScreenSize});
+        },
+
+        /**
+         * @inheritdoc
+         */
+        getTemplateData() {
+            const data = BackendSelectAllHeaderCell.__super__.getTemplateData.call(this);
+
+            data.isSimple = this._isSimple();
+
+            return data;
+        },
+
+        render() {
+            BackendSelectAllHeaderCell.__super__.render.call(this);
+
+            this.$el.trigger('content:changed');
+
+            if (this.renderMode === modes.SIMPLE) {
+                this.updateVisibleState(false);
+            } else {
+                this.updateVisibleState();
+                this.onSelectUnbind();
+            }
+
+            return this;
         }
     });
 

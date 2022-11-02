@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Rounding;
 
+use Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Rounding\AbstractRoundingServiceTest;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -13,34 +15,28 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
     /** @var QuantityRoundingService */
     protected $service;
 
-    /** {@inheritdoc} */
-    protected function getRoundingService()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRoundingService(): AbstractRoundingService
     {
         return new QuantityRoundingService($this->configManager);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testDefaultPrecision()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->service->round(15.1);
     }
 
     /**
      * @dataProvider roundQuantityProvider
-     * @param string $roundingType
-     * @param mixed $value
-     * @param mixed $expectedValue
-     * @param int $precision
-     * @param ProductUnit $productUnit
-     * @param Product $product
      */
     public function testRoundQuantity(
-        $roundingType,
-        $value,
-        $expectedValue,
-        $precision,
+        int $roundingType,
+        float $value,
+        float $expectedValue,
+        int $precision,
         ProductUnit $productUnit = null,
         Product $product = null
     ) {
@@ -52,26 +48,26 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
     /**
      * @return array
      */
-    public function roundQuantityProvider()
+    public function roundQuantityProvider(): array
     {
         $unit = (new ProductUnit())->setDefaultPrecision(2)->setCode('kg');
 
         return [
             'no round without unit' => [
-                'roundingType' => QuantityRoundingService::ROUND_HALF_UP,
+                'roundingType' => RoundingServiceInterface::ROUND_HALF_UP,
                 'value' => 5.5555,
                 'expectedValue' => 5.5555,
                 'precision' => 3,
             ],
             'default unit precision without product' => [
-                'roundingType' => QuantityRoundingService::ROUND_HALF_UP,
+                'roundingType' => RoundingServiceInterface::ROUND_HALF_UP,
                 'value' => 5.5555,
                 'expectedValue' => 5.56,
                 'precision' => 2,
                 'productUnit' => $unit,
             ],
             'no linked product unit' => [
-                'roundingType' => QuantityRoundingService::ROUND_HALF_UP,
+                'roundingType' => RoundingServiceInterface::ROUND_HALF_UP,
                 'value' => 5.5555,
                 'expectedValue' => 5.556,
                 'precision' => 3,

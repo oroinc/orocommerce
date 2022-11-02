@@ -2,18 +2,22 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Returns category tree restricted by certain user as well as category root (will be suggested by current organization
+ * if not passed explicitly)
+ */
 class CategoryTreeProvider
 {
     /**
-     * @var CategoryRepository
+     * @var ManagerRegistry
      */
-    protected $categoryRepository;
+    protected $registry;
 
     /**
      * @var EventDispatcherInterface
@@ -21,15 +25,18 @@ class CategoryTreeProvider
     protected $eventDispatcher;
 
     /**
-     * @param CategoryRepository $categoryRepository
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var MasterCatalogRootProviderInterface
      */
+    private $masterCatalogRootProvider;
+
     public function __construct(
-        CategoryRepository $categoryRepository,
-        EventDispatcherInterface $eventDispatcher
+        ManagerRegistry $registry,
+        EventDispatcherInterface $eventDispatcher,
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider
     ) {
-        $this->categoryRepository = $categoryRepository;
+        $this->registry = $registry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
     /**
@@ -40,11 +47,33 @@ class CategoryTreeProvider
      */
     public function getCategories($user, $root = null, $includeRoot = true)
     {
-        $categories = $this->categoryRepository->getChildren($root, false, 'left', 'ASC', $includeRoot);
+        if (!$root) {
+            $root = $this->masterCatalogRootProvider->getMasterCatalogRoot();
+        }
+
+        $categories = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->getChildren($root, false, 'left', 'ASC', $includeRoot);
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);
-        $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, CategoryTreeCreateAfterEvent::NAME);
+
+        return $event->getCategories();
+    }
+
+    /**
+     * @return Category[]
+     */
+    public function getParentCategories(?UserInterface $user, Category $category): array
+    {
+        $categories = $this->registry->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
+            ->getPath($category);
+
+        $event = new CategoryTreeCreateAfterEvent($categories);
+        $event->setUser($user);
+        $this->eventDispatcher->dispatch($event, CategoryTreeCreateAfterEvent::NAME);
 
         return $event->getCategories();
     }

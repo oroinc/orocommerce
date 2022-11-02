@@ -3,59 +3,43 @@
 namespace Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler;
 
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Provides easy way to work with the boolean fields of the Product entity.
+ */
 class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandlerInterface
 {
-    const TYPE = 'boolean';
+    public const TYPE = 'boolean';
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPossibleValues($fieldName)
+    public function getPossibleValues(string $fieldName) : array
     {
         return [
-            $this->translator->trans('oro.product.variant_fields.no.label') => 0,
-            $this->translator->trans('oro.product.variant_fields.yes.label') => 1,
+            0 => $this->translator->trans('oro.product.variant_fields.no.label'),
+            1 => $this->translator->trans('oro.product.variant_fields.yes.label'),
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getScalarValue($value)
+    public function getScalarValue(mixed $value) : mixed
     {
         return (bool)$value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHumanReadableValue($fieldName, $value)
+    public function getHumanReadableValue(string $fieldName, mixed $value) : mixed
     {
         $values = $this->getPossibleValues($fieldName);
-        $label = array_search($value, $values, false);
 
-        return $label ?? 'N/A';
+        return array_key_exists((int) $value, $values) ? $values[(int) $value] : 'N/A';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType() : string
     {
         return self::TYPE;
     }

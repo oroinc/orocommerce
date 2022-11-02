@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Compiler\WebsiteSearchCompilerPass;
@@ -7,67 +8,52 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class WebsiteSearchCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContainerBuilder|\PHPUnit\Framework\MockObject\MockObject $containerBuilder
-     */
-    private $containerBuilder;
+    /** @var WebsiteSearchCompilerPass */
+    private $compiler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->compiler = new WebsiteSearchCompilerPass();
     }
 
-    private function runCompilerPass()
+    public function testProcessRegistryDoesNotExist()
     {
-        $pass = new WebsiteSearchCompilerPass();
-        $pass->process($this->containerBuilder);
+        $container = new ContainerBuilder();
+
+        $this->compiler->process($container);
     }
 
-    public function testProcessWhenPlaceholderRegistryDefinitionNotExists()
+    public function testProcessNoTaggedServicesFound()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('has')
-            ->with(WebsiteSearchCompilerPass::WEBSITE_SEARCH_PLACEHOLDER_REGISTRY)
-            ->willReturn(false);
+        $container = new ContainerBuilder();
+        $registryDef = $container->register('oro_website_search.placeholder.registry');
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('findTaggedServiceIds');
+        $this->compiler->process($container);
 
-        $this->runCompilerPass();
+        self::assertSame([], $registryDef->getMethodCalls());
     }
 
-    public function testProcessWhenPlaceholderRegistryDefinitionExists()
+    public function testProcess()
     {
-        $this->containerBuilder
-            ->expects($this->once())
-            ->method('has')
-            ->with(WebsiteSearchCompilerPass::WEBSITE_SEARCH_PLACEHOLDER_REGISTRY)
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $registryDef = $container->register('oro_website_search.placeholder.registry');
 
-        $placeholderRegistryDefinition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $container->register('service.name.1')
+            ->addTag('website_search.placeholder');
+        $container->register('service.name.2')
+            ->addTag('website_search.placeholder');
+        $container->register('service.name.3')
+            ->addTag('website_search.placeholder');
 
-        $this->containerBuilder->expects($this->once())
-            ->method('getDefinition')
-            ->with(WebsiteSearchCompilerPass::WEBSITE_SEARCH_PLACEHOLDER_REGISTRY)
-            ->will($this->returnValue($placeholderRegistryDefinition));
+        $this->compiler->process($container);
 
-        $services = ['LocalizationIdPlaceholder' => []];
-
-        $this->containerBuilder->expects($this->once())
-            ->method('findTaggedServiceIds')
-            ->with(WebsiteSearchCompilerPass::WEBSITE_SEARCH_PLACEHOLDER_TAG)
-            ->willReturn($services);
-
-        $placeholderRegistryDefinition->expects($this->once())
-            ->method('addMethodCall')
-            ->with('addPlaceholder', [new Reference('LocalizationIdPlaceholder')]);
-
-        $this->runCompilerPass();
+        self::assertEquals(
+            [
+                ['addPlaceholder', [new Reference('service.name.1')]],
+                ['addPlaceholder', [new Reference('service.name.2')]],
+                ['addPlaceholder', [new Reference('service.name.3')]]
+            ],
+            $registryDef->getMethodCalls()
+        );
     }
 }

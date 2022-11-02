@@ -10,11 +10,13 @@ use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTestCaseTrait;
+    use EntityTestCaseTrait, EntityTrait;
 
     public function testConstruct()
     {
@@ -48,6 +50,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
             ['website', new Website()],
+            ['shipUntil', new \DateTime('now', new \DateTimeZone('UTC'))],
         ];
 
         $propertyRequest = new Request();
@@ -99,12 +102,9 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $lastName  = 'Brzeczyszczykiewicz';
 
         $request = new Request();
-        $request->setFirstName($firstName)
-            ->setLastName($lastName);
-
-        $reflectionProperty = new \ReflectionProperty(get_class($request), 'id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($request, $id);
+        ReflectionUtil::setId($request, $id);
+        $request->setFirstName($firstName);
+        $request->setLastName($lastName);
 
         $this->assertEquals(sprintf('%s: %s %s', $id, $firstName, $lastName), (string)$request);
     }
@@ -116,5 +116,19 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request->setPoNumber($poNumber);
 
         $this->assertEquals($poNumber, $request->getIdentifier());
+    }
+
+    public function testOwnerEmailInterface()
+    {
+        $request = $this->getEntity(Request::class, [
+            'id' => 74,
+            'firstName' => 'first',
+            'lastName' => 'last'
+        ]);
+
+        $this->assertEquals(74, $request->getId());
+        $this->assertEquals('first', $request->getFirstName());
+        $this->assertEquals('last', $request->getLastName());
+        $this->assertEquals(['email'], $request->getEmailFields());
     }
 }

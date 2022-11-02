@@ -2,10 +2,13 @@
 @ticket-BB-7523
 @ticket-BB-13978
 @ticket-BB-14758
+@ticket-BB-16275
+@ticket-BAP-21444
 @fixture-OroCheckoutBundle:Products_quick_order_form_ce.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroProductBundle:ProductUnitItemZuluTranslation.yml
 @automatically-ticket-tagged
 @regression
 
@@ -95,9 +98,9 @@ Feature: Quick order form
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And "Order Review" checkout step "Order Summary Products Grid" contains products
-      | Product1 | 2 | items |
-      | Product2 | 4 | sets  |
-      | Product3 | 2 | items |
+      | Product1`"'&йёщ®&reg;> | 2 | items |
+      | Product2               | 4 | sets  |
+      | Product3               | 2 | items |
     And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
@@ -125,6 +128,7 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKUwithlowercase |
+    And I wait for products to load
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
@@ -152,7 +156,7 @@ Feature: Quick order form
     Then Page title equals to "Billing Information - Checkout"
     And I should see "Some products have not been added to this order. Please create an RFQ to request price." flash message
     And "Billing Information" checkout step "Order Summary Products Grid" contains products
-      | Product1 | 2 | items |
+      | Product1`"'&йёщ®&reg;> | 2 | items |
 
   Scenario: Verify disabled products are cannot be added via quick order form
     Given I click "Quick Order Form"
@@ -162,7 +166,7 @@ Feature: Quick order form
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Get Quote"
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | pskulowercaseonly |
@@ -170,7 +174,7 @@ Feature: Quick order form
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Create Order"
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | pskulowercaseonly |
@@ -179,7 +183,7 @@ Feature: Quick order form
       | QTY1 | 1     |
     And I click on "Shopping List Dropdown"
     And I click "Add to List 2"
-    Then I should see text matching "Item Number Cannot Be Found"
+    Then I should see text matching "Item number cannot be found"
 
   Scenario: User is able to use Quick Order Form (copy paste) and create RFQ
     Given I click "Quick Order Form"
@@ -189,7 +193,7 @@ Feature: Quick order form
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product1 | 5 | item |
+      | Product1`"'&йёщ®&reg;> | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
@@ -222,14 +226,14 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 5 test |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the products SKUs or units you have provided were not found. Correct them and try again."
+    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 test item |
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test 5 item |
     And I click "Verify Order"
-    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the products SKUs or units you have provided were not found. Correct them and try again."
+    Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test |
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
@@ -242,20 +246,22 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1,2,item |
     And I click "Verify Order"
+    And I wait for products to load
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1 |
-      | QTY1  | 2                |
-      | UNIT1 | item             |
+      | SKU1  | psku1 - Product1`"'&йёщ®&reg;> |
+      | QTY1  | 2                              |
+      | UNIT1 | item                           |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;2;item |
     And I click "Verify Order"
+    And I wait for products to load
     And "QuickAddForm" must contains values:
-      | SKU1  | psku1 - Product1 |
-      | QTY1  | 2                |
-      | UNIT1 | item             |
-      | SKU2  | PSKU2 - Product2 |
-      | QTY2  | 2                |
-      | UNIT2 | item             |
+      | SKU1  | psku1 - Product1`"'&йёщ®&reg;> |
+      | QTY1  | 2                              |
+      | UNIT1 | item                           |
+      | SKU2  | PSKU2 - Product2               |
+      | QTY2  | 2                              |
+      | UNIT2 | item                           |
 
   Scenario: Check upload import validation with empty file
     Given I click "Quick Order Form"
@@ -306,7 +312,7 @@ Feature: Quick order form
     And I should see text matching "We have not been able to identify any product references in the uploaded file."
     And I close ui dialog
 
-  Scenario: Check product name is localized in Import Validation popup
+  Scenario: Check product and unit names are localized in Import Validation popup
     Given I click "Localization Switcher"
     And I select "Localization 1" localization
     And I click "Quick Order Form"
@@ -315,12 +321,56 @@ Feature: Quick order form
     And I download "the CSV template"
     And I close ui dialog
     And I fill quick order template with data:
-      | Item Number | Quantity | Unit |
-      | PSKU1       | 1        | item |
+      | Item Number | Quantity | Unit         |
+      | PSKU1       | 1        | item         |
+      | PSKU1       | 1        | item (lang1) |
+      | PSKU2       | 3        | item         |
+      | PSKU2       | 4        | item (lang1) |
+      | PSKU2       | 5        | set          |
     When I import file for quick order
     Then I should see next rows in "Quick Order Import Validation" table
-      | Item #                           | Qty | Unit         | Price    |
-      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00 |
+      | Item #                           | Qty | Unit         | Price     |
+      | PSKU1 - Product1 (Localization1) | 1   | item (lang1) | US$45.00  |
+      | PSKU2 - Product2                 | 3   | item (lang1) | N/A       |
+      | PSKU2 - Product2                 | 3   | item         | US$60.00  |
+      | PSKU2 - Product2                 | 5   | set          | US$175.00 |
+    And I click "Add to Form"
+    And "QuickAddForm" must contains values:
+      | SKU1  | psku1 - Product1 (Localization1) |
+      | QTY1  | 1                                |
+      | UNIT1 | item (lang1)                     |
+      | SKU2  | PSKU2 - Product2                 |
+      | QTY2  | 3                                |
+      | UNIT2 | item (lang1)                     |
+
+  Scenario: Check unit names are localized in copy paste form
+    Given I click "Localization Switcher"
+    And I select "Zulu" localization
+    And I click "Quick Order Form"
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU2,1,item |
+    And I click "Verify Order"
+    And I wait for products to load
+    Then "QuickAddForm" must contains values:
+      | SKU1  | PSKU2 - Product2 |
+      | QTY1  | 1                |
+      | UNIT1 | Element          |
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU2;3;Element |
+    And I click "Verify Order"
+    And I wait for products to load
+    Then "QuickAddForm" must contains values:
+      | SKU1  | PSKU2 - Product2 |
+      | QTY1  | 4                |
+      | UNIT1 | Element          |
+    When I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | PSKU2;2;element |
+    And I click "Verify Order"
+    And I wait for products to load
+    Then "QuickAddForm" must contains values:
+      | SKU1  | PSKU2 - Product2 |
+      | QTY1  | 6                |
+      | UNIT1 | Element          |
 
   #@todo check with Serhii Polishchuk how can we manipulate xlsx files
 # Scenario: Verify user is able to upload .xlsx file

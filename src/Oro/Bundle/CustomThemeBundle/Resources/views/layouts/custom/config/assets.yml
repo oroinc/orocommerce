@@ -1,10 +1,8 @@
 styles:
     inputs:
+        - 'bundles/orocustomtheme/CheckoutBundle/scss/settings/global-settings.scss'
+
         - 'bundles/orocustomtheme/FrontendBundle/scss/settings/main/global-settings.scss'
-
-        - 'bundles/orocatalog/default/scss/styles.scss'
-
-        - 'bundles/orocommercemenu/blank/scss/styles.scss': 'bundles/orocommercemenu/blank/scss/styles_custom.scss'
 
         - 'bundles/orocustomtheme/CheckoutBundle/scss/styles.scss'
 
@@ -12,6 +10,7 @@ styles:
 
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-columns-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-column-config.scss'
+        - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/main-menu/main-menu-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/variables/quick-access-container-config.scss'
         - 'bundles/orocustomtheme/CommerceMenuBundle/scss/styles.scss'
 
@@ -19,6 +18,7 @@ styles:
         - 'bundles/orocustomtheme/CustomerBundle/scss/styles.scss'
 
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/page-main-config.scss'
+        - 'bundles/orocustomtheme/FrontendBundle/scss/variables/middlebar-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/breadcrumbs-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/variables/search-container-config.scss'
         - 'bundles/orocustomtheme/FrontendBundle/scss/styles.scss'
@@ -28,4 +28,17 @@ styles:
         - 'bundles/orocustomtheme/FilterBundle/scss/variables/filters-box-collapse-config.scss'
         - 'bundles/orocustomtheme/FilterBundle/scss/styles.scss'
 
-    output: 'css/layout/custom/styles.css'
+        - 'bundles/orocustomtheme/ShoppingListBundle/scss/variables/shopping-list-config.scss'
+
+        - 'bundles/orocustomtheme/ProductBundle/scss/variables/page-templates/list-theme-config.scss'
+        - 'bundles/orocustomtheme/ProductBundle/scss/styles.scss'
+
+    output: 'css/styles.css'
+
+stylebook_styles:
+    inputs:
+        - 'bundles/orocustomtheme/FrontendBundle/scss/settings/main/global-settings.scss'
+    output: 'css/stylebook.css'
+
+print_styles:
+    output: 'css/styles-print.css'

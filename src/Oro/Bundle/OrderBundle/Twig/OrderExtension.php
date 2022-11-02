@@ -4,18 +4,27 @@ namespace Oro\Bundle\OrderBundle\Twig;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-class OrderExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to format shipping tracking information and a function to render another template's content:
+ *   - oro_order_format_shipping_tracking_method
+ *   - oro_order_format_shipping_tracking_link
+ *   - oro_order_get_template_content
+ *
+ * Provides a Twig filter to display source document name:
+ *   - oro_order_format_source_document
+ */
+class OrderExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_order_order';
-
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -43,7 +52,7 @@ class OrderExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'oro_order_format_source_document',
                 [$this, 'formatSourceDocument']
             )
@@ -56,15 +65,15 @@ class OrderExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_format_shipping_tracking_method',
                 [$this, 'formatShippingTrackingMethod']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this, 'formatShippingTrackingLink']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_get_template_content',
                 [$this, 'getTemplateContent'],
                 ['needs_environment' => true, 'is_safe' => ['html']]
@@ -73,20 +82,12 @@ class OrderExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
-    }
-
-    /**
-     * @param \Twig_Environment $environment
+     * @param Environment $environment
      * @param string $templateName
      * @param array $context
      * @return string
      */
-    public function getTemplateContent(\Twig_Environment $environment, $templateName, array $context)
+    public function getTemplateContent(Environment $environment, $templateName, array $context)
     {
         $template = $environment->resolveTemplate($templateName);
 
@@ -127,5 +128,16 @@ class OrderExtension extends \Twig_Extension
     {
         return $this->getShippingTrackingFormatter()
             ->formatShippingTrackingLink($shippingMethodName, $trackingNumber);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_order.formatter.source_document' => SourceDocumentFormatter::class,
+            'oro_order.formatter.shipping_tracking' => ShippingTrackingFormatter::class,
+        ];
     }
 }

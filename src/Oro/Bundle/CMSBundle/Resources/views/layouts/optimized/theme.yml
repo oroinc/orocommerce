@@ -1,0 +1,7 @@
+parent: default
+label: Optimized theme
+description: Optimized theme has extra js builds.
+groups: [ commerce ]
+
+extra_js_builds:
+    - landing

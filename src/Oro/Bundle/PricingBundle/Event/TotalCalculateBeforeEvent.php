@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class TotalCalculateBeforeEvent extends Event
 {
@@ -16,10 +16,6 @@ class TotalCalculateBeforeEvent extends Event
     /** @var Request */
     protected $request;
 
-    /**
-     * @param $entity
-     * @param Request $request
-     */
     public function __construct($entity, Request $request)
     {
         $this->entity = $entity;

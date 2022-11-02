@@ -12,7 +12,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      */
     protected $configuration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $configuration = new Configuration();
 
@@ -34,6 +34,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 ],
                 Configuration::DISCOUNT_STRATEGY => [
                     'value' => 'apply_all',
+                    'scope' => 'app'
+                ],
+                Configuration::CASE_INSENSITIVE_COUPON_SEARCH => [
+                    'value' => false,
                     'scope' => 'app'
                 ],
             ]

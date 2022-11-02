@@ -12,7 +12,7 @@ class SingleCheckoutControllerTest extends CheckoutControllerTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -30,10 +30,13 @@ class SingleCheckoutControllerTest extends CheckoutControllerTestCase
             $this->client->request('GET', self::$checkoutUrl)
         );
 
+        $values = $form->getPhpValues();
+        $values['oro_workflow_transition']['po_number'] = 12345;
+
         $this->client->request(
             'POST',
             $this->getTransitionUrl('save_state'),
-            $form->getPhpValues(),
+            $values,
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );

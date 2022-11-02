@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\EntityConfig\ConfigurationHandler;
+use Oro\Bundle\EntityConfigBundle\Migration\ConfigurationHandlerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -12,8 +14,11 @@ use Psr\Log\LoggerInterface;
 /**
  * Change value to `extra_lazy` for `fetch` option of relation settings between Category and Product entities.
  */
-class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQuery
+class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQuery implements
+    ConfigurationHandlerAwareInterface
 {
+    protected ConfigurationHandler $configurationHandler;
+
     /**
      * {@inheritdoc}
      */
@@ -25,13 +30,24 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
     /**
      * {@inheritdoc}
      */
+    public function setConfigurationHandler(ConfigurationHandler $configurationHandler): void
+    {
+        $this->configurationHandler = $configurationHandler;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function execute(LoggerInterface $logger)
     {
         $rows = $this->createEntityConfigQb()
             ->execute()
             ->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->process(reset($rows), $logger);
+        $row = reset($rows);
+        if ($row) {
+            $this->process($row, $logger);
+        }
     }
 
     /**
@@ -58,6 +74,7 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
                 'extra_lazy'
             );
 
+            $query->setConfigurationHandler($this->configurationHandler);
             $query->setConnection($this->connection);
             $query->execute($logger);
 
@@ -92,9 +109,9 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
     private function updateEntityConfigData(array $entityData, $id, LoggerInterface $logger)
     {
         $query = 'UPDATE oro_entity_config SET data = ? WHERE id = ?';
-        $parameters = [$this->connection->convertToDatabaseValue($entityData, Type::TARRAY), $id];
+        $parameters = [$this->connection->convertToDatabaseValue($entityData, Types::ARRAY), $id];
 
         $this->logQuery($logger, $query, $parameters);
-        $this->connection->executeUpdate($query, $parameters);
+        $this->connection->executeStatement($query, $parameters);
     }
 }

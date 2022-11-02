@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -11,21 +11,17 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ContentBlockControllerTest extends WebTestCase
 {
-    const CONTENT_BLOCK_ALIAS = 'content-block-alias';
+    private const CONTENT_BLOCK_ALIAS = 'content-block-alias';
 
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->registry = $this->getContainer()->get('doctrine');
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return self::getContainer()->get('doctrine');
     }
 
     public function testIndex()
@@ -33,8 +29,11 @@ class ContentBlockControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_content_block_index'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('cms-content-block-grid', $crawler->html());
-        $this->assertContains('Create Content Block', $crawler->filter('div.title-buttons-container')->html());
+        static::assertStringContainsString('cms-content-block-grid', $crawler->html());
+        static::assertStringContainsString(
+            'Create Content Block',
+            $crawler->filter('div.title-buttons-container')->html()
+        );
     }
 
     public function testCreate()
@@ -48,7 +47,7 @@ class ContentBlockControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Content block has been saved', $crawler->html());
+        static::assertStringContainsString('Content block has been saved', $crawler->html());
     }
 
     /**
@@ -57,7 +56,7 @@ class ContentBlockControllerTest extends WebTestCase
     public function testView()
     {
         /** @var ContentBlock $contentBlock */
-        $contentBlock = $this->registry->getRepository(ContentBlock::class)->findOneBy(
+        $contentBlock = $this->getDoctrine()->getRepository(ContentBlock::class)->findOneBy(
             ['alias' => self::CONTENT_BLOCK_ALIAS]
         );
         $crawler      = $this->client->request(
@@ -66,7 +65,7 @@ class ContentBlockControllerTest extends WebTestCase
         );
         $result       = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($contentBlock->getAlias(), $crawler->html());
+        static::assertStringContainsString($contentBlock->getAlias(), $crawler->html());
     }
 
     /**
@@ -75,7 +74,7 @@ class ContentBlockControllerTest extends WebTestCase
     public function testUpdate()
     {
         /** @var ContentBlock $contentBlock */
-        $contentBlock = $this->registry->getRepository(ContentBlock::class)->findOneBy(
+        $contentBlock = $this->getDoctrine()->getRepository(ContentBlock::class)->findOneBy(
             ['alias' => self::CONTENT_BLOCK_ALIAS]
         );
         $crawler      = $this->client->request(
@@ -94,6 +93,6 @@ class ContentBlockControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Content block has been saved', $crawler->html());
+        static::assertStringContainsString('Content block has been saved', $crawler->html());
     }
 }

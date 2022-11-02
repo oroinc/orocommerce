@@ -2,46 +2,36 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as BaseRouter;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Router extends BaseRouter implements ContainerAwareInterface
+/**
+ * Extends the router to work with the storefront slugs.
+ */
+class Router extends BaseRouter
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private MatchedUrlDecisionMaker $urlDecisionMaker;
+    private ContainerInterface $container;
 
     /**
-     * @var SluggableUrlGenerator
+     * {@inheritdoc}
      */
-    private $sluggableUrlGenerator;
-
-    /**
-     * @var SlugUrlMatcher
-     */
-    private $slugUrlMatcher;
-
-    /**
-     * @var MatchedUrlDecisionMaker
-     */
-    private $urlDecisionMaker;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public static function getSubscribedServices(): array
     {
-        $this->container = $container;
+        return array_merge(parent::getSubscribedServices(), [
+            'oro_redirect.routing.sluggable_url_generator' => SluggableUrlGenerator::class,
+            'oro_redirect.routing.slug_url_matcher' => SlugUrlMatcher::class
+        ]);
     }
 
-    /**
-     * @param MatchedUrlDecisionMaker $urlDecisionMaker
-     */
-    public function setMatchedUrlDecisionMaker(MatchedUrlDecisionMaker $urlDecisionMaker)
+    public function setUrlDecisionMaker(MatchedUrlDecisionMaker $urlDecisionMaker): void
     {
         $this->urlDecisionMaker = $urlDecisionMaker;
+    }
+
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
     }
 
     /**
@@ -51,9 +41,9 @@ class Router extends BaseRouter implements ContainerAwareInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
             if (!$this->generator instanceof SluggableUrlGenerator) {
-                $this->sluggableUrlGenerator = $this->container->get('oro_redirect.routing.sluggable_url_generator');
-                $this->sluggableUrlGenerator->setBaseGenerator(parent::getGenerator());
-                $this->generator = $this->sluggableUrlGenerator;
+                $sluggableUrlGenerator = $this->container->get('oro_redirect.routing.sluggable_url_generator');
+                $sluggableUrlGenerator->setBaseGenerator(parent::getGenerator());
+                $this->generator = $sluggableUrlGenerator;
             }
         } elseif (!$this->generator) {
             $this->generator = parent::getGenerator();
@@ -69,9 +59,9 @@ class Router extends BaseRouter implements ContainerAwareInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
             if (!$this->matcher instanceof SlugUrlMatcher) {
-                $this->slugUrlMatcher = $this->container->get('oro_redirect.routing.slug_url_matcher');
-                $this->slugUrlMatcher->setBaseMatcher(parent::getMatcher());
-                $this->matcher = $this->slugUrlMatcher;
+                $slugUrlMatcher = $this->container->get('oro_redirect.routing.slug_url_matcher');
+                $slugUrlMatcher->setBaseMatcher(parent::getMatcher());
+                $this->matcher = $slugUrlMatcher;
             }
         } elseif (!$this->matcher) {
             $this->matcher = parent::getMatcher();

@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuoteEntityNameProvider implements EntityNameProviderInterface
 {
@@ -13,9 +13,6 @@ class QuoteEntityNameProvider implements EntityNameProviderInterface
      */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         TranslatorInterface $translator
     ) {

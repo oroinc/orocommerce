@@ -64,7 +64,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_16';
+        return 'v1_19_1';
     }
 
     /**
@@ -112,9 +112,6 @@ class OroSaleBundleInstaller implements
         $this->addAllowUnlistedAndLockMethodFlagsToQuoteTable($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAllowUnlistedAndLockMethodFlagsToQuoteTable(Schema $schema)
     {
         $table = $schema->getTable('oro_sale_quote');
@@ -124,8 +121,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_quote_assigned_cus_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroQuoteAssignedAccUsersTable(Schema $schema)
     {
@@ -137,8 +132,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_quote_assigned_users table
-     *
-     * @param Schema $schema
      */
     protected function createOroQuoteAssignedUsersTable(Schema $schema)
     {
@@ -150,13 +143,12 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_sale_quote table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteTable(Schema $schema)
     {
         $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('guest_access_id', 'guid', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
@@ -193,8 +185,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_quote_address table
-     *
-     * @param Schema $schema
      */
     protected function createOroQuoteAddressTable(Schema $schema)
     {
@@ -224,8 +214,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_sale_quote_prod_offer table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProdOfferTable(Schema $schema)
     {
@@ -249,8 +237,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_sale_quote_prod_request table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProdRequestTable(Schema $schema)
     {
@@ -273,8 +259,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_sale_quote_product table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProductTable(Schema $schema)
     {
@@ -295,8 +279,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_quote_assigned_cus_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroQuoteAssignedAccUsersForeignKeys(Schema $schema)
     {
@@ -317,8 +299,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_quote_assigned_users foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroQuoteAssignedUsersForeignKeys(Schema $schema)
     {
@@ -339,8 +319,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_sale_quote foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteForeignKeys(Schema $schema)
     {
@@ -391,8 +369,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_sale_quote_prod_offer foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProdOfferForeignKeys(Schema $schema)
     {
@@ -413,8 +389,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_sale_quote_prod_request foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProdRequestForeignKeys(Schema $schema)
     {
@@ -441,8 +415,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_sale_quote_product foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProductForeignKeys(Schema $schema)
     {
@@ -469,8 +441,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Enable Attachment for Quote entity
-     *
-     * @param Schema $schema
      */
     protected function addAttachmentAssociations(Schema $schema)
     {
@@ -495,8 +465,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Enable Events for Quote entity
-     *
-     * @param Schema $schema
      */
     protected function addActivityAssociations(Schema $schema)
     {
@@ -506,8 +474,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_quote_address foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroQuoteAddressForeignKeys(Schema $schema)
     {
@@ -538,9 +504,6 @@ class OroSaleBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuoteCheckoutSource(Schema $schema)
     {
         if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
@@ -570,9 +533,6 @@ class OroSaleBundleInstaller implements
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuoteCustomerStatusField(Schema $schema)
     {
         $customerStatusOptions = new OroOptions();
@@ -590,9 +550,6 @@ class OroSaleBundleInstaller implements
         $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addQuoteInternalStatusField(Schema $schema)
     {
         $internalStatusOptions = new OroOptions();
@@ -612,8 +569,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_quote_demand table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteDemandTable(Schema $schema)
     {
@@ -621,6 +576,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visitor_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -638,8 +594,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Create oro_quote_product_demand table
-     *
-     * @param Schema $schema
      */
     protected function createOroSaleQuoteProductDemandTable(Schema $schema)
     {
@@ -653,8 +607,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_quote_product_demand foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteProductDemandForeignKeys(Schema $schema)
     {
@@ -675,8 +627,6 @@ class OroSaleBundleInstaller implements
 
     /**
      * Add oro_quote_demand foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroSaleQuoteDemandForeignKeys(Schema $schema)
     {
@@ -698,6 +648,12 @@ class OroSaleBundleInstaller implements
             ['quote_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_visitor'),
+            ['visitor_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

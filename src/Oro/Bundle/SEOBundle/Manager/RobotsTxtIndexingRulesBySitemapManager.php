@@ -6,32 +6,26 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Adds rules to robots.txt file according to system configuration.
+ */
 class RobotsTxtIndexingRulesBySitemapManager
 {
-    const ALLOW = 'Allow';
-    const DISALLOW = 'Disallow';
-    const USER_AGENT = 'User-Agent';
+    private const ALLOW      = 'Allow';
+    private const DISALLOW   = 'Disallow';
+    private const USER_AGENT = 'User-Agent';
 
-    /**
-     * @var RobotsTxtFileManager
-     */
+    private const AUTO_GENERATED_MARK = '# auto-generated';
+
+    /** @var RobotsTxtFileManager */
     private $robotsTxtFileManager;
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @var UrlItemsProviderRegistryInterface
-     */
+    /** @var UrlItemsProviderRegistryInterface */
     private $urlItemsProviderRegistry;
 
-    /**
-     * @param RobotsTxtFileManager              $robotsTxtFileManager
-     * @param ConfigManager                     $configManager
-     * @param UrlItemsProviderRegistryInterface $urlItemsProviderRegistry
-     */
     public function __construct(
         RobotsTxtFileManager $robotsTxtFileManager,
         ConfigManager $configManager,
@@ -48,7 +42,7 @@ class RobotsTxtIndexingRulesBySitemapManager
      */
     public function flush(WebsiteInterface $website, $version)
     {
-        $content = $this->robotsTxtFileManager->getContent();
+        $content = $this->robotsTxtFileManager->getContent($website);
         $content = explode(PHP_EOL, $content);
         $regex = '/^\s*(%s|%s|%s)\s*:\s*(\/?.+)%s\s*$/i';
         $lineRegex = sprintf(
@@ -56,7 +50,7 @@ class RobotsTxtIndexingRulesBySitemapManager
             self::ALLOW,
             self::DISALLOW,
             self::USER_AGENT,
-            RobotsTxtFileManager::AUTO_GENERATED_MARK
+            self::AUTO_GENERATED_MARK
         );
         foreach ($content as $key => $line) {
             if (preg_match($lineRegex, $line)) {
@@ -67,7 +61,7 @@ class RobotsTxtIndexingRulesBySitemapManager
             $content[] = sprintf(
                 '%s: * %s',
                 self::USER_AGENT,
-                RobotsTxtFileManager::AUTO_GENERATED_MARK
+                self::AUTO_GENERATED_MARK
             );
             $providers = $this->urlItemsProviderRegistry->getProvidersIndexedByNames();
             foreach ($providers as $providerType => $provider) {
@@ -77,17 +71,17 @@ class RobotsTxtIndexingRulesBySitemapManager
                         '%s: %s %s',
                         self::ALLOW,
                         $allowUrl,
-                        RobotsTxtFileManager::AUTO_GENERATED_MARK
+                        self::AUTO_GENERATED_MARK
                     );
                 }
             }
             $content[] = sprintf(
                 '%s: / %s',
                 self::DISALLOW,
-                RobotsTxtFileManager::AUTO_GENERATED_MARK
+                self::AUTO_GENERATED_MARK
             );
         }
 
-        $this->robotsTxtFileManager->dumpContent(implode(PHP_EOL, $content));
+        $this->robotsTxtFileManager->dumpContent(implode(PHP_EOL, $content), $website);
     }
 }

@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+              id: title
+              optionName: value
+              optionValue: '=data["web_catalog_title"].getTitle(defaultValue)'

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,22 +24,16 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 {
     use ResolvedEntityRepositoryTestTrait;
 
-    /**
-     * @var  Registry
-     */
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     protected $entityManager;
 
-    /**
-     * @var ScopeManager
-     */
+    /** @var ScopeManager */
     protected $scopeManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -47,14 +41,10 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         $this->entityManager = $this->registry->getManager();
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
-        $this->loadFixtures(
-            [
-                LoadProductVisibilityData::class,
-            ]
-        );
+        $this->loadFixtures([LoadProductVisibilityData::class]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->registry->getManager()->clear();
         parent::tearDown();

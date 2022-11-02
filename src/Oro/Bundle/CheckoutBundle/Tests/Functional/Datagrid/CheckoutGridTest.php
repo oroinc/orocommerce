@@ -15,7 +15,7 @@ class CheckoutGridTest extends FrontendWebTestCase
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -40,6 +40,6 @@ class CheckoutGridTest extends FrontendWebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $checkout->getSourceEntity();
 
-        $this->assertContains($shoppingList->getLabel(), $checkoutData['startedFrom']);
+        static::assertStringContainsString($shoppingList->getLabel(), $checkoutData['startedFrom']);
     }
 }

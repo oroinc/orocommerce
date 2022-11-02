@@ -1,0 +1,7 @@
+/* @theme: default; */
+
+$oro-single-page-checkout-breakpoints: (
+    'single-page-checkout-overflow': '(max-width: 1366px)'
+);
+
+$breakpoints: update-default($breakpoints, merge-breakpoints($breakpoints, $oro-single-page-checkout-breakpoints));

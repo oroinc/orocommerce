@@ -2,89 +2,95 @@
 
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeCustomerTopic;
 use Oro\Bundle\VisibilityBundle\Driver\CustomerPartialUpdateDriverInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
+use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-class CustomerProcessor implements MessageProcessorInterface
+/**
+ * Updated visibility for a customer.
+ */
+class CustomerProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    use LoggerAwareTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var MessageFactoryInterface
-     */
-    protected $messageFactory;
+    private CustomerPartialUpdateDriverInterface $partialUpdateDriver;
 
-    /**
-     * @var CustomerPartialUpdateDriverInterface
-     */
-    protected $partialUpdateDriver;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param LoggerInterface $logger
-     * @param MessageFactoryInterface $messageFactory
-     * @param CustomerPartialUpdateDriverInterface $partialUpdateDriver
-     */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        LoggerInterface $logger,
-        MessageFactoryInterface $messageFactory,
+        ManagerRegistry $doctrine,
         CustomerPartialUpdateDriverInterface $partialUpdateDriver
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->logger = $logger;
-        $this->messageFactory = $messageFactory;
+        $this->doctrine = $doctrine;
         $this->partialUpdateDriver = $partialUpdateDriver;
+        $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public static function getSubscribedTopics(): array
     {
-        $em = $this->doctrineHelper->getEntityManagerForClass(BaseVisibilityResolved::class);
+        return [VisibilityOnChangeCustomerTopic::getName()];
+    }
+
+    public function process(MessageInterface $message, SessionInterface $session): string
+    {
+        $body = $message->getBody();
+
+        /** @var EntityManagerInterface $em */
+        $em = $this->doctrine->getManagerForClass(BaseVisibilityResolved::class);
         $em->beginTransaction();
         try {
-            $messageData = JSON::decode($message->getBody());
-            /** @var Customer $customer */
-            $customer = $this->messageFactory->getEntityFromMessage($messageData);
-
+            $customer = $this->getCustomer($body['id']);
             $this->partialUpdateDriver->updateCustomerVisibility($customer);
             $em->commit();
-        } catch (InvalidArgumentException $e) {
+        } catch (UniqueConstraintViolationException $e) {
             $em->rollback();
-            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
+            $this->logger->warning(
+                'Couldn`t create scope because the scope already created with the same data.',
+                ['exception' => $e]
+            );
 
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                sprintf(
-                    'Transaction aborted wit error: %s.',
-                    $e->getMessage()
-                )
+                'Unexpected exception occurred during update Customer Visibility.',
+                ['exception' => $e]
             );
+
+            if ($e instanceof EntityNotFoundException) {
+                return self::REJECT;
+            }
 
             return self::REQUEUE;
         }
 
         return self::ACK;
+    }
+
+    /**
+     * @throws EntityNotFoundException if a customer does not exist
+     */
+    public function getCustomer(int $customerId): Customer
+    {
+        /** @var Customer|null $customer */
+        $customer = $this->doctrine->getManagerForClass(Customer::class)
+            ->find(Customer::class, $customerId);
+        if (null === $customer) {
+            throw new EntityNotFoundException('Customer was not found.');
+        }
+
+        return $customer;
     }
 }

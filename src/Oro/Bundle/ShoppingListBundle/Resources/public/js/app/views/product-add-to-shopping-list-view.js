@@ -1,24 +1,27 @@
 define(function(require) {
     'use strict';
 
-    var ProductAddToShoppingListView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
-    var ApiAccessor = require('oroui/js/tools/api-accessor');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
+    const ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
+    const ApiAccessor = require('oroui/js/tools/api-accessor');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
+    const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
+    const ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             emptyMatrixAllowed: false,
             buttonTemplate: '',
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
             shoppingListCreateEnabled: true,
+            showSingleAddToShoppingListButton: true,
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
@@ -42,17 +45,17 @@ define(function(require) {
         rendered: false,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductAddToShoppingListView() {
-            ProductAddToShoppingListView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductAddToShoppingListView(options) {
+            ProductAddToShoppingListView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
-            ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
+            ProductAddToShoppingListView.__super__.initialize.call(this, options);
             this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
         },
 
@@ -81,17 +84,17 @@ define(function(require) {
                 this.model.on('editLineItem', this._onEditLineItem, this);
             }
 
-            this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
+            this.$form.find(this.options.quantityField).on('keydown', this._onQuantityEnter.bind(this));
 
-            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+            ShoppingListCollectionService.shoppingListCollection.done(collection => {
                 this.shoppingListCollection = collection;
                 this.listenTo(collection, 'change', this._onCollectionChange);
                 this.render();
-            }, this));
+            });
         },
 
         initModel: function(options) {
-            var modelAttr = _.each(options.modelAttr, function(value, attribute) {
+            const modelAttr = _.each(options.modelAttr, function(value, attribute) {
                 options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
             }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
@@ -117,18 +120,18 @@ define(function(require) {
         render: function() {
             this._setEditLineItem(null, true);
 
-            var buttons = this._collectAllButtons();
+            const buttons = this._collectAllButtons();
 
             this._getContainer().html(buttons);
         },
 
-        _onCollectionChange: function() {
-            if (arguments.length > 0 && arguments[0].shoppingListCreateEnabled !== undefined) {
-                this.options.shoppingListCreateEnabled = arguments[0].shoppingListCreateEnabled;
+        _onCollectionChange: function(...args) {
+            if (args.length > 0 && args[0].shoppingListCreateEnabled !== undefined) {
+                this.options.shoppingListCreateEnabled = args[0].shoppingListCreateEnabled;
             }
             this._setEditLineItem();
 
-            var buttons = this._collectAllButtons();
+            const buttons = this._collectAllButtons();
 
             this._clearButtons();
             this._getContainer().prepend(buttons);
@@ -147,10 +150,14 @@ define(function(require) {
         },
 
         _collectAllButtons: function() {
-            var buttons = [];
+            let buttons = [];
 
             if (!this.shoppingListCollection.length) {
-                var $addNewButton = $(this.options.buttonTemplate({
+                if (!this.options.showSingleAddToShoppingListButton) {
+                    return [];
+                }
+
+                const $addNewButton = $(this.options.buttonTemplate({
                     id: null,
                     label: _.__('oro.shoppinglist.entity_label')
                 })).find(this.options.buttonsSelector);
@@ -158,12 +165,12 @@ define(function(require) {
                 return [$addNewButton];
             }
 
-            var currentShoppingList = this.findCurrentShoppingList();
+            const currentShoppingList = this.findCurrentShoppingList();
             this._addShippingListButtons(buttons, currentShoppingList);
 
             this.shoppingListCollection.sort();
             this.shoppingListCollection.each(function(model) {
-                var shoppingList = model.toJSON();
+                const shoppingList = model.toJSON();
                 if (shoppingList.id === currentShoppingList.id) {
                     return;
                 }
@@ -172,13 +179,13 @@ define(function(require) {
             }, this);
 
             if (this.options.shoppingListCreateEnabled) {
-                var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
+                let $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
                 $createNewButton = this.updateLabel($createNewButton, null);
                 buttons.push($createNewButton);
             }
 
             if (buttons.length === 1) {
-                var decoreClass = this.dropdownWidget.options.decoreClass || '';
+                const decoreClass = this.dropdownWidget.options.decoreClass || '';
                 buttons = _.first(buttons).find(this.options.buttonsSelector).addClass(decoreClass);
             }
 
@@ -186,20 +193,20 @@ define(function(require) {
         },
 
         _addShippingListButtons: function(buttons, shoppingList) {
-            var $button = $(this.options.buttonTemplate(shoppingList));
+            let $button = $(this.options.buttonTemplate(shoppingList));
             if (!this.model) {
                 buttons.push($button);
                 return;
             }
-            var hasLineItems = this.findShoppingListByIdAndUnit(shoppingList, this.model.get('unit'));
+            const hasLineItems = this.findShoppingListByIdAndUnit(shoppingList, this.model.get('unit'));
             if (hasLineItems) {
                 $button = this.updateLabel($button, shoppingList, hasLineItems);
             }
             buttons.push($button);
 
             if (hasLineItems) {
-                var $removeButton = $(this.options.removeButtonTemplate(shoppingList));
-                $removeButton.find('a').attr('data-intention', 'remove');
+                const $removeButton = $(this.options.removeButtonTemplate(shoppingList));
+                $removeButton.find('a, button').attr('data-intention', 'remove');
                 buttons.push($removeButton);
             }
         },
@@ -210,14 +217,21 @@ define(function(require) {
         },
 
         initButtons: function() {
-            this.findAllButtons()
+            const $buttons = this.findAllButtons();
+
+            $buttons.each((i, btn) => {
+                if (!$(btn).is('button')) {
+                    $(btn).attr('role', 'button');
+                }
+            });
+            $buttons
                 .off('click' + this.eventNamespace())
-                .on('click' + this.eventNamespace(), _.bind(this.onClick, this));
+                .on('click' + this.eventNamespace(), this.onClick.bind(this));
         },
 
         findDropdownButtons: function(filter) {
-            var $el = this.dropdownWidget.element || this.dropdownWidget.dropdown;
-            var $buttons = $el.find(this.options.buttonsSelector);
+            const $el = this.dropdownWidget.element || this.dropdownWidget.dropdown;
+            let $buttons = $el.find(this.options.buttonsSelector);
             if (filter) {
                 $buttons = $buttons.filter(filter);
             }
@@ -232,7 +246,7 @@ define(function(require) {
         },
 
         findAllButtons: function(filter) {
-            var $buttons = this.findMainButton().add(this.findDropdownButtons());
+            let $buttons = this.findMainButton().add(this.findDropdownButtons());
             if (filter) {
                 $buttons = $buttons.filter(filter);
             }
@@ -247,16 +261,16 @@ define(function(require) {
         },
 
         findShoppingListByIdAndUnit: function(shoppingList, unit) {
-            var foundShoppingList = this.findShoppingListById(shoppingList);
+            const foundShoppingList = this.findShoppingListById(shoppingList);
             if (!foundShoppingList) {
                 return null;
             }
-            var hasUnits = _.find(foundShoppingList.line_items, {unit: unit});
+            const hasUnits = _.find(foundShoppingList.line_items, {unit: unit});
             return hasUnits ? foundShoppingList : null;
         },
 
         findShoppingListLineItemByUnit: function(shoppingList, unit) {
-            var foundShoppingList = this.findShoppingListById(shoppingList);
+            const foundShoppingList = this.findShoppingListById(shoppingList);
             if (!foundShoppingList) {
                 return null;
             }
@@ -264,14 +278,14 @@ define(function(require) {
         },
 
         _onQuantityEnter: function(e) {
-            var ENTER_KEY_CODE = 13;
+            const ENTER_KEY_CODE = 13;
 
             if (e.keyCode === ENTER_KEY_CODE) {
                 this.model.set({
-                    quantity: parseInt($(e.target).val(), 10)
+                    quantity: QuantityHelper.getQuantityNumberOrDefaultValue($(e.target).val(), NaN)
                 });
 
-                var mainButton = this.findMainButton();
+                let mainButton = this.findMainButton();
 
                 if (!mainButton.length) {
                     mainButton = this.findAllButtons();
@@ -290,30 +304,35 @@ define(function(require) {
             return this.shoppingListCollection.find({id: id}).toJSON() || null;
         },
 
-        validate: function(intention, url, urlOptions, formData) {
+        validate: function() {
             return this.dropdownWidget.validateForm();
         },
 
         onClick: function(e) {
-            var $button = $(e.currentTarget);
+            e.preventDefault();
+            const $button = $(e.currentTarget);
             if ($button.data('disabled')) {
                 return false;
             }
-            var url = $button.data('url');
-            var intention = $button.data('intention');
-            var formData = this.$form.serialize();
+            const url = $button.data('url');
+            const intention = $button.data('intention');
+            const formData = this.$form.serialize();
 
-            var urlOptions = {
+            const urlOptions = {
                 shoppingListId: $button.data('shoppinglist').id
             };
+
+            let isValidProduct = true;
+
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
+                isValidProduct = urlOptions.productId !== 0;
                 if (this.model.has('parentProduct')) {
                     urlOptions.parentProductId = this.model.get('parentProduct');
                 }
             }
 
-            if (!this.validate(intention, url, urlOptions, formData)) {
+            if (!this.validate() || !isValidProduct) {
                 return;
             }
 
@@ -329,8 +348,8 @@ define(function(require) {
         },
 
         updateLabel: function($button, shoppingList, hasLineItems) {
-            var label;
-            var intention;
+            let label;
+            let intention;
 
             if (shoppingList && hasLineItems) {
                 label = _.__('oro.shoppinglist.actions.update_shopping_list', {
@@ -347,10 +366,16 @@ define(function(require) {
                 intention = 'add';
             }
 
-            $button.find('a')
+            const $els = $button.find('a, button');
+            const $icon = $button.find('.fa').clone();
+
+            $els
                 .text(label)
-                .attr('title', label)
                 .attr('data-intention', intention);
+
+            if ($icon.length) {
+                $els.prepend($icon);
+            }
 
             return $button;
         },
@@ -362,8 +387,8 @@ define(function(require) {
                 return;
             }
 
-            var currentShoppingListInCollection = this.findCurrentShoppingList();
-            var currentShoppingListInModel = this.findShoppingListById(currentShoppingListInCollection);
+            const currentShoppingListInCollection = this.findCurrentShoppingList();
+            const currentShoppingListInModel = this.findShoppingListById(currentShoppingListInCollection);
 
             if (!currentShoppingListInModel) {
                 return;
@@ -379,10 +404,12 @@ define(function(require) {
                 ) || null;
             }
 
-            if (this.editLineItem) {
+            // Local variable used because this.editLineItem is set to null in model change:unit listener
+            const editLineItem = this.editLineItem;
+            if (editLineItem) {
                 // quantity precision depend on unit, set unit first
-                this.model.set('unit', this.editLineItem.unit);
-                this.model.set('quantity', this.editLineItem.quantity);
+                this.model.set('unit', editLineItem.unit);
+                this.model.set('quantity', editLineItem.quantity);
                 this.model.set('quantity_changed_manually', true);// prevent quantity change in other components
             }
         },
@@ -391,11 +418,11 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            var dialog = new ShoppingListCreateWidget({});
-            dialog.on('formSave', _.bind(function(response) {
+            const dialog = new ShoppingListCreateWidget({});
+            dialog.on('formSave', response => {
                 urlOptions.shoppingListId = response.savedId;
                 this._addLineItem(url, urlOptions, formData);
-            }, this));
+            });
             dialog.render();
         },
 
@@ -403,11 +430,31 @@ define(function(require) {
             if (this.model && !this.model.get('line_item_form_enable')) {
                 return;
             }
-            var self = this;
+            const self = this;
 
             mediator.execute('showLoading');
             $.ajax({
                 type: 'POST',
+                url: routing.generate(url, urlOptions),
+                data: formData,
+                success: function(response) {
+                    mediator.trigger('shopping-list:line-items:update-response', self.model, response);
+                },
+                complete: function() {
+                    mediator.execute('hideLoading');
+                }
+            });
+        },
+
+        _removeProductFromShoppingList: function(url, urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
+            const self = this;
+
+            mediator.execute('showLoading');
+            $.ajax({
+                type: 'DELETE',
                 url: routing.generate(url, urlOptions),
                 data: formData,
                 success: function(response) {
@@ -436,7 +483,7 @@ define(function(require) {
         },
 
         _removeLineItem: function(url, urlOptions, formData) {
-            this._addProductToShoppingList(url, urlOptions, formData);
+            this._removeProductFromShoppingList(url, urlOptions, formData);
         },
 
         _saveLineItem: function(url, urlOptions, formData) {
@@ -445,26 +492,27 @@ define(function(require) {
             }
             mediator.execute('showLoading');
 
-            var shoppingList = this.findShoppingList(urlOptions.shoppingListId);
-            var lineItem = this.findShoppingListLineItemByUnit(shoppingList, this.model.get('unit'));
+            const shoppingList = this.findShoppingList(urlOptions.shoppingListId);
+            const lineItem = this.findShoppingListLineItemByUnit(shoppingList, this.model.get('unit'));
 
-            var savePromise = this.saveApiAccessor.send({
+            const savePromise = this.saveApiAccessor.send({
                 id: lineItem.id
             }, {
-                quantity: this.model.get('quantity'),
+                quantity: QuantityHelper.formatQuantity(this.model.get('quantity')),
                 unit: this.model.get('unit')
             });
 
             savePromise
-                .done(_.bind(function(response) {
+                .done(response => {
                     lineItem.quantity = response.quantity;
                     lineItem.unit = response.unit;
                     this.shoppingListCollection.trigger('change', {
                         refresh: true
                     });
-                    mediator.execute('showFlashMessage', 'success', _.__(this.options.messages.success));
-                }, this))
-                .always(function() {
+                    const messageOptions = {namespace: 'shopping_list'};
+                    mediator.execute('showFlashMessage', 'success', __(this.options.messages.success), messageOptions);
+                })
+                .always(() => {
                     mediator.execute('hideLoading');
                 });
         },
@@ -481,7 +529,7 @@ define(function(require) {
                 this.model.off(null, null, this);
             }
 
-            ProductAddToShoppingListView.__super__.dispose.apply(this, arguments);
+            ProductAddToShoppingListView.__super__.dispose.call(this);
         }
     }));
 

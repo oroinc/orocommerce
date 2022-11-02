@@ -2,40 +2,29 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\FieldsProviderInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * Abstract class for listeners which watch product changes and execute price recalculation.
+ * The base class for listeners which watch product changes and execute price recalculation.
  */
 abstract class AbstractRuleEntityListener
 {
-    /**
-     * @var PriceRuleLexemeTriggerHandler
-     */
+    /** @var PriceRuleLexemeTriggerHandler */
     protected $priceRuleLexemeTriggerHandler;
 
-    /**
-     * @var FieldsProviderInterface
-     */
+    /** @var FieldsProviderInterface */
     protected $fieldsProvider;
 
-    /**
-     * @var RegistryInterface
-     */
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     * @param FieldsProviderInterface $fieldsProvider
-     * @param RegistryInterface $registry
-     */
     public function __construct(
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
         FieldsProviderInterface $fieldsProvider,
-        RegistryInterface $registry
+        ManagerRegistry $registry
     ) {
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
         $this->fieldsProvider = $fieldsProvider;
@@ -63,7 +52,7 @@ abstract class AbstractRuleEntityListener
                 $updatedFields,
                 $relationId
             );
-            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, [$product]);
+            $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, [$product]);
         }
     }
 
@@ -73,9 +62,12 @@ abstract class AbstractRuleEntityListener
      */
     protected function recalculateByEntity(Product $product = null, $relationId = null)
     {
-        $lexemes = $this->priceRuleLexemeTriggerHandler
-            ->findEntityLexemes($this->getEntityClassName(), [], $relationId);
-        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product ? [$product] : []);
+        $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+            $this->getEntityClassName(),
+            [],
+            $relationId
+        );
+        $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, $product ? [$product] : []);
     }
 
     /**

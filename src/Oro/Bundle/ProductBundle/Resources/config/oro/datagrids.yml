@@ -1,8 +1,8 @@
 datagrids:
     products-select-grid-base-without-default-sorting:
-        extended_entity_name: '%oro_product.entity.product.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
         source:
             type:         orm
             query:
@@ -19,7 +19,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
-                    - { table: '%oro_product.entity.product.class%', alias: product }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -105,7 +105,7 @@ datagrids:
                             choices:
                                 oro.product.new_arrival.yes: 1
                                 oro.product.new_arrival.no: 2
-                    enabled: false
+                    renderable: false
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -117,7 +117,10 @@ datagrids:
         extends: products-select-grid-base-without-default-sorting
         sorters:
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
+
+    all-products-select-grid:
+        extends: products-select-grid-base
 
     products-select-grid:
         extends: products-select-grid-base
@@ -126,11 +129,15 @@ datagrids:
                 where:
                     and:
                         - product.type = 'simple'
+        filters:
+            columns:
+                type:
+                    visible: false
 
     products-select-grid-frontend:
         acl_resource: oro_product_frontend_view
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
             frontend: true
         source:
             type: search
@@ -138,13 +145,14 @@ datagrids:
             skip_acl_apply: true
             query:
                 select:
+                    - integer.system_entity_id as autocomplete_record_id
                     - text.sku as sku
                     - text.names_LOCALIZATION_ID as productName
                     - text.status as status
                     - text.type as type
                     - datetime.created_at as createdAt
                     - datetime.updated_at as updatedAt
-                    - text.inventory_status as inventoryStatus
+                    - text.inv_status as inventoryStatus
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -166,7 +174,7 @@ datagrids:
                     data_name: names_LOCALIZATION_ID
                 inventoryStatus:
                     type:      enum
-                    data_name: inventory_status
+                    data_name: inv_status
                     enum_code: prod_inventory_status
         properties:
             id: ~
@@ -297,6 +305,12 @@ datagrids:
 
     products-grid:
         extends: products-select-grid-base
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
+        source:
+            query:
+                join:
+                    left:
+                        - { join: product.attributeFamily, alias: af }
         options:
             entity_pagination: true
         properties:
@@ -305,6 +319,22 @@ datagrids:
                 route: oro_product_view
                 params:
                     - id
+            edit_link:
+                type: url
+                route: oro_product_update
+                params:
+                    - id
+            delete_link:
+                type: url
+                route: oro_rest_api_item
+                params:
+                    - id
+                direct_params:
+                    entity: 'products'
+            attribute_family_localized:
+                type: localized_value
+                data_name: af.labels
+                allow_empty: true
         actions:
             view:
                 type:          navigate
@@ -313,10 +343,34 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
+            update:
+                type: navigate
+                label: oro.grid.action.update
+                link: edit_link
+                icon: pencil-square-o
+                acl_resource: oro_product_update
+            delete:
+                type: delete
+                acl_resource: 'DELETE;entity:Oro\Bundle\ProductBundle\Entity\Product'
+                label: oro.grid.action.delete
+                icon: trash-o
+                link: delete_link
+                defaultMessages:
+                    confirm_title: oro.product.grid.delete_entity_title
+                    confirm_content: oro.action.delete_confirm
+                    confirm_content_params:
+                        entityLabel: '@translator->trans(oro.product.entity_label)'
+                    success: oro.product.grid.delete_success
         inline_editing:
             enable: true
             behaviour: enable_selected
         columns:
+            productImage:
+                label:         oro.product.image.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroProduct/Product/Datagrid/image.html.twig'
+                order:         2
             productName:
                 inline_editing:
                     enable: true
@@ -328,6 +382,11 @@ datagrids:
                             - id
                     validation_rules:
                         NotBlank: true
+                order:         3
+            attributeFamily:
+                label:         oro.product.attribute_family.label
+                data_name:     attribute_family_localized
+                order:         4
             inventoryStatusId:
                 inline_editing:
                     enable: true
@@ -337,17 +396,40 @@ datagrids:
                             - id
                     validation_rules:
                         NotBlank: true
+                order:         6
             status:
                 inline_editing:
                     enable: true
+                order:         5
             newArrival:
                 inline_editing:
                     enable: true
+                order:         7
+            createdAt:
+                renderable: false
+                order:         80
+            updatedAt:
+                order:         90
+        sorters:
+            columns:
+                attributeFamily:
+                    data_name: product.attributeFamily
+        filters:
+            columns:
+                attributeFamily:
+                    data_name: product.attributeFamily
+                    type: choice-tree
+                    label: oro.product.attribute_family.label
+                    autocomplete_alias: oro_product_families
+                    renderedPropertyName: 'defaultLabel'
+                    className: 'Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily'
+                createdAt:
+                    renderable: false
 
     product-product-variants-base:
         acl_resource: oro_product_view
         options:
-            entityHint: product varitans
+            entityHint: oro.product.variant.plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -359,12 +441,15 @@ datagrids:
                     - product.status
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
-                    - IDENTITY(product.inventory_status) AS inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
                 from:
-                    - { table: '%oro_product.entity.product.class%', alias: product }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 where:
                     and:
                         - product.id <> :parentProduct
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus }
             bind_parameters:
                 - parentProduct
         sorters:
@@ -398,14 +483,15 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-                inventoryStatusId:
+                inventoryStatusName:
+                    label:     oro.product.inventory_status.label
                     type:      enum
-                    data_name: inventoryStatusId
+                    data_name: inventoryStatusName
                     enum_code: prod_inventory_status
 
     product-product-variants-edit:
         extends: product-product-variants-base
-        extended_entity_name: '%oro_product.entity.product.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         options:
             rowSelection:
                 dataField: id
@@ -425,7 +511,7 @@ datagrids:
                 join:
                     left:
                         -
-                            join: '%oro_product.entity.product_variant_link.class%'
+                            join: 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink'
                             alias: currentVariantLink
                             conditionType: WITH
                             condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
@@ -459,17 +545,17 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
         sorters:
             columns:
                 isVariant:
                     data_name: isVariant
             default:
-                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                sku: ASC
 
     product-product-variants-view:
         extends: product-product-variants-base
-        extended_entity_name: '%oro_product.entity.product.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         source:
             query:
                 select:
@@ -477,7 +563,7 @@ datagrids:
                 join:
                     inner:
                         -
-                            join: '%oro_product.entity.product_variant_link.class%'
+                            join: 'Oro\Bundle\ProductBundle\Entity\ProductVariantLink'
                             alias: productVariantLink
                             conditionType: WITH
                             condition: productVariantLink.product = product.id AND productVariantLink.parentProduct = :parentProduct
@@ -499,19 +585,19 @@ datagrids:
                 label:         oro.product.inventory_status.label
                 type:          twig
                 frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
         sorters:
             columns:
                 visible:
                     data_name: visible
             default:
-                visible: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
-                sku: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                visible: DESC
+                sku: ASC
 
     products-related-items-base:
-        extended_entity_name: '%oro_product.entity.product.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
         source:
             type:         orm
             query:
@@ -527,7 +613,7 @@ datagrids:
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
                     - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
-                    - { table: '%oro_product.entity.product.class%', alias: product }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -569,7 +655,7 @@ datagrids:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                createdAt: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                createdAt: DESC
         filters:
             columns:
                 sku:
@@ -627,7 +713,7 @@ datagrids:
         acl_resource: oro_product_update
         extends: products-related-items-base
         options:
-            requireJSModules:
+            jsmodules:
                 - orodatagrid/js/datagrid/listener/action-form-listener
                 - oroproduct/js/app/datagrid/listener/related-product-listener
         source:
@@ -679,7 +765,7 @@ datagrids:
     products-related-items-select:
         extends: products-select-grid-base-without-default-sorting
         options:
-            entityHint: products
+            entityHint: oro.product.entity_plural_label
         source:
             query:
                 select:
@@ -711,7 +797,8 @@ datagrids:
             columns:
                 isRelated:
                     data_name: isRelated
-            default: { isRelated: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC' }
+            default:
+                isRelated: DESC
 
     products-related-products-select:
         extends: products-related-items-select
@@ -735,10 +822,11 @@ datagrids:
 
     frontend-product-search-grid:
         options:
-            entityHint:        products
+            entityHint: oro.product.entity_plural_label
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
-            requireJSModules:
+            jsmodules:
+                - oroproduct/js/app/datagrid/frontend-product-process-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-display-options-builder
                 - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
             frontend: true
@@ -754,8 +842,13 @@ datagrids:
                     - text.type as type
                     - text.image_product_medium as image_product_medium
                     - text.image_product_large as image_product_large
+                    - text.image_product_medium_webp as image_product_medium_webp
+                    - text.image_product_large_webp as image_product_large_webp
                     - text.product_units as product_units
                     - text.primary_unit as unit
+                    - integer.variant_fields_count as variant_fields_count
+                    - text.schema_org_brand_name_LOCALIZATION_ID as schemaOrgBrandName
+                    - text.schema_org_description_LOCALIZATION_ID as schemaOrgDescription
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -778,12 +871,18 @@ datagrids:
         properties:
             id: ~
             type: ~
+            schemaOrgBrandName: ~
+            schemaOrgDescription: ~
             view_link:
                 type:  url
                 route: oro_product_frontend_product_view
                 params: [ id ]
             newArrival: ~
             unit: ~
+            view_aria_label:
+                type:   translatable
+                key:    oro.product.frontend.grid.action.product.view.aria_label
+                params: [name]
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
@@ -791,13 +890,14 @@ datagrids:
             view:
                 type:          navigate
                 label:         oro.grid.action.view
+                ariaLabel:     view_aria_label
                 link:          view_link
                 icon:          eye
                 rowAction:     true
 
     brand-grid:
         acl_resource: oro_product_brand_view
-        extended_entity_name: '%oro_product.entity.brand.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Brand'
         source:
             type: orm
             query:
@@ -805,7 +905,7 @@ datagrids:
                     - brand.id
                     - brand.defaultTitle
                 from:
-                    - { table: '%oro_product.entity.brand.class%', alias: brand }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Brand', alias: brand }
         columns:
             defaultTitle:
                 label: oro.product.brand.names.label
@@ -852,10 +952,10 @@ datagrids:
                 rowAction:     true
 
     brand-select-grid:
-        extended_entity_name: '%oro_product.entity.brand.class%'
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Brand'
         acl_resource: oro_product_brand_update
         options:
-            entityHint:        brands
+            entityHint: oro.product.brand.entity_plural_label
         source:
             type:         orm
             query:
@@ -863,7 +963,7 @@ datagrids:
                     - brand.id
                     - brand.defaultTitle
                 from:
-                    - { table: '%oro_product.entity.brand.class%', alias: brand }
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Brand', alias: brand }
         columns:
             defaultTitle:
                 label: oro.product.brand.label
@@ -874,9 +974,13 @@ datagrids:
                 defaultTitle:
                     data_name: brand.defaultTitle
             default:
-                defaultTitle: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                defaultTitle: ASC
         filters:
             columns:
                 defaultTitle:
                     type:      string
                     data_name: brand.defaultTitle
+
+    attributes-grid:
+        options:
+            entityHint: oro.product.product_attributes.plural_label

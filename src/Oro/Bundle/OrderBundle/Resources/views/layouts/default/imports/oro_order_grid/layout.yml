@@ -6,7 +6,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroOrderBundle:layouts:default/imports/oro_order_grid/layout.html.twig'
+            themes: '@OroOrder/layouts/default/imports/oro_order_grid/layout.html.twig'
 
         - '@setOption':
             id: __datagrid
@@ -17,8 +17,3 @@ layout:
             id: __datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.text
-            optionValue: 'oro.order.past_orders.label'

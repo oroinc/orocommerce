@@ -1,0 +1,42 @@
+include:
+    - '@OroProductBundle:product_collection_add.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueNodeProductCollection:
+        string: 'Product Collection Node'
+    localValueProductCollectionNodeSlug:
+        string: 'new-category'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    productCollectionSegment:
+        name: 'Product Collection #1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    systemPageVariant:
+        type: 'system_page'
+        node: '@nodeRoot'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'
+    productCollectionContentVariant:
+        node: '@nodeProductCollection'
+        type: 'product_collection'
+        default: true
+        productCollectionSegment: '@productCollectionSegment'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    nodeRoot:
+        __calls:
+            - addTitle: ['@localValueRootNode']
+            - addScope: ['@first_website_scope']
+        webCatalog: '@webCatalog'
+    nodeProductCollection:
+        __calls:
+            - addTitle: ['@localValueNodeProductCollection']
+            - addSlugPrototype: ['@localValueProductCollectionNodeSlug']
+            - addContentVariant: ['@productCollectionContentVariant']
+        parentNode: '@nodeRoot'
+        webCatalog: '@webCatalog'

@@ -14,10 +14,6 @@ class ShippingPackageOptions implements ShippingPackageOptionsInterface
      */
     private $weight;
 
-    /**
-     * @param Dimensions $dimensions
-     * @param Weight     $weight
-     */
     public function __construct(Dimensions $dimensions, Weight $weight)
     {
         $this->dimensions = $dimensions;

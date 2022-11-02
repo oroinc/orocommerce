@@ -23,7 +23,7 @@ class PageTemplateProviderTest extends \PHPUnit\Framework\TestCase
     /** @var Product */
     private $product;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->themeManagerMock = $this->getMockBuilder(ThemeManager::class)
             ->disableOriginalConstructor()

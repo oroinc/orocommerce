@@ -5,34 +5,26 @@ namespace Oro\Bundle\ProductBundle\Twig;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\FormView;
+use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Introduces function to get products' related/upsell items ids, check if product type is configurable, generate
- * form id for line items form and get data for rendering autocomplete input.
+ * Provides Twig functions related to products:
+ *   - is_configurable_product_type
+ *   - get_upsell_products_ids
+ *   - get_related_products_ids
+ *   - get_related_items_translation_key
  */
-class ProductExtension extends \Twig_Extension
+class ProductExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    const NAME = 'oro_product';
+    private ContainerInterface $container;
 
-    /** @var ContainerInterface */
-    protected $container;
-
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * @return AutocompleteFieldsProvider
-     */
-    protected function getAutocompleteFieldsProvider()
-    {
-        return $this->container->get('oro_product.autocomplete_fields_provider');
     }
 
     /**
@@ -41,46 +33,11 @@ class ProductExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
-                'is_configurable_product_type',
-                [$this, 'isConfigurableType']
-            ),
-            new \Twig_SimpleFunction(
-                'get_upsell_products_ids',
-                [$this, 'getUpsellProductsIds']
-            ),
-            new \Twig_SimpleFunction(
-                'get_related_products_ids',
-                [$this, 'getRelatedProductsIds']
-            ),
-            new \Twig_SimpleFunction(
-                'set_unique_line_item_form_id',
-                [$this, 'setUniqueLineItemFormId']
-            ),
+            new TwigFunction('is_configurable_product_type', [$this, 'isConfigurableType']),
+            new TwigFunction('get_upsell_products_ids', [$this, 'getUpsellProductsIds']),
+            new TwigFunction('get_related_products_ids', [$this, 'getRelatedProductsIds']),
+            new TwigFunction('get_related_items_translation_key', [$this, 'getRelatedItemsTranslationKey']),
         ];
-    }
-
-    /**
-     * @param FormView $form
-     * @param Product|array $product
-     */
-    public function setUniqueLineItemFormId($form, $product = [])
-    {
-        if (!isset($form->vars['_notUniqueId'])) {
-            $form->vars['_notUniqueId'] = $form->vars['id'];
-        }
-
-        $productId = null;
-        if ($product) {
-            $productId  = is_array($product) ? $product['id'] : $product->getId();
-        }
-        if ($productId) {
-            $form->vars['id'] = sprintf('%s-product-id-%s', $form->vars['_notUniqueId'], $productId);
-        } else {
-            $form->vars['id'] = $form->vars['_notUniqueId'];
-        }
-
-        $form->vars['attr']['id'] = $form->vars['id'];
     }
 
     /**
@@ -90,10 +47,7 @@ class ProductExtension extends \Twig_Extension
      */
     public function getRelatedProductsIds(Product $product)
     {
-        return $this->getRelatedItemsIds(
-            $product,
-            $this->container->get('oro_product.related_item.related_product.finder_strategy')
-        );
+        return $this->getRelatedItemsIds($product, $this->getRelatedProductFinderStrategy());
     }
 
     /**
@@ -113,27 +67,57 @@ class ProductExtension extends \Twig_Extension
      */
     public function getUpsellProductsIds(Product $product)
     {
-        return $this->getRelatedItemsIds(
-            $product,
-            $this->container->get('oro_product.related_item.upsell_product.finder_strategy')
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
+        return $this->getRelatedItemsIds($product, $this->getUpsellProductFinderStrategy());
     }
 
     /**
      * @param Product $product
      * @param FinderStrategyInterface $finderStrategy
-     * @return \int[]
+     * @return int[]
      */
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
     {
         return $finderStrategy->findIds($product, false);
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelatedItemsTranslationKey()
+    {
+        return $this->getRelatedItemConfigHelper()->getRelatedItemsTranslationKey();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.autocomplete_fields_provider' => AutocompleteFieldsProvider::class,
+            'oro_product.related_item.related_product.finder_strategy' => FinderStrategyInterface::class,
+            'oro_product.related_item.upsell_product.finder_strategy' => FinderStrategyInterface::class,
+            'oro_product.related_item.helper.config_helper' => RelatedItemConfigHelper::class,
+        ];
+    }
+
+    private function getAutocompleteFieldsProvider(): AutocompleteFieldsProvider
+    {
+        return $this->container->get('oro_product.autocomplete_fields_provider');
+    }
+
+    private function getRelatedProductFinderStrategy(): FinderStrategyInterface
+    {
+        return $this->container->get('oro_product.related_item.related_product.finder_strategy');
+    }
+
+    private function getUpsellProductFinderStrategy(): FinderStrategyInterface
+    {
+        return $this->container->get('oro_product.related_item.upsell_product.finder_strategy');
+    }
+
+    private function getRelatedItemConfigHelper(): RelatedItemConfigHelper
+    {
+        return $this->container->get('oro_product.related_item.helper.config_helper');
     }
 }

@@ -53,6 +53,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => Configuration::DEFAULT_CRON_DEFINITION,
                     'scope' => 'app',
                 ],
+                'sitemap_exclude_landing_pages' => [
+                    'value' => true,
+                    'scope' => 'app',
+                ],
+                'sitemap_include_landing_pages_not_in_web_catalog' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ]
             ],
         ];
 

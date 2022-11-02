@@ -12,25 +12,10 @@ use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
  */
 class ProductCollectionSegmentHelper
 {
-    /**
-     * @var ContentVariantSegmentProvider
-     */
-    private $contentVariantSegmentProvider;
+    private ContentVariantSegmentProvider $contentVariantSegmentProvider;
+    private ?WebCatalogUsageProviderInterface $webCatalogUsageProvider;
+    private ?array $websiteIdsByWebCatalog = null;
 
-    /**
-     * @var WebCatalogUsageProviderInterface
-     */
-    private $webCatalogUsageProvider;
-
-    /**
-     * @var array
-     */
-    private $websiteIdsByWebCatalog;
-
-    /**
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
-     */
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
         WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
@@ -44,9 +29,6 @@ class ProductCollectionSegmentHelper
      *
      * Website identifiers are collected by web catalog in which there are product collection
      * content variants assigned to given segment
-     *
-     * @param Segment $segment
-     * @return array
      */
     public function getWebsiteIdsBySegment(Segment $segment): array
     {
@@ -55,23 +37,18 @@ class ProductCollectionSegmentHelper
         }
 
         $this->websiteIdsByWebCatalog = null;
-        $websiteIds = [];
         $contentVariants = $this->contentVariantSegmentProvider->getContentVariants($segment);
 
+        $websiteIdBatches = [];
         foreach ($contentVariants as $contentVariant) {
-            $websiteIds = array_merge(
-                $websiteIds,
-                $this->getWebsiteIdsByWebCatalog($contentVariant->getNode()->getWebCatalog())
+            $websiteIdBatches[] = $this->getWebsiteIdsByWebCatalog(
+                $contentVariant->getNode()->getWebCatalog()
             );
         }
 
-        return $websiteIds;
+        return \array_unique(\array_merge(...$websiteIdBatches));
     }
 
-    /**
-     * @param WebCatalogInterface $webCatalog
-     * @return array
-     */
     private function getWebsiteIdsByWebCatalog(WebCatalogInterface $webCatalog): array
     {
         if (null === $this->websiteIdsByWebCatalog) {
@@ -86,9 +63,6 @@ class ProductCollectionSegmentHelper
         return $this->websiteIdsByWebCatalog[$webCatalog->getId()] ?? [];
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return (bool) $this->webCatalogUsageProvider;

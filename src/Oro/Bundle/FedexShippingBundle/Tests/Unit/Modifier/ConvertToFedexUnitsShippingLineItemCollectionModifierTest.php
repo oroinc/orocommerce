@@ -53,7 +53,7 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifierTest extends TestCase
      */
     private $modifier;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->measureUnitConverter = $this->createMock(MeasureUnitConversion::class);
         $this->weightUnitTransformer = new FedexToShippingWeightUnitTransformer();

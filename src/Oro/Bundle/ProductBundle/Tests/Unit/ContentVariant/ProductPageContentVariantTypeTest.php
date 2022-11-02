@@ -24,7 +24,7 @@ class ProductPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
      */
     private $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
@@ -64,6 +64,33 @@ class ProductPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             new RouteData('oro_product_frontend_product_view', ['id' => 42]),
             $this->type->getRouteData($contentVariant)
+        );
+    }
+
+    public function testGetAttachedEntity()
+    {
+        /** @var ContentVariantStub **/
+        $contentVariant = new ContentVariantStub();
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $contentVariant->setProductPageProduct($product);
+
+        $this->assertEquals(
+            $product,
+            $this->type->getAttachedEntity($contentVariant)
+        );
+    }
+
+    public function testGetApiResourceClassName()
+    {
+        $this->assertEquals(Product::class, $this->type->getApiResourceClassName());
+    }
+
+    public function testGetApiResourceIdentifierDqlExpression()
+    {
+        $this->assertEquals(
+            'IDENTITY(e.product_page_product)',
+            $this->type->getApiResourceIdentifierDqlExpression('e')
         );
     }
 }

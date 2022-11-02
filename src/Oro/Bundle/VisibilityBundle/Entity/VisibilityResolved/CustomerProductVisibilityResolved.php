@@ -17,7 +17,6 @@ class CustomerProductVisibilityResolved extends BaseProductVisibilityResolved
 {
     const VISIBILITY_FALLBACK_TO_ALL = 2;
 
-
     /**
      * @var CustomerProductVisibility
      *
@@ -26,10 +25,6 @@ class CustomerProductVisibilityResolved extends BaseProductVisibilityResolved
      */
     protected $sourceProductVisibility;
 
-    /**
-     * @param Scope $scope
-     * @param Product $product
-     */
     public function __construct(Scope $scope, Product $product)
     {
         parent::__construct($scope, $product);

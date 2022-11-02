@@ -6,10 +6,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
@@ -50,7 +51,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestProduct::class,
             'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT1,
-            'title' => 'Good product',
             'datetimeFields' => [
                 [
                     'field' => 'created',
@@ -74,7 +74,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestProduct::class,
             'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT2,
-            'title' => 'Better product',
             'decimalFields' => [
                 [
                     'field' => 'price',
@@ -96,7 +95,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestEmployee::class,
             'alias' => 'oro_employee_',
             'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON1,
-            'title' => 'Employee1',
             'textFields' => [
                 [
                     'field' => 'name',
@@ -108,7 +106,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             'entity' => TestEmployee::class,
             'alias' => 'oro_employee_',
             'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON2,
-            'title' => 'Employee2',
             'textFields' => [
                 [
                     'field' => 'name',
@@ -140,7 +137,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
      */
     public function load(ObjectManager $manager)
     {
-        $websiteIds = $manager->getRepository('OroWebsiteBundle:Website')->getWebsiteIdentifiers();
+        $websiteIds = $manager->getRepository(Website::class)->getWebsiteIdentifiers();
 
         $manager = $this->container->get('oro_entity.doctrine_helper')->getEntityManager(Item::class);
         self::$searchReferenceRepository = new ReferenceRepository($manager);
@@ -151,7 +148,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
 
                 $item = new Item;
                 $item
-                    ->setTitle($itemData['title'])
                     ->setAlias($itemData['alias'] . $websiteId)
                     ->setEntity($itemData['entity'])
                     ->setRecordId($entity->getId());
@@ -205,12 +201,6 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
         return $referenceName . '_website_' . $websiteId;
     }
 
-    /**
-     * @param Item $item
-     * @param Collection $collection
-     * @param ItemFieldInterface $fieldObject
-     * @param array $fieldsData
-     */
     private function populateFields(
         Item $item,
         Collection $collection,

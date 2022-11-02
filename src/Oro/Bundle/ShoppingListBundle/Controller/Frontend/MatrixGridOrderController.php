@@ -4,15 +4,20 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Submits matrix form for configurable products; also displays popup matrix form
@@ -37,31 +42,30 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     public function orderAction(Request $request, Product $product)
     {
-        $matrixOrderFormProvider = $this->getMatrixOrderFormProvider();
-        $matrixGridOrderManager = $this->getMatrixGridOrderManager();
-        $shoppingListManager = $this->getShoppingListManager();
+        $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
 
         $shoppingListId = $request->get('shoppingListId');
-        $shoppingList = $shoppingListId
-            ? $shoppingListManager->getForCurrentUser($shoppingListId)
-            : $shoppingListManager->getCurrent();
+        $shoppingList = $currentShoppingListManager->getForCurrentUser($shoppingListId);
 
-        $form = $matrixOrderFormProvider->getMatrixOrderForm($product, $shoppingList);
+        $form = $this->get(MatrixGridOrderFormProvider::class)->getMatrixOrderForm($product, $shoppingList);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $matrixGridOrderManager = $this->get(MatrixGridOrderManager::class);
             $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems(
                 $form->getData(),
                 $product,
                 $request->request->get('matrix_collection', [])
             );
 
-            $shoppingList = $shoppingList ?? $shoppingListManager->getForCurrentUser($shoppingListId);
-            $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
+            $shoppingList = $shoppingList ?? $currentShoppingListManager->getForCurrentUser($shoppingListId, true);
 
+            $shoppingListManager = $this->get(ShoppingListManager::class);
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
+
+            $matrixGridOrderManager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
 
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse(
@@ -82,16 +86,54 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
+     * @Route("/{shoppingListId}/{productId}/{unitCode}", name="oro_shopping_list_frontend_matrix_grid_update")
+     * @ParamConverter("shoppingList", options={"id" = "shoppingListId"})
+     * @ParamConverter("product", options={"id" = "productId"})
+     * @ParamConverter("unit", options={"id" = "unitCode"})
+     * @Layout()
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     *
+     * @param ShoppingList $shoppingList
+     * @param Product $product
+     * @param ProductUnit $unit
+     * @param Request $request
+     * @return array|JsonResponse
+     */
+    public function updateAction(ShoppingList $shoppingList, Product $product, ProductUnit $unit, Request $request)
+    {
+        $form = $this->get(MatrixGridOrderFormProvider::class)
+            ->getMatrixOrderByUnitForm($product, $unit, $shoppingList);
+
+        $result = $this->get(MatrixGridOrderFormHandler::class)
+            ->process($form->getData(), $form, $request);
+
+        if ($result) {
+            return new JsonResponse(
+                $this->getSuccessResponse($shoppingList, $product, 'oro.shoppinglist.flash.update_success')
+            );
+        }
+
+        return [
+            'data' => [
+                'product' => $product,
+                'productUnit' => $unit,
+                'shoppingList' => $shoppingList,
+                'hasLineItems' => $form->getData()->hasLineItems(),
+            ]
+        ];
+    }
+
+    /**
      * @see \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::getSuccessResponse
      * @param ShoppingList $shoppingList
      * @param Product $product
      * @param string $message
      * @return array
      */
-    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
+    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
     {
-        $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
-            ->getProductUnitsQuantity($product);
+        $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
+            ->getProductUnitsQuantity($product->getId());
 
         return [
             'successful' => true,
@@ -108,26 +150,17 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
-     * @return MatrixGridOrderFormProvider
+     * {@inheritdoc}
      */
-    private function getMatrixOrderFormProvider()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_shopping_list.layout.data_provider.matrix_order_form');
-    }
-
-    /**
-     * @return MatrixGridOrderManager
-     */
-    private function getMatrixGridOrderManager()
-    {
-        return $this->get('oro_shopping_list.provider.matrix_grid_order_manager');
-    }
-
-    /**
-     * @return ShoppingListManager
-     */
-    private function getShoppingListManager()
-    {
-        return $this->get('oro_shopping_list.shopping_list.manager');
+        return array_merge(parent::getSubscribedServices(), [
+            CurrentShoppingListManager::class,
+            ShoppingListManager::class,
+            ProductShoppingListsDataProvider::class,
+            MatrixGridOrderManager::class,
+            MatrixGridOrderFormProvider::class,
+            MatrixGridOrderFormHandler::class,
+        ]);
     }
 }

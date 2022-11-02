@@ -7,51 +7,32 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ProductCollectionCompilerPassTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductCollectionCompilerPass
-     */
-    private $productCollectionCompilerPass;
+    /** @var ProductCollectionCompilerPass */
+    private $compiler;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ContainerBuilder
-     */
-    private $container;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->container = $this->getMockBuilder(ContainerBuilder::class)->getMock();
-
-        $this->productCollectionCompilerPass = new ProductCollectionCompilerPass();
+        $this->compiler = new ProductCollectionCompilerPass();
     }
 
     public function testProcessWhenWebCatalogUsageProviderServiceFound()
     {
-        $this->container
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with('oro_web_catalog.provider.web_catalog_usage_provider')
-            ->willReturn(true);
+        $container = new ContainerBuilder();
+        $container->register('oro_web_catalog.provider.web_catalog_usage_provider');
+        $container->register('oro_product.form.type.extension.product_collection');
 
-        $this->container
-            ->expects($this->never())
-            ->method('removeDefinition');
+        $this->compiler->process($container);
 
-        $this->productCollectionCompilerPass->process($this->container);
+        self::assertTrue($container->hasDefinition('oro_product.form.type.extension.product_collection'));
     }
 
-    public function testProcessWhenNoWebCatalogUsageProviderServiceFound()
+    public function testProcessWhenWebCatalogUsageProviderServiceNotFound()
     {
-        $this->container
-            ->expects($this->once())
-            ->method('hasDefinition')
-            ->with('oro_web_catalog.provider.web_catalog_usage_provider')
-            ->willReturn(false);
+        $container = new ContainerBuilder();
+        $container->register('oro_product.form.type.extension.product_collection');
 
-        $this->container
-            ->expects($this->once())
-            ->method('removeDefinition')
-            ->with('oro_product.form.type.extension.product_collection');
+        $this->compiler->process($container);
 
-        $this->productCollectionCompilerPass->process($this->container);
+        self::assertFalse($container->hasDefinition('oro_product.form.type.extension.product_collection'));
     }
 }

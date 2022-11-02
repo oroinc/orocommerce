@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ENGINE_KEY = 'engine';
+    const ENGINE_KEY_DSN = 'engine_dsn';
     const ENGINE_PARAMETERS_KEY = 'engine_parameters';
 
     /**
@@ -16,13 +16,13 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(OroWebsiteSearchExtension::ALIAS);
+        $treeBuilder = new TreeBuilder('oro_website_search');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->children()
-            ->scalarNode(self::ENGINE_KEY)
+            ->scalarNode(self::ENGINE_KEY_DSN)
                 ->cannotBeEmpty()
-                ->defaultValue(SearchConfiguration::DEFAULT_ENGINE)
+                ->defaultValue(SearchConfiguration::DEFAULT_ENGINE_DSN)
             ->end()
             ->arrayNode(self::ENGINE_PARAMETERS_KEY)
                 ->prototype('variable')->end()

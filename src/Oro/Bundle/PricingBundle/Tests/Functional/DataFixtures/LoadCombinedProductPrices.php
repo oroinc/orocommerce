@@ -4,12 +4,13 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -192,7 +193,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.18'
         ],
         [
-            'product' => 'product-7',
+            'product' => 'продукт-7',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -270,12 +271,14 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
+        $priceLists = [];
         foreach (static::$data as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
 
-            /** @var PriceList $priceList */
-            $priceList = $this->getReference($data['priceList']);
+            /** @var CombinedPriceList $cpl */
+            $cpl = $this->getReference($data['priceList']);
+            $priceLists[$cpl->getId()] = $cpl;
 
             /** @var ProductUnit $unit */
             $unit = $this->getReference($data['unit']);
@@ -283,7 +286,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
 
             $productPrice = new CombinedProductPrice();
             $productPrice
-                ->setPriceList($priceList)
+                ->setPriceList($cpl)
                 ->setUnit($unit)
                 ->setQuantity($data['qty'])
                 ->setPrice($price)
@@ -293,11 +296,16 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             $this->setReference($data['reference'], $productPrice);
         }
 
+        foreach ($priceLists as $cpl) {
+            $cpl->setPricesCalculated(true);
+            $manager->persist($cpl);
+        }
+
         $manager->flush();
 
         $this->container->get('event_dispatcher')->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], [], false)
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 
@@ -307,8 +315,8 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
+            LoadProductUnitPrecisions::class,
+            LoadCombinedPriceLists::class
         ];
     }
 

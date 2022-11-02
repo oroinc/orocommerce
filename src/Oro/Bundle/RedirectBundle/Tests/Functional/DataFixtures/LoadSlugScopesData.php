@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -48,7 +48,7 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
         $slug->addScope($scope);
 
         /** @var Slug $slug */
-        $slug = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+        $slug = $this->getReference(LoadSlugsData::SLUG_TEST_URL);
         $slug->addScope($scope);
 
         /** @var Slug $slug */

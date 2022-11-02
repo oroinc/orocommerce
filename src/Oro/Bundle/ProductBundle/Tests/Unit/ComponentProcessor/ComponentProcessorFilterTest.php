@@ -11,33 +11,17 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ComponentProcessorFilter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $filter;
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
 
-    /**
-     * @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productRepository;
+    /** @var ComponentProcessorFilter */
+    private $filter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->filter = new ComponentProcessorFilter($this->getProductRepository());
-    }
+        $this->productRepository = $this->createMock(ProductRepository::class);
 
-    /**
-     * @return ProductRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getProductRepository()
-    {
-        if (!$this->productRepository) {
-            $this->productRepository = $this
-                ->getMockBuilder(ProductRepository::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        }
-        return $this->productRepository;
+        $this->filter = new ComponentProcessorFilter($this->productRepository);
     }
 
     public function testFilterDataOnEmptyInput()
@@ -53,8 +37,8 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 
     public function testFilterData()
     {
-        $skus           = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
-        $data           = [
+        $skus = ['visibleSku1', 'invisibleSku1', 'visibleSku2Абв'];
+        $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 ['productSku' => $skus[0]],
                 ['productSku' => $skus[1]],
@@ -65,7 +49,8 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
 
         $searchQuery = $this->getMockBuilder(SearchQueryInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getResult', 'toArray'])
+            ->onlyMethods(['getResult'])
+            ->addMethods(['toArray'])
             ->getMockForAbstractClass();
         $searchQuery->expects($this->once())
             ->method('getResult')
@@ -75,15 +60,14 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
             ->willReturnCallback(function () use ($skus) {
                 $filteredSkus = [];
                 foreach ($skus as $index => $sku) {
-                    if (strpos($sku, 'invisibleSku') === false) {
+                    if (!str_contains($sku, 'invisibleSku')) {
                         $filteredSkus[] = new Item(
                             Product::class,
                             $index,
                             null,
-                            null,
                             [
                                 'sku'           => $sku,
-                                'sku_uppercase' => strtoupper($sku)
+                                'sku_uppercase' => mb_strtoupper($sku)
                             ]
                         );
                     }
@@ -91,14 +75,14 @@ class ComponentProcessorFilterTest extends \PHPUnit\Framework\TestCase
                 return $filteredSkus;
             });
 
-        $this->getProductRepository()->expects($this->once())
+        $this->productRepository->expects($this->once())
             ->method('getFilterSkuQuery')
-            ->with(array_map('strtoupper', $skus))
+            ->with(array_map('mb_strtoupper', $skus))
             ->willReturn($searchQuery);
 
         $filteredData = $this->filter->filterData($data, $dataParameters);
 
-        $this->assertInternalType('array', $filteredData);
+        $this->assertIsArray($filteredData);
         $this->assertCount(2, $filteredData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
         $this->assertEquals(
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][0],

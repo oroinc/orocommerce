@@ -4,9 +4,13 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
+use Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription;
+use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -21,10 +25,10 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     const LOCALIZED_VALUE = 'some string';
 
-    /** @var Category $category */
+    /** @var Category */
     protected $category;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->category = new Category();
     }
@@ -45,6 +49,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
             ['updatedAt', $date, false],
             ['defaultProductOptions', new CategoryDefaultProductOptions()],
             ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
+            ['organization', new Organization(), null]
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);
@@ -88,9 +93,9 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         $category = $this->category;
         $this->assertEmpty($category->getTitles()->toArray());
 
-        $firstTitle = $this->createLocalizedValue();
+        $firstTitle = $this->createLocalizedValue(false, CategoryTitle::class);
 
-        $secondTitle = $this->createLocalizedValue();
+        $secondTitle = $this->createLocalizedValue(false, CategoryTitle::class);
 
         $category->addTitle($firstTitle)
             ->addTitle($secondTitle)
@@ -111,9 +116,9 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         $category = $this->category;
         $this->assertEmpty($category->getShortDescriptions()->toArray());
 
-        $firstShortDescription = $this->createLocalizedValue();
+        $firstShortDescription = $this->createLocalizedValue(false, CategoryShortDescription::class);
 
-        $secondShortDescription = $this->createLocalizedValue();
+        $secondShortDescription = $this->createLocalizedValue(false, CategoryShortDescription::class);
 
         $category->addShortDescription($firstShortDescription)
             ->addShortDescription($secondShortDescription)
@@ -137,9 +142,9 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         $category = $this->category;
         $this->assertEmpty($category->getLongDescriptions()->toArray());
 
-        $firstLongDescription = $this->createLocalizedValue();
+        $firstLongDescription = $this->createLocalizedValue(false, CategoryLongDescription::class);
 
-        $secondLongDescription = $this->createLocalizedValue();
+        $secondLongDescription = $this->createLocalizedValue(false, CategoryLongDescription::class);
 
         $category->addLongDescription($firstLongDescription)
             ->addLongDescription($secondLongDescription)
@@ -209,8 +214,8 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDefaultTitle()
     {
-        $defaultTitle = $this->createLocalizedValue(true);
-        $localizedTitle = $this->createLocalizedValue();
+        $defaultTitle = $this->createLocalizedValue(true, CategoryTitle::class);
+        $localizedTitle = $this->createLocalizedValue(false, CategoryTitle::class);
 
         $category = $this->category;
         $category->addTitle($defaultTitle)
@@ -221,8 +226,8 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDefaultShortDescription()
     {
-        $defaultShortDescription = $this->createLocalizedValue(true);
-        $localizedTShortDescription = $this->createLocalizedValue();
+        $defaultShortDescription = $this->createLocalizedValue(true, CategoryShortDescription::class);
+        $localizedTShortDescription = $this->createLocalizedValue(false, CategoryShortDescription::class);
 
         $category = $this->category;
         $category->addShortDescription($defaultShortDescription)
@@ -233,8 +238,8 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDefaultLongDescription()
     {
-        $defaultLongDescription = $this->createLocalizedValue(true);
-        $localizedLongDescription = $this->createLocalizedValue();
+        $defaultLongDescription = $this->createLocalizedValue(true, CategoryLongDescription::class);
+        $localizedLongDescription = $this->createLocalizedValue(false, CategoryLongDescription::class);
 
         $category = $this->category;
         $category->addLongDescription($defaultLongDescription)
@@ -264,7 +269,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     public function testPrePersist()
     {
         $category = $this->category;
-        $category->addTitle($this->createLocalizedValue(true));
+        $category->addTitle($this->createLocalizedValue(true, CategoryTitle::class));
         $category->prePersist();
         $this->assertInstanceOf('\DateTime', $category->getCreatedAt());
         $this->assertInstanceOf('\DateTime', $category->getUpdatedAt());
@@ -281,7 +286,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdate()
     {
         $category = $this->category;
-        $category->addTitle($this->createLocalizedValue(true));
+        $category->addTitle($this->createLocalizedValue(true, CategoryTitle::class));
         $category->preUpdate();
 
         $this->assertInstanceOf('DateTime', $category->getUpdatedAt());
@@ -293,7 +298,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     {
         $value = 'test';
 
-        $title = new LocalizedFallbackValue();
+        $title = new CategoryTitle();
         $title->setString($value);
 
         $category = $this->category;
@@ -303,13 +308,14 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool|false $default
+     * @param bool   $default
+     * @param string $className
      *
      * @return LocalizedFallbackValue
      */
-    protected function createLocalizedValue($default = false)
+    protected function createLocalizedValue($default = false, string $className = LocalizedFallbackValue::class)
     {
-        $localized = (new LocalizedFallbackValue())->setString(self::LOCALIZED_VALUE);
+        $localized = (new $className())->setString(self::LOCALIZED_VALUE);
 
         if (!$default) {
             $localized->setLocalization(new Localization());

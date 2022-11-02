@@ -4,9 +4,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\UPSBundle\Entity\UPSTransport:
     upsTransport:
-        addLabel: ['@upsLabel']
+        __calls:
+            - addLabel: ['@upsLabel']
+            - addApplicableShippingService: ['@UPS2ndDayAirShippingService']
         upsApiUser: 'test'
-        addApplicableShippingService: ['@UPS2ndDayAirShippingService']
         upsUnitOfWeight: 'KGS'
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:

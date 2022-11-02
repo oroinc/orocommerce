@@ -18,16 +18,13 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param AppliedPromotion $defaultData
-     * @param array $submittedData
-     * @param AppliedPromotion $expectedData
      */
     public function testSubmit(AppliedPromotion $defaultData, array $submittedData, AppliedPromotion $expectedData)
     {
         $form = $this->factory->create(AppliedPromotionType::class, $defaultData);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
 
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -62,9 +59,7 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(AppliedPromotionType::class);
 
-        $this->assertArraySubset([
-            'data_class' => AppliedPromotion::class,
-        ], $form->getConfig()->getOptions());
+        $this->assertSame(AppliedPromotion::class, $form->getConfig()->getOptions()['data_class']);
     }
 
     public function testGetName()

@@ -62,11 +62,11 @@ datagrids:
         acl_resource: oro_tax_product_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
-            entityHint: product tax codes
+            entityHint: oro.tax.producttaxcode.entity_plural_label
         source:
             query:
                 from:
-                    - { table: '%oro_tax.entity.product_tax_code.class%', alias: tax_code }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', alias: tax_code }
         columns:
             code:
                 label: oro.tax.producttaxcode.code.label
@@ -83,11 +83,11 @@ datagrids:
         acl_resource: oro_tax_customer_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
-            entityHint: customer tax codes
+            entityHint: oro.tax.customertaxcode.entity_plural_label
         source:
             query:
                 from:
-                    - { table: '%oro_tax.entity.customer_tax_code.class%', alias: tax_code }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', alias: tax_code }
         columns:
             code:
                 label: oro.tax.customertaxcode.code.label
@@ -113,7 +113,7 @@ datagrids:
     tax-taxes-grid:
         acl_resource: oro_tax_view
         options:
-            entityHint: taxes
+            entityHint: oro.tax.entity_plural_label
         source:
             type:         orm
             query:
@@ -125,7 +125,7 @@ datagrids:
                     - tax.createdAt
                     - tax.updatedAt
                 from:
-                    - { table: '%oro_tax.entity.tax.class%', alias: tax }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\Tax', alias: tax }
         columns:
             code:
                 label: oro.tax.code.label
@@ -135,7 +135,7 @@ datagrids:
                 label: oro.tax.rate.label
                 type:          twig
                 frontend_type: html
-                template:      OroTaxBundle:TaxRate:Datagrid/percent.html.twig
+                template:      '@OroTax/TaxRate/Datagrid/percent.html.twig'
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -164,7 +164,7 @@ datagrids:
                     type:      string
                     data_name: tax.description
                 rate:
-                    type:      string
+                    type:      percent
                     data_name: tax.rate
                 createdAt:
                     type:      datetime
@@ -195,7 +195,7 @@ datagrids:
     tax-taxe-rules-grid:
         acl_resource: oro_tax_rule_view
         options:
-            entityHint: taxes
+            entityHint: oro.tax.taxrule.entity_plural_label
         source:
             type:         orm
             query:
@@ -209,7 +209,7 @@ datagrids:
                     - tax_rule.createdAt
                     - tax_rule.updatedAt
                 from:
-                    - { table: '%oro_tax.entity.tax_rule.class%', alias: tax_rule }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\TaxRule', alias: tax_rule }
                 join:
                     left:
                         - { join: tax_rule.customerTaxCode, alias: customer_tax_code }
@@ -269,10 +269,10 @@ datagrids:
                     data_name: tax_jurisdiction_code
                 createdAt:
                     type:      datetime
-                    data_name: tax_code.createdAt
+                    data_name: tax_rule.createdAt
                 updatedAt:
                     type:      datetime
-                    data_name: tax_code.updatedAt
+                    data_name: tax_rule.updatedAt
         properties:
             id: ~
             view_link:
@@ -300,7 +300,7 @@ datagrids:
                     - jurisdiction.createdAt
                     - jurisdiction.updatedAt
                 from:
-                    - { table: '%oro_tax.entity.tax_jurisdiction.class%', alias: jurisdiction }
+                    - { table: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', alias: jurisdiction }
         columns:
             code:
                 label: oro.tax.taxjurisdiction.code.label
@@ -319,9 +319,9 @@ datagrids:
                 description:
                     data_name: jurisdiction.description
                 createdAt:
-                    data_name: tax_code.createdAt
+                    data_name: jurisdiction.createdAt
                 updatedAt:
-                    data_name: tax_code.updatedAt
+                    data_name: jurisdiction.updatedAt
             disable_default_sorting: true
         filters:
             columns:
@@ -333,10 +333,10 @@ datagrids:
                     data_name: jurisdiction.description
                 createdAt:
                     type:      datetime
-                    data_name: tax_code.createdAt
+                    data_name: jurisdiction.createdAt
                 updatedAt:
                     type:      datetime
-                    data_name: tax_code.updatedAt
+                    data_name: jurisdiction.updatedAt
         properties:
             id: ~
             view_link:

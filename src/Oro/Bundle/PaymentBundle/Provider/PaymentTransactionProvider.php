@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Provider;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
@@ -12,40 +12,36 @@ use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Provides functionality to work with payment transactions such as creating for current runtime, saving and fetching.
+ */
 class PaymentTransactionProvider
 {
     use LoggerAwareTrait;
 
-    /** @var EventDispatcherInterface */
-    protected $dispatcher;
-
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
+    /** @var CustomerUserProvider */
+    protected $customerUserProvider;
 
     /** @var string */
     protected $paymentTransactionClass;
 
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
+    /** @var EventDispatcherInterface */
+    protected $dispatcher;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TokenStorageInterface $tokenStorage
-     * @param EventDispatcherInterface $dispatcher
-     * @param string $paymentTransactionClass
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        TokenStorageInterface $tokenStorage,
+        CustomerUserProvider $customerUserProvider,
         EventDispatcherInterface $dispatcher,
-        $paymentTransactionClass
+        string $paymentTransactionClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->customerUserProvider = $customerUserProvider;
         $this->paymentTransactionClass = $paymentTransactionClass;
         $this->dispatcher = $dispatcher;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -54,30 +50,11 @@ class PaymentTransactionProvider
      * @param array $orderBy
      * @return PaymentTransaction|null
      */
-    public function getPaymentTransaction($object, array $criteria = [], array $orderBy = [])
+    public function getPaymentTransaction($object, array $criteria = [], array $orderBy = []): ?PaymentTransaction
     {
         $paymentTransactions = $this->getPaymentTransactions($object, $criteria, $orderBy, 1);
 
-        return reset($paymentTransactions);
-    }
-
-    /**
-     * @return CustomerUser|null
-     */
-    protected function getLoggedCustomerUser()
-    {
-        $token = $this->tokenStorage->getToken();
-        if (!$token) {
-            return null;
-        }
-
-        $user = $token->getUser();
-
-        if ($user instanceof CustomerUser) {
-            return $user;
-        }
-
-        return null;
+        return reset($paymentTransactions) ?: null;
     }
 
     /**
@@ -92,9 +69,9 @@ class PaymentTransactionProvider
         $object,
         array $criteria = [],
         array $orderBy = [],
-        $limit = null,
-        $offset = null
-    ) {
+        int $limit = null,
+        int $offset = null
+    ): array {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
@@ -114,17 +91,21 @@ class PaymentTransactionProvider
 
     /**
      * @param object $object
-     * @return array
+     * @return array|string[]
      */
-    public function getPaymentMethods($object)
+    public function getPaymentMethods($object): array
     {
-        $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
+        if (!$identifier) {
+            return [];
+        }
+        $className = $this->doctrineHelper->getEntityClass($object);
+
         /** @var PaymentTransactionRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
         $methods = $repository->getPaymentMethods($className, [$identifier]);
 
-        return isset($methods[$identifier]) ? $methods[$identifier] : [];
+        return $methods[$identifier] ?? [];
     }
 
     /**
@@ -134,8 +115,12 @@ class PaymentTransactionProvider
      * @param string|null $paymentMethod
      * @return null|PaymentTransaction
      */
-    public function getActiveAuthorizePaymentTransaction($object, $amount, $currency, $paymentMethod = null)
-    {
+    public function getActiveAuthorizePaymentTransaction(
+        $object,
+        float $amount,
+        string $currency,
+        ?string $paymentMethod = null
+    ): ?PaymentTransaction {
         $criteria = [
             'active' => true,
             'successful' => true,
@@ -151,13 +136,9 @@ class PaymentTransactionProvider
         return $this->getPaymentTransaction($object, $criteria);
     }
 
-    /**
-     * @param string $paymentMethod
-     * @return PaymentTransaction|null
-     */
-    public function getActiveValidatePaymentTransaction($paymentMethod)
+    public function getActiveValidatePaymentTransaction(?string $paymentMethod): ?PaymentTransaction
     {
-        $customerUser = $this->getLoggedCustomerUser();
+        $customerUser = $this->customerUserProvider->getLoggedUser(true);
         if (!$customerUser) {
             return null;
         }
@@ -180,7 +161,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @return PaymentTransaction
      */
-    public function createPaymentTransaction($paymentMethod, $type, $object)
+    public function createPaymentTransaction(string $paymentMethod, string $type, $object): PaymentTransaction
     {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
@@ -190,19 +171,15 @@ class PaymentTransactionProvider
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
-            ->setFrontendOwner($this->getLoggedCustomerUser());
+            ->setFrontendOwner($this->customerUserProvider->getLoggedUser(true));
 
         return $paymentTransaction;
     }
 
-    /**
-     * @param string $action
-     * @param PaymentTransaction $parentPaymentTransaction
-     *
-     * @return PaymentTransaction
-     */
-    public function createPaymentTransactionByParentTransaction($action, PaymentTransaction $parentPaymentTransaction)
-    {
+    public function createPaymentTransactionByParentTransaction(
+        string $action,
+        PaymentTransaction $parentPaymentTransaction
+    ): PaymentTransaction {
         $paymentTransaction = $this->createEmptyPaymentTransaction()
             ->setAction($action)
             ->setPaymentMethod($parentPaymentTransaction->getPaymentMethod())
@@ -210,18 +187,19 @@ class PaymentTransactionProvider
             ->setEntityIdentifier($parentPaymentTransaction->getEntityIdentifier())
             ->setAmount($parentPaymentTransaction->getAmount())
             ->setCurrency($parentPaymentTransaction->getCurrency())
-            ->setFrontendOwner($this->getLoggedCustomerUser())
+            ->setFrontendOwner($this->customerUserProvider->getLoggedUser(true))
             ->setSourcePaymentTransaction($parentPaymentTransaction);
 
         return $paymentTransaction;
     }
 
     /**
-     * @param PaymentTransaction $paymentTransaction
+     * @throws \Throwable
      */
-    public function savePaymentTransaction(PaymentTransaction $paymentTransaction)
+    public function savePaymentTransaction(PaymentTransaction $paymentTransaction): void
     {
         $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
+
         try {
             $em->transactional(
                 function (EntityManagerInterface $em) use ($paymentTransaction) {
@@ -232,22 +210,17 @@ class PaymentTransactionProvider
             );
 
             $event = new TransactionCompleteEvent($paymentTransaction);
-            $this->dispatcher->dispatch(TransactionCompleteEvent::NAME, $event);
-        } catch (\Exception $e) {
+            $this->dispatcher->dispatch($event, TransactionCompleteEvent::NAME);
+        } catch (\Throwable $e) {
             if ($this->logger) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
+                $this->logger->critical('Can not save payment transaction', ['exception' => $e]);
             }
-        } catch (\Error $e) {
-            if ($this->logger) {
-                $this->logger->error($e->getMessage(), $e->getTrace());
-            }
+
+            throw $e;
         }
     }
 
-    /**
-     * @return PaymentTransaction
-     */
-    private function createEmptyPaymentTransaction()
+    private function createEmptyPaymentTransaction(): PaymentTransaction
     {
         return new $this->paymentTransactionClass();
     }

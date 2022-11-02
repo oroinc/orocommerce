@@ -7,6 +7,8 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
 
 /**
+ * Provides set of common operations for database drivers.
+ * Each operation can be replaced with specific implementation in certain driver.
  * @method initRepo(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
  * @property EntityManagerInterface $entityManager
  */
@@ -68,22 +70,6 @@ trait DriverTrait
         $className = Item::class;
 
         return new $className();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function saveItems(array $items)
-    {
-        array_walk(
-            $items,
-            function (Item $item) {
-                $this->getEntityManager()->persist($item);
-            }
-        );
-
-        $this->getEntityManager()->flush($items);
-        $this->getEntityManager()->clear(Item::class);
     }
 
     /**

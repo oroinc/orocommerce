@@ -15,7 +15,7 @@ class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessors()
     {
-        $this->assertPropertyAccessors(
+        static::assertPropertyAccessors(
             new ProductPrice(),
             [
                 ['id', 42],
@@ -35,46 +35,38 @@ class BaseProductPriceTest extends \PHPUnit\Framework\TestCase
         $price = new ProductPrice();
         $price->setProduct($product);
 
-        $this->assertEquals($product->getSku(), $price->getProductSku());
+        static::assertEquals($product->getSku(), $price->getProductSku());
     }
 
     public function testSetGetPrice()
     {
-        $productPrice = new ProductPrice();
-        $this->assertNull($productPrice->getPrice());
+        $productPrice = new class() extends ProductPrice {
+            public function xsetValueAndCurrency(float $value, string $currency): void
+            {
+                $this->value = $value;
+                $this->currency = $currency;
+            }
+        };
+        static::assertNull($productPrice->getPrice());
 
         $productPrice->updatePrice();
-        $this->assertAttributeEquals(null, 'value', $productPrice);
-        $this->assertAttributeEquals(null, 'currency', $productPrice);
+        static::assertNull($productPrice->getPrice());
 
         $value = 11;
         $currency = 'EUR';
-        $this->setProperty($productPrice, 'value', $value);
-        $this->setProperty($productPrice, 'currency', $currency);
+        $productPrice->xsetValueAndCurrency($value, $currency);
 
         $price = $productPrice->getPrice();
-        $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Entity\Price', $price);
-        $this->assertEquals($value, $price->getValue());
-        $this->assertEquals($currency, $price->getCurrency());
+        static::assertInstanceOf(Price::class, $price);
+        static::assertEquals($value, $price->getValue());
+        static::assertEquals($currency, $price->getCurrency());
 
         $price = Price::create(12, 'USD');
         $productPrice->setPrice($price);
-        $this->assertEquals($price, $productPrice->getPrice());
+        static::assertEquals($price, $productPrice->getPrice());
 
         $productPrice->updatePrice();
-        $this->assertAttributeEquals($price->getValue(), 'value', $productPrice);
-        $this->assertAttributeEquals($price->getCurrency(), 'currency', $productPrice);
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     */
-    protected function setProperty($object, $property, $value)
-    {
-        $reflection = new \ReflectionProperty(get_class($object), $property);
-        $reflection->setAccessible(true);
-        $reflection->setValue($object, $value);
+        static::assertEquals($price->getValue(), $productPrice->getPrice()->getValue());
+        static::assertEquals($price->getCurrency(), $productPrice->getPrice()->getCurrency());
     }
 }

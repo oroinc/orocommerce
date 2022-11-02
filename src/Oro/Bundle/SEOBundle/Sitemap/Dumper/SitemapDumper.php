@@ -11,6 +11,9 @@ use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * The main implementation of dumping sitemap related data to files.
+ */
 class SitemapDumper implements SitemapDumperInterface
 {
     const SITEMAP_FILENAME_TEMPLATE = 'sitemap-%s-%s.xml';
@@ -91,7 +94,6 @@ class SitemapDumper implements SitemapDumperInterface
                     $this->filesystemAdapter->dumpSitemapStorage(
                         static::createFileName($providerType, $fileNumber++),
                         $website,
-                        $version,
                         $urlsStorage
                     );
 
@@ -103,15 +105,14 @@ class SitemapDumper implements SitemapDumperInterface
             $this->filesystemAdapter->dumpSitemapStorage(
                 static::createFileName($providerType, $fileNumber),
                 $website,
-                $version,
                 $urlsStorage
             );
         }
 
         $event = new OnSitemapDumpFinishEvent($website, $version);
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, $this->storageType),
-            $event
+            $event,
+            sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, $this->storageType)
         );
     }
 

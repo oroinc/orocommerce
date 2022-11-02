@@ -43,7 +43,7 @@ services:
         decorates: oro_sale.quote.configured_shipping_price_provider
         decoration_priority: 30
         arguments:
-            - '@oro_sale.quote.configured_shipping_price_provider_overridden_decorator.inner'
+            - '@.inner'
 
     oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator:
         class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AllowUnlisted\AllowUnlistedConfiguredPriceProviderDecorator'
@@ -52,7 +52,7 @@ services:
         decoration_priority: 20
         arguments:
             - '@oro_shipping.method.view_factory'
-            - '@oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator.inner'
+            - '@.inner'
 
     oro_sale.quote.configured_shipping_price_provider_method_locked_decorator:
         class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\Locked\MethodLockedConfiguredPriceProviderDecorator'
@@ -60,7 +60,7 @@ services:
         decorates: oro_sale.quote.configured_shipping_price_provider
         decoration_priority: 10
         arguments:
-            - '@oro_sale.quote.configured_shipping_price_provider_method_locked_decorator.inner'
+            - '@.inner'
 
     oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator:
         class: 'Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost\ShippingCostQuoteDemandSubtotalsCalculatorDecorator'
@@ -71,7 +71,7 @@ services:
             - '@oro_sale.quote.selected_offers_shipping_context_factory'
             - '@oro_sale.quote.shipping_configuration_factory'
             - '@oro_sale.quote.configured_shipping_price_provider'
-            - '@oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator.inner'
+            - '@.inner'
 
     oro_sale.quote.shipping_line_items_converter_first_offers:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter'

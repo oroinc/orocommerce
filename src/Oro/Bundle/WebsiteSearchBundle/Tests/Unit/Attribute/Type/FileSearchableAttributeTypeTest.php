@@ -14,31 +14,28 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         return FileSearchableAttributeType::class;
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
-    public function testGetFilterStorageFieldType()
+    public function testGetFilterStorageFieldTypes()
     {
-        $this->getSearchableAttributeType()->getFilterStorageFieldType();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getFilterStorageFieldTypes($this->attribute);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetSorterStorageFieldType()
     {
-        $this->getSearchableAttributeType()->getSorterStorageFieldType();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getSorterStorageFieldType($this->attribute);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterTypeException()
     {
-        $this->getSearchableAttributeType()->getFilterType();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getFilterType($this->attribute);
     }
 
     public function testIsLocalizable()
@@ -46,21 +43,27 @@ class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
         $this->assertFalse($this->getSearchableAttributeType()->isLocalizable($this->attribute));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetFilterableFieldNameException()
     {
-        $this->getSearchableAttributeType()->getFilterableFieldName($this->attribute);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getFilterableFieldNames($this->attribute);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Not supported
-     */
     public function testGetSortableFieldNameException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
         $this->getSearchableAttributeType()->getSortableFieldName($this->attribute);
+    }
+
+    public function testGetSearchableFieldName()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not supported');
+
+        $this->getSearchableAttributeType()->getSearchableFieldName($this->attribute);
     }
 }

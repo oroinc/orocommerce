@@ -1,0 +1,86 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        default: true
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct:
+        product: '@product1'
+        pricelist: '@pricelist'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@Customer_AmandaRCole'
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice:
+        pricelist: '@pricelist'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 1
+        unit: '@item'
+        value: 1
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue:
+        string: 'Product 1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'AA1'
+        __calls:
+            - addName: ['@locValue']
+            - addUnitPrecision: ['@precision']
+            - setPrimaryUnitPrecision: ['@precision']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'Shopping List 1'
+        customerUser: '@CustomerUser_AmandaRCole'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@CustomerUser_AmandaRCole'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        subtotalValue: '1'
+        valid: true

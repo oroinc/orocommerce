@@ -123,7 +123,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()
@@ -178,6 +178,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         $this->assertEquals($this->emptyFieldsValues, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

@@ -1,0 +1,13 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if product is defined %}
+    {{ UI.renderProperty('oro.product.entity_label'|trans, product) }}
+{% endif %}
+
+{% if show_prices is defined %}
+    {{ UI.renderProperty('oro.product.content_widget_type.product_mini_block.options.show_prices.label'|trans, show_prices ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}
+
+{% if show_add_button is defined %}
+    {{ UI.renderProperty('oro.product.content_widget_type.product_mini_block.options.show_add_button.label'|trans, show_add_button ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}

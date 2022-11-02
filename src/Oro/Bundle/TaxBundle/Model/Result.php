@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Tax result model
+ */
 final class Result extends AbstractResult implements \JsonSerializable
 {
     const TOTAL = 'total';
@@ -45,7 +48,7 @@ final class Result extends AbstractResult implements \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         // Prevent original object modifying
         $that = clone $this;
@@ -103,25 +106,25 @@ final class Result extends AbstractResult implements \JsonSerializable
         return $this->getOffset(self::ITEMS, []);
     }
 
-    /** {@inheritdoc} */
-    public function serialize()
+    /**
+     * {@inheritdoc}
+     */
+    public function __serialize(): array
     {
         // Prevent original object modifying
         $that = clone $this;
 
         $that->prepareToSerialization();
 
-        return $that->parentSerialize();
+        return $that->__parentSerialize();
     }
 
     /**
-     * Proxy method to call parent serialization
-     *
-     * @return string
+     * Proxy method to call parent::__serialize method in cloned object
      */
-    private function parentSerialize()
+    private function __parentSerialize(): array
     {
-        return parent::serialize();
+        return parent::__serialize();
     }
 
     public function lockResult()
@@ -164,9 +167,6 @@ final class Result extends AbstractResult implements \JsonSerializable
         $this->unlockResult();
     }
 
-    /**
-     * @param array $serialized
-     */
     protected function deserializeTaxesAsTaxResultElement(array $serialized)
     {
         if (isset($serialized[self::TAXES]) && is_array($serialized[self::TAXES])) {

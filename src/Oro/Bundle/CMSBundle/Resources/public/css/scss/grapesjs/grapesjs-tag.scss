@@ -1,0 +1,116 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &clm-tags {
+        padding: 0 0 10px;
+        display: inline;
+
+        ##{$clm-prefix}add-tag,
+        .#{$clm-prefix}tags-btn__sync {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin: 3px 0;
+
+            font-size: $base-font-size--s;
+            text-align: center;
+            line-height: 18px;
+
+            background-color: $secondary;
+            color: $primary-inverse;
+            box-shadow: none;
+            border: 0;
+
+            &:not(:last-child) {
+                margin-right: 3px;
+            }
+        }
+
+        ##{$clm-prefix}tags-field {
+            width: 100%;
+            padding: 0 3px;
+        }
+
+        ##{$clm-prefix}up {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ##{$clm-prefix}label {
+            color: $primary-200;
+            padding: 6px 0;
+        }
+
+        ##{$app-prefix}sm-caret {
+            font-size: $base-font-size--m;
+        }
+
+        ##{$clm-prefix}sel {
+            word-break: break-word;
+            padding: 0;
+            line-height: 1.3;
+        }
+
+        ##{$clm-prefix}sel-help {
+            display: flex;
+            align-items: baseline;
+            font-style: italic;
+            color: $primary-550;
+            margin-bottom: 6px;
+        }
+
+        ##{$clm-prefix}new[style*=block] {
+            // Hank for correct alignment of multiselect with classes
+            // stylelint-disable-next-line declaration-no-important
+            display: inline !important;
+            width: auto;
+        }
+
+        .#{$clm-prefix}tag {
+            padding: 3px 5px;
+            margin: 3px 0 3px 3px;
+
+            &:last-child {
+                margin-right: 3px;
+            }
+
+            ##{$clm-prefix}checkbox {
+                font-size: 0;
+            }
+        }
+    }
+
+    &clm-tag {
+        color: $primary-400;
+        margin: 3px 3px 3px 0;
+
+        ##{$clm-prefix}checkbox,
+        ##{$clm-prefix}tag-label,
+        ##{$clm-prefix}close {
+            color: $primary-400;
+            opacity: 1;
+            font-size: $base-font-size--s;
+        }
+
+        ##{$clm-prefix}checkbox {
+            min-width: 12px;
+        }
+
+        ##{$clm-prefix}close {
+            font-size: $base-font-size--xl;
+            font-weight: font-weight('bold');
+            min-width: 12px;
+        }
+    }
+
+    &clm-header {
+        &-status {
+            min-width: 90px;
+        }
+
+        [data-states] {
+            padding-right: 15px;
+        }
+    }
+}

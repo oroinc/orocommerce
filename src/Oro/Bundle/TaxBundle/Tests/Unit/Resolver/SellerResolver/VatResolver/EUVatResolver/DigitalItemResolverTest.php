@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\SellerResolver\VatResolver\EU
 
 use Brick\Math\BigDecimal;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
@@ -16,47 +18,31 @@ use Oro\Bundle\TaxBundle\Resolver\UnitResolver;
 
 class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UnitResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $unitResolver;
+    /** @var UnitResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $unitResolver;
 
-    /**
-     * @var RowTotalResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $rowTotalResolver;
+    /** @var RowTotalResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $rowTotalResolver;
 
-    /**
-     * @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $matcher;
+    /** @var CountryMatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $matcher;
 
-    /** @var  DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $resolver;
+    /** @var DigitalItemResolver */
+    private $resolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->unitResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\UnitResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->rowTotalResolver = $this->getMockBuilder('Oro\Bundle\TaxBundle\Resolver\RowTotalResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->matcher = $this->getMockBuilder('Oro\Bundle\TaxBundle\Matcher\CountryMatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->unitResolver = $this->createMock(UnitResolver::class);
+        $this->rowTotalResolver = $this->createMock(RowTotalResolver::class);
+        $this->matcher = $this->createMock(CountryMatcher::class);
 
         $this->resolver = new DigitalItemResolver($this->unitResolver, $this->rowTotalResolver, $this->matcher);
     }
 
     /**
      * @dataProvider resolveDataProvider
-     * @param string $taxableAmount
-     * @param array $taxRules
      */
-    public function testResolve($taxableAmount, array $taxRules)
+    public function testResolve(string $taxableAmount, array $taxRules)
     {
         $taxable = new Taxable();
         $taxable->setPrice($taxableAmount);
@@ -66,8 +52,9 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $taxable->getContext()->offsetSet(Taxable::DIGITAL_PRODUCT, true);
         $taxable->getContext()->offsetSet(Taxable::PRODUCT_TAX_CODE, 'prod_tax_code');
 
-
-        $this->matcher->expects($this->once())->method('match')->willReturn($taxRules);
+        $this->matcher->expects($this->once())
+            ->method('match')
+            ->willReturn($taxRules);
 
         $taxableUnitPrice = BigDecimal::of($taxable->getPrice());
 
@@ -82,10 +69,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    /**
-     * @return array
-     */
-    public function resolveDataProvider()
+    public function resolveDataProvider(): array
     {
         return [
             [
@@ -145,12 +129,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    /**
-     * @param string $taxCode
-     * @param string $taxRate
-     * @return TaxRule
-     */
-    protected function getTaxRule($taxCode, $taxRate)
+    private function getTaxRule(string $taxCode, string $taxRate): TaxRule
     {
         $taxRule = new TaxRule();
         $tax = new Tax();
@@ -162,10 +141,110 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         return $taxRule;
     }
 
-    protected function assertNothing()
+    private function assertNothing()
     {
-        $this->matcher->expects($this->never())->method($this->anything());
-        $this->unitResolver->expects($this->never())->method($this->anything());
-        $this->rowTotalResolver->expects($this->never())->method($this->anything());
+        $this->matcher->expects($this->never())
+            ->method($this->anything());
+        $this->unitResolver->expects($this->never())
+            ->method($this->anything());
+        $this->rowTotalResolver->expects($this->never())
+            ->method($this->anything());
+    }
+
+    public function testDestinationAddressForDigitalProductsAndEUBuyer()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('DE'))
+            ->setRegion((new Region('DE-BE'))->setCode('BE'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('AT'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->matcher->expects($this->once())
+            ->method('match')
+            ->willReturn([]);
+        $this->rowTotalResolver->expects($this->once())
+            ->method('resolveRowTotal');
+        $this->unitResolver->expects($this->once())
+            ->method('resolveUnitPrice');
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($address, $taxable->getTaxationAddress());
+    }
+
+    public function testOriginAddressForNonDigitalProductsAndEUBuyer()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('DE'))
+            ->setRegion((new Region('DE-BE'))->setCode('BE'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('AT'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, false);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->matcher->expects($this->never())
+            ->method('match');
+        $this->rowTotalResolver->expects($this->never())
+            ->method('resolveRowTotal');
+        $this->unitResolver->expects($this->never())
+            ->method('resolveUnitPrice');
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
+    }
+
+    public function testDestinationAddressForDigitalProductsAndNonEUBuyer()
+    {
+        $taxable = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-FL'))->setCode('FL'));
+
+        $origin = new Address();
+        $origin
+            ->setCountry(new Country('AT'));
+
+        $taxable
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->setOrigin($origin)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable->makeOriginAddressTaxable();
+
+        $this->matcher->expects($this->never())
+            ->method('match');
+        $this->rowTotalResolver->expects($this->never())
+            ->method('resolveRowTotal');
+        $this->unitResolver->expects($this->never())
+            ->method('resolveUnitPrice');
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertSame($origin, $taxable->getTaxationAddress());
     }
 }

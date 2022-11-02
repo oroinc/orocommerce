@@ -1,0 +1,22 @@
+oro_behat_extension:
+    elements:
+        Shipping Rule Fixed Product:
+            selector: 'form[name="oro_shipping_methods_configs_rule"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Surcharge Type: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][surcharge_type]"
+                    Surcharge On: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][surcharge_on]"
+                    Surcharge Amount: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][surcharge_amount]"
+
+        Shipping Cost Attribute Product Form:
+            selector: 'form[name="oro_product"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Shipping Cost EUR: 'oro_product[shippingCost][1][0][price]'
+                    Shipping Cost USD: 'oro_product[shippingCost][1][1][price]'
+
+        Shipping Cost Attribute Grid:
+            selector: '.shipping-cost-attribute-view>div'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

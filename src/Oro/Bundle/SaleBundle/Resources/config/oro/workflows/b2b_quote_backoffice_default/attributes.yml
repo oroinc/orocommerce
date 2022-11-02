@@ -7,13 +7,10 @@ workflows:
                     virtual: true
             expire_quote:
                 type: string
-                options:
-                    virtual: true
             original_quote:
                 type: entity
                 options:
                     class: 'Oro\Bundle\SaleBundle\Entity\Quote'
-                    virtual: true
             email:
                 type: object
                 options:

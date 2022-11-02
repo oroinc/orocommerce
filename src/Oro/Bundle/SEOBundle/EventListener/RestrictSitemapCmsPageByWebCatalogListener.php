@@ -6,92 +6,69 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider;
+use Oro\Bundle\SEOBundle\Modifier\ScopeQueryBuilderModifierInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Component\Website\WebsiteInterface;
 
+/**
+ * Listener for restricting sitemap building for cms pages
+ */
 class RestrictSitemapCmsPageByWebCatalogListener
 {
-    use FeatureCheckerHolderTrait;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
-     * @var WebCatalogScopeCriteriaProvider
-     */
-    private $scopeCriteriaProvider;
-
-    /**
-     * @param ConfigManager $configManager
-     * @param WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
-     */
     public function __construct(
-        ConfigManager $configManager,
-        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
+        private ConfigManager $configManager,
+        private CmsPageSitemapRestrictionProvider $provider,
+        private ScopeQueryBuilderModifierInterface $scopeQueryBuilderModifier
     ) {
-        $this->configManager = $configManager;
-        $this->scopeCriteriaProvider = $scopeCriteriaProvider;
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
-    public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
+    public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event): void
     {
-        if ($this->isEnabled($event->getWebsite())) {
+        if ($this->provider->isRestrictionActive($event->getWebsite())) {
             $this->restrict($event);
         }
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
-    private function restrict(RestrictSitemapEntitiesEvent $event)
+    private function restrict(RestrictSitemapEntitiesEvent $event): void
     {
         $em = $event->getQueryBuilder()->getEntityManager();
         $website = $event->getWebsite();
 
-        $webCatalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
-        $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
-
         $qb = $event->getQueryBuilder();
         $rootAliases = $qb->getRootAliases();
 
+        $webCatalogId = $this->configManager->get(
+            'oro_web_catalog.web_catalog',
+            false,
+            false,
+            $event->getWebsite()
+        );
         $webCatalogEntitiesQueryBuilder = $this->getWebCatalogEntityIdsQueryBuilder(
             reset($rootAliases),
             $em,
-            $scopeCriteria,
             $webCatalogId
         );
 
-        $qb->andWhere($qb->expr()->exists($webCatalogEntitiesQueryBuilder->getDQL()));
+        $webCatalogRestriction = $webCatalogEntitiesQueryBuilder->getDQL();
+        if ($this->provider->isRestrictedToPagesBelongToWebCatalogOnly($website)) {
+            $qb->andWhere($qb->expr()->exists($webCatalogRestriction));
+        } else {
+            $qb->andWhere($qb->expr()->not($qb->expr()->exists($webCatalogRestriction)));
+        }
 
         foreach ($webCatalogEntitiesQueryBuilder->getParameters() as $parameter) {
             $qb->getParameters()->add($parameter);
         }
     }
 
-    /**
-     * @param string $rootAlias
-     * @param EntityManager $em
-     * @param ScopeCriteria $scopeCriteria
-     * @param int $webCatalogId
-     * @return QueryBuilder
-     */
     private function getWebCatalogEntityIdsQueryBuilder(
-        $rootAlias,
+        string $rootAlias,
         EntityManager $em,
-        ScopeCriteria $scopeCriteria,
-        $webCatalogId
-    ) {
+        int $webCatalogId
+    ): QueryBuilder {
         $subQb = $em->createQueryBuilder();
         $subQb->select('IDENTITY(contentVariant.cms_page)')
             ->from(ContentVariant::class, 'contentVariant')
@@ -114,17 +91,8 @@ class RestrictSitemapCmsPageByWebCatalogListener
             ->setParameter('pageType', 'cms_page')
             ->setParameter('webCatalogId', $webCatalogId);
 
-        $scopeCriteria->applyWhereWithPriority($subQb, 'scopes');
+        $this->scopeQueryBuilderModifier->applyScopeCriteria($subQb, 'scopes');
 
         return $subQb;
-    }
-
-    /**
-     * @param null|WebsiteInterface $website
-     * @return bool
-     */
-    private function isEnabled(WebsiteInterface $website = null)
-    {
-        return !$this->isFeaturesEnabled($website);
     }
 }

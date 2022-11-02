@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -9,9 +10,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Sets available primary unit choices
+ */
 class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeExtension
 {
     use ProductAwareTrait;
+
+    private const EXTENDED_TYPE = ProductPrimaryUnitPrecisionType::class;
 
     /**
      * @var ProductUnitFieldsSettingsInterface
@@ -23,23 +29,9 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
      */
     private $childName;
 
-    /**
-     * @var string
-     */
-    private $extendedType;
-
-    /**
-     * @param $childName
-     * @param $extendedType
-     * @param ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings
-     */
-    public function __construct(
-        $childName,
-        $extendedType,
-        ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings
-    ) {
+    public function __construct($childName, ProductUnitFieldsSettingsInterface $productFormUnitFieldsSettings)
+    {
         $this->childName = $childName;
-        $this->extendedType = $extendedType;
         $this->productFormUnitFieldsSettings = $productFormUnitFieldsSettings;
     }
 
@@ -51,16 +43,13 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAvailableUnits']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setAvailableUnits(FormEvent $event)
     {
         $form = $event->getForm();
         $child = $form->get($this->childName);
         if (!$child) {
             throw new \InvalidArgumentException(
-                sprintf('Unknown %s child in %s', $this->childName, $this->getExtendedType())
+                sprintf('Unknown %s child in %s', $this->childName, self::EXTENDED_TYPE)
             );
         }
         $options = $child->getConfig()->getOptions();
@@ -76,8 +65,8 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return $this->extendedType;
+        return [self::EXTENDED_TYPE];
     }
 }

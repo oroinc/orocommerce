@@ -24,9 +24,7 @@ class AddAppliedPromotionForeignKey implements Migration, OrderedMigrationInterf
     {
         $this->modifyAppliedDiscountTable($schema);
     }
-    /**
-     * @param Schema $schema
-     */
+
     protected function modifyAppliedDiscountTable(Schema $schema)
     {
         $table = $schema->getTable('oro_promotion_applied_discount');

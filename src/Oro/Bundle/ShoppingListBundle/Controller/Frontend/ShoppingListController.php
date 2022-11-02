@@ -2,56 +2,131 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\DataGridBundle\Controller\GridController;
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ShoppingListController extends Controller
+/**
+ * Controller that manages shopping lists.
+ */
+class ShoppingListController extends AbstractController
 {
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout
-     * @Acl(
-     *      id="oro_shopping_list_frontend_view",
-     *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
-     *
+     * @AclAncestor("oro_shopping_list_frontend_view")
      */
-    public function viewAction(ShoppingList $shoppingList = null)
+    public function viewAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get('oro_shopping_list.shopping_list.manager')->getCurrent();
+            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
         if ($shoppingList) {
-            $title = $shoppingList->getLabel();
-            $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
-        } else {
-            $title = null;
-            $totalWithSubtotalsAsArray = [];
+            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
         }
 
         return [
             'data' => [
-                'title' => $title,
                 'entity' => $shoppingList,
-                'totals' => [
-                    'identifier' => 'totals',
-                    'data' => $totalWithSubtotalsAsArray
-                ]
+            ],
+        ];
+    }
+
+    /**
+     * @Route("/all", name="oro_shopping_list_frontend_index")
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_view")
+     */
+    public function indexAction(): array
+    {
+        if (!$this->getUser() instanceof CustomerUser) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return [];
+    }
+
+    /**
+     * @Route(
+     *     "/update/{id}",
+     *     name="oro_shopping_list_frontend_update",
+     *     defaults={"id" = null},
+     *     requirements={"id"="\d+"}
+     * )
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     */
+    public function updateAction(ShoppingList $shoppingList = null): array
+    {
+        if (!$shoppingList) {
+            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
+        }
+
+        if ($shoppingList) {
+            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+        }
+
+        return [
+            'data' => [
+                'entity' => $shoppingList,
+            ],
+        ];
+    }
+
+    /**
+     * @Route(
+     *      "/{id}/massAction/{gridName}/{actionName}",
+     *      name="oro_shopping_list_frontend_move_mass_action",
+     *      requirements={"id"="\d+", "gridName"="[\w\:\-]+", "actionName"="[\w\-]+"}
+     * )
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_update")
+     */
+    public function moveMassActionAction(
+        ShoppingList $shoppingList,
+        Request $request,
+        string $gridName,
+        string $actionName
+    ): array|Response {
+        if ($request->getMethod() === Request::METHOD_GET) {
+            return [
+                'data' => [
+                    'entity' => $shoppingList,
+                ],
+            ];
+        }
+
+        return $this->forward(
+            GridController::class . '::massActionAction',
+            ['gridName' => $gridName, 'actionName' => $actionName],
+            $request->query->all()
+        );
+    }
+
+    /**
+     * @Route("/{id}/assign", name="oro_shopping_list_frontend_assign", requirements={"id"="\d+"})
+     * @Layout
+     * @AclAncestor("oro_shopping_list_frontend_assign")
+     */
+    public function assignAction(ShoppingList $shoppingList): array
+    {
+        return [
+            'data' => [
+                'entity' => $shoppingList
             ],
         ];
     }
@@ -68,14 +143,10 @@ class ShoppingListController extends Controller
      *      permission="CREATE",
      *      group_name="commerce"
      * )
-     *
-     * @param Request $request
-     * @return array|Response
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): array|Response
     {
-        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
-        $shoppingList = $shoppingListManager->create();
+        $shoppingList = $this->get(ShoppingListManager::class)->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {
@@ -90,49 +161,33 @@ class ShoppingListController extends Controller
 
         return ['data' => array_merge($defaultResponse, $response)];
     }
-
-    /**
-     * @param Request $request
-     * @param ShoppingList $shoppingList
-     *
-     * @return array|Response
-     */
-    protected function create(Request $request, ShoppingList $shoppingList)
+    
+    protected function create(Request $request, ShoppingList $shoppingList): array|Response
     {
-        $form = $this->createForm(ShoppingListType::class);
-
         $handler = new ShoppingListHandler(
-            $form,
-            $request,
-            $this->get('oro_shopping_list.shopping_list.manager'),
+            $this->get(CurrentShoppingListManager::class),
             $this->getDoctrine()
         );
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $shoppingList,
             $this->createForm(ShoppingListType::class, $shoppingList),
-            function (ShoppingList $shoppingList) {
-                return [
-                    'route' => 'oro_shopping_list_frontend_view',
-                    'parameters' => ['id' => $shoppingList->getId()]
-                ];
-            },
-            function (ShoppingList $shoppingList) {
-                return [
-                    'route' => 'oro_shopping_list_frontend_view',
-                    'parameters' => ['id' => $shoppingList->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
+            $this->get(TranslatorInterface::class)->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
+            $request,
             $handler
         );
     }
 
     /**
-     * @return TotalProcessorProvider
+     * {@inheritDoc}
      */
-    protected function getTotalProcessor()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return array_merge(parent::getSubscribedServices(), [
+            CurrentShoppingListManager::class,
+            ShoppingListManager::class,
+            TranslatorInterface::class,
+            UpdateHandlerFacade::class
+        ]);
     }
 }

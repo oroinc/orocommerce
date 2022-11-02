@@ -1,0 +1,19 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    fields:
+        -
+            name: inv_status
+            type: text
+            fulltext: false
+            group: inventory
+        -
+            name: low_inventory_threshold
+            type: decimal
+            group: inventory
+        -
+            name: is_upcoming
+            type: integer
+            group: inventory
+        -
+            name: availability_date
+            type: datetime
+            group: inventory

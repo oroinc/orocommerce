@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -28,11 +28,6 @@ class AttributeFamilyChangesListener
     /** @var array */
     protected $changedAttributeFamilies = [];
 
-    /**
-     * @param RequestStack $requestStack
-     * @param ManagerRegistry $registry
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $registry,
@@ -43,12 +38,9 @@ class AttributeFamilyChangesListener
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param OnFlushEventArgs $eventArgs
-     */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        if (!$this->requestStack->getMasterRequest()) {
+        if (!$this->requestStack->getMainRequest()) {
             return;
         }
 
@@ -79,8 +71,8 @@ class AttributeFamilyChangesListener
         $this->changedAttributeFamilies = [];
 
         $this->dispatcher->dispatch(
-            ReindexationRequestEvent::EVENT_NAME,
-            new ReindexationRequestEvent([Product::class], [], $productIds)
+            new ReindexationRequestEvent([Product::class], [], $productIds, true, ['main']),
+            ReindexationRequestEvent::EVENT_NAME
         );
     }
 

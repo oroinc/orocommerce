@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Builds QuoteProductType form
@@ -55,12 +55,6 @@ class QuoteProductType extends AbstractType
      */
     protected $productUnitClass;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param UnitLabelFormatterInterface $labelFormatter
-     * @param QuoteProductFormatter $formatter
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         TranslatorInterface $translator,
         UnitLabelFormatterInterface $labelFormatter,
@@ -129,14 +123,7 @@ class QuoteProductType extends AbstractType
         }
 
         foreach ($products as $product) {
-            $units[$product->getId()] = [];
-
-            foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->labelFormatter->format(
-                    $unitCode,
-                    $options['compact_units']
-                );
-            }
+            $units[$product->getId()] = $product->getSellUnitsPrecision();
         }
 
         $view->vars['componentOptions'] = [

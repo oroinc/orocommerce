@@ -4,7 +4,7 @@ OroShippingBundle introduces the shipping methods integration framework for the 
 
 The bundle enables developers to add new Shipping Methods by implementing shipping method interfaces. It also provides UI for management console users to enable Shipping Methods and configure their visibility in storefront orders via Shipping Rules.
 
-For more details, refer to the [Add a New Shipping Method](https://oroinc.com/orocommerce/doc/current/dev-guide/extend-and-customize/shipping-method-add) user guide.
+For more details, refer to the [Add a New Shipping Method](https://doc.oroinc.com/backend/extend-commerce/shipping/) user guide.
 
 ## Table of Contents
 

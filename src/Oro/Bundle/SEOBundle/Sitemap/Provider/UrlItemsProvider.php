@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryWithDoctrineIterableResultIterator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
@@ -19,6 +18,9 @@ use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Provides UrlItems for sitemap generation
+ */
 class UrlItemsProvider implements UrlItemsProviderInterface
 {
     const ENTITY_ALIAS = 'entityAlias';
@@ -83,12 +85,6 @@ class UrlItemsProvider implements UrlItemsProviderInterface
      */
     private $entitySitemapPriority;
 
-    /**
-     * @param CanonicalUrlGenerator $canonicalUrlGenerator
-     * @param ConfigManager $configManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ManagerRegistry $registry
-     */
     public function __construct(
         CanonicalUrlGenerator $canonicalUrlGenerator,
         ConfigManager $configManager,
@@ -199,7 +195,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
      */
     protected function getResultIterator(WebsiteInterface $website, $version)
     {
-        $resultIterator = new BufferedQueryResultIterator(
+        $resultIterator = new BufferedQueryWithDoctrineIterableResultIterator(
             $this->getQueryBuilder($website, $version)
         );
         $resultIterator->setBufferSize(self::BUFFER_SIZE);
@@ -282,7 +278,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     }
 
     /**
-     * @return EntityManagerInterface|ObjectManager
+     * @return EntityManagerInterface
      */
     protected function getEntityManager()
     {
@@ -297,10 +293,10 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     private function dispatchIterationEvent($eventName, WebsiteInterface $website, $version)
     {
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', $eventName, $this->type),
-            new UrlItemsProviderEvent($version, $website)
+            new UrlItemsProviderEvent($version, $website),
+            sprintf('%s.%s', $eventName, $this->type)
         );
-        $this->eventDispatcher->dispatch($eventName, new UrlItemsProviderEvent($version, $website));
+        $this->eventDispatcher->dispatch(new UrlItemsProviderEvent($version, $website), $eventName);
     }
 
     /**
@@ -314,18 +310,15 @@ class UrlItemsProvider implements UrlItemsProviderInterface
         $version
     ) {
         $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type),
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website),
+            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type)
         );
         $this->eventDispatcher->dispatch(
-            RestrictSitemapEntitiesEvent::NAME,
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website),
+            RestrictSitemapEntitiesEvent::NAME
         );
     }
 
-    /**
-     * @param WebsiteInterface $website
-     */
     private function loadConfigs(WebsiteInterface $website)
     {
         $this->isDirectUrlEnabled = $this->canonicalUrlGenerator->isDirectUrlEnabled($website);

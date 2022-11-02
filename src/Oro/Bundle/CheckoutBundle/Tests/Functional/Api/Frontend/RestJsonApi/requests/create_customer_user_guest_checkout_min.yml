@@ -1,0 +1,4 @@
+data:
+    type: customerusers
+    attributes:
+        email: test2341@test.com

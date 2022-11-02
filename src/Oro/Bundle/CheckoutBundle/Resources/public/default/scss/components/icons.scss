@@ -1,36 +1,64 @@
 /* @theme: default; */
 
 .credit-card-icon {
-    $paymentIconUrl: $global-url + '/orofrontend/default/images/payments';
+    $payment-icon-url: $global-url + '/orofrontend/default/images/payments';
 
     display: inline-block;
     vertical-align: middle;
+
+    &_paypal {
+        width: 39px;
+        height: 25px;
+
+        background: url('#{$payment-icon-url}/paypal.png') no-repeat;
+    }
 
     &_mastercard {
         width: 39px;
         height: 25px;
 
-        background: url('#{$paymentIconUrl}/mastercard.png') no-repeat;
+        background: url('#{$payment-icon-url}/mastercard.png') no-repeat;
     }
 
     &_visa {
         width: 41px;
         height: 25px;
 
-        background: url('#{$paymentIconUrl}/visa.png') no-repeat;
+        background: url('#{$payment-icon-url}/visa.png') no-repeat;
     }
 
     &_american_express {
         width: 40px;
         height: 25px;
 
-        background: url('#{$paymentIconUrl}/american_express.png') no-repeat;
+        background: url('#{$payment-icon-url}/american_express.png') no-repeat;
     }
 
     &_discover {
         width: 40px;
         height: 25px;
 
-        background: url('#{$paymentIconUrl}/discover.png') no-repeat;
+        background: url('#{$payment-icon-url}/discover.png') no-repeat;
+    }
+
+    &_jcb {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$payment-icon-url}/jcb.png') no-repeat;
+    }
+
+    &_diners_club {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$payment-icon-url}/diners_club.png') no-repeat;
+    }
+
+    &_china_union_pay {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$payment-icon-url}/china_union_pay.png') no-repeat;
     }
 }

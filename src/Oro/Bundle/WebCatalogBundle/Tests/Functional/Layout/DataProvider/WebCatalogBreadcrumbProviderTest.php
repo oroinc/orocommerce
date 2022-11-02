@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Layout\DataProvider;
 
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -16,11 +15,11 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->client->useHashNavigation(false);
 
@@ -30,49 +29,45 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             ]
         );
 
-        $this->getContainer()->get('oro_website_search.indexer')->reindex();
+        self::getContainer()->get('oro_website_search.indexer')->reindex();
     }
 
     /**
      * @dataProvider getSlugs
-     * @param $reference string
-     * @param $expectedCount int
-     * @param $expectedBreadcrumbs array
      */
-    public function testBreadcrumbs($reference, $expectedCount, $expectedBreadcrumbs)
+    public function testBreadcrumbs(string $reference, int $expectedCount, array $expectedBreadcrumbs): void
     {
         $crawler = $this->client->request('GET', '/'.$reference);
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(
+        self::assertStringContainsString(
             $reference,
             $crawler->filter('title')->html()
         );
 
-        $this->assertContains(
+        self::assertStringContainsString(
             $reference,
             $crawler->filter('h1.category-title')->html()
         );
 
         $breadcrumbs = [];
-        /**
-         * @var $item \DOMElement
-         */
+        /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
-            $this->assertEquals($expectedBreadcrumbs[$key], $item->textContent);
+            self::assertEquals($expectedBreadcrumbs[$key], $item->textContent);
             $breadcrumbs[] = trim($item->textContent);
         }
 
-        $this->assertCount($expectedCount, $breadcrumbs);
+        self::assertCount($expectedCount, $breadcrumbs);
     }
 
-    public function testGetItemsByProducWithBaseUrl()
+    public function testBreadcrumbsWhenInSubfolder(): void
     {
-        //Emulate subfolder request
+        // Emulates subfolder request.
+        $baseUrl = '/custom/base/url/';
         $crawler = $this->client->request(
             'GET',
-            '/custom/base/url/app.php/' . LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
+            $baseUrl . 'app.php/' . LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
             [],
             [],
             [
@@ -83,54 +78,51 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
 
         $breadcrumbUrls = [];
 
-        /** @var $item \DOMElement */
+        /** @var \DOMElement $item */
         foreach ($crawler->filter('.breadcrumbs__item a') as $key => $item) {
             $breadcrumbUrls[] = $item->getAttribute('href');
         }
 
         self::assertCount(3, $breadcrumbUrls);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[0]);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[1]);
-        self::assertContains('/custom/base/url/app.php/', $breadcrumbUrls[2]);
+        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[0]);
+        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[1]);
+        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[2]);
     }
 
-    /**
-     * @return array
-     */
-    public function getSlugs()
+    public function getSlugs(): array
     {
         return [
             [
                 LoadContentNodesData::CATALOG_1_ROOT,
                 1,
                 [
-                    'All Products'
+                    LoadContentNodesData::CATALOG_1_ROOT,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
                 2,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
                 3,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL1,
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2,
                 3,
                 [
-                    'All Products',
-                    LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL2,
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
+                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2
                 ]
             ],
         ];

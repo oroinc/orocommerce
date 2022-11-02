@@ -10,38 +10,32 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const ALLOWED_CC_TYPES = ['visa', 'mastercard'];
+    private const ALLOWED_CC_TYPES = ['visa', 'mastercard'];
 
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
+    private $formFactory;
 
-    /** @var PayPalCreditCardPaymentMethodView */
-    protected $methodView;
-
-    /** @var  PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTransactionProvider;
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransactionProvider;
 
     /** @var PayPalCreditCardConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentConfig;
+    private $paymentConfig;
 
-    protected function setUp()
+    /** @var PayPalCreditCardPaymentMethodView */
+    private $methodView;
+
+    protected function setUp(): void
     {
-        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentTransactionProvider = $this
-            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentConfig =
-            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface');
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->paymentConfig = $this->createMock(PayPalCreditCardConfigInterface::class);
 
         $this->methodView = new PayPalCreditCardPaymentMethodView(
             $this->formFactory,
@@ -52,9 +46,10 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOptionsWithoutZeroAmount()
     {
-        $this->paymentTransactionProvider->expects($this->never())->method('getActiveValidatePaymentTransaction');
+        $this->paymentTransactionProvider->expects($this->never())
+            ->method('getActiveValidatePaymentTransaction');
 
-        list($formView, $context) = $this->prepareMocks(false, true);
+        [$formView, $context] = $this->prepareMocks(false, true);
 
         $this->assertEquals(
             [
@@ -73,7 +68,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn(null);
 
-        list($formView, $context) = $this->prepareMocks(true, true);
+        [$formView, $context] = $this->prepareMocks(true, true);
 
         $this->assertEquals(
             [
@@ -95,7 +90,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        list($formView, $context) = $this->prepareMocks(true, true);
+        [$formView, $context] = $this->prepareMocks(true, true);
 
         $this->assertEquals(
             [
@@ -122,7 +117,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        list($formView, $context) = $this->prepareMocks(true, true);
+        [$formView, $context] = $this->prepareMocks(true, true);
 
         $this->assertEquals(
             [
@@ -148,7 +143,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        list($formView, $context) = $this->prepareMocks(true, false);
+        [$formView, $context] = $this->prepareMocks(true, false);
 
         $this->assertEquals(
             [
@@ -180,17 +175,14 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($allowedCards, $this->methodView->getAllowedCreditCards());
     }
 
-    /**
-     * @param $zeroAmountAuthEnabled
-     * @param $requireCvvEntryEnabled
-     * @return array|\PHPUnit\Framework\MockObject\MockObject[]
-     */
-    protected function prepareMocks($zeroAmountAuthEnabled, $requireCvvEntryEnabled)
+    private function prepareMocks(bool $zeroAmountAuthEnabled, bool $requireCvvEntryEnabled): array
     {
-        $formView = $this->createMock('Symfony\Component\Form\FormView');
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock(FormView::class);
+        $form = $this->createMock(FormInterface::class);
 
-        $form->expects($this->once())->method('createView')->willReturn($formView);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
 
         $formOptions = [
             'zeroAmountAuthorizationEnabled' => $zeroAmountAuthEnabled,
@@ -214,12 +206,10 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
             ->method('getAllowedCreditCards')
             ->willReturn(self::ALLOWED_CC_TYPES);
 
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
 
-        return array($formView, $context);
+        return [$formView, $context];
     }
-
 
     public function testGetPaymentMethodIdentifier()
     {

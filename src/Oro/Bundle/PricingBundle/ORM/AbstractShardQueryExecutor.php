@@ -4,17 +4,16 @@ namespace Oro\Bundle\PricingBundle\ORM;
 
 use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Abstract implementation of ShardQueryExecutorInterface
+ */
 abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
 {
-    /**
-     * @var array
-     */
-    protected $tablesColumns;
-
     /**
      * @var NativeQueryExecutorHelper
      */
@@ -26,13 +25,26 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
     protected $shardManager;
 
     /**
-     * @param NativeQueryExecutorHelper $helper
-     * @param ShardManager $shardManager
+     * Unique field list by class. Used to construct ON DUPLICATE KEY UPDATE to prevent locking
+     *
+     * @var array
      */
+    protected $uniqueFields = [];
+
+    /**
+     * @var int[]|array
+     */
+    protected $version = [];
+
     public function __construct(NativeQueryExecutorHelper $helper, ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
         $this->helper = $helper;
+    }
+
+    public function registerUniqueFields(string $className, array $fields)
+    {
+        $this->uniqueFields[$className] = $fields;
     }
 
     /**
@@ -41,8 +53,39 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
     abstract public function execute($className, array $fields, QueryBuilder $selectQueryBuilder);
 
     /**
-     * @param              $className
-     * @param array        $fields
+     * @param string $className
+     * @param string $sql
+     * @return string
+     */
+    protected function applyOnDuplicateKeyUpdate(string $className, string $sql)
+    {
+        if (empty($this->uniqueFields[$className])) {
+            return $sql;
+        }
+
+        $uniqueFields = $this->uniqueFields[$className]['search_fields'];
+        $updateField = $this->uniqueFields[$className]['update_field'];
+        $driver = $this->shardManager->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
+        switch ($driver) {
+            case DatabasePlatformInterface::DATABASE_MYSQL:
+                $sql .= sprintf(' ON DUPLICATE KEY UPDATE %1$s=VALUES(%1$s)', $updateField);
+                break;
+            case DatabasePlatformInterface::DATABASE_POSTGRESQL:
+                $sql .= sprintf(
+                    ' ON CONFLICT (' . implode(',', $uniqueFields) . ') DO UPDATE SET %1$s=EXCLUDED.%1$s',
+                    $updateField
+                );
+                break;
+            default:
+                return $sql;
+        }
+
+        return $sql;
+    }
+
+    /**
+     * @param $className
+     * @param array $fields
      * @param QueryBuilder $selectQueryBuilder
      *
      * @return string
@@ -78,33 +121,5 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
         }
 
         return $this->shardManager->getEnabledShardName($className, ['priceList' => (int)$priceListId]);
-    }
-
-    /**
-     * @param string $className
-     * @param array $fields
-     * @return array
-     */
-    protected function getColumns($className, array $fields)
-    {
-        $result = [];
-
-        foreach ($fields as $field) {
-            if (!isset($this->tablesColumns[$className][$field])) {
-                $classMetadata = $this->helper->getClassMetadata($className);
-                if (!$classMetadata->hasField($field) && !$classMetadata->hasAssociation($field)) {
-                    throw new \InvalidArgumentException(sprintf('Field %s is not known for %s', $field, $className));
-                }
-                if ($classMetadata->hasAssociation($field)) {
-                    $mapping = $classMetadata->getAssociationMapping($field);
-                    $this->tablesColumns[$className][$field] = array_shift($mapping['joinColumnFieldNames']);
-                } else {
-                    $this->tablesColumns[$className][$field] = $classMetadata->getColumnName($field);
-                }
-            }
-            $result[] = $this->tablesColumns[$className][$field];
-        }
-
-        return $result;
     }
 }

@@ -16,9 +16,12 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
+/**
+ * Abstract driver for the partial update of the customer visibility in the website search index
+ */
 abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpdateDriverInterface
 {
-    const PRODUCT_BATCH_SIZE = 100000;
+    const PRODUCT_BATCH_SIZE = 1000;
 
     /**
      * @var PlaceholderProvider
@@ -35,11 +38,6 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
      */
     protected $doctrineHelper;
 
-    /**
-     * @param PlaceholderProvider $placeholderProvider
-     * @param ProductVisibilityProvider $productVisibilityProvider
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(
         PlaceholderProvider $placeholderProvider,
         ProductVisibilityProvider $productVisibilityProvider,
@@ -58,7 +56,7 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
         $this->deleteCustomerVisibility($customer);
 
         $customerVisibilityFieldName = $this->getCustomerVisibilityFieldName($customer);
-        foreach ($this->getAllWebsites() as $website) {
+        foreach ($this->getAllWebsites($customer) as $website) {
             $iterator = $this->getCustomerVisibilityIterator($customer, $website);
 
             $productAlias = $this->getProductAliasByWebsite($website);
@@ -103,13 +101,16 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
     );
 
     /**
+     * @param Customer $customer
+     *
      * @return Website[]
      */
-    protected function getAllWebsites()
+    protected function getAllWebsites(Customer $customer)
     {
         /** @var WebsiteRepository $websiteRepository */
         $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-        return $websiteRepository->getAllWebsites();
+
+        return $websiteRepository->getAllWebsites($customer->getOrganization());
     }
 
     /**

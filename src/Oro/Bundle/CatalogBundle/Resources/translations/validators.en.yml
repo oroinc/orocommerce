@@ -1,0 +1,5 @@
+oro:
+    catalog:
+        category:
+            title:
+                blank: 'Category Title should not be blank.'

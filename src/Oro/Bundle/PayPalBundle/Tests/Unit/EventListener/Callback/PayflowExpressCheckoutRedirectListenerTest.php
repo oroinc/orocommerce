@@ -8,7 +8,6 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -29,7 +28,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
     /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $messageProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
@@ -80,7 +79,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onReturn($event);
 
-        $this->assertResponses(new RedirectResponse('failUrlForExpressCheckout'), $event->getResponse());
+        $this->assertEquals('failUrlForExpressCheckout', $event->getResponse()->getTargetUrl());
     }
 
     public function testOnErrorWithWrongTransaction()
@@ -138,7 +137,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
 
         $this->listener->onReturn($event);
 
-        $this->assertResponses(new RedirectResponse('failUrlForExpressCheckout'), $event->getResponse());
+        $this->assertEquals('failUrlForExpressCheckout', $event->getResponse()->getTargetUrl());
     }
 
     public function testOnErrorWithoutTransaction()
@@ -150,14 +149,49 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
         $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
 
-    /**
-     * @param Response $expectedResponse
-     * @param Response $actualResponse
-     */
-    private function assertResponses(Response $expectedResponse, Response $actualResponse)
+    public function testOnReturnError10486()
     {
-        // Hack response datetime because of requests might have different datetime
-        $expectedResponse->setDate($actualResponse->getDate());
-        $this->assertEquals($expectedResponse, $actualResponse);
+        $this->paymentTransaction
+            ->setSuccessful(false)
+            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout'])
+            ->setResponse([
+                'RESPMSG' =>
+                    'Declined: 10486-This transaction couldn\'t be completed. Please redirect your customer to PayPal.'
+            ])
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+
+        $event = new CallbackErrorEvent();
+        $event->setPaymentTransaction($this->paymentTransaction);
+
+        $message = 'oro.payment.result.error';
+        $this->messageProvider->expects($this->once())->method('getErrorMessage')->willReturn($message);
+
+        /** @var FlashBagInterface|\PHPUnit\Framework\MockObject\MockObject $flashBag */
+        $flashBag = $this->createMock(FlashBagInterface::class);
+
+        $flashBag->expects($this->once())
+            ->method('has')
+            ->with('error')
+            ->willReturn(false);
+
+        $flashBag->expects($this->exactly(2))
+            ->method('add')
+            ->withConsecutive(
+                ['warning', 'oro.paypal.result.funding_decline_error'],
+                ['error', $message]
+            );
+
+        $this->session->expects($this->any())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
+
+        $this->listener->onReturn($event);
+
+        $this->assertEquals('failUrlForExpressCheckout', $event->getResponse()->getTargetUrl());
     }
 }

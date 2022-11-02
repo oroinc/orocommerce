@@ -22,7 +22,6 @@ Feature: Limit product filters and sorters in product catalog
     When I fill form with:
       | Filterable | Yes |
       | Sortable   | Yes |
-      | Enabled    | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -35,7 +34,6 @@ Feature: Limit product filters and sorters in product catalog
     When I fill form with:
       | Filterable | Yes |
       | Sortable   | Yes |
-      | Enabled    | Yes |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -57,9 +55,9 @@ Feature: Limit product filters and sorters in product catalog
 
   Scenario: Check that feature hides sorters and filters on the search page
     Given I proceed as the Buyer
-    Then I signed in as AmandaRCole@example.org on the store frontend
-    And type "SKU1" in "search"
-    And click "Search Button"
+    And I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Search Button"
+    When I filter "Any Text" as contains "SKU1"
     Then I check that filter block visible in frontend product grid
     Then I should see "AttrWithFamily" in the "ProductFrontendGridFiltersBlock" element
     Then I should see "AttrWithFamily" in the "Frontend Product Grid Sorter" element
@@ -79,8 +77,8 @@ Feature: Limit product filters and sorters in product catalog
     Given I proceed as the Admin
     Given I go to System / Configuration
     And I follow "Commerce/Catalog/Filters and Sorters" on configuration sidebar
-    And uncheck "Use default" for "Hide unrelated product filters and sorting options" field
-    And I uncheck "Hide unrelated product filters and sorting options"
+    And uncheck "Use default" for "Hide Unrelated Product Filters And Sorting Options" field
+    And I uncheck "Hide Unrelated Product Filters And Sorting Options"
     And I click "Save settings"
     Given I proceed as the Buyer
     Then I reload the page

@@ -2,28 +2,31 @@
 
 namespace Oro\Bundle\TaxBundle\Controller;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ProductTaxCodeController extends Controller
+/**
+ * CRUD for product tax codes.
+ */
+class ProductTaxCodeController extends AbstractController
 {
     /**
      * @Route("/", name="oro_tax_product_tax_code_index")
      * @Template
      * @AclAncestor("oro_tax_product_tax_code_view")
-     *
-     * @return array
      */
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_tax.entity.product_tax_code.class')
+            'entity_class' => ProductTaxCode::class
         ];
     }
 
@@ -36,11 +39,8 @@ class ProductTaxCodeController extends Controller
      *      class="OroTaxBundle:ProductTaxCode",
      *      permission="VIEW"
      * )
-     *
-     * @param ProductTaxCode $productTaxCode
-     * @return array
      */
-    public function viewAction(ProductTaxCode $productTaxCode)
+    public function viewAction(ProductTaxCode $productTaxCode): array
     {
         return [
             'entity' => $productTaxCode
@@ -49,17 +49,15 @@ class ProductTaxCodeController extends Controller
 
     /**
      * @Route("/create", name="oro_tax_product_tax_code_create")
-     * @Template("OroTaxBundle:ProductTaxCode:update.html.twig")
+     * @Template("@OroTax/ProductTaxCode/update.html.twig")
      * @Acl(
      *      id="oro_tax_product_tax_code_create",
      *      type="entity",
      *      class="OroTaxBundle:ProductTaxCode",
      *      permission="CREATE"
      * )
-     *
-     * @return array
      */
-    public function createAction()
+    public function createAction(): array|RedirectResponse
     {
         return $this->update(new ProductTaxCode());
     }
@@ -73,37 +71,32 @@ class ProductTaxCodeController extends Controller
      *      class="OroTaxBundle:ProductTaxCode",
      *      permission="EDIT"
      * )
-     *
-     * @param ProductTaxCode $productTaxCode
-     * @return array
      */
-    public function updateAction(ProductTaxCode $productTaxCode)
+    public function updateAction(ProductTaxCode $productTaxCode): array|RedirectResponse
     {
         return $this->update($productTaxCode);
     }
 
-    /**
-     * @param ProductTaxCode $productTaxCode
-     * @return array|RedirectResponse
-     */
-    protected function update(ProductTaxCode $productTaxCode)
+    protected function update(ProductTaxCode $productTaxCode): array|RedirectResponse
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get(UpdateHandlerFacade::class)->update(
             $productTaxCode,
             $this->createForm(ProductTaxCodeType::class, $productTaxCode),
-            function (ProductTaxCode $productTaxCode) {
-                return [
-                    'route' => 'oro_tax_product_tax_code_update',
-                    'parameters' => ['id' => $productTaxCode->getId()]
-                ];
-            },
-            function (ProductTaxCode $productTaxCode) {
-                return [
-                    'route' => 'oro_tax_product_tax_code_view',
-                    'parameters' => ['id' => $productTaxCode->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.tax.controller.product_tax_code.saved.message')
+            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.product_tax_code.saved.message')
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class,
+                UpdateHandlerFacade::class
+            ]
         );
     }
 }

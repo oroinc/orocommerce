@@ -34,7 +34,7 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $granularizer;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->regularIndexerMock = $this->getMockBuilder(IndexerInterface::class)->getMock();
         $this->asyncIndexerMock   = $this->getMockBuilder(IndexerInterface::class)->getMock();
@@ -73,10 +73,6 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $classes
-     * @param array $websiteIds
-     * @param array $productIds
      */
     public function testProcess(array $classes, array $websiteIds, array $productIds)
     {
@@ -134,10 +130,6 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processDataProvider
-     *
-     * @param array $classes
-     * @param array $websiteIds
-     * @param array $productIds
      */
     public function testProcessAsync(array $classes, array $websiteIds, array $productIds)
     {

@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\TaxBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
+/**
+ * Adds taxCode field to the customers grid.
+ */
 class CustomerTaxCodeGridListener extends TaxCodeGridListener
 {
-    /** {@inheritdoc} */
-    protected function addColumn(DatagridConfiguration $config)
+    /**
+     * {@inheritDoc}
+     */
+    protected function addColumn(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
             sprintf('[columns][%s]', $this->getDataName()),
@@ -16,26 +20,31 @@ class CustomerTaxCodeGridListener extends TaxCodeGridListener
         );
     }
 
-    /** {@inheritdoc} */
-    protected function getDataName()
+    protected function getDataName(): string
     {
         return 'customerGroupTaxCode';
     }
 
-    /** {@inheritdoc} */
-    protected function getColumnLabel()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getColumnLabel(): string
     {
         return 'oro.tax.taxcode.customergroup.label';
     }
 
-    /** {@inheritdoc} */
-    protected function getJoinAlias()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getJoinAlias(): string
     {
         return 'customerGroupTaxCodes';
     }
 
-    /** {@inheritdoc} */
-    protected function getAlias(DatagridConfiguration $configuration)
+    /**
+     * {@inheritDoc}
+     */
+    protected function getAlias(DatagridConfiguration $configuration): string
     {
         return 'customer_group';
     }

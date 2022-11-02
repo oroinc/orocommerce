@@ -3,16 +3,21 @@
 namespace Oro\Bundle\OrderBundle\Twig;
 
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class OrderShippingExtension extends \Twig_Extension
+/**
+ * Provides a Twig function to display the name of a shipping method:
+ *   - oro_order_shipping_method_label
+ */
+class OrderShippingExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -23,19 +28,20 @@ class OrderShippingExtension extends \Twig_Extension
      */
     protected function getLabelTranslator()
     {
-        return $this->container->get(
-            'oro_shipping.translator.shipping_method_label',
-            ContainerInterface::NULL_ON_INVALID_REFERENCE
-        );
+        try {
+            return $this->container->get('oro_shipping.translator.shipping_method_label');
+        } catch (ServiceNotFoundException $e) {
+            return null;
+        }
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'oro_order_shipping_method_label',
                 [$this, 'getShippingMethodLabel']
             ),
@@ -59,5 +65,15 @@ class OrderShippingExtension extends \Twig_Extension
             $shippingMethodName,
             $shippingTypeName
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_shipping.translator.shipping_method_label' => ShippingMethodLabelTranslator::class,
+        ];
     }
 }

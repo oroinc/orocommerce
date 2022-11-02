@@ -1,43 +1,40 @@
 /* @theme: admin.oro; */
 
 .tax-address-row {
-    margin-bottom: 3px !important;
-    padding: 3px !important;
-    width: 300px;
-
-    .option {
-        .input-widget-select {
-            margin: 0 !important;
-            width: 294px !important;
-        }
-    }
-
-    .region {
-        input {
-            margin-bottom: 2px !important;
-            width: 280px !important;
-        }
-    }
+    width: $field-width;
 
     .removeRow {
-        float: right !important;
-        margin: 0 !important;
+        position: absolute;
+        top: 0;
+        right: 0;
     }
 
     .tax-address {
-        margin: 2px 0 !important;
+        margin-bottom: $content-padding-small;
+
+        &.controls {
+            float: none;
+        }
+
+        .select2-container,
+        input[type='text'] {
+            width: 262px;
+        }
+
+        select {
+            width: 248px;
+        }
     }
 
-    .row-oro {
-        margin: 0 !important;
+    &:last-of-type {
+        .row-oro {
+            margin-bottom: 0;
+        }
     }
-}
-
-.tax-address {
-    margin: 0 !important;
 }
 
 .tax-result-grid {
+    /* stylelint-disable declaration-no-important */
     th {
         border-bottom-left-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
@@ -46,6 +43,8 @@
     .other-scroll-container & {
         border: 1px solid $general-border-color !important;
     }
+
+    /* stylelint-enable declaration-no-important */
 }
 
 .order-line-item-unitPriceIncludingTax,
@@ -64,11 +63,11 @@
 }
 
 .order-line-items-content fieldset {
-    min-width: inherit !important;
+    min-width: inherit;
 
     .order-line-items-table {
-        overflow-x: scroll !important;
-        display: block !important;
+        overflow-x: auto;
+        display: block;
     }
 }
 
@@ -80,28 +79,39 @@
     .line-item-taxes-items {
         .tax-result-grid {
             min-width: 325px;
+        }
 
-            td:first-child {
-                white-space: nowrap;
-                font-weight: bold;
-                font-size: 11px;
-            }
+        td:first-child {
+            white-space: nowrap;
         }
     }
 }
 
-.tax-zip-code-list-items {
-    .tax-zip-code-list-item {
-        input[type="text"] {
-            width: 92%;
-        }
+.tax-zip-code-collection {
+    .tax-zip-input {
+        display: inline-block;
+        vertical-align: middle;
     }
 
-    .tax-zip-code-list-remove {
-        display: flex;
+    .tax-zip-code-divider {
+        width: 24px;
+        text-align: center;
+    }
 
-        .btn {
-            margin: 0 auto;
+    .add-list-item {
+        margin-top: $content-padding-small;
+    }
+
+    .tax-zip-zip-range {
+        padding-right: $table-td-first-child-inner-offset;
+    }
+
+    .tax-zip-action {
+        width: $btn-icon-width + $table-tbody-td-offset;
+        padding-left: 0;
+
+        &:last-child {
+            padding-right: 0;
         }
     }
 }

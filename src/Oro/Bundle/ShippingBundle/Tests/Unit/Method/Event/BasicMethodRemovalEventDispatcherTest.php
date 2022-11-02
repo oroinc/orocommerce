@@ -18,7 +18,7 @@ class BasicMethodRemovalEventDispatcherTest extends \PHPUnit\Framework\TestCase
      */
     private $dispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -30,7 +30,7 @@ class BasicMethodRemovalEventDispatcherTest extends \PHPUnit\Framework\TestCase
         $methodId = 'method';
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(MethodRemovalEvent::NAME, new MethodRemovalEvent($methodId));
+            ->with(new MethodRemovalEvent($methodId), MethodRemovalEvent::NAME);
 
         $this->dispatcher->dispatch($methodId);
     }

@@ -10,7 +10,7 @@ class CategoryControllerTest extends WebTestCase
 {
     use FallbackTestTrait;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
@@ -22,12 +22,17 @@ class CategoryControllerTest extends WebTestCase
         $categoryId = $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId();
         $crawler = $this->updateCategory($categoryId, '123', '321', null, null);
         $form = $crawler->selectButton('Save')->form();
+
+        static::assertStringNotContainsString(
+            'The CSRF token is invalid. Please try to resubmit the form.',
+            $crawler->html()
+        );
         $this->assertEquals(
-            '123',
+            '123.00',
             $form['oro_catalog_category[minimumQuantityToOrder][scalarValue]']->getValue()
         );
         $this->assertEquals(
-            '321',
+            '321.00',
             $form['oro_catalog_category[maximumQuantityToOrder][scalarValue]']->getValue()
         );
     }
@@ -38,6 +43,10 @@ class CategoryControllerTest extends WebTestCase
         $crawler = $this->updateCategory($categoryId, null, null, 'systemConfig', 'systemConfig');
         $form = $crawler->selectButton('Save')->form();
 
+        static::assertStringNotContainsString(
+            'The CSRF token is invalid. Please try to resubmit the form.',
+            $crawler->html()
+        );
         $this->assertEquals(
             'systemConfig',
             $form['oro_catalog_category[minimumQuantityToOrder][fallback]']->getValue()
@@ -62,11 +71,9 @@ class CategoryControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
         $this->updateFallbackField($form, $minScalar, $minFallback, 'oro_catalog_category', 'minimumQuantityToOrder');
         $this->updateFallbackField($form, $maxScalar, $maxFallback, 'oro_catalog_category', 'maximumQuantityToOrder');
-        $form['input_action'] = 'save_and_stay';
+        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
         $values = $form->getPhpValues();
-        $values['oro_catalog_category']['_token'] = $this->getContainer()
-            ->get('security.csrf.token_manager')
-            ->getToken('category');
+        $values['oro_catalog_category']['_token'] = $this->getCsrfToken('category')->getValue();
 
         $this->client->followRedirects();
 

@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Triggered by import/export product data converter.
+ */
 class ProductDataConverterEvent extends Event
 {
     const BACKEND_HEADER = 'oro_product.data_converter.backend_header';
@@ -13,9 +17,9 @@ class ProductDataConverterEvent extends Event
     /** @var array */
     protected $data = [];
 
-    /**
-     * @param array $data
-     */
+    /** @var ContextInterface */
+    protected $context;
+
     public function __construct(array $data = [])
     {
         $this->data = $data;
@@ -29,11 +33,18 @@ class ProductDataConverterEvent extends Event
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    public function getContext(): ?ContextInterface
+    {
+        return $this->context;
+    }
+
+    public function setContext(?ContextInterface $context): void
+    {
+        $this->context = $context;
     }
 }

@@ -23,10 +23,6 @@ class ProductPriceType extends AbstractType
     /** @var string */
     protected $dataClass;
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -54,9 +50,7 @@ class ProductPriceType extends AbstractType
                 'quantity',
                 QuantityType::class,
                 [
-                    'label' => 'oro.pricing.quantity.label',
-                    'product' => $options['product'],
-                    'product_unit_field' => 'unit',
+                    'label' => 'oro.pricing.quantity.label'
                 ]
             );
 
@@ -76,9 +70,6 @@ class ProductPriceType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmit(FormEvent $event)
     {
         $submittedData = $event->getData();
@@ -102,7 +93,6 @@ class ProductPriceType extends AbstractType
     /**
      * Adds Price lists currencies to select even if there are no such system currencies
      * Fetches full currency list only for add new collection item form type template
-     * @param FormEvent $event
      */
     public function onPreSetData(FormEvent $event)
     {
@@ -128,9 +118,6 @@ class ProductPriceType extends AbstractType
         );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(

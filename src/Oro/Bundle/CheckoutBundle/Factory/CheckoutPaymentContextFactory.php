@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
@@ -21,6 +22,11 @@ class CheckoutPaymentContextFactory
      * @var CheckoutLineItemsManager
      */
     protected $checkoutLineItemsManager;
+
+    /**
+     * @var SubtotalProviderInterface
+     */
+    protected $checkoutSubtotalProvider;
 
     /**
      * @var TotalProcessorProvider
@@ -42,21 +48,16 @@ class CheckoutPaymentContextFactory
      */
     private $shippingOriginProvider;
 
-    /**
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     * @param TotalProcessorProvider $totalProcessor
-     * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
-     * @param ShippingOriginProvider $shippingOriginProvider
-     * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
-     */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
+        SubtotalProviderInterface $checkoutSubtotalProvider,
         TotalProcessorProvider $totalProcessor,
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
         ShippingOriginProvider $shippingOriginProvider,
         PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->checkoutSubtotalProvider = $checkoutSubtotalProvider;
         $this->totalProcessor = $totalProcessor;
         $this->paymentLineItemConverter = $paymentLineItemConverter;
         $this->shippingOriginProvider = $shippingOriginProvider;
@@ -82,14 +83,14 @@ class CheckoutPaymentContextFactory
             (string)$checkout->getId()
         );
 
-        $total = $this->totalProcessor->getTotal($checkout);
-        $subtotal = Price::create(
-            $total->getAmount(),
-            $total->getCurrency()
+        $subtotal = $this->checkoutSubtotalProvider->getSubtotal($checkout);
+        $subtotalPrice = Price::create(
+            $subtotal->getAmount(),
+            $subtotal->getCurrency()
         );
 
         $paymentContextBuilder
-            ->setSubTotal($subtotal)
+            ->setSubTotal($subtotalPrice)
             ->setCurrency($checkout->getCurrency());
 
         if (null !== $checkout->getWebsite()) {
@@ -109,16 +110,18 @@ class CheckoutPaymentContextFactory
 
         if (null !== $checkout->getCustomer()) {
             $paymentContextBuilder->setCustomer($checkout->getCustomer());
+        }
+
+        if (null !== $checkout->getCustomerUser()) {
             $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
+
+        $total = $this->totalProcessor->getTotal($checkout);
+        $paymentContextBuilder->setTotal($total->getAmount());
 
         return $paymentContextBuilder->getResult();
     }
 
-    /**
-     * @param PaymentContextBuilderInterface $paymentContextBuilder
-     * @param Checkout $checkout
-     */
     private function addAddresses(
         PaymentContextBuilderInterface $paymentContextBuilder,
         Checkout $checkout

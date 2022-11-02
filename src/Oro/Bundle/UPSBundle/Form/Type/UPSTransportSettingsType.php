@@ -26,6 +26,9 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
+/**
+ * UPS integration settings form type.
+ */
 class UPSTransportSettingsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_ups_transport_settings';
@@ -45,10 +48,6 @@ class UPSTransportSettingsType extends AbstractType
      */
     protected $shippingOriginProvider;
 
-    /**
-     * @param TransportInterface        $transport
-     * @param ShippingOriginProvider    $shippingOriginProvider
-     */
     public function __construct(TransportInterface $transport, ShippingOriginProvider $shippingOriginProvider)
     {
         $this->transport = $transport;
@@ -86,7 +85,8 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_user.label',
-                'required' => true
+                'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ]
         );
         $builder->add(
@@ -102,7 +102,8 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_key.label',
-                'required' => true
+                'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ]
         );
         $builder->add(
@@ -166,7 +167,6 @@ class UPSTransportSettingsType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
      * @throws NotManageableEntityException
      */
     public function onPreSetData(FormEvent $event)
@@ -176,9 +176,6 @@ class UPSTransportSettingsType extends AbstractType
         $this->setApplicableShippingServicesChoicesByCountry($event);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     protected function setDefaultCountry(FormEvent $event)
     {
         /** @var UPSTransport $transport */
@@ -200,9 +197,6 @@ class UPSTransportSettingsType extends AbstractType
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     protected function setApplicableShippingServicesChoicesByCountry(FormEvent $event)
     {
         /** @var UPSTransport $transport */

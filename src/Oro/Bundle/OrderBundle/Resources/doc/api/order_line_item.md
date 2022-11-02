@@ -78,19 +78,13 @@ Example:
   "data": {
     "type": "orderlineitems",
     "id": "1",
-    "attributes": {    
+    "attributes": {
       "quantity": 19,     
       "value": 23.55,      
       "priceType": 10,
       "shipBy": "2016-04-30"
     },
     "relationships": {
-      "order": {
-        "data": {
-          "type": "orders",
-          "id": "1"
-        }
-      },
       "product": {
         "data": {
           "type": "products",
@@ -123,7 +117,7 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### productUnit
 
@@ -131,7 +125,7 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 ### productSku
 
@@ -139,15 +133,13 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### quantity
 
@@ -155,15 +147,13 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
-
-*This field is **required** and must remain defined.*
+**This field must not be empty, if it is passed.**
 
 ### value
 
@@ -171,31 +161,35 @@ Delete a collection of line item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
+**This field must not be empty, if it is passed.**
 
-*This field is **required** and must remain defined.*
- 
 ### currency
 
 #### create
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
 {@inheritdoc}
 
-**Please note:**
+**This field must not be empty, if it is passed.**
 
-*This field is **required** and must remain defined.*
+### productUnitCode
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
 
 ## SUBRESOURCES
 
@@ -208,23 +202,6 @@ Retrieve the order record a specific line item record is assigned to.
 #### get_relationship
 
 Retrieve the ID of the order record which a specific line item record is assigned to.
-
-#### update_relationship
-
-Replace order a specific line item record is assigned to.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "orders",
-    "id": "1"
-  }
-}
-```
-{@/request}
 
 ### parentProduct
 
@@ -302,33 +279,6 @@ Example:
   "data": {
     "type": "productunits",
     "id": "item"
-  }
-}
-```
-{@/request}
-
-### warehouse
-
-#### get_subresource
-
-Retrieve the warehouse record a specific line item record is assigned to.
-
-#### get_relationship
-
-Retrieve the ID of the warehouse record which a specific line item record is assigned to.
-
-#### update_relationship
-
-Replace warehouse a specific line item record is assigned to.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "warehouses",
-    "id": "1"
   }
 }
 ```

@@ -31,12 +31,6 @@ class FedexRateServiceSoapClient implements FedexRateServiceBySettingsClientInte
      */
     private $soapTestSettings;
 
-    /**
-     * @param SoapClientInterface                      $soapClient
-     * @param FedexRateServiceResponseFactoryInterface $responseFactory
-     * @param SoapClientSettingsInterface              $soapSettings
-     * @param SoapClientSettingsInterface              $soapTestSettings
-     */
     public function __construct(
         SoapClientInterface $soapClient,
         FedexRateServiceResponseFactoryInterface $responseFactory,
@@ -68,11 +62,6 @@ class FedexRateServiceSoapClient implements FedexRateServiceBySettingsClientInte
         }
     }
 
-    /**
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return SoapClientSettingsInterface
-     */
     private function getSoapSettings(FedexIntegrationSettings $settings): SoapClientSettingsInterface
     {
         if ($settings->isFedexTestMode()) {

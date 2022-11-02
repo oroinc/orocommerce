@@ -1,5 +1,5 @@
 {% macro renderShippingMethodsConfigs(methodConfigs, currency) %}
-    {%- spaceless -%}
+    {%- apply spaceless -%}
         <ol>
             {%- for methodConfig in methodConfigs -%}
                 {%- set typeConfigData = [] -%}
@@ -21,11 +21,11 @@
                 } -%}
             {%- endfor -%}
         </ol>
-    {%- endspaceless -%}
+    {%- endapply -%}
 {% endmacro %}
 
 {% macro renderShippingMethodDisabledFlag(identifier) %}
     {% if oro_shipping_method_enabled(identifier) == false %}
-        <span class="label">Disabled</span>
+        <span class="label">{{ 'oro.shipping.shippingmethodconfig.disabled'|trans }}</span>
     {% endif %}
 {% endmacro %}

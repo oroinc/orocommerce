@@ -12,14 +12,18 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Component\Math\BigDecimal;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for line items with prices. SUM(ROUND(price*qty))
+ */
 class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
     SubtotalCacheAwareInterface
 {
     const TYPE = 'subtotal';
-    const NAME = 'oro.pricing.subtotals.subtotal';
+    const LABEL = 'oro.pricing.subtotals.subtotal.label';
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -27,11 +31,6 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /**
-     * @param TranslatorInterface $translator
-     * @param RoundingServiceInterface $rounding
-     * @param SubtotalProviderConstructorArguments $arguments
-     */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
@@ -40,14 +39,6 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         parent::__construct($arguments);
         $this->translator = $translator;
         $this->rounding = $rounding;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**
@@ -90,7 +81,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     protected function createSubtotal($entity, $amount)
     {
         $subtotal = new Subtotal();
-        $subtotal->setLabel($this->translator->trans(self::NAME . '.label'));
+        $subtotal->setLabel($this->translator->trans(self::LABEL));
         $subtotal->setType(self::TYPE);
         $subtotal->setVisible($amount > 0);
         $subtotal->setAmount($amount);
@@ -105,15 +96,16 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
      */
     protected function getRecalculatedSubtotalAmount($entity)
     {
-        $subtotalAmount = 0.0;
+        $subtotalAmount = BigDecimal::of(0);
         $baseCurrency   = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
-                $subtotalAmount += $this->getRowTotal($lineItem, $baseCurrency);
+                $rowTotal = $this->getRowTotal($lineItem, $baseCurrency);
+                $subtotalAmount = $subtotalAmount->plus($rowTotal);
             }
         }
 
-        return $this->rounding->round($subtotalAmount);
+        return $subtotalAmount->toFloat();
     }
 
     /**
@@ -141,6 +133,6 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
             $rowTotal *= $this->getExchangeRate($rowCurrency, $baseCurrency);
         }
 
-        return $rowTotal;
+        return $this->rounding->round($rowTotal);
     }
 }

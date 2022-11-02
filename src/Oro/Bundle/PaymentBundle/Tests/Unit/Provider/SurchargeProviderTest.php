@@ -15,7 +15,7 @@ class SurchargeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SurchargeProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->provider = new SurchargeProvider($this->dispatcher);
@@ -25,7 +25,7 @@ class SurchargeProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(CollectSurchargeEvent::NAME, $this->isInstanceOf(CollectSurchargeEvent::class));
+            ->with($this->isInstanceOf(CollectSurchargeEvent::class), CollectSurchargeEvent::NAME);
 
         $entity = new \stdClass();
         $surcharge = $this->provider->getSurcharges($entity);

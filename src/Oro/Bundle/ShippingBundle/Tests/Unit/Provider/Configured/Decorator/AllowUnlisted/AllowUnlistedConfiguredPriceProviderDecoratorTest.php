@@ -30,7 +30,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewo
      */
     private $testedProvider;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodViewFactory = $this->createMock(ShippingMethodViewFactory::class);
 

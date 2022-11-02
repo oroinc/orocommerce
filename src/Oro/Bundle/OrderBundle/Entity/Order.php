@@ -12,6 +12,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
+use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -42,7 +43,12 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="fa-briefcase"
+ *              "icon"="fa-briefcase",
+ *              "contact_information"={
+ *                  "email"={
+ *                      {"fieldName"="contactInformation"}
+ *                  }
+ *              }
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -78,6 +84,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 class Order extends ExtendOrder implements
     OrganizationAwareInterface,
     EmailHolderInterface,
+    EmailHolderNameInterface,
     CustomerOwnerAwareInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
@@ -205,7 +212,6 @@ class Order extends ExtendOrder implements
      */
     protected $currency;
 
-
     /**
      * Changes to this value object wont affect entity change set
      * To change persisted price value you should create and set new Multicurrency
@@ -279,7 +285,6 @@ class Order extends ExtendOrder implements
      * @var Multicurrency
      */
     protected $total;
-
 
     /**
      * @var string
@@ -668,11 +673,11 @@ class Order extends ExtendOrder implements
     /**
      * Set shipUntil
      *
-     * @param \DateTime $shipUntil
+     * @param \DateTime|null $shipUntil
      *
      * @return Order
      */
-    public function setShipUntil($shipUntil)
+    public function setShipUntil(\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -681,10 +686,8 @@ class Order extends ExtendOrder implements
 
     /**
      * Get shipUntil
-     *
-     * @return \DateTime
      */
-    public function getShipUntil()
+    public function getShipUntil(): ?\DateTime
     {
         return $this->shipUntil;
     }
@@ -919,6 +922,21 @@ class Order extends ExtendOrder implements
     /**
      * {@inheritDoc}
      */
+    public function getEmailHolderName()
+    {
+        if (null !== $this->getCustomerUser()) {
+            return implode(' ', [
+                $this->getCustomerUser()->getFirstName(),
+                $this->getCustomerUser()->getLastName(),
+            ]);
+        }
+
+        return '';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setWebsite(Website $website)
     {
         $this->website = $website;
@@ -940,10 +958,10 @@ class Order extends ExtendOrder implements
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
-        if ($this->overriddenShippingCostAmount) {
+        if ($this->overriddenShippingCostAmount !== null) {
             $amount = $this->overriddenShippingCostAmount;
         }
-        if ($amount && $this->currency) {
+        if (null !== $amount && $this->currency) {
             return Price::create($amount, $this->currency);
         }
         return null;

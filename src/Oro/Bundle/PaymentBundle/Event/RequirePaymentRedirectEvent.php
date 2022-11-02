@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Event;
 
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class RequirePaymentRedirectEvent extends Event
 {
@@ -19,9 +19,6 @@ class RequirePaymentRedirectEvent extends Event
      */
     private $redirectRequired;
 
-    /**
-     * @param PaymentMethodInterface $paymentMethod
-     */
     public function __construct(PaymentMethodInterface $paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;

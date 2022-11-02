@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
@@ -15,7 +17,6 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
-use Oro\Component\Testing\Doctrine\EntityManagerMockBuilder;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
@@ -27,9 +28,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ProductContentVariantReindexEventListener */
-    private $eventListener;
-
     /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $webCatalogUsageProvider;
 
@@ -42,24 +40,14 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     /** @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit\Framework\MockObject\MockObject */
     private $messageSendListener;
 
-    /** @var EntityManagerMockBuilder */
-    private $entityManagerMockBuilder;
+    /** @var ProductContentVariantReindexEventListener */
+    private $eventListener;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->entityManagerMockBuilder = new EntityManagerMockBuilder();
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->fieldUpdatesChecker = $this->getMockBuilder(FieldUpdatesChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->webCatalogUsageProvider = $this->getMockBuilder(WebCatalogUsageProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->fieldUpdatesChecker = $this->createMock(FieldUpdatesChecker::class);
+        $this->webCatalogUsageProvider = $this->createMock(WebCatalogUsageProviderInterface::class);
         $this->messageSendListener = $this->createMock(ProductCollectionVariantReindexMessageSendListener::class);
 
         $this->eventListener = new ProductContentVariantReindexEventListener(
@@ -72,12 +60,11 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
 
     public function testItAcceptsOnlyContentVariantAfterFlush()
     {
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [new \stdClass()], [], []);
+        $entityManager = $this->getEntityManager([new \stdClass()]);
         $this->webCatalogUsageProvider->expects($this->once())
             ->method('getAssignedWebCatalogs')
             ->willReturn([]);
-        $this->eventDispatcher
-            ->expects($this->never())
+        $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
@@ -92,14 +79,13 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $contentVariant5 = $this->generateContentVariant(5);
         $contentVariant6 = $this->generateContentVariant(6);
 
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [$contentVariant1, $contentVariant2],
             [$contentVariant3, $contentVariant4],
             [$contentVariant5, $contentVariant6]
         );
 
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->atLeastOnce())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
@@ -113,14 +99,13 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $contentVariant2 = $this->generateContentVariant(2);
         $contentVariant3 = $this->generateContentVariant(3);
 
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [$contentVariant1, $contentVariant2, $contentVariant3],
             [$contentVariant1, $contentVariant2, $contentVariant3],
             [$contentVariant1, $contentVariant2, $contentVariant3]
         );
 
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->atLeastOnce())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
@@ -136,15 +121,14 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $contentVariant1->setProductPageProduct($newProduct);
 
         $entityChangeSet = ['product_page_product' => [$oldProduct, $newProduct]];
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [],
             [$contentVariant1],
             [],
             $entityChangeSet
         );
 
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->once())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
@@ -159,14 +143,13 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $contentVariant->setProductPageProduct($product);
 
         $entityChangeSet = ['product_page_product' => [0 => null, 1 => null]];
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [$contentVariant],
             [],
             [],
             $entityChangeSet
         );
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->once())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
@@ -188,20 +171,18 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
             ->addContentVariant($contentVariant3)
             ->addContentVariant($contentVariant4);
 
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [],
-            [$contentNodeWithFieldChanges, $contentNodeWithoutFieldChanges, new \stdClass()],
-            []
+            [$contentNodeWithFieldChanges, $contentNodeWithoutFieldChanges, new \stdClass()]
         );
-        $this->fieldUpdatesChecker
+        $this->fieldUpdatesChecker->expects($this->atLeastOnce())
             ->method('isRelationFieldChanged')
             ->willReturnMap([
                 [$contentNodeWithFieldChanges, 'titles', true],
                 [$contentNodeWithoutFieldChanges, 'titles', false],
             ]);
 
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->atLeastOnce())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
@@ -217,12 +198,11 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $contentVariant3 = $this->generateContentVariant(null, 1);
         $contentVariant3->setType(CategoryPageContentVariantType::TYPE);
 
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [$contentVariant1, $contentVariant2, $contentVariant3]
         );
 
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->atLeastOnce())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => '1', 2 => '2', 3 => '1', 4 => '2', 5 => '3', 6 => '5']);
 
@@ -233,7 +213,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     public function testItReindexDefaultRelatedWebsiteAfterFlush()
     {
         $websiteMock = $this->createMock(Website::class);
-        $websiteMock->method('getId')
+        $websiteMock->expects($this->any())
+            ->method('getId')
             ->willReturn(1);
 
         $contentVariant1 = $this->generateContentVariant(1, 1);
@@ -241,12 +222,11 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $contentVariant3 = $this->generateContentVariant(null, 1);
         $contentVariant3->setType(CategoryPageContentVariantType::TYPE);
 
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
+        $entityManager = $this->getEntityManager(
             [$contentVariant1, $contentVariant2, $contentVariant3]
         );
 
-        $this->webCatalogUsageProvider
+        $this->webCatalogUsageProvider->expects($this->atLeastOnce())
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
@@ -256,10 +236,12 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
 
     public function testWebsiteIdsWillNotBeCollectedIfThereAreNoProductsToReindex()
     {
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [], [], []);
+        $entityManager = $this->getEntityManager();
 
-        $this->webCatalogUsageProvider->expects($this->never())->method('getAssignedWebCatalogs');
-        $this->eventDispatcher->expects($this->never())->method('dispatch');
+        $this->webCatalogUsageProvider->expects($this->never())
+            ->method('getAssignedWebCatalogs');
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
@@ -267,30 +249,35 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     public function testReindexationWillNotBeTriggeredWhenThereAreNoWebsitesWithCurrentWebCatalog()
     {
         $contentVariant = $this->generateContentVariant(1);
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [$contentVariant], [], []);
+        $entityManager = $this->getEntityManager([$contentVariant]);
 
-        $this->webCatalogUsageProvider->method('getAssignedWebCatalogs')->willReturn([]);
-        $this->eventDispatcher->expects($this->never())->method('dispatch');
+        $this->webCatalogUsageProvider->expects($this->once())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([]);
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
     /**
      * @dataProvider dataProviderForNotWebCatalogAwareEntities
-     * @param ContentVariantInterface $contentVariant
      */
     public function testReindexationWillNotBeTriggeredWhenThereAreNotWebCatalogAwareEntitiesChanged(
         ContentVariantInterface $contentVariant
     ) {
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [$contentVariant], [], []);
+        $entityManager = $this->getEntityManager([$contentVariant]);
 
-        $this->webCatalogUsageProvider->method('getAssignedWebCatalogs')->willReturn([1 => 1]);
-        $this->eventDispatcher->expects($this->never())->method('dispatch');
+        $this->webCatalogUsageProvider->expects($this->once())
+            ->method('getAssignedWebCatalogs')
+            ->willReturn([1 => 1]);
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
-    public function dataProviderForNotWebCatalogAwareEntities()
+    public function dataProviderForNotWebCatalogAwareEntities(): array
     {
         $notContentNodeAwareEntity = $this->createMock(ContentVariantInterface::class);
         $notWebCatalogAwareEntity = $this->generateContentVariant(1);
@@ -304,8 +291,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
 
     public function testReindexationForProductCollectionIfNodeFieldsWasChanged()
     {
-        list($contentNode, $segment) = $this->generateContentNodeAndSegment();
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [], [$contentNode], []);
+        [$contentNode, $segment] = $this->generateContentNodeAndSegment();
+        $entityManager = $this->getEntityManager([], [$contentNode]);
         $this->fieldUpdatesChecker->expects($this->once())
             ->method('isRelationFieldChanged')
             ->with($contentNode, 'titles')
@@ -313,7 +300,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $this->messageSendListener->expects($this->once())
             ->method('scheduleSegment')
             ->with($segment);
-        $this->webCatalogUsageProvider->expects($this->any())
+        $this->webCatalogUsageProvider->expects($this->atLeastOnce())
             ->method('getAssignedWebCatalogs')
             ->willReturn([]);
 
@@ -322,8 +309,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
 
     public function testReindexationForProductCollectionIfNodeFieldsWithoutChanges()
     {
-        list($contentNode) = $this->generateContentNodeAndSegment();
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [], [$contentNode], []);
+        [$contentNode] = $this->generateContentNodeAndSegment();
+        $entityManager = $this->getEntityManager([], [$contentNode]);
         $this->fieldUpdatesChecker->expects($this->once())
             ->method('isRelationFieldChanged')
             ->with($contentNode, 'titles')
@@ -338,8 +325,39 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     }
 
     /**
+     * @return EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getEntityManager(
+        array $insertions = [],
+        array $updates = [],
+        array $deletions = [],
+        array $entityChangeSet = []
+    ) {
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork->expects($this->any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn($insertions);
+        $unitOfWork->expects($this->any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn($updates);
+        $unitOfWork->expects($this->any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn($deletions);
+        $unitOfWork->expects($this->any())
+            ->method('getEntityChangeSet')
+            ->willReturn($entityChangeSet);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+
+        return $entityManager;
+    }
+
+    /**
      * @param int $webCatalogId
-     * @return array|[ContentNode,Segment]
+     * @return array [<ContentNode>, <Segment>]
      */
     private function generateContentNodeAndSegment($webCatalogId = 1)
     {
@@ -348,7 +366,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
         $segment = new Segment();
         $contentVariant->setProductCollectionSegment($segment);
         $webCatalogMock = $this->createMock(WebCatalogInterface::class);
-        $webCatalogMock->method('getId')
+        $webCatalogMock->expects($this->any())
+            ->method('getId')
             ->willReturn($webCatalogId);
 
         $contentNode = new ContentNodeStub(1);
@@ -373,7 +392,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
             $contentVariant->setProductPageProduct($product);
         }
         $webCatalogMock = $this->createMock(WebCatalogInterface::class);
-        $webCatalogMock->method('getId')
+        $webCatalogMock->expects($this->any())
+            ->method('getId')
             ->willReturn($webCatalogId);
 
         $contentVariant->setNode((new ContentNodeStub(1))->setWebCatalog($webCatalogMock));
@@ -388,24 +408,20 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     private function generateProduct($productId)
     {
         $product = $this->createMock(Product::class);
-        $product->method('getId')
+        $product->expects($this->any())
+            ->method('getId')
             ->willReturn($productId);
 
         return $product;
     }
 
-    /**
-     * @param array $productIds
-     * @param array $websiteIds
-     */
     private function assertReindexEvent(array $productIds = [], array $websiteIds = [])
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], $websiteIds, $productIds)
+                new ReindexationRequestEvent([Product::class], $websiteIds, $productIds, true, ['main']),
+                ReindexationRequestEvent::EVENT_NAME
             );
     }
 }

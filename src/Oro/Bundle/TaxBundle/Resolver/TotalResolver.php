@@ -4,13 +4,15 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
-use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Tax resolver that combines all previous calculated tax values and provides total result.
+ */
 class TotalResolver implements ResolverInterface
 {
     /** @var TaxationSettingsProvider */
@@ -19,10 +21,6 @@ class TotalResolver implements ResolverInterface
     /**  @var RoundingResolver */
     protected $roundingResolver;
 
-    /**
-     * @param TaxationSettingsProvider $settingsProvider
-     * @param RoundingResolver $roundingResolver
-     */
     public function __construct(TaxationSettingsProvider $settingsProvider, RoundingResolver $roundingResolver)
     {
         $this->settingsProvider = $settingsProvider;
@@ -62,59 +60,12 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnTotal()) {
-            try {
-                $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
-                $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
-
-                $adjustTaxResults = [];
-                foreach ($taxResults as $key => $taxData) {
-                    $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
-                }
-            } catch (NumberFormatException $e) {
-                return;
-            }
-            $data = $adjustedAmounts;
-            $taxResults = $adjustTaxResults;
-        }
-
         $data = $this->mergeShippingData($taxable, $data);
 
         $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
         $result->lockResult();
-    }
-
-    /**
-     * @param AbstractResultElement $data
-     * @param BigDecimal $adjustment
-     * @return AbstractResultElement
-     */
-    protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
-    {
-        $arrayCopy = $data->getArrayCopy();
-        if ($data instanceof TaxResultElement) {
-            $currentData = new TaxResultElement($arrayCopy);
-        } else {
-            $currentData = new ResultElement($arrayCopy);
-        }
-
-        $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
-
-        if ($this->settingsProvider->isProductPricesIncludeTax()) {
-            $keysToAdjust[ResultElement::EXCLUDING_TAX] = $adjustment->negated();
-        } else {
-            $keysToAdjust[ResultElement::INCLUDING_TAX] = $adjustment;
-        }
-
-        foreach ($keysToAdjust as $key => $adjustment) {
-            if ($currentData->offsetExists($key)) {
-                $currentData->offsetSet($key, BigDecimal::of($currentData->getOffset($key))->plus($adjustment));
-            }
-        }
-
-        return $currentData;
     }
 
     /**

@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * Try to extract address (AddressInterface object) by object and property
+ */
 class AddressExtractor
 {
     const PROPERTY_PATH = 'billingAddress';
@@ -13,9 +16,6 @@ class AddressExtractor
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
-    /**
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(PropertyAccessor $propertyAccessor)
     {
         $this->propertyAccessor = $propertyAccessor;
@@ -36,11 +36,11 @@ class AddressExtractor
         try {
             $result = $this->propertyAccessor->getValue($object, $from);
         } catch (NoSuchPropertyException $e) {
-            throw new \InvalidArgumentException('Object does not contains billingAddress');
+            throw new \InvalidArgumentException(sprintf('Object does not contains %s', $from));
         }
 
         if ($result === null) {
-            throw new \InvalidArgumentException('Object does not contains billingAddress');
+            throw new \InvalidArgumentException(sprintf('Object does not contains %s', $from));
         }
 
         if (!$result instanceof AddressInterface) {

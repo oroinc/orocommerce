@@ -2,34 +2,22 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
-use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
+use Oro\Bundle\ScopeBundle\Manager\ScopeCriteriaProviderInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
-class ScopeWebCatalogProvider extends AbstractScopeCriteriaProvider
+/**
+ * The scope criteria provider for the current web catalog.
+ */
+class ScopeWebCatalogProvider implements ScopeCriteriaProviderInterface
 {
-    const WEB_CATALOG = 'webCatalog';
+    public const WEB_CATALOG = 'webCatalog';
 
-    /**
-     * @var WebCatalogProvider
-     */
-    protected $webCatalogProvider;
+    /** @var WebCatalogProvider */
+    private $webCatalogProvider;
 
-    /**
-     * @param WebCatalogProvider $webCatalogProvider
-     */
     public function __construct(WebCatalogProvider $webCatalogProvider)
     {
         $this->webCatalogProvider = $webCatalogProvider;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCriteriaForCurrentScope()
-    {
-        $webCatalog = $this->webCatalogProvider->getWebCatalog();
-
-        return [self::WEB_CATALOG => $webCatalog];
     }
 
     /**
@@ -37,7 +25,15 @@ class ScopeWebCatalogProvider extends AbstractScopeCriteriaProvider
      */
     public function getCriteriaField()
     {
-        return static::WEB_CATALOG;
+        return self::WEB_CATALOG;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCriteriaValue()
+    {
+        return $this->webCatalogProvider->getWebCatalog();
     }
 
     /**

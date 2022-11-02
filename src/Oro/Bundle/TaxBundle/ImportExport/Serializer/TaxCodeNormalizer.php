@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\TaxBundle\ImportExport\Serializer;
 
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 
 /**
  * Serializer implementation for AbstractTaxCode instances
  */
-class TaxCodeNormalizer implements NormalizerInterface, DenormalizerInterface
+class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAwareDenormalizerInterface
 {
     /**
      * @param AbstractTaxCode $object
      *
      * {@inheritdoc}
      */
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         if (!$object instanceof AbstractTaxCode) {
             return null;
@@ -24,23 +24,23 @@ class TaxCodeNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (!empty($context['mode']) && $context['mode'] === 'short') {
             return [
-                'code' => $object->getCode()
+                'code' => $object->getCode(),
             ];
         }
 
         return [
             'code' => $object->getCode(),
-            'description' => $object->getDescription()
+            'description' => $object->getDescription(),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         /** @var AbstractTaxCode $object */
-        $object = new $class;
+        $object = new $type;
         if (!is_array($data)) {
             $data = ['code' => $data];
         }
@@ -57,7 +57,7 @@ class TaxCodeNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, AbstractTaxCode::class, true);
     }
@@ -65,7 +65,7 @@ class TaxCodeNormalizer implements NormalizerInterface, DenormalizerInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof AbstractTaxCode;
     }

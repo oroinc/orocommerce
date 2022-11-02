@@ -1,22 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var VariantFieldsView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    require('jquery-ui');
+    const $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
+    require('jquery-ui/widgets/sortable');
 
-    VariantFieldsView = BaseView.extend({
+    const VariantFieldsView = BaseView.extend({
         events: {
             'click a.add-list-item': 'reindexValues'
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function VariantFieldsView() {
-            VariantFieldsView.__super__.constructor.apply(this, arguments);
+        constructor: function VariantFieldsView(options) {
+            VariantFieldsView.__super__.constructor.call(this, options);
         },
 
         render: function() {
@@ -26,7 +24,7 @@ define(function(require) {
         },
 
         reindexValues: function() {
-            var index = 1;
+            let index = 1;
             this.$('[name$="[priority]"]').each(function() {
                 $(this).val(index++);
             });
@@ -38,7 +36,7 @@ define(function(require) {
                 tolerance: 'pointer',
                 delay: 100,
                 containment: 'parent',
-                stop: _.bind(this.reindexValues, this)
+                stop: this.reindexValues.bind(this)
             });
         }
     });

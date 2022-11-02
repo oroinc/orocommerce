@@ -31,7 +31,7 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTransaction */
     protected $transaction;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->statusProviderMock = $this->getMockBuilder(PaymentStatusProvider::class)
             ->disableOriginalConstructor()->getMock();
@@ -122,7 +122,8 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
 
         $emMock = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
 
-        $this->doctrineHelperMock->expects($this->once())->method('getEntityManager')
+        $this->doctrineHelperMock->expects($this->once())
+            ->method('getEntityManagerForClass')
             ->with(PaymentStatus::class)
             ->willReturn($emMock);
 
@@ -130,5 +131,65 @@ class PaymentStatusManagerTest extends \PHPUnit\Framework\TestCase
         $emMock->expects($this->once())->method('flush')->with($this->isInstanceOf(PaymentStatus::class));
 
         return $repositoryMock;
+    }
+
+    public function testGetPaymentStatusForEntityWhenNotExist(): void
+    {
+        $entity = new \stdClass();
+
+        $entityRepository = $this->createMock(EntityRepository::class);
+
+        $this->doctrineHelperMock
+            ->expects($this->once())
+            ->method('getEntityReference')
+            ->with(\stdClass::class, 1)
+            ->willReturn($entity);
+
+        $this->doctrineHelperMock
+            ->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($entityRepository);
+
+        $entityRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['entityClass' => \stdClass::class, 'entityIdentifier' => 1])
+            ->willReturn(null);
+
+        $paymentStatus = PaymentStatusProvider::FULL;
+        $this->statusProviderMock
+            ->expects($this->once())
+            ->method('getPaymentStatus')
+            ->with($entity)
+            ->willReturn($paymentStatus);
+
+        $paymentStatusEntity = $this->manager->getPaymentStatusForEntity(\stdClass::class, 1);
+        $this->assertEquals($paymentStatus, $paymentStatusEntity->getPaymentStatus());
+    }
+
+    public function testGetPaymentStatusForEntityWhenExists(): void
+    {
+        $entityRepository = $this->createMock(EntityRepository::class);
+
+        $this->doctrineHelperMock
+            ->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(PaymentStatus::class)
+            ->willReturn($entityRepository);
+
+        $paymentStatus = PaymentStatusProvider::INVOICED;
+        $entityRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['entityClass' => \stdClass::class, 'entityIdentifier' => 1])
+            ->willReturn((new PaymentStatus())->setPaymentStatus($paymentStatus));
+
+        $this->statusProviderMock
+            ->expects($this->never())
+            ->method('getPaymentStatus');
+
+        $paymentStatusEntity = $this->manager->getPaymentStatusForEntity(\stdClass::class, 1);
+        $this->assertEquals($paymentStatus, $paymentStatusEntity->getPaymentStatus());
     }
 }

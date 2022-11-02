@@ -4,14 +4,17 @@ namespace Oro\Bundle\PayPalBundle\Method\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
+use Oro\Bundle\PayPalBundle\OptionsProvider\OptionsProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Factory to create instance of PayPal payment method.
+ */
 class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressCheckoutPaymentMethodFactoryInterface
 {
     /**
@@ -30,7 +33,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
     private $doctrineHelper;
 
     /**
-     * @var ExtractOptionsProvider
+     * @var OptionsProviderInterface
      */
     private $optionsProvider;
 
@@ -44,19 +47,11 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
      */
     private $propertyAccessor;
 
-    /**
-     * @param Gateway $gateway
-     * @param RouterInterface $router
-     * @param DoctrineHelper $doctrineHelper
-     * @param ExtractOptionsProvider $optionsProvider
-     * @param SurchargeProvider $surchargeProvider
-     * @param PropertyAccessor $propertyAccessor
-     */
     public function __construct(
         Gateway $gateway,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
-        ExtractOptionsProvider $optionsProvider,
+        OptionsProviderInterface $optionsProvider,
         SurchargeProvider $surchargeProvider,
         PropertyAccessor $propertyAccessor
     ) {

@@ -2,27 +2,30 @@
 
 namespace Oro\Bundle\OrderBundle\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 
+/**
+ * Class OrderAddressManager - service that contains get and update methods for order addresses
+ */
 class OrderAddressManager extends AbstractAddressManager
 {
     /** @var string */
     protected $orderAddressClass;
 
     /**
-     * @param OrderAddressProvider $addressProvider
+     * @param AddressProviderInterface $addressProvider
      * @param ManagerRegistry $registry
      * @param string $orderAddressClass
      */
     public function __construct(
-        OrderAddressProvider $addressProvider,
+        AddressProviderInterface $addressProvider,
         ManagerRegistry $registry,
         $orderAddressClass
     ) {

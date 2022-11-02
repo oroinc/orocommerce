@@ -2,11 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantProviderCompilerPass;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantTypeCompilerPass;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogDependenciesCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -15,33 +12,16 @@ class OroWebCatalogBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function build(ContainerBuilder $container): void
     {
-        if (!$this->extension) {
-            $this->extension = new OroWebCatalogExtension();
-        }
+        parent::build($container);
 
-        return $this->extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new ContentVariantTypeCompilerPass());
-        $container->addCompilerPass(new ContentVariantProviderCompilerPass());
-
-        $container
-            ->addCompilerPass(
-                new DefaultFallbackExtensionPass(
-                    [
-                        ContentNode::class => [
-                            'title' => 'titles',
-                            'slugPrototype' => 'slugPrototypes'
-                        ]
-                    ]
-                )
-            );
+        $container->addCompilerPass(new WebCatalogDependenciesCompilerPass());
+        $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
+            'Oro\Bundle\WebCatalogBundle\Entity\ContentNode' => [
+                'title' => 'titles',
+                'slugPrototype' => 'slugPrototypes'
+            ]
+        ]));
     }
 }

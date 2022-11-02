@@ -2,15 +2,17 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
+/**
+ * Datagrid listener which adds column and filters for category to datagrids
+ */
 class DatagridListener
 {
     const CATEGORY_COLUMN = 'category_name';
@@ -24,42 +26,30 @@ class DatagridListener
     /** @var string */
     protected $dataClass;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     * @param RequestProductHandler $requestProductHandler
-     */
     public function __construct(ManagerRegistry $doctrine, RequestProductHandler $requestProductHandler)
     {
         $this->doctrine = $doctrine;
         $this->requestProductHandler = $requestProductHandler;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
         $this->addCategoryInfo($event->getConfig());
     }
 
-    /**
-     * @param PreBuild $event
-     */
     public function onPreBuildProducts(PreBuild $event)
     {
         $this->addFilterForNonCategorizedProduct($event);
         $this->addFilterByCategory($event);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     protected function addCategoryInfo(DatagridConfiguration $config)
     {
         $query = $config->getOrmQuery();
 
         // select
-        $query->addSelect('IDENTITY(product.category) as ' . self::CATEGORY_COLUMN);
+        $query->addLeftJoin('product.category', 'category');
+        $query->addSelect('category.denormalizedDefaultTitle as ' . self::CATEGORY_COLUMN);
 
         // columns
         $categoryColumn = [
@@ -80,18 +70,6 @@ class DatagridListener
         $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @deprecated since 1.5. Please use denormalizedDefaultTitle instead of Category and associated relation
-     */
-    protected function addCategoryRelation(DatagridConfiguration $config)
-    {
-        $this->addCategoryInfo($config);
-    }
-
-    /**
-     * @param PreBuild $event
-     */
     protected function addFilterForNonCategorizedProduct(PreBuild $event)
     {
         $isIncludeNonCategorizedProducts = $event->getParameters()->get('includeNotCategorizedProducts')
@@ -109,9 +87,6 @@ class DatagridListener
         $config->getOrmQuery()->addOrWhere('product.category IS NULL');
     }
 
-    /**
-     * @param PreBuild $event
-     */
     protected function addFilterByCategory(PreBuild $event)
     {
         $categoryId = $event->getParameters()->get('categoryId');

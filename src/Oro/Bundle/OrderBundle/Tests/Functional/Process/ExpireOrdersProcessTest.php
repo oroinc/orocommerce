@@ -3,7 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Process;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
@@ -22,26 +24,24 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessTrigger;
 use Oro\Bundle\WorkflowBundle\Tests\Functional\Process\AbstractProcessTest;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @group CommunityEdition
  */
 class ExpireOrdersProcessTest extends AbstractProcessTest
 {
+    use ConfigManagerAwareTestTrait;
+
     /** @var ProcessDefinition */
-    protected $processDefinition;
+    private $processDefinition;
 
     /** @var ManagerRegistry */
-    protected $managerRegistry;
+    private $doctrine;
 
     /** @var ConfigManager */
-    protected $configManager;
+    private $configManager;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
@@ -50,8 +50,8 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
             ->getRepository(ProcessDefinition::class)
             ->findOneBy(['name' => 'expire_orders']);
 
-        $this->managerRegistry = $this->getContainer()->get('doctrine');
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->doctrine = $this->getContainer()->get('doctrine');
+        $this->configManager = self::getConfigManager();
 
         $this->loadFixtures([
             LoadCustomers::class,
@@ -169,16 +169,11 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         );
     }
 
-    /**
-     * @param bool $enabled
-     * @param array $statuses
-     * @param string $target
-     */
-    protected function configureMockManager(
-        $enabled = true,
+    private function configureMockManager(
+        bool $enabled = true,
         array $statuses = [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
-        $target = OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
-    ) {
+        string $target = OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+    ): void {
         $this->configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
         $this->configManager->set('oro_order.order_automation_applicable_statuses', $statuses);
         $this->configManager->set('oro_order.order_automation_target_status', $target);
@@ -192,25 +187,19 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         return $this->getContainer()->get('oro_workflow.process.process_handler');
     }
 
-    /**
-     * @param \DateTime $doNotShipLater
-     * @param string $internalStatus
-     *
-     * @return Order
-     */
-    protected function prepareOrderObject(
+    private function prepareOrderObject(
         \DateTime $doNotShipLater = null,
-        $internalStatus = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
-    ) {
+        string $internalStatus = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+    ): Order {
         /** @var User $user */
         $user = $this->getReference(LoadOrderUsers::ORDER_USER_1);
         if (!$user->getOrganization()) {
-            $user->setOrganization($this->managerRegistry->getRepository(Organization::class)->findOneBy([]));
+            $user->setOrganization($this->doctrine->getRepository(Organization::class)->findOneBy([]));
         }
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->managerRegistry->getRepository(CustomerUser::class)->findOneBy([]);
+        $customerUser = $this->doctrine->getRepository(CustomerUser::class)->findOneBy([]);
         /** @var PaymentTerm $paymentTerm */
-        $paymentTerm = $this->managerRegistry->getRepository(PaymentTerm::class)->findOneBy([]);
+        $paymentTerm = $this->doctrine->getRepository(PaymentTerm::class)->findOneBy([]);
 
         $order = new Order();
         $order
@@ -228,43 +217,28 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         $this->getContainer()->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($order, $paymentTerm);
 
-        $em = $this->managerRegistry->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($order);
         $em->flush();
 
         return $this->reloadOrder($order);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return object|AbstractEnumValue
-     * @throws \InvalidArgumentException
-     */
-    protected function getOrderInternalStatusById($id = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
+    private function getOrderInternalStatusById(string $id): AbstractEnumValue
     {
         $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
 
-        return $this->managerRegistry->getManagerForClass($className)->getRepository($className)->find($id);
+        return $this->doctrine->getManagerForClass($className)->getRepository($className)->find($id);
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return Order
-     */
-    protected function reloadOrder(Order $order)
+    private function reloadOrder(Order $order): Order
     {
-        return $this->managerRegistry->getManager()
-            ->getRepository(Order::class)
+        return $this->doctrine->getRepository(Order::class)
             ->findOneBy(['id' => $order->getId()]);
     }
 
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
+    private function getDefaultWebsite(): Website
     {
-        return $this->managerRegistry->getRepository(Website::class)->findOneBy(['default' => true]);
+        return $this->doctrine->getRepository(Website::class)->findOneBy(['default' => true]);
     }
 }

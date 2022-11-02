@@ -2,6 +2,9 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
         - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
             groups: [update]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            path: quantity
+            groups: [Default, create, update, add_product]
     properties:
         product:
             - NotBlank:
@@ -20,6 +23,10 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         shoppingList:
             - NotBlank:
                 groups: [create, update]
+        notes:
+            - Length:
+                max: 2048
+                groups: [Default, create, update, add_product]
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
@@ -27,6 +34,23 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
             - NotBlank: ~
             - Length:
                 max: 255
+        totals:
+            - Valid: ~
+        notes:
+            - Length:
+                max: 2048
+        lineItems:
+            - Valid: ~
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    properties:
+        subtotalValue:
+            - Type:
+                type: numeric
+                groups: [create, update, add_product]
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                minMessage: 'oro.shoppinglist.subtotal.min.error.label'
+                maxMessage: 'oro.shoppinglist.subtotal.max.error.label'
 
 Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
     constraints:
@@ -34,4 +58,4 @@ Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
     properties:
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~

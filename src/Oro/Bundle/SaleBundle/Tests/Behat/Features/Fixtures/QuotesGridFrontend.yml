@@ -1,0 +1,148 @@
+include:
+    - '@OroSaleBundle:QuotesGrid.yml'
+    - '@OroCustomerBundle:CustomerUserFixture.yml'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO1'
+        qid: 'Quote1'
+        website: '@website1'
+
+    quote2:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO2'
+        qid: 'Quote2'
+        website: '@website1'
+
+    quote3:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO3'
+        qid: 'Quote3'
+        website: '@website1'
+
+    quote4:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO4'
+        qid: 'Quote4'
+        website: '@website1'
+
+    quote5:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO5'
+        qid: 'Quote5'
+        website: '@website1'
+
+    quote6:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        owner: '@charlie'
+        organization: '@organization'
+        poNumber: 'PO6'
+        qid: 'Quote6'
+        website: '@website1'
+
+    quote7:
+        customer: '@customer1'
+        customerUser: '@nancy'
+        internal_status: '@quote_internal_status_open'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO7'
+        qid: 'Quote7'
+        website: '@website1'
+
+    quote8:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO8'
+        qid: 'Quote8'
+        website: '@website1'
+
+    quote9:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO9'
+        qid: 'Quote9'
+        website: '@website1'
+
+    quote10:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        customer_status: '@quote_customer_status_not_approved'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO10'
+        qid: 'Quote10'
+        website: '@website1'
+
+    quote11:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        expired: true
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO11'
+        qid: 'Quote11'
+        website: '@website1'
+
+    quote12:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        validUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO12'
+        qid: 'Quote12'
+        website: '@website1'
+
+    quote13:
+        customer: '@customer1'
+        customerUser: '@amanda'
+        internal_status: '@quote_internal_status_sent_to_customer'
+        shipUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
+        organization: '@organization'
+        owner: '@admin'
+        poNumber: 'PO13'
+        qid: 'Quote13'
+        website: '@website1'
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
+    quote{1..13}WorkflowItem:
+        workflowName: 'b2b_quote_backoffice_approvals'
+        definition: '@workflow_b2b_quote_backoffice_approvals'
+        currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
+        # Cannot use '@quote15->id' because quotes are not yet persisted to DB at this point.
+        entityId: '<current()>'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
+        serializedData: <('[]')>

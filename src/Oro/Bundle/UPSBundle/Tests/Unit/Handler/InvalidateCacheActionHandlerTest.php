@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CacheBundle\Action\DataStorage\InvalidateCacheDataStorage;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
@@ -46,7 +46,7 @@ class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->upsPriceCache = $this->createMock(UPSShippingPriceCache::class);
@@ -83,8 +83,7 @@ class InvalidateCacheActionHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->upsPriceCache
             ->expects(static::once())
-            ->method('deleteAll')
-            ->with(self::TRANSPORT_ID);
+            ->method('deleteAll');
 
         $this->shippingPriceCache
             ->expects(static::once())

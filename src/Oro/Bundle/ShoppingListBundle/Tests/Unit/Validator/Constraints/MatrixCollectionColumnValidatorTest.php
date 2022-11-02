@@ -2,74 +2,46 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn as MatrixCollectionColumnModel;
-use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
+class MatrixCollectionColumnValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
-
-    /**
-     * @var MatrixCollectionColumnValidator
-     */
-    protected $validator;
-
-    /** @var
-     * Constraint|\MatrixCollectionColumn $constraint
-     */
-    protected $constraint;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function createValidator(): MatrixCollectionColumnValidator
     {
-        $this->constraint = new MatrixCollectionColumn();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator = new MatrixCollectionColumnValidator();
-        $this->validator->initialize($this->context);
+        return new MatrixCollectionColumnValidator();
     }
 
-    /**
-     *
-     */
-    protected function tearDown()
+    public function testGetTargets()
     {
-        unset($this->constraint, $this->context, $this->validator);
+        $constraint = new MatrixCollectionColumn();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
-    /**
-     *
-     */
     public function testValidateEmptyProduct()
     {
-        $this->expectEmptyProductViolation();
-
         $matrixCollectionColumn = new MatrixCollectionColumnModel();
         $matrixCollectionColumn->quantity = 1;
 
-        $this->validator->validate($matrixCollectionColumn, $this->constraint);
+        $constraint = new MatrixCollectionColumn();
+        $this->validator->validate($matrixCollectionColumn, $constraint);
+
+        $this->buildViolation($constraint->messageOnProductUnavailable)
+            ->atPath('property.path.quantity')
+            ->assertRaised();
     }
 
-    /**
-     *
-     */
     public function testValidateWrongPrecision()
     {
         $validPrecision = 0;
-        $this->expectWrongPrecisionViolation($validPrecision);
 
         $unit = new ProductUnit();
         $unit->setCode('item');
@@ -77,60 +49,77 @@ class MatrixCollectionColumnValidatorTest extends \PHPUnit\Framework\TestCase
         $collection->unit = $unit;
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setPrecision($validPrecision);
+        $unitPrecision->setUnit($unit);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $parentForm */
         $rootForm = $this->createMock(FormInterface::class);
-
-        $this->context->expects($this->once())
-            ->method('getRoot')
-            ->willReturn($rootForm);
         $rootForm->expects($this->once())
             ->method('getData')
             ->willReturn($collection);
 
         $matrixCollectionColumn = new MatrixCollectionColumnModel();
-        $matrixCollectionColumn->product = new ProductWithSizeAndColor();
-        $matrixCollectionColumn->product->setUnitPrecision($unitPrecision);
+        $matrixCollectionColumn->product = new Product();
+        $matrixCollectionColumn->product->addUnitPrecision($unitPrecision);
         $matrixCollectionColumn->quantity = 1.123;
 
-        $this->validator->validate($matrixCollectionColumn, $this->constraint);
+        $this->setRoot($rootForm);
+        $constraint = new MatrixCollectionColumn();
+        $this->validator->validate($matrixCollectionColumn, $constraint);
+
+        $this->buildViolation($constraint->messageOnNonValidPrecision)
+            ->setParameter('{{ precision }}', $validPrecision)
+            ->atPath('property.path.quantity')
+            ->assertRaised();
     }
 
     /**
-     *
+     * @dataProvider validateDataProvider
      */
-    public function expectEmptyProductViolation()
+    public function testValidateCorrectPrecision(int $validPrecision, float $quantity): void
     {
-        $violationBuilder = $this
-            ->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder->expects($this->once())
-            ->method('atPath')
-            ->with('quantity')
-            ->willReturnSelf();
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($this->constraint->messageOnProductUnavailable)
-            ->willReturn($violationBuilder);
+        $unit = new ProductUnit();
+        $unit->setCode('item');
+
+        $collection = new MatrixCollection();
+        $collection->unit = $unit;
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setPrecision($validPrecision);
+        $unitPrecision->setUnit($unit);
+
+        $product = new Product();
+        $product->addUnitPrecision($unitPrecision);
+
+        $rootForm = $this->createMock(FormInterface::class);
+        $rootForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($collection);
+
+        $matrixCollectionColumn = new MatrixCollectionColumnModel();
+        $matrixCollectionColumn->product = $product;
+        $matrixCollectionColumn->quantity = $quantity;
+
+        $this->setRoot($rootForm);
+        $constraint = new MatrixCollectionColumn();
+        $this->validator->validate($matrixCollectionColumn, $constraint);
+
+        $this->assertNoViolation();
     }
 
-    /**
-     * @param $precision
-     */
-    public function expectWrongPrecisionViolation($precision)
+    public function validateDataProvider(): array
     {
-        $violationBuilder = $this
-            ->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder->expects($this->once())
-            ->method('atPath')
-            ->with('quantity')
-            ->willReturnSelf();
-        $violationBuilder->expects($this->once())
-            ->method('setParameter')
-            ->with('{{ precision }}', $precision)
-            ->willReturnSelf();
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($this->constraint->messageOnNonValidPrecision)
-            ->willReturn($violationBuilder);
+        return [
+            [
+                'validPrecision' => 3,
+                'quantity' => 1.123,
+            ],
+            [
+                'validPrecision' => 2,
+                'quantity' => 999.99,
+            ],
+            [
+                'validPrecision' => 10,
+                'quantity' => 999.9999999999,
+            ],
+        ];
     }
 }

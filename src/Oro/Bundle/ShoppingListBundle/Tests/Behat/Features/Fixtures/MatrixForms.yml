@@ -1,0 +1,11 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  attribute_family_label:
+    string: 'Attribute Family'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+  attribute_family:
+    entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+    code: 'family'
+    __calls:
+      - addLabel: ['@attribute_family_label']
+    owner: '@organization'

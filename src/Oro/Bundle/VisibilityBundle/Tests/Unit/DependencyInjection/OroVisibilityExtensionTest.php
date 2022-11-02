@@ -2,44 +2,61 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\SecurityBundle\Tests\Unit\DependencyInjection\AbstractPrependExtensionTest;
 use Oro\Bundle\VisibilityBundle\DependencyInjection\OroVisibilityExtension;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroVisibilityExtensionTest extends AbstractPrependExtensionTest
+class OroVisibilityExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * Test Extension
-     */
-    public function testExtension()
+    public function testLoad(): void
     {
+        $container = new ContainerBuilder();
+
         $extension = new OroVisibilityExtension();
+        $extension->load([], $container);
 
-        $this->loadExtension($extension);
-
-        $expectedParameters = [
-            'oro_visibility.entity.product_visibility.class',
-            'oro_visibility.entity.product_visibility_resolved.class'
-        ];
-
-        $this->assertParametersLoaded($expectedParameters);
-
-        $this->assertEquals('oro_visibility', $extension->getAlias());
+        $extensionConfig = $container->getExtensionConfig('oro_visibility');
+        self::assertSame(
+            [
+                [
+                    'settings' => [
+                        'resolved' => true,
+                        'category_visibility' => ['value' => 'visible', 'scope' => 'app'],
+                        'product_visibility' => ['value' => 'visible', 'scope' => 'app'],
+                    ]
+                ]
+            ],
+            $extensionConfig
+        );
     }
 
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
+    public function testPrepend(): void
     {
-        $this->assertEquals(OroVisibilityExtension::ALIAS, $this->getExtension()->getAlias());
-    }
+        $container = new ExtendedContainerBuilder();
+        $container->setExtensionConfig('security', [
+            [
+                'firewalls' => [
+                    'frontend' => ['frontend_config'],
+                    'frontend_secure' => ['frontend_secure_config'],
+                    'main' => ['main_config'],
+                ]
+            ]
+        ]);
 
-    /**
-     * @return Extension
-     */
-    protected function getExtension()
-    {
-        return new OroVisibilityExtension();
+        $extension = new OroVisibilityExtension();
+        $extension->prepend($container);
+
+        self::assertSame(
+            [
+                [
+                    'firewalls' => [
+                        'main' => ['main_config'],
+                        'frontend_secure' => ['frontend_secure_config'],
+                        'frontend' => ['frontend_config'],
+                    ]
+                ]
+            ],
+            $container->getExtensionConfig('security')
+        );
     }
 }

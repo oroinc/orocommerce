@@ -6,12 +6,16 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
+/**
+ * Resolve content node slugs on entity create, remove or fields update
+ */
 class ContentNodeListener
 {
     /**
@@ -34,12 +38,6 @@ class ContentNodeListener
      */
     protected $messageFactory;
 
-    /**
-     * @param ContentNodeMaterializedPathModifier $modifier
-     * @param ExtraActionEntityStorageInterface $storage
-     * @param MessageProducerInterface $messageProducer
-     * @param ResolveNodeSlugsMessageFactory $messageFactory
-     */
     public function __construct(
         ContentNodeMaterializedPathModifier $modifier,
         ExtraActionEntityStorageInterface $storage,
@@ -52,19 +50,12 @@ class ContentNodeListener
         $this->messageFactory = $messageFactory;
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     public function postPersist(ContentNode $contentNode)
     {
         $contentNode = $this->modifier->calculateMaterializedPath($contentNode);
         $this->storage->scheduleForExtraInsert($contentNode);
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(ContentNode $contentNode, PreUpdateEventArgs $args)
     {
         $changeSet = $args->getEntityChangeSet();
@@ -80,37 +71,33 @@ class ContentNodeListener
         }
     }
 
-    /**
-     * @param ContentNode $contentNode
-     * @param LifecycleEventArgs $args
-     */
     public function postRemove(ContentNode $contentNode, LifecycleEventArgs $args)
     {
-        if ($contentNode->getParentNode()) {
+        if ($contentNode->getParentNode() && $contentNode->getParentNode()->getId()) {
             if (!$args->getEntityManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
                 $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
             }
         } else {
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $contentNode->getWebCatalog()->getId());
+            $this->messageProducer->send(WebCatalogCalculateCacheTopic::getName(), [
+                WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $contentNode->getWebCatalog()->getId(),
+            ]);
         }
     }
 
     /**
      * Form after flush is used to catch all content node fields update, including collections of
      * localized fallback values which are used for Titles and Slug Prototypes.
-     *
-     * @param AfterFormProcessEvent $event
      */
     public function onFormAfterFlush(AfterFormProcessEvent $event)
     {
         $this->scheduleContentNodeRecalculation($event->getData());
     }
 
-    /**
-     * @param ContentNode $contentNode
-     */
     protected function scheduleContentNodeRecalculation(ContentNode $contentNode)
     {
-        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($contentNode));
+        $this->messageProducer->send(
+            WebCatalogResolveContentNodeSlugsTopic::getName(),
+            $this->messageFactory->createMessage($contentNode)
+        );
     }
 }

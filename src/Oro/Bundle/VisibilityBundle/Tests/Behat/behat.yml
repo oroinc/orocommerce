@@ -4,15 +4,20 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
-        - OroDataGridBundle::GridContext
-        - OroUserBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroFormBundle::FeatureContext
-        - OroApplicationBundle::CommerceMainContext
-        - OroConfigBundle::FeatureContext
-        - OroUIBundle::TypeaheadContext
-        - OroNavigationBundle::ScrollspyContext
-        - OroNavigationBundle::TabContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UIBundle\Tests\Behat\Context\TypeaheadContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\WebsiteSearchBundle\Tests\Behat\Context\SearchIndexContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroVisibilityBundle/Tests/Behat/Features'
   elements:
@@ -22,30 +27,19 @@ oro_behat_extension:
       options:
         mapping:
           Visibility To All:
-            locator: '#product-visibility-all select'
-            type: css
+            # Locate Visibility To All select that is inside active tab (multi-website) or first one that is not inside any tabs (single website)
+            locator: '//select[@data-name="field__all" and (ancestor::div[(contains(@class, "tab-pane") and contains(@class, "active"))] or ancestor::form[@name="oro_scoped_data_type" and not(descendant::div[contains(@class, "tab-pane") and descendant::select[@data-name="field__all"]])])]'
+            type: xpath
           Visibility To Customers First:
             locator: '#product-visibility-customer tr:contains(first) .grid-body-cell-visibility select'
             type: css
           Visibility To Customer First Group:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
             type: css
-    Category Form:
-      selector: 'form[name="oro_catalog_category"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Visibility To All: 'oro_catalog_category[visibility][all]'
-          Visibility To Customers First:
-            locator: '#CustomerCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
-            type: css
-          Visibility To Customer First Group:
-            locator: '#CustomerGroupCategoryVisibility tr:contains(first) .grid-body-cell-visibility select'
-            type: css
-          Title: 'oro_catalog_category[titles][values][default]'
-          Inventory Threshold Use: 'oro_catalog_category[inventoryThreshold][useFallback]'
-          Inventory Threshold: 'oro_catalog_category[inventoryThreshold][scalarValue]'
-          Low Inventory Threshold: 'oro_catalog_category[lowInventoryThreshold][scalarValue]'
+
+    Short Description English (United States) fallback selector:
+      selector: 'select[name="oro_catalog_category[shortDescriptions][values][localizations][1][fallback]"]'
+
     Visibility Settings Form:
       selector: 'form[name="visibility_title"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

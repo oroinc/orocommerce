@@ -1,0 +1,57 @@
+data:
+    -
+        type: landingpages
+        id: '<toString(@page1->id)>'
+        attributes:
+            content: '<style type="text/css">.test {color: red}</style>Page 1 content. Twig Expr: "test".'
+            createdAt: '@page1->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@page1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Page 1'
+            url: '/page1_slug_default'
+            urls:
+                - { url: '/page1_slug_en_CA', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/page1_slug_es', localizationId: '<toString(@es->id)>' }
+            metaTitle: 'Page 1 Meta Title'
+            metaDescription: 'Page 1 Meta Description'
+            metaKeywords: 'Page 1 Meta Keywords'
+    -
+        type: landingpages
+        id: '<toString(@page2->id)>'
+        attributes:
+            content: 'Page 2 content'
+            createdAt: '@page2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@page2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Page 2'
+            url: '/page2_slug_default'
+            urls:
+                - { url: '/page2_slug_default', localizationId: '<toString(@en_CA->id)>' }
+                - { url: '/page2_slug_default', localizationId: '<toString(@es->id)>' }
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+    -
+        type: landingpages
+        id: '<toString(@page3->id)>'
+        attributes:
+            content: null
+            createdAt: '@page3->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@page3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Page 3'
+            url: null
+            urls: []
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null
+    -
+        type: landingpages
+        id: '<toString(@page4->id)>'
+        attributes:
+            content: null
+            createdAt: '@page4->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@page4->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            title: 'Page 4'
+            url: null
+            urls: []
+            metaTitle: null
+            metaDescription: null
+            metaKeywords: null

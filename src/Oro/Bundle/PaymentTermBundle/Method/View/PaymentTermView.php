@@ -2,16 +2,21 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\View;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * View class for PaymentTerm.
+ */
 class PaymentTermView implements PaymentMethodViewInterface
 {
     /**
-     * @var PaymentTermProvider
+     * @var PaymentTermProviderInterface
      */
     protected $paymentTermProvider;
 
@@ -25,13 +30,8 @@ class PaymentTermView implements PaymentMethodViewInterface
      */
     protected $config;
 
-    /**
-     * @param PaymentTermProvider        $paymentTermProvider
-     * @param TranslatorInterface        $translator
-     * @param PaymentTermConfigInterface $config
-     */
     public function __construct(
-        PaymentTermProvider $paymentTermProvider,
+        PaymentTermProviderInterface $paymentTermProvider,
         TranslatorInterface $translator,
         PaymentTermConfigInterface $config
     ) {
@@ -45,11 +45,7 @@ class PaymentTermView implements PaymentMethodViewInterface
      */
     public function getOptions(PaymentContextInterface $context)
     {
-        $paymentTerm = null;
-        if ($context->getCustomer()) {
-            $paymentTerm = $this->paymentTermProvider->getPaymentTerm($context->getCustomer());
-        }
-
+        $paymentTerm = $this->getPaymentTerm($context);
         if ($paymentTerm) {
             return [
                 'value' => $this->translator->trans(
@@ -100,5 +96,30 @@ class PaymentTermView implements PaymentMethodViewInterface
     public function getPaymentMethodIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();
+    }
+
+    /**
+     * @param PaymentContextInterface $context
+     * @return PaymentTerm|null
+     */
+    protected function getPaymentTerm(PaymentContextInterface $context)
+    {
+        $paymentTerm = null;
+        $sourceEntity = $context->getSourceEntity();
+        if ($sourceEntity instanceof CheckoutInterface) {
+            $paymentTerm = $this->paymentTermProvider->getObjectPaymentTerm(
+                $sourceEntity->getSourceEntity()
+            );
+        }
+
+        if ($paymentTerm) {
+            return $paymentTerm;
+        }
+
+        if ($context->getCustomer()) {
+            return $this->paymentTermProvider->getPaymentTerm($context->getCustomer());
+        }
+
+        return null;
     }
 }

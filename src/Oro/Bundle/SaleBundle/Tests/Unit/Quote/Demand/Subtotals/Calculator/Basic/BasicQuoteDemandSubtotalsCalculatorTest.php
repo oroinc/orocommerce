@@ -18,7 +18,7 @@ class BasicQuoteDemandSubtotalsCalculatorTest extends \PHPUnit\Framework\TestCas
      */
     private $basicQuoteDemandSubtotalsCalculator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->totalProcessorProviderMock = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()

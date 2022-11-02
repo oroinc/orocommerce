@@ -3,13 +3,16 @@
 namespace Oro\Bundle\OrderBundle\Provider;
 
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Provides purchase information for products.
+ */
 class LatestOrderedProductsInfoProvider
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -20,11 +23,9 @@ class LatestOrderedProductsInfoProvider
 
     /**
      * LatestOrderedProductsInfoProvider constructor.
-     * @param RegistryInterface $registry
-     * @param OrderStatusesProviderInterface $availableOrderStatusesProvider
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         OrderStatusesProviderInterface $availableOrderStatusesProvider
     ) {
         $this->registry = $registry;
@@ -53,9 +54,14 @@ class LatestOrderedProductsInfoProvider
     {
         $orderRepository = $this->getOrderRepository();
         $orderStatuses = $this->statusesProvider->getAvailableStatuses();
-        $qb = $orderRepository->getLatestOrderedProductsInfo($productIds, $websiteId, $orderStatuses);
 
-        return $this->getResultFromQB($qb);
+        $qb = $orderRepository->getLatestOrderedProductsInfo($productIds, $websiteId, $orderStatuses);
+        $productsResult = $this->getResultFromQB($qb);
+
+        $qb = $orderRepository->getLatestOrderedParentProductsInfo($productIds, $websiteId, $orderStatuses);
+        $parentProductsResult = $this->getResultFromQB($qb);
+
+        return array_replace($productsResult, $parentProductsResult);
     }
 
     /**

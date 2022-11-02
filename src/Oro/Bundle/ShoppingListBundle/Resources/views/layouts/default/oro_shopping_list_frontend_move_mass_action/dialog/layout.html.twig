@@ -1,0 +1,9 @@
+{% block _shopping_list_move_grid_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-select-grid'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

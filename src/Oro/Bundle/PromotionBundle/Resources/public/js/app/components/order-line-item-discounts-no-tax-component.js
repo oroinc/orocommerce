@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var OrderLineItemAppliedDiscountsComponent;
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var NumberFormatter = require('orolocale/js/formatter/number');
+    const _ = require('underscore');
+    const mediator = require('oroui/js/mediator');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const NumberFormatter = require('orolocale/js/formatter/number');
 
     /**
      * @export orotax/js/app/components/order-line-item-discounts-no-tax-component
      * @extends oroui.app.components.base.Component
      * @class orotax.app.components.OrderLineItemAppliedDiscountsComponent
      */
-    OrderLineItemAppliedDiscountsComponent = BaseComponent.extend({
+    const OrderLineItemAppliedDiscountsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -30,22 +29,22 @@ define(function(require) {
         loadingMaskView: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function OrderLineItemAppliedDiscountsComponent() {
-            OrderLineItemAppliedDiscountsComponent.__super__.constructor.apply(this, arguments);
+        constructor: function OrderLineItemAppliedDiscountsComponent(options) {
+            OrderLineItemAppliedDiscountsComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.setDiscounts, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
-
+            this.listenTo(mediator, {
+                'entry-point:order:load:before': this.showLoadingMask,
+                'entry-point:order:load': this.setDiscounts,
+                'entry-point:order:load:after': this.hideLoadingMask
+            });
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
         },
 
@@ -61,16 +60,16 @@ define(function(require) {
          * @param {Object} response
          */
         setDiscounts: function(response) {
-            var itemId = this.options._sourceElement.closest('tr.order-line-item').index();
+            const itemId = this.options._sourceElement.closest('tr.order-line-item').index();
             if (!_.has(response.appliedDiscounts, itemId)) {
                 return;
             }
-            var discounts = response.appliedDiscounts[itemId];
-            var appliedDiscountsAmount = NumberFormatter.formatCurrency(
+            const discounts = response.appliedDiscounts[itemId];
+            const appliedDiscountsAmount = NumberFormatter.formatCurrency(
                 discounts.appliedDiscountsAmount,
                 discounts.currency
             );
-            var rowTotalAfterDiscount = NumberFormatter.formatCurrency(
+            const rowTotalAfterDiscount = NumberFormatter.formatCurrency(
                 discounts.rowTotalAfterDiscount,
                 discounts.currency
             );
@@ -80,21 +79,6 @@ define(function(require) {
             this.options._sourceElement
                 .find(this.options.selectors.rowTotalAfterDiscount)
                 .text(rowTotalAfterDiscount);
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.setDiscounts, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
-
-            OrderLineItemAppliedDiscountsComponent.__super__.dispose.call(this);
         }
     });
 

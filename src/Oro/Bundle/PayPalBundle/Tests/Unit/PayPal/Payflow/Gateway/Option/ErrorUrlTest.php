@@ -24,7 +24,7 @@ class ErrorUrlTest extends AbstractOptionTest
                 [
                     'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
                     'The option "ERRORURL" with value 123 is expected to be of type "string", but is of ' .
-                    'type "integer".',
+                    'type "int".',
                 ],
             ],
             'valid' => [['ERRORURL' => 'http://127.0.0.1']],

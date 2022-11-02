@@ -1,0 +1,145 @@
+/* @theme: default; */
+
+.product {
+    &__view-details-link {
+        &--gallery-view {
+            display: none;
+        }
+
+        &--no-image-view {
+            .product-item--compact & {
+                display: inline-block;
+            }
+        }
+    }
+
+    &__select {
+        width: 47%;
+        display: inline-block;
+    }
+
+    &__select-label {
+        width: 82px;
+    }
+
+    &__select .select2-chosen {
+        min-width: 50px;
+    }
+
+    &__qty-container {
+        min-width: 165px;
+    }
+
+    &__qty-input {
+        width: 48%;
+        min-width: 60px;
+        margin: 0 0 20px;
+
+        &_inline {
+            display: inline-block;
+        }
+
+        &_more-info {
+            position: relative;
+
+            .validation-failed {
+                white-space: normal;
+            }
+
+            &:hover {
+                .product__qty-input_more-info__popup {
+                    display: block;
+                }
+            }
+        }
+
+        label {
+            display: block;
+            margin: 0 0 8px;
+        }
+    }
+
+    &__specification {
+        &--list-view {
+            margin: 0 0 ($offset-y-m * 2);
+        }
+
+        &--no-image-view {
+            margin: 0 0 $offset-y-m;
+
+            &.product__specification--delivery {
+                display: none;
+            }
+
+            .product-item--compact & {
+                display: inline-block;
+                width: 100%;
+                margin: 0;
+            }
+        }
+    }
+
+    &__description {
+        &-content {
+            margin: 0 0 15px;
+        }
+    }
+
+    &__static-unit {
+        min-width: 82px;
+        padding: 13px 12px;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product {
+        &__qty-input,
+        &__select {
+            display: inline-block;
+
+            margin-top: 0;
+            width: 47%;
+        }
+
+        &__description {
+            @include line-clamp();
+
+            &--list-view {
+                font-size: $base-font-size;
+                line-height: $base-line-height;
+
+                height: $base-font-size * $base-line-height * 2;
+
+                overflow: hidden;
+            }
+        }
+
+        &__view-details-link {
+            &--list-view {
+                display: none;
+            }
+
+            &--no-image-view {
+                display: none;
+
+                .product-item--compact & {
+                    display: none;
+                }
+            }
+        }
+
+        &__specification {
+            &--list-view {
+                margin: 0;
+
+                &.product__specification--delivery {
+                    display: none;
+                }
+            }
+
+            &--no-image-view {
+                margin: 0;
+            }
+        }
+    }
+}

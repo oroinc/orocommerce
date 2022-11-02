@@ -1,67 +1,43 @@
 <?php
+
 namespace Oro\Bundle\WebsiteSearchBundle\Manager;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 
+/**
+ * Provides functionality to get a website form the search context.
+ */
 class WebsiteContextManager
 {
     use ContextTrait;
 
-    /** @var  DoctrineHelper */
-    private $doctrineHelper;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
     }
 
     /**
-     * Returns website id from context if according website exists
-     * @param array $context
-     * $context = [
-     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
-     * ]
-     *
-     * @return int|null
+     * Gets a website ID from the search context if the given website entity exists.
      */
-    public function getWebsiteId(array $context)
+    public function getWebsiteId(array $context): ?int
     {
-        /** @var WebsiteRepository $websiteRepository */
-        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-        $websiteId = $this->getContextCurrentWebsiteId($context);
-
-        if ($websiteRepository->checkWebsiteExists($websiteId)) {
-            return $websiteId;
-        }
-
-        return null;
+        return $this->getWebsite($context)?->getId();
     }
 
     /**
-     * Returns website id from context if according website exists
-     * @param array $context
-     * $context = [
-     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
-     * ]
-     *
-     * @return Website|null
+     * Gets a website from the search context if the given website entity exists.
      */
-    public function getWebsite(array $context)
+    public function getWebsite(array $context): ?Website
     {
-        /** @var WebsiteRepository $websiteRepository */
-        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
         $websiteId = $this->getContextCurrentWebsiteId($context);
-
-        if ($websiteId === null) {
+        if (null === $websiteId) {
             return null;
         }
 
-        return $websiteRepository->find($websiteId);
+        return $this->doctrine->getManagerForClass(Website::class)->find(Website::class, $websiteId);
     }
 }

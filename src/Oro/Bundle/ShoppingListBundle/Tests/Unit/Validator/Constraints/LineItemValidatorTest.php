@@ -2,89 +2,88 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class LineItemValidatorTest extends \PHPUnit\Framework\TestCase
+class LineItemValidatorTest extends ConstraintValidatorTestCase
 {
-    const LINE_ITEM_SHORTCUT = 'OroShoppingListBundle:LineItem';
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $managerRegistry;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Registry
-     */
-    protected $registry;
+    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemRepository
-     */
-    protected $repository;
+    /** @var LineItem|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItem;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ExecutionContextInterface
-     */
-    protected $context;
+    /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingList;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LineItem
-     */
-    protected $lineItem;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LineItemConstraint
-     */
-    protected $constraint;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock(Registry::class);
+        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
         $this->repository = $this->createMock(LineItemRepository::class);
-        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->lineItem = $this->createMock(LineItem::class);
-        $this->constraint = $this->createMock(LineItemConstraint::class);
+        $this->shoppingList = $this->createMock(ShoppingList::class);
+
+        $this->lineItem->expects($this->any())
+            ->method('getShoppingList')
+            ->willReturn($this->shoppingList);
+
+        parent::setUp();
     }
 
-    public function testValidateNoDuplicate()
+    protected function createValidator(): LineItemValidator
     {
-        $this->repository->expects($this->once())
-            ->method('findDuplicate')
-            ->with($this->lineItem)
-            ->will($this->returnValue(null));
-
-        $this->registry->expects($this->once())
-            ->method('getRepository')
-            ->with(self::LINE_ITEM_SHORTCUT)
-            ->will($this->returnValue($this->repository));
-
-        $this->context->expects($this->never())
-            ->method('addViolation');
-
-        $validator = new LineItemValidator($this->registry);
-        $validator->initialize($this->context);
-        $validator->validate($this->lineItem, $this->constraint);
+        return new LineItemValidator($this->managerRegistry);
     }
 
-    public function testValidate()
+    public function testGetTargets(): void
+    {
+        $constraint = new LineItemConstraint();
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
+    }
+
+    public function testValidateNoDuplicate(): void
     {
         $this->repository->expects($this->once())
-            ->method('findDuplicate')
-            ->with($this->lineItem)
-            ->will($this->returnValue(true));
+            ->method('findDuplicateInShoppingList')
+            ->with($this->lineItem, $this->shoppingList)
+            ->willReturn(null);
 
-        $this->registry->expects($this->once())
+        $this->managerRegistry->expects($this->once())
             ->method('getRepository')
-            ->with(self::LINE_ITEM_SHORTCUT)
-            ->will($this->returnValue($this->repository));
+            ->with(LineItem::class)
+            ->willReturn($this->repository);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with($this->constraint->message);
+        $constraint = new LineItemConstraint();
+        $this->validator->validate($this->lineItem, $constraint);
 
-        $validator = new LineItemValidator($this->registry);
-        $validator->initialize($this->context);
-        $validator->validate($this->lineItem, $this->constraint);
+        $this->assertNoViolation();
+    }
+
+    public function testValidate(): void
+    {
+        $this->repository->expects($this->once())
+            ->method('findDuplicateInShoppingList')
+            ->with($this->lineItem, $this->shoppingList)
+            ->willReturn($this->createMock(LineItem::class));
+
+        $this->managerRegistry->expects($this->once())
+            ->method('getRepository')
+            ->with(LineItem::class)
+            ->willReturn($this->repository);
+
+        $constraint = new LineItemConstraint();
+        $this->validator->validate($this->lineItem, $constraint);
+
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 }

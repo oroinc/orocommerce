@@ -5,9 +5,13 @@ namespace Oro\Bundle\InventoryBundle\Inventory;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * Provides methods to create/delete inventory levels
+ */
 class InventoryManager
 {
     /**
@@ -15,9 +19,6 @@ class InventoryManager
      */
     protected $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
@@ -36,13 +37,14 @@ class InventoryManager
         $inventoryLevel = new InventoryLevel();
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
         $inventoryLevel->setQuantity(0);
+        $organization = $this->doctrineHelper->getEntityRepositoryForClass(Organization::class)->getFirst();
+        if ($organization) {
+            $inventoryLevel->setOrganization($organization);
+        }
 
         return $inventoryLevel;
     }
 
-    /**
-     * @param ProductUnitPrecision $productUnitPrecision
-     */
     public function deleteInventoryLevel(ProductUnitPrecision $productUnitPrecision)
     {
         /** @var InventoryLevelRepository $inventoryLevelRepository */

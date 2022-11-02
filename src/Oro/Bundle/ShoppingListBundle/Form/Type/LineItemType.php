@@ -14,6 +14,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for ShoppingList line item
+ */
 class LineItemType extends AbstractType
 {
     const NAME = 'oro_shopping_list_line_item';
@@ -31,7 +34,6 @@ class LineItemType extends AbstractType
         /** @var LineItem $data */
         $data = $builder->getData();
         $isExisting = $data && $data->getId();
-
         $builder
             ->add(
                 'product',
@@ -61,9 +63,7 @@ class LineItemType extends AbstractType
                 QuantityType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.shoppinglist.lineitem.quantity.label',
-                    'product_holder' => $data,
-                    'product_unit_field' => 'unit',
+                    'label' => 'oro.shoppinglist.lineitem.quantity.label'
                 ]
             )
             ->add(
@@ -79,9 +79,6 @@ class LineItemType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $entity = $event->getData();
@@ -137,6 +134,7 @@ class LineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
+                'ownership_disabled' => true,
                 'validation_groups' => function (FormInterface $form) {
                     return $form->getData()->getId() ? ['update'] : ['create'];
                 },

@@ -6,7 +6,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroRFPBundle:layouts:default/imports/oro_rfp_request_grid/layout.html.twig'
+            themes: '@OroRFP/layouts/default/imports/oro_rfp_request_grid/layout.html.twig'
 
         - '@setOption':
             id: __datagrid
@@ -24,11 +24,6 @@ layout:
             blockType: combined_buttons
             options:
                 buttons: '=data["buttons"].getAll()'
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.text
-            optionValue: 'oro.rfp.request.label'
 
         - '@setOption':
             id: __datagrid

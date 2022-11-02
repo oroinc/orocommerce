@@ -3,13 +3,28 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\SearchBundle\Engine\Orm\DBALPersisterInterface;
 use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * Describes the general mandatory set of operations for search operations.
+ * In order to be able to use certain driver for search purposes, it must implements this interface.
+ */
 interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterface
 {
+
+    /**
+     * Create a new QueryBuilder instance that is prepopulated for this entity name
+     *
+     * @param string $alias
+     *
+     * @return QueryBuilder $qb
+     */
+    public function createQueryBuilder($alias);
+
     /**
      * Search query by Query builder object
      *
@@ -36,9 +51,6 @@ interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterfac
      */
     public function getAggregatedData(Query $query);
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
     public function initialize(EntityManagerInterface $entityManager);
 
     /**
@@ -69,12 +81,4 @@ interface DriverInterface extends DatabaseDriverInterface, DBALPersisterInterfac
      * @return AbstractItem
      */
     public function createItem();
-
-    /**
-     * @deprecated Please use writeItem() and flushWrites() instead from the DBALPersister.
-     *
-     * @param AbstractItem[] $items
-     * @return bool
-     */
-    public function saveItems(array $items);
 }

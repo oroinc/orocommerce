@@ -1,0 +1,17 @@
+layout:
+    imports:
+        -
+            id: oro_customer_page
+        -
+            id: oro_sale_quote_frontend_view
+    actions:
+        - '@setOption':
+              id: page_main_header
+              optionName: visible
+              optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
+
+        - '@setOption':
+              id: head_customer_menu_container
+              optionName: visible
+              optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
+

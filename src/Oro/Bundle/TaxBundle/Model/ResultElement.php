@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Contains tax result
+ */
 final class ResultElement extends AbstractResultElement implements \JsonSerializable
 {
     const INCLUDING_TAX = 'includingTax';
     const EXCLUDING_TAX = 'excludingTax';
     const TAX_AMOUNT = 'taxAmount';
     const ADJUSTMENT = 'adjustment';
+    const DISCOUNTS_INCLUDED = 'discountsIncluded';
 
     /**
      * @param string $includingTax
@@ -40,7 +44,7 @@ final class ResultElement extends AbstractResultElement implements \JsonSerializ
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->getArrayCopy();
     }
@@ -84,5 +88,17 @@ final class ResultElement extends AbstractResultElement implements \JsonSerializ
     public function setAdjustment($adjustment)
     {
         $this->offsetSet(self::ADJUSTMENT, $adjustment);
+    }
+
+    public function setDiscountsIncluded(bool $isDiscountsIncluded): self
+    {
+        $this->offsetSet(self::DISCOUNTS_INCLUDED, $isDiscountsIncluded);
+
+        return $this;
+    }
+
+    public function isDiscountsIncluded(): bool
+    {
+        return (bool) $this->getOffset(self::DISCOUNTS_INCLUDED, false);
     }
 }

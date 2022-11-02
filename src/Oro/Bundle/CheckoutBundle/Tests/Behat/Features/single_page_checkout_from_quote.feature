@@ -10,16 +10,13 @@ Feature: Single Page Checkout From Quote
   As a Customer User
   I want to see all checkout information and be able to complete checkout on one page from "Quote"
 
-  Scenario: Enable Single Page Checkout Workflow
+  Scenario: Feature Background
     Given There is USD currency in the system configuration
-    And I login as administrator
-    And go to System/Workflows
-    When I click "Activate" on row "Single Page Checkout" in grid
-    And I click "Activate"
-    Then I should see "Workflow activated" flash message
+    And I activate "Single Page Checkout" workflow
 
   Scenario: Set internal status "Sent to Customer" for Quote with PO number "PO1"
-    Given go to Sales/Quotes
+    Given I login as administrator
+    And go to Sales/Quotes
     And click view PO1 in grid
     When I click "Send to Customer"
     And click "Send"
@@ -28,7 +25,7 @@ Feature: Single Page Checkout From Quote
   Scenario: Create order from from Quote PO1
     Given AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Account"
+    And I follow "Account"
     And I click "Quotes"
     And I click view PO1 in grid
     When I click "Accept and Submit to Order"
@@ -45,7 +42,7 @@ Feature: Single Page Checkout From Quote
       | Checkout | Quote #1     | 1     | $25.00   |
     And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
 
-    When I click "Edit Order"
+    When I click "Edit items"
     And I type "10" in "First Product Quantity on Quote"
     And I click "Submit"
     Then Checkout "Order Summary Products Grid" should contain products:

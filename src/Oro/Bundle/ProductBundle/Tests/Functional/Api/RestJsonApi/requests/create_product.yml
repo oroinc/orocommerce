@@ -1,0 +1,226 @@
+data:
+    type: products
+    attributes:
+        sku: 'test-api-2'
+        status: 'enabled'
+        variantFields: []
+        productType: 'simple'
+        featured: true
+        newArrival: false
+        availability_date: '2018-01-01'
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '<toString(@TestBusinessUnit->getId())>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@TestBusinessUnit->organization->getId())>'
+        names:
+            data:
+                -
+                    type: productnames
+                    id: 'names-1'
+                -
+                    type: productnames
+                    id: 'names-2'
+        slugPrototypes:
+            data:
+                -
+                    type: localizedfallbackvalues
+                    id: 'slug-id-1'
+                -
+                    type: localizedfallbackvalues
+                    id: 'slug-id-2'
+        attributeFamily:
+            data:
+                type: attributefamilies
+                id: '<toString(@default_family->getId())>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: 'product-unit-precision-id-3'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: 'product-unit-precision-id-1'
+                -
+                    type: productunitprecisions
+                    id: 'product-unit-precision-id-2'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: 'out_of_stock'
+        manageInventory:
+            data:
+                type: entityfieldfallbackvalues
+                id: '1abcd'
+        pageTemplate:
+            data:
+                type: entityfieldfallbackvalues
+                id: 'page-template'
+        inventoryThreshold:
+            data:
+                type: entityfieldfallbackvalues
+                id: '2abcd'
+        isUpcoming:
+            data:
+                type: entityfieldfallbackvalues
+                id: 'product-is-upcoming'
+        minimumQuantityToOrder:
+            data:
+                type: entityfieldfallbackvalues
+                id: '3abcd'
+        maximumQuantityToOrder:
+            data:
+                type: entityfieldfallbackvalues
+                id: '4abcd'
+        decrementQuantity:
+            data:
+                type: entityfieldfallbackvalues
+                id: '5abcd'
+        backOrder:
+            data:
+                type: entityfieldfallbackvalues
+                id: '6abcd'
+        category:
+            data:
+                type: categories
+                id: '<toString(@category_1_5->getId())>'
+included:
+    -
+        type: entityfieldfallbackvalues
+        id: '1abcd'
+        attributes:
+            fallback: 'systemConfig'
+            scalarValue: null
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: 'page-template'
+        attributes:
+            fallback: null
+            scalarValue: short
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: 'product-is-upcoming'
+        attributes:
+            fallback: category
+            scalarValue: null
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: '2abcd'
+        attributes:
+            fallback: null
+            scalarValue: 31
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: '3abcd'
+        attributes:
+            fallback: systemConfig
+            scalarValue: null
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: '4abcd'
+        attributes:
+            fallback: null
+            scalarValue: 12
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: '5abcd'
+        attributes:
+            fallback: null
+            scalarValue: 1
+            arrayValue: null
+    -
+        type: entityfieldfallbackvalues
+        id: '6abcd'
+        attributes:
+            fallback: null
+            scalarValue: 0
+            arrayValue: null
+    -
+        type: productnames
+        id: 'names-1'
+        attributes:
+            fallback: null
+            string: 'Test product'
+        relationships:
+            localization:
+                data: null
+    -
+        type: productnames
+        id: 'names-2'
+        attributes:
+            fallback: null
+            string: 'Product in spanish'
+        relationships:
+            localization:
+                data:
+                    type: localizations
+                    id: '<toString(@es->getId())>'
+    -
+        type: localizedfallbackvalues
+        id: 'slug-id-1'
+        attributes:
+            fallback: null
+            string: 'test-prod-slug'
+            text: null
+        relationships:
+            localization:
+                data: null
+    -
+        type: localizedfallbackvalues
+        id: 'slug-id-2'
+        attributes:
+            fallback: null
+            string: null
+            text: null
+        relationships:
+            localization:
+                data:
+                    type: "localizations"
+                    id: '<toString(@es->getId())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-1'
+        attributes:
+            precision: 0
+            conversionRate: 5
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-2'
+        attributes:
+            precision: 0
+            conversionRate: 10
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->getCode())>'
+    -
+        type: productunitprecisions
+        id: 'product-unit-precision-id-3'
+        attributes:
+            precision: 0
+            conversionRate: 2
+            sell: 1
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->getCode())>'

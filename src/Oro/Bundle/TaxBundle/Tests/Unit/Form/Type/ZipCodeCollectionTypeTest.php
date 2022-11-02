@@ -10,55 +10,34 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ZipCodeCollectionType
-     */
-    protected $formType;
+    /** @var ZipCodeCollectionType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->formType = new ZipCodeCollectionType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->formType);
-
-        parent::tearDown();
-    }
-
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->formType->getName());
+        $this->assertIsString($this->formType->getName());
         $this->assertEquals('oro_tax_zip_code_collection_type', $this->formType->getName());
     }
 
     public function testGetParent()
     {
-        $this->assertInternalType('string', $this->formType->getParent());
+        $this->assertIsString($this->formType->getParent());
         $this->assertEquals(CollectionType::class, $this->formType->getParent());
     }
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit\Framework\MockObject\MockObject|OptionsResolver */
-        $resolver = $this->createMock('\Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'entry_type' => ZipCodeType::class,
-                    'required' => false,
-                ]
-            );
+            ->with(['entry_type' => ZipCodeType::class, 'required' => false]);
 
         $this->formType->configureOptions($resolver);
     }

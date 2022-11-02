@@ -1,0 +1,17 @@
+/* @theme: admin.oro; */
+
+.image-collection {
+    &.view table {
+        width: 100%;
+    }
+
+    th,
+    td {
+        input {
+            &[type='checkbox'],
+            &[type='radio'] {
+                margin-top: $content-padding-small + $content-padding-medium;
+            }
+        }
+    }
+}

@@ -1,3 +1,9 @@
+parameters:
+    flat_rate_type: 'flat_rate'
+    flat_rate_label: 'Flat Rate'
+    payment_term_type: 'payment_term'
+    payment_term_label: 'Payment Term'
+
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     flatRateLabel2:
         string: 'Flat Rate Two'
@@ -6,12 +12,14 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
     flatRateSettings2:
-        addLabel: ['@flatRateLabel2']
+        __calls:
+            - addLabel: ['@flatRateLabel2']
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
     paymentTermSettings2:
-        addLabel: ['@paymentTermLabel2']
-        addShortLabel: ['@paymentTermLabel2']
+        __calls:
+            - addLabel: ['@paymentTermLabel2']
+            - addShortLabel: ['@paymentTermLabel2']
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:
     flatRateIntegration2:

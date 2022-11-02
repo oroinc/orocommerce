@@ -19,10 +19,6 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
      */
     protected $productVisibilityLimitedSearchHandler;
 
-    /**
-     * @param SearchHandlerInterface $productWithPricesSearchHandler
-     * @param SearchHandlerInterface $productVisibilityLimitedSearchHandler
-     */
     public function __construct(
         SearchHandlerInterface $productWithPricesSearchHandler,
         SearchHandlerInterface $productVisibilityLimitedSearchHandler
@@ -40,11 +36,14 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
 
         if (\count($results['results'])) {
             $skus = array_column($results['results'], 'sku');
-            $skus = array_map('strtoupper', $skus);
+            $skus = array_map('mb_strtoupper', $skus);
             $priceResults = $this->productWithPricesSearchHandler->search($query, $page, $perPage, $searchById);
-            $priceResults['results'] = array_filter($priceResults['results'], function ($result) use ($skus) {
-                return \in_array(strtoupper($result['sku']), $skus, true);
-            });
+            $priceResults['results'] = array_values(array_filter(
+                $priceResults['results'],
+                function ($result) use ($skus) {
+                    return \in_array(mb_strtoupper($result['sku']), $skus, true);
+                }
+            ));
 
             return $priceResults;
         }

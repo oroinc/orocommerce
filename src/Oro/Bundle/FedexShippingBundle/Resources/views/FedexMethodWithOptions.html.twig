@@ -1,6 +1,6 @@
-{% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
+{% import '@OroShipping/ShippingMethodsConfigsRule/macros.html.twig' as ShipRuleMacro %}
 
-{% spaceless %}
+{% apply spaceless %}
     {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
     {% if methodLabel|length > 0 %}
         <li>{{ methodLabel }} {{ ShipRuleMacro.renderShippingMethodDisabledFlag(methodData.identifier) }}
@@ -22,4 +22,4 @@
         </ul>
         </li>
     {% endif %}
-{% endspaceless %}
+{% endapply %}

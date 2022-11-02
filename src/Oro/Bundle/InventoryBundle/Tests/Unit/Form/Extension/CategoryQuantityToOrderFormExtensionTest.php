@@ -16,7 +16,7 @@ class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCa
      */
     protected $categoryFormExtension;
 
-    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder * */
+    /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $builder;
 
     /** @var CategoryStub */
@@ -25,7 +25,7 @@ class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCa
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->categoryFormExtension = new CategoryQuantityToOrderFormExtension();
         $this->builder = $this->createMock(FormBuilderInterface::class);

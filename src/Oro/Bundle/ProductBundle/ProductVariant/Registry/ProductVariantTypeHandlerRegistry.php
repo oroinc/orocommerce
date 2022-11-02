@@ -7,9 +7,6 @@ class ProductVariantTypeHandlerRegistry
     /** @var ProductVariantTypeHandlerInterface[] */
     protected $typeHandlers = [];
 
-    /**
-     * @param ProductVariantTypeHandlerInterface $typeHandler
-     */
     public function addHandler(ProductVariantTypeHandlerInterface $typeHandler)
     {
         $this->typeHandlers[$typeHandler->getType()] = $typeHandler;

@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
@@ -18,12 +20,15 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Adds field 'prices' on product edit form and process changes of product prices
  */
-class ProductFormExtension extends AbstractTypeExtension
+class ProductFormExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
@@ -36,12 +41,6 @@ class ProductFormExtension extends AbstractTypeExtension
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
-     * @param PriceManager $priceManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         ManagerRegistry $registry,
         ShardManager $shardManager,
@@ -59,15 +58,16 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'addFormOnPreSetData']);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'], 10);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function addFormOnPreSetData(FormEvent $event)
     {
         /** @var Product|null $product */
@@ -116,6 +116,8 @@ class ProductFormExtension extends AbstractTypeExtension
                 'mapped' => false,
                 'constraints' => [
                     new UniqueProductPrices(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]]),
+                    // Valid constraint added to allow cascade validation of the prices on the backend
+                    new Valid(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]])
                 ],
                 'entry_options' => [
                     'product' => $product,
@@ -192,9 +194,9 @@ class ProductFormExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return ProductType::class;
+        return [ProductType::class];
     }
 
     /**
@@ -291,10 +293,6 @@ class ProductFormExtension extends AbstractTypeExtension
         return $submittedData;
     }
 
-    /**
-     * @param array   $prices
-     * @param Product $product
-     */
     private function processPrices(array $prices, Product $product)
     {
         $repository = $this->getProductPriceRepository();

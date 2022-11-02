@@ -9,17 +9,15 @@ class WeightUnitTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /**
-     * @var WeightUnit $entity
-     */
+    /** @var WeightUnit */
     protected $entity;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->entity = new WeightUnit();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }

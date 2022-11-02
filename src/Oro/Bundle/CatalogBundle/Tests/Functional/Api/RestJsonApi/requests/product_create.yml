@@ -1,0 +1,66 @@
+data:
+    type: products
+    attributes:
+        sku: test-api-1
+        status: enabled
+        variantFields: []
+        productType: simple
+        featured: true
+        newArrival: false
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '1'
+        organization:
+            data:
+                type: organizations
+                id: '1'
+        names:
+            data:
+                -
+                    type: productnames
+                    id: names-1
+        attributeFamily:
+            data:
+                type: attributefamilies
+                id: '1'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: product-unit-precision-id-1
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: product-unit-precision-id-1
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: out_of_stock
+        category:
+            data:
+                type: categories
+                id: '<toString(@category_1->id)>'
+included:
+    -
+        type: productnames
+        id: names-1
+        attributes:
+            fallback: ~
+            string: Test product
+        relationships:
+            localization:
+                data: ~
+    -
+        type: productunitprecisions
+        id: product-unit-precision-id-1
+        attributes:
+            precision: '0'
+            conversionRate: '5'
+            sell: '1'
+        relationships:
+            unit:
+                data:
+                    type: productunits
+                    id: each

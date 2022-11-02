@@ -1,0 +1,180 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles
+    - Oro\Bundle\CatalogBundle\Tests\Functional\Api\DataFixtures\LoadRootCategory
+    - Oro\Bundle\SegmentBundle\Tests\Functional\DataFixtures\LoadSegmentTypes
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    scope_catalog1:
+        webCatalog: '@catalog1'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    segment_product_collection1:
+        name: 'Product Collection #1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1,PSKU3,PSKU4,PSKU5,PSKU6,PSKU7,PSKU8,PSKU9,PSKU10,PSKU11,PSKU12","type":"6"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    catalog1_rootNode_title:
+        string: 'Root Node'
+    catalog1_rootNode_url:
+        text: /catalog1_rootNode
+    catalog1_node1_title:
+        string: 'Node 1'
+    catalog1_node1_url:
+        text: /catalog1_node1
+    catalog1_node1_slug_prototype:
+        string: catalog1_node1
+    catalog1_node2_title:
+        string: 'Node 2'
+    catalog1_node2_url:
+        text: /catalog1_node2
+    catalog1_node2_slug_prototype:
+        string: catalog1_node2
+    catalog1_node3_title:
+        string: 'Node 3'
+    catalog1_node3_url:
+        text: /catalog1_node3
+    catalog1_node3_slug_prototype:
+        string: catalog1_node3
+    catalog1_node4_title:
+        string: 'Node 4'
+    catalog1_node4_url:
+        text: /catalog1_node4
+    catalog1_node4_slug_prototype:
+        string: catalog1_node4
+    catalog1_node5_title:
+        string: 'Node 5'
+    catalog1_node5_url:
+        text: /catalog1_node5
+    catalog1_node5_slug_prototype:
+        string: catalog1_node5
+    landing_page1_name:
+        string: 'Landing Page 1'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    category1_title:
+        string: 'Category 1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Product 1'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category1:
+        title: ['@category1_title']
+        organization: '@organization'
+        parentCategory: '@root_category'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        names: ['@product1_name']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    landing_page1:
+        title: ['@landing_page1_name']
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    catalog1_rootNode_variant:
+        type: 'system_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        systemPageRoute: 'oro_frontend_root'
+    catalog1_node1_variant:
+        type: 'product_collection'
+        default: true
+        scopes: ['@scope_catalog1']
+        productCollectionSegment: '@segment_product_collection1'
+    catalog1_node2_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        categoryPageCategory: '@category1'
+    catalog1_node3_variant:
+        type: 'product_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        productPageProduct: '@product1'
+    catalog1_node4_variant:
+        type: 'cms_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        cmsPage: '@landing_page1'
+    catalog1_node5_variant:
+        type: 'category_page'
+        default: true
+        scopes: ['@scope_catalog1']
+        categoryPageCategory: '@category1'
+        excludeSubcategories: true
+
+# - catalog1_rootNode
+#   - catalog1_node1
+#   - catalog1_node2
+#   - catalog1_node3
+#   - catalog1_node4
+#   - catalog1_node5
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    catalog1_rootNode:
+        title: ['@catalog1_rootNode_title']
+        __calls:
+            - addContentVariant: ['@catalog1_rootNode_variant']
+        webCatalog: '@catalog1'
+        scopes: ['@scope_catalog1']
+        localizedUrls: ['@catalog1_rootNode_url']
+    catalog1_node1:
+        title: ['@catalog1_node1_title']
+        __calls:
+            - addContentVariant: ['@catalog1_node1_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node1_url']
+        slugPrototypes: ['@catalog1_node1_slug_prototype']
+        parentNode: '@catalog1_rootNode'
+    catalog1_node2:
+        title: ['@catalog1_node2_title']
+        __calls:
+            - addContentVariant: ['@catalog1_node2_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node2_url']
+        slugPrototypes: ['@catalog1_node2_slug_prototype']
+        parentNode: '@catalog1_rootNode'
+    catalog1_node3:
+        title: ['@catalog1_node3_title']
+        __calls:
+            - addContentVariant: ['@catalog1_node3_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node3_url']
+        slugPrototypes: ['@catalog1_node3_slug_prototype']
+        parentNode: '@catalog1_rootNode'
+    catalog1_node4:
+        title: ['@catalog1_node4_title']
+        __calls:
+            - addContentVariant: ['@catalog1_node4_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node4_url']
+        slugPrototypes: ['@catalog1_node4_slug_prototype']
+        parentNode: '@catalog1_rootNode'
+    catalog1_node5:
+        title: ['@catalog1_node5_title']
+        __calls:
+            - addContentVariant: ['@catalog1_node5_variant']
+        webCatalog: '@catalog1'
+        localizedUrls: ['@catalog1_node5_url']
+        slugPrototypes: ['@catalog1_node5_slug_prototype']
+        parentNode: '@catalog1_rootNode'

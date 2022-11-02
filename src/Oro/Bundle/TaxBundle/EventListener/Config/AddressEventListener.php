@@ -4,51 +4,42 @@ namespace Oro\Bundle\TaxBundle\EventListener\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
+use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
 
+/**
+ * Transforms address ID to Address entity and vise versa for the "origin address" configuration option.
+ */
 class AddressEventListener
 {
-    const KEY = 'origin_address';
+    private const KEY = 'origin_address';
 
-    /**
-     * @param AddressModelFactory $addressModelFactory
-     */
+    private AddressModelFactory $addressModelFactory;
+
     public function __construct(AddressModelFactory $addressModelFactory)
     {
         $this->addressModelFactory = $addressModelFactory;
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
-    public function formPreSet(ConfigSettingsUpdateEvent $event)
+    public function formPreSet(ConfigSettingsUpdateEvent $event): void
     {
+        $settingsKey = Configuration::ROOT_NODE . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
         $settings = $event->getSettings();
-
-        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_VIEW_SEPARATOR . self::KEY;
-        if (!array_key_exists($key, $settings)) {
-            return;
+        if (\array_key_exists($settingsKey, $settings)) {
+            $settings[$settingsKey]['value'] = $this->addressModelFactory->create($settings[$settingsKey]['value']);
+            $event->setSettings($settings);
         }
-
-        $settings[$key]['value'] = $this->addressModelFactory->create($settings[$key]['value']);
-        $event->setSettings($settings);
     }
 
-    /**
-     * @param ConfigSettingsUpdateEvent $event
-     */
-    public function beforeSave(ConfigSettingsUpdateEvent $event)
+    public function beforeSave(ConfigSettingsUpdateEvent $event): void
     {
         $settings = $event->getSettings();
-
-        if (!array_key_exists('value', $settings)) {
+        if (!\array_key_exists('value', $settings)) {
             return;
         }
 
         $address = $settings['value'];
-
         if (!$address instanceof Address) {
             return;
         }
@@ -59,7 +50,6 @@ class AddressEventListener
             'region_text' => $address->getRegionText(),
             'postal_code' => $address->getPostalCode(),
         ];
-
         $event->setSettings($settings);
     }
 }

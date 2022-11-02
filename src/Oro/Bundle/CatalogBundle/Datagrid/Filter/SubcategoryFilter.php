@@ -11,7 +11,11 @@ use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapte
 use Oro\Bundle\SearchBundle\Datagrid\Form\Type\SearchEntityFilterType;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Component\Exception\UnexpectedTypeException;
 
+/**
+ * The filter by a subcategory value for a datasource based on a search index.
+ */
 class SubcategoryFilter extends AbstractFilter
 {
     const FILTER_TYPE_NAME = 'subcategory';
@@ -53,10 +57,18 @@ class SubcategoryFilter extends AbstractFilter
     /**
      * {@inheritDoc}
      */
+    public function prepareData(array $data): array
+    {
+        throw new \BadMethodCallException('Not implemented');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
         if (!$ds instanceof SearchFilterDatasourceAdapter) {
-            throw new \RuntimeException('Invalid filter datasource adapter provided: ' . get_class($ds));
+            throw new UnexpectedTypeException($ds, SearchFilterDatasourceAdapter::class);
         }
 
         return $this->applyRestrictions($ds, $data);
@@ -75,7 +87,6 @@ class SubcategoryFilter extends AbstractFilter
 
         /** @var Category[] $categories */
         $categories = $data['value']->toArray();
-
         if (!$categories) {
             $categories = [$rootCategory];
         }
@@ -109,6 +120,6 @@ class SubcategoryFilter extends AbstractFilter
     {
         $dataName = $this->get(FilterUtility::DATA_NAME_KEY);
 
-        return sprintf('%s.%s_%s', Query::TYPE_INTEGER, $dataName, CategoryPathPlaceholder::NAME);
+        return sprintf('%s.%s.%s', Query::TYPE_INTEGER, $dataName, CategoryPathPlaceholder::NAME);
     }
 }

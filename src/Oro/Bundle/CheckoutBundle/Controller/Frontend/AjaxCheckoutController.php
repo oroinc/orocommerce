@@ -3,14 +3,18 @@
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AjaxCheckoutController extends Controller
+/**
+ * Handles logic of checkout ajax requests.
+ */
+class AjaxCheckoutController extends AbstractController
 {
     /**
      * @Route(
@@ -29,14 +33,14 @@ class AjaxCheckoutController extends Controller
     {
         /** @var Checkout $checkout */
         $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
-            ->getRepository(Checkout::class)->find($entityId);
+            ->getRepository(Checkout::class)->getCheckoutWithRelations($entityId);
         if (!$checkout) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
 
         $this->setCorrectCheckoutShippingMethodData($checkout, $request);
 
-        return new JsonResponse($this->get('oro_checkout.provider.checkout_totals')->getTotalsArray($checkout));
+        return new JsonResponse($this->get(CheckoutTotalsProvider::class)->getTotalsArray($checkout));
     }
 
     /**
@@ -58,5 +62,18 @@ class AjaxCheckoutController extends Controller
         return $checkout
             ->setShippingMethod($workflowTransitionData['shipping_method'])
             ->setShippingMethodType($workflowTransitionData['shipping_method_type']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                CheckoutTotalsProvider::class,
+            ]
+        );
     }
 }

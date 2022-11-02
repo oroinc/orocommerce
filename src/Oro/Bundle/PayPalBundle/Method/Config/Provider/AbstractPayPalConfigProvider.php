@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalConfigFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalConfigInterface;

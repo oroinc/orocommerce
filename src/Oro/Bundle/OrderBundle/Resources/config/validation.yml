@@ -6,23 +6,24 @@ Oro\Bundle\OrderBundle\Entity\Order:
             - Length:
                 max: 255
         shipUntil:
-            - Date: ~
+            - Type:
+                type: DateTimeInterface
+                message: oro.order.order.ship_until.type.message
+                payload:
+                    jsValidation:
+                        type: Date
         currency:
             - Currency: ~
         totalValue:
             - Type:
                 type: numeric
-            - Range:
-                min: 0
-                max: 999999999999999999
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 minMessage: 'oro.order.total.min.error.label'
                 maxMessage: 'oro.order.total.max.error.label'
         subtotalValue:
             - Type:
                 type: numeric
-            - Range:
-                min: 0
-                max: 999999999999999999
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 minMessage: 'oro.order.subtotal.min.error.label'
                 maxMessage: 'oro.order.subtotal.max.error.label'
         customer:
@@ -42,9 +43,14 @@ Oro\Bundle\OrderBundle\Entity\Order:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
         - Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+              path: quantity
     properties:
         order:
             - NotBlank: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                message: oro.order.orderlineitem.order.changed
+                groups: [ api ]
         productSku:
             - NotBlank:
                 groups: [ Import ]
@@ -73,6 +79,8 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     constraints:
         - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+        - Oro\Bundle\AddressBundle\Validator\Constraints\RegionText: ~
+        - Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion: ~
         - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
     properties:
         street:
@@ -91,27 +99,25 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     constraints:
         - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
             groups: [Default, OrderDiscountItemType]
+        - Oro\Bundle\OrderBundle\Validator\Constraints\NotBlankDiscountValue:
+            groups: [Default, OrderDiscountItemType]
     properties:
         percent:
-            - NotBlank:
-                groups: [Default, OrderDiscountItemType]
             - Type:
                 groups: [Default, OrderDiscountItemType]
                 type: numeric
-            - Range:
+            - Oro\Bundle\FormBundle\Validator\Constraints\PercentRange:
                 groups: [Default, OrderDiscountItemType]
                 min: -100
                 max: 100
+                type: fractional_100
         amount:
-            - NotBlank:
-                groups: [Default, OrderDiscountItemType]
             - Type:
                 groups: [Default, OrderDiscountItemType]
                 type: numeric
-            - Range:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                 groups: [Default, OrderDiscountItemType]
-                min: 0
-                max: 999999999999999999
+                maxMessage: 'oro.order.discounts.item.error.label'
         type:
             - Type:
                 groups: [Default, OrderDiscountItemType]
@@ -121,6 +127,9 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
                 errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
                 groups: [OrderDiscountItemType]
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                message: oro.order.discounts.order.changed
+                groups: [api]
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:

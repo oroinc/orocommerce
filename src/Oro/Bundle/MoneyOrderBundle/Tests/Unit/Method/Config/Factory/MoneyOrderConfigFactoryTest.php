@@ -13,22 +13,16 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 
 class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var MoneyOrderConfigFactoryInterface
-     */
-    private $testedFactory;
-
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelperMock;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIdentifierGeneratorMock;
 
-    public function setUp()
+    /** @var MoneyOrderConfigFactoryInterface */
+    private $testedFactory;
+
+    protected function setUp(): void
     {
         $this->localizationHelperMock = $this->createMock(LocalizationHelper::class);
         $this->integrationIdentifierGeneratorMock = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
@@ -47,57 +41,38 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
         $payTo = 'payTo';
         $sendTo = 'sendTo';
 
-        $paymentSettingsMock = $this->createMoneyOrderSettingsMock();
-        $channelMock = $this->createChannelMock();
-        $labelsCollection = $this->createLabelsCollectionMock();
-        $shortLabelsCollection = $this->createLabelsCollectionMock();
+        $paymentSettingsMock = $this->createMock(MoneyOrderSettings::class);
+        $channelMock = $this->createMock(Channel::class);
+        $labelsCollection = $this->createMock(Collection::class);
+        $shortLabelsCollection = $this->createMock(Collection::class);
 
-        $this->integrationIdentifierGeneratorMock
-            ->expects(static::once())
+        $this->integrationIdentifierGeneratorMock->expects(self::once())
             ->method('generateIdentifier')
             ->with($channelMock)
             ->willReturn($paymentMethodId);
 
-        $this->localizationHelperMock
-            ->expects(static::at(0))
+        $this->localizationHelperMock->expects(self::exactly(2))
             ->method('getLocalizedValue')
-            ->with($labelsCollection)
-            ->willReturn($label);
+            ->withConsecutive([$labelsCollection], [$shortLabelsCollection])
+            ->willReturnOnConsecutiveCalls($label, $label);
 
-        $this->localizationHelperMock
-            ->expects(static::at(1))
-            ->method('getLocalizedValue')
-            ->with($shortLabelsCollection)
-            ->willReturn($label);
-
-        $channelMock
-            ->expects(static::once())
+        $channelMock->expects(self::once())
             ->method('getName')
             ->willReturn($channelName);
 
-        $paymentSettingsMock
-            ->expects(static::once())
+        $paymentSettingsMock->expects(self::once())
             ->method('getChannel')
             ->willReturn($channelMock);
-
-        $paymentSettingsMock
-            ->expects(static::once())
+        $paymentSettingsMock->expects(self::once())
             ->method('getLabels')
             ->willReturn($labelsCollection);
-
-        $paymentSettingsMock
-            ->expects(static::once())
+        $paymentSettingsMock->expects(self::once())
             ->method('getShortLabels')
             ->willReturn($shortLabelsCollection);
-
-        $paymentSettingsMock
-            ->expects(static::once())
+        $paymentSettingsMock->expects(self::once())
             ->method('getPayTo')
             ->willReturn($payTo);
-
-
-        $paymentSettingsMock
-            ->expects(static::once())
+        $paymentSettingsMock->expects(self::once())
             ->method('getSendTo')
             ->willReturn($sendTo);
 
@@ -114,30 +89,6 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
 
         $actualSettings = $this->testedFactory->create($paymentSettingsMock);
 
-        static::assertEquals($expectedSettings, $actualSettings);
-    }
-
-    /**
-     * @return MoneyOrderSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createMoneyOrderSettingsMock()
-    {
-        return $this->createMock(MoneyOrderSettings::class);
-    }
-
-    /**
-     * @return Channel|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createChannelMock()
-    {
-        return $this->createMock(Channel::class);
-    }
-
-    /**
-     * @return Collection|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createLabelsCollectionMock()
-    {
-        return $this->createMock(Collection::class);
+        self::assertEquals($expectedSettings, $actualSettings);
     }
 }

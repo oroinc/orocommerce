@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -12,28 +11,21 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\Test
 {
     use EntityTrait;
 
-    /** @var PaymentMethodViewInterface */
-    protected $methodView;
-
     /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentConfig;
+    private $paymentConfig;
 
-    protected function setUp()
+    /** @var PayPalExpressCheckoutPaymentMethodView */
+    private $methodView;
+
+    protected function setUp(): void
     {
-        $this->paymentConfig =
-            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface');
+        $this->paymentConfig = $this->createMock(PayPalExpressCheckoutConfigInterface::class);
 
-        $this->methodView = $this->createMethodView();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->paymentConfig, $this->methodView);
+        $this->methodView = new PayPalExpressCheckoutPaymentMethodView($this->paymentConfig);
     }
 
     public function testGetOptions()
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertEmpty($this->methodView->getOptions($context));
     }
@@ -45,7 +37,7 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\Test
 
     public function testGetPaymentMethodIdentifier()
     {
-        $this->paymentConfig->expects(static::once())
+        $this->paymentConfig->expects(self::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn('payflow_express_checkout');
         $this->assertSame('payflow_express_checkout', $this->methodView->getPaymentMethodIdentifier());
@@ -71,13 +63,5 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\Test
             ->willReturn($shortLAbel);
 
         $this->assertSame($shortLAbel, $this->methodView->getShortLabel());
-    }
-
-    /**
-     * @return PaymentMethodViewInterface
-     */
-    protected function createMethodView()
-    {
-        return new PayPalExpressCheckoutPaymentMethodView($this->paymentConfig);
     }
 }

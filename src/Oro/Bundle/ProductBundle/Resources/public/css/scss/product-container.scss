@@ -9,6 +9,15 @@
 
         .select2-container {
             width: 100%;
+            max-width: 100%;
+        }
+    }
+}
+
+.product-primary-unit-controls {
+    table {
+        td {
+            display: block;
         }
     }
 }

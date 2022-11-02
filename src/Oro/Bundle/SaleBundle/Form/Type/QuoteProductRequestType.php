@@ -9,6 +9,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for QuoteProductRequest
+ */
 class QuoteProductRequestType extends AbstractType
 {
     const NAME = 'oro_sale_quote_product_request';
@@ -61,7 +64,6 @@ class QuoteProductRequestType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.sale.quoteproductrequest.quantity.label',
-                    'product_holder' => $builder->getData(),
                     'attr' => [
                         'readonly' => true
                     ]
@@ -76,7 +78,7 @@ class QuoteProductRequestType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass,
+                'data_class'    => $this->dataClass,
                 'compact_units' => false,
                 'csrf_token_id' => 'sale_quote_product_request',
             ]

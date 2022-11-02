@@ -11,28 +11,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CallbackHandler */
-    protected $handler;
+    private CallbackHandler $handler;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|PaymentTransactionProvider */
-    protected $paymentTransactionProvider;
+    private PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject $paymentTransactionProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->paymentTransactionProvider = $this
-            ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
 
         $this->handler = new CallbackHandler($this->eventDispatcher, $this->paymentTransactionProvider);
     }
 
-    public function testHandleNoEntity()
+    public function testHandleNoEntity(): void
     {
         $event = new CallbackReturnEvent();
 
@@ -40,7 +34,7 @@ class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
     }
 
-    public function testHandle()
+    public function testHandle(): void
     {
         $event = new CallbackReturnEvent();
         $transaction = new PaymentTransaction();
@@ -54,7 +48,7 @@ class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
     }
 
-    public function testHandleEventFailedOnFirstDispatchNotSaved()
+    public function testHandleEventFailedOnFirstDispatchNotSaved(): void
     {
         $event = new CallbackReturnEvent();
         $transaction = new PaymentTransaction();
@@ -64,10 +58,12 @@ class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
         $this->paymentTransactionProvider->expects($this->never())->method('savePaymentTransaction');
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')
-            ->with(CallbackReturnEvent::NAME, $event)
+            ->with($event, CallbackReturnEvent::NAME)
             ->willReturnCallback(
-                function ($name, CallbackReturnEvent $event) {
+                function (CallbackReturnEvent $event) {
                     $event->markFailed();
+
+                    return $event;
                 }
             );
 

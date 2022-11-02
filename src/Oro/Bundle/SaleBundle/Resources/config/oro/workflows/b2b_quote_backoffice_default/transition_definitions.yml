@@ -156,7 +156,7 @@ workflows:
                                     parameters_mapping:
                                         entity: $original_quote
                                         recordGroup: b2b_quote_backoffice_flow
-                                        transition: expire_transition
+                                        transition: auto_expire_transition
                 decline_transition_definition:
                     actions:
                         - '@request_enum_entity':

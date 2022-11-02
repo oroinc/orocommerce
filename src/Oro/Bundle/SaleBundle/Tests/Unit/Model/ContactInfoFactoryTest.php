@@ -9,17 +9,13 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class ContactInfoFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContactInfoFactory
-     */
+    /** @var ContactInfoFactory */
     private $factory;
 
-    /**
-     * @var NameFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var NameFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $nameFormatter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->nameFormatter = $this->createMock(NameFormatter::class);
         $this->factory = new ContactInfoFactory($this->nameFormatter);
@@ -28,39 +24,44 @@ class ContactInfoFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreateEmptyObject()
     {
         $contactInfo = $this->factory->createContactInfo();
-        static::assertInstanceOf(ContactInfo::class, $contactInfo);
-        static::assertTrue($contactInfo->isEmpty());
+        self::assertInstanceOf(ContactInfo::class, $contactInfo);
+        self::assertTrue($contactInfo->isEmpty());
     }
 
     public function testCreateFromUserObject()
     {
         $user = $this->getMockBuilder(User::class)
-            ->setMethods(['getPhone', 'getEmail'])
+            ->onlyMethods(['getEmail'])
+            ->addMethods(['getPhone'])
             ->getMock();
-        $user->method('getPhone')->willReturn('1111');
-        $user->method('getEmail')->willReturn('mail@example.dev');
-        $this->nameFormatter
+        $user->expects(self::any())
+            ->method('getPhone')
+            ->willReturn('1111');
+        $user->expects(self::any())
+            ->method('getEmail')
+            ->willReturn('mail@example.dev');
+        $this->nameFormatter->expects(self::any())
             ->method('format')
             ->with($user)
             ->willReturn('John Doe');
 
         $contactInfo = $this->factory->createContactInfoByUser($user);
-        static::assertInstanceOf(ContactInfo::class, $contactInfo);
-        static::assertFalse($contactInfo->isEmpty());
+        self::assertInstanceOf(ContactInfo::class, $contactInfo);
+        self::assertFalse($contactInfo->isEmpty());
         $expectedResult = [
             'email' => 'mail@example.dev',
             'phone' => '1111',
             'name' => 'John Doe',
         ];
-        static::assertEquals($expectedResult, $contactInfo->all());
+        self::assertEquals($expectedResult, $contactInfo->all());
     }
 
     public function testCreateWithManualText()
     {
         $text = 'test text';
         $contactInfo = $this->factory->createContactInfoWithText($text);
-        static::assertInstanceOf(ContactInfo::class, $contactInfo);
-        static::assertFalse($contactInfo->isEmpty());
-        static::assertEquals($text, $contactInfo->getManualText());
+        self::assertInstanceOf(ContactInfo::class, $contactInfo);
+        self::assertFalse($contactInfo->isEmpty());
+        self::assertEquals($text, $contactInfo->getManualText());
     }
 }

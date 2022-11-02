@@ -4,40 +4,42 @@ namespace Oro\Bundle\ProductBundle\Acl\Voter;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
+use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
-class ProductCollectionSegmentVoter extends AbstractEntityVoter
+/**
+ * Prevents editing and removal of segments that represent a product collection content variant.
+ */
+class ProductCollectionSegmentVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    protected $supportedAttributes = ['EDIT', 'DELETE'];
+    /** {@inheritDoc} */
+    protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
-    /**
-     * @var array
-     */
-    private $segmentsStateToContentVariants = [];
+    private ContainerInterface $container;
 
-    /**
-     * @var ContentVariantSegmentProvider
-     */
-    private $contentVariantSegmentProvider;
+    private array $segmentsStateToContentVariants = [];
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ContentVariantSegmentProvider $contentVariantSegmentProvider
-     */
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        ContentVariantSegmentProvider $contentVariantSegmentProvider
-    ) {
-        $this->contentVariantSegmentProvider = $contentVariantSegmentProvider;
+    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container)
+    {
         parent::__construct($doctrineHelper);
+        $this->container = $container;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_product.provider.content_variant_segment_provider' => ContentVariantSegmentProvider::class
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
@@ -48,19 +50,20 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter
         return self::ACCESS_ABSTAIN;
     }
 
-    /**
-     * @param int $segmentId
-     * @return bool
-     */
-    protected function isSegmentAttachedToContentVariant($segmentId)
+    private function isSegmentAttachedToContentVariant(int $segmentId): bool
     {
         if (empty($this->segmentsStateToContentVariants[$segmentId])) {
             /** @var Segment $segment */
             $segment = $this->doctrineHelper->getEntityReference($this->className, $segmentId);
-            $hasContentVariant = $this->contentVariantSegmentProvider->hasContentVariant($segment);
+            $hasContentVariant = $this->getContentVariantSegmentProvider()->hasContentVariant($segment);
             $this->segmentsStateToContentVariants[$segmentId] = $hasContentVariant;
         }
 
         return $this->segmentsStateToContentVariants[$segmentId];
+    }
+
+    private function getContentVariantSegmentProvider(): ContentVariantSegmentProvider
+    {
+        return $this->container->get('oro_product.provider.content_variant_segment_provider');
     }
 }

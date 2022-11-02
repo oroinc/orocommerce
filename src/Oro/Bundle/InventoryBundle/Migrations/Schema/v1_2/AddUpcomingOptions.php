@@ -6,13 +6,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
-use Oro\Bundle\InventoryBundle\Provider\ProductUpcomingProvider;
+use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
@@ -45,45 +46,40 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         $this->addAvailabilityDateToCategory($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUpcomingFieldToProduct(Schema $schema)
     {
         $this->addFallbackRelation(
             $schema,
             $this->extendExtension,
             OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
-            EntityFallbackResolver::TYPE_BOOLEAN
+            [
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN],
+            ]
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addUpcomingFieldToCategory(Schema $schema)
     {
         $this->addFallbackRelation(
             $schema,
             $this->extendExtension,
             OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME,
-            ProductUpcomingProvider::IS_UPCOMING,
+            UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
-                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => ProductUpcomingProvider::IS_UPCOMING],
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => UpcomingProductProvider::IS_UPCOMING],
             ],
-            EntityFallbackResolver::TYPE_BOOLEAN
+            [
+                'fallback' => ['fallbackType' => EntityFallbackResolver::TYPE_BOOLEAN],
+            ]
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAvailabilityDateToProduct(Schema $schema)
     {
         $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
@@ -99,7 +95,7 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
                         'owner' => ExtendScope::OWNER_CUSTOM,
                         'is_extend' => true,
                     ],
-                    'datagrid' => ['is_visible' => false],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false,],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
@@ -110,9 +106,6 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAvailabilityDateToCategory(Schema $schema)
     {
         $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
@@ -128,7 +121,7 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
                         'owner' => ExtendScope::OWNER_CUSTOM,
                         'is_extend' => true,
                     ],
-                    'datagrid' => ['is_visible' => false],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false,],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],

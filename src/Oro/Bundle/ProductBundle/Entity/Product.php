@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -21,8 +22,14 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
+ * Product entity class.
+ *
  * @ORM\Table(
  *      name="oro_product",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="uidx_oro_product_sku_organization",
+ *          columns={"sku", "organization_id"})
+ *      },
  *      indexes={
  *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
  *          @ORM\Index(name="idx_oro_product_sku_uppercase", columns={"sku_uppercase"}),
@@ -124,6 +131,9 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          },
  *          "attribute"={
  *              "has_attributes"=true
+ *          },
+ *          "slug"={
+ *              "source"="names"
  *          }
  *      }
  * )
@@ -138,10 +148,10 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  */
 class Product extends ExtendProduct implements
     OrganizationAwareInterface,
-    \JsonSerializable,
     AttributeFamilyAwareInterface,
     SluggableInterface,
-    DatesAwareInterface
+    DatesAwareInterface,
+    DenormalizedPropertyAwareInterface
 {
     use SluggableTrait;
 
@@ -172,7 +182,7 @@ class Product extends ExtendProduct implements
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -184,6 +194,9 @@ class Product extends ExtendProduct implements
      *          },
      *          "attribute"={
      *              "is_attribute"=true
+     *          },
+     *          "frontend"={
+     *              "use_in_export"=true
      *          }
      *      }
      * )
@@ -318,7 +331,13 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|ProductUnitPrecision[]
      *
-     * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="ProductUnitPrecision",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
@@ -354,22 +373,9 @@ class Product extends ExtendProduct implements
     protected $primaryUnitPrecision;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection|ProductName[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_product_name",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="ProductName", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -382,6 +388,9 @@ class Product extends ExtendProduct implements
      *          },
      *          "attribute"={
      *              "is_attribute"=true
+     *          },
+     *          "frontend"={
+     *              "use_in_export"=true
      *          }
      *      }
      * )
@@ -391,32 +400,25 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     * @ORM\OneToMany(
+     *      targetEntity="ProductDescription",
+     *      mappedBy="product",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_product_description",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="description_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=60,
      *              "full"=true,
-     *              "fallback_field"="text"
+     *              "fallback_field"="wysiwyg"
      *          },
      *          "attribute"={
      *              "is_attribute"=true
+     *          },
+     *          "attachment"={
+     *              "acl_protected"=false
      *          }
      *      }
      * )
@@ -426,7 +428,13 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|ProductVariantLink[]
      *
-     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="ProductVariantLink",
+     *     mappedBy="parentProduct",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -444,7 +452,13 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|ProductVariantLink[]
      *
-     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="ProductVariantLink",
+     *     mappedBy="product",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -461,25 +475,15 @@ class Product extends ExtendProduct implements
     /**
      * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     * @ORM\OneToMany(
+     *      targetEntity="ProductShortDescription",
+     *      mappedBy="product",
      *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_product_short_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="short_description_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
+     *      orphanRemoval=true,
+     *      fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
      *          "importexport"={
      *              "order"=50,
      *              "full"=true,
@@ -500,7 +504,8 @@ class Product extends ExtendProduct implements
      *     targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage",
      *     mappedBy="product",
      *     cascade={"ALL"},
-     *     orphanRemoval=true
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={
@@ -665,9 +670,6 @@ class Product extends ExtendProduct implements
         return [self::STATUS_ENABLED, self::STATUS_DISABLED];
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->getStatus() === self::STATUS_ENABLED;
@@ -689,9 +691,9 @@ class Product extends ExtendProduct implements
         try {
             if ($this->getDefaultName()) {
                 return (string) $this->getDefaultName();
-            } else {
-                return (string) $this->sku;
             }
+
+            return (string) $this->sku;
         } catch (\LogicException $e) {
             return (string) $this->sku;
         }
@@ -721,6 +723,9 @@ class Product extends ExtendProduct implements
     public function setSku($sku)
     {
         $this->sku = $sku;
+        $this->skuUppercase = $this->sku
+            ? mb_strtoupper($this->sku)
+            : $this->sku;
 
         return $this;
     }
@@ -929,18 +934,15 @@ class Product extends ExtendProduct implements
      */
     public function getUnitPrecision($unitCode)
     {
-        $result = null;
-
         foreach ($this->unitPrecisions as $unitPrecision) {
-            if ($unit = $unitPrecision->getUnit()) {
-                if ($unit->getCode() === $unitCode) {
-                    $result = $unitPrecision;
-                    break;
-                }
+            $unit = $unitPrecision->getUnit();
+
+            if ($unit && $unit->getCode() === $unitCode) {
+                return $unitPrecision;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -962,26 +964,25 @@ class Product extends ExtendProduct implements
     /**
      * Get available units.
      *
-     * @return ProductUnit[]
+     * @return ProductUnit[] [unit code => ProductUnit, ...]
      */
     public function getAvailableUnits()
     {
         $result = [];
-
         foreach ($this->unitPrecisions as $unitPrecision) {
-            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getUnit();
+            $unit = $unitPrecision->getUnit();
+            $result[$unit->getCode()] = $unit;
         }
 
         return $result;
     }
 
     /**
-     * @return array
+     * @return array [unit code => unit precision, ...]
      */
     public function getAvailableUnitsPrecision()
     {
         $result = [];
-
         foreach ($this->unitPrecisions as $unitPrecision) {
             $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
         }
@@ -992,12 +993,11 @@ class Product extends ExtendProduct implements
     /**
      * We need to return only precisions with sell=true for frontend.
      *
-     * @return array
+     * @return array [unit code => unit precision, ...]
      */
     public function getSellUnitsPrecision()
     {
         $result = [];
-
         foreach ($this->unitPrecisions as $unitPrecision) {
             if ($unitPrecision->isSell()) {
                 $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
@@ -1008,7 +1008,19 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param array|LocalizedFallbackValue[] $names
+     * {@inheritdoc}
+     */
+    public function setDefaultName($value)
+    {
+        $this->setDefaultFallbackValue($this->names, $value, ProductName::class);
+        $this->getDefaultName()->setProduct($this);
+        $this->updateDenormalizedProperties();
+
+        return $this;
+    }
+
+    /**
+     * @param array|ProductName[] $names
      *
      * @return $this
      */
@@ -1024,7 +1036,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * @return Collection|ProductName[]
      */
     public function getNames()
     {
@@ -1032,25 +1044,30 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $name
+     * @param ProductName $name
      *
      * @return $this
      */
-    public function addName(LocalizedFallbackValue $name)
+    public function addName(ProductName $name)
     {
         if (!$this->names->contains($name)) {
+            $name->setProduct($this);
             $this->names->add($name);
+
+            if (!$name->getLocalization()) {
+                $this->updateDenormalizedProperties();
+            }
         }
 
         return $this;
     }
 
     /**
-     * @param LocalizedFallbackValue $name
+     * @param ProductName $name
      *
      * @return $this
      */
-    public function removeName(LocalizedFallbackValue $name)
+    public function removeName(ProductName $name)
     {
         if ($this->names->contains($name)) {
             $this->names->removeElement($name);
@@ -1060,7 +1077,34 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->descriptions, $value, ProductDescription::class);
+        $this->getDefaultDescription()->setProduct($this);
+
+        return $this;
+    }
+
+    /**
+     * @param array|ProductDescription[] $descriptions
+     *
+     * @return $this
+     */
+    public function setDescriptions(array $descriptions = [])
+    {
+        $this->descriptions->clear();
+
+        foreach ($descriptions as $description) {
+            $this->addDescription($description);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductDescription[]
      */
     public function getDescriptions()
     {
@@ -1068,13 +1112,14 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $description
+     * @param ProductDescription $description
      *
      * @return $this
      */
-    public function addDescription(LocalizedFallbackValue $description)
+    public function addDescription(ProductDescription $description)
     {
         if (!$this->descriptions->contains($description)) {
+            $description->setProduct($this);
             $this->descriptions->add($description);
         }
 
@@ -1082,11 +1127,11 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $description
+     * @param ProductDescription $description
      *
      * @return $this
      */
-    public function removeDescription(LocalizedFallbackValue $description)
+    public function removeDescription(ProductDescription $description)
     {
         if ($this->descriptions->contains($description)) {
             $this->descriptions->removeElement($description);
@@ -1110,7 +1155,9 @@ class Product extends ExtendProduct implements
      */
     public function addVariantLink(ProductVariantLink $variantLink)
     {
-        $variantLink->setParentProduct($this);
+        if (!$variantLink->getParentProduct()) {
+            $variantLink->setParentProduct($this);
+        }
 
         if (!$this->variantLinks->contains($variantLink)) {
             $this->variantLinks->add($variantLink);
@@ -1141,9 +1188,6 @@ class Product extends ExtendProduct implements
         return $this->parentVariantLinks;
     }
 
-    /**
-     * @return bool
-     */
     public function isVariant(): bool
     {
         return $this->isSimple() && count($this->parentVariantLinks) > 0;
@@ -1156,7 +1200,9 @@ class Product extends ExtendProduct implements
      */
     public function addParentVariantLink(ProductVariantLink $parentVariantLink)
     {
-        $parentVariantLink->setProduct($this);
+        if (!$parentVariantLink->getProduct()) {
+            $parentVariantLink->setProduct($this);
+        }
 
         if (!$this->parentVariantLinks->contains($parentVariantLink)) {
             $this->parentVariantLinks->add($parentVariantLink);
@@ -1230,7 +1276,34 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
+     * {@inheritdoc}
+     */
+    public function setDefaultShortDescription($value)
+    {
+        $this->setDefaultFallbackValue($this->shortDescriptions, $value, ProductShortDescription::class);
+        $this->getDefaultShortDescription()->setProduct($this);
+
+        return $this;
+    }
+
+    /**
+     * @param array|ProductShortDescription[] $shortDescriptions
+     *
+     * @return $this
+     */
+    public function setShortDescriptions(array $shortDescriptions = [])
+    {
+        $this->shortDescriptions->clear();
+
+        foreach ($shortDescriptions as $shortDescription) {
+            $this->addShortDescription($shortDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductShortDescription[]
      */
     public function getShortDescriptions()
     {
@@ -1238,13 +1311,14 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param ProductShortDescription $shortDescription
      *
      * @return $this
      */
-    public function addShortDescription(LocalizedFallbackValue $shortDescription)
+    public function addShortDescription(ProductShortDescription $shortDescription)
     {
         if (!$this->shortDescriptions->contains($shortDescription)) {
+            $shortDescription->setProduct($this);
             $this->shortDescriptions->add($shortDescription);
         }
 
@@ -1252,11 +1326,11 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @param LocalizedFallbackValue $shortDescription
+     * @param ProductShortDescription $shortDescription
      *
      * @return $this
      */
-    public function removeShortDescription(LocalizedFallbackValue $shortDescription)
+    public function removeShortDescription(ProductShortDescription $shortDescription)
     {
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);
@@ -1294,12 +1368,8 @@ class Product extends ExtendProduct implements
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->skuUppercase = mb_strtoupper($this->sku);
-        if (!$this->getDefaultName()) {
-            throw new \RuntimeException('Product has to have a default name');
-        }
-        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
-        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
+
+        $this->updateDenormalizedProperties();
     }
 
     /**
@@ -1310,17 +1380,28 @@ class Product extends ExtendProduct implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->skuUppercase = strtoupper($this->sku);
-        if (!$this->getDefaultName()) {
-            throw new \RuntimeException('Product has to have a default name');
-        }
-        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
-        $this->denormalizedDefaultNameUppercase = mb_strtoupper($this->denormalizedDefaultName);
+
+        $this->updateDenormalizedProperties();
 
         if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }
+    }
+
+    public function updateDenormalizedProperties(): void
+    {
+        $this->skuUppercase = $this->sku
+            ? mb_strtoupper($this->sku)
+            : $this->sku;
+
+        if (!$this->getDefaultName()) {
+            throw new \RuntimeException('Product has to have a default name');
+        }
+        $this->denormalizedDefaultName = $this->getDefaultName()->getString();
+        $this->denormalizedDefaultNameUppercase = $this->denormalizedDefaultName
+            ? mb_strtoupper($this->denormalizedDefaultName)
+            : $this->denormalizedDefaultName;
     }
 
     public function __clone()
@@ -1338,21 +1419,9 @@ class Product extends ExtendProduct implements
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
-        }
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'id' => $this->getId(),
-            'product_units' => $this->getSellUnitsPrecision(),
-            'unit' => $this->getPrimaryUnitPrecision()->getProductUnitCode(),
-            'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
-            'sku' => $this->getSku(),
-        ];
+            $this->cloneLocalizedFallbackValueAssociations();
+        }
     }
 
     /**
@@ -1360,7 +1429,7 @@ class Product extends ExtendProduct implements
      *
      * @return Product
      */
-    public function setPrimaryUnitPrecision($primaryUnitPrecision)
+    public function setPrimaryUnitPrecision(?ProductUnitPrecision $primaryUnitPrecision)
     {
         if ($primaryUnitPrecision) {
             $primaryUnitPrecision->setConversionRate(1.0)->setSell(true);
@@ -1392,7 +1461,7 @@ class Product extends ExtendProduct implements
     {
         $productUnit = $unitPrecision->getUnit();
         $primary = $this->getPrimaryUnitPrecision();
-        $primaryUnit = $primary ? $primary->getUnit() : null;
+        $primaryUnit = $primary?->getUnit();
         if ($productUnit == $primaryUnit) {
             return $this;
         }
@@ -1412,7 +1481,7 @@ class Product extends ExtendProduct implements
     {
         $productUnit = $unitPrecision->getUnit();
         $primary = $this->getPrimaryUnitPrecision();
-        $primaryUnit = $primary ? $primary->getUnit() : null;
+        $primaryUnit = $primary?->getUnit();
         if ($productUnit == $primaryUnit) {
             return $this;
         }
@@ -1434,9 +1503,7 @@ class Product extends ExtendProduct implements
                 return $precision != $primaryPrecision;
             });
 
-        $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
-
-        return $additionalPrecisionsSorted;
+        return new ArrayCollection(array_values($additionalPrecisions->toArray()));
     }
 
     /**

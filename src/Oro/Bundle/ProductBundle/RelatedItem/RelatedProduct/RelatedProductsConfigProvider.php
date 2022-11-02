@@ -2,14 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
 /**
- * @codeCoverageIgnore There is no point to test these getters
+ * The configuration provider for related products.
  */
-class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
+class RelatedProductsConfigProvider implements RelatedItemConfigProviderInterface
 {
+    private ConfigManager $configManager;
+
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
     /**
      * {@inheritdoc}
      */

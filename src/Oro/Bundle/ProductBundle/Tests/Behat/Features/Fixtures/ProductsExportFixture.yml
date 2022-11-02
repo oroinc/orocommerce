@@ -20,7 +20,12 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU1'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
+            - addMetaTitl: ['@metaTitle']
+            - addMetaDescription: ['@metaDescription']
+            - addMetaKeyword: ['@metaKeywords']
+            - addDescription: ['@description_value1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -29,7 +34,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU2'
         primaryUnitPrecision: '@precision2'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
+            - addDescription: ['@description_value2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -38,7 +45,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU3'
         primaryUnitPrecision: '@precision3'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
+        __calls:
+            - addName: ['@locvalue3']
+            - addDescription: ['@description_value3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -47,7 +56,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU4'
         primaryUnitPrecision: '@precision4'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue4']
+        __calls:
+            - addName: ['@locvalue4']
+            - addDescription: ['@description_value4']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -56,13 +67,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU5'
         primaryUnitPrecision: '@precision5'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue5']
+        __calls:
+            - addName: ['@locvalue5']
+            - addDescription: ['@description_value5']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'disabled'
         organization: '@organization'
         owner: '@business_unit'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product 1'
     locvalue2:
@@ -73,3 +86,23 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 4'
     locvalue5:
         string: 'Product5(disabled)'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    description_value1:
+        wysiwyg: 'Product 1 Description'
+    description_value2:
+        wysiwyg: 'Product 2 Description'
+    description_value3:
+        wysiwyg: 'Product 3 Description'
+    description_value4:
+        wysiwyg: 'Product 4 Description'
+    description_value5:
+        wysiwyg: 'Product 5 Description'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    metaTitle:
+        string: 'Meta Title 1'
+    metaDescription:
+        text: 'Meta Description 1'
+    metaKeywords:
+        text: 'Meta Keywords 1'

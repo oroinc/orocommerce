@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\MigrationBundle\Event\MigrationDataFixturesEvent;
 use Oro\Bundle\PlatformBundle\EventListener\AbstractDemoDataFixturesListener;
 use Oro\Bundle\PlatformBundle\Manager\OptionalListenerManager;
@@ -10,39 +12,38 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListAssociationsProvider;
+use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 
 /**
  * Building all combined price lists during loading of demo data
  * Disables search re-indexation for building combined price lists
  */
-class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener
+class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListener implements FeatureToggleableInterface
 {
-    /** @var CombinedPriceListsBuilderFacade CombinedPriceListsBuilderFacade */
-    protected $combinedPriceListsBuilderFacade;
+    use FeatureCheckerHolderTrait;
 
-    /** @var ProductPriceBuilder */
-    protected $priceBuilder;
+    private CombinedPriceListsBuilderFacade $combinedPriceListsBuilderFacade;
+    private ProductPriceBuilder $priceBuilder;
+    private PriceListProductAssignmentBuilder $assignmentBuilder;
+    private CombinedPriceListAssociationsProvider $associationsProvider;
+    private CombinedPriceListProvider $combinedPriceListProvider;
 
-    /** @var PriceListProductAssignmentBuilder */
-    protected $assignmentBuilder;
-
-    /**
-     * @param OptionalListenerManager $listenerManager
-     * @param CombinedPriceListsBuilderFacade $builderFacade
-     * @param ProductPriceBuilder $priceBuilder
-     * @param PriceListProductAssignmentBuilder $assignmentBuilder
-     */
     public function __construct(
         OptionalListenerManager $listenerManager,
         CombinedPriceListsBuilderFacade $builderFacade,
         ProductPriceBuilder $priceBuilder,
-        PriceListProductAssignmentBuilder $assignmentBuilder
+        PriceListProductAssignmentBuilder $assignmentBuilder,
+        CombinedPriceListAssociationsProvider $associationsProvider,
+        CombinedPriceListProvider $combinedPriceListProvider
     ) {
         parent::__construct($listenerManager);
 
         $this->combinedPriceListsBuilderFacade = $builderFacade;
         $this->priceBuilder = $priceBuilder;
         $this->assignmentBuilder = $assignmentBuilder;
+        $this->associationsProvider = $associationsProvider;
+        $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
     /**
@@ -50,6 +51,10 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
      */
     protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $event->log('building all combined price lists');
 
         // website search index should not be re-indexed while cpl build
@@ -58,9 +63,6 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->listenerManager->enableListener('oro_website_search.reindex_request.listener');
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     protected function buildPrices(ObjectManager $manager)
     {
         $priceLists = $manager->getRepository(PriceList::class)->getPriceListsWithRules();
@@ -70,6 +72,21 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
             $this->priceBuilder->buildByPriceListWithoutTriggers($priceList);
         }
 
-        $this->combinedPriceListsBuilderFacade->rebuildAll(time());
+        $this->rebuildCombinedPrices();
+    }
+
+    private function rebuildCombinedPrices(): void
+    {
+        $associations = $this->associationsProvider->getCombinedPriceListsWithAssociations(true);
+        foreach ($associations as $association) {
+            $cpl = $this->combinedPriceListProvider
+                ->getCombinedPriceListByCollectionInformation($association['collection']);
+            $this->combinedPriceListsBuilderFacade->rebuild([$cpl]);
+            $assignTo = $association['assign_to'] ?? [];
+            if (!empty($assignTo)) {
+                $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo, null, true);
+            }
+            $this->combinedPriceListsBuilderFacade->triggerProductIndexation($cpl, $assignTo);
+        }
     }
 }

@@ -6,26 +6,29 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds price and price per unit columns, sorters, filters for each currency enabled in current price list.
  */
-class ProductPriceDatagridExtension extends AbstractExtension
+class ProductPriceDatagridExtension extends AbstractExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     private const SUPPORTED_GRID = 'products-grid';
     private const UNIT_FILTER_SUFFIX = '__value';
 
@@ -53,13 +56,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
     /** @var array */
     private $enabledPriceColumns;
 
-    /**
-     * @param PriceListRequestHandler $priceListRequestHandler
-     * @param DoctrineHelper $doctrineHelper
-     * @param SelectedFieldsProviderInterface $selectedFieldsProvider
-     * @param TranslatorInterface $translator
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function __construct(
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
@@ -89,8 +85,8 @@ class ProductPriceDatagridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        return
-            !$this->applied
+        return $this->isFeaturesEnabled()
+            && !$this->applied
             && static::SUPPORTED_GRID === $config->getName()
             && parent::isApplicable($config);
     }
@@ -130,9 +126,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     */
     private function addColumns(DatagridConfiguration $config): void
     {
         $currencies = $this->getCurrencies();
@@ -164,18 +157,13 @@ class ProductPriceDatagridExtension extends AbstractExtension
         $selectedFields = $this->getSelectedFields($config, $dataColumns);
         $this->enabledPriceColumns = array_intersect_key($priceColumns, array_flip($selectedFields));
         if ($this->enabledPriceColumns) {
-            $config->getOrmQuery()->addHint(PriceShardWalker::HINT_PRICE_SHARD);
+            $config->getOrmQuery()->addHint(PriceShardOutputResultModifier::HINT_PRICE_SHARD);
             foreach ($this->enabledPriceColumns as $columnName => list($currencyIsoCode, $unitCode)) {
                 $this->addColumnToQueryConfig($config, $columnName, $currencyIsoCode, $unitCode);
             }
         }
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param array $dataColumns
-     * @return array
-     */
     private function getSelectedFields(DatagridConfiguration $config, array $dataColumns): array
     {
         array_walk(
@@ -193,9 +181,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @return array
-     */
     private function getCurrencies(): array
     {
         $priceList = $this->getPriceList();
@@ -240,12 +225,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return array_unique([$columnName, $filterConfig['data_name']]);
     }
 
-    /**
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     *
-     * @return array
-     */
     private function createPriceColumnConfig(
         string $currencyIsoCode,
         ?string $unitCode = null
@@ -260,20 +239,13 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return [
             'label' => $this->translator->trans($message, $params),
             'type' => 'twig',
-            'template' => 'OroPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'template' => '@OroPricing/Datagrid/Column/productPrice.html.twig',
             'frontend_type' => 'html',
             // Filters for price / unit pairs must not be renderable by default.
             'renderable' => !$unitCode,
         ];
     }
 
-    /**
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     *
-     * @return array
-     */
     private function createPriceFilterConfig(
         string $columnName,
         string $currencyIsoCode,
@@ -284,7 +256,7 @@ class ProductPriceDatagridExtension extends AbstractExtension
                 'type' => 'number-range',
                 'data_name' => $columnName . self::UNIT_FILTER_SUFFIX,
                 // Filters for price / unit pairs must be disabled by default.
-                'enabled' => false,
+                'renderable' => false,
             ];
         } else {
             $filter = ['type' => 'product-price', 'data_name' => $currencyIsoCode];
@@ -293,12 +265,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return $filter;
     }
 
-    /**
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     *
-     * @return string
-     */
     private function getColumnName(string $currencyIsoCode, ?string $unitCode = null): string
     {
         $result = 'price_column_' . strtolower($currencyIsoCode);
@@ -306,11 +272,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return $unitCode ? sprintf('%s_%s', $result, strtolower($unitCode)) : $result;
     }
 
-    /**
-     * @param string $columnName
-     *
-     * @return string
-     */
     private function getJoinAlias(string $columnName): string
     {
         QueryBuilderUtil::checkIdentifier($columnName);
@@ -318,12 +279,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return $columnName . '_table';
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     */
     private function addColumnToQueryConfig(
         DatagridConfiguration $config,
         string $columnName,
@@ -356,12 +311,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         $this->addJoinToQueryConfig($config, $columnName, $currencyIsoCode, $unitCode);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     * @param null|string $unitCode
-     */
     private function addJoinToQueryConfig(
         DatagridConfiguration $config,
         string $columnName,
@@ -395,9 +344,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         );
     }
 
-    /**
-     * @return PriceList|null
-     */
     private function getPriceList(): ?PriceList
     {
         if (!$this->priceList) {
@@ -407,11 +353,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return $this->priceList;
     }
 
-    /**
-     * @param ResultRecord $record
-     * @param string $columnName
-     * @param string $currencyIsoCode
-     */
     private function unpackPrices(ResultRecord $record, string $columnName, string $currencyIsoCode): void
     {
         $rawPrices = $record->getValue($columnName);
@@ -421,12 +362,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         }
     }
 
-    /**
-     * @param string $rawPrices
-     * @param string $currencyIsoCode
-     *
-     * @return array
-     */
     private function unpackPriceFromRaw(string $rawPrices, string $currencyIsoCode): array
     {
         $prices = [];
@@ -443,9 +378,6 @@ class ProductPriceDatagridExtension extends AbstractExtension
         return $prices;
     }
 
-    /**
-     * @return bool
-     */
     private function isGrantedToViewPriceFields(): bool
     {
         return $this->authorizationChecker->isGranted('VIEW', sprintf('entity:%s', ProductPrice::class));

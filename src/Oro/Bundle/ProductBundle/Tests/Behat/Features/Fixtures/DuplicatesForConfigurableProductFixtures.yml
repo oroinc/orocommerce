@@ -1,0 +1,46 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    simpleUnitPrecision3:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    simpleProductLoc3:
+        string: 'duplicate Black Slip-On Clog L'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    simpleProduct3Slug:
+        url: '/duplicate-black-slip-on-clog-l'
+        slugPrototype: 'duplicate-black-slip-on-clog-l'
+        routeName: 'oro_product_frontend_product_view'
+        routeParameters: {'id': '@simpleProduct3->id'}
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    simpleProduct3:
+        type: 'simple'
+        sku: 'DUPLICATE'
+        slugs: ['@simpleProduct3Slug']
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+        newArrival: true
+        featured: true
+        __calls:
+            - addName: ['@simpleProductLoc3']
+            - addUnitPrecision: ['@simpleUnitPrecision3']
+            - setPrimaryUnitPrecision: ['@simpleUnitPrecision3']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    simpleProductItemPrice3:
+        product: '@simpleProduct3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation3:
+        product: '@simpleProduct3'
+        priceList: '@defaultPriceList'

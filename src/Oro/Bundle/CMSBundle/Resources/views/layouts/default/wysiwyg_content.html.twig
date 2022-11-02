@@ -1,0 +1,10 @@
+{% block wysiwyg_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' cms-typography'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {%- import '@OroCMS/macros.html.twig' as CMS -%}
+        {{ CMS.renderWysiwygContent(content, contentStyle|default('')) }}
+    </div>
+{% endblock %}

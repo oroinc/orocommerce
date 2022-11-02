@@ -6,10 +6,10 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryStub extends Category
 {
-    /** @var  mixed smallImage */
+    /** @var mixed */
     protected $smallImage;
 
-    /** @var  mixed largeImage */
+    /** @var mixed */
     protected $largeImage;
 
     /**

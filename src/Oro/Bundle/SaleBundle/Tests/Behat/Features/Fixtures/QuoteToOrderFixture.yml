@@ -5,6 +5,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
     quote1:
         currency: 'USD'
         customer: '@customer1'
+        customerUser: '@amanda'
         owner: '@admin'
         organization: '@organization'
         poNumber: 'Q123'
@@ -16,7 +17,7 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
         product: '@product1'
         quote: '@quote1'
 
-Oro\Bundle\CurrencyBundle\Entity\Price (local):
+Oro\Bundle\CurrencyBundle\Entity\Price :
     quoteProductPrice1:
         value: 5
         currency: USD

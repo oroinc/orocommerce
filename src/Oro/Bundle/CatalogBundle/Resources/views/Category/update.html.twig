@@ -1,6 +1,6 @@
-{% extends 'OroUIBundle:actions:update.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% extends '@OroUI/actions/update.html.twig' %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% set entityId = entity.id %}
 {% set parentCategoryId = entity.parentCategory ? entity.parentCategory.id : null %}
@@ -12,6 +12,8 @@
 {% set formAction = entityId ? path('oro_catalog_category_update', { 'id': entityId }) : path('oro_catalog_category_create', { 'id': parentCategoryId })  %}
 
 {% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% if entityId %}
         {% if is_granted('oro_catalog_category_create') %}
             {{ UI.button({
@@ -26,7 +28,10 @@
     {% endif %}
 
     {{ UI.cancelButton(path('oro_catalog_category_index')) }}
-    {% set html = UI.saveAndStayButton() %}
+    {% set html = UI.saveAndStayButton({
+        'route' : 'oro_catalog_category_update',
+        'params': {'id': '$id'}
+    }) %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
@@ -41,47 +46,44 @@
         {{ parent() }}
     {% else %}
         {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.catalog.category.entity_label'|trans}) %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+        {% include '@OroUI/page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
     {% set id = 'category-edit' %}
 
     {% set dataBlocks = [{
-            'title': 'oro.catalog.sections.general'|trans,
-            'class': 'active',
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_widget(form.appendProducts, {'id': 'categoryAppendProducts'}),
-                    form_widget(form.removeProducts, {'id': 'categoryRemoveProducts'}),
-                    form_row(form.titles),
-                    form_row(form.slugPrototypesWithRedirect),
-                    form_row(form.shortDescriptions),
-                    form_row(form.longDescriptions),
-                    form_row(form.smallImage),
-                    form_row(form.largeImage)
-                ]
-            }]
+        'title': 'oro.catalog.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'title': '',
+            'data': [
+                form_widget(form.appendProducts, {'id': 'categoryAppendProducts'}),
+                form_widget(form.removeProducts, {'id': 'categoryRemoveProducts'}),
+                form_row(form.titles),
+                form_row(form.slugPrototypesWithRedirect),
+                form_row(form.smallImage),
+                form_row(form.largeImage)
+            ]
         }]
-    %}
+    }, {
+        'title': 'oro.catalog.category.short_descriptions.label'|trans,
+        'subblocks': [{
+            'title': '',
+            'data': [form_widget(form.shortDescriptions)],
+        }]
+    }, {
+        'title': 'oro.catalog.category.long_descriptions.label'|trans,
+        'subblocks': [{
+            'title': '',
+            'data': [form_widget(form.longDescriptions)],
+        }]
+    }] %}
 
-    {% set additionalData = [] %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% set additionalData = additionalData|merge([form_row(child)]) %}
-    {% endfor %}
-
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'oro.catalog.sections.additional'|trans,
-            'subblocks': [{
-                'title': '',
-                'useSpan': false,
-                'data' : additionalData
-            }]
-        }] ) %}
-    {% endif %}
+    {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.catalog.sections.additional'|trans)) %}
 
     {% if is_granted('oro_product_update') %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -114,7 +116,7 @@
     {% set treeOptions = {
         'view' : 'orocatalog/js/app/views/tree-manage-view',
         'key' : 'commerce-category',
-        'data' : oro_category_list(),
+        'data' : oro_category_list(null, rootCategory),
         'nodeId' : entityId ? entityId : parentCategoryId,
         'updateAllowed' : is_granted('oro_catalog_category_update'),
         'onSelectRoute' : 'oro_catalog_category_update',
@@ -124,10 +126,11 @@
     {% set twoColumnContent = parent() %}
 
     <div class="sidebar-container">
-        {% embed "OroUIBundle::content_sidebar.html.twig" with {options: {
-            scrollbar: '[data-role="jstree-container"]'
+        {% embed "@OroUI/content_sidebar.html.twig" with {options: {
+            fixSidebarHeight: false
         }} %}
             {% block sidebar %}
+                {% import '@OroUI/macros.html.twig' as UI %}
                 {{ UI.renderJsTree(
                     {
                         'label': 'oro.catalog.category.entity_plural_label'|trans,

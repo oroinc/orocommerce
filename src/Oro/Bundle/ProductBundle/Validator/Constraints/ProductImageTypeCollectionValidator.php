@@ -5,11 +5,14 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Validates a collection of product image types.
+ */
 class ProductImageTypeCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_image_type_collection_validator';
@@ -29,10 +32,6 @@ class ProductImageTypeCollectionValidator extends ConstraintValidator
      */
     protected $context;
 
-    /**
-     * @param ImageTypeProvider $imageTypeProvider
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         ImageTypeProvider $imageTypeProvider,
         TranslatorInterface $translator
@@ -63,9 +62,7 @@ class ProductImageTypeCollectionValidator extends ConstraintValidator
             if ($count > 1) {
                 $this->context
                     ->buildViolation($constraint->message, [
-                        '%type%' => $this->translator->trans(
-                            $availableTypes[$typeName]->getLabel()
-                        ),
+                        '%type%' => $this->translator->trans((string) $availableTypes[$typeName]->getLabel()),
                     ])
                     ->addViolation();
             }

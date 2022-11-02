@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -52,7 +52,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->segmentManager = $this->createMock(SegmentManager::class);
@@ -260,9 +260,6 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    /**
-     * @return array
-     */
     public function gridNameDataProvider(): array
     {
         return [
@@ -274,7 +271,6 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider definitionEmptyAndNoIncludedProductsDataProvider
-     * @param array $requestData
      */
     public function testOnBuildAfterWhenDefinitionFilterIsEmptyAndNoIncludedProducts(array $requestData)
     {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -15,7 +15,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityReso
  *  - scope
  *  - category
  */
-class CategoryRepository extends EntityRepository
+class CategoryRepository extends ServiceEntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;
@@ -103,10 +103,6 @@ class CategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param Scope $scope
-     */
     public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope)
     {
         $visibilityCondition = sprintf(

@@ -13,7 +13,7 @@ class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ActionPermissionProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->record = $this->createMock(ResultRecordInterface::class);
 

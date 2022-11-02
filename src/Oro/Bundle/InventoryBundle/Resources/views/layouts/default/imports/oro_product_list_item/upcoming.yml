@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'upcoming.html.twig'
+        - '@add':
+            id: __product_upcoming_label
+            parentId: __product_specification
+            blockType: container
+            prepend: true

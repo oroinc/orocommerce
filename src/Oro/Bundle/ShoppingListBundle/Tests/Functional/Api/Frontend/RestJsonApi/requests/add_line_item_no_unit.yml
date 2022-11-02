@@ -1,0 +1,12 @@
+data:
+    -
+        type: shoppinglistitems
+        attributes:
+            quantity: 10
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null

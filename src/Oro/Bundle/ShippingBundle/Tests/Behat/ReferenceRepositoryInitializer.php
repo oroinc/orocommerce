@@ -2,35 +2,34 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Behat;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityRepository;
-use Nelmio\Alice\Instances\Collection as AliceCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
-    const PARCEL_CODE = 'parcel';
-    const KILOGRAM_CODE = 'kg';
-    const METER_CODE = 'm';
+    private const LENGTH_UNIT_MAPPING = ['m' => 'meter', 'cm' => 'centimeter'];
 
     /**
      * {@inheritdoc}
      */
-    public function init(Registry $doctrine, AliceCollection $referenceRepository)
+    public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
-        /** @var EntityRepository $repository */
-        $repository = $doctrine->getManager()->getRepository(FreightClass::class);
-        $referenceRepository->set('parcel', $repository->findOneBy(['code' => self::PARCEL_CODE]));
+        $repository = $doctrine->getRepository(FreightClass::class);
+        $referenceRepository->set('parcel', $repository->findOneBy(['code' => 'parcel']));
 
-        /** @var EntityRepository $repository */
-        $repository = $doctrine->getManager()->getRepository(WeightUnit::class);
-        $referenceRepository->set('kg', $repository->findOneBy(['code' => self::KILOGRAM_CODE]));
+        /** @var WeightUnit $weightUnit */
+        foreach ($doctrine->getRepository(WeightUnit::class)->findAll() as $weightUnit) {
+            $referenceRepository->set($weightUnit->getCode(), $weightUnit);
+        }
 
-        /** @var EntityRepository $repository */
-        $repository = $doctrine->getManager()->getRepository(LengthUnit::class);
-        $referenceRepository->set('meter', $repository->findOneBy(['code' => self::METER_CODE]));
+        /** @var LengthUnit $lengthUnit */
+        foreach ($doctrine->getRepository(LengthUnit::class)->findAll() as $lengthUnit) {
+            $code = $lengthUnit->getCode();
+            $referenceRepository->set(self::LENGTH_UNIT_MAPPING[$code] ?? $code, $lengthUnit);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Handler;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -15,12 +16,17 @@ use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @dbIsolationPerTest
+ */
 class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fixturesToLoad[] = LoadCheckoutData::class;
         $this->fixturesToLoad[] = LoadCombinedProductPrices::class;
@@ -31,6 +37,8 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         $this->client->useHashNavigation(true);
 
         parent::setUp();
+        static::getContainer()->get('request_stack')
+            ->push(Request::create($this->getUrl('oro_promotion_frontend_add_coupon')));
     }
 
     /**
@@ -47,7 +55,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
             false,
             'k',
             $user->getOrganization(),
-            $user->getRoles()
+            $user->getUserRoles()
         );
     }
 
@@ -128,6 +136,62 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
         $appliedCoupons = $entity->getAppliedCoupons()->toArray();
         self::assertEquals($expectedAppliedCoupons, $appliedCoupons);
+    }
+
+    public function testHandleCaseSensitive()
+    {
+        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
+        $code = strtoupper($this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getCode());
+        $postData = [
+            'entityClass' => Checkout::class,
+            'entityId' => $entity->getId(),
+            'couponCode' => $code
+        ];
+
+        $request = new Request([], $postData);
+        $response = $this->handler->handle($request);
+
+        self::assertJsonResponseStatusCodeEquals($response, 200);
+        $jsonContent = json_decode($response->getContent(), true);
+        self::assertFalse($jsonContent['success']);
+        self::assertEquals('oro.promotion.coupon.violation.invalid_coupon_code', reset($jsonContent['errors']));
+    }
+
+    public function testHandleCaseInsensitive()
+    {
+        $configManager = self::getConfigManager('global');
+        $savedState = $configManager->get('oro_promotion.case_insensitive_coupon_search');
+        $configManager->set('oro_promotion.case_insensitive_coupon_search', true);
+        $configManager->flush();
+
+        /** @var AppliedCouponsAwareInterface|Checkout $entity */
+        $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
+        $code = strtoupper($this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getCode());
+        $postData = [
+            'entityClass' => Checkout::class,
+            'entityId' => $entity->getId(),
+            'couponCode' => $code
+        ];
+
+        $request = new Request([], $postData);
+        $response = $this->handler->handle($request);
+
+        self::assertJsonResponseStatusCodeEquals($response, 200);
+        $jsonContent = json_decode($response->getContent(), true);
+
+        self::assertTrue($jsonContent['success']);
+        self::assertEmpty($jsonContent['errors']);
+
+        $expectedAppliedCoupons = array_values($entity->getAppliedCoupons()->toArray());
+        self::assertCount(1, $expectedAppliedCoupons);
+        self::getContainer()->get('doctrine')->getManagerForClass(Checkout::class)->refresh($entity);
+
+        $appliedCoupons = $entity->getAppliedCoupons()->toArray();
+        self::assertEquals($expectedAppliedCoupons, $appliedCoupons);
+
+        $configManager->set('oro_promotion.case_insensitive_coupon_search', $savedState);
+        $configManager->flush();
     }
 
     public function testHandleShippingPromotionForShoppingList()

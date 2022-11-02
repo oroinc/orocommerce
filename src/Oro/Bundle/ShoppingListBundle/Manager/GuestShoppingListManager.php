@@ -11,7 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Handles logic related to getting/creating shopping lists for customer visitors
@@ -35,13 +35,6 @@ class GuestShoppingListManager
     /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param TokenStorageInterface $tokenStorage
-     * @param WebsiteManager $websiteManager
-     * @param TranslatorInterface $translator
-     * @param ConfigManager $configManager
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         TokenStorageInterface $tokenStorage,
@@ -79,10 +72,7 @@ class GuestShoppingListManager
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken && $this->isFeaturesEnabled();
     }
 
-    /**
-     * @return ShoppingList|null
-     */
-    public function getShoppingListForCustomerVisitor()
+    public function findExistingShoppingListForCustomerVisitor(): ?ShoppingList
     {
         $token = $this->tokenStorage->getToken();
         if (!$token instanceof AnonymousCustomerUserToken) {
@@ -112,11 +102,23 @@ class GuestShoppingListManager
             }
         }
 
-        if ($this->configManager->get('oro_shopping_list.create_shopping_list_for_new_guest')) {
-            return $this->createShoppingListForCustomerVisitor();
+        return null;
+    }
+
+    /**
+     * @return ShoppingList|null
+     */
+    public function getShoppingListForCustomerVisitor()
+    {
+        $shoppingList = $this->findExistingShoppingListForCustomerVisitor();
+
+        if (null === $shoppingList
+            && $this->configManager->get('oro_shopping_list.create_shopping_list_for_new_guest')
+        ) {
+            $shoppingList = $this->createShoppingListForCustomerVisitor();
         }
 
-        return null;
+        return $shoppingList;
     }
 
     /**
@@ -132,7 +134,7 @@ class GuestShoppingListManager
     /**
      * @return ShoppingList
      */
-    private function createShoppingListForCustomerVisitor()
+    public function createShoppingListForCustomerVisitor()
     {
         $token = $this->tokenStorage->getToken();
 

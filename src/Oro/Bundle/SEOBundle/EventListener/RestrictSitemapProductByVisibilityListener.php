@@ -12,17 +12,11 @@ class RestrictSitemapProductByVisibilityListener
      */
     private $productVisibilityQueryBuilderModifier;
 
-    /**
-     * @param ProductVisibilityQueryBuilderModifier $productVisibilityQueryBuilderModifier
-     */
     public function __construct(ProductVisibilityQueryBuilderModifier $productVisibilityQueryBuilderModifier)
     {
         $this->productVisibilityQueryBuilderModifier = $productVisibilityQueryBuilderModifier;
     }
 
-    /**
-     * @param RestrictSitemapEntitiesEvent $event
-     */
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
     {
         $this->productVisibilityQueryBuilderModifier->restrictForAnonymous(

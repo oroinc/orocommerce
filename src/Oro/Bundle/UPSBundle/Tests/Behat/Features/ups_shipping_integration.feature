@@ -1,6 +1,6 @@
 @regression
 Feature: UPS shipping integration
-  ToDo: BAP-16103 Add missing descriptions to the Behat features
+
   Scenario: Create UPS integration
     Given I login as administrator
     And go to System/ Integrations/ Manage Integrations

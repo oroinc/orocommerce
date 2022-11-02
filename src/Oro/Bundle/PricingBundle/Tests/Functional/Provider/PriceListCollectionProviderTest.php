@@ -3,8 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
@@ -15,25 +17,22 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListCollectionProviderTest extends WebTestCase
 {
-    const DEFAULT_PRICE_LIST = 1;
+    use ConfigManagerAwareTestTrait;
 
-    /**
-     * @var PriceListCollectionProvider
-     */
-    protected $provider;
+    private const DEFAULT_PRICE_LIST = 1;
 
-    protected function setUp()
+    private PriceListCollectionProvider $provider;
+
+    protected function setUp(): void
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);
-        $this->provider = $this->getContainer()->get('oro_pricing.provider.price_list_collection');
+        $this->loadFixtures([
+            LoadPriceListFallbackSettings::class,
+            LoadPriceListRelations::class,
+        ]);
 
-        $this->loadFixtures(
-            [
-                LoadPriceListFallbackSettings::class,
-                LoadPriceListRelations::class,
-            ]
-        );
+        $this->provider = $this->getContainer()->get('oro_pricing.provider.price_list_collection');
     }
 
     public function testGetPriceListsByConfig()
@@ -46,10 +45,8 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     /**
      * @dataProvider testGetPriceListsByWebsiteDataProvider
-     * @param string $websiteReference
-     * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByWebsite($websiteReference, array $expectedPriceLists)
+    public function testGetPriceListsByWebsite(string $websiteReference, array $expectedPriceLists)
     {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
@@ -59,10 +56,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
-    /**
-     * @return array
-     */
-    public function testGetPriceListsByWebsiteDataProvider()
+    public function testGetPriceListsByWebsiteDataProvider(): array
     {
         return [
             'website with settings and enabled fallback' => [
@@ -115,14 +109,10 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     /**
      * @dataProvider testGetPriceListsByCustomerGroupDataProvider
-     *
-     * @param string $customerGroupReference
-     * @param string $websiteReference
-     * @param array $expectedPriceLists
      */
     public function testGetPriceListsByCustomerGroup(
-        $customerGroupReference,
-        $websiteReference,
+        string $customerGroupReference,
+        string $websiteReference,
         array $expectedPriceLists
     ) {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
@@ -135,10 +125,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
-    /**
-     * @return array
-     */
-    public function testGetPriceListsByCustomerGroupDataProvider()
+    public function testGetPriceListsByCustomerGroupDataProvider(): array
     {
         return [
             'all fallbacks' => [
@@ -153,6 +140,10 @@ class PriceListCollectionProviderTest extends WebTestCase
                     [
                         'priceList' => 'price_list_1',
                         'mergeAllowed' => true,
+                    ],
+                    [
+                        'priceList' => 'price_list_6', // Not active.
+                        'mergeAllowed' => false
                     ],
                     /** End From group */
                     /** From Website */
@@ -231,14 +222,10 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     /**
      * @dataProvider testGetPriceListsByCustomerDataProvider
-     *
-     * @param string $customerReference
-     * @param string $websiteReference
-     * @param array $expectedPriceLists
      */
     public function testGetPriceListsByCustomer(
-        $customerReference,
-        $websiteReference,
+        string $customerReference,
+        string $websiteReference,
         array $expectedPriceLists
     ) {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
@@ -251,10 +238,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
-    /**
-     * @return array
-     */
-    public function testGetPriceListsByCustomerDataProvider()
+    public function testGetPriceListsByCustomerDataProvider(): array
     {
         return [
             'customer.orphan Canada' => [
@@ -290,11 +274,8 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     /**
      * @dataProvider getPriceListsByCustomerForCustomerWithoutGroupDataProvider
-     *
-     * @param string $website
-     * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByCustomerForCustomerWithoutGroup($website, array $expectedPriceLists)
+    public function testGetPriceListsByCustomerForCustomerWithoutGroup(string $website, array $expectedPriceLists)
     {
         /** @var Customer $customer */
         $customer = $this->getReference('customer.level_1_1');
@@ -308,10 +289,7 @@ class PriceListCollectionProviderTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListsByCustomerForCustomerWithoutGroupDataProvider()
+    public function getPriceListsByCustomerForCustomerWithoutGroupDataProvider(): array
     {
         return [
             'current customer only' => [
@@ -361,18 +339,14 @@ class PriceListCollectionProviderTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $expectedPriceLists
-     * @return array
-     */
-    protected function resolveExpectedPriceLists(array $expectedPriceLists)
+    private function resolveExpectedPriceLists(array $expectedPriceLists): array
     {
         $result = [];
         /** @var EntityManager $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
         foreach ($expectedPriceLists as $expectedPriceListData) {
             if ($expectedPriceListData['priceList'] === self::DEFAULT_PRICE_LIST) {
-                $priceList = $em->getReference('OroPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
+                $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
             } else {
                 $priceList = $this->getReference($expectedPriceListData['priceList']);
             }
@@ -385,12 +359,12 @@ class PriceListCollectionProviderTest extends WebTestCase
         return $result;
     }
 
-    protected function setPriceListToConfig()
+    private function setPriceListToConfig(): void
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $priceList = $em->getReference('OroPricingBundle:PriceList', self::DEFAULT_PRICE_LIST);
+        $priceList = $em->getReference(PriceList::class, self::DEFAULT_PRICE_LIST);
 
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_pricing.default_price_lists',
             [new PriceListConfig($priceList, 100, true)]
@@ -398,13 +372,10 @@ class PriceListCollectionProviderTest extends WebTestCase
         $configManager->flush();
     }
 
-    /**
-     * @param PriceListSequenceMember[] $sequenceMembers
-     * @return array
-     */
-    protected function resolveResult(array $sequenceMembers)
+    private function resolveResult(array $sequenceMembers): array
     {
         $result = [];
+        /** @var PriceListSequenceMember $sequenceMember */
         foreach ($sequenceMembers as $sequenceMember) {
             $result[] = [
                 'priceList' => $sequenceMember->getPriceList()->getName(),

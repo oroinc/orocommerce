@@ -5,17 +5,32 @@ namespace Oro\Bundle\ShippingBundle\Controller;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ShippingMethodsConfigsRuleController extends Controller
+/**
+ * Shipping Methods Configs Rule Controller
+ */
+class ShippingMethodsConfigsRuleController extends AbstractController
 {
+    private array $addMethodWidgetUpdateFlags = [ShippingMethodsConfigsRuleHandler::UPDATE_FLAG];
+
+    public function addUpdateFlagToAddMethodWidget(string $addMethodWidgetUpdateFlags): void
+    {
+        if (false === \in_array($addMethodWidgetUpdateFlags, $this->addMethodWidgetUpdateFlags, true)) {
+            $this->addMethodWidgetUpdateFlags[] = $addMethodWidgetUpdateFlags;
+        }
+    }
+
     /**
      * @Route("/", name="oro_shipping_methods_configs_rule_index")
      * @Template
@@ -26,13 +41,13 @@ class ShippingMethodsConfigsRuleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_shipping.entity.shipping_methods_configs_rule.class')
+            'entity_class' => ShippingMethodsConfigsRule::class
         ];
     }
 
     /**
      * @Route("/create", name="oro_shipping_methods_configs_rule_create")
-     * @Template("OroShippingBundle:ShippingMethodsConfigsRule:update.html.twig")
+     * @Template("@OroShipping/ShippingMethodsConfigsRule/update.html.twig")
      * @Acl(
      *     id="oro_shipping_methods_configs_rule_create",
      *     type="entity",
@@ -96,13 +111,13 @@ class ShippingMethodsConfigsRuleController extends Controller
     protected function update(ShippingMethodsConfigsRule $entity, Request $request)
     {
         $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
-        if ($this->get('oro_shipping.form.handler.shipping_methods_configs_rule')->process($form, $entity)) {
-            $this->get('session')->getFlashBag()->add(
+        if ($this->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
+            $request->getSession()->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('oro.shipping.controller.rule.saved.message')
+                $this->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
             );
 
-            return $this->get('oro_ui.router')->redirect($entity);
+            return $this->get(Router::class)->redirect($entity);
         }
 
         if ($request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
@@ -113,7 +128,9 @@ class ShippingMethodsConfigsRuleController extends Controller
 
         return [
             'entity' => $entity,
-            'form'   => $form->createView()
+            'form'   => $form->createView(),
+            'addMethodWidgetUpdateFlags' => $this->addMethodWidgetUpdateFlags,
+            'addMethodWidgetInFocus' => $request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)
         ];
     }
 
@@ -125,6 +142,8 @@ class ShippingMethodsConfigsRuleController extends Controller
      *     permission="EDIT",
      *     class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
+     * @CsrfProtection()
+     *
      * @param string $gridName
      * @param string $actionName
      * @param Request $request
@@ -133,8 +152,7 @@ class ShippingMethodsConfigsRuleController extends Controller
      */
     public function markMassAction($gridName, $actionName, Request $request)
     {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+        $massActionDispatcher = $this->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 
@@ -144,5 +162,21 @@ class ShippingMethodsConfigsRuleController extends Controller
         ];
 
         return new JsonResponse(array_merge($data, $response->getOptions()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ShippingMethodsConfigsRuleHandler::class,
+                TranslatorInterface::class,
+                Router::class,
+                MassActionDispatcher::class,
+            ]
+        );
     }
 }

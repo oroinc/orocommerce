@@ -5,27 +5,24 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $extensions = [
+        return [
             new PreloadedExtension(
                 [
-                    ProductAttributePriceType::class => new ProductAttributePriceType(new RoundingServiceStub())
+                    ProductAttributePriceType::class => new ProductAttributePriceType()
                 ],
                 []
             )
         ];
-
-        return $extensions;
     }
 
     public function testSubmit()
@@ -36,6 +33,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 
         $form->submit([ProductAttributePriceType::PRICE => '500']);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
     }
 
     public function testSubmittedDataMapping()
@@ -58,6 +56,7 @@ class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 
         $form->submit([ProductAttributePriceType::PRICE => '500.1234']);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals('500.1234', $form->get(ProductAttributePriceType::PRICE)->getData());
     }
 }

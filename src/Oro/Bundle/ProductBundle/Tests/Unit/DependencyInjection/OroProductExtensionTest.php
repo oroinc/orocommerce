@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController;
+use Oro\Bundle\ProductBundle\Controller\Api\Rest\InlineEditProductController;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroProductExtensionTest extends ExtensionTestCase
 {
-    public function testLoad()
+    public function testLoad(): void
     {
         $this->loadExtension(new OroProductExtension());
-
-        $expectedParameters = [
-            'oro_product.entity.product.class',
-        ];
-        $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
             'oro_product.form.type.product',
@@ -25,6 +22,8 @@ class OroProductExtensionTest extends ExtensionTestCase
             'oro_product.virtual_fields.decorator_factory',
             'oro_product.virtual_fields.select_query_converter',
             'oro_product.importexport.configuration_provider.product',
+            BrandController::class,
+            InlineEditProductController::class,
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
@@ -32,14 +31,5 @@ class OroProductExtensionTest extends ExtensionTestCase
             'oro_product',
         ];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
-    }
-
-    /**
-     * Test Get Alias
-     */
-    public function testGetAlias()
-    {
-        $extension = new OroProductExtension();
-        $this->assertEquals('oro_product', $extension->getAlias());
     }
 }

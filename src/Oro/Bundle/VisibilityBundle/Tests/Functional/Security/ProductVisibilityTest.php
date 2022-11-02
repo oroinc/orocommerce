@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Security;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -13,12 +14,14 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
  */
 class ProductVisibilityTest extends FrontendWebTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -42,7 +45,7 @@ class ProductVisibilityTest extends FrontendWebTestCase
      */
     public function testVisibility($configValue, $expectedData)
     {
-        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager = self::getConfigManager('global');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
         $configManager->flush();
         foreach ($expectedData as $productSKU => $resultCode) {

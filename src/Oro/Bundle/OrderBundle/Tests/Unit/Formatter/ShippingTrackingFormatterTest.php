@@ -16,14 +16,13 @@ class ShippingTrackingFormatterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->trackingAwareShippingMethodsProvider = $this
             ->getMockBuilder(TrackingAwareShippingMethodsProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
-
 
     /**
      * @param string|null $trackingLink

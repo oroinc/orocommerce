@@ -2,29 +2,35 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Checks if line item's product and unit are unique in shopping list.
+ */
 class LineItemValidator extends ConstraintValidator
 {
-    /**
-     * @param ManagerRegistry $registry
-     */
+    private ManagerRegistry $registry;
+
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
     /**
-     * @param \Oro\Bundle\ShoppingListBundle\Entity\LineItem $value
+     * @param LineItem $value
      * @param Constraint|LineItem $constraint
      *
      * {@inheritdoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        if ($this->registry->getRepository('OroShoppingListBundle:LineItem')->findDuplicate($value)) {
+        $lineItemRepository = $this->registry->getRepository(LineItem::class);
+        $shoppingList = $value->getShoppingList();
+
+        if ($shoppingList && $lineItemRepository->findDuplicateInShoppingList($value, $shoppingList)) {
             $this->context->addViolation($constraint->message);
         }
     }

@@ -20,6 +20,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Quote Address
+ */
 class QuoteAddressType extends AbstractType
 {
     const NAME = 'oro_quote_address_type';
@@ -39,12 +42,6 @@ class QuoteAddressType extends AbstractType
     /** @var Serializer */
     protected $serializer;
 
-    /**
-     * @param AddressFormatter $addressFormatter
-     * @param QuoteAddressManager $quoteAddressManager
-     * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-     * @param Serializer $serializer
-     */
     public function __construct(
         AddressFormatter $addressFormatter,
         QuoteAddressManager $quoteAddressManager,
@@ -80,7 +77,7 @@ class QuoteAddressType extends AbstractType
                     'required' => false,
                     'mapped' => false,
                     'choices' => $this->getChoices($addresses),
-                    'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
+                    'configs' => ['placeholder' => 'oro.sale.quote.form.address.choose'],
                     'attr' => [
                         'data-addresses' => json_encode($this->getPlainData($addresses)),
                         'data-default' => $addressCollection->getDefaultAddressKey(),

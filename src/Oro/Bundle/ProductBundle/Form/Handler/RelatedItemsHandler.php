@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Exception\AssignerNotFoundException;
 use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Allows to assign or remove related items to Product entity from UI.
@@ -23,9 +23,6 @@ class RelatedItemsHandler
     /** @var TranslatorInterface */
     private $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -53,19 +50,16 @@ class RelatedItemsHandler
     {
         $hasErrors = true;
 
-        $appendRelated = $appendField->getData();
-        $removeRelated = $removeField->getData();
+        $appendRelated = (array) $appendField->getData();
+        $removeRelated = (array) $removeField->getData();
 
-        $this->getAssigner($assignerName)->removeRelations($product, $removeRelated);
+        $assigner = $this->getAssigner($assignerName);
+        $assigner->removeRelations($product, $removeRelated);
 
         try {
-            $this->getAssigner($assignerName)->addRelations($product, $appendRelated);
+            $assigner->addRelations($product, $appendRelated);
             $hasErrors = false;
-        } catch (\InvalidArgumentException $e) {
-            $this->addFormError($appendField, $e->getMessage());
-        } catch (\LogicException $e) {
-            $this->addFormError($appendField, $e->getMessage());
-        } catch (\OverflowException $e) {
+        } catch (\InvalidArgumentException|\LogicException|\OverflowException $e) {
             $this->addFormError($appendField, $e->getMessage());
         }
 
@@ -74,13 +68,13 @@ class RelatedItemsHandler
 
     /**
      * @param FormInterface $form
-     * @param string $message
+     * @param string|null $message
      */
-    private function addFormError(FormInterface $form, $message)
+    private function addFormError(FormInterface $form, ?string $message)
     {
         $form->addError(
             new FormError(
-                $this->translator->trans($message, [], 'validators')
+                $this->translator->trans((string) $message, [], 'validators')
             )
         );
     }

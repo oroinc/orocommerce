@@ -24,7 +24,7 @@ class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $contactInfoProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->contactInfoProvider = $this->createMock(ContactInfoProviderInterface::class);
@@ -35,9 +35,6 @@ class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param ContactInfo $contactInfo
-     * @param array       $expectedResult
-     *
      * @dataProvider contactInfoBlockDataProvider
      */
     public function testGetContactInfoBlock(ContactInfo $contactInfo, array $expectedResult)

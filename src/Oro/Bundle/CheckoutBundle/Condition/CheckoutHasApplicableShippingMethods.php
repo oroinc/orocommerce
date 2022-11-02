@@ -25,9 +25,6 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
      */
     private $checkout;
 
-    /**
-     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-     */
     public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
     {
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;

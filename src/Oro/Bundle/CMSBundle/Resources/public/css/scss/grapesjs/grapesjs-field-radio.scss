@@ -1,0 +1,41 @@
+/* @theme: admin.oro; */
+
+.#{$app-prefix} {
+    &field-radio {
+        border-radius: 20px;
+        border: none;
+
+        .#{$app-prefix}radio-item {
+            border: none;
+            margin-left: 1px;
+            background-color: $primary-860;
+            line-height: 1;
+
+            &-label {
+                padding: 6px;
+                font-size: $base-font-size--s;
+            }
+
+            &:first-child {
+                margin-left: 0;
+                border-radius: 20px 0 0 20px;
+                .#{$app-prefix}radio-item-label {
+                    border-radius: 20px 0 0 20px;
+                }
+            }
+
+            &:last-child {
+                border-radius: 0 20px 20px 0;
+                .#{$app-prefix}radio-item-label {
+                    border-radius: 0 20px 20px 0;
+                }
+            }
+
+            input:checked + .#{$app-prefix}radio-item-label {
+                background-color: $additional-extra-light;
+                box-shadow: $grapejs-radio-shadow;
+                line-height: 1;
+            }
+        }
+    }
+}

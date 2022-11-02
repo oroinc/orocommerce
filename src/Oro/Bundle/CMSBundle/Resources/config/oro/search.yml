@@ -1,12 +1,11 @@
 search:
     Oro\Bundle\CMSBundle\Entity\Page:
         alias:                          oro_cms_page
-        title_fields:                   [defaultTitle]
         route:
             name:                       oro_cms_page_view
             parameters:
                 id:                     id
-        search_template:                OroCMSBundle:Page:searchResult.html.twig
+        search_template:                '@OroCMS/Page/searchResult.html.twig'
         fields:
             -
                 name:                   defaultTitle
@@ -32,3 +31,41 @@ search:
                         name: text
                         target_type: text
                         target_fields: [slugs]
+
+    Oro\Bundle\CMSBundle\Entity\ContentWidget:
+        alias:                          oro_cms_content_widget
+        route:
+            name:                       oro_cms_content_widget_view
+            parameters:
+                id:                     id
+        search_template:                '@OroCMS/ContentWidget/searchResult.html.twig'
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]
+            -
+                name:                   description
+                target_type:            text
+                target_fields:          [description]
+            -
+                name:                   widgetType
+                target_type:            text
+                target_fields:          [widgetType]
+            -
+                name:                   template
+                target_type:            text
+                target_fields:          [template]
+
+    Oro\Bundle\CMSBundle\Entity\ContentTemplate:
+        alias:                          oro_cms_content_template
+        route:
+            name:                       oro_cms_content_template_view
+            parameters:
+                id:                     id
+        search_template:                '@OroCMS/ContentTemplate/searchResult.html.twig'
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]

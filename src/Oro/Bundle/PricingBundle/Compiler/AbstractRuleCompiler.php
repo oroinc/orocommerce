@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Compiler;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
 use Oro\Bundle\ProductBundle\Expression\QueryConverter;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Component\Expression\QueryExpressionBuilder;
 
+/**
+ * Abstract class for price rule compilers
+ */
 abstract class AbstractRuleCompiler
 {
     /**
@@ -38,25 +41,17 @@ abstract class AbstractRuleCompiler
     protected $expressionBuilder;
 
     /**
-     * @var Cache
+     * @var RuleCache
      */
     protected $cache;
 
-    /**
-     * @param ExpressionParser $parser
-     * @param ExpressionPreprocessorInterface $preprocessor
-     * @param NodeToQueryDesignerConverter $nodeConverter
-     * @param QueryConverter $queryConverter
-     * @param QueryExpressionBuilder $expressionBuilder
-     * @param Cache $cache
-     */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
         NodeToQueryDesignerConverter $nodeConverter,
         QueryConverter $queryConverter,
         QueryExpressionBuilder $expressionBuilder,
-        Cache $cache
+        RuleCache $cache
     ) {
         $this->expressionParser = $parser;
         $this->expressionPreprocessor = $preprocessor;
@@ -66,10 +61,6 @@ abstract class AbstractRuleCompiler
         $this->cache = $cache;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param array $params
-     */
     protected function applyParameters(QueryBuilder $qb, array $params)
     {
         foreach ($params as $key => $value) {
@@ -77,10 +68,6 @@ abstract class AbstractRuleCompiler
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param array $fieldsMap
-     */
     protected function addSelectInOrder(QueryBuilder $qb, array $fieldsMap)
     {
         $select = [];

@@ -8,15 +8,14 @@
     }
 
     &__row {
-        @extend %grid__row;
-
-        margin: 14px 0 20px 0;
+        margin: 14px 0 20px;
         padding-bottom: 20px;
 
-        border-bottom: 1px solid get-color('additional', 'light');
+        border-bottom: $request-form-border-bottom;
     }
 }
 
-.request-form-editline textarea, .request-form-container textarea {
+.request-form-editline textarea,
+.request-form-container textarea {
     width: 100%;
 }

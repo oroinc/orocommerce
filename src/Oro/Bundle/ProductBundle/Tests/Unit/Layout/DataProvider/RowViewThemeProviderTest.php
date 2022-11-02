@@ -20,7 +20,7 @@ class RowViewThemeProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);
         $this->provider = new RowViewThemeProvider($this->themeHelper);

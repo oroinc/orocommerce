@@ -1,0 +1,77 @@
+/* @theme: default; */
+
+.shopping-lists {
+    display: $shopping-lists-display;
+
+    &__content {
+        position: $shopping-lists-content-position;
+        display: $shopping-lists-content-display;
+        justify-content: $shopping-lists-content-justify-content;
+        align-items: $shopping-lists-content-align-items;
+
+        padding: $shopping-lists-content-inner-offset;
+
+        width: $shopping-lists-content-width;
+        height: $shopping-lists-content-height;
+        min-height: $shopping-lists-content-min-height;
+
+        color: $shopping-lists-content-color;
+        background: $shopping-lists-content-background;
+        border-radius: $shopping-lists-content-border-radius;
+    }
+
+    &__content-wrapper {
+        overflow: hidden;
+        display: flex;
+        padding: $shopping-lists-content-wrapper-offset;
+    }
+
+    &__text {
+        display: $shopping-lists-text-display;
+
+        @include ellipsis();
+    }
+
+    &__cart {
+        padding-right: $shopping-lists-cart-offset;
+
+        @include fa-icon($shopping-lists-cart-icon, before, true) {
+            font-size: $shopping-lists-cart-font-size;
+        }
+    }
+
+    &__area-trigger {
+        position: $shopping-lists-area-trigger-position;
+        top: 50%;
+        right: $shopping-lists-area-trigger-right;
+
+        height: $shopping-lists-area-trigger-size;
+        width: $shopping-lists-area-trigger-size;
+        margin-top: -($shopping-lists-area-trigger-size * .5);
+
+        border-radius: 0;
+        color: $shopping-lists-content-color;
+
+        cursor: pointer;
+
+        @include fa-icon($shopping-lists-area-trigger-icon, before, true) {
+            font-size: $shopping-lists-area-trigger-font-size;
+            line-height: 1;
+
+            opacity: 1;
+
+            @include transition($btn-transition);
+        }
+
+        &.focus-visible,
+        &:hover,
+        &:focus,
+        &:not(.disabled):active {
+            &::before {
+                color: $shopping-lists-content-color;
+
+                opacity: $shopping-lists-content-color-opacity-hover;
+            }
+        }
+    }
+}

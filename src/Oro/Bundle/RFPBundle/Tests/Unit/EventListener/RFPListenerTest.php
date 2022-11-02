@@ -29,7 +29,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -40,14 +40,10 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider persistNotSetDefaultOwnerDataProvider
-     *
-     * @param string $token
-     * @param Request $request
      */
-    public function testPrePersistNotSetDefaultOwner($token, Request $request)
+    public function testPrePersistNotSetDefaultOwner(?object $token, Request $request)
     {
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -57,10 +53,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($newUser, $request->getOwner());
     }
 
-    /**
-     * @return array
-     */
-    public function persistNotSetDefaultOwnerDataProvider()
+    public function persistNotSetDefaultOwnerDataProvider(): array
     {
         return [
             'without token and without owner' => [
@@ -78,41 +71,66 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $token
-     * @param Request $request
-     */
     public function testPrePersistSetDefaultOwner()
     {
         $token = $this->createAnonymousToken();
         $request = new Request();
 
-        $this->tokenAccessor
-            ->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        $this->defaultUserProvider
-            ->expects($this->once())
+        $this->defaultUserProvider->expects($this->once())
             ->method('getDefaultUser')
-            ->with('oro_rfp', 'default_guest_rfp_owner')
+            ->with('oro_rfp.default_guest_rfp_owner')
             ->willReturn($newUser);
 
         $this->listener->prePersist($request);
         $this->assertSame($newUser, $request->getOwner());
     }
 
-    /**
-     * @return AnonymousCustomerUserToken
-     */
-    protected function createAnonymousToken()
+    public function testPrePersistCreatesNewCustomerUser()
+    {
+        $token = $this->createAnonymousToken();
+        $request = new Request();
+        $request->setEmail('Some mail')
+            ->setFirstName('Firstname')
+            ->setLastName('Lastname');
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $newUser = new User();
+        $newUser->setFirstName('first_name');
+        $this->defaultUserProvider->expects($this->once())
+            ->method('getDefaultUser')
+            ->with('oro_rfp.default_guest_rfp_owner')
+            ->willReturn($newUser);
+
+        $customerUser = new CustomerUser();
+        $this->customerUserManager->expects($this->once())
+            ->method('generateGuestCustomerUser')
+            ->with(
+                [
+                    'email' => $request->getEmail(),
+                    'first_name' => $request->getFirstName(),
+                    'last_name' => $request->getLastName()
+                ]
+            )
+            ->willReturn($customerUser);
+        $this->listener->prePersist($request);
+        $this->assertSame($newUser, $request->getOwner());
+        $this->assertSame($customerUser, $request->getCustomerUser());
+    }
+
+    private function createAnonymousToken(): AnonymousCustomerUserToken
     {
         $visitor = new CustomerVisitor();
         $visitor->setCustomerUser(new CustomerUser);
-        $token = new AnonymousCustomerUserToken('', [], $visitor);
 
-        return $token;
+        return new AnonymousCustomerUserToken('', [], $visitor);
     }
 }

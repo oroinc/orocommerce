@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\MultiWebsiteBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
@@ -13,48 +13,34 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currencyManager;
 
-    /**
-     * @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteCurrencyProvider;
 
-    /**
-     * @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rounding;
 
-    /**
-     * @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionExecutor;
 
-    /**
-     * @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AppliedDiscountsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $appliedDiscountsProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var SubtotalProvider
-     */
+    /** @var SubtotalProvider */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
@@ -72,11 +58,6 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertSame(SubtotalProvider::NAME, $this->provider->getName());
-    }
-
     public function testIsSupported()
     {
         $order2 = new Order();
@@ -84,10 +65,10 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->promotionExecutor->expects($this->any())
             ->method('supports')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$order2, true],
                 [$entity, false],
-            ]));
+            ]);
 
         $this->assertFalse($this->provider->isSupported($entity));
         $this->assertTrue($this->provider->isSupported($order2));
@@ -100,13 +81,13 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $discountContext = $this->createMock(DiscountContext::class);
         $discountContext->expects($this->once())
             ->method('getTotalLineItemsDiscount')
-            ->willReturn(10);
+            ->willReturn(10.0);
         $discountContext->expects($this->once())
             ->method('getSubtotalDiscountTotal')
-            ->willReturn(5);
+            ->willReturn(5.0);
         $discountContext->expects($this->once())
             ->method('getShippingDiscountTotal')
-            ->willReturn(8);
+            ->willReturn(8.0);
         $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($entity)
@@ -114,11 +95,9 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($messageId) {
-                    return $messageId . ' TRANS';
-                }
-            );
+            ->willReturnCallback(function ($messageId) {
+                return $messageId . ' TRANS';
+            });
 
         $this->rounding->expects($this->exactly(2))
             ->method('round')
@@ -136,22 +115,18 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getSubtotal($entity));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetCachedSubtotalEntityWithWrongEntity()
     {
+        $this->expectException(\RuntimeException::class);
         $this->appliedDiscountsProvider->expects($this->never())
             ->method('getDiscountsAmountByOrder');
 
         $this->provider->getCachedSubtotal(new \stdClass());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testGetCachedSubtotalEntityWithoutId()
     {
+        $this->expectException(\RuntimeException::class);
         $order = new Order();
 
         $this->appliedDiscountsProvider->expects($this->never())
@@ -162,17 +137,14 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCachedSubtotal()
     {
-        /** @var Order $order */
         $order = $this->getEntity(Order::class, ['id' => 123]);
         $order->setCurrency('USD');
 
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($messageId) {
-                    return $messageId . ' TRANS';
-                }
-            );
+            ->willReturnCallback(function ($messageId) {
+                return $messageId . ' TRANS';
+            });
 
         $this->appliedDiscountsProvider->expects($this->once())
             ->method('getDiscountsAmountByOrder')
@@ -198,14 +170,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getCachedSubtotal($order));
     }
 
-    /**
-     * @param string $label
-     * @param float $amount
-     * @param string $currency
-     * @param int $order
-     * @return Subtotal
-     */
-    private function createSubtotal($label, $amount, $currency, $order): Subtotal
+    private function createSubtotal(string $label, float $amount, string $currency, int $order): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);

@@ -2,6 +2,8 @@ services:
     oro_shipping.shipping_method_provider:
         class: 'Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider'
         public: false
+        arguments:
+            - !tagged_iterator oro_shipping_method_provider
 
     oro_shipping.formatter.shipping_method_label:
         class: 'Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter'
@@ -13,16 +15,6 @@ services:
         arguments:
             - "@oro_shipping.formatter.shipping_method_label"
             - "@translator.default"
-
-    oro_shipping.twig.shipping_method_extension:
-        class: 'Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
-        public: false
-        arguments:
-            - "@oro_shipping.formatter.shipping_method_label"
-            - '@event_dispatcher'
-            - '@oro_shipping.checker.shipping_method_enabled'
-        tags:
-            - { name: twig.extension }
 
     oro_shipping.tracking_aware_shipping_methods_provider:
         class: 'Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider'

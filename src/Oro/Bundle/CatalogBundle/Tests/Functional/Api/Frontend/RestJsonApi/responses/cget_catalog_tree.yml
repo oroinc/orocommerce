@@ -1,0 +1,119 @@
+data:
+    -
+        type: mastercatalogtree
+        id: '<toString(@root_category->id)>'
+        attributes:
+            order: 1
+        relationships:
+            parent:
+                data: null
+            path:
+                data: []
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@root_category->id)>'
+    -
+        type: mastercatalogtree
+        id: '<toString(@category1->id)>'
+        attributes:
+            order: 2
+        relationships:
+            parent:
+                data:
+                    type: mastercatalogtree
+                    id: '<toString(@root_category->id)>'
+            path:
+                data:
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@root_category->id)>'
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category1->id)>'
+    -
+        type: mastercatalogtree
+        id: '<toString(@category1_1->id)>'
+        attributes:
+            order: 3
+        relationships:
+            parent:
+                data:
+                    type: mastercatalogtree
+                    id: '<toString(@category1->id)>'
+            path:
+                data:
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@root_category->id)>'
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@category1->id)>'
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category1_1->id)>'
+    -
+        type: mastercatalogtree
+        id: '<toString(@category1_1_1->id)>'
+        attributes:
+            order: 4
+        relationships:
+            parent:
+                data:
+                    type: mastercatalogtree
+                    id: '<toString(@category1_1->id)>'
+            path:
+                data:
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@root_category->id)>'
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@category1->id)>'
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@category1_1->id)>'
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category1_1_1->id)>'
+    -
+        type: mastercatalogtree
+        id: '<toString(@category2->id)>'
+        attributes:
+            order: 8
+        relationships:
+            parent:
+                data:
+                    type: mastercatalogtree
+                    id: '<toString(@root_category->id)>'
+            path:
+                data:
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@root_category->id)>'
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category2->id)>'
+    -
+        type: mastercatalogtree
+        id: '<toString(@category3_1_1->id)>'
+        attributes:
+            order: 12
+        relationships:
+            parent:
+                data:
+                    type: mastercatalogtree
+                    id: '<toString(@root_category->id)>'
+            path:
+                data:
+                    -
+                        type: mastercatalogtree
+                        id: '<toString(@root_category->id)>'
+            category:
+                data:
+                    type: mastercatalogcategories
+                    id: '<toString(@category3_1_1->id)>'

@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
-abstract class AbstractVisibilityRepository extends EntityRepository
+/**
+ * Abstract class for doctrine repository which contains common logic for repositories for VisibilityResolved entities
+ */
+abstract class AbstractVisibilityRepository extends ServiceEntityRepository
 {
     /**
      * @param Scope $scope

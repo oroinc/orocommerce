@@ -51,11 +51,6 @@ class CodeGenerator implements CodeGeneratorInterface
         return array_values($codes);
     }
 
-    /**
-     * @param int $length
-     * @param string $type
-     * @return string
-     */
     protected function generateRandomString(int $length, string $type): string
     {
         if ($length === 0) {
@@ -71,10 +66,6 @@ class CodeGenerator implements CodeGeneratorInterface
         return $randomString;
     }
 
-    /**
-     * @param string $type
-     * @return string
-     */
     protected function getTemplate(string $type): string
     {
         if (!array_key_exists($type, self::TEMPLATES)) {

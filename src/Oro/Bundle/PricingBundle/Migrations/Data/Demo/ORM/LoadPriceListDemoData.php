@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -51,11 +51,6 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param array $row
-     * @param array $currencies
-     */
     protected function processRow(ObjectManager $manager, array $row, array $currencies)
     {
         $priceList = $this->getPriceList($manager, $row['name']);

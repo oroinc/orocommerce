@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -12,6 +12,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Provides a method to save visibility form data
+ */
 class VisibilityFormPostSubmitDataHandler
 {
     /**
@@ -24,10 +27,6 @@ class VisibilityFormPostSubmitDataHandler
      */
     protected $formFieldDataProvider;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param VisibilityFormFieldDataProvider $formFieldDataProvider
-     */
     public function __construct(ManagerRegistry $registry, VisibilityFormFieldDataProvider $formFieldDataProvider)
     {
         $this->registry = $registry;
@@ -53,12 +52,12 @@ class VisibilityFormPostSubmitDataHandler
         $this->saveFormCustomerData($visibilityForm);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function saveFormAllData(FormInterface $form)
     {
         $targetEntity = $form->getData();
+        if (!$form->has(EntityVisibilityType::ALL_FIELD)) {
+            return;
+        }
         $visibility = $form->get(EntityVisibilityType::ALL_FIELD)->getData();
 
         if (!$visibility) {
@@ -76,17 +75,11 @@ class VisibilityFormPostSubmitDataHandler
         $this->saveVisibility($targetEntity, $visibilityEntity, $visibility);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function saveFormCustomerGroupData(FormInterface $form)
     {
         $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
     }
 
-    /**
-     * @param FormInterface $form
-     */
     protected function saveFormCustomerData(FormInterface $form)
     {
         $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);
@@ -99,6 +92,9 @@ class VisibilityFormPostSubmitDataHandler
     protected function saveFormFieldData(FormInterface $form, $field)
     {
         $targetEntity = $form->getData();
+        if (!$form->has($field)) {
+            return;
+        }
         $visibilitiesData = $form->get($field)->getData();
         $visibilitiesEntity = $this->formFieldDataProvider
             ->findFormFieldData($form, $field);

@@ -18,7 +18,7 @@ Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
         steps: ['@product_workflow_starting_point', '@product_workflow_step_first']
         startStep: '@product_workflow_step_first'
         label: 'oro.workflow.product_workflow_definition.label'
-        relatedEntity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        relatedEntity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
         entityAttributeName: 'entity'
         stepsDisplayOrdered: false
         system: false

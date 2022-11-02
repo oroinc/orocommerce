@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoginPageProvider
@@ -22,9 +22,6 @@ class LoginPageProvider
      */
     protected $loginPageClass;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;

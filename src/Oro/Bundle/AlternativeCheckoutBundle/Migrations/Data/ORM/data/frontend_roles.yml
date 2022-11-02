@@ -1,3 +1,0 @@
-BUYER:
-    permissions:
-        action|oro_alternativecheckout_checkout_approve: [NONE]

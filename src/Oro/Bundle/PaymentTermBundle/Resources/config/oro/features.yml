@@ -1,0 +1,19 @@
+features:
+    manage_payment_terms:
+        label: oro.paymentterm.feature.manage.label
+        description: oro.paymentterm.feature.manage.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_payment_term_index
+            - oro_payment_term_view
+            - oro_payment_term_create
+            - oro_payment_term_update
+            - oro_payment_term_widget_info
+        entities:
+            - Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm
+        api_resources:
+            - [Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm, [create, update, delete, delete_list]]
+        operations:
+            - oro_payment_term_delete
+        navigation_items:
+            - application_menu.sales_tab.payment_terms

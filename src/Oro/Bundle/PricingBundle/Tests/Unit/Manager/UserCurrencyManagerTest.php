@@ -2,15 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Manager;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\UserBundle\Entity\BaseUserManager;
+use Oro\Bundle\PricingBundle\Provider\CurrentCurrencyProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -19,59 +23,43 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var Session|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $session;
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    /**
-     * @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $tokenStorage;
+    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenStorage;
 
-    /**
-     * @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $currencyProvider;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $websiteManager;
+    /** @var CurrencyProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyProvider;
 
-    /**
-     * @var BaseUserManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $userManager;
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteManager;
 
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $userCurrencyManager;
+    /** @var UserCurrencyManager */
+    private $userCurrencyManager;
 
-    protected function setUp()
+    /** @var CurrentCurrencyProviderInterface */
+    private $currentCurrencyProvider;
+
+    protected function setUp(): void
     {
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->tokenStorage = $this
-            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->setMethods(['getDefaultCurrency', 'getCurrencyList'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->websiteManager = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Manager\WebsiteManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\BaseUserManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->session = $this->createMock(Session::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
+        $this->currentCurrencyProvider = $this->createMock(CurrentCurrencyProviderInterface::class);
+
         $this->userCurrencyManager = new UserCurrencyManager(
             $this->session,
             $this->tokenStorage,
+            $this->doctrine,
             $this->currencyProvider,
             $this->websiteManager,
-            $this->userManager
+            $this->currentCurrencyProvider
         );
     }
 
@@ -81,10 +69,10 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
 
@@ -94,18 +82,16 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyLoggedUser()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setCurrency('EUR');
 
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(CustomerUser::class);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -126,15 +112,13 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyLoggedUserUnsupportedCurrency()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+        $user = $this->createMock(CustomerUser::class);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
-        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -149,10 +133,10 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getWebsiteSettings')
             ->with($website)
             ->willReturn($userWebsiteSettings);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
 
@@ -162,7 +146,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasCurrencyForWebsiteAndSessionWasStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $currency = 'EUR';
         $sessionCurrencies = [1 => $currency, 2 => 'GBP'];
 
@@ -185,7 +169,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasCurrencyForWebsiteAndSessionWasNotStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $currency = 'EUR';
 
         $this->websiteManager->expects($this->never())
@@ -207,15 +191,15 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousNoCurrencyForWebsiteAndSessionWasStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $sessionCurrencies = null;
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
         $this->session->expects($this->once())
@@ -232,8 +216,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousNoCurrencyForWebsiteAndSessionWasNotStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
-        $sessionCurrencies = null;
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -254,15 +237,15 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasUnsupportedCurrencyForWebsiteAndSessionWasStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
         $sessionCurrencies = [1 => 'UAH', 2 => 'GBP'];
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyProvider->expects(static::any())
+        $this->currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
         $this->session->expects($this->once())
@@ -279,7 +262,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCurrencyAnonymousHasUnsupportedCurrencyForWebsiteAndSessionWasNotStarted()
     {
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -297,19 +280,54 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('EUR', $this->userCurrencyManager->getUserCurrency($website));
     }
 
+    public function testGetUserCurrencyWhenCurrentCurrencyProviderReturnsCurrentCurrency()
+    {
+        $currency = 'EUR';
+        $this->currencyProvider->expects(self::any())
+            ->method('getCurrencyList')
+            ->willReturn(['EUR', 'USD']);
+        $this->currentCurrencyProvider->expects($this->any())
+            ->method('getCurrentCurrency')
+            ->willReturn($currency);
+
+        $this->currencyProvider->expects($this->never())
+            ->method('getDefaultCurrency');
+        $this->websiteManager->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        $this->assertEquals($currency, $this->userCurrencyManager->getUserCurrency());
+    }
+
+    public function testGetUserCurrencyWhenCurrentCurrencyProviderReturnsCurrentCurrencyButItIsNotAvailableForWebsite()
+    {
+        $currency = 'UAH';
+        $defaultCurrency = 'EUR';
+        $this->currencyProvider->expects(self::any())
+            ->method('getCurrencyList')
+            ->willReturn(['EUR', 'USD']);
+        $this->currentCurrencyProvider->expects($this->any())
+            ->method('getCurrentCurrency')
+            ->willReturn($currency);
+
+        $this->currencyProvider->expects($this->once())
+            ->method('getDefaultCurrency')
+            ->willReturn($defaultCurrency);
+        $this->websiteManager->expects($this->never())
+            ->method('getCurrentWebsite');
+
+        $this->assertEquals($defaultCurrency, $this->userCurrencyManager->getUserCurrency());
+    }
+
     public function testSaveSelectedCurrencyLoggedUser()
     {
         $currency = 'USD';
-        /** @var Website|\PHPUnit\Framework\MockObject\MockObject $website */
-        $website = $this->createMock('Oro\Bundle\WebsiteBundle\Entity\Website');
+        $website = $this->createMock(Website::class);
 
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $user = $this->createMock(CustomerUser::class);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -318,11 +336,12 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($token);
         $user->expects($this->once())
             ->method('setWebsiteSettings');
-        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('flush');
-        $this->userManager->expects($this->once())
-            ->method('getStorageManager')
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CustomerUser::class)
             ->willReturn($em);
 
         $this->userCurrencyManager->saveSelectedCurrency($currency, $website);
@@ -333,7 +352,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $currency = 'USD';
         $sessionCurrencies = [2 => 'GBP'];
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -355,7 +374,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     {
         $currency = 'USD';
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
@@ -375,7 +394,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
         $currency = 'USD';
         $sessionCurrencies = [2 => 'GBP'];
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
@@ -398,7 +417,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     {
         $currency = 'USD';
         /** @var Website $website */
-        $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
+        $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')

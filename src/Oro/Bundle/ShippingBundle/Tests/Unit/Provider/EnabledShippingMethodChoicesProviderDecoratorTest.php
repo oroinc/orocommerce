@@ -12,25 +12,20 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit\Framewo
 {
     use EntityTrait;
 
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
-     */
-    protected $shippingMethodProvider;
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingMethodProvider;
 
-    /**
-     * @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject phpdoc
-     */
-    protected $choicesProvider;
+    /** @var ShippingMethodChoicesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $choicesProvider;
 
-    /**
-     * @var ShippingMethodChoicesProviderInterface
-     */
-    protected $enabledChoicesProvider;
+    /** @var ShippingMethodChoicesProviderInterface */
+    private $enabledChoicesProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+
         $this->enabledChoicesProvider = new EnabledShippingMethodChoicesProviderDecorator(
             $this->shippingMethodProvider,
             $this->choicesProvider
@@ -38,17 +33,13 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit\Framewo
     }
 
     /**
-     * @param array $registryMap
-     * @param array $choices
-     * @param array $result
-     *
      * @dataProvider methodsProvider
      */
-    public function testGetMethods($registryMap, $choices, $result)
+    public function testGetMethods(array $registryMap, array $choices, array $result)
     {
         $this->shippingMethodProvider->expects($this->any())
             ->method('getShippingMethod')
-            ->will($this->returnValueMap($registryMap));
+            ->willReturnMap($registryMap);
 
         $this->choicesProvider->expects($this->once())
             ->method('getMethods')
@@ -59,9 +50,8 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit\Framewo
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function methodsProvider()
+    public function methodsProvider(): array
     {
         return
             [

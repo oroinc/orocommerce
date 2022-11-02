@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ActualizeCouponsStateListener
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $registry;
 
@@ -21,19 +21,12 @@ class ActualizeCouponsStateListener
      */
     private $entityCouponsProvider;
 
-    /**
-     * @param RegistryInterface $registry
-     * @param EntityCouponsProvider $entityCouponsProvider
-     */
-    public function __construct(RegistryInterface $registry, EntityCouponsProvider $entityCouponsProvider)
+    public function __construct(ManagerRegistry $registry, EntityCouponsProvider $entityCouponsProvider)
     {
         $this->registry = $registry;
         $this->entityCouponsProvider = $entityCouponsProvider;
     }
 
-    /**
-     * @param TotalCalculateBeforeEvent $event
-     */
     public function onBeforeTotalCalculate(TotalCalculateBeforeEvent $event)
     {
         $entity = $event->getEntity();

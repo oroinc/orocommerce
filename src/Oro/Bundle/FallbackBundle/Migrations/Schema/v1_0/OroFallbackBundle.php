@@ -22,8 +22,6 @@ class OroFallbackBundle implements Migration
 
     /**
      * Create orob2b_fallback_locale_value table
-     *
-     * @param Schema $schema
      */
     protected function createOrob2BFallbackLocalizedValueTable(Schema $schema)
     {
@@ -40,8 +38,6 @@ class OroFallbackBundle implements Migration
 
     /**
      * Add orob2b_fallback_locale_value foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOrob2BFallbackLocalizedValueForeignKeys(Schema $schema)
     {

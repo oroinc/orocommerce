@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 
@@ -11,7 +14,7 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertBeforeSave()
     {
-        $converter = new PriceListConfigConverter($this->getRegistryMock(), '\PriceList');
+        $converter = new PriceListConfigConverter($this->createMock(ManagerRegistry::class), '\PriceList');
         $testData = $this->createConfigs(2);
 
         $expected = [
@@ -25,8 +28,7 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvertFromSaved()
     {
-        $registry = $this->getRegistryMockWithRepository();
-        $converter = new PriceListConfigConverter($registry, '\PriceList');
+        $converter = new PriceListConfigConverter($this->getDoctrine(), '\PriceList');
 
         $configs = [
             ['priceList' => 1, 'sort_order' => 100, 'mergeAllowed' => true],
@@ -41,14 +43,12 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Price list record with id 5 not found, while reading
-     */
     public function testConvertFromSavedInvalidData()
     {
-        $registry = $this->getRegistryMockWithRepository();
-        $converter = new PriceListConfigConverter($registry, '\PriceList');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Price list record with id 5 not found, while reading');
+
+        $converter = new PriceListConfigConverter($this->getDoctrine(), '\PriceList');
 
         $configs = [
             ['priceList' => 1, 'sort_order' => 100, 'mergeAllowed' => true],
@@ -58,48 +58,28 @@ class PriceListConfigConverterTest extends \PHPUnit\Framework\TestCase
         $converter->convertFromSaved($configs);
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
-     */
-    protected function getRegistryMock()
-    {
-        return $this->createMock('Symfony\Bridge\Doctrine\RegistryInterface');
-    }
-
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Symfony\Bridge\Doctrine\RegistryInterface
-     */
-    protected function getRegistryMockWithRepository()
+    private function getDoctrine(): ManagerRegistry
     {
         $priceListConfigs = $this->createConfigs(2);
-        $priceLists = array_map(function ($item) {
-            /** @var PriceListConfig $item */
+        $priceLists = array_map(function (PriceListConfig $item) {
             return $item->getPriceList();
         }, $priceListConfigs);
 
-
-        $repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->once())
             ->method('findBy')
             ->willReturn($priceLists);
 
-        $manager = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);
 
-        $registry = $this->getRegistryMock();
-
-        $registry->expects($this->once())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->willReturn($manager);
 
-        return $registry;
+        return $doctrine;
     }
 }

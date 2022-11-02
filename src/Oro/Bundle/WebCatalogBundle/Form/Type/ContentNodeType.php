@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CheckboxType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * ContentNode form type
+ */
 class ContentNodeType extends AbstractType
 {
     const NAME = 'oro_web_catalog_content_node';
@@ -25,18 +28,11 @@ class ContentNodeType extends AbstractType
      */
     private $router;
 
-    /**
-     * @param RouterInterface $router
-     */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ContentNode $contentNode */
@@ -82,11 +78,9 @@ class ContentNodeType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
@@ -121,9 +115,6 @@ class ContentNodeType extends AbstractType
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         /** @var ContentNode $contentNode */
@@ -146,6 +137,20 @@ class ContentNodeType extends AbstractType
                 );
             }
         }
+    }
+
+    public function onPreSubmit(FormEvent $event)
+    {
+        $data = $event->getData();
+        if (!\is_array($data)) {
+            return;
+        }
+
+        if (!isset($data['scopes'])) {
+            $data['scopes'] = [];
+        }
+
+        $event->setData($data);
     }
 
     /**

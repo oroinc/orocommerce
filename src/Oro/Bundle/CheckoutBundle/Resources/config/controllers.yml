@@ -1,0 +1,21 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CheckoutBundle\Controller\Frontend\AjaxCheckoutController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CheckoutBundle\Controller\Frontend\OpenOrdersController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

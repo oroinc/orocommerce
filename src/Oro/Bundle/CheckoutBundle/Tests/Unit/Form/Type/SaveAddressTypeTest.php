@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -11,30 +13,36 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SaveAddressTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var  AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $authorizationChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         parent::setUp();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [new SaveAddressType($this->authorizationChecker)],
+                []
+            )
+        ];
     }
 
     public function testCreateByUserWithoutPermissions()
     {
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->will($this->returnValueMap(
-                [
-                    ['CREATE;entity:OroCustomerBundle:CustomerUserAddress', null, false],
-                    ['CREATE;entity:OroCustomerBundle:CustomerAddress', null, false]
-                ]
-            ));
+            ->willReturnMap([
+                ['CREATE', 'entity:' . CustomerUserAddress::class, false],
+                ['CREATE', 'entity:' . CustomerAddress::class, false]
+            ]);
 
         $form = $this->factory->create(SaveAddressType::class);
         $this->assertInstanceOf(HiddenType::class, $form->getConfig()->getType()->getParent()->getInnerType());
@@ -45,26 +53,12 @@ class SaveAddressTypeTest extends FormIntegrationTestCase
     {
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->will($this->returnValueMap(
-                [
-                    ['CREATE;entity:OroCustomerBundle:CustomerUserAddress', null, true],
-                    ['CREATE;entity:OroCustomerBundle:CustomerAddress', null, true]
-                ]
-            ));
+            ->willReturnMap([
+                ['CREATE', 'entity:' . CustomerUserAddress::class, true],
+                ['CREATE', 'entity:' . CustomerAddress::class, true]
+            ]);
 
         $form = $this->factory->create(SaveAddressType::class);
         $this->assertInstanceOf(CheckboxType::class, $form->getConfig()->getType()->getParent()->getInnerType());
-    }
-
-    /**
-     * @return array
-     */
-    protected function getExtensions()
-    {
-        $type = new SaveAddressType($this->authorizationChecker);
-
-        return [
-            new PreloadedExtension([$type], [])
-        ];
     }
 }

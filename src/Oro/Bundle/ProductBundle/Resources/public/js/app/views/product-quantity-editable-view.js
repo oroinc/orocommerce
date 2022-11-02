@@ -1,16 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var ProductQuantityEditableView;
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ApiAccessor = require('oroui/js/tools/api-accessor');
-    var mediator = require('oroui/js/mediator');
-    var tools = require('oroui/js/tools');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const ApiAccessor = require('oroui/js/tools/api-accessor');
+    const mediator = require('oroui/js/mediator');
+    const loadModules = require('oroui/js/app/services/load-modules');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    /** @var QuantityHelper QuantityHelper **/
+    const QuantityHelper = require('oroproduct/js/app/quantity-helper');
 
-    ProductQuantityEditableView = BaseView.extend({
+    const ProductQuantityEditableView = BaseView.extend({
         options: {
             quantityFieldName: 'quantity',
             unitFieldName: 'unit',
@@ -24,6 +25,7 @@ define(function(require) {
                 processingMessage: __('oro.form.inlineEditing.saving_progress'),
                 preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
             },
+            successMessageOptions: {},
             elements: {
                 saveButton: '',
                 quantity: '[name$="[quantity]"]',
@@ -51,10 +53,10 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductQuantityEditableView() {
-            ProductQuantityEditableView.__super__.constructor.apply(this, arguments);
+        constructor: function ProductQuantityEditableView(options) {
+            ProductQuantityEditableView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -69,6 +71,7 @@ define(function(require) {
             this._isSaving = false;
 
             this.messages = options.messages;
+            this.successMessageOptions = options.successMessageOptions;
             this.dataKey = options.dataKey;
             this.quantityFieldName = options.quantityFieldName;
             this.unitFieldName = options.unitFieldName;
@@ -94,7 +97,7 @@ define(function(require) {
 
             this.initValidator(options);
             if (this.deferredInit) {
-                this.deferredInit.done(_.bind(this.initListeners, this));
+                this.deferredInit.done(this.initListeners.bind(this));
             } else {
                 this.initListeners();
             }
@@ -104,9 +107,9 @@ define(function(require) {
         },
 
         _bindEvents: function() {
-            this.elements.unit.on('change.' + this.cid, _.bind(function() {
+            this.elements.unit.on('change' + this.eventNamespace(), () => {
                 mediator.trigger('unitChanged');
-            }, this));
+            });
 
             mediator.on('unitChanged', this.disableOptions, this);
         },
@@ -114,41 +117,41 @@ define(function(require) {
         disableOptions: function() {
             this.elements.unit.find('option').prop('disabled', false);
 
-            this.$el.siblings().each(_.bind(function(index, el) {
-                var value = $(el).find('[name="unit"]').val();
+            this.$el.siblings().each((index, el) => {
+                const value = $(el).find('[name="unit"]').val();
                 this.elements.unit
                     .find('[value="' + value + '"]')
                     .prop('disabled', true);
-            }, this));
+            });
+            this._updateQuantityPrecision();
         },
 
         enableAccept: function() {
-            this.elements.saveButton.prop('disabled', false);
+            this.elements.saveButton.attr('disabled', false).inputWidget('refresh');
         },
 
         enableQuantity: function() {
-            this.elements.quantity.prop('disabled', false);
+            this.elements.quantity.attr('disabled', false).inputWidget('refresh');
         },
 
         initValidator: function(options) {
-            var $form = this.$el.find('form');
-            var validationRules = {};
+            const $form = this.$el.find('form');
+            const validationRules = {};
             validationRules[this.elements.quantity.attr('name')] = options.validation.rules.quantity;
             validationRules[this.elements.unit.attr('name')] = options.validation.rules.unit;
 
-            var validationOptions = {
+            const validationOptions = {
                 rules: validationRules
             };
 
             if (options.validation.showErrorsHandler) {
-                var waitors = [];
-                waitors.push(tools.loadModuleAndReplace(options.validation, 'showErrorsHandler').then(
-                    _.bind(function() {
+                const waitors = [];
+                waitors.push(loadModules.fromObjectProp(options.validation, 'showErrorsHandler')
+                    .then(() => {
                         validationOptions.showErrors = options.validation.showErrorsHandler;
                         this.updateValidation($form, validationOptions);
-                    }, this)
-                ));
-                this.deferredInit = $.when.apply($, waitors);
+                    }));
+                this.deferredInit = $.when(...waitors);
             } else {
                 this.updateValidation($form, validationOptions);
             }
@@ -158,19 +161,20 @@ define(function(require) {
             this.validator = $form.validate();
 
             if (_.isObject(options)) {
-                var settings = this.validator.settings;
+                const settings = this.validator.settings;
                 $.extend(true, settings, options);
             }
         },
 
         initListeners: function() {
-            var changeAction = this.onViewChange;
+            let changeAction = this.onViewChange;
             if (this.elements.saveButton) {
-                this.elements.saveButton.on('click', _.bind(this.onViewChange, this));
+                this.elements.saveButton.on('click', this.onViewChange.bind(this));
                 changeAction = this.enableAccept;
             }
-            this.$el.on('change', this.elements.quantity, _.bind(changeAction, this));
-            this.$el.on('change', this.elements.unit, _.bind(changeAction, this));
+
+            this.$el.on('change', this.elements.quantity, changeAction.bind(this));
+            this.$el.on('change', this.elements.unit, changeAction.bind(this));
         },
 
         saveModelState: function() {
@@ -178,7 +182,9 @@ define(function(require) {
         },
 
         restoreSavedState: function() {
-            this.elements.quantity.val(this.oldModelState.quantity).change();
+            const oldQuantity = this.oldModelState.quantity;
+            const formattedQuantity = QuantityHelper.formatQuantity(oldQuantity);
+            this.elements.quantity.val(formattedQuantity).change();
             this.elements.unit.val(this.oldModelState.unit).change();
         },
 
@@ -195,15 +201,18 @@ define(function(require) {
         },
 
         getValue: function() {
+            const quantity = this.elements.quantity.val();
+            const quantityNumber = QuantityHelper.getQuantityNumberOrDefaultValue(quantity);
+
             return {
-                quantity: this.elements.quantity.val(),
+                quantity: quantityNumber,
                 unit: this.elements.unit.val()
             };
         },
 
         isChanged: function() {
-            var modelData = this.getValue();
-            for (var key in modelData) {
+            const modelData = this.getValue();
+            for (const key in modelData) {
                 if (modelData.hasOwnProperty(key) && this.oldModelState[key] !== modelData[key]) {
                     return true;
                 }
@@ -228,51 +237,57 @@ define(function(require) {
             }
 
             this._isSaving = true;
-            var modelData = this.getValue();
-            var serverUpdateData = {};
+
+            const modelData = this.getValue();
+            const localizedModelData = _.clone(modelData);
+            localizedModelData.quantity = QuantityHelper.formatQuantity(localizedModelData.quantity);
+            let serverUpdateData = {};
+
             if (this.dataKey) {
-                serverUpdateData[this.dataKey] = modelData;
+                serverUpdateData[this.dataKey] = localizedModelData;
             } else {
-                serverUpdateData = modelData;
+                serverUpdateData = localizedModelData;
             }
 
-            var savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
+            const savePromise = this.saveApiAccessor.send(modelData, serverUpdateData, {}, {
                 processingMessage: this.messages.processingMessage,
-                preventWindowUnload: this.messages.preventWindowUnload
+                preventWindowUnload: this.messages.preventWindowUnload,
+                errorHandlerMessage: false
             });
             savePromise
-                .done(_.bind(this.onSaveSuccess, this))
-                .fail(_.bind(this.onSaveError, this))
-                .always(_.bind(function() {
-                    this._isSaving = false;
-                }, this));
+                .done(this.onSaveSuccess.bind(this))
+                .fail(this.onSaveError.bind(this))
+                .always(() => {
+                    if (!this.disposed) {
+                        this._isSaving = false;
+                    }
+                });
         },
 
         onSaveSuccess: function(response) {
             this.saveModelState();
             this.restoreSavedState();
 
-            var value = _.extend({}, this.triggerData || {}, {
+            const value = _.extend({}, this.triggerData || {}, {
                 value: this.getValue()
             });
             this.trigger('product:quantity-unit:update', value);
             mediator.trigger('product:quantity-unit:update', value);
 
-            mediator.execute('showFlashMessage', 'success', this.messages.success);
+            mediator.execute('showFlashMessage', 'success', this.messages.success, this.successMessageOptions);
         },
 
         onSaveError: function(jqXHR) {
-            var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+            const errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+            const errors = 'responseJSON' in jqXHR ? jqXHR.responseJSON.errors.errors : [];
 
             this.restoreSavedState();
-
-            var errors = [];
             switch (errorCode) {
                 case 400:
-                    var jqXHRerrors = jqXHR.responseJSON.errors.children;
-                    for (var i in jqXHRerrors) {
+                    const jqXHRerrors = 'responseJSON' in jqXHR ? jqXHR.responseJSON.errors.children : [];
+                    for (const i in jqXHRerrors) {
                         if (jqXHRerrors.hasOwnProperty(i) && jqXHRerrors[i].errors) {
-                            errors.push.apply(errors, _.values(jqXHRerrors[i].errors));
+                            errors.push(..._.values(jqXHRerrors[i].errors));
                         }
                     }
                     if (!errors.length) {
@@ -280,7 +295,7 @@ define(function(require) {
                     }
                     break;
                 case 403:
-                    errors.push(__('You do not have permission to perform this action.'));
+                    errors.push(__('oro.ui.forbidden_error'));
                     break;
                 default:
                     errors.push(__('oro.ui.unexpected_error'));
@@ -297,9 +312,20 @@ define(function(require) {
             }
 
             mediator.off('unitChanged', this.disableOptions, this);
-            this.elements.unit.off('change.' + this.cid);
+            this.elements.unit.off('change' + this.eventNamespace());
+            this.elements.quantity.off(this.eventNamespace());
 
             ProductQuantityEditableView.__super__.dispose.call(this);
+        },
+
+        _updateQuantityPrecision: function() {
+            const precisions = this.$el.data('unit-precisions') || {};
+            const unit = this.elements.unit.val();
+
+            if (unit in precisions) {
+                const precision = precisions[unit];
+                this.elements.quantity.data('precision', precision).inputWidget('refresh');
+            }
         }
     });
 

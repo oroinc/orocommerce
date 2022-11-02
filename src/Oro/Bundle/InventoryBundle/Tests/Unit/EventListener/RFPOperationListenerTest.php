@@ -21,7 +21,7 @@ class RFPOperationListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $listener;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->collectionProvider = $this->getMockBuilder(QuickAddCollectionProvider::class)
             ->disableOriginalConstructor()

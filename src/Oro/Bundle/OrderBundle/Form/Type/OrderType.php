@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
@@ -24,6 +25,9 @@ use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * Represents order form type
+ */
 class OrderType extends AbstractType
 {
     const NAME = 'oro_order_type';
@@ -41,11 +45,6 @@ class OrderType extends AbstractType
     /** @var SubtotalSubscriber */
     protected $subtotalSubscriber;
 
-    /**
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param SubtotalSubscriber $subtotalSubscriber
-     */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderCurrencyHandler $orderCurrencyHandler,
@@ -84,7 +83,10 @@ class OrderType extends AbstractType
                 TextareaType::class,
                 ['required' => false, 'label' => 'oro.order.customer_notes.label']
             )
-            ->add('currency', HiddenType::class)
+            ->add('currency', CurrencySelectionType::class, [
+                'label' => 'oro.order.currency.label',
+                'full_currency_name' => true,
+            ])
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::class,
@@ -108,7 +110,7 @@ class OrderType extends AbstractType
                         [
                             'min' => PHP_INT_MAX * (-1), //use some big negative number
                             'max' => $order->getSubtotal(),
-                            'maxMessage' => 'oro.order.discounts.sum.error.label'
+                            'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
                         ]
                     )],
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
@@ -205,7 +207,6 @@ class OrderType extends AbstractType
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_BILLING,
-                        'isEditEnabled' => true
                     ]
                 );
         }
@@ -228,7 +229,6 @@ class OrderType extends AbstractType
                         'object' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
-                        'isEditEnabled' => true
                     ]
                 );
         }

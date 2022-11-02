@@ -1,0 +1,226 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1Label:
+        string: 'Product1'
+    product2Label:
+        string: 'Product2'
+    product3Label:
+        string: 'Product3'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    orderTotalPromotionLabel:
+        string: 'Order Total Promotion'
+    orderLineItemPromotionLabel:
+        string: 'Order Line Item Promotion'
+    orderTotalCouponPromotionLabel:
+        string: 'Order Total Coupon Promotion'
+    orderLineItemCouponPromotionLabel:
+        string: 'Order Line Item Coupon Promotion'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    orderPromotionSegment:
+        name: 'All Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"number","data":{"value":0,"type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderTotalPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Total Promotion'
+    orderLineItemPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Line Item Promotion'
+    orderTotalCouponPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Total Coupon Promotion'
+    orderLineItemCouponPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Line Item Coupon Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderTotalPromotionConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+
+    orderLineItemPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_product_unit_code: 'item'
+            discount_value: 2
+            apply_to: 'each_item'
+
+    orderTotalCouponPromotionConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 3
+            discount_currency: 'USD'
+
+    orderLineItemCouponPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'amount'
+            discount_currency: 'USD'
+            discount_product_unit_code: 'item'
+            discount_value: 4
+            apply_to: 'each_item'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderTotalPromotion:
+        __calls:
+            - addLabel: ['@orderTotalPromotionLabel']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderPromotionSegment'
+        rule: '@orderTotalPromotionRule'
+        discountConfiguration: '@orderTotalPromotionConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+
+    orderLineItemPromotion:
+        __calls:
+            - addLabel: ['@orderLineItemPromotionLabel']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderPromotionSegment'
+        rule: '@orderLineItemPromotionRule'
+        discountConfiguration: '@orderLineItemPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+
+    orderTotalCouponPromotion:
+        __calls:
+            - addLabel: ['@orderTotalCouponPromotionLabel']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderPromotionSegment'
+        rule: '@orderTotalCouponPromotionRule'
+        discountConfiguration: '@orderTotalCouponPromotionConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+
+    orderLineItemCouponPromotion:
+        __calls:
+            - addLabel: ['@orderLineItemCouponPromotionLabel']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderPromotionSegment'
+        rule: '@orderLineItemCouponPromotionRule'
+        discountConfiguration: '@orderLineItemCouponPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: true
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    orderTotalCoupon:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'OrderTotalCoupon'
+        promotion: '@orderTotalCouponPromotion'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+    orderLineItemCoupon:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'OrderLineItemCoupon'
+        promotion: '@orderLineItemCouponPromotion'
+        enabled: true
+        usesPerPerson: 100
+        usesPerCoupon: 100
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productPrecision1:
+        unit: '@item'
+        precision: '1'
+    productPrecision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'Product1'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@productPrecision1'
+        __calls:
+            - addName: ['@product1Label']
+        inventoryStatus: '@enumInventoryStatuses'
+        attributeFamily: '@defaultProductFamily'
+        status: 'enabled'
+
+    product2:
+        sku: 'Product2'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@productPrecision2'
+        __calls:
+            - addName: ['@product2Label']
+        inventoryStatus: '@enumInventoryStatuses'
+        attributeFamily: '@defaultProductFamily'
+        status: 'enabled'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@Customer_AmandaRCole'
+        customerUser: '@CustomerUser_AmandaRCole'
+        identifier: 'Order'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price:
+        value: 10
+        currency: USD
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'Product1'
+        quantity: 1
+        unit: '@item'
+        value: 50
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@defaultPriceList'
+        product: '@product2'
+        productSku: 'Product2'
+        quantity: 1
+        unit: '@item'
+        value: 50
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelation2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    orderLineItem:
+        product: '@product1'
+        order: '@order'
+        price: '@price'
+        quantity: 1
+        productUnit: '@item'
+        productUnitCode: item

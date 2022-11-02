@@ -2,52 +2,34 @@
 
 namespace Oro\Bundle\SaleBundle\Acl\Voter;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
- * Checks if given Quote contains frontend internal status.
- * Triggered only for Commerce Application
+ * On the storefront, denies access to not available on the storefront quotes.
  */
-class FrontendQuotePermissionVoter extends Voter
+class FrontendQuotePermissionVoter implements VoterInterface
 {
-    /** @var CurrentApplicationProviderInterface */
-    protected $applicationProvider;
+    private FrontendHelper $frontendHelper;
 
-    /**
-     * @param CurrentApplicationProviderInterface $applicationProvider
-     */
-    public function __construct(CurrentApplicationProviderInterface $applicationProvider)
+    public function __construct(FrontendHelper $frontendHelper)
     {
-        $this->applicationProvider = $applicationProvider;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function supports($attribute, $subject)
+    public function vote(TokenInterface $token, $subject, array $attributes)
     {
-        return $subject instanceof Quote && $this->isValidApplication();
-    }
+        if (!$subject instanceof Quote || !$this->frontendHelper->isFrontendRequest()) {
+            return self::ACCESS_ABSTAIN;
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
-    {
-        /* @var $subject Quote */
-        return !$subject->getInternalStatus() ||
-            in_array($subject->getInternalStatus()->getId(), Quote::FRONTEND_INTERNAL_STATUSES, true);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isValidApplication()
-    {
-        return $this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION;
+        return $subject->isAvailableOnFrontend()
+            ? self::ACCESS_GRANTED
+            : self::ACCESS_DENIED;
     }
 }

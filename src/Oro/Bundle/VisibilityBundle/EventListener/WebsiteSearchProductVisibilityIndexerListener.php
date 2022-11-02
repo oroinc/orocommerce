@@ -3,11 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
+/**
+ * Add visibility related information to search index.
+ */
 class WebsiteSearchProductVisibilityIndexerListener
 {
+    use ContextTrait;
+
     /**
      * @var ProductVisibilityIndexer
      */
@@ -18,10 +24,6 @@ class WebsiteSearchProductVisibilityIndexerListener
      */
     private $websiteContextManager;
 
-    /**
-     * @param ProductVisibilityIndexer $visibilityIndexer
-     * @param WebsiteContextManager $websiteContextManager
-     */
     public function __construct(
         ProductVisibilityIndexer $visibilityIndexer,
         WebsiteContextManager $websiteContextManager
@@ -30,11 +32,12 @@ class WebsiteSearchProductVisibilityIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    /**
-     * @param IndexEntityEvent $event
-     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'visibility')) {
+            return;
+        }
+
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
             $event->stopPropagation();

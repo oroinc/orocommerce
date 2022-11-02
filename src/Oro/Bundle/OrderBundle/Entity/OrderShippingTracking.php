@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
+ * Represents shipping tracking record for an order.
  * @ORM\Entity
  * @ORM\Table("oro_order_shipping_tracking")
  * @Config
@@ -87,7 +88,7 @@ class OrderShippingTracking
     public function setNumber($number)
     {
         $this->number = $number;
-        
+
         return $this;
     }
 
@@ -107,7 +108,7 @@ class OrderShippingTracking
     public function setOrder($order)
     {
         $this->order = $order;
-        
+
         return $this;
     }
 

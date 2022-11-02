@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\RFPBundle\EventListener\AbstractCustomerViewListener;
-use Oro\Bundle\RFPBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
+use Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
 use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
 
 class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
@@ -25,7 +24,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerViewTemplate()
     {
-        return 'OroSaleBundle:Customer:quote_view.html.twig';
+        return '@OroSale/Customer/quote_view.html.twig';
     }
 
     /**
@@ -41,7 +40,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
      */
     protected function getCustomerUserViewTemplate()
     {
-        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+        return '@OroSale/CustomerUser/quote_view.html.twig';
     }
 
     /**

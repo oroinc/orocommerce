@@ -11,9 +11,6 @@ class SurchargeProvider
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -26,7 +23,7 @@ class SurchargeProvider
     public function getSurcharges($entity)
     {
         $event = new CollectSurchargeEvent($entity);
-        $this->eventDispatcher->dispatch(CollectSurchargeEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, CollectSurchargeEvent::NAME);
 
         return $event->getSurchargeModel();
     }

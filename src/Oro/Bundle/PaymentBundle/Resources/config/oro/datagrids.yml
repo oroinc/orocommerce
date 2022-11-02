@@ -1,9 +1,9 @@
 datagrids:
     payment-methods-configs-rule-grid:
         acl_resource: oro_payment_methods_configs_rule_view
-        extended_entity_name: '%oro_payment.entity.payment_methods_configs_rule.class%'
+        extended_entity_name: 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
         options:
-            entityHint:        payment methods configs rules
+            entityHint: oro.payment.paymentmethodsconfigsrule.entity_plural_label
             entity_pagination: true
         source:
             type:         orm
@@ -17,7 +17,7 @@ datagrids:
                     - rule.expression
                     - payment_rule.currency
                 from:
-                    - { table: '%oro_payment.entity.payment_methods_configs_rule.class%', alias: payment_rule }
+                    - { table: 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule', alias: payment_rule }
                 join:
                     inner:
                         - { join: payment_rule.rule, alias: rule }
@@ -39,12 +39,12 @@ datagrids:
                 label:         oro.payment.paymentmethodsconfigsrule.method_configs.label
                 type:          twig
                 frontend_type: html
-                template:      OroPaymentBundle:PaymentMethodsConfigsRule:Datagrid/configurations.html.twig
+                template:      '@OroPayment/PaymentMethodsConfigsRule/Datagrid/configurations.html.twig'
             destinations:
                 label:         oro.payment.paymentmethodsconfigsrule.destinations.label
                 type:          twig
                 frontend_type: html
-                template:      OroPaymentBundle:PaymentMethodsConfigsRule:Datagrid/destinations.html.twig
+                template:      '@OroPayment/PaymentMethodsConfigsRule/Datagrid/destinations.html.twig'
         properties:
             id: ~
             view_link:
@@ -130,19 +130,19 @@ datagrids:
                 acl_resource: oro_payment_methods_configs_rule_update
                 label:        oro.payment.datagrid.action.enable
                 icon:         check
-                entity_name:  '%oro_payment.entity.payment_methods_configs_rule.class%'
+                entity_name:  'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
                 data_identifier: payment_rule.id
             disable:
                 type:         paymentruledisable
                 acl_resource: oro_payment_methods_configs_rule_update
                 label:        oro.payment.datagrid.action.disable
                 icon:         close
-                entity_name:  '%oro_payment.entity.payment_methods_configs_rule.class%'
+                entity_name:  'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
                 data_identifier: payment_rule.id
 
     payment-transactions-grid:
         options:
-            entityHint: payment_transaction
+            entityHint: oro.payment.paymenttransaction.entity_plural_label
         source:
             type: orm
             query:
@@ -157,7 +157,7 @@ datagrids:
                     - payment_transaction.createdAt
                     - payment_transaction.updatedAt
                 from:
-                    - { table: '%oro_payment.entity.payment_transaction.class%', alias: payment_transaction }
+                    - { table: 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction', alias: payment_transaction }
         columns:
             id:
                 label: oro.payment.paymenttransaction.id.label
@@ -165,17 +165,17 @@ datagrids:
                 label: oro.payment.paymenttransaction.paymentMethod.label
                 type: twig
                 frontend_type: html
-                template: 'OroPaymentBundle:PaymentTransaction/Datagrid:paymentMethod.html.twig'
+                template: '@OroPayment/PaymentTransaction/Datagrid/paymentMethod.html.twig'
             action:
                 label: oro.payment.paymenttransaction.action.label
                 type: twig
                 frontend_type: html
-                template: 'OroPaymentBundle:PaymentTransaction/Datagrid:action.html.twig'
+                template: '@OroPayment/PaymentTransaction/Datagrid/action.html.twig'
             amount:
                 label: oro.payment.paymenttransaction.amount.label
                 type: twig
                 frontend_type: html
-                template: OroPaymentBundle:PaymentTransaction:Datagrid/price.html.twig
+                template: '@OroPayment/PaymentTransaction/Datagrid/price.html.twig'
             active:
                 label: oro.payment.paymenttransaction.active.label
                 frontend_type: boolean

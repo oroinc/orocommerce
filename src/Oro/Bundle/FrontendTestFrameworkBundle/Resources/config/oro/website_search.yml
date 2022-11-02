@@ -29,6 +29,7 @@ Oro\Bundle\TestFrameworkBundle\Entity\Item:
         -
             name: blobValue
             type: text
+            fulltext: false
         -
             name: phone
             type: text

@@ -1,79 +1,121 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CronBundle\Command\CronCommandActivationInterface;
+use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilderFacade;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Prepares and activates combined price list by schedule
+ * Prepares and activates combined price lists based on their schedules.
  */
-class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements CronCommandInterface
+class CombinedPriceListScheduleCommand extends Command implements
+    CronCommandScheduleDefinitionInterface,
+    CronCommandActivationInterface
 {
-    const NAME = 'oro:cron:price-lists:schedule';
+    /** @var string */
+    protected static $defaultName = 'oro:cron:price-lists:schedule';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
-    {
-        $this
-            ->setName(self::NAME)
-            ->setDescription('Prepare and activate combined price list by schedule');
+    private ManagerRegistry $doctrine;
+    private ConfigManager $configManager;
+    private CombinedPriceListScheduleResolver $priceListScheduleResolver;
+    private CombinedPriceListTriggerHandler $triggerHandler;
+    private CombinedPriceListsBuilderFacade $builder;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ConfigManager $configManager,
+        CombinedPriceListScheduleResolver $priceListScheduleResolver,
+        CombinedPriceListTriggerHandler $triggerHandler,
+        CombinedPriceListsBuilderFacade $builder
+    ) {
+        $this->doctrine = $doctrine;
+        $this->configManager = $configManager;
+        $this->priceListScheduleResolver = $priceListScheduleResolver;
+        $this->triggerHandler = $triggerHandler;
+        $this->builder = $builder;
+
+        parent::__construct();
     }
 
-    public function isActive()
+    /** @noinspection PhpMissingParentCallCommonInspection */
+    protected function configure()
     {
-        $container = $this->getContainer();
-        $offsetHours = $container->get('oro_config.manager')
-            ->get('oro_pricing.offset_of_processing_cpl_prices');
+        $this->setDescription('Prepares and activates combined price lists based on their schedules.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command prepares and activates combined price lists
+based on their schedules.
 
-        $count = $container->get('doctrine')
-            ->getManagerForClass(CombinedPriceList::class)
-            ->getRepository(CombinedPriceList::class)
+  <info>php %command.full_name%</info>
+
+HELP
+            )
+        ;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isActive(): bool
+    {
+        $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
+
+        $count = $this->doctrine->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffsetCount($offsetHours);
 
         return ($count > 0);
     }
 
     /**
-     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $container = $this->getContainer();
-        $triggerHandler = $container->get('oro_pricing.model.combined_price_list_trigger_handler');
-        $triggerHandler->startCollect();
+        $this->triggerHandler->startCollect();
 
-        $container->get('oro_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
-
+        // Build not calculated CPLs before switch
         $this->combinePricesForScheduledCPL();
-        $triggerHandler->commit();
+        // Switch to scheduled CPLs according to activation schedule
+        $this->priceListScheduleResolver->updateRelations();
+
+        $this->triggerHandler->commit();
+
+        return self::SUCCESS;
     }
 
     protected function combinePricesForScheduledCPL()
     {
-        $container = $this->getContainer();
-        $offsetHours = $this->getContainer()->get('oro_config.manager')
-            ->get('oro_pricing.offset_of_processing_cpl_prices');
+        $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
 
-        $combinedPriceLists = $container->get('doctrine')
-            ->getManagerForClass(CombinedPriceList::class)
-            ->getRepository(CombinedPriceList::class)
+        $combinedPriceLists = $this->doctrine->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $builder = $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder_facade');
-        $builder->rebuild($combinedPriceLists);
-        $builder->dispatchEvents();
+        $buildActivityRepo = $this->doctrine->getRepository(CombinedPriceListBuildActivity::class);
+        $buildActivityRepo->addBuildActivities($combinedPriceLists);
+
+        $this->builder->rebuild($combinedPriceLists);
+        foreach ($combinedPriceLists as $combinedPriceList) {
+            $buildActivityRepo->deleteActivityRecordsForCombinedPriceList($combinedPriceList);
+            $this->builder->triggerProductIndexation($combinedPriceList);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getDefaultDefinition()
+    public function getDefaultDefinition(): string
     {
         return '*/5 * * * *';
     }

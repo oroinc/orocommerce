@@ -9,6 +9,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * This class helps duplicate product with independent related fields
+ */
 class ProductDuplicator
 {
     /**
@@ -36,12 +39,6 @@ class ProductDuplicator
      */
     protected $attachmentProvider;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param FileManager $fileManager
-     * @param AttachmentProvider $attachmentProvider
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EventDispatcherInterface $eventDispatcher,
@@ -71,8 +68,8 @@ class ProductDuplicator
             $objectManager->flush();
 
             $this->eventDispatcher->dispatch(
-                ProductDuplicateAfterEvent::NAME,
-                new ProductDuplicateAfterEvent($productCopy, $product)
+                new ProductDuplicateAfterEvent($productCopy, $product),
+                ProductDuplicateAfterEvent::NAME
             );
 
             $objectManager->getConnection()->commit();
@@ -84,9 +81,6 @@ class ProductDuplicator
         return $productCopy;
     }
 
-    /**
-     * @param SkuIncrementorInterface $skuIncrementor
-     */
     public function setSkuIncrementor(SkuIncrementorInterface $skuIncrementor)
     {
         $this->skuIncrementor = $skuIncrementor;
@@ -108,11 +102,20 @@ class ProductDuplicator
         return $productCopy;
     }
 
-    /**
-     * @param Product $product
-     * @param Product $productCopy
-     */
     protected function cloneChildObjects(Product $product, Product $productCopy)
+    {
+        $this->cloneUnitPrecisions($product, $productCopy);
+        $this->cloneFallbackValues($product, $productCopy);
+        $this->cloneImages($product, $productCopy);
+        $this->cloneAttachments($product, $productCopy);
+
+        $pageTemplate = $product->getPageTemplate();
+        if ($pageTemplate) {
+            $productCopy->setPageTemplate(clone $pageTemplate);
+        }
+    }
+
+    private function cloneUnitPrecisions(Product $product, Product $productCopy)
     {
         $primaryPrecision = $product->getPrimaryUnitPrecision();
         if ($primaryPrecision) {
@@ -122,7 +125,10 @@ class ProductDuplicator
         foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
             $productCopy->addAdditionalUnitPrecision(clone $unitPrecision);
         }
+    }
 
+    private function cloneFallbackValues(Product $product, Product $productCopy)
+    {
         foreach ($product->getNames() as $name) {
             $productCopy->addName(clone $name);
         }
@@ -134,22 +140,33 @@ class ProductDuplicator
         foreach ($product->getShortDescriptions() as $shortDescription) {
             $productCopy->addShortDescription(clone $shortDescription);
         }
+    }
 
+    private function cloneImages(Product $product, Product $productCopy)
+    {
         foreach ($product->getImages() as $productImage) {
             $productImageCopy = clone $productImage;
             $productImageCopy->setProduct($productCopy);
 
             $imageFileCopy = $this->fileManager->cloneFileEntity($productImageCopy->getImage());
+            if (!$imageFileCopy) {
+                continue;
+            }
             $productImageCopy->setImage($imageFileCopy);
 
             $this->doctrineHelper->getEntityManager($productImageCopy)->persist($productImageCopy);
         }
+    }
 
+    private function cloneAttachments(Product $product, Product $productCopy)
+    {
         $attachments = $this->attachmentProvider->getEntityAttachments($product);
-
         foreach ($attachments as $attachment) {
             $attachmentCopy = clone $attachment;
             $attachmentFileCopy = $this->fileManager->cloneFileEntity($attachment->getFile());
+            if (!$attachmentFileCopy) {
+                continue;
+            }
             $attachmentCopy->setFile($attachmentFileCopy);
 
             $attachmentCopy->setTarget($productCopy);

@@ -4,16 +4,16 @@ define(function(require) {
     require('jasmine-jquery');
     require('orofrontend/default/js/app/modules/input-widgets');
 
-    var UnitsUtil = require('oroproduct/js/app/units-util');
-    var BaseModel = require('oroui/js/app/models/base/model');
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var translator = require('translator');
+    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const BaseModel = require('oroui/js/app/models/base/model');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const Translator = require('orotranslation/lib/translator');
 
     // fixtures
-    var html = require('text!./Fixture/units-select-template.html');
+    const html = require('text-loader!./Fixture/units-select-template.html');
 
-    translator.fromJSON({
+    Translator.fromJSON({
         locale: 'en',
         defaultDomain: 'jsmessages',
         translations: {
@@ -28,10 +28,10 @@ define(function(require) {
     });
 
     // variables
-    var $el;
-    var model;
+    let $el;
+    let model;
 
-    var getOptions = function($el) {
+    const getOptions = function($el) {
         return _.map($el.find('option'), function(el) {
             return el.innerHTML;
         });
@@ -87,7 +87,7 @@ define(function(require) {
         });
 
         describe('check select update', function() {
-            it('we should get limited list of select options', function() {
+            it('we should get limited list of select options with first unit selected', function() {
                 UnitsUtil.updateSelect(model, $el);
 
                 expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
@@ -96,13 +96,33 @@ define(function(require) {
                 expect($el.prop('readonly')).toBeFalsy();
             });
 
+            it('we should get a placeholder option, once unit_label is defined without unit in model', function() {
+                model.set('unit_label', 'piece');
+                UnitsUtil.updateSelect(model, $el);
+
+                expect(getOptions($el)).toEqual(['Please select...', 'item', 'set', 'kilogram']);
+                expect($el.val()).toEqual('');
+                expect($el.prop('disabled')).toBeFalsy();
+                expect($el.prop('readonly')).toBeFalsy();
+            });
+
+            it('we should get kilogram option selected, once it is defined unit in model', function() {
+                model.set('unit', 'kg');
+                UnitsUtil.updateSelect(model, $el);
+
+                expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
+                expect($el.val()).toEqual('kg');
+                expect($el.prop('disabled')).toBeFalsy();
+                expect($el.prop('readonly')).toBeFalsy();
+            });
+
             it('we should see placeholder if units list is empty', function() {
                 model.set('product_units', []);
+                model.set('unit', 'kg');
                 UnitsUtil.updateSelect(model, $el);
 
                 expect(getOptions($el)).toEqual(['Please select...']);
                 expect(model.get('unit')).toEqual('');
-                expect(model.get('unit_placeholder')).toEqual('Please select...');
                 expect($el.prop('disabled')).toBeTruthy();
 
                 model.set('unit_placeholder', '--');

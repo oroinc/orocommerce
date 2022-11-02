@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
-use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Url provider for Category entity.
+ */
 class CategoryContextUrlProvider implements ContextUrlProviderInterface
 {
     const CATEGORY_ROUTE_NAME = 'oro_product_frontend_product_index';
@@ -15,34 +18,20 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
     const CATEGORY_ID = 'categoryId';
     const INCLUDE_SUBCATEGORIES = 'includeSubcategories';
 
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
+    private RequestStack $requestStack;
 
-    /**
-     * @var UrlCacheInterface
-     */
-    private $cache;
+    private UrlCacheInterface $cache;
 
-    /**
-     * @var UserLocalizationManager
-     */
-    private $userLocalizationManager;
+    private LocalizationProviderInterface $localizationProvider;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param UrlCacheInterface $cache
-     * @param UserLocalizationManager $userLocalizationManager
-     */
     public function __construct(
         RequestStack $requestStack,
         UrlCacheInterface $cache,
-        UserLocalizationManager $userLocalizationManager
+        LocalizationProviderInterface $localizationProvider
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
-        $this->userLocalizationManager = $userLocalizationManager;
+        $this->localizationProvider = $localizationProvider;
     }
 
     /**
@@ -62,7 +51,7 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
         }
         if (!$contextUrl) {
             $localizationId = null;
-            if ($localization = $this->userLocalizationManager->getCurrentLocalization()) {
+            if ($localization = $this->localizationProvider->getCurrentLocalization()) {
                 $localizationId = $localization->getId();
             }
 

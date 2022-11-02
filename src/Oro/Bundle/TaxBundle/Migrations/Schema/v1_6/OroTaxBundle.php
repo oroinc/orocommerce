@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -29,9 +30,6 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
         $queries->addQuery(new MigrateProductTaxCodesQuery());
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addCustomerExtendFields(Schema $schema)
     {
         $this->extendExtension->addManyToOneRelation(
@@ -50,7 +48,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
                     'nullable' => true,
                 ],
                 'datagrid' => [
-                    'is_visible' => false
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
                     'is_enabled' => false
@@ -77,7 +75,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
                     'nullable' => true,
                 ],
                 'datagrid' => [
-                    'is_visible' => false
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
                     'is_enabled' => false
@@ -104,7 +102,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
                     'nullable' => true,
                 ],
                 'datagrid' => [
-                    'is_visible' => false
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE
                 ],
                 'form' => [
                     'is_enabled' => false

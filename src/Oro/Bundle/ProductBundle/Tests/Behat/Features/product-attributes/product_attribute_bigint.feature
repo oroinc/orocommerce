@@ -61,3 +61,12 @@ Feature: Product attribute bigint
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "BigIntField" options
+
+  Scenario: Delete product attribute
+    Given I login as administrator
+    Given I go to Products/ Product Attributes
+    When I click Remove "BigIntField" in grid
+    Then I should see "Are you sure you want to delete this attribute?"
+    And I click "Yes"
+    Then I should see "Attribute successfully deleted" flash message
+    And I should not see "Update schema"

@@ -17,9 +17,6 @@ class FedexShippingMethodOptionsType extends AbstractType
      */
     protected $roundingService;
 
-    /**
-     * @param RoundingServiceInterface $roundingService
-     */
     public function __construct(RoundingServiceInterface $roundingService)
     {
         $this->roundingService = $roundingService;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
@@ -11,6 +11,9 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Contains methods to simplify fixtures for attributes.
+ */
 trait MakeProductAttributesTrait
 {
     use ContainerAwareTrait;
@@ -18,8 +21,9 @@ trait MakeProductAttributesTrait
     /**
      * @param array $fields
      * @param string $owner
+     * @param array $otherScopes
      */
-    private function makeProductAttributes(array $fields, $owner = ExtendScope::ORIGIN_SYSTEM)
+    private function makeProductAttributes(array $fields, $owner = ExtendScope::OWNER_SYSTEM, array $otherScopes = [])
     {
         $configManager = $this->getConfigManager();
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
@@ -28,14 +32,17 @@ trait MakeProductAttributesTrait
         foreach ($fields as $field => $attributeOptions) {
             $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $field);
 
-            $options = [
-                'attribute' => array_merge([
-                    'is_attribute' => true,
-                ], $attributeOptions),
-                'extend' => [
-                    'owner' => $owner
-                ]
-            ];
+            $options = array_merge(
+                [
+                    'attribute' => array_merge([
+                        'is_attribute' => true,
+                    ], $attributeOptions),
+                    'extend' => [
+                        'owner' => $owner
+                    ]
+                ],
+                $otherScopes
+            );
 
             $configHelper->updateFieldConfigs($fieldConfigModel, $options);
             $entityManager->persist($fieldConfigModel);
@@ -44,9 +51,6 @@ trait MakeProductAttributesTrait
         $entityManager->flush();
     }
 
-    /**
-     * @param array $fields
-     */
     private function updateProductAttributes(array $fields)
     {
         $configManager = $this->getConfigManager();
@@ -74,10 +78,6 @@ trait MakeProductAttributesTrait
     /**
      * Iterates over passed groups array assigning corresponding attributes
      * Assigns groups to passed family
-     *
-     * @param array $groupsWithAttributes
-     * @param AttributeFamily $attributeFamily
-     * @param ObjectManager $manager
      */
     protected function addGroupsWithAttributesToFamily(
         array $groupsWithAttributes,
@@ -87,18 +87,32 @@ trait MakeProductAttributesTrait
         $configManager = $this->getConfigManager();
 
         foreach ($groupsWithAttributes as $groupData) {
-            $attributeGroup = new AttributeGroup();
-            $attributeGroup->setDefaultLabel($groupData['groupLabel']);
-            $attributeGroup->setIsVisible($groupData['groupVisibility']);
-            $attributeGroup->setCode($groupData['groupCode']);
-            foreach ($groupData['attributes'] as $attribute) {
-                $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $attribute);
-                $attributeGroupRelation = new AttributeGroupRelation();
-                $attributeGroupRelation->setEntityConfigFieldId($fieldConfigModel->getId());
-                $attributeGroup->addAttributeRelation($attributeGroupRelation);
+            $attributeGroup = $attributeFamily->getAttributeGroup($groupData['groupCode']);
+            if (!$attributeGroup) {
+                $attributeGroup = new AttributeGroup();
+                $attributeGroup->setCode($groupData['groupCode']);
+                $attributeFamily->addAttributeGroup($attributeGroup);
             }
 
-            $attributeFamily->addAttributeGroup($attributeGroup);
+            $attributeGroup->setDefaultLabel($groupData['groupLabel']);
+            $attributeGroup->setIsVisible($groupData['groupVisibility']);
+
+            $existingAttributes = $attributeGroup->getAttributeRelations()
+                ->map(static fn ($attributeGroupRelation) => $attributeGroupRelation->getEntityConfigFieldId())
+                ->toArray();
+
+            foreach ($groupData['attributes'] as $attribute) {
+                $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $attribute);
+                if (in_array($fieldConfigModel->getId(), $existingAttributes, true)) {
+                    // Skips adding attribute to the group because it is already present.
+                    continue;
+                }
+
+                $attributeGroupRelation = new AttributeGroupRelation();
+                $attributeGroupRelation->setEntityConfigFieldId($fieldConfigModel->getId());
+                $attributeGroupRelation->setAttributeGroup($attributeGroup);
+                $attributeGroup->addAttributeRelation($attributeGroupRelation);
+            }
         }
 
         $manager->persist($attributeFamily);

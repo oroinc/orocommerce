@@ -1,16 +1,15 @@
 define(function(require) {
     'use strict';
 
-    var ProductSidebarComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    const routing = require('routing');
+    const mediator = require('oroui/js/mediator');
+    const __ = require('orotranslation/js/translator');
 
-    ProductSidebarComponent = BaseComponent.extend({
+    const ProductSidebarComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -21,8 +20,9 @@ define(function(require) {
             sidebarAlias: 'products-sidebar',
             routeName: 'oro_pricing_price_list_currency_list',
             routingParams: {},
-            currencyTemplate: '<input type="checkbox" id="<%- id %>" value="<%- value %>">' +
-            '<label for="<%- id %>"><%- text %></label>'
+            currencyTemplate: `<label for="<%- id %>" class="checkbox-label">
+                <input type="checkbox" id="<%- id %>" value="<%- value %>"><%- text %>
+            </label>`
         },
 
         /**
@@ -41,14 +41,14 @@ define(function(require) {
         loadingMaskView: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ProductSidebarComponent() {
-            ProductSidebarComponent.__super__.constructor.apply(this, arguments);
+        constructor: function ProductSidebarComponent(options) {
+            ProductSidebarComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
@@ -56,21 +56,25 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
             this.currenciesContainer = this.options._sourceElement.find(this.options.currenciesSelector);
 
+            this.onPriceListChange = this.onPriceListChange.bind(this);
+            this.onCurrenciesChange = this.onCurrenciesChange.bind(this);
+            this.onShowTierPricesChange = this.onShowTierPricesChange.bind(this);
+
             this.options._sourceElement
-                .on('change', this.options.priceListSelector, _.bind(this.onPriceListChange, this))
-                .on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this))
-                .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
+                .on('change', this.options.priceListSelector, this.onPriceListChange)
+                .on('change', this.options.currenciesSelector, this.onCurrenciesChange)
+                .on('change', this.options.showTierPricesSelector, this.onShowTierPricesChange);
         },
 
         onPriceListChange: function(e) {
-            var value = e.target.value;
-            var routeParams = $.extend({}, this.options.routingParams, {id: value});
+            const value = e.target.value;
+            const routeParams = $.extend({}, this.options.routingParams, {id: value});
 
             $.ajax({
                 url: routing.generate(this.options.routeName, routeParams),
-                beforeSend: $.proxy(this._beforeSend, this),
-                success: $.proxy(this._success, this),
-                complete: $.proxy(this._complete, this),
+                beforeSend: this._beforeSend.bind(this),
+                success: this._success.bind(this),
+                complete: this._complete.bind(this),
                 errorHandlerMessage: __(this.options.errorMessage)
             });
         },
@@ -87,10 +91,10 @@ define(function(require) {
          * @param {Boolean} widgetReload
          */
         triggerSidebarChanged: function(widgetReload) {
-            var currencies = [];
+            let currencies = [];
             _.each($(this.options.currenciesSelector + ' input'), function(input) {
-                var checked = input.checked;
-                var value = $(input).val();
+                const checked = input.checked;
+                const value = $(input).val();
                 if (checked) {
                     currencies.push(value);
                 }
@@ -101,7 +105,7 @@ define(function(require) {
                 currencies = false;
             }
 
-            var params = {
+            const params = {
                 priceListId: $(this.options.priceListSelector).val(),
                 priceCurrencies: currencies,
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
@@ -126,17 +130,17 @@ define(function(require) {
          * @private
          */
         _success: function(data) {
-            var html = [];
-            var index = 0;
-            var template = _.template(this.options.currencyTemplate);
+            const html = [];
+            let index = 0;
+            const template = _.template(this.options.currencyTemplate);
             if (!this._hasActiveCurrencies(data)) {
                 this.currenciesState = {};
             }
 
             _.each(data, function(value, key) {
-                var checked = 'checked';
-                if (this.currenciesState.hasOwnProperty(key) && !this.currenciesState[key]) {
-                    checked = '';
+                let checked = '';
+                if (this.currenciesState.hasOwnProperty(key) && this.currenciesState[key]) {
+                    checked = 'checked';
                 }
                 html[index] = template({
                     value: key,
@@ -155,7 +159,7 @@ define(function(require) {
         },
 
         _hasActiveCurrencies: function(data) {
-            for (var key in this.currenciesState) {
+            for (const key in this.currenciesState) {
                 if (this.currenciesState.hasOwnProperty(key) && data.hasOwnProperty(key) && this.currenciesState[key]) {
                     return true;
                 }
@@ -168,6 +172,7 @@ define(function(require) {
          */
         _complete: function() {
             this.loadingMaskView.hide();
+            this.currenciesContainer.inputWidget('seekAndCreate');
         },
 
         dispose: function() {

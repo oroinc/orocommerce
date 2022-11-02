@@ -1,0 +1,19 @@
+dynamic-imports:
+    orosale:
+        - oroorder/js/app/components/data-load-component
+        - oroorder/js/app/components/entry-point-component
+        - oroorder/js/app/components/notes-component
+        - oroorder/js/app/components/products-prices-component
+        - oroorder/js/app/components/related-data-component
+        - oroorder/js/app/components/select-switch-input-component
+        - oroorder/js/app/components/totals-component
+        - oroorder/js/app/views/address-view
+        - oroorder/js/app/views/currency-select-view
+        - oroorder/js/app/views/discount-collection-view
+        - oroorder/js/app/views/discount-item-view
+        - oroorder/js/app/views/line-item-view
+        - oroorder/js/app/views/line-items-view
+        - oroorder/js/app/views/payment-term-view
+        - oroorder/js/app/views/possible-shipping-methods-view
+        - oroorder/js/app/views/shipping-cost-view
+        - oroorder/js/app/views/shipping-tracking-collection-view

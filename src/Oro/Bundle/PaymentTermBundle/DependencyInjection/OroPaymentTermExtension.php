@@ -9,8 +9,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroPaymentTermExtension extends Extension
 {
-    const ALIAS = 'oro_payment_term';
-
     /**
      * {@inheritDoc}
      */
@@ -21,13 +19,6 @@ class OroPaymentTermExtension extends Extension
         $loader->load('payment.yml');
         $loader->load('services.yml');
         $loader->load('integration.yml');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAlias()
-    {
-        return self::ALIAS;
+        $loader->load('controllers.yml');
     }
 }

@@ -4,11 +4,15 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Checks if shopping list line items follow minimum and maximum quantity restrictions.
+ */
 class QuantityToOrderValidatorService
 {
     /**
@@ -22,13 +26,18 @@ class QuantityToOrderValidatorService
     protected $translator;
 
     /**
-     * @param EntityFallbackResolver $fallbackResolver
-     * @param TranslatorInterface $translator
+     * @var PreloadingManager
      */
-    public function __construct(EntityFallbackResolver $fallbackResolver, TranslatorInterface $translator)
-    {
+    private $preloadingManager;
+
+    public function __construct(
+        EntityFallbackResolver $fallbackResolver,
+        TranslatorInterface $translator,
+        PreloadingManager $preloadingManager
+    ) {
         $this->fallbackResolver = $fallbackResolver;
         $this->translator = $translator;
+        $this->preloadingManager = $preloadingManager;
     }
 
     /**
@@ -37,6 +46,20 @@ class QuantityToOrderValidatorService
      */
     public function isLineItemListValid($lineItems)
     {
+        $this->preloadingManager->preloadInEntities(
+            $lineItems instanceof Collection ? $lineItems->toArray() : $lineItems,
+            [
+                'product' => [
+                    'minimumQuantityToOrder' => [],
+                    'maximumQuantityToOrder' => [],
+                    'category' => [
+                        'minimumQuantityToOrder' => [],
+                        'maximumQuantityToOrder' => [],
+                    ],
+                ],
+            ]
+        );
+
         foreach ($lineItems as $item) {
             $product = $item->getProduct();
             $quantity = $item->getQuantity();
@@ -122,14 +145,17 @@ class QuantityToOrderValidatorService
 
     /**
      * @param Product $product
-     * @param $quantity
+     * @param int|float $quantity
      * @return bool|string
      */
     public function getMinimumErrorIfInvalid(Product $product, $quantity)
     {
         $minLimit = $this->getMinimumLimit($product);
         if ($this->isLowerThenMinLimit($minLimit, $quantity)) {
-            return $this->getErrorMessage($product, $minLimit, 'quantity_below_min_limit');
+            return $this->translator->trans(
+                'oro.inventory.product.error.quantity_below_min_limit',
+                ['%limit%' => $minLimit]
+            );
         }
 
         return false;
@@ -137,38 +163,29 @@ class QuantityToOrderValidatorService
 
     /**
      * @param Product $product
-     * @param $quantity
+     * @param int|float $quantity
      * @return bool|string
      */
     public function getMaximumErrorIfInvalid(Product $product, $quantity)
     {
         $maxLimit = $this->getMaximumLimit($product);
         if (0 == $maxLimit) {
-            return $this->getErrorMessage($product, $maxLimit, 'quantity_limit_is_zero');
+            return $this->translator->trans(
+                'oro.inventory.product.error.quantity_limit_is_zero',
+                [
+                    '%sku%' => $product->getSku(),
+                    '%product_name%' => $product->getDenormalizedDefaultName()
+                ]
+            );
         }
 
         if ($this->isHigherThanMaxLimit($maxLimit, $quantity)) {
-            return $this->getErrorMessage($product, $maxLimit, 'quantity_over_max_limit');
+            return $this->translator->trans(
+                'oro.inventory.product.error.quantity_over_max_limit',
+                ['%limit%' => $maxLimit]
+            );
         }
 
         return false;
-    }
-
-    /**
-     * @param Product $product
-     * @param int $limit
-     * @param string $messageSuffix
-     * @return string
-     */
-    protected function getErrorMessage(Product $product, $limit, $messageSuffix)
-    {
-        return $this->translator->trans(
-            'oro.inventory.product.error.' . $messageSuffix,
-            [
-                '%limit%' => $limit,
-                '%sku%' => $product->getSku(),
-                '%product_name%' => $product->getName(),
-            ]
-        );
     }
 }

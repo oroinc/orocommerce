@@ -22,7 +22,7 @@ navigation:
                 position:        100
                 extras:
                     routes:      ['oro_tax_customer_tax_code_index', 'oro_tax_customer_tax_code_view', 'oro_tax_customer_tax_code_update', 'oro_tax_customer_tax_code_create']
-                    description: 'oro.tax.customertaxcode.description'
+                    description: 'oro.tax.customertaxcode.list.description'
 
             tax_list:
                 label:           'oro.tax.entity_plural_label'

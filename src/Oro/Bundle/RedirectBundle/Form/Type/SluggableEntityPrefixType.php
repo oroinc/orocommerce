@@ -16,6 +16,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for managing sluggable entities prefix.
+ * Used in system configuration.
+ */
 class SluggableEntityPrefixType extends AbstractType
 {
     const NAME = 'oro_redirect_sluggable_prefix';
@@ -32,10 +36,6 @@ class SluggableEntityPrefixType extends AbstractType
      */
     protected $configManager;
 
-    /**
-     * @param RedirectStorage $storage
-     * @param ConfigManager $configManager
-     */
     public function __construct(RedirectStorage $storage, ConfigManager $configManager)
     {
         $this->storage = $storage;
@@ -97,9 +97,6 @@ class SluggableEntityPrefixType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onPreSubmit(FormEvent $event)
     {
         // Value from model should be converted from string to appropriate array for `Use Default` case
@@ -120,19 +117,18 @@ class SluggableEntityPrefixType extends AbstractType
         $view->vars['askStrategyName'] = Configuration::STRATEGY_ASK;
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function onSubmit(FormEvent $event)
     {
         $data = $event->getForm()->getViewData();
-        $key = str_replace(
-            ConfigManager::SECTION_VIEW_SEPARATOR,
-            ConfigManager::SECTION_MODEL_SEPARATOR,
-            $event->getForm()->getParent()->getName()
-        );
+        if ($data) {
+            $key = str_replace(
+                ConfigManager::SECTION_VIEW_SEPARATOR,
+                ConfigManager::SECTION_MODEL_SEPARATOR,
+                $event->getForm()->getParent()->getName()
+            );
 
-        $this->storage->addPrefix($key, $data);
+            $this->storage->addPrefix($key, $data);
+        }
     }
 
     /**

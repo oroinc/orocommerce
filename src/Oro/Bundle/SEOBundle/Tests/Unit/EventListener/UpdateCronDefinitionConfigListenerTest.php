@@ -19,7 +19,7 @@ class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->deferredScheduler = $this->getMockBuilder(DeferredScheduler::class)
             ->disableOriginalConstructor()
@@ -48,10 +48,10 @@ class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
         ]);
         $this->deferredScheduler->expects($this->once())
             ->method('removeSchedule')
-            ->with(GenerateSitemapCommand::NAME, [], $oldValue);
+            ->with(GenerateSitemapCommand::getDefaultName(), [], $oldValue);
         $this->deferredScheduler->expects($this->once())
             ->method('addSchedule')
-            ->with(GenerateSitemapCommand::NAME, [], $newValue);
+            ->with(GenerateSitemapCommand::getDefaultName(), [], $newValue);
         $this->deferredScheduler->expects($this->once())
             ->method('flush');
         $this->listener->onUpdateAfter($event);

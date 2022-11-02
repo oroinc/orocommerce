@@ -10,12 +10,14 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Subtotal provider for promotions.
+ */
 class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
     const TYPE = 'discount';
-    const NAME = 'oro_promotion.subtotal_discount';
     const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
     const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
     const ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER = 100;
@@ -41,13 +43,6 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     private $translator;
 
-    /**
-     * @param SubtotalProviderConstructorArguments $arguments
-     * @param PromotionExecutor $promotionExecutor
-     * @param AppliedDiscountsProvider $appliedDiscountsProvider
-     * @param RoundingServiceInterface $roundingService
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         SubtotalProviderConstructorArguments $arguments,
         PromotionExecutor $promotionExecutor,
@@ -60,14 +55,6 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
         $this->rounding = $roundingService;
         $this->translator = $translator;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 
     /**

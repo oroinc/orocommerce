@@ -7,6 +7,7 @@ use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\NumberRangeFilter;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
@@ -14,32 +15,19 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Form\FormFactoryInterface;
 
 /**
- * Applies a filter restrictions to a data source (use public method apply())
- * More details: Modifies dbSource query by applying restriction constraints (WHERE type = $data['type'])
+ * The filter by a product price.
  */
 class ProductPriceFilter extends NumberRangeFilter
 {
-    /**
-     * @var UnitLabelFormatterInterface
-     */
+    /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
-    /**
-     * @var PriceListRequestHandler
-     */
+    /** @var PriceListRequestHandler */
     protected $priceListRequestHandler;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $productPriceClass;
 
-    /**
-     * @param FormFactoryInterface $factory
-     * @param FilterUtility $util
-     * @param UnitLabelFormatterInterface $formatter
-     * @param PriceListRequestHandler $priceListRequestHandler
-     */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,
@@ -53,6 +41,7 @@ class ProductPriceFilter extends NumberRangeFilter
 
     /**
      * @param string $productPriceClass
+     *
      * @return $this
      */
     public function setProductPriceClass($productPriceClass)
@@ -131,7 +120,7 @@ class ProductPriceFilter extends NumberRangeFilter
     }
 
     /**
-     * @return null|object|\Oro\Bundle\PricingBundle\Entity\PriceList
+     * @return PriceList|null
      */
     protected function getPriceList()
     {
@@ -140,9 +129,9 @@ class ProductPriceFilter extends NumberRangeFilter
 
     /**
      * @param FilterDatasourceAdapterInterface $ds
-     * @param string $fieldName
-     * @param string $parameterName
-     * @param mixed $parameterValue
+     * @param string                           $fieldName
+     * @param string                           $parameterName
+     * @param mixed                            $parameterValue
      */
     protected function addEqExpr(FilterDatasourceAdapterInterface $ds, $fieldName, $parameterName, $parameterValue)
     {
@@ -151,13 +140,12 @@ class ProductPriceFilter extends NumberRangeFilter
     }
 
     /**
-     * @param mixed $data
-     *
-     * @return array|bool
+     * {@inheritdoc}
      */
-    public function parseData($data)
+    protected function parseData($data)
     {
-        if (false === ($data = parent::parseData($data))) {
+        $data = parent::parseData($data);
+        if (false === $data) {
             return false;
         }
 

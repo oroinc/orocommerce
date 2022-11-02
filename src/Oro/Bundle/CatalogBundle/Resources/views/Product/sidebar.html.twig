@@ -1,13 +1,13 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import '@OroUI/macros.html.twig' as UI %}
 
 {% set treeOptions = {
-    'data' : oro_category_list(),
+    'data' : oro_category_list(null, rootCategory),
     'defaultCategoryId': defaultCategoryId,
     'nodeId': defaultCategoryId,
     'view' : 'orocatalog/js/app/views/product-sidebar-view'
 } %}
 
-{% embed "OroUIBundle::jstree.html.twig" with {
+{% embed "@OroUI/jstree.html.twig" with {
     data: {
         'label': 'oro.catalog.category.entity_plural_label'|trans,
         'treeOptions': treeOptions

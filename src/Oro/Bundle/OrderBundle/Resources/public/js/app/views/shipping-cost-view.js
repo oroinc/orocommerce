@@ -1,18 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var ShippingCostView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const $ = require('jquery');
+    const TotalsListener = require('oropricing/js/app/listener/totals-listener');
+    const BaseView = require('oroui/js/app/views/base/view');
 
     /**
      * @export oroorder/js/app/views/shipping-cost-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.ShippingCostView
      */
-    ShippingCostView = BaseView.extend({
+    const ShippingCostView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -34,18 +32,18 @@ define(function(require) {
         fieldsByName: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
-        constructor: function ShippingCostView() {
-            ShippingCostView.__super__.constructor.apply(this, arguments);
+        constructor: function ShippingCostView(options) {
+            ShippingCostView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout().done(this.handleLayoutInit.bind(this));
         },
 
         /**
@@ -56,9 +54,9 @@ define(function(require) {
             this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
-            this.$fields.each(_.bind(function(i, field) {
+            this.$fields.each((i, field) => {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
-            }, this));
+            });
 
             this.subtotalFields(this.fieldsByName);
         },
@@ -68,11 +66,11 @@ define(function(require) {
          * @returns {String}
          */
         formFieldName: function(field) {
-            var name = '';
-            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
-            var namePart;
+            let name = '';
+            const nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            let namePart;
 
-            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+            for (let i = 0, iMax = nameParts.length; i < iMax; i++) {
                 namePart = nameParts[i];
                 if (!namePart.length) {
                     continue;

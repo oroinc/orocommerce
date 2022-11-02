@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Bundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DependencyInjection\Configuration;
@@ -49,6 +49,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'scope' => 'app',
                 ],
                 'create_shopping_list_for_new_guest' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
+                'shopping_lists_max_line_items_per_page' => [
+                    'value' => 1000,
+                    'scope' => 'app',
+                ],
+                'show_all_in_shopping_list_widget' => [
                     'value' => false,
                     'scope' => 'app',
                 ],

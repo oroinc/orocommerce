@@ -9,7 +9,7 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@piece'
         precision: '0'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: Product1
     locvalue2:
@@ -20,16 +20,20 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         sku: 'AA1'
+        attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@precision1'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
     product2:
         organization: '@organization'
         owner: '@business_unit'
         sku: 'BB2'
+        attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@precision2'
-        addName: ['@locvalue2']
+        __calls:
+            - addName: ['@locvalue2']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
 

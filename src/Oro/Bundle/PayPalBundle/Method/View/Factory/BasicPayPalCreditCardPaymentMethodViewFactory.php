@@ -19,10 +19,6 @@ class BasicPayPalCreditCardPaymentMethodViewFactory implements PayPalCreditCardP
      */
     private $transactionProvider;
 
-    /**
-     * @param FormFactoryInterface $formFactory
-     * @param PaymentTransactionProvider $transactionProvider
-     */
     public function __construct(FormFactoryInterface $formFactory, PaymentTransactionProvider $transactionProvider)
     {
         $this->formFactory = $formFactory;

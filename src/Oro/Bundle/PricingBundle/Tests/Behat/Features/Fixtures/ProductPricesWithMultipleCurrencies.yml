@@ -1,7 +1,7 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
         string: 'Product 1'
 
@@ -19,7 +19,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        __calls:
+            - addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
@@ -42,19 +43,3 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation1:
         product: '@product1'
         priceList: '@defaultPriceList'
-
-Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
-    combinedPriceRelationUsd:
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        currency: 'USD'
-        quantity: 1
-        unit: '@item'
-        value: 13
-    combinedPriceRelationEur:
-        product: '@product1'
-        priceList: '@combinedPriceList'
-        currency: 'EUR'
-        quantity: 1
-        unit: '@item'
-        value: 10

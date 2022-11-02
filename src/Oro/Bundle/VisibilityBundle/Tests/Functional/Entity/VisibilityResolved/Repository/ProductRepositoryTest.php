@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -29,27 +28,12 @@ class ProductRepositoryTest extends WebTestCase
 {
     use ResolvedEntityRepositoryTestTrait ;
 
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
+    private EntityManager $entityManager;
+    private ProductRepository $repository;
+    private ScopeManager $scopeManager;
+    private InsertFromSelectQueryExecutor $insertExecutor;
 
-    /**
-     * @var ProductRepository
-     */
-    protected $repository;
-
-    /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertExecutor;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
@@ -118,10 +102,9 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository->clearTable();
 
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(ProductVisibility::class)
             ->getRepository(ProductVisibility::class)
             ->createQueryBuilder('visibility');
-        $qb->delete(ProductVisibility::class, 'visibillity')->getQuery()->execute();
+        $qb->delete(ProductVisibility::class, 'visibility')->getQuery()->execute();
 
         $scope = $this->getScope();
         $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
@@ -165,28 +148,19 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $visibility
-     * @return int|null
-     */
-    protected function resolveVisibility($visibility)
+    private function resolveVisibility(string $visibility): ?int
     {
-        switch ($visibility) {
-            case ProductVisibility::HIDDEN:
-                return BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
-                break;
-            case ProductVisibility::VISIBLE:
-                return BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
-                break;
-            default:
-                return null;
+        if (ProductVisibility::HIDDEN === $visibility) {
+            return BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
         }
+        if (ProductVisibility::VISIBLE === $visibility) {
+            return BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
+        }
+
+        return null;
     }
 
-    /**
-     * @param array $actual
-     */
-    protected function assertInsertedByCategory(array $actual)
+    private function assertInsertedByCategory(array $actual): void
     {
         $categoryRepository = $this->getCategoryRepository();
         $pv = $this->getProductVisibilities();
@@ -212,14 +186,11 @@ class ProductRepositoryTest extends WebTestCase
                 'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
                 'category' => $category->getId()
             ];
-            $this->assertContains($expected, $actual);
+            self::assertContainsEquals($expected, $actual);
         }
     }
 
-    /**
-     * @param array $actual
-     */
-    protected function assertInsertedFromBaseTable(array $actual)
+    private function assertInsertedFromBaseTable(array $actual): void
     {
         foreach ($this->getProductVisibilities() as $pv) {
             $visibility = $this->resolveVisibility($pv->getVisibility());
@@ -233,7 +204,7 @@ class ProductRepositoryTest extends WebTestCase
                     'source' => ProductVisibilityResolved::SOURCE_STATIC,
                     'category' => null
                 ];
-                $this->assertContains($expected, $actual);
+                self::assertContainsEquals($expected, $actual);
             }
         }
     }
@@ -241,27 +212,17 @@ class ProductRepositoryTest extends WebTestCase
     /**
      * @return Product[]
      */
-    protected function getProducts()
+    private function getProducts(): array
     {
         return $this->getProductRepository()->findAll();
     }
 
-    /**
-     * @return ProductEntityRepository
-     */
-    protected function getProductRepository()
+    private function getProductRepository(): ProductEntityRepository
     {
-        $className = $this->getContainer()->getParameter('oro_product.entity.product.class');
-
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className)
-            ->getRepository('OroProductBundle:Product');
+        return $this->getContainer()->get('doctrine')->getRepository(Product::class);
     }
 
-    /**
-     * @return array
-     */
-    protected function getActualArray()
+    private function getActualArray(): array
     {
         return $this->repository->createQueryBuilder('pvr')
             ->select(
@@ -276,68 +237,30 @@ class ProductRepositoryTest extends WebTestCase
             ->getResult();
     }
 
-    /**
-     * @return array
-     */
-    protected function getActual()
+    private function getResolvedVisibilityManager(): EntityManager
     {
-        return $this->repository->findAll();
+        return $this->getContainer()->get('doctrine')->getManagerForClass(ProductVisibilityResolved::class);
     }
 
-    /**
-     * @return ObjectManager
-     */
-    protected function getResolvedVisibilityManager()
+    private function getCategoryRepository(): CategoryRepository
     {
-        $className = $this->getContainer()->getParameter('oro_visibility.entity.product_visibility_resolved.class');
-
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className);
-    }
-
-    /**
-     * @return CategoryRepository
-     */
-    protected function getCategoryRepository()
-    {
-        $className = $this->getContainer()->getParameter('oro_catalog.entity.category.class');
-
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className)
-            ->getRepository('OroCatalogBundle:Category');
-    }
-
-    /**
-     * @return Category[]
-     */
-    protected function getCategories()
-    {
-        return $this->getCategoryRepository()->findAll();
+        return $this->getContainer()->get('doctrine')->getRepository(Category::class);
     }
 
     /**
      * @return ProductVisibility[]
      */
-    protected function getProductVisibilities()
+    private function getProductVisibilities(): array
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
+            ->getRepository(ProductVisibility::class)
             ->findAll();
-    }
-
-    /**
-     * @return InsertFromSelectQueryExecutor
-     */
-    protected function getInsertFromSelectExecutor()
-    {
-        return $this->getContainer()
-            ->get('oro_entity.orm.insert_from_select_query_executor');
     }
 
     public function testDeleteByProduct()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
@@ -354,8 +277,8 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testInsertByProduct()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
@@ -371,6 +294,7 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testInsertByProductWithoutCategory()
     {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_2);
 
         $visibility = new ProductVisibility();
@@ -381,7 +305,6 @@ class ProductRepositoryTest extends WebTestCase
         $em->persist($visibility);
         $em->flush();
 
-        /** @var $product Product */
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
             $this->insertExecutor,
@@ -397,22 +320,14 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEquals(BaseVisibilityResolved::VISIBILITY_HIDDEN, $actualVisibility->getVisibility());
     }
 
-    /**
-     * @param Product $product
-     * @return null|Category
-     */
-    protected function getCategoryByProduct(Product $product)
+    private function getCategoryByProduct(Product $product): ?Category
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->findOneByProduct($product);
     }
 
-    /**
-     * @return Scope
-     */
-    protected function getScope()
+    private function getScope(): Scope
     {
         return $this->getContainer()->get('oro_scope.scope_manager')->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
     }

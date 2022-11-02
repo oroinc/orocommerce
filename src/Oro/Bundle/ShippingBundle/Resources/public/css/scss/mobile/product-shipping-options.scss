@@ -1,0 +1,11 @@
+/* @theme: admin.oro; */
+
+.product-shipping-options-collection {
+    min-width: 100%;
+
+    .grid {
+        display: block;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}

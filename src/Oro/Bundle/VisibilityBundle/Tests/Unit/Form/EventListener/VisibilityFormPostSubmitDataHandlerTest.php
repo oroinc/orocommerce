@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
@@ -17,38 +17,27 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
 {
     use EntityTrait;
 
-    /**
-     * @var VisibilityFormPostSubmitDataHandler
-     */
-    protected $dataHandler;
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $em;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var VisibilityFormFieldDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldDataProvider;
 
-    /**
-     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $em;
+    /** @var VisibilityFormPostSubmitDataHandler */
+    private $dataHandler;
 
-    /**
-     * @var VisibilityFormFieldDataProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $fieldDataProvider;
-
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->fieldDataProvider = $this->createMock(VisibilityFormFieldDataProvider::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($this->em);
 
-        $this->fieldDataProvider = $this->getMockBuilder(VisibilityFormFieldDataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->em);
 
         $this->dataHandler = new VisibilityFormPostSubmitDataHandler(
-            $this->registry,
+            $doctrine,
             $this->fieldDataProvider
         );
     }
@@ -56,13 +45,22 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
     public function testSaveInvalidForm()
     {
         $form = $this->createMock(FormInterface::class);
+        /** @var Product $targetEntity */
         $targetEntity = $this->getEntity(Product::class, ['id' => 1]);
-        $form->method('getData')->willReturn($targetEntity);
-        $form->method('isSubmitted')->willReturn(true);
-        $form->method('isValid')->willReturn(false);
+        $form->expects($this->any())
+            ->method('getData')
+            ->willReturn($targetEntity);
+        $form->expects($this->any())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->any())
+            ->method('isValid')
+            ->willReturn(false);
 
-        $this->em->expects($this->never())->method('persist');
-        $form->expects($this->never())->method('get');
+        $this->em->expects($this->never())
+            ->method('persist');
+        $form->expects($this->never())
+            ->method('get');
 
         $this->dataHandler->saveForm($form, $targetEntity);
     }
@@ -70,17 +68,27 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
     public function testSaveForm()
     {
         $form = $this->createMock(FormInterface::class);
+        /** @var Product $targetEntity */
         $targetEntity = $this->getEntity(Product::class, ['id' => 1]);
-        $form->method('getData')->willReturn($targetEntity);
-        $form->method('isSubmitted')->willReturn(true);
-        $form->method('isValid')->willReturn(true);
+        $form->expects($this->any())
+            ->method('getData')
+            ->willReturn($targetEntity);
+        $form->expects($this->any())
+            ->method('isSubmitted')
+            ->willReturn(true);
+        $form->expects($this->any())
+            ->method('isValid')
+            ->willReturn(true);
 
         $allForm = $this->createMock(FormInterface::class);
-        $allForm->method('getData')->willReturn('hidden');
+        $allForm->expects($this->any())
+            ->method('getData')
+            ->willReturn('hidden');
         $customerForm = $this->createMock(FormInterface::class);
         $customer3 = $this->getEntity(Customer::class, ['id' => 3]);
-        $customerForm->method('getData')->willReturn(
-            [
+        $customerForm->expects($this->any())
+            ->method('getData')
+            ->willReturn([
                 1 => [
                     'data' => ['visibility' => 'category'],
                     'entity' => $this->getEntity(Customer::class, ['id' => 1]),
@@ -93,63 +101,65 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
                     'data' => ['visibility' => 'visible'],
                     'entity' => $customer3,
                 ],
-            ]
-        );
+            ]);
         $customerGroupForm = $this->createMock(FormInterface::class);
-        $customerGroupForm->method('getData')->willReturn([]);
+        $customerGroupForm->expects($this->any())
+            ->method('getData')
+            ->willReturn([]);
 
-        $form->method('get')->willReturnMap(
-            [
+        $form->expects($this->any())
+            ->method('has')
+            ->willReturnMap([
+                ['all', true],
+                ['customer', true],
+                ['customerGroup', true],
+            ]);
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
                 ['all', $allForm],
                 ['customer', $customerForm],
                 ['customerGroup', $customerGroupForm],
-            ]
-        );
+            ]);
 
         $productVisibility = new ProductVisibility();
         $customerProductVisibility1 = (new CustomerProductVisibility())->setVisibility('hidden');
         $customerProductVisibility2 = (new CustomerProductVisibility())->setVisibility('visible');
-        $customerProductVisibility3 = (new CustomerProductVisibility());
-        $this->fieldDataProvider->method('findFormFieldData')
-            ->willReturnMap(
-                [
-                    [$form, 'all', null],
-                    [$form, 'customer', [1 => $customerProductVisibility1, 2 => $customerProductVisibility2]],
-                    [$form, 'customerGroup', []],
-                ]
-            );
+        $customerProductVisibility3 = new CustomerProductVisibility();
+        $this->fieldDataProvider->expects($this->any())
+            ->method('findFormFieldData')
+            ->willReturnMap([
+                [$form, 'all', null],
+                [$form, 'customer', [1 => $customerProductVisibility1, 2 => $customerProductVisibility2]],
+                [$form, 'customerGroup', []],
+            ]);
         // expect new visibility entities will be created with following arguments
-        $this->fieldDataProvider->method('createFormFieldData')
-            ->willReturnMap(
-                [
-                    [$form, 'all', null, $productVisibility],
-                    [$form, 'customer', $customer3, $customerProductVisibility3],
-                ]
-            );
+        $this->fieldDataProvider->expects($this->any())
+            ->method('createFormFieldData')
+            ->willReturnMap([
+                [$form, 'all', null, $productVisibility],
+                [$form, 'customer', $customer3, $customerProductVisibility3],
+            ]);
 
         // assert that new visibility entity persisted when visibility value is not default
-        $this->em->expects($this->at(0))
-            ->method('persist')
-            ->with($productVisibility);
-
         // assert that existing customer visibility with new non default will be persisted
-        $this->em->expects($this->at(1))
+        // assert that customer visibility with non default will be persisted
+        $this->em->expects($this->exactly(3))
             ->method('persist')
-            ->with($customerProductVisibility1);
-
+            ->withConsecutive(
+                [$productVisibility],
+                [$customerProductVisibility1],
+                [$customerProductVisibility3]
+            );
         // assert that existing customer visibility with new default will be remove
-        $this->em->expects($this->at(2))
+        $this->em->expects($this->once())
             ->method('remove')
             ->with($customerProductVisibility2);
 
-        // assert that customer visibility with non default will be persisted
-        $this->em->expects($this->at(3))
-            ->method('persist')
-            ->with($customerProductVisibility3);
         $this->dataHandler->saveForm($form, $targetEntity);
 
-        $this->assertEquals($productVisibility->getVisibility(), 'hidden');
-        $this->assertEquals($customerProductVisibility1->getVisibility(), 'category');
-        $this->assertEquals($customerProductVisibility3->getVisibility(), 'visible');
+        $this->assertEquals('hidden', $productVisibility->getVisibility());
+        $this->assertEquals('category', $customerProductVisibility1->getVisibility());
+        $this->assertEquals('visible', $customerProductVisibility3->getVisibility());
     }
 }

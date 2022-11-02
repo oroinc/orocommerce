@@ -1,0 +1,20 @@
+{% block __oro_product_grid_sidebar_filters__sidebar_filters_root_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-filters-sidebar'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_grid_sidebar_filters__sidebar_filters_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' sidebar-filter-container',
+        'data-role': 'sidebar-filter-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{- block_widget(block) -}}
+    </div>
+{% endblock %}

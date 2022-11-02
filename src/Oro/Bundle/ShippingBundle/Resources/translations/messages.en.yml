@@ -31,6 +31,7 @@ oro:
         product_shipping_options:
             entity_label: Shipping Option
             entity_plural_label: Shipping Options
+            entity_grid_all_view_label: All %entity_plural_label%
             add_label: Add Options
             product_unit.label: Unit
             weight.label: Weight
@@ -39,20 +40,24 @@ oro:
         weightunit:
             entity_label: Unit Of Weight
             entity_plural_label: Units Of Weight
+            entity_grid_all_view_label: All %entity_plural_label%
             code.label: Code
             conversion_rates.label: Conversion Rates
         lengthunit:
             entity_label: Unit Of Length
             entity_plural_label: Units Of Length
+            entity_grid_all_view_label: All %entity_plural_label%
             code.label: Code
             conversion_rates.label: Conversion Rates
         freightclass:
             entity_label: Freight Class
             entity_plural_label: Freight Classes
+            entity_grid_all_view_label: All %entity_plural_label%
             code.label: Code
         shippingmethodsconfigsrule:
             entity_label: Shipping Rule
             entity_plural_label: Shipping Rules
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             rule.label: Rule
             destinations.label: Destinations
@@ -61,9 +66,16 @@ oro:
             currency.label: Currency
             organization.label: Organization
             websites.label: Websites
+            method.label: Method
+            feature:
+                manage:
+                    label: Shipping Rule Management
+                    description: Enables creating a shipping rule to activate a particular shipping method for the provided destinations and websites.
         shippingmethodconfig:
+            disabled: Disabled
             entity_label: Shipping Rule Method Config
             entity_plural_label: Shipping Rule Methods Configs
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             method.label: Method
             options.label: Options
@@ -72,6 +84,7 @@ oro:
         shippingmethodtypeconfig:
             entity_label: Shipping Rule Method Type Config
             entity_plural_label: Shipping Rule Method Types Configs
+            entity_grid_all_view_label: All %entity_plural_label%
             id.label: Id
             type.label: Type
             enabled.label: Enabled
@@ -142,12 +155,12 @@ oro:
             short: lb
             short_plural: lbs
         value:
-            full: '{0} none|{1} %count% pound|]1,Inf] %count% pounds'
-            full_fraction: '%count% pound'
-            full_fraction_gt_1: '%count% pounds'
-            short: '{0} none|{1} %count% lb|]1,Inf] %count% lbs'
-            short_fraction: '%count% lb'
-            short_fraction_gt_1: '%count% lbs'
+            full: '{0} none|{1} %formattedCount% pound|]1,Inf] %formattedCount% pounds'
+            full_fraction: '%formattedCount% pound'
+            full_fraction_gt_1: '%formattedCount% pounds'
+            short: '{0} none|{1} %formattedCount% lb|]1,Inf] %formattedCount% lbs'
+            short_fraction: '%formattedCount% lb'
+            short_fraction_gt_1: '%formattedCount% lbs'
 
     weight_unit.kg:
         label:
@@ -156,12 +169,12 @@ oro:
             short: kg
             short_plural: kgs
         value:
-            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
-            full_fraction: '%count% kilogram'
-            full_fraction_gt_1: '%count% kilograms'
-            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
-            short_fraction: '%count% kg'
-            short_fraction_gt_1: '%count% kg'
+            full: '{0} none|{1} %formattedCount% kilogram|]1,Inf] %formattedCount% kilograms'
+            full_fraction: '%formattedCount% kilogram'
+            full_fraction_gt_1: '%formattedCount% kilograms'
+            short: '{0} none|{1} %formattedCount% kg|]1,Inf] %formattedCount% kg'
+            short_fraction: '%formattedCount% kg'
+            short_fraction_gt_1: '%formattedCount% kg'
 
     length_unit.inch:
         label:

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
@@ -12,10 +11,11 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsC
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient(
             [],
@@ -41,10 +41,8 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
         $crawler = $this->client->request('GET', $data['workflowItem']['result']['redirectUrl']);
 
-        $content = $crawler->filter('.checkout-order-summary')->html();
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            $this->assertContains($lineItem->getProduct()->getSku(), $content);
-        }
+        $content = $crawler->filter('.totals-container table tr td')->html();
+        static::assertStringContainsString(sprintf('%s Item', count($shoppingList->getLineItems())), $content);
     }
 
     public function testCreateOrdersFromSingleShoppingList()
@@ -83,19 +81,32 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     {
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $crawler = $this->client->request(
+        $this->client->request(
             'GET',
-            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+            $this->getUrl(
+                'oro_shopping_list_frontend_view',
+                ['id' => $shoppingList->getId(), 'layout_block_ids' => ['combined_button_wrapper']]
+            ),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+
+        $content = \json_decode($response->getContent(), true);
+        $crawler = new Crawler($content['combined_button_wrapper']);
+
         $link = $crawler->selectLink('Create Order');
-        $this->assertCount(2, $link);
+        $this->assertCount(1, $link);
         $this->assertNotEmpty($link->attr('data-transition-url'));
-        $this->client->request('GET', $link->attr('data-transition-url'));
+        $this->ajaxRequest('POST', $link->attr('data-transition-url'));
 
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
 
-        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $data = \json_decode($response->getContent(), true);
 
         $this->assertArrayHasKey('workflowItem', $data);
         $this->assertArrayHasKey('result', $data['workflowItem']);
