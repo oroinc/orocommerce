@@ -16,11 +16,11 @@ Feature: Category products sort order
     And I click "Create Category"
     Then I should see following grid:
       | SKU   | NAME      |
-      | PSKU1 | Product 1 |
-      | PSKU2 | Product 2 |
-      | PSKU3 | Product 3 |
-      | PSKU4 | Product 4 |
       | PSKU5 | Product 5 |
+      | PSKU4 | Product 4 |
+      | PSKU3 | Product 3 |
+      | PSKU2 | Product 2 |
+      | PSKU1 | Product 1 |
     And I click on PSKU1 in grid
     And I click on PSKU2 in grid
     And I click on PSKU4 in grid
