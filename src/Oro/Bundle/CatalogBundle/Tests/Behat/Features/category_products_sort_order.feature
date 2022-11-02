@@ -38,8 +38,8 @@ Feature: Category products sort order
       | SKU   | NAME      |
       | PSKU4 | Product 4 |
       | PSKU2 | Product 2 |
-      | PSKU1 | Product 1 |
       | PSKU5 | Product 5 |
+      | PSKU1 | Product 1 |
       | PSKU3 | Product 3 |
 #
   Scenario: Category correctly sorted in frontend
