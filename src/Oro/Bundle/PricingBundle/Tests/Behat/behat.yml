@@ -220,7 +220,7 @@ oro_behat_extension:
           Price: 'oro_pricing_price_list_product_price[price][value]'
 
     QuickOrderFirstSkuField:
-      selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][productDisplayName]"]'
+      selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][product]"]'
 
     QuickOrderFirstSkuFieldTypeahead:
-      selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][productDisplayName]"] + .oro-select2__dropdown'
+      selector: 'form[name="oro_product_quick_add"] input[name="oro_product_quick_add[products][0][product]"] + .oro-select2__dropdown'

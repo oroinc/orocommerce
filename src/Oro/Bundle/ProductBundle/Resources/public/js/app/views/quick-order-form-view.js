@@ -11,11 +11,11 @@ const QuickOrderFromView = BaseView.extend({
         form: '[data-role="quick-order-add-container"] form',
         grid: '[data-role="quick-order-add-container"] form > .grid',
         rowsCollection: '.js-item-collection',
-        rows: '[data-name="field__name"]',
+        rows: '[data-name="field__row"]',
         buttons: '[data-role="quick-order-add-buttons"]',
         clear: '[data-role="quick-order-add-clear"]',
         add: '.add-list-item',
-        productSkus: '[data-name="field__product-sku"]',
+        productSkus: '[data-name="field__sku"]',
         collectionValidation: '[data-name="collection-validation"]'
     },
 
@@ -32,7 +32,8 @@ const QuickOrderFromView = BaseView.extend({
      */
     options: {
         rowsCountThreshold: 20,
-        rowsBatchSize: 50
+        rowsBatchSize: 50,
+        selectors: {}
     },
 
     listen: {
@@ -55,6 +56,8 @@ const QuickOrderFromView = BaseView.extend({
      */
     initialize(options) {
         this.options = $.extend(true, {}, this.options, options);
+        this.elem = $.extend(this.elem, this.options.selectors || {});
+
         const collectionOptions = Object.assign({
             ajaxOptions: {
                 global: false // ignore global loading bar

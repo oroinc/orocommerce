@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\QuickAdd\Normalizer;
 
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Component\PhpUtils\ArrayUtil;
 
 /**
  * Normalizes {@see QuickAddRowCollection} using inner providers.
@@ -22,16 +21,21 @@ class QuickAddCollectionNormalizer implements QuickAddCollectionNormalizerInterf
 
     public function normalize(QuickAddRowCollection $quickAddRowCollection): array
     {
-        $results = ['errors' => []];
+        $result = ['errors' => [], 'items' => []];
         foreach ($this->innerNormalizers as $innerNormalizer) {
-            $results = ArrayUtil::arrayMergeRecursiveDistinct(
-                $results,
-                $innerNormalizer->normalize($quickAddRowCollection)
-            );
+            $normalized = $innerNormalizer->normalize($quickAddRowCollection);
+            $result['errors'][] = $normalized['errors'];
+            foreach ($normalized['items'] as $index => $normalizedItem) {
+                $result['items'][$index][] = $normalizedItem;
+            }
         }
 
-        $results['items'] = array_values($results['items'] ?? []);
+        $result['errors'] = array_merge(...$result['errors']);
+        $result['items'] = array_map(
+            static fn (array $normalizedItems) => array_merge(...$normalizedItems),
+            $result['items']
+        );
 
-        return $results;
+        return $result;
     }
 }

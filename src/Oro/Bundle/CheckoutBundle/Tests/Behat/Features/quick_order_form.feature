@@ -25,8 +25,8 @@ Feature: Quick order form
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     When I click "Quick Order Form"
-    Then should see that "Product Line Item Input Field" contains "Enter Product Name or Item Number" placeholder
-    And should see that "Qty Line Item Input Field" contains "Qty #" placeholder
+    Then should see that "Quick Add Row Product Field" contains "Enter Product Name or Item Number" placeholder
+    And should see that "Quick Add Row Quantity Field" contains "Qty #" placeholder
     And should see that "Paste Your Order Input Field" contains "Copy and paste your order." placeholder
     When I click "Get Quote"
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
@@ -39,7 +39,7 @@ Feature: Quick order form
 
   Scenario: Check if the price depends on quantity
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | psku1 |
     And I wait for products to load
     And I type "1" in "Quick Order Form > QTY1"
@@ -52,13 +52,13 @@ Feature: Quick order form
 
   Scenario: Get A Quote from quick order page
     Given I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU2 |
       | SKU2 | PSKU2 |
       | SKU3 | PSKU3 |
       | SKU4 | PSKU3 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
       | QTY2  | 4   |
       | UNIT2 | set |
@@ -81,13 +81,13 @@ Feature: Quick order form
   Scenario: Create an order from quick order page
     Given There are products in the system available for order
     And I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
       | SKU2 | PSKU2 |
       | SKU3 | PSKU3 |
       | SKU4 | PSKU3 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
       | QTY2  | 4   |
       | UNIT2 | set |
@@ -107,13 +107,13 @@ Feature: Quick order form
 
   Scenario: Add to shopping list from quick order page
     Given I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
       | SKU2 | PSKU2 |
       | SKU3 | PSKU3 |
       | SKU4 | PSKU3 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
       | QTY2  | 4   |
       | UNIT2 | set |
@@ -127,7 +127,7 @@ Feature: Quick order form
 
   Scenario: Get A Quote from quick order page with product without price
     Given I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKUwithlowercase |
     And I wait for products to load
     When I click "Get Quote"
@@ -139,18 +139,18 @@ Feature: Quick order form
 
   Scenario: Create an order from quick order page with product without price
     Given I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKUwithlowercase |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1 | 1 |
     When I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | PSKUwithlowercase |
       | SKU2 | PSKU1             |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1 | 1 |
       | QTY2 | 2 |
     And I click "Create Order"
@@ -161,26 +161,26 @@ Feature: Quick order form
 
   Scenario: Verify disabled products are cannot be added via quick order form
     Given I click "Quick Order Form"
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | pskulowercaseonly |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1 | 1 |
     And I click "Get Quote"
     Then I should see text matching "Item number cannot be found"
     And I click "Quick Order Form"
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | pskulowercaseonly |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1 | 1 |
     And I click "Create Order"
     Then I should see text matching "Item number cannot be found"
     And I click "Quick Order Form"
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | pskulowercaseonly |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1 | 1 |
     And I click on "Shopping List Dropdown"
     And I click "Add to List 2"
@@ -205,7 +205,7 @@ Feature: Quick order form
       | Paste your order | SKU123 1 item |
     And I click "Verify Order"
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1      | SKU123 - 400-Watt Bulb Work Light |
       | QTY1      | 1                                 |
       | UNIT1     | item                              |
@@ -223,7 +223,7 @@ Feature: Quick order form
       | Item Number | Quantity | Unit |
       | SKU123      | 1        | item |
     When I import file for quick order
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1      | SKU123 - 400-Watt Bulb Work Light |
       | QTY1      | 1                                 |
       | UNIT1     | item                              |
@@ -237,7 +237,7 @@ Feature: Quick order form
       | Paste your order | PSKU2 3 set |
     And I click "Verify Order"
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU2 - Product2 |
       | QTY1  | 3                |
       | UNIT1 | set              |
@@ -265,7 +265,7 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 5 test |
     And I click "Verify Order"
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 5                              |
       | UNIT1 | --                             |
@@ -276,7 +276,7 @@ Feature: Quick order form
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test 5 item |
     And I click "Verify Order"
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 5                              |
       | UNIT1 | --                             |
@@ -302,7 +302,7 @@ Feature: Quick order form
       """
     And I click "Verify Order"
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 0                              |
       | UNIT1 | item                           |
@@ -327,7 +327,7 @@ Feature: Quick order form
       | Paste your order | PSKU1,2,item |
     And I click "Verify Order"
     And I wait for products to load
-    And "QuickAddForm" must contains values:
+    And "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 2                              |
       | UNIT1 | item                           |
@@ -335,7 +335,7 @@ Feature: Quick order form
       | Paste your order | PSKU2;2;item |
     And I click "Verify Order"
     And I wait for products to load
-    And "QuickAddForm" must contains values:
+    And "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 2                              |
       | UNIT1 | item                           |
@@ -352,7 +352,7 @@ Feature: Quick order form
       """
     And I click "Verify Order"
     And I wait for products to load
-    And "QuickAddForm" must contains values:
+    And "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 2                              |
       | UNIT1 | item                           |
@@ -366,7 +366,7 @@ Feature: Quick order form
       """
     And I click "Verify Order"
     And I wait for products to load
-    And "QuickAddForm" must contains values:
+    And "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 5                              |
       | UNIT1 | item                           |
@@ -400,7 +400,7 @@ Feature: Quick order form
       |               | Wrong format2 | Wrong format2 |
       | Wrong format3 | Wrong format3 | Wrong format3 |
     When I import file for quick order
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | WRONG FORMAT1 |
       | QTY1  | 0             |
       | UNIT1 | --            |
@@ -424,7 +424,7 @@ Feature: Quick order form
       |               | 2             | Wrong format2 |
       | PSKU1         | 2             | item          |
     When I import file for quick order
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | WRONG FORMAT1                  |
       | QTY1  | 0                              |
       | UNIT1 | --                             |
@@ -465,7 +465,7 @@ Feature: Quick order form
       | PSKU1       | 1        | set  |
       | PSKU2       | 1        | item |
     When I import file for quick order
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1`"'&йёщ®&reg;> |
       | QTY1  | 1                              |
       | UNIT1 | --                             |
@@ -489,7 +489,7 @@ Feature: Quick order form
       | PSKU2       | 3        | item         |
       | PSKU2       | 3        | item (lang1) |
     When I import file for quick order
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU1 - Product1 (Localization1) |
       | QTY1  | 2                                |
       | UNIT1 | item (lang1)                     |
@@ -505,7 +505,7 @@ Feature: Quick order form
       | Paste your order | PSKU2,1,item |
     And I click "Verify Order"
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU2 - Product2 |
       | QTY1  | 1                |
       | UNIT1 | Element          |
@@ -513,7 +513,7 @@ Feature: Quick order form
       | Paste your order | PSKU2;3;Element |
     And I click "Verify Order"
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU2 - Product2 |
       | QTY1  | 4                |
       | UNIT1 | Element          |
@@ -521,7 +521,7 @@ Feature: Quick order form
       | Paste your order | PSKU2;2;element |
     And I click "Verify Order"
     And I wait for products to load
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1  | PSKU2 - Product2 |
       | QTY1  | 6                |
       | UNIT1 | Element          |
@@ -544,7 +544,7 @@ Feature: Quick order form
     And I scroll to top
     When I click "Add to List 2"
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU2 |
     When I click "Add to List 2" in "After Validation Buttons Controls Group" element
     Then I should see "1 product was added (view shopping list)." flash message

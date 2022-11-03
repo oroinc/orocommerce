@@ -16,7 +16,6 @@ class ProductDataStorage extends AbstractSessionDataStorage
     public const TRANSITION_NAME_KEY = 'transition_name';
 
     public const PRODUCT_SKU_KEY = 'productSku';
-    public const PRODUCT_DISPLAY_NAME = 'productDisplayName';
     public const PRODUCT_QUANTITY_KEY = 'productQuantity';
     public const PRODUCT_UNIT_KEY = 'productUnit';
 

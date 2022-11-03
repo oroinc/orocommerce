@@ -75,9 +75,9 @@ define(function(require) {
                 if (model.get('sku')) {
                     const {sku, unit, quantity} = model.attributes;
                     quickAddRows.unshift({
-                        productSku: sku,
-                        productUnit: unit,
-                        productQuantity: quantity
+                        sku: sku,
+                        unit: unit,
+                        quantity: quantity
                     });
                 }
             });
@@ -120,7 +120,7 @@ define(function(require) {
                             messenger.notificationMessage('error', error.message);
                         });
 
-                        if (response.collection.items && response.collection.items.length) {
+                        if (response.collection.items && _.size(response.collection.items)) {
                             this.productsCollection.addQuickAddRows(response.collection.items, {strategy: 'replace'});
                         }
                     }

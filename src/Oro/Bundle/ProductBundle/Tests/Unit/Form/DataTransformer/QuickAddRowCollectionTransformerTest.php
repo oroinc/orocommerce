@@ -11,8 +11,7 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    private $quickAddRowCollectionBuilder;
+    private QuickAddRowCollectionBuilder|\PHPUnit\Framework\MockObject\MockObject $quickAddRowCollectionBuilder;
 
     private QuickAddRowCollectionTransformer $transformer;
 
@@ -40,9 +39,9 @@ class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
                 'value' => [$quickAddRow],
                 'expected' => [
                     [
-                        'productSku' => $quickAddRow->getSku(),
-                        'productQuantity' => $quickAddRow->getQuantity(),
-                        'productUnit' => $quickAddRow->getUnit(),
+                        QuickAddRow::SKU => $quickAddRow->getSku(),
+                        QuickAddRow::QUANTITY => $quickAddRow->getQuantity(),
+                        QuickAddRow::UNIT => $quickAddRow->getUnit(),
                     ],
                 ],
             ],

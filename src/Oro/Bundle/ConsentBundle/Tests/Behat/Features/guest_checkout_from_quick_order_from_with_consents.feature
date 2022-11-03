@@ -103,10 +103,10 @@ Feature: Guest Checkout from Quick Order From with Consents
     And I click "Quick Order Form"
     And I should see "Add to Shopping List"
     And I should see "Create Order"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
     When I click "Create Order"
     And click "Continue as a Guest"

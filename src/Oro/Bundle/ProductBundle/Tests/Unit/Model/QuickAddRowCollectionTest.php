@@ -131,4 +131,42 @@ class QuickAddRowCollectionTest extends \PHPUnit\Framework\TestCase
         );
         self::assertTrue($invalidRows->hasErrors());
     }
+
+    /**
+     * @dataProvider isValidDataProvider
+     */
+    public function testIsValid(QuickAddRowCollection $quickAddRowCollection, bool $expected): void
+    {
+        self::assertSame($expected, $quickAddRowCollection->isValid());
+    }
+
+    public function isValidDataProvider(): array
+    {
+        $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'kg');
+        $quickAddRowWithError = new QuickAddRow(2, 'sku2', 242, 'kg');
+        $quickAddRowWithError->addError('sample quick add row error');
+
+        return [
+            ['quickAddRowCollection' => new QuickAddRowCollection(), 'expected' => true],
+            [
+                'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRow]),
+                'expected' => true,
+            ],
+            [
+                'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRow]),
+                'expected' => true,
+            ],
+            ['quickAddRowCollection' => (new QuickAddRowCollection())->addError('sample error'), 'expected' => false],
+            [
+                'quickAddRowCollection' => (new QuickAddRowCollection([$quickAddRowWithError]))
+                    ->addError('sample error'),
+                'expected' => false,
+            ],
+            ['quickAddRowCollection' => new QuickAddRowCollection([$quickAddRowWithError]), 'expected' => false],
+            [
+                'quickAddRowCollection' => new QuickAddRowCollection([$quickAddRowWithError, $quickAddRowWithError]),
+                'expected' => false,
+            ],
+        ];
+    }
 }

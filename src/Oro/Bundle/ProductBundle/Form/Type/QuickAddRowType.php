@@ -2,63 +2,54 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 /**
- * Product row type which is used in quick add form.
+ * Form type representing row in {@see QuickAddRowCollectionType}.
  */
-class ProductRowType extends AbstractType
+class QuickAddRowType extends AbstractType
 {
-    const NAME = 'oro_product_row';
-
-    /**
-     * @var  ProductUnitsProvider
-     */
-    protected $productUnitsProvider;
+    private ProductUnitsProvider $productUnitsProvider;
 
     public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
         $this->productUnitsProvider = $productUnitsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // To keep select consistent with Select2 after page JS initialization have to add first empty option
         $unitChoices = array_merge(['--' => ''], $this->productUnitsProvider->getAvailableProductUnits());
 
         $builder
             ->add(
-                ProductDataStorage::PRODUCT_DISPLAY_NAME,
+                'product',
                 ProductAutocompleteType::class,
                 [
                     'required' => false,
                     'label' => 'oro.product.sku.label',
-                    'mapped' => false
+                    'mapped' => false,
                 ]
             )
+            ->add(QuickAddRow::SKU, HiddenType::class)
             ->add(
-                ProductDataStorage::PRODUCT_SKU_KEY,
-                HiddenType::class
-            )
-            ->add(
-                ProductDataStorage::PRODUCT_UNIT_KEY,
+                QuickAddRow::UNIT,
                 ProductUnitsType::class,
                 [
                     'required' => true,
                     'label' => 'oro.product.productunitprecision.unit.label',
-                    'choices' => $unitChoices
+                    'choices' => $unitChoices,
                 ]
             )
             ->add(
-                ProductDataStorage::PRODUCT_QUANTITY_KEY,
+                QuickAddRow::QUANTITY,
                 NumberType::class,
                 [
                     'required' => false,
@@ -67,11 +58,16 @@ class ProductRowType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
-        return self::NAME;
+        $view['product']->vars['componentOptions']['selectors'] = [
+            'sku' => '[data-name="' . $view['sku']->vars['attr']['data-name'] . '"]',
+            'displayName' => '[data-name="' . $view['product']->vars['attr']['data-name'] . '"]',
+        ];
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'oro_product_quick_add_row';
     }
 }

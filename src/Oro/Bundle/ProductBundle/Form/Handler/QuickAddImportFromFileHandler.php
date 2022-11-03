@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
@@ -15,7 +16,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -28,6 +28,8 @@ class QuickAddImportFromFileHandler
     private EventDispatcherInterface $eventDispatcher;
 
     private ValidatorInterface $validator;
+
+    private ProductsGrouperFactory $productsGrouperFactory;
 
     private QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper;
 
@@ -47,12 +49,14 @@ class QuickAddImportFromFileHandler
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         EventDispatcherInterface $eventDispatcher,
         ValidatorInterface $validator,
+        ProductsGrouperFactory $productsGrouperFactory,
         QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper,
         QuickAddCollectionNormalizerInterface $quickAddCollectionNormalizer
     ) {
         $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->eventDispatcher = $eventDispatcher;
         $this->validator = $validator;
+        $this->productsGrouperFactory = $productsGrouperFactory;
         $this->quickAddRowCollectionViolationsMapper = $quickAddRowCollectionViolationsMapper;
         $this->quickAddCollectionNormalizer = $quickAddCollectionNormalizer;
     }
@@ -70,17 +74,24 @@ class QuickAddImportFromFileHandler
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @return Response
+     * @return Response|array
      */
     public function process(FormInterface $form, Request $request)
     {
         $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            return new JsonResponse(['success' => false]);
+        }
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isValid()) {
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
 
             try {
                 $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
+                $quickAddRowCollection = $this->productsGrouperFactory
+                    ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+                    ->process($quickAddRowCollection);
+
                 if (!$quickAddRowCollection->count()) {
                     $quickAddRowCollection->addError('oro.product.frontend.quick_add.validation.empty_file');
                 }
@@ -89,41 +100,34 @@ class QuickAddImportFromFileHandler
                 $quickAddRowCollection->addError('oro.product.frontend.quick_add.invalid_file_type');
             }
 
-            $this->validateCollection($quickAddRowCollection);
+            $this->validate($quickAddRowCollection);
             $this->eventDispatcher->dispatch(
                 new QuickAddRowsCollectionReadyEvent($quickAddRowCollection),
                 QuickAddRowsCollectionReadyEvent::NAME
             );
 
             $responseData = [
-                'success' => !$quickAddRowCollection->hasErrors(),
+                'success' => $quickAddRowCollection->isValid(),
                 'collection' => $this->quickAddCollectionNormalizer->normalize($quickAddRowCollection),
             ];
         } else {
             $responseData = ['success' => false];
-            $formErrorIterator = $form->getErrors(true);
-            if ($formErrorIterator) {
-                foreach ($formErrorIterator as $formError) {
-                    $responseData['messages']['error'][] = $formError->getMessage();
-                }
+            foreach ($form->getErrors(true) as $formError) {
+                $responseData['messages']['error'][] = $formError->getMessage();
             }
         }
 
         return new JsonResponse($responseData);
     }
 
-    private function validateCollection(QuickAddRowCollection $collection): void
+    private function validate(QuickAddRowCollection $collection): void
     {
         if ($this->preloadingManager) {
             $this->preloadingManager
                 ->preloadInEntities(array_values($collection->getProducts()), $this->preloadingConfig);
         }
 
-        $violationList = $this->validator->validate(
-            $collection,
-            null,
-            new GroupSequence(['Default'])
-        );
+        $violationList = $this->validator->validate($collection);
         $this->quickAddRowCollectionViolationsMapper->mapViolations($collection, $violationList);
     }
 }

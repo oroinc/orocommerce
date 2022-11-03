@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -27,6 +27,8 @@ class QuickAddProcessHandler
     private ComponentProcessorRegistry $componentRegistry;
 
     private ValidatorInterface $validator;
+
+    private ProductsGrouperFactory $productsGrouperFactory;
 
     private QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper;
 
@@ -45,11 +47,13 @@ class QuickAddProcessHandler
     public function __construct(
         ComponentProcessorRegistry $componentRegistry,
         ValidatorInterface $validator,
+        ProductsGrouperFactory $productsGrouperFactory,
         QuickAddRowCollectionViolationsMapper $quickAddRowCollectionViolationsMapper,
         QuickAddCollectionNormalizerInterface $quickAddCollectionNormalizer
     ) {
         $this->componentRegistry = $componentRegistry;
         $this->validator = $validator;
+        $this->productsGrouperFactory = $productsGrouperFactory;
         $this->quickAddRowCollectionViolationsMapper = $quickAddRowCollectionViolationsMapper;
         $this->quickAddCollectionNormalizer = $quickAddCollectionNormalizer;
     }
@@ -80,11 +84,16 @@ class QuickAddProcessHandler
             $formData = $form->getData();
             /** @var QuickAddRowCollection $quickAddRowCollection */
             $quickAddRowCollection = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+            $this->validate($quickAddRowCollection);
 
-            $this->validateCollection($quickAddRowCollection, $formData[QuickAddType::COMPONENT_FIELD_NAME]);
-            $invalidRows = $quickAddRowCollection->getInvalidRows();
+            if ($quickAddRowCollection->isValid()) {
+                $quickAddRowCollection = $this->productsGrouperFactory
+                    ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+                    ->process($quickAddRowCollection);
+                $this->validateAfterMerge($quickAddRowCollection, $formData[QuickAddType::COMPONENT_FIELD_NAME]);
+            }
 
-            if (!$invalidRows->hasErrors() && !$invalidRows->count()) {
+            if ($quickAddRowCollection->isValid()) {
                 $entityItemsData = $quickAddRowCollection->map(static fn (QuickAddRow $quickAddRow) => [
                     ProductDataStorage::PRODUCT_SKU_KEY => $quickAddRow->getSku(),
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $quickAddRow->getQuantity(),
@@ -119,7 +128,8 @@ class QuickAddProcessHandler
             } else {
                 $responseData = [
                     'success' => false,
-                    'collection' => $this->quickAddCollectionNormalizer->normalize($invalidRows),
+                    'collection' => $this->quickAddCollectionNormalizer
+                        ->normalize($quickAddRowCollection->getInvalidRows()),
                 ];
             }
         } else {
@@ -140,19 +150,22 @@ class QuickAddProcessHandler
         return $this->componentRegistry->getProcessorByName($name);
     }
 
-    private function validateCollection(QuickAddRowCollection $quickAddRowCollection, string $componentName): void
+    private function validate(QuickAddRowCollection $quickAddRowCollection): void
     {
         if ($this->preloadingManager) {
             $this->preloadingManager
                 ->preloadInEntities(array_values($quickAddRowCollection->getProducts()), $this->preloadingConfig);
         }
 
-        $validationGroups = ['Default'];
-        if ($componentName !== 'oro_rfp_quick_add_processor') {
-            $validationGroups[] = 'not_request_for_quote';
-        }
-
-        $violationList = $this->validator->validate($quickAddRowCollection, null, new GroupSequence($validationGroups));
+        $violationList = $this->validator->validate($quickAddRowCollection);
         $this->quickAddRowCollectionViolationsMapper->mapViolations($quickAddRowCollection, $violationList);
+    }
+
+    private function validateAfterMerge(
+        QuickAddRowCollection $quickAddRowCollection,
+        string $componentName
+    ): void {
+        $violationList = $this->validator->validate($quickAddRowCollection, null, $componentName);
+        $this->quickAddRowCollectionViolationsMapper->mapViolations($quickAddRowCollection, $violationList, true);
     }
 }

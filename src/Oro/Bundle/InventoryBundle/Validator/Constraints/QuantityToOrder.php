@@ -17,6 +17,9 @@ class QuantityToOrder extends Constraint
         self::LESS_THAN_MIN_LIMIT => 'LESS_THAN_MIN_LIMIT',
     ];
 
+    public string $minMessage = '';
+    public string $maxMessage = '';
+
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

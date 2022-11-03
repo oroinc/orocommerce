@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
@@ -296,5 +297,94 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
             ->method('apply')
             ->with($queryBuilder)
             ->willReturn($query);
+    }
+
+    /**
+     * @dataProvider createFromArrayDataProvider
+     */
+    public function testCreateFromArray($input, $expected): void
+    {
+        $this->numberFormatter
+            ->expects(self::never())
+            ->method('parseFormattedDecimal');
+
+        $index = 0;
+
+        if (!array_key_exists('unit', $input)) {
+            $this->assertProductRepository();
+        }
+
+        $result = $this->quickAddRowInputParser->createFromArray($input, $index++);
+
+        self::assertEquals($expected[0], $result->getSku());
+        self::assertEquals($expected[1], $result->getQuantity());
+        self::assertEquals($expected[2], $result->getUnit());
+
+        self::assertEquals(1, $index);
+    }
+
+    public function createFromArrayDataProvider(): array
+    {
+        return [
+            [
+                'input' => [
+                    QuickAddRow::SKU => ' SKU5  ',
+                    QuickAddRow::QUANTITY => ' 4.5',
+                    QuickAddRow::UNIT => 'item '
+                ],
+                'expected' => [
+                    'SKU5',
+                    4.5,
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => 'ss2',
+                    QuickAddRow::QUANTITY => '   6 ',
+                    QuickAddRow::UNIT => 'liter'
+                ],
+                'expected' => [
+                    'ss2',
+                    6,
+                    'liter'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => 'ss2',
+                    QuickAddRow::QUANTITY => '   6 ',
+                ],
+                'expected' => [
+                    'ss2',
+                    '6',
+                    'item'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => ' SKU5  ',
+                    QuickAddRow::QUANTITY => ' 4.5',
+                    QuickAddRow::UNIT => 'Stunde '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'hour'
+                ]
+            ],
+            [
+                'input' => [
+                    QuickAddRow::SKU => ' SKU5  ',
+                    QuickAddRow::QUANTITY => ' 4.5',
+                    QuickAddRow::UNIT => 'ELEMENT '
+                ],
+                'expected' => [
+                    'SKU5',
+                    '4.5',
+                    'item'
+                ]
+            ],
+        ];
     }
 }

@@ -76,7 +76,7 @@ Feature: Create RFQ with product variant
     And I signed in as AmandaRCole@example.org on the store frontend
 
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
     Then I should see text matching "Item number cannot be found"
@@ -146,7 +146,7 @@ Feature: Create RFQ with product variant
     Given I proceed as the User
     And I am on the homepage
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
     And I click "Get Quote"

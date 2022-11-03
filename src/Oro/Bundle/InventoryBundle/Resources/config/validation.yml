@@ -55,4 +55,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ProductBundle\Model\QuickAddRow:
     constraints:
         - Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
-              groups: [ not_request_for_quote ]
+              minMessage: 'oro.inventory.quick_add_row.quantity_to_order.min_message'
+              maxMessage: 'oro.inventory.quick_add_row.quantity_to_order.max_message'
+              groups:
+                    - oro_shopping_list_quick_add_processor
+                    - oro_shopping_list_to_checkout_quick_add_processor

@@ -268,28 +268,25 @@ oro_behat_extension:
         locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
 
-    Product Line Item Input Field:
-      selector:
-        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productDisplayName-uid")]'
-        type: xpath
-
-    Qty Line Item Input Field:
-      selector:
-        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productQuantity-uid")]'
-        type: xpath
-
     Paste Your Order Input Field:
       selector:
         locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste")]'
+        type: xpath
+
+    Quick Add Row Product Field:
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_product-uid")]'
+        type: xpath
+
+    Quick Add Row Quantity Field:
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_quantity-uid")]'
         type: xpath
 
     Assigned To Input Field:
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
-
-    Quick Order Add Form:
-      selector: 'form[name="oro_product_quick_add"]'
 
     Customers Address Book Paginator:
       selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.visible-items-counter'

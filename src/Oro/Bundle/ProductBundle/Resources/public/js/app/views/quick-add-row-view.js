@@ -22,11 +22,11 @@ const QuickAddRowView = BaseView.extend({
     },
 
     attrElem: {
-        product: '[data-name="field__product-display-name"]',
-        display_name: '[data-name="field__product-display-name"]',
-        sku: '[data-name="field__product-sku"]',
-        quantity: '[data-name="field__product-quantity"]',
-        unit: '[data-name="field__product-unit"]'
+        product: '[data-name="field__product"]',
+        display_name: '[data-name="field__product"]',
+        sku: '[data-name="field__sku"]',
+        quantity: '[data-name="field__quantity"]',
+        unit: '[data-name="field__unit"]'
     },
 
     listen() {
@@ -62,6 +62,8 @@ const QuickAddRowView = BaseView.extend({
         if (!productsCollection) {
             throw new Error('Option `productsCollection` is require for QuickAddRowView');
         }
+
+        this.attrElem = $.extend(this.attrElem, options.selectors || {});
 
         this.initModel(productsCollection, options);
         this.initUnitValidator();

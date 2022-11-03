@@ -612,10 +612,8 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
-            - "@event_dispatcher"
             - "@oro_product.model.builder.quick_add_row_input_parser"
             - "@oro_security.acl_helper"
-            - "@oro_product.helper.product_grouper.factory"
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
@@ -1998,6 +1996,7 @@ services:
             - '@oro_product.model.builder.quick_add_row_collection'
             - '@event_dispatcher'
             - '@validator'
+            - '@oro_product.helper.product_grouper.factory'
             - '@oro_product.quick_add.violations_mapper'
             - '@oro_product.quick_add.normalizer'
         calls:
@@ -2012,6 +2011,7 @@ services:
             - '@oro_product.model.builder.quick_add_row_collection'
             - '@event_dispatcher'
             - '@validator'
+            - '@oro_product.helper.product_grouper.factory'
             - '@oro_product.quick_add.violations_mapper'
             - '@oro_product.quick_add.normalizer'
         calls:
@@ -2025,6 +2025,7 @@ services:
         arguments:
             - '@oro_product.component_processor.registry'
             - '@validator'
+            - '@oro_product.helper.product_grouper.factory'
             - '@oro_product.quick_add.violations_mapper'
             - '@oro_product.quick_add.normalizer'
         calls:

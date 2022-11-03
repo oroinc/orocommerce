@@ -112,4 +112,9 @@ class QuickAddRowCollection extends ArrayCollection
     {
         return count($this->errors) > 0;
     }
+
+    public function isValid(): bool
+    {
+        return !$this->hasErrors() && $this->forAll(static fn ($key, QuickAddRow $element) => !$element->hasErrors());
+    }
 }

@@ -10,109 +10,53 @@ use Box\Spout\Reader\ReaderInterface;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Creates QuickAddRowCollection based on either request, file or text.
  */
 class QuickAddRowCollectionBuilder
 {
-    /**
-     * @var EntityRepository|ProductRepository
-     */
-    protected $productRepository;
+    private EntityRepository $productRepository;
 
-    /**
-     * @var ProductManager
-     */
-    protected $productManager;
+    private ProductManager $productManager;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    private QuickAddRowInputParser $quickAddRowInputParser;
 
-    /**
-     * @var QuickAddRowInputParser
-     */
-    protected $quickAddRowInputParser;
-
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
-
-    private ProductsGrouperFactory $productsGrouperFactory;
+    private AclHelper $aclHelper;
 
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
-        EventDispatcherInterface $eventDispatcher,
         QuickAddRowInputParser $quickAddRowInputParser,
-        AclHelper $aclHelper,
-        ProductsGrouperFactory $productsGrouperFactory
+        AclHelper $aclHelper
     ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
-        $this->eventDispatcher = $eventDispatcher;
         $this->quickAddRowInputParser = $quickAddRowInputParser;
         $this->aclHelper = $aclHelper;
-        $this->productsGrouperFactory = $productsGrouperFactory;
-    }
-
-    /**
-     * @param Request $request
-     * @return QuickAddRowCollection
-     */
-    public function buildFromRequest(Request $request)
-    {
-        $formData = $request->request->get(QuickAddType::NAME);
-
-        return $this->buildFromArray($formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? []);
     }
 
     public function buildFromArray(array $products): QuickAddRowCollection
     {
         $collection = new QuickAddRowCollection();
-
-        if (!$products) {
-            return $collection;
-        }
-
-        $products = $this->productsGrouperFactory
-            ->createProductsGrouper(ProductsGrouperFactory::ARRAY_PRODUCTS)
-            ->process($products);
-
-        foreach ($products as $index => $product) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $product) ||
-                !array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $product)
-            ) {
-                continue;
+        if ($products) {
+            foreach ($products as $index => $product) {
+                $collection->add($this->quickAddRowInputParser->createFromArray($product, $index));
             }
 
-            $quickAddRow = $this->quickAddRowInputParser->createFromRequest($product, $index);
-            $collection->add($quickAddRow);
+            $this->mapProducts($collection);
         }
-
-        $this->mapProducts($collection);
 
         return $collection;
     }
 
     /**
-     * @param UploadedFile $file
-     * @return QuickAddRowCollection
      * @throws UnsupportedTypeException
      */
-    public function buildFromFile(UploadedFile $file)
+    public function buildFromFile(UploadedFile $file): QuickAddRowCollection
     {
         $lineNumber = 0;
         $collection = new QuickAddRowCollection();
@@ -135,20 +79,12 @@ class QuickAddRowCollectionBuilder
             }
         }
 
-        $collection = $this->productsGrouperFactory
-            ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
-            ->process($collection);
-
         $this->mapProducts($collection);
 
         return $collection;
     }
 
-    /**
-     * @param string $text
-     * @return QuickAddRowCollection
-     */
-    public function buildFromCopyPasteText($text)
+    public function buildFromCopyPasteText(string $text): QuickAddRowCollection
     {
         $collection = new QuickAddRowCollection();
         $lineNumber = 1;
@@ -166,10 +102,6 @@ class QuickAddRowCollectionBuilder
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
             }
-
-            $collection = $this->productsGrouperFactory
-                ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
-                ->process($collection);
         }
 
         $this->mapProducts($collection);
@@ -193,7 +125,7 @@ class QuickAddRowCollectionBuilder
      * @param string[] $skus
      * @return Product[]
      */
-    private function getRestrictedProductsBySkus(array $skus)
+    private function getRestrictedProductsBySkus(array $skus): array
     {
         $qb = $this->productRepository->getProductWithNamesBySkuQueryBuilder($skus);
         $restricted = $this->productManager->restrictQueryBuilder($qb, []);
@@ -235,9 +167,12 @@ class QuickAddRowCollectionBuilder
         throw new UnsupportedTypeException();
     }
 
-    private function mapProducts(QuickAddRowCollection $collection)
+    private function mapProducts(QuickAddRowCollection $collection): void
     {
-        $products = $this->getRestrictedProductsBySkus($collection->getSkus());
-        $collection->mapProducts($products);
+        $skus = $collection->getSkus();
+        if ($skus) {
+            $products = $this->getRestrictedProductsBySkus($skus);
+            $collection->mapProducts($products);
+        }
     }
 }

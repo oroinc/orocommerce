@@ -482,54 +482,54 @@ oro_behat_extension:
             locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_seo_attributeRelations-uid")]]//input'
           Attribute Groups Visible SEO: 'oro_attribute_family[attributeGroups][seo][isVisible]'
 
-    QuickAddForm:
+    Quick Order Form:
       selector: "form[name='oro_product_quick_add']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
           SKU1:
             type: 'css'
-            locator: 'input[name="oro_product_quick_add[products][0][productDisplayName]"]'
+            locator: 'input[name="oro_product_quick_add[products][0][product]"]'
             element: ProductAutocomplete
           SKU2:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][1][productDisplayName]']"
+            locator: "input[name='oro_product_quick_add[products][1][product]']"
             element: ProductAutocomplete
           SKU3:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][2][productDisplayName]']"
+            locator: "input[name='oro_product_quick_add[products][2][product]']"
             element: ProductAutocomplete
           SKU4:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][3][productDisplayName]']"
+            locator: "input[name='oro_product_quick_add[products][3][product]']"
             element: ProductAutocomplete
           QTY1:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+            locator: "input[name='oro_product_quick_add[products][0][quantity]']"
           QTY2:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][1][productQuantity]']"
+            locator: "input[name='oro_product_quick_add[products][1][quantity]']"
           QTY3:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][2][productQuantity]']"
+            locator: "input[name='oro_product_quick_add[products][2][quantity]']"
           QTY4:
             type: 'css'
-            locator: "input[name='oro_product_quick_add[products][3][productQuantity]']"
+            locator: "input[name='oro_product_quick_add[products][3][quantity]']"
           UNIT1:
             type: 'css'
-            locator: 'select[name="oro_product_quick_add[products][0][productUnit]"]'
+            locator: 'select[name="oro_product_quick_add[products][0][unit]"]'
             element: Select
           UNIT2:
             type: 'css'
-            locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
+            locator: 'select[name="oro_product_quick_add[products][1][unit]"]'
             element: Select
           UNIT3:
             type: 'css'
-            locator: 'select[name="oro_product_quick_add[products][2][productUnit]"]'
+            locator: 'select[name="oro_product_quick_add[products][2][unit]"]'
             element: Select
           UNIT4:
             type: 'css'
-            locator: 'select[name="oro_product_quick_add[products][3][productUnit]"]'
+            locator: 'select[name="oro_product_quick_add[products][3][unit]"]'
             element: Select
           SUBTOTAL1:
             type: 'css'
@@ -547,12 +547,7 @@ oro_behat_extension:
     Quick Order Form > QTY1:
       selector:
         type: 'css'
-        locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
-
-    Quick Order Form > Unit1:
-      selector:
-        type: 'css'
-        locator: "input[name='oro_product_quick_add[products][0][productUnit]']"
+        locator: "input[name='oro_product_quick_add[products][0][quantity]']"
 
     Quick Add Price Field:
       selector:
@@ -562,7 +557,7 @@ oro_behat_extension:
     Quick Add Sku Field:
       selector:
         type: 'xpath'
-        locator: '//input[@data-name="field__product-sku"]'
+        locator: '//input[@data-name="field__sku"]'
 
     Quick Add Form Validation:
       selector:

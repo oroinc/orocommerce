@@ -155,7 +155,7 @@ const QuickAddCollection = BaseCollection.extend({
                 .sort((ma, mb) => ma.get('_order') - mb.get('_order'));
         }
 
-        items.forEach(item => {
+        _.each(items, item => {
             const productUnits = item.units || {};
             let unitLabel;
             if (item.unit_label !== undefined) {

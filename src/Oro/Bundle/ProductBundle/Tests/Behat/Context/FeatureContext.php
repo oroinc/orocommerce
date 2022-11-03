@@ -154,27 +154,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @Then quick order form contains product with sku :productSku and quantity :productQuantity
-     *
-     * @param string $productSku
-     * @param int    $productQuantity
-     */
-    public function quickOrderFormContainsProductWithSkuAndQuantity($productSku, $productQuantity)
-    {
-        $quickAddForm = $this->createElement('QuickAddForm');
-        $firstSkuField = $quickAddForm->find('css', 'input[name="oro_product_quick_add[products][0][productSku]"]');
-
-        static::assertEquals($productSku, $firstSkuField->getValue());
-
-        $firstQuantityField = $quickAddForm->find(
-            'css',
-            'input[name="oro_product_quick_add[products][0][productQuantity]"]'
-        );
-
-        static::assertEquals($productQuantity, $firstQuantityField->getValue());
-    }
-
-    /**
      * Validate unique variant field values when changing simple products or extended fields BB-7110
      *
      * I click on info tooltip for selected Enum value

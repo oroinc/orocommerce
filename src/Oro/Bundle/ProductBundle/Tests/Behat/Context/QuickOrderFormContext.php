@@ -118,7 +118,7 @@ class QuickOrderFormContext extends OroFeatureContext implements OroPageObjectAw
     private function findProductRow($sku)
     {
         /** @var NodeElement[] $productRows */
-        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
+        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('Quick Order Form'));
 
         foreach ($productRows as $skuField) {
             if ($skuField->getValue() === $sku) {

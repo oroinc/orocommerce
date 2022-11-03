@@ -20,10 +20,10 @@ Feature: Default Shipping Service Selector on Quote Edit page
     And I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | SKU123 |
     And I wait for products to load
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | QTY1 | 1      |
     And I click "Add to Shopping List"
     And I click "Shopping List Widget"

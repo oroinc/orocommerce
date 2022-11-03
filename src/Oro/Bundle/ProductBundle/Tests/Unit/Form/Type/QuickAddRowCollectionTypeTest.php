@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionTransformer;
+use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddRowCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddRowType;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,25 +21,34 @@ class QuickAddRowCollectionTypeTest extends FormIntegrationTestCase
 {
     private QuickAddRowCollectionType $formType;
 
+    private ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject $unitsProvider;
+
     protected function setUp(): void
     {
         $quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);
         $quickAddRowCollectionBuilder
             ->expects(self::any())
             ->method('buildFromArray')
-            ->willReturnCallback(function (array $array) {
+            ->willReturnCallback(static function (array $array) {
                 return new QuickAddRowCollection(
-                    [
+                    $array ? [
                         new QuickAddRow(
                             1,
-                            $array[0][ProductDataStorage::PRODUCT_SKU_KEY],
-                            $array[0][ProductDataStorage::PRODUCT_QUANTITY_KEY] ?? 0
+                            $array[0][QuickAddRow::SKU],
+                            $array[0][QuickAddRow::QUANTITY] ?? 0,
+                            $array[0][QuickAddRow::UNIT] ?? null,
                         ),
-                    ]
+                    ] : []
                 );
             });
 
         $quickAddRowCollectionTransformer = new QuickAddRowCollectionTransformer($quickAddRowCollectionBuilder);
+
+        $this->unitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $this->unitsProvider
+            ->expects(self::any())
+            ->method('getAvailableProductUnits')
+            ->willReturn(['Item' => 'item']);
 
         $this->formType = new QuickAddRowCollectionType($quickAddRowCollectionTransformer);
 
@@ -46,29 +60,55 @@ class QuickAddRowCollectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension([
                 $this->formType,
+                CollectionType::class => new CollectionType(),
+                ProductAutocompleteType::class => new StubProductAutocompleteType(),
+                ProductUnitsType::class => new ProductUnitsType($this->unitsProvider),
+                QuickAddRowType::class => new QuickAddRowType($this->unitsProvider),
             ], []),
             $this->getValidatorExtension(false),
         ];
     }
 
-    public function testSubmit(): void
+    /**
+     * @dataProvider submitDataProvider
+     */
+    public function testSubmit(array $data, array $expected): void
     {
         $form = $this->factory->create(QuickAddRowCollectionType::class);
-        $form->submit(
-            json_encode([
-                [
-                    ProductDataStorage::PRODUCT_SKU_KEY => 'sku42',
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '42',
-                ],
-            ])
-        );
+        $form->submit(json_encode($data));
 
         $quickAddRowCollection = $form->getData();
         self::assertInstanceOf(QuickAddRowCollection::class, $quickAddRowCollection);
 
         self::assertTrue($form->isValid());
         self::assertTrue($form->isSynchronized());
-        self::assertEquals(new QuickAddRowCollection([new QuickAddRow(1, 'sku42', 42)]), $quickAddRowCollection);
+        self::assertEquals(new QuickAddRowCollection($expected), $quickAddRowCollection);
+    }
+
+    public function submitDataProvider(): array
+    {
+        return [
+            'empty' => ['data' => [], 'expected' => []],
+            'without unit' => [
+                'data' => [
+                    [
+                        QuickAddRow::SKU => 'sku42',
+                        QuickAddRow::QUANTITY => '42',
+                    ],
+                ],
+                'expected' => [new QuickAddRow(1, 'sku42', 42)],
+            ],
+            'with unit' => [
+                'data' => [
+                    [
+                        QuickAddRow::SKU => 'sku142',
+                        QuickAddRow::QUANTITY => '142',
+                        QuickAddRow::UNIT => 'item',
+                    ],
+                ],
+                'expected' => [new QuickAddRow(1, 'sku142', 142, 'item')],
+            ],
+        ];
     }
 
     public function testSubmitWhenInvalidJson(): void
@@ -89,8 +129,14 @@ class QuickAddRowCollectionTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
         self::assertEquals(
             [
+                'compound' => false,
                 'data_class' => QuickAddRowCollection::class,
                 'error_bubbling' => false,
+                'prototype_name' => '__row__',
+                'entry_type' => QuickAddRowType::class,
+                'handle_primary' => false,
+                'row_count_add' => 5,
+                'row_count_initial' => 8,
             ],
             $resolver->resolve([])
         );

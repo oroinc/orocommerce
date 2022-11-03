@@ -21,11 +21,11 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
     /**
      * @dataProvider mapViolationsDataProvider
      */
-    public function testMapViolations(array $violations, array $expected): void
+    public function testMapViolations(array $violations, bool $errorBubbling, array $expected): void
     {
         $quickAddRowCollection = new QuickAddRowCollection();
 
-        $this->mapper->mapViolations($quickAddRowCollection, $violations);
+        $this->mapper->mapViolations($quickAddRowCollection, $violations, $errorBubbling);
 
         self::assertEquals($expected, $quickAddRowCollection->getErrors());
     }
@@ -33,7 +33,7 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
     public function mapViolationsDataProvider(): array
     {
         return [
-            'no violations' => ['violations' => [], 'expected' => []],
+            'no violations' => ['violations' => [], 'errorBubbling' => false, 'expected' => []],
             'no property path and message template' => [
                 'violations' => [
                     new ConstraintViolation(
@@ -45,6 +45,7 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
                         ''
                     ),
                 ],
+                'errorBubbling' => false,
                 'expected' => [
                     ['message' => 'sample message', 'parameters' => ['{{ sample_key }}' => 'sample_value']],
                 ],
@@ -60,6 +61,7 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
                         ''
                     ),
                 ],
+                'errorBubbling' => false,
                 'expected' => [
                     ['message' => 'sample message template', 'parameters' => ['{{ sample_key }}' => 'sample_value']],
                 ],
@@ -75,6 +77,7 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
                         ''
                     ),
                 ],
+                'errorBubbling' => false,
                 'expected' => [
                     ['message' => 'sample message template', 'parameters' => ['{{ sample_key }}' => 'sample_value']],
                 ],
@@ -90,7 +93,24 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
                         ''
                     ),
                 ],
+                'errorBubbling' => false,
                 'expected' => [],
+            ],
+            'with property path and error bubbling' => [
+                'violations' => [
+                    new ConstraintViolation(
+                        'sample message',
+                        null,
+                        ['{{ sample_key }}' => 'sample_value'],
+                        \stdClass::class,
+                        '[0].quantity',
+                        ''
+                    ),
+                ],
+                'errorBubbling' => true,
+                'expected' => [
+                    ['message' => 'sample message', 'parameters' => ['{{ sample_key }}' => 'sample_value']],
+                ],
             ],
         ];
     }
@@ -192,6 +212,99 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
                             '{{ sku }}' => 'sku1',
                         ],
                         'propertyPath' => 'quantity',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider mapViolationsWithErrorBubblingAndItemsDataProvider
+     */
+    public function testMapViolationsWithErrorBubblingAndItems(array $violations, array $expected): void
+    {
+        $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'kg');
+        $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
+
+        $this->mapper->mapViolations($quickAddRowCollection, $violations, true);
+
+        self::assertEquals($expected, $quickAddRowCollection->getErrors());
+        self::assertEquals([], $quickAddRow->getErrors());
+    }
+
+    public function mapViolationsWithErrorBubblingAndItemsDataProvider(): array
+    {
+        return [
+            'no violations' => ['violations' => [], 'expected' => []],
+            'with non-existent index in property path' => [
+                'violations' => [
+                    new ConstraintViolation(
+                        'sample message',
+                        'sample message template',
+                        ['{{ sample_key }}' => 'sample_value'],
+                        \stdClass::class,
+                        '[999]',
+                        ''
+                    ),
+                ],
+                'expected' => [
+                    [
+                        'message' => 'sample message template',
+                        'parameters' => ['{{ sample_key }}' => 'sample_value'],
+                    ],
+                ],
+            ],
+            'with correct index in property path, without property name, without message template' => [
+                'violations' => [
+                    new ConstraintViolation(
+                        'sample message',
+                        null,
+                        ['{{ sample_key }}' => 'sample_value'],
+                        \stdClass::class,
+                        '[0]',
+                        ''
+                    ),
+                ],
+                'expected' => [
+                    [
+                        'message' => 'sample message',
+                        'parameters' => ['{{ sample_key }}' => 'sample_value'],
+                    ],
+                ],
+            ],
+            'with correct index in property path, without property name' => [
+                'violations' => [
+                    new ConstraintViolation(
+                        'sample message',
+                        'sample message template',
+                        ['{{ sample_key }}' => 'sample_value'],
+                        \stdClass::class,
+                        '[0]',
+                        ''
+                    ),
+                ],
+                'expected' => [
+                    [
+                        'message' => 'sample message template',
+                        'parameters' => ['{{ sample_key }}' => 'sample_value'],
+                    ],
+                ],
+            ],
+            'with correct index in property path' => [
+                'violations' => [
+                    new ConstraintViolation(
+                        'sample message',
+                        'sample message template',
+                        ['{{ sample_key }}' => 'sample_value'],
+                        \stdClass::class,
+                        '[0].quantity',
+                        ''
+                    ),
+                ],
+                'expected' => [
+                    [
+                        'message' => 'sample message template',
+                        'parameters' => ['{{ sample_key }}' => 'sample_value'],
                     ],
                 ],
             ],

@@ -92,13 +92,13 @@ Feature: Guest quick order form
     And I should see "Add to Shopping List"
     And I should see "Get Quote"
     And I should see "Create Order"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
       | SKU2 | PSKU2 |
       | SKU3 | PSKU3 |
       | SKU4 | PSKU3 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
       | QTY2  | 4   |
       | UNIT2 | set |
@@ -159,13 +159,13 @@ Feature: Guest quick order form
     And I should see "Add to Shopping List"
     And I should see "Get Quote"
     And I should not see "Create Order"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
       | SKU2 | PSKU2 |
       | SKU3 | PSKU3 |
       | SKU4 | PSKU3 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
       | QTY2  | 4   |
       | UNIT2 | set |
@@ -194,13 +194,13 @@ Feature: Guest quick order form
     And I should not see "Add to Shopping List"
     And I should see "Get Quote"
     And I should not see "Create Order"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | PSKU2 |
       | SKU2 | PSKU2 |
       | SKU3 | PSKU3 |
       | SKU4 | PSKU3 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1  | 2   |
       | QTY2  | 4   |
       | UNIT2 | set |

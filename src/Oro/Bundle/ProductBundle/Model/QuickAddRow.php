@@ -9,6 +9,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
 {
+    public const SKU = 'sku';
+    public const UNIT = 'unit';
+    public const QUANTITY = 'quantity';
+
     use QuickAddFieldTrait;
     /**
      * @var int

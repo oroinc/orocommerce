@@ -7,7 +7,7 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
@@ -17,26 +17,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuickAddControllerTest extends WebTestCase
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emProduct;
+    private EntityManagerInterface $emProduct;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emFallback;
+    private EntityManagerInterface $emFallback;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    private TranslatorInterface $translator;
 
     protected function setUp(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures(
             [
@@ -46,11 +37,11 @@ class QuickAddControllerTest extends WebTestCase
                 LoadCombinedProductPrices::class,
             ]
         );
-        $this->emProduct = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(Product::class);
-        $this->emFallback = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(
+        $this->emProduct = self::getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(Product::class);
+        $this->emFallback = self::getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(
             EntityFieldFallbackValue::class
         );
-        $this->translator = $this->getContainer()->get('translator');
+        $this->translator = self::getContainer()->get('translator');
     }
 
     /**
@@ -63,12 +54,12 @@ class QuickAddControllerTest extends WebTestCase
      * @dataProvider getQuickAddData
      */
     public function testQuickAddReturnsErrorIfQuantityOutOfBound(
-        $quantity,
-        $minLimit,
-        $maxLimit,
-        $errorMessage,
-        $errorLimit
-    ) {
+        int $quantity,
+        int $minLimit,
+        int $maxLimit,
+        string $errorMessage,
+        int $errorLimit
+    ): void {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
         $this->setProductLimits($product, $minLimit, $maxLimit);
@@ -76,7 +67,7 @@ class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
-        $processor = $this->getContainer()->get('oro_shopping_list.processor.quick_add');
+        $processor = self::getContainer()->get('oro_shopping_list.processor.quick_add');
 
         $this->client->request(
             $form->getMethod(),
@@ -86,8 +77,8 @@ class QuickAddControllerTest extends WebTestCase
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => json_encode([
                         [
-                            ProductDataStorage::PRODUCT_SKU_KEY => $product->getSku(),
-                            ProductDataStorage::PRODUCT_QUANTITY_KEY => $quantity,
+                            QuickAddRow::SKU => $product->getSku(),
+                            QuickAddRow::QUANTITY => $quantity,
                         ],
                     ]),
                     'component' => $processor->getName(),
@@ -98,28 +89,27 @@ class QuickAddControllerTest extends WebTestCase
 
         $errorMessage = $this->translator->trans(
             $errorMessage,
-            ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
+            ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()],
+            'validators'
         );
         $response = $this->client->getResponse();
         $responseData = self::getJsonResponseContent($response, 200);
+        self::assertFalse($responseData['success']);
         self::assertStringContainsString(
             $errorMessage,
-            $responseData['collection']['items'][0]['errors'][0]['message']
+            $responseData['collection']['errors'][0]['message']
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getQuickAddData()
+    public function getQuickAddData(): array
     {
         return [
-            [2, 3, 5, 'oro.inventory.product.error.quantity_below_min_limit', 3],
-            [6, 3, 5, 'oro.inventory.product.error.quantity_over_max_limit', 5],
+            [2, 3, 5, 'oro.inventory.quick_add_row.quantity_to_order.min_message', 3],
+            [6, 3, 5, 'oro.inventory.quick_add_row.quantity_to_order.max_message', 5],
         ];
     }
 
-    public function testRFQExcludesQuantityLimitValidation()
+    public function testRFQExcludesQuantityLimitValidation(): void
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_3);
@@ -130,7 +120,8 @@ class QuickAddControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
-        $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
+        $processor = self::getContainer()->get('oro_rfp.processor.quick_add');
+        $this->client->followRedirects(false);
 
         $this->client->request(
             $form->getMethod(),
@@ -140,8 +131,8 @@ class QuickAddControllerTest extends WebTestCase
                     '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => json_encode([
                         [
-                            ProductDataStorage::PRODUCT_SKU_KEY => $product->getSku(),
-                            ProductDataStorage::PRODUCT_QUANTITY_KEY => $quantity,
+                            QuickAddRow::SKU => $product->getSku(),
+                            QuickAddRow::QUANTITY => $quantity,
                         ],
                     ]),
                     'component' => $processor->getName(),
@@ -152,18 +143,14 @@ class QuickAddControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $responseData = self::getJsonResponseContent($response, 200);
+        self::assertTrue($responseData['success']);
         self::assertStringContainsString(
             $this->getUrl('oro_rfp_frontend_request_create'),
             $responseData['redirectUrl']
         );
     }
 
-    /**
-     * @param Product $product
-     * @param int $minLimit
-     * @param int $maxLimit
-     */
-    protected function setProductLimits(Product $product, $minLimit, $maxLimit)
+    private function setProductLimits(Product $product, int $minLimit, int $maxLimit): void
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setScalarValue($minLimit);
