@@ -7,6 +7,8 @@ use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 
 /**
+ * Stores items in the index
+ *
  * @ORM\Table(
  *    name="oro_website_search_item",
  *    uniqueConstraints={
