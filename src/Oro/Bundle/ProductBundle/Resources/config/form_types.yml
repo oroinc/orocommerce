@@ -278,3 +278,10 @@ services:
             - '@oro_product.form.data_transformer.quick_add_row_collection'
         tags:
             - { name: form.type }
+
+    oro_product.form.type.quick_add_row:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\QuickAddRowType'
+        arguments:
+            - '@oro_product.provider.product_units_provider'
+        tags:
+            - { name: form.type }

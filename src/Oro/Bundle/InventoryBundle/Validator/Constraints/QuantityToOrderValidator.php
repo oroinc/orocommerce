@@ -46,19 +46,40 @@ class QuantityToOrderValidator extends ConstraintValidator
             return;
         }
 
-        $minimumError = $this->quantityToOrderValidator->getMinimumErrorIfInvalid($product, $value->getQuantity());
+        $this->validateMinimum($product, $value->getQuantity(), $constraint);
+        $this->validateMaximum($product, $value->getQuantity(), $constraint);
+    }
+
+    private function validateMinimum(Product $product, float $quantity, QuantityToOrder $constraint): void
+    {
+        $minimumError = $this->quantityToOrderValidator->getMinimumErrorIfInvalid($product, $quantity);
         if ($minimumError !== false) {
             $this->context
-                ->buildViolation($minimumError)
+                ->buildViolation($constraint->minMessage ?: $minimumError)
+                ->setParameters(
+                    [
+                        '%limit%' => $this->quantityToOrderValidator->getMinimumLimit($product),
+                        '%sku%' => $product->getSku(),
+                    ]
+                )
                 ->setCode($constraint::LESS_THAN_MIN_LIMIT)
                 ->atPath('quantity')
                 ->addViolation();
         }
+    }
 
-        $maximumError = $this->quantityToOrderValidator->getMaximumErrorIfInvalid($product, $value->getQuantity());
+    private function validateMaximum(Product $product, float $quantity, QuantityToOrder $constraint): void
+    {
+        $maximumError = $this->quantityToOrderValidator->getMaximumErrorIfInvalid($product, $quantity);
         if ($maximumError !== false) {
             $this->context
-                ->buildViolation($maximumError)
+                ->buildViolation($constraint->maxMessage ?: $maximumError)
+                ->setParameters(
+                    [
+                        '%limit%' => $this->quantityToOrderValidator->getMaximumLimit($product),
+                        '%sku%' => $product->getSku(),
+                    ]
+                )
                 ->setCode($constraint::GREATER_THAN_MAX_LIMIT)
                 ->atPath('quantity')
                 ->addViolation();

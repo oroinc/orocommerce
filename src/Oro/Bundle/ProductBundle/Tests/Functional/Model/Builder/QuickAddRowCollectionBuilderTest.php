@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Model\Builder;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -26,8 +27,6 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
             self::getContainer()->get('oro_product.model.builder.quick_add_row_input_parser'),
             self::getContainer()->get('oro_security.acl_helper')
         );
-        $this->quickAddRowCollectionBuilder
-            ->setProductsGrouperFactory(self::getContainer()->get('oro_product.helper.product_grouper.factory'));
     }
 
     public function testBuildFromRequest(): void
@@ -58,11 +57,6 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
                         'productQuantity' => '3',
                         'productUnit' => 'item',
                     ],
-                    [
-                        'productSku' => LoadProductData::PRODUCT_9,
-                        'productQuantity' => '1',
-                        'productUnit' => 'item',
-                    ],
                 ],
             ],
         ]);
@@ -82,17 +76,77 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
         self::assertInstanceOf(Product::class, $quickAddRowCollection->get(1)->getProduct());
 
         self::assertEquals(LoadProductData::PRODUCT_9, $quickAddRowCollection->get(2)->getSku());
-        self::assertEquals('4', $quickAddRowCollection->get(2)->getQuantity());
+        self::assertEquals('3', $quickAddRowCollection->get(2)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(2)->getUnit());
         self::assertNull($quickAddRowCollection->get(2)->getProduct());
     }
 
-    public function testBuildFromCopyPasteText(): void
+    public function testBuildFromArray(): void
+    {
+        $data = [
+            [
+                QuickAddRow::SKU => LoadProductData::PRODUCT_1,
+                QuickAddRow::QUANTITY => '1',
+                QuickAddRow::UNIT => 'item',
+            ],
+            [
+                QuickAddRow::SKU => 'SKIP1',
+                QuickAddRow::UNIT => 'item',
+            ],
+            [
+                QuickAddRow::SKU => LoadProductData::PRODUCT_7,
+                QuickAddRow::QUANTITY => '2',
+                QuickAddRow::UNIT => 'item',
+            ],
+            [
+                QuickAddRow::QUANTITY => '1',
+                QuickAddRow::UNIT => 'item',
+            ],
+            [
+                QuickAddRow::SKU => LoadProductData::PRODUCT_9,
+                QuickAddRow::QUANTITY => '3',
+                QuickAddRow::UNIT => 'item',
+            ],
+        ];
+
+        $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromArray($data);
+
+        self::assertEquals(5, $quickAddRowCollection->count());
+
+        self::assertEquals(LoadProductData::PRODUCT_1, $quickAddRowCollection->get(0)->getSku());
+        self::assertEquals('1', $quickAddRowCollection->get(0)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(0)->getUnit());
+        self::assertInstanceOf(Product::class, $quickAddRowCollection->get(0)->getProduct());
+
+        self::assertEquals('SKIP1', $quickAddRowCollection->get(1)->getSku());
+        self::assertEquals(0, $quickAddRowCollection->get(1)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
+        self::assertNull($quickAddRowCollection->get(1)->getProduct());
+
+        self::assertEquals(LoadProductData::PRODUCT_7, $quickAddRowCollection->get(2)->getSku());
+        self::assertEquals('2', $quickAddRowCollection->get(2)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(2)->getUnit());
+        self::assertInstanceOf(Product::class, $quickAddRowCollection->get(2)->getProduct());
+
+        self::assertEquals('', $quickAddRowCollection->get(3)->getSku());
+        self::assertEquals(1, $quickAddRowCollection->get(3)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(3)->getUnit());
+        self::assertNull($quickAddRowCollection->get(3)->getProduct());
+
+        self::assertEquals(LoadProductData::PRODUCT_9, $quickAddRowCollection->get(4)->getSku());
+        self::assertEquals('3', $quickAddRowCollection->get(4)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(4)->getUnit());
+        self::assertNull($quickAddRowCollection->get(4)->getProduct());
+    }
+
+    /**
+     * @dataProvider delimiterDataProvider
+     */
+    public function testBuildFromCopyPasteText(string $delimiter): void
     {
         $text = <<<TEXT
-1ABSC 1 item
-2ABSC 2 item
-2ABSC 1 item
+1ABSC${delimiter}1${delimiter}item
+2ABSC${delimiter}2${delimiter}item
 TEXT;
 
         $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($text);
@@ -102,14 +156,22 @@ TEXT;
         self::assertEquals('item', $quickAddRowCollection->get(0)->getUnit());
 
         self::assertEquals('2ABSC', $quickAddRowCollection->get(1)->getSku());
-        self::assertEquals('3', $quickAddRowCollection->get(1)->getQuantity());
+        self::assertEquals('2', $quickAddRowCollection->get(1)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
+    }
+
+    public function delimiterDataProvider(): array
+    {
+        return [
+            [' '],
+            [';'],
+            [';'],
+            ["\t"],
+        ];
     }
 
     /**
      * @dataProvider uploadedFileProvider
-     *
-     * @param string $fileName
      */
     public function testBuildFromFile(string $fileName): void
     {
@@ -122,20 +184,6 @@ TEXT;
 
         self::assertEquals('2ABSC', $quickAddRowCollection->get(1)->getSku());
         self::assertEquals('2.0', $quickAddRowCollection->get(1)->getQuantity());
-        self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
-    }
-
-    public function testBuildFromFileWithGrouping(): void
-    {
-        $file = new UploadedFile(__DIR__ . '/data/quick-order-group.csv', 'quick-order-group.csv');
-        $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-
-        self::assertEquals('1ABSC', $quickAddRowCollection->get(0)->getSku());
-        self::assertEquals(5.0, $quickAddRowCollection->get(0)->getQuantity());
-        self::assertEquals('item', $quickAddRowCollection->get(0)->getUnit());
-
-        self::assertEquals('2ABSC', $quickAddRowCollection->get(1)->getSku());
-        self::assertEquals(3.0, $quickAddRowCollection->get(1)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
     }
 

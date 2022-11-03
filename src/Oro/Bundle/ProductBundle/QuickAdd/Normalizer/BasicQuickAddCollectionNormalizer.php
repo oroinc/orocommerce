@@ -28,20 +28,30 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
     public function normalize(QuickAddRowCollection $quickAddRowCollection): array
     {
         $results = [
-            'errors' => $this->normalizeErrors($quickAddRowCollection->getErrors()),
+            'errors' => array_map(
+                fn (array $error) => [
+                    'message' => $this->translator->trans($error['message'], $error['parameters'], 'validators'),
+                ],
+                $quickAddRowCollection->getErrors()
+            ),
             'items' => [],
         ];
 
         /** @var QuickAddRow $quickAddRow */
-        foreach ($quickAddRowCollection as $quickAddRow) {
+        foreach ($quickAddRowCollection as $index => $quickAddRow) {
             $sku = $quickAddRow->getSku();
-            $index = $this->getIndex($quickAddRow);
             $results['items'][$index] = [
                 'sku' => $sku,
                 'product_name' => '',
-                'unit' => (string) $quickAddRow->getUnit(),
+                'unit' => (string)$quickAddRow->getUnit(),
                 'quantity' => $quickAddRow->getQuantity(),
-                'errors' => $this->normalizeErrors($quickAddRow->getErrors()),
+                'errors' => array_map(
+                    fn (array $error) => [
+                        'message' => $this->translator->trans($error['message'], $error['parameters'], 'validators'),
+                        'propertyPath' => $error['propertyPath'] ?? '',
+                    ],
+                    $quickAddRow->getErrors()
+                ),
                 'additional' => [],
             ];
 
@@ -60,21 +70,5 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
         }
 
         return $results;
-    }
-
-    private function getIndex(QuickAddRow $quickAddRow): string
-    {
-        return sprintf('%s_%s', mb_strtoupper($quickAddRow->getSku()), $quickAddRow->getUnit());
-    }
-
-    private function normalizeErrors(array $errors): array
-    {
-        return array_map(
-            fn (array $error) => array_merge([
-                'message' => $this->translator->trans($error['message'], $error['parameters'], 'validators'),
-                'propertyPath' => $error['propertyPath'] ?? '',
-            ]),
-            $errors
-        );
     }
 }

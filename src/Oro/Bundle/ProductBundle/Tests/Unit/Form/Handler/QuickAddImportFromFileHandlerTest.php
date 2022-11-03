@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddImportFromFileHandler;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -18,7 +19,6 @@ use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -32,6 +32,8 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
 
     /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $validator;
+
+    private ProductsGrouperFactory $productsGrouperFactory;
 
     /** @var QuickAddRowCollectionViolationsMapper|\PHPUnit\Framework\MockObject\MockObject */
     private $quickAddRowCollectionViolationsMapper;
@@ -49,6 +51,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
         $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
+        $this->productsGrouperFactory = new ProductsGrouperFactory();
         $this->quickAddRowCollectionViolationsMapper = $this->createMock(QuickAddRowCollectionViolationsMapper::class);
         $this->quickAddCollectionNormalizer = $this->createMock(QuickAddCollectionNormalizerInterface::class);
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
@@ -57,6 +60,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
             $this->quickAddRowCollectionBuilder,
             $this->eventDispatcher,
             $this->validator,
+            $this->productsGrouperFactory,
             $this->quickAddRowCollectionViolationsMapper,
             $this->quickAddCollectionNormalizer
         );
@@ -184,11 +188,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with(
-                $quickAddRowCollection,
-                null,
-                new GroupSequence(['Default'])
-            )
+            ->with($quickAddRowCollection)
             ->willReturn($violationList);
 
         $this->quickAddRowCollectionViolationsMapper

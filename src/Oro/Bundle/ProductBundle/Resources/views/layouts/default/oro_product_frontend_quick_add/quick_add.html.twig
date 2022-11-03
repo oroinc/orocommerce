@@ -4,13 +4,21 @@
 {% endblock %}
 
 {% block _quick_add_container_widget %}
+    {% if form.vars.is_optimized %}
+        {% set pageComponentOptions = {
+            'isOptimized': form.vars.is_optimized,
+            'selectors': {
+                rows: '[data-name="field__row"]',
+                productSkus: '[data-name="field__sku"]',
+            }
+        } %}
+    {% endif %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' quick-order',
         'data-focusable': true,
         'data-page-component-view': 'oroproduct/js/app/views/quick-order-form-view',
-        'data-page-component-options': {
-            'isOptimized': form.vars.is_optimized
-        },
+        'data-page-component-options': pageComponentOptions|default({}),
         'data-layout': 'separate',
     }) %}
     <div {{ block('block_attributes') }}>

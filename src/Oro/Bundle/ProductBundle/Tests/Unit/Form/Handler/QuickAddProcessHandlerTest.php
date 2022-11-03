@@ -8,6 +8,8 @@ use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddProcessHandler;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\QuickAddRowGrouper;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\QuickAddCollectionNormalizerInterface;
@@ -21,7 +23,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -44,17 +45,29 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
 
     private QuickAddProcessHandler $handler;
 
+    /** @var QuickAddRowGrouper|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddRowGrouper;
+
     protected function setUp(): void
     {
         $this->componentRegistry = $this->createMock(ComponentProcessorRegistry::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
+        $productsGrouperFactory = $this->createMock(ProductsGrouperFactory::class);
         $this->quickAddRowCollectionViolationsMapper = $this->createMock(QuickAddRowCollectionViolationsMapper::class);
         $this->quickAddCollectionNormalizer = $this->createMock(QuickAddCollectionNormalizerInterface::class);
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
+        $this->quickAddRowGrouper = $this->createMock(QuickAddRowGrouper::class);
+        $productsGrouperFactory
+            ->expects(self::any())
+            ->method('createProductsGrouper')
+            ->with(ProductsGrouperFactory::QUICK_ADD_ROW)
+            ->willReturn($this->quickAddRowGrouper);
+
         $this->handler = new QuickAddProcessHandler(
             $this->componentRegistry,
             $this->validator,
+            $productsGrouperFactory,
             $this->quickAddRowCollectionViolationsMapper,
             $this->quickAddCollectionNormalizer
         );
@@ -163,6 +176,10 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($quickAddRowCollection);
 
+        $this->quickAddRowGrouper
+            ->expects(self::never())
+            ->method(self::anything());
+
         $this->preloadingManager
             ->expects(self::once())
             ->method('preloadInEntities')
@@ -181,20 +198,20 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with(
-                $quickAddRowCollection,
-                null,
-                new GroupSequence(['Default', 'not_request_for_quote'])
-            )
+            ->with($quickAddRowCollection)
             ->willReturn($violationList);
 
         $this->quickAddRowCollectionViolationsMapper
             ->expects(self::once())
             ->method('mapViolations')
-            ->with($quickAddRowCollection, $violationList)
-            ->willReturnCallback(function (QuickAddRowCollection $quickAddRowCollection) {
-                $quickAddRowCollection->addError('sample error');
-            });
+            ->with(
+                self::callback(static function (QuickAddRowCollection $quickAddRowCollection) {
+                    $quickAddRowCollection[0]->addError('sample item error');
+
+                    return true;
+                }),
+                $violationList
+            );
 
         $normalizedCollection = [
             'errors' => [['message' => 'sample error', 'propertyPath' => '']],
@@ -255,6 +272,10 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($quickAddRowCollection);
 
+        $this->quickAddRowGrouper
+            ->expects(self::never())
+            ->method(self::anything());
+
         $this->preloadingManager
             ->expects(self::once())
             ->method('preloadInEntities')
@@ -273,20 +294,129 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with(
-                $quickAddRowCollection,
-                null,
-                new GroupSequence(['Default', 'not_request_for_quote'])
-            )
+            ->with($quickAddRowCollection)
             ->willReturn($violationList);
 
         $this->quickAddRowCollectionViolationsMapper
             ->expects(self::once())
             ->method('mapViolations')
-            ->with($quickAddRowCollection, $violationList)
-            ->willReturnCallback(function (QuickAddRowCollection $quickAddRowCollection) {
-                $quickAddRowCollection[0]->addError('sample item error');
-            });
+            ->with(
+                self::callback(static function (QuickAddRowCollection $quickAddRowCollection) {
+                    $quickAddRowCollection[0]->addError('sample item error');
+
+                    return true;
+                }),
+                $violationList
+            );
+
+        $normalizedCollection = [
+            'errors' => [],
+            'items' => [['sample_key' => 'sample_value']],
+        ];
+        $this->quickAddCollectionNormalizer
+            ->expects(self::once())
+            ->method('normalize')
+            ->with($quickAddRowCollection)
+            ->willReturn($normalizedCollection);
+
+        self::assertEquals(
+            ['success' => false, 'collection' => $normalizedCollection],
+            json_decode($this->handler->process($form, $request)->getContent(), true)
+        );
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testProcessWhenFormValidButItemHasErrorsAfterMerge(): void
+    {
+        $request = new Request();
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects(self::once())
+            ->method('handleRequest')
+            ->with($request);
+
+        $form
+            ->expects(self::once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+
+        $form
+            ->expects(self::once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $formData = [
+            QuickAddType::COMPONENT_FIELD_NAME => 'sample_component',
+            QuickAddType::TRANSITION_FIELD_NAME => 'sample_transition',
+            QuickAddType::ADDITIONAL_FIELD_NAME => ['sample_key' => 'sample_value'],
+        ];
+        $form
+            ->expects(self::once())
+            ->method('getData')
+            ->willReturn($formData);
+        $quickAddRowCollectionForm = $this->createMock(FormInterface::class);
+        $form
+            ->expects(self::once())
+            ->method('get')
+            ->with(QuickAddType::PRODUCTS_FIELD_NAME)
+            ->willReturn($quickAddRowCollectionForm);
+        $quickAddRow = new QuickAddRow(1, 'sku1', 42, 'item');
+        $product = new Product();
+        $quickAddRow->setProduct($product);
+        $quickAddRowCollection = new QuickAddRowCollection([$quickAddRow]);
+        $quickAddRowCollectionForm
+            ->expects(self::once())
+            ->method('getData')
+            ->willReturn($quickAddRowCollection);
+
+        $this->quickAddRowGrouper
+            ->expects(self::once())
+            ->method('process')
+            ->with($quickAddRowCollection)
+            ->willReturn($quickAddRowCollection);
+
+        $this->preloadingManager
+            ->expects(self::once())
+            ->method('preloadInEntities')
+            ->with(
+                [$product],
+                [
+                    'names' => [],
+                    'unitPrecisions' => [],
+                    'minimumQuantityToOrder' => [],
+                    'maximumQuantityToOrder' => [],
+                    'category' => ['minimumQuantityToOrder' => [], 'maximumQuantityToOrder' => []],
+                ]
+            );
+
+        $violationList = new ConstraintViolationList();
+        $violationListBeforeProcess = new ConstraintViolationList();
+        $this->validator
+            ->expects(self::exactly(2))
+            ->method('validate')
+            ->withConsecutive(
+                [$quickAddRowCollection],
+                [$quickAddRowCollection, null, $formData[QuickAddType::COMPONENT_FIELD_NAME]]
+            )
+            ->willReturn($violationList, $violationListBeforeProcess);
+
+        $this->quickAddRowCollectionViolationsMapper
+            ->expects(self::exactly(2))
+            ->method('mapViolations')
+            ->withConsecutive(
+                [$quickAddRowCollection, $violationList],
+                [
+                    self::callback(static function (QuickAddRowCollection $quickAddRowCollection) {
+                        $quickAddRowCollection[0]->addError('sample item error');
+
+                        return true;
+                    }),
+                    $violationListBeforeProcess,
+                    true,
+                ]
+            );
 
         $normalizedCollection = [
             'errors' => [],
@@ -353,6 +483,12 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($quickAddRowCollection);
 
+        $this->quickAddRowGrouper
+            ->expects(self::once())
+            ->method('process')
+            ->with($quickAddRowCollection)
+            ->willReturn($quickAddRowCollection);
+
         $this->preloadingManager
             ->expects(self::once())
             ->method('preloadInEntities')
@@ -368,20 +504,23 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             );
 
         $violationList = new ConstraintViolationList();
+        $violationListBeforeProcess = new ConstraintViolationList();
         $this->validator
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('validate')
-            ->with(
-                $quickAddRowCollection,
-                null,
-                new GroupSequence(['Default', 'not_request_for_quote'])
+            ->withConsecutive(
+                [$quickAddRowCollection],
+                [$quickAddRowCollection, null, $formData[QuickAddType::COMPONENT_FIELD_NAME]]
             )
-            ->willReturn($violationList);
+            ->willReturn($violationList, $violationListBeforeProcess);
 
         $this->quickAddRowCollectionViolationsMapper
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('mapViolations')
-            ->with($quickAddRowCollection, $violationList);
+            ->withConsecutive(
+                [$quickAddRowCollection, $violationList],
+                [$quickAddRowCollection, $violationListBeforeProcess, true]
+            );
 
         $this->quickAddCollectionNormalizer
             ->expects(self::never())
@@ -472,6 +611,12 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn($quickAddRowCollection);
 
+        $this->quickAddRowGrouper
+            ->expects(self::once())
+            ->method('process')
+            ->with($quickAddRowCollection)
+            ->willReturn($quickAddRowCollection);
+
         $this->preloadingManager
             ->expects(self::once())
             ->method('preloadInEntities')
@@ -487,20 +632,23 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
             );
 
         $violationList = new ConstraintViolationList();
+        $violationListBeforeProcess = new ConstraintViolationList();
         $this->validator
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('validate')
-            ->with(
-                $quickAddRowCollection,
-                null,
-                new GroupSequence(['Default', 'not_request_for_quote'])
+            ->withConsecutive(
+                [$quickAddRowCollection],
+                [$quickAddRowCollection, null, $formData[QuickAddType::COMPONENT_FIELD_NAME]]
             )
-            ->willReturn($violationList);
+            ->willReturn($violationList, $violationListBeforeProcess);
 
         $this->quickAddRowCollectionViolationsMapper
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('mapViolations')
-            ->with($quickAddRowCollection, $violationList);
+            ->withConsecutive(
+                [$quickAddRowCollection, $violationList],
+                [$quickAddRowCollection, $violationListBeforeProcess, true]
+            );
 
         $this->quickAddCollectionNormalizer
             ->expects(self::never())

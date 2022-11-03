@@ -62,6 +62,18 @@ class QuickAddRowInputParser
         return new QuickAddRow($lineNumber, $sku, $parsedQty, $this->resolveUnit($sku, $unit));
     }
 
+    public function createFromArray(array $product, int $index): QuickAddRow
+    {
+        $sku = isset($product[QuickAddRow::SKU]) ? trim($product[QuickAddRow::SKU]) : '';
+        $quantity = isset($product[QuickAddRow::QUANTITY]) ? (float)$product[QuickAddRow::QUANTITY] : 0;
+        $unit = isset($product[QuickAddRow::UNIT]) ? trim($product[QuickAddRow::UNIT]) : null;
+
+        $quickAddRow = new QuickAddRow($index, $sku, $quantity, $this->resolveUnit($sku, $unit));
+        $quickAddRow->setValid(true);
+
+        return $quickAddRow;
+    }
+
     public function createFromRequest(array $product, int $index): QuickAddRow
     {
         $sku = trim($product[ProductDataStorage::PRODUCT_SKU_KEY]);

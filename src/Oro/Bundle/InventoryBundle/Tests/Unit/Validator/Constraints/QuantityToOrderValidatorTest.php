@@ -93,8 +93,8 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidateWhenMinimumError(): void
     {
-        $product = new Product();
         $value = new QuickAddRow(1, 'sku1', 42);
+        $product = (new Product())->setSku($value->getSku());
         $value->setProduct($product);
 
         $minimumError = 'minimum error';
@@ -102,6 +102,12 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
             ->expects(self::once())
             ->method('getMinimumErrorIfInvalid')
             ->willReturn($minimumError);
+
+        $minLimit = 2;
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMinimumLimit')
+            ->willReturn($minLimit);
 
         $this->quantityToOrderValidatorService
             ->expects(self::once())
@@ -112,6 +118,47 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
 
         $this
             ->buildViolation($minimumError)
+            ->setParameters([
+                '%limit%' => $minLimit,
+                '%sku%' => $product->getSku(),
+            ])
+            ->setCode(QuantityToOrder::LESS_THAN_MIN_LIMIT)
+            ->atPath('property.path.quantity')
+            ->assertRaised();
+    }
+
+    public function testValidateWhenMinimumErrorWithCustomMessage(): void
+    {
+        $value = new QuickAddRow(1, 'sku1', 42);
+        $product = (new Product())->setSku($value->getSku());
+        $value->setProduct($product);
+
+        $minimumError = 'minimum error';
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMinimumErrorIfInvalid')
+            ->willReturn($minimumError);
+
+        $minLimit = 2;
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMinimumLimit')
+            ->willReturn($minLimit);
+
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMaximumErrorIfInvalid')
+            ->willReturn(false);
+
+        $constraint = new QuantityToOrder(['minMessage' => 'custom minimum error']);
+        $this->validator->validate($value, $constraint);
+
+        $this
+            ->buildViolation($constraint->minMessage)
+            ->setParameters([
+                '%limit%' => $minLimit,
+                '%sku%' => $product->getSku(),
+            ])
             ->setCode(QuantityToOrder::LESS_THAN_MIN_LIMIT)
             ->atPath('property.path.quantity')
             ->assertRaised();
@@ -119,14 +166,20 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidateWhenMaximumError(): void
     {
-        $product = new Product();
         $value = new QuickAddRow(1, 'sku1', 42);
+        $product = (new Product())->setSku($value->getSku());
         $value->setProduct($product);
 
         $this->quantityToOrderValidatorService
             ->expects(self::once())
             ->method('getMinimumErrorIfInvalid')
             ->willReturn(false);
+
+        $maxLimit = 2;
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMaximumLimit')
+            ->willReturn($maxLimit);
 
         $maximumError = 'maximum error';
         $this->quantityToOrderValidatorService
@@ -138,6 +191,47 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
 
         $this
             ->buildViolation($maximumError)
+            ->setParameters([
+                '%limit%' => $maxLimit,
+                '%sku%' => $product->getSku(),
+            ])
+            ->setCode(QuantityToOrder::GREATER_THAN_MAX_LIMIT)
+            ->atPath('property.path.quantity')
+            ->assertRaised();
+    }
+
+    public function testValidateWhenMaximumErrorWithCustomMessage(): void
+    {
+        $value = new QuickAddRow(1, 'sku1', 42);
+        $product = (new Product())->setSku($value->getSku());
+        $value->setProduct($product);
+
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMinimumErrorIfInvalid')
+            ->willReturn(false);
+
+        $maxLimit = 2;
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMaximumLimit')
+            ->willReturn($maxLimit);
+
+        $maximumError = 'maximum error';
+        $this->quantityToOrderValidatorService
+            ->expects(self::once())
+            ->method('getMaximumErrorIfInvalid')
+            ->willReturn($maximumError);
+
+        $constraint = new QuantityToOrder(['maxMessage' => 'custom maximum error']);
+        $this->validator->validate($value, $constraint);
+
+        $this
+            ->buildViolation($constraint->maxMessage)
+            ->setParameters([
+                '%limit%' => $maxLimit,
+                '%sku%' => $product->getSku(),
+            ])
             ->setCode(QuantityToOrder::GREATER_THAN_MAX_LIMIT)
             ->atPath('property.path.quantity')
             ->assertRaised();

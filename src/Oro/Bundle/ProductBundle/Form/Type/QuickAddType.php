@@ -6,7 +6,6 @@ use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddComponentProcessor;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -41,21 +40,38 @@ class QuickAddType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ($options['is_optimized']) {
+            $builder
+                ->add(
+                    self::PRODUCTS_FIELD_NAME,
+                    QuickAddRowCollectionType::class,
+                    [
+                        'required' => false,
+                        'mapped' => false,
+                        'constraints' => [new Count(['min' => 1, 'minMessage' => 'oro.product.at_least_one_item'])],
+                        'add_label' => 'oro.product.form.add_row',
+                    ]
+                );
+        } else {
+            $builder
+                ->add(
+                    self::PRODUCTS_FIELD_NAME,
+                    ProductRowCollectionType::class,
+                    [
+                        'required' => false,
+                        'entry_options' => [
+                            'validation_required' => $options['validation_required'],
+                        ],
+                        'error_bubbling' => true,
+                        'constraints' => [new NotBlank(['message' => 'oro.product.at_least_one_item'])],
+                        'add_label' => 'oro.product.form.add_row',
+                        'products' => $options['products'],
+                    ]
+                )
+                ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+        }
+
         $builder
-            ->add(
-                self::PRODUCTS_FIELD_NAME,
-                ProductRowCollectionType::class,
-                [
-                    'required' => false,
-                    'entry_options' => [
-                        'validation_required' => $options['validation_required'],
-                    ],
-                    'error_bubbling' => true,
-                    'constraints' => [new NotBlank(['message' => 'oro.product.at_least_one_item'])],
-                    'add_label' => 'oro.product.form.add_row',
-                    'products' => $options['products'],
-                ]
-            )
             ->add(
                 self::COMPONENT_FIELD_NAME,
                 HiddenType::class,
@@ -69,12 +85,6 @@ class QuickAddType extends AbstractType
                 self::TRANSITION_FIELD_NAME,
                 HiddenType::class
             );
-
-        if ($options['is_optimized']) {
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onOptimizedFormPreSubmit']);
-        } else {
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
-        }
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options): void
@@ -138,23 +148,5 @@ class QuickAddType extends AbstractType
         }
 
         $event->setData($data);
-    }
-
-    public function onOptimizedFormPreSubmit(PreSubmitEvent $event): void
-    {
-        $form = $event->getForm();
-        $formBuilder = $form->getConfig()
-            ->getFormFactory()
-            ->createNamedBuilder(
-                self::PRODUCTS_FIELD_NAME,
-                QuickAddRowCollectionType::class,
-                null,
-                [
-                    'auto_initialize' => false,
-                    'mapped' => false,
-                    'constraints' => [new Count(['min' => 1, 'minMessage' => 'oro.product.at_least_one_item'])],
-                ]
-            );
-        $form->add($formBuilder->getForm());
     }
 }

@@ -242,7 +242,6 @@ class QuickAddControllerTest extends WebTestCase
                             [
                                 'message' => 'We have not been able to identify any product references '
                                     . 'in the uploaded file.',
-                                'propertyPath' => '',
                             ],
                         ],
                         'items' => [],
@@ -257,7 +256,6 @@ class QuickAddControllerTest extends WebTestCase
                         'errors' => [
                             [
                                 'message' => 'This file type is not allowed',
-                                'propertyPath' => '',
                             ],
                         ],
                         'items' => [],

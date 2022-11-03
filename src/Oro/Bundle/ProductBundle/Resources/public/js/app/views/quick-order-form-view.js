@@ -29,7 +29,8 @@ const QuickOrderFromView = BaseView.extend({
     options: {
         rowsCountThreshold: 20,
         rowsBatchSize: 50,
-        isOptimized: false
+        isOptimized: false,
+        selectors: {}
     },
 
     listen: {
@@ -52,6 +53,8 @@ const QuickOrderFromView = BaseView.extend({
         this.checkRowsQuantity = _.debounce(this.checkRowsQuantity.bind(this), 25);
 
         this.options = $.extend(true, {}, this.options, options);
+        this.elem = $.extend(this.elem, this.options.selectors || {});
+
         const collectionOptions = Object.assign({
             ajaxOptions: {
                 global: false // ignore global loading bar

@@ -17,10 +17,17 @@ class QuickAddRowCollectionViolationsMapper
     /**
      * @param iterable<ConstraintViolationInterface> $constraintViolations
      */
-    public function mapViolations(QuickAddRowCollection $quickAddRowCollection, iterable $constraintViolations): void
-    {
+    public function mapViolations(
+        QuickAddRowCollection $quickAddRowCollection,
+        iterable $constraintViolations,
+        bool $errorBubbling = false
+    ): void {
         foreach ($constraintViolations as $violation) {
-            [$index, $propertyName] = $this->extractFromPropertyPath($violation->getPropertyPath());
+            if (!$errorBubbling) {
+                [$index, $propertyName] = $this->extractFromPropertyPath($violation->getPropertyPath());
+            } else {
+                $index = $propertyName = null;
+            }
 
             if ($index === null) {
                 $quickAddRowCollection->addError(

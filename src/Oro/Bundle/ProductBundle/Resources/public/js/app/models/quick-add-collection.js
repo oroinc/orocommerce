@@ -160,7 +160,7 @@ const QuickAddCollection = BaseCollection.extend({
                 .sort((ma, mb) => ma.get('_order') - mb.get('_order'));
         }
 
-        items.forEach(item => {
+        _.each(items, item => {
             if (!this.isOptimized && !item.quantity) {
                 zeroQuantityItems.push(item);
                 return;

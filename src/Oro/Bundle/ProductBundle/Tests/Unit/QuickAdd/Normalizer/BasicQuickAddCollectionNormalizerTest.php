@@ -101,7 +101,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        'SKU1_item' => [
+                        0 => [
                             'sku' => $quickAddRowWithoutProductAndAdditional->getSku(),
                             'product_name' => '',
                             'unit' => $quickAddRowWithoutProductAndAdditional->getUnit(),
@@ -117,7 +117,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        'SKU2_each' => [
+                        0 => [
                             'sku' => $quickAddRowWithoutAdditionalFields->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit' => $quickAddRowWithoutAdditionalFields->getUnit(),
@@ -136,7 +136,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        'SKU2_each' => [
+                        0 => [
                             'sku' => $quickAddRowWithAdditionalFields->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit' => $quickAddRowWithAdditionalFields->getUnit(),
@@ -158,7 +158,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        'SKU2_each' => [
+                        0 => [
                             'sku' => $quickAddRowWithErrors->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit' => $quickAddRowWithErrors->getUnit(),
@@ -180,9 +180,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
             'collection with errors' => [
                 (new QuickAddRowCollection())->addError('sample error'),
                 [
-                    'errors' => [
-                        ['message' => 'sample error [trans]', 'propertyPath' => ''],
-                    ],
+                    'errors' => [['message' => 'sample error [trans]']],
                     'items' => [],
                 ],
             ],

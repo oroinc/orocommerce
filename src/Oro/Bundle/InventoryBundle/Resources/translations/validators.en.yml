@@ -6,3 +6,7 @@ oro:
         product:
             validators:
                 quantity_min_over_max: 'The maximum quantity to order must be higher or equal to the minimum quantity to order'
+        quick_add_row:
+            quantity_to_order:
+                max_message: 'You cannot order more than %limit% units of product "%sku%".'
+                min_message: 'You cannot order less than %limit% units of product "%sku%".'

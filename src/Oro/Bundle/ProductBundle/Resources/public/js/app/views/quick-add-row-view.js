@@ -61,6 +61,8 @@ const QuickAddRowView = BaseView.extend({
             throw new Error('Option `productsCollection` is require for QuickAddRowView');
         }
 
+        this.attrElem = $.extend(this.attrElem, options.selectors || {});
+
         this.initModel(productsCollection, options);
         this.initUnitValidator();
         this.$(this.attrElem.unit).removeClass('disabled');

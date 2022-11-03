@@ -123,17 +123,17 @@ Feature: Configurable product in quick order form
   Scenario: Check validation for configurable products and simple products from the configurable product on the optimized quick order form
     Given I proceed as the User
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form Optimized" with:
       | SKU1 | Shirt_Sku |
     And I wait for products to load
     Then I should see text matching "Item Number Cannot Be Found"
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form Optimized" with:
       | SKU1 | EmptyShirt_Sku |
     And I wait for products to load
     Then I should see text matching "Item Number Cannot Be Found"
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form Optimized" with:
       | SKU1 | Black_Shirt_L_sku |
     And I wait for products to load
     Then I should see text matching "Item Number Cannot Be Found"

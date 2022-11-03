@@ -12,7 +12,6 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -50,8 +49,6 @@ class QuickAddRowCollectionBuilder
      */
     private $aclHelper;
 
-    private ?ProductsGrouperFactory $productsGrouperFactory = null;
-
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
@@ -66,35 +63,18 @@ class QuickAddRowCollectionBuilder
         $this->aclHelper = $aclHelper;
     }
 
-    public function setProductsGrouperFactory(?ProductsGrouperFactory $productsGrouperFactory): void
-    {
-        $this->productsGrouperFactory = $productsGrouperFactory;
-    }
-
     /**
      * @param Request $request
      * @return QuickAddRowCollection
      */
     public function buildFromRequest(Request $request)
     {
-        $formData = $request->request->get(QuickAddType::NAME);
-
-        return $this->buildFromArray($formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? []);
-    }
-
-    public function buildFromArray(array $products): QuickAddRowCollection
-    {
         $collection = new QuickAddRowCollection();
-        $collection->setEventDispatcher($this->eventDispatcher);
+        $formData = $request->request->get(QuickAddType::NAME);
+        $products = $formData[QuickAddType::PRODUCTS_FIELD_NAME] ?? [];
 
-        if (!$products) {
+        if (!is_array($products) || empty($products)) {
             return $collection;
-        }
-
-        if ($this->productsGrouperFactory) {
-            $products = $this->productsGrouperFactory
-                ->createProductsGrouper(ProductsGrouperFactory::ARRAY_PRODUCTS)
-                ->process($products);
         }
 
         foreach ($products as $index => $product) {
@@ -104,12 +84,26 @@ class QuickAddRowCollectionBuilder
                 continue;
             }
 
-            $quickAddRow = $this->quickAddRowInputParser->createFromRequest($product, $index);
-            $quickAddRow->setValid(true);
-            $collection->add($quickAddRow);
+            $collection->add(
+                $this->quickAddRowInputParser->createFromRequest($product, $index)
+            );
         }
 
         $this->mapProducts($collection);
+
+        return $collection;
+    }
+
+    public function buildFromArray(array $products): QuickAddRowCollection
+    {
+        $collection = new QuickAddRowCollection();
+        if ($products) {
+            foreach ($products as $index => $product) {
+                $collection->add($this->quickAddRowInputParser->createFromArray($product, $index));
+            }
+
+            $this->mapProducts($collection);
+        }
 
         return $collection;
     }
@@ -143,12 +137,6 @@ class QuickAddRowCollectionBuilder
             }
         }
 
-        if ($this->productsGrouperFactory) {
-            $collection = $this->productsGrouperFactory
-                ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
-                ->process($collection);
-        }
-
         $this->mapProducts($collection);
 
         return $collection;
@@ -176,12 +164,6 @@ class QuickAddRowCollectionBuilder
                 $collection->add(
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
-            }
-
-            if ($this->productsGrouperFactory) {
-                $collection = $this->productsGrouperFactory
-                    ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
-                    ->process($collection);
             }
         }
 
@@ -248,9 +230,12 @@ class QuickAddRowCollectionBuilder
         throw new UnsupportedTypeException();
     }
 
-    private function mapProducts(QuickAddRowCollection $collection)
+    private function mapProducts(QuickAddRowCollection $collection): void
     {
-        $products = $this->getRestrictedProductsBySkus($collection->getSkus());
-        $collection->mapProducts($products);
+        $skus = $collection->getSkus();
+        if ($skus) {
+            $products = $this->getRestrictedProductsBySkus($skus);
+            $collection->mapProducts($products);
+        }
     }
 }

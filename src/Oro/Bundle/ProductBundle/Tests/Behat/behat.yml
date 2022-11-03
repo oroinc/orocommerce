@@ -532,6 +532,68 @@ oro_behat_extension:
             type: 'css'
             locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
 
+    Quick Order Form Optimized:
+      selector: "form[name='oro_product_quick_add']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU1:
+            type: 'css'
+            locator: 'input[name="oro_product_quick_add[products][0][product]"]'
+            element: ProductAutocomplete
+          SKU2:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][1][product]']"
+            element: ProductAutocomplete
+          SKU3:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][2][product]']"
+            element: ProductAutocomplete
+          SKU4:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][3][product]']"
+            element: ProductAutocomplete
+          QTY1:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][0][quantity]']"
+          QTY2:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][1][quantity]']"
+          QTY3:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][2][quantity]']"
+          QTY4:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][3][quantity]']"
+          UNIT1:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][0][unit]"]'
+            element: Select
+          UNIT2:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][1][unit]"]'
+            element: Select
+          UNIT3:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][2][unit]"]'
+            element: Select
+          UNIT4:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][3][unit]"]'
+            element: Select
+          SUBTOTAL1:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_0"] input[data-name="field__product-subtotal"]'
+          SUBTOTAL2:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
+
+    Quick Order Form > DeleteRow1:
+      selector: '[data-content="oro_product_quick_add[products][0]"] button[data-role="row-remove"]'
+
+    Quick Order Form > DeleteRow2:
+      selector: '[data-content="oro_product_quick_add[products][1]"] button[data-role="row-remove"]'
+
     Quick Order Form > QTY1:
       selector:
         type: 'css'
@@ -541,6 +603,11 @@ oro_behat_extension:
       selector:
         type: 'css'
         locator: "input[name='oro_product_quick_add[products][0][productUnit]']"
+
+    Quick Order Form Optimized > QTY1:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][0][quantity]']"
 
     Quick Add Price Field:
       selector:
