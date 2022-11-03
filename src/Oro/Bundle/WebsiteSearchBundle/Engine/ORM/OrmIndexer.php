@@ -252,9 +252,9 @@ class OrmIndexer extends AbstractIndexer
     {
         $item = $this->getDriver()->createItem();
 
-        if (isset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
-            $item->setWeight($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
-            unset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+        if (isset($data[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
+            $item->setWeight($data[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+            unset($data[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
         }
 
         $item->setEntity($entityClass)
