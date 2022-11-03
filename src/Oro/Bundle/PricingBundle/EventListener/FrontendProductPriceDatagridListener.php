@@ -178,7 +178,7 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
 
         $config->addSorter(
             self::COLUMN_MINIMAL_PRICE_SORT,
-            ['data_name' => $sortColumn, 'type' => 'decimal']
+            ['data_name' => 'decimal.' . $sortColumn, 'type' => 'decimal']
         );
     }
 }
