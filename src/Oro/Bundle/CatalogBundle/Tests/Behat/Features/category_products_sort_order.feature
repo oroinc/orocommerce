@@ -47,10 +47,10 @@ Feature: Category products sort order
     When I am on homepage
     Then I should see "4 items" for "Test Category" category
     When I click "Test Category"
-    Then I should see "PSKU4"
-    And I should see "PSKU2"
-    And I should see "PSKU1"
-    And I should see "PSKU5"
+    Then PSKU4 must be first record in "Product Frontend Grid"
+    And PSKU2 must be second record in "Product Frontend Grid"
+    And PSKU1 must be 3 record in "Product Frontend Grid"
+    And PSKU5 must be 4 record in "Product Frontend Grid"
     And I should not see "PSKU3"
 
   Scenario: Category sort order can be edited
@@ -80,8 +80,8 @@ Feature: Category products sort order
     When I am on homepage
     Then I should see "4 items" for "Test Category" category
     When I click "Test Category"
-    Then I should see "PSKU5"
-    And I should see "PSKU3"
-    And I should see "PSKU4"
-    And I should see "PSKU2"
+    Then PSKU5 must be first record in "Product Frontend Grid"
+    And PSKU3 must be second record in "Product Frontend Grid"
+    And PSKU4 must be 3 record in "Product Frontend Grid"
+    And PSKU2 must be 4 record in "Product Frontend Grid"
     And I should not see "PSKU1"
