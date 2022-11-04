@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages CheckoutBundle service configuration
+ */
 class OroCheckoutExtension extends Extension
 {
     const ALIAS = 'oro_checkout';
@@ -25,6 +28,7 @@ class OroCheckoutExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('form_types.yml');
         $loader->load('controllers.yml');
+        $loader->load('mq_topics.yml');
 
         $this->registerSaleBundleDependencies($loader, $container);
 
