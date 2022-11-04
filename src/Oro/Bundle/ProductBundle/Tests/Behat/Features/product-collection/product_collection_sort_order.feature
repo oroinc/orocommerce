@@ -54,11 +54,11 @@ Feature: Product collection sort order
   Scenario: Product Collection correctly sorted in frontend
     Given I operate as the Buyer
     When I am on homepage
-    Then I should see "PSKU4"
-    And I should see "PSKU2"
-    And I should see "PSKU1"
-    And I should see "PSKU3"
-    And I should see "PSKU5"
+    Then PSKU4 must be first record in "Product Frontend Grid"
+    And PSKU2 must be second record in "Product Frontend Grid"
+    And PSKU1 must be 3 record in "Product Frontend Grid"
+    And PSKU3 must be 4 record in "Product Frontend Grid"
+    And PSKU5 must be 5 record in "Product Frontend Grid"
 
   Scenario: Product Collection sort order can be edited
     Given I proceed as the Admin
@@ -84,8 +84,8 @@ Feature: Product collection sort order
   Scenario: Product Collection sort order updated in frontend
     Given I operate as the Buyer
     When I am on homepage
-    Then I should see "PSKU3"
-    And I should see "PSKU1"
-    And I should see "PSKU4"
-    And I should see "PSKU5"
-    And I should see "PSKU2"
+    Then PSKU3 must be first record in "Product Frontend Grid"
+    And PSKU1 must be second record in "Product Frontend Grid"
+    And PSKU4 must be 3 record in "Product Frontend Grid"
+    And PSKU2 must be 4 record in "Product Frontend Grid"
+    And PSKU5 must be 5 record in "Product Frontend Grid"
