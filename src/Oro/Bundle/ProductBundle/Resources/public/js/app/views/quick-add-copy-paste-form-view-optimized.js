@@ -1,8 +1,8 @@
 import _ from 'underscore';
-import __ from 'orotranslation/js/translator';
+import $ from 'jquery';
 import mediator from 'oroui/js/mediator';
-import QuantityHelper from 'oroproduct/js/app/quantity-helper';
 import BaseView from 'oroui/js/app/views/base/view';
+import formToAjaxOptions from 'oroui/js/tools/form-to-ajax-options';
 
 const QuickAddCopyPasteFormView = BaseView.extend({
     /**
@@ -38,7 +38,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
             throw new Error('Option `productsCollection` is require for QuickAddCopyPasteFormComponent');
         }
 
-        this.productsCollection = options.productsCollection;
+        Object.assign(this, _.pick(options, 'productsCollection'));
 
         QuickAddCopyPasteFormView.__super__.initialize.call(this, options);
 
@@ -80,39 +80,47 @@ const QuickAddCopyPasteFormView = BaseView.extend({
         this.$('button:submit').attr('disabled', disabled);
     },
 
-    async onSubmit(e) {
+    onSubmit(e) {
         e.preventDefault();
 
         if (!this.validator.element(this.$field)) {
             return false;
         }
 
-        // @deprecated all below in this method
-        this.disableForm();
 
-        const lines = _.compact(this.$field.val().split('\n'));
-        const items = this._prepareFieldItems(lines);
-
-        let result;
-        try {
-            result = await this.productsCollection.addQuickAddRows(items, {ignoreIncorrectUnit: false});
-        } catch (e) {
-            mediator.execute('showFlashMessage', 'error', __('oro.ui.unexpected_error'));
-        }
-
-        // @deprecated invalid items remain on QOF and not returned to copy-paste textarea
-        if (result) {
-            const failed = result.invalid || [];
-            if (failed.length) {
-                const failedLines = _.intersection(lines, _.flatten(_.pluck(failed, 'raw')));
-                this.$field.val(failedLines.join('\n'));
-                this._showErrorMessage();
-            } else {
-                this.$field.val('');
+        this.submitForm({
+            beforeSend: () => {
+                this.disableForm();
             }
-        }
+        }).always(() => this.enableForm());
+    },
 
-        this.enableForm();
+    submitForm(options) {
+        const ajaxOptions = formToAjaxOptions(this.$el, {
+            ...options,
+            success: response => {
+                if (response.messages) {
+                    Object.entries(response.messages).forEach(([type, messages]) => {
+                        messages.forEach(message => mediator.execute('showMessage', type, message));
+                    });
+                }
+                if (response.collection) {
+                    const {errors = [], items} = response.collection;
+                    errors.forEach(error => mediator.execute('showMessage', 'error', error.message));
+
+                    if (items && items.length && !this.disposed) {
+                        const _items = items.map(item => {
+                            // omit index attr, since it is not an index of a model in collection
+                            const {index, ...attrs} = item;
+                            return attrs;
+                        });
+                        this.productsCollection.addQuickAddRows(_items, {ignoreIncorrectUnit: false});
+                    }
+                }
+            }
+        });
+
+        return $.ajax(ajaxOptions);
     },
 
     /**
@@ -131,60 +139,6 @@ const QuickAddCopyPasteFormView = BaseView.extend({
         this.disabled = false;
         this.$field.removeAttr('disabled');
         this._toggleSubmitButton(false);
-    },
-
-    /**
-     * Parses text in field, creates an array of items, and merges items that have the same sku and unit
-     *
-     * @param {Array<string>} lines
-     * @return {[{raw: [string], sku: string, quantity: string, unit_label: string|null}]}
-     * @private
-     * @deprecated
-     */
-    _prepareFieldItems(lines) {
-        const items = [];
-
-        lines.forEach(line => {
-            const [raw, sku, quantity, unitLabel = ''] = line.match(this.itemParseRegExp);
-
-            if (!sku || !quantity) {
-                // row must match the pattern and contains SKU and quantity
-                return;
-            }
-
-            const product = {
-                raw: [raw],
-                sku: sku.toUpperCase(),
-                quantity: QuantityHelper.getQuantityNumberOrDefaultValue(quantity, NaN),
-                unit_label: unitLabel.toUpperCase() || null
-            };
-
-            const existItem = items
-                .find(item => item.sku === product.sku && item.unit_label === product.unit_label);
-
-            if (existItem) {
-                existItem.raw = existItem.raw.concat(product.raw);
-                existItem.quantity += product.quantity;
-            } else {
-                items.push(product);
-            }
-        });
-
-        return items;
-    },
-
-    /**
-     * @deprecated
-     */
-    _showErrorMessage() {
-        const fieldName = this.$field.attr('name');
-        if (!this.isEmptyField()) {
-            this.validator.showBackendErrors({
-                [fieldName]: {
-                    errors: [__('oro.product.frontend.quick_add.copy_paste.error')]
-                }
-            });
-        }
     },
 
     isEmptyField() {

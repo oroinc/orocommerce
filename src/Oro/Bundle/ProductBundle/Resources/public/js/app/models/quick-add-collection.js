@@ -3,7 +3,6 @@ import _ from 'underscore';
 import routing from 'routing';
 import QuickAddModel from 'oroproduct/js/app/models/quick-add-model';
 import BaseCollection from 'oroui/js/app/models/base/collection';
-import UnitsUtil from 'oroproduct/js/app/units-util';
 
 const QuickAddCollection = BaseCollection.extend({
     /**
@@ -19,13 +18,8 @@ const QuickAddCollection = BaseCollection.extend({
 
     ajaxOptions: {},
 
-    isOptimized: false,
-
     constructor: function QuickAddCollection(data, options) {
-        Object.assign(
-            this,
-            _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize', 'ajaxOptions', 'isOptimized')
-        );
+        Object.assign(this, _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize', 'ajaxOptions'));
 
         this._index = {_: []};
 
@@ -130,7 +124,6 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
      * @param {Object} options
      * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @param {string=} options.strategy Either "update" or "replace"
      * @return {Promise<{invalid: Object}>}
      */
     addQuickAddRows(items, options = {}) {
@@ -145,7 +138,6 @@ const QuickAddCollection = BaseCollection.extend({
      * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
      * @param {Object} options
      * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @param {string=} options.strategy Either "update" or "replace"
      * @return {Promise<{invalid: Object}>}
      * @protected
      */
@@ -160,60 +152,26 @@ const QuickAddCollection = BaseCollection.extend({
                 .sort((ma, mb) => ma.get('_order') - mb.get('_order'));
         }
 
-        _.each(items, item => {
-            if (!this.isOptimized && !item.quantity) {
+        items.forEach(item => {
+            if (!item.quantity) {
                 zeroQuantityItems.push(item);
                 return;
             }
 
-            const productUnits = item.units || {};
-            let unitLabel;
-            if (item.unit_label !== undefined) {
-                unitLabel = item.unit_label;
-            } else if (item.unit) {
-                unitLabel = productUnits.hasOwnProperty(item.unit) ? UnitsUtil.getUnitFullLabel(item.unit) : item.unit;
-            }
-
-            let quantity = item.quantity;
-            let model = this.findCompatibleModel(item.sku, unitLabel);
-            if (model && options.strategy !== 'replace') {
-                quantity += model.get('quantity');
-            }
-
-            if (!model) {
+            let model = this.findCompatibleModel(item);
+            if (model) {
+                // update existing model
+                model.set('quantity', model.get('quantity') + item.quantity);
+            } else {
                 model = this.getEmptyModel();
-            }
-
-            model.set({
-                sku: item.sku.toUpperCase(),
-                product_name: item.product_name || '',
-                errors: []
-            });
-
-            // Triggers change event on 'errors' attribute to ensure that displayed errors are up-to-date.
-            model.set({errors: item.errors || []});
-
-            if (quantity !== undefined) {
                 model.set({
-                    quantity: quantity,
-                    quantity_changed_manually: true
+                    sku: item.sku.toUpperCase(),
+                    quantity: item.quantity,
+                    unit_label: item.unit_label
                 });
             }
 
-            if (unitLabel !== undefined) {
-                model.set({unit_label: unitLabel});
-            }
-
-            model.set({
-                product_units: productUnits,
-                units_loaded: item.units !== undefined
-            });
-
-            if (item.additional !== undefined) {
-                model.set({...item.additional});
-            }
-
-            if (item.product_name === undefined) {
+            if (!model.get('product_name')) {
                 // the product info not loaded yet, then add to load list
                 itemsToLoad[model.cid] = item;
             }

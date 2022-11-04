@@ -2,18 +2,11 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
-    const loadModules = require('oroui/js/app/services/load-modules');
+    const QuickAddImportWidget = require('oro/quick-add-import-widget');
     const BaseView = require('oroui/js/app/views/base/view');
     const mediator = require('oroui/js/mediator');
 
-
     const QuickAddImportFormView = BaseView.extend({
-        options: {
-            quickAddImportWidget: 'oro/quick-add-import-widget'
-        },
-
-        quickAddImportWidget: null,
-
         /**
          * @type {string}
          */
@@ -38,14 +31,10 @@ define(function(require) {
         /**
          * @inheritdoc
          */
-        initialize: function(options) {
+        initialize(options) {
             _.extend(this, _.pick(options, 'droppableContainer', 'productsCollection'));
 
-            loadModules({quickAddImportWidget: options.quickAddImportWidget})
-                .then(({quickAddImportWidget}) => {
-                    this.quickAddImportWidget = quickAddImportWidget;
-                });
-
+            // @deprecated no need for this handler without QuickAddImportWidget
             this.listenTo(mediator, {
                 'quick-add-import-form:submit': this.onImportFormSubmit
             });
@@ -55,7 +44,7 @@ define(function(require) {
         /**
          * @inheritdoc
          */
-        delegateEvents: function() {
+        delegateEvents() {
             QuickAddImportFormView.__super__.delegateEvents.call(this);
 
             if (this.droppableContainer) {
@@ -78,7 +67,7 @@ define(function(require) {
         /**
          * @inheritdoc
          */
-        undelegateEvents: function() {
+        undelegateEvents() {
             QuickAddImportFormView.__super__.undelegateEvents.call(this);
             if (this.$el && this.droppableContainer) {
                 this.$el.closest(this.droppableContainer).off(this.eventNamespace());
@@ -86,11 +75,11 @@ define(function(require) {
             return this;
         },
 
-        onFileChange: function() {
+        onFileChange() {
             this.$el.submit();
         },
 
-        onSubmit: function(event) {
+        onSubmit(event) {
             if (event.isDefaultPrevented() || !this.find('input:file')[0].value) {
                 // in case form is invalid and submit has been already prevented
                 return false;
@@ -98,60 +87,65 @@ define(function(require) {
 
             event.preventDefault();
 
+            // @deprecated all below in this method
             this.getWidget()
                 .loadContentWithFormSubmit(this.$el);
         },
 
-        onWidgetContentLoad: function() {
+        onWidgetContentLoad() {
             this.find('input:file')[0].value = '';
         },
 
-        onDragenter: function(event) {
+        onDragenter(event) {
             event.preventDefault();
             event.stopPropagation();
             this.highlight();
         },
 
-        onDragover: function(event) {
+        onDragover(event) {
             event.preventDefault();
             event.stopPropagation();
             this.highlight();
         },
 
-        onDragleave: function(event) {
+        onDragleave(event) {
             event.preventDefault();
             event.stopPropagation();
             this.unhighlight();
         },
 
-        onDrop: function(event) {
+        onDrop(event) {
             event.preventDefault();
             event.stopPropagation();
             this.unhighlight();
+            const {dataTransfer} = event.originalEvent;
 
-            if (
-                event.originalEvent.dataTransfer &&
-                event.originalEvent.dataTransfer.files.length
-            ) {
+            if (dataTransfer && dataTransfer.files.length) {
+                const _dataTransfer = new DataTransfer();
                 // upload supported only for one file, so it is only first file is taken
-                this.getWidget()
-                    .loadContentWithFileUpload(event.originalEvent.dataTransfer.files[0], this.$el);
+                _dataTransfer.items.add(dataTransfer.files[0]);
+                this.find('input:file')[0].files = _dataTransfer.files;
+
+                this.$el.submit();
             }
         },
 
-        getWidget: function() {
-            const widget = new this.quickAddImportWidget();
+        /**
+         * @deprecated method
+         */
+        getWidget() {
+            const widget = new QuickAddImportWidget();
 
             widget.once('contentLoad', this.onWidgetContentLoad.bind(this));
 
             return widget;
         },
 
-        highlight: function() {
+        highlight() {
             this.$el.addClass('highlight');
         },
 
-        unhighlight: function() {
+        unhighlight() {
             this.$el.removeClass('highlight');
         },
 

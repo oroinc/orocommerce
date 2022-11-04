@@ -62,6 +62,11 @@ const QuickAddModel = BaseModel.extend({
         return productName ? `${sku} - ${productName}` : sku;
     },
 
+    toBackendJSON() {
+        const {sku, unit, quantity, _order: index} = this.getAttributes();
+        return {sku, unit, quantity, index};
+    },
+
     onUnitsLoaded() {
         if (!this.get('unit') && this.get('unit_label')) {
             const unit = this._resolveUnitCode(this.get('unit_label'));
@@ -97,7 +102,7 @@ const QuickAddModel = BaseModel.extend({
         this.set(defaults);
     },
 
-    isValidUnit: function() {
+    isValidUnit() {
         return !this.get('units_loaded') || _.has(this.get('product_units'), this.get('unit'));
     }
 });

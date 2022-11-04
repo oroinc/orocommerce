@@ -1,7 +1,6 @@
 aliases:
     jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
     oro/quick-add-import-widget$: oroproduct/js/app/widget/quick-add-import-widget
-    oro/quick-add-import-optimized-widget$: oroproduct/js/app/widget/quick-add-import-optimized-widget
 app-modules:
     - oroproduct/js/app/modules/frontend-validator-constraints-module
 configs:
@@ -10,7 +9,6 @@ configs:
 dynamic-imports:
     commons:
         - oro/quick-add-import-widget
-        - oro/quick-add-import-optimized-widget
     orodatagrid:
         - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
         - oroproduct/js/app/datagrid/backend-datagrid-component
@@ -37,9 +35,14 @@ dynamic-imports:
         - oroproduct/js/app/views/base-product-view
         - oroproduct/js/app/views/product-quantity-editable-view
         - oroproduct/js/app/views/quick-add-copy-paste-form-view
+        - oroproduct/js/app/views/quick-add-copy-paste-form-view-optimized
+        - oroproduct/js/app/views/quick-add-form-view
         - oroproduct/js/app/views/quick-add-import-form-view
+        - oroproduct/js/app/views/quick-add-import-form-view-optimized
         - oroproduct/js/app/views/quick-add-row-view
+        - oroproduct/js/app/views/quick-add-row-view-optimized
         - oroproduct/js/app/views/quick-order-form-view
+        - oroproduct/js/app/views/quick-order-view
         - oroproduct/js/app/views/search-autocomplete-view
         - oroproduct/js/app/widget/product-popup-gallery-widget
         - oroproduct/js/content-processor/product-add-to-dropdown-button

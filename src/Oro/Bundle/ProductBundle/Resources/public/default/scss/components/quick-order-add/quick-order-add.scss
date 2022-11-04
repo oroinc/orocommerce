@@ -65,8 +65,6 @@
   }
 
   &__remove-row {
-    display: none;
-
     position: absolute;
     bottom: 11px;
     right: -20px;
@@ -221,5 +219,10 @@
         }
       }
     }
+  }
+
+  form > .validation-failed,
+  .collection-validation-input + .validation-failed {
+    margin-bottom: $offset-y-m;
   }
 }
