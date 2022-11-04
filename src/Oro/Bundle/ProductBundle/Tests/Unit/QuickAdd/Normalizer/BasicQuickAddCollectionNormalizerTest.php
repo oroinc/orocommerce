@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddField;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -24,8 +25,17 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);
         $translator = $this->createMock(TranslatorInterface::class);
+        $unitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+        $unitLabelFormatter
+            ->expects(self::any())
+            ->method('format')
+            ->willReturnCallback(static fn (string $code) => $code . ' [label]');
 
-        $this->normalizer = new BasicQuickAddCollectionNormalizer($localizationHelper, $translator);
+        $this->normalizer = new BasicQuickAddCollectionNormalizer(
+            $localizationHelper,
+            $unitLabelFormatter,
+            $translator
+        );
 
         $translator
             ->expects(self::any())
@@ -95,6 +105,9 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
         $errorPropertyPath = 'samplePath';
         $quickAddRowWithErrors->addError($errorMessage, $errorMessageParameters, $errorPropertyPath);
 
+        $quickAddRowWithInvalidUnit = new QuickAddRow(5, $product->getSku(), 46, 'invalid_unit');
+        $quickAddRowWithInvalidUnit->setProduct($product);
+
         return [
             'without product, additional fields, errors' => [
                 new QuickAddRowCollection([$quickAddRowWithoutProductAndAdditional]),
@@ -104,7 +117,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                         0 => [
                             'sku' => $quickAddRowWithoutProductAndAdditional->getSku(),
                             'product_name' => '',
-                            'unit' => $quickAddRowWithoutProductAndAdditional->getUnit(),
+                            'unit_label' => $quickAddRowWithoutProductAndAdditional->getUnit(),
                             'quantity' => $quickAddRowWithoutProductAndAdditional->getQuantity(),
                             'errors' => [],
                             'additional' => [],
@@ -120,7 +133,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                         0 => [
                             'sku' => $quickAddRowWithoutAdditionalFields->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
-                            'unit' => $quickAddRowWithoutAdditionalFields->getUnit(),
+                            'unit_label' => $quickAddRowWithoutAdditionalFields->getUnit() . ' [label]',
                             'units' => [
                                 $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
                             ],
@@ -139,7 +152,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                         0 => [
                             'sku' => $quickAddRowWithAdditionalFields->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
-                            'unit' => $quickAddRowWithAdditionalFields->getUnit(),
+                            'unit_label' => $quickAddRowWithAdditionalFields->getUnit() . ' [label]',
                             'units' => [
                                 $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
                             ],
@@ -161,7 +174,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                         0 => [
                             'sku' => $quickAddRowWithErrors->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
-                            'unit' => $quickAddRowWithErrors->getUnit(),
+                            'unit_label' => $quickAddRowWithErrors->getUnit() . ' [label]',
                             'units' => [
                                 $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
                             ],
@@ -172,6 +185,25 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                                     'propertyPath' => $errorPropertyPath,
                                 ],
                             ],
+                            'additional' => [],
+                        ],
+                    ],
+                ],
+            ],
+            'items with invalid unit' => [
+                new QuickAddRowCollection([$quickAddRowWithInvalidUnit]),
+                [
+                    'errors' => [],
+                    'items' => [
+                        0 => [
+                            'sku' => $quickAddRowWithInvalidUnit->getSku(),
+                            'product_name' => $product->getDefaultName()->getString(),
+                            'unit_label' => $quickAddRowWithInvalidUnit->getUnit(),
+                            'units' => [
+                                $productUnitPrecision->getProductUnitCode() => $productUnitPrecision->getPrecision(),
+                            ],
+                            'quantity' => $quickAddRowWithInvalidUnit->getQuantity(),
+                            'errors' => [],
                             'additional' => [],
                         ],
                     ],

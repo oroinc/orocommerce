@@ -6,6 +6,7 @@ namespace Oro\Bundle\ProductBundle\QuickAdd\Normalizer;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -17,11 +18,17 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
 {
     private LocalizationHelper $localizationHelper;
 
+    private UnitLabelFormatterInterface $unitLabelFormatter;
+
     private TranslatorInterface $translator;
 
-    public function __construct(LocalizationHelper $localizationHelper, TranslatorInterface $translator)
-    {
+    public function __construct(
+        LocalizationHelper $localizationHelper,
+        UnitLabelFormatterInterface $unitLabelFormatter,
+        TranslatorInterface $translator
+    ) {
         $this->localizationHelper = $localizationHelper;
+        $this->unitLabelFormatter = $unitLabelFormatter;
         $this->translator = $translator;
     }
 
@@ -43,7 +50,6 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
             $results['items'][$index] = [
                 'sku' => $sku,
                 'product_name' => '',
-                'unit' => (string)$quickAddRow->getUnit(),
                 'quantity' => $quickAddRow->getQuantity(),
                 'errors' => array_map(
                     fn (array $error) => [
@@ -61,6 +67,13 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
                     ->getLocalizedValue($product->getNames());
 
                 $results['items'][$index]['units'] = $product->getSellUnitsPrecision();
+            }
+
+            $unitCode = (string) $quickAddRow->getUnit();
+            if (isset($results['items'][$index]['units'][$unitCode])) {
+                $results['items'][$index]['unit_label'] = $this->unitLabelFormatter->format($unitCode);
+            } else {
+                $results['items'][$index]['unit_label'] = $unitCode;
             }
 
             foreach ($quickAddRow->getAdditionalFields() as $additionalField) {

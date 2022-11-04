@@ -2002,6 +2002,7 @@ services:
         class: Oro\Bundle\ProductBundle\QuickAdd\Normalizer\BasicQuickAddCollectionNormalizer
         arguments:
             - '@oro_locale.helper.localization'
+            - '@oro_product.formatter.product_unit_label'
             - '@translator'
         tags:
             - { name: oro_product.quick_add.normalizer }
