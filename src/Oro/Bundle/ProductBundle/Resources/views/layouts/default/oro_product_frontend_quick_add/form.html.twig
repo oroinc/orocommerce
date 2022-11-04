@@ -27,6 +27,7 @@
                     placeholder: "oro.product.sku.placeholder",
                     'aria-label': "oro.product.sku.aria_label",
                     'data-value': form.product.vars.value,
+                    'data-required': "data-required",
                     'data-dropdown-classes':{
                         holder: 'select2-drop oro-select2__dropdown',
                         menu: 'select2-results',
@@ -47,12 +48,12 @@
             </div>
             <div class="quick-order-add__col quick-order-add__unit"
                  data-label="{{ 'oro.product.productunitprecision.unit.label'|trans }}"
-                 data-validation="{{ {'QuickAddUnit': {}}|json_encode(constant('JSON_FORCE_OBJECT')) }}"
             >
                 {{ form_widget(form.unit, {attr: {
                     'class': 'disabled',
                     'aria-label': 'oro.product.productunitprecision.unit.label',
-                    'data-skip-input-widgets': ''
+                    'data-skip-input-widgets': '',
+                    'data-validation': {'QuickAddUnit': {}}|json_encode(constant('JSON_FORCE_OBJECT'))
                 }|merge(form.unit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields with {
@@ -60,7 +61,7 @@
                 _collection_unique_prefix: form.parent.vars.unique_block_prefix
             } %}
             {% if allow_delete %}
-                <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
+                <button class="btn btn--plain quick-order-add__remove-row hidden removeRow" data-role="row-remove" type="button"
                         aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
                 </button>
             {% endif %}

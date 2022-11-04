@@ -1,11 +1,8 @@
 import _ from 'underscore';
 import $ from 'jquery';
-import __ from 'orotranslation/js/translator';
 import mediator from 'oroui/js/mediator';
-import QuantityHelper from 'oroproduct/js/app/quantity-helper';
 import BaseView from 'oroui/js/app/views/base/view';
 import formToAjaxOptions from 'oroui/js/tools/form-to-ajax-options';
-import messenger from 'oroui/js/messenger';
 
 const QuickAddCopyPasteFormView = BaseView.extend({
     /**
@@ -83,42 +80,47 @@ const QuickAddCopyPasteFormView = BaseView.extend({
         this.$('button:submit').attr('disabled', disabled);
     },
 
-    async onSubmit(e) {
+    onSubmit(e) {
         e.preventDefault();
 
         if (!this.validator.element(this.$field)) {
             return false;
         }
 
-        const ajaxOptions = formToAjaxOptions(this.$el, {
-            success: response => {
-                if (response.collection) {
-                    _.each(response.collection.errors, error => {
-                        messenger.notificationMessage('error', error.message);
-                    });
 
-                    if (response.collection.items && response.collection.items.length) {
-                        mediator.trigger('quick-add-import-form:submit', response.collection.items);
+        this.submitForm({
+            beforeSend: () => {
+                this.disableForm();
+            }
+        }).always(() => this.enableForm());
+    },
+
+    submitForm(options) {
+        const ajaxOptions = formToAjaxOptions(this.$el, {
+            ...options,
+            success: response => {
+                if (response.messages) {
+                    Object.entries(response.messages).forEach(([type, messages]) => {
+                        messages.forEach(message => mediator.execute('showMessage', type, message));
+                    });
+                }
+                if (response.collection) {
+                    const {errors = [], items} = response.collection;
+                    errors.forEach(error => mediator.execute('showMessage', 'error', error.message));
+
+                    if (items && items.length && !this.disposed) {
+                        const _items = items.map(item => {
+                            // omit index attr, since it is not an index of a model in collection
+                            const {index, ...attrs} = item;
+                            return attrs;
+                        });
+                        this.productsCollection.addQuickAddRows(_items, {ignoreIncorrectUnit: false});
                     }
                 }
-
-                if (response.messages) {
-                    _.each(response.messages, (messages, type) => {
-                        _.each(messages, message => {
-                            messenger.notificationMessage(type, message);
-                        });
-                    });
-                }
-            },
-            complete: xhr => {
-                this.enableForm();
             }
         });
 
-        this.disableForm();
-
-        this.trigger('beforeContentLoad', this);
-        this.loading = $.ajax(ajaxOptions);
+        return $.ajax(ajaxOptions);
     },
 
     /**
@@ -137,56 +139,6 @@ const QuickAddCopyPasteFormView = BaseView.extend({
         this.disabled = false;
         this.$field.removeAttr('disabled');
         this._toggleSubmitButton(false);
-    },
-
-    /**
-     * Parses text in field, creates an array of items, and merges items that have the same sku and unit
-     *
-     * @param {Array<string>} lines
-     * @return {[{raw: [string], sku: string, quantity: string, unit_label: string|null}]}
-     * @private
-     */
-    _prepareFieldItems(lines) {
-        const items = [];
-
-        lines.forEach(line => {
-            const [raw, sku, quantity, unitLabel = ''] = line.match(this.itemParseRegExp);
-
-            if (!sku || !quantity) {
-                // row must match the pattern and contains SKU and quantity
-                return;
-            }
-
-            const product = {
-                raw: [raw],
-                sku: sku.toUpperCase(),
-                quantity: QuantityHelper.getQuantityNumberOrDefaultValue(quantity, NaN),
-                unit_label: unitLabel.toUpperCase() || null
-            };
-
-            const existItem = items
-                .find(item => item.sku === product.sku && item.unit_label === product.unit_label);
-
-            if (existItem) {
-                existItem.raw = existItem.raw.concat(product.raw);
-                existItem.quantity += product.quantity;
-            } else {
-                items.push(product);
-            }
-        });
-
-        return items;
-    },
-
-    _showErrorMessage() {
-        const fieldName = this.$field.attr('name');
-        if (!this.isEmptyField()) {
-            this.validator.showBackendErrors({
-                [fieldName]: {
-                    errors: [__('oro.product.frontend.quick_add.copy_paste.error')]
-                }
-            });
-        }
     },
 
     isEmptyField() {

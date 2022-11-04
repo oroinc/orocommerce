@@ -1,9 +1,5 @@
-import $ from 'jquery';
-import _ from 'underscore';
-import routing from 'routing';
 import QuickAddModel from 'oroproduct/js/app/models/quick-add-model';
 import BaseCollection from 'oroui/js/app/models/base/collection';
-import UnitsUtil from 'oroproduct/js/app/units-util';
 
 const QuickAddCollection = BaseCollection.extend({
     /**
@@ -11,17 +7,11 @@ const QuickAddCollection = BaseCollection.extend({
      */
     _index: null,
 
-    productBySkuRoute: 'oro_frontend_autocomplete_search',
-
-    loadProductsBatchSize: 500,
+    comparator: 'index',
 
     model: QuickAddModel,
 
-    ajaxOptions: {},
-
     constructor: function QuickAddCollection(data, options) {
-        Object.assign(this, _.pick(options, 'productBySkuRoute', 'loadProductsBatchSize', 'ajaxOptions'));
-
         this._index = {_: []};
 
         this.listenTo(this, {
@@ -88,17 +78,10 @@ const QuickAddCollection = BaseCollection.extend({
     /**
      * Check if model with proper sku and unit_label exists
      *
-     * @param {[string,string]|Object<{sku:string,unit:string}>} args
+     * @param {Object<{sku:string, unit_label:string}>} attrs
      * @return {QuickAddModel|null}
      */
-    findCompatibleModel(...args) {
-        let sku;
-        let unitLabel;
-        if (args.length === 1) {
-            ({sku, unit_label: unitLabel} = args[0]);
-        } else {
-            ([sku, unitLabel] = args);
-        }
+    findCompatibleModel({sku, unit_label: unitLabel}) {
         const key = this._formatIndexKey(sku, unitLabel);
         const models = this._index[key];
         return models && models.length ? models[0] : null;
@@ -122,207 +105,71 @@ const QuickAddCollection = BaseCollection.extend({
     /**
      * Updates the collection with supplied items and loads product information
      *
-     * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
+     * @param {Array<{sku:string, quantity: string, unit_label?: string, index?: number}>} items
      * @param {Object} options
      * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
      * @param {string=} options.strategy Either "update" or "replace"
-     * @return {Promise<{invalid: Object}>}
      */
     addQuickAddRows(items, options = {}) {
-        const promise = this._addQuickAddRows(items, options);
-        this.trigger('quick-add-rows', promise);
-        return promise;
-    },
-
-    /**
-     * Updates the collection with supplied items and loads product information
-     *
-     * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
-     * @param {Object} options
-     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @param {string=} options.strategy Either "update" or "replace"
-     * @return {Promise<{invalid: Object}>}
-     * @protected
-     */
-    async _addQuickAddRows(items, options = {}) {
-        const itemsToLoad = {};
-        const zeroQuantityItems = [];
-
-        await window.sleep(0); // give time to repaint UI
-
         if (this._index['_']) {
             this._index['_'] // sort empty models by rows order in form
-                .sort((ma, mb) => ma.get('_order') - mb.get('_order'));
+                .sort((ma, mb) => ma.get('index') - mb.get('index'));
         }
 
-        _.each(items, item => {
-            const productUnits = item.units || {};
-            let unitLabel;
-            if (item.unit_label !== undefined) {
-                unitLabel = item.unit_label;
-            } else if (item.unit) {
-                unitLabel = productUnits.hasOwnProperty(item.unit) ? UnitsUtil.getUnitFullLabel(item.unit) : item.unit;
+        items.forEach(attrs => {
+            const {
+                product_name: productName = '',
+                units = {},
+                unit_label: unitLabel,
+                quantity
+            } = attrs;
+            const unitsLoaded = attrs.units !== undefined;
+            const sku = attrs.sku.toUpperCase();
+            let model;
+
+            if (attrs.index) {
+                // get existing model by index
+                model = this.find(model => model.get('index') === attrs.index);
+            } else {
+                // get model with the same pair of sku+unit
+                model = this.findCompatibleModel(attrs);
             }
 
-            let quantity = item.quantity;
-            let model = this.findCompatibleModel(item.sku, unitLabel);
-            if (model && options.strategy !== 'replace') {
-                quantity += model.get('quantity');
-            }
-
-            if (!model) {
-                model = this.getEmptyModel();
-            }
-
-            model.set({
-                sku: item.sku.toUpperCase(),
-                product_name: item.product_name || '',
-                errors: []
-            });
-
-            // Triggers change event on 'errors' attribute to ensure that displayed errors are up-to-date.
-            model.set({errors: item.errors || []});
-
-            if (quantity !== undefined) {
+            if (model) {
+                let quantity = attrs.quantity;
+                if (options.strategy !== 'replace') {
+                    quantity += model.get('quantity');
+                }
+                // update existing model
                 model.set({
-                    quantity: quantity,
-                    quantity_changed_manually: true
-                });
-            }
-
-            if (unitLabel !== undefined) {
-                model.set({unit_label: unitLabel});
-            }
-
-            model.set({
-                product_units: productUnits,
-                units_loaded: item.units !== undefined
-            });
-
-            if (item.additional !== undefined) {
-                model.set({...item.additional});
-            }
-
-            if (item.product_name === undefined) {
-                // the product info not loaded yet, then add to load list
-                itemsToLoad[model.cid] = item;
-            }
-        });
-
-        this.trigger('quick-add-rows:before-load');
-
-        let result;
-        let invalidItems;
-        try {
-            result = await this.loadProductInfo(itemsToLoad, options);
-        } catch (e) {
-            throw e;
-        } finally {
-            const obsoleteModels = [];
-            if (result) {
-                ({invalid: invalidItems = {}} = result);
-                const loadedItems = _.omit(itemsToLoad, Object.keys(invalidItems));
-                Object.keys(loadedItems).forEach(cid => {
-                    const model = this.get(cid);
-                    const existingModel = this.findCompatibleModel(model.toJSON());
-                    if (existingModel && model !== existingModel) {
-                        // update existing model
-                        existingModel.set('quantity', existingModel.get('quantity') + model.get('quantity'));
-                        obsoleteModels.push(model);
-                    }
+                    product_name: productName,
+                    product_units: units,
+                    units_loaded: unitsLoaded,
+                    quantity
                 });
             } else {
-                invalidItems = itemsToLoad;
+                model = this.getEmptyModel();
+                model.set({
+                    sku,
+                    product_name: productName,
+                    product_units: units,
+                    units_loaded: unitsLoaded,
+                    unit_label: unitLabel,
+                    quantity
+                });
             }
 
-            const invalidModels = Object.keys(invalidItems).map(cid => this.get(cid));
+            // Reset errors to make sure that 'error' event will be triggered even if errors are not changed
+            if (model.get('errors') !== void 0) {
+                model.set('errors', [], {silent: true});
+            }
 
-            this.remove([...invalidModels, ...obsoleteModels]);
-        }
-        this.trigger('quick-add-rows:after-load');
-
-        return {invalid: [...Object.values(invalidItems), ...zeroQuantityItems]};
-    },
-
-    /**
-     *
-     * @param {Array<{sku:string, quantity: string, unit_label?: string}>} items
-     * @param {Object} options
-     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @return {Promise<{invalid: any}>}
-     */
-    async loadProductInfo(items, options = {}) {
-        let remainingItems = Object.assign({}, items);
-
-        const batches = _.chunk(_.unique(_.pluck(Object.values(items), 'sku')), this.loadProductsBatchSize);
-        await batches.reduce(async (previousRequest, batch) => {
-            await previousRequest;
-            return new Promise((resolve, reject) => {
-                if (!batch.length) {
-                    resolve({});
-                } else {
-                    const routeParams = {
-                        name: 'oro_product_visibility_limited_with_prices',
-                        per_page: batch.length,
-                        query: ''
-                    };
-                    $.ajax(Object.assign({
-                        url: routing.generate(this.productBySkuRoute, routeParams),
-                        method: 'post',
-                        data: {
-                            sku: batch
-                        }
-                    }, this.ajaxOptions)).done((data, status) => {
-                        if (status === 'success') {
-                            remainingItems = this._updateModels(data.results, remainingItems, options);
-                            resolve();
-                        } else {
-                            reject(new Error('Invalid response'));
-                        }
-                    }).fail(e => reject(e));
-                }
-            });
-        }, {});
-
-        return Promise.resolve({invalid: remainingItems});
-    },
-
-    /**
-     * Processes loaded product info data, update related models and returns items that were not updated
-     *
-     * @param {Array<Object>} productInfo list of loaded product info data
-     * @param {Object} itemsToUpdate map of model's CIDs to base product info data
-     * @param {Object} options
-     * @param {boolean=} options.ignoreIncorrectUnit by default product with incorrect units are added to collection
-     * @return {Object} remaining items that was not updated
-     * @private
-     */
-    _updateModels(productInfo, itemsToUpdate, options = {}) {
-        const updatedModels = [];
-        productInfo.forEach(data => {
-            const {id, sku, units, 'defaultName.string': productName, ...extraAttrs} = data;
-            const SKU = sku.toUpperCase();
-            this.where(model => model.get('sku').toUpperCase() === SKU && model.get('product_name') === '')
-                .forEach(model => {
-                    const attrs = {
-                        sku,
-                        product_name: productName,
-                        units_loaded: typeof units !== 'undefined',
-                        product_units: {...units},
-                        ...extraAttrs
-                    };
-                    model.set(attrs);
-
-                    const unitLabel = itemsToUpdate[model.cid].unit_label;
-                    if (model.get('unit') || !unitLabel || options.ignoreIncorrectUnit !== false) {
-                        // unit is resolved properly, or no wishful unit, or incorrect unit has to be ignored
-                        // and to list to models that going to be updated
-                        updatedModels.push(model.cid);
-                    }
-                });
+            const {additional = {}, errors = []} = attrs;
+            // update rest of attributes
+            model.set({errors, ...additional});
         });
 
-        return _.omit(itemsToUpdate, updatedModels);
+        this.trigger('quick-add-rows');
     }
 });
 

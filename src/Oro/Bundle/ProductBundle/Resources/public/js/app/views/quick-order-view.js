@@ -9,7 +9,6 @@ import Progress from 'oroui/js/app/services/progress';
 const QuickOrderFromView = BaseView.extend({
     elem: {
         form: '[data-role="quick-order-add-container"] form',
-        grid: '[data-role="quick-order-add-container"] form > .grid',
         rowsCollection: '.js-item-collection',
         rows: '[data-name="field__row"]',
         buttons: '[data-role="quick-order-add-buttons"]',
@@ -32,15 +31,15 @@ const QuickOrderFromView = BaseView.extend({
      */
     options: {
         rowsCountThreshold: 20,
-        rowsBatchSize: 50,
+        rowsBatchSize: 250,
         selectors: {}
     },
 
     listen: {
         'rows-initialization-progress': 'updateLoadingBarProgress',
         'quick-add-rows collection': 'onCollectionQuickAddRows',
-        'quick-add-rows:before-load collection': 'checkRowsAvailability',
-        'update collection': 'checkRowsQuantity'
+        'update collection': 'checkRowsQuantity',
+        'rows-initialization-done': 'updateTopButtons'
     },
 
     topButtons: null,
@@ -58,29 +57,17 @@ const QuickOrderFromView = BaseView.extend({
         this.options = $.extend(true, {}, this.options, options);
         this.elem = $.extend(this.elem, this.options.selectors || {});
 
-        const collectionOptions = Object.assign({
-            ajaxOptions: {
-                global: false // ignore global loading bar
-            }
-        }, _.pick(this.options, 'productBySkuRoute'));
-        this.collection = new QuickAddCollection([], collectionOptions);
+        this.collection = new QuickAddCollection();
 
         this.createTopButtonCache();
 
-        this.initLayout({
-            productsCollection: this.collection
-        }).then(() => {
-            const items = this.collection.filter('sku').map(model => [model.cid, {sku: model.get('sku')}]);
-            if (items.length) {
-                this.collection.loadProductInfo(Object.fromEntries(items));
-            }
-        });
+        this.initLayout({productsCollection: this.collection});
 
-        this.checkRowsCount();
+        this.updateTopButtons();
         this.rowsCountInitial = this.getRowsCount();
     },
 
-    onCollectionQuickAddRows(requestPromise) {
+    onCollectionQuickAddRows() {
         if (!this.subview('loadingMask')) {
             this.subview('loadingMask', new LoadingMaskView({
                 container: this.$el
@@ -95,18 +82,16 @@ const QuickOrderFromView = BaseView.extend({
         this.subview('loadingMask').show();
         this.subview('loadingBar').showLoader();
 
-        const initPromise = new Promise(resolve => {
-            this.once('rows-initialization-done', () => {
-                resolve();
-            });
-        });
-        Promise.all([requestPromise, initPromise]).finally(() => {
+        this.once('rows-initialization-done', () => {
             this.subview('loadingBar').hideLoader(() => {
                 this.$el.removeAttr('data-ignore-tabbable');
                 this.$el.removeClass('quick-order__progress');
                 this.subview('loadingMask').hide();
+                this.$(this.elem.form).data('validator').focusInvalid();
             });
         });
+
+        this.checkRowsAvailability();
     },
 
     updateLoadingBarProgress(value) {
@@ -116,13 +101,16 @@ const QuickOrderFromView = BaseView.extend({
     },
 
     onContentInitialized() {
-        this.checkRowsCount();
         if (this._initProgress) {
             this._initProgress.step();
         }
+        // once the last step is done -- `_initProgress` property is removed
+        if (!this._initProgress) {
+            this.updateTopButtons();
+        }
     },
 
-    checkRowsCount() {
+    updateTopButtons() {
         const rowsCount = this.getRowsCount();
         if (rowsCount > this.options.rowsCountThreshold) {
             this.showTopButtons();
@@ -152,7 +140,7 @@ const QuickOrderFromView = BaseView.extend({
             contentShouldUpdate = true;
         }
 
-        this.$(this.elem.grid).prepend(this.topButtons);
+        this.$(this.elem.form).prepend(this.topButtons);
         this.$(this.elem.clear).removeClass('hidden');
 
         if (contentShouldUpdate) {
@@ -192,7 +180,7 @@ const QuickOrderFromView = BaseView.extend({
      * Adds form rows for vacant models in collection
      */
     checkRowsAvailability() {
-        const count = this.collection.filter(model => !model.has('_order')).length;
+        const count = this.collection.filter(model => !model.has('index')).length;
         if (count) {
             this.addRows(count);
         } else {
@@ -210,13 +198,28 @@ const QuickOrderFromView = BaseView.extend({
         this.listenToOnce(progress, 'done', () => {
             this.stopListening(progress);
             delete this._initProgress;
+            // show newly added rows at once, for the sake of performance
+            this.$(this.elem.rowsCollection).children().removeClass('hidden');
             this.trigger('rows-initialization-done');
         });
 
         while (count > 0) {
             await window.sleep(0); // give time to repaint UI
             const batch = count > batchSize ? batchSize : count;
-            this.$(this.elem.add).trigger({type: 'add-rows', count: batch});
+            this.$(this.elem.add).trigger({
+                type: 'add-rows',
+                count: batch,
+                htmlProcessor(html) {
+                    // hide all newly added rows and show them at once when all rows are ready to use,
+                    // for the sake of performance
+                    const template = document.createElement('template');
+                    template.innerHTML = html;
+                    for (const child of template.content.children) {
+                        child.classList.add('hidden');
+                    }
+                    return template.content;
+                }
+            });
             progress.step();
             count -= batch;
         }
