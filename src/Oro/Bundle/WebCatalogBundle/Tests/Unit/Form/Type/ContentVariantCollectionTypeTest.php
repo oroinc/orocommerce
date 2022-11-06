@@ -16,15 +16,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContentVariantCollectionType
-     */
-    protected $type;
-
-    /**
-     * @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $variantTypeRegistry;
+
+    /** @var ContentVariantCollectionType */
+    private $type;
 
     protected function setUp(): void
     {
@@ -40,11 +36,7 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->getMockBuilder(OptionsResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->any())
             ->method('setDefault')
             ->withConsecutive(
@@ -56,18 +48,9 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $view */
-        $view = $this->getMockBuilder(FormView::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var FormView|\PHPUnit\Framework\MockObject\MockObject $subformView */
-        $subformView = $this->getMockBuilder(FormView::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $view = $this->createMock(FormView::class);
+        $subformView = $this->createMock(FormView::class);
 
         $subform = $this->createMock(FormInterface::class);
         $subform->expects($this->once())
@@ -82,7 +65,6 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
             'name' => new ContentVariantFormPrototype($subform, 'title')
         ];
 
-        /** @var FormConfigInterface|\PHPUnit\Framework\MockObject\MockObject $config */
         $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->once())
             ->method('hasAttribute')
@@ -114,7 +96,6 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->exactly(2))
             ->method('addEventSubscriber')
@@ -123,7 +104,6 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
                 [$this->isInstanceOf(ContentVariantCollectionResizeSubscriber::class)]
             );
 
-        /** @var ContentVariantTypeInterface|\PHPUnit\Framework\MockObject\MockObject $variantType */
         $variantType = $this->createMock(ContentVariantTypeInterface::class);
         $variantType->expects($this->any())
             ->method('getFormType')
@@ -138,7 +118,6 @@ class ContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
             ->method('getAllowedContentVariantTypes')
             ->willReturn([$variantType]);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $subform */
         $subform = $this->createMock(FormInterface::class);
         $subformBuilder = $this->createMock(FormBuilderInterface::class);
         $subformBuilder->expects($this->once())

@@ -11,24 +11,15 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductVisibilityIndexer
-     */
-    private $indexer;
-
-    /**
-     * @var ProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $visibilityProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var ProductVisibilityIndexer */
+    private $indexer;
+
     protected function setUp(): void
     {
-        $this->visibilityProvider = $this->getMockBuilder(ProductVisibilityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->visibilityProvider = $this->createMock(ProductVisibilityProvider::class);
 
         $this->indexer = new ProductVisibilityIndexer($this->visibilityProvider);
     }
@@ -48,8 +39,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->visibilityProvider
-            ->expects($this->once())
+        $this->visibilityProvider->expects($this->once())
             ->method('getCustomerVisibilitiesForProducts')
             ->with($entityIds, $websiteId)
             ->willReturn([
@@ -67,8 +57,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
                 ]
             ]);
 
-        $this->visibilityProvider
-            ->expects($this->once())
+        $this->visibilityProvider->expects($this->once())
             ->method('getNewUserAndAnonymousVisibilitiesForProducts')
             ->with($entityIds, $websiteId)
             ->willReturn([

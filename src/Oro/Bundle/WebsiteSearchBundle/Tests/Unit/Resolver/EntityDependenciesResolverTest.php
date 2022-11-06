@@ -20,13 +20,8 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->mappingProvider = $this->getMockBuilder(SearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mappingProvider = $this->createMock(SearchMappingProvider::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->entityDependenciesResolver = new EntityDependenciesResolver(
             $this->eventDispatcher,
@@ -34,22 +29,15 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->mappingProvider, $this->eventDispatcher, $this->entityDependenciesResolver);
-    }
-
     public function testGetClassesForReindexWhenAllClassesReturned(): void
     {
         $expectedClasses = ['Product', 'Category', 'User'];
 
-        $this->mappingProvider
-            ->expects($this->once())
+        $this->mappingProvider->expects($this->once())
             ->method('getEntityClasses')
             ->willReturn($expectedClasses);
 
-        $this->eventDispatcher
-            ->expects($this->never())
+        $this->eventDispatcher->expects($this->never())
             ->method('dispatch');
 
         $this->assertEquals($expectedClasses, $this->entityDependenciesResolver->getClassesForReindex());
@@ -57,11 +45,10 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetClassesForReindexWithDependentClasses(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
-            ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
+            ->willReturnCallback(function (CollectDependentClassesEvent $event) {
                 $event->addClassDependencies('Product', ['Category', 'User']);
 
                 return $event;
@@ -72,11 +59,10 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
 
     public function testGetClassesForReindexWithCircularDependency(): void
     {
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with($this->isInstanceOf(CollectDependentClassesEvent::class), CollectDependentClassesEvent::NAME)
-            ->willReturnCallback(function (CollectDependentClassesEvent $event, $eventName) {
+            ->willReturnCallback(function (CollectDependentClassesEvent $event) {
                 $event->addClassDependencies('User', ['Category']);
                 $event->addClassDependencies('Category', ['Product']);
                 $event->addClassDependencies('Product', ['User']);

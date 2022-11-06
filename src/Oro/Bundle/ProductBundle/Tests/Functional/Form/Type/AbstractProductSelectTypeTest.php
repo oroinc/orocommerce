@@ -83,15 +83,9 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     {
     }
 
-    /**
-     * @return array
-     */
-    abstract public function restrictionSelectDataProvider();
+    abstract public function restrictionSelectDataProvider(): array;
 
-    /**
-     * @return array
-     */
-    abstract public function restrictionGridDataProvider();
+    abstract public function restrictionGridDataProvider(): array;
 
     public function testAllDependenciesInjectedException()
     {
@@ -111,11 +105,14 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
     /**
      * @param Response $result
-     * @param string $dataFieldName
+     * @param string   $dataFieldName
      * @param string[] $expectedProducts
      */
-    protected function assertResponseContainsProducts(Response $result, $dataFieldName, array $expectedProducts)
-    {
+    protected function assertResponseContainsProducts(
+        Response $result,
+        string $dataFieldName,
+        array $expectedProducts
+    ): void {
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
         $actualProducts = array_map(
@@ -125,41 +122,29 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
             json_decode($result->getContent())->$dataFieldName
         );
 
-        $this->assertEquals(count($expectedProducts), count($actualProducts));
+        $this->assertCount(count($expectedProducts), $actualProducts);
 
         foreach ($actualProducts as $product) {
             $this->assertContains($product, $expectedProducts);
         }
     }
 
-    /**
-     * @param string $datagridName
-     */
-    public function setDatagridName($datagridName)
+    public function setDatagridName(string $datagridName): void
     {
         $this->datagridName = $datagridName;
     }
 
-    /**
-     * @param string $datagridIndexPath
-     */
-    public function setDatagridIndexPath($datagridIndexPath)
+    public function setDatagridIndexPath(string $datagridIndexPath): void
     {
         $this->datagridIndexPath = $datagridIndexPath;
     }
 
-    /**
-     * @param string $searchAutocompletePath
-     */
-    public function setSearchAutocompletePath($searchAutocompletePath)
+    public function setSearchAutocompletePath(string $searchAutocompletePath): void
     {
         $this->searchAutocompletePath = $searchAutocompletePath;
     }
 
-    /**
-     * @param array $dataParameters
-     */
-    public function setDataParameters($dataParameters)
+    public function setDataParameters(array $dataParameters): void
     {
         $this->dataParameters = $dataParameters;
     }

@@ -9,20 +9,19 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    private DirectUrlMessageFactory $factory;
+    /** @var DirectUrlMessageFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->factory = new DirectUrlMessageFactory($this->registry);
+        $this->factory = new DirectUrlMessageFactory($this->doctrine);
     }
 
     /**
@@ -46,9 +45,8 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider redirectStrategyDataProvider
-     * @param bool $requestCreateRedirect
      */
-    public function testCreateMassMessage($requestCreateRedirect): void
+    public function testCreateMassMessage(bool $requestCreateRedirect): void
     {
         self::assertEquals(
             [
@@ -60,9 +58,6 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function redirectStrategyDataProvider(): array
     {
         return [
@@ -90,16 +85,12 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
         $entity = new SluggableEntityStub();
         $entity->setId(1);
 
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects(self::once())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
 
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())
             ->method('findBy')
             ->with(['id' => 1])
@@ -114,7 +105,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(SluggableEntityStub::class)
             ->willReturn($metadata);
-        $this->registry->expects(self::once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(SluggableEntityStub::class)
             ->willReturn($em);

@@ -12,9 +12,6 @@ class PageControllerTest extends WebTestCase
 {
     use SEOFrontendTrait;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient(
@@ -23,17 +20,15 @@ class PageControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData',
-            'Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData',
+            LoadPageData::class,
+            LoadPageMetaData::class,
         ]);
     }
 
     /**
      * @dataProvider viewDataProvider
-     * @param string $page
-     * @param array $metaTags
      */
-    public function testView($page, array $metaTags)
+    public function testView(string $page, array $metaTags)
     {
         $page = $this->getPage($page);
 
@@ -46,10 +41,7 @@ class PageControllerTest extends WebTestCase
         $this->checkSEOFrontendMetaTags($crawler, $metaTags);
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
+    public function viewDataProvider(): array
     {
         $title1 = $this->getMetaContent(LoadPageData::PAGE_1, LoadPageMetaData::META_TITLES);
         $description1 = $this->getMetaContent(LoadPageData::PAGE_1, LoadPageMetaData::META_DESCRIPTIONS);
@@ -75,19 +67,12 @@ class PageControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $reference
-     * @return Page
-     */
-    protected function getPage($reference)
+    private function getPage(string $reference): Page
     {
         return $this->getReference($reference);
     }
 
-    /**
-     * @return array
-     */
-    protected function getMetadataArray()
+    private function getMetadataArray(): array
     {
         return LoadPageMetaData::$metadata;
     }

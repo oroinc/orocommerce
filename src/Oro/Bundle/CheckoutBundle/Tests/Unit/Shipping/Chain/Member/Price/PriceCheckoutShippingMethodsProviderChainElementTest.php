@@ -13,88 +13,69 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceCheckoutShippingMethodsProviderChainElement
-     */
-    private $testedMethodsProvider;
+    /** @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingPriceProvider;
 
-    /**
-     * @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingPriceProviderMock;
-
-    /**
-     * @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutShippingContextProvider;
+
+    /** @var PriceCheckoutShippingMethodsProviderChainElement */
+    private $testedMethodsProvider;
 
     protected function setUp(): void
     {
-        $this->shippingPriceProviderMock = $this
-            ->getMockBuilder(ShippingPriceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->checkoutShippingContextProvider = $this
-            ->getMockBuilder(CheckoutShippingContextProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingPriceProvider = $this->createMock(ShippingPriceProvider::class);
+        $this->checkoutShippingContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
 
         $this->testedMethodsProvider = new PriceCheckoutShippingMethodsProviderChainElement(
-            $this->shippingPriceProviderMock,
+            $this->shippingPriceProvider,
             $this->checkoutShippingContextProvider
         );
     }
 
     public function testGetApplicableMethodsViewsWithoutSuccessor()
     {
-        $checkoutMock = $this->getCheckoutMock();
-        $shippingContextMock = $this->getShippingContextMock();
+        $checkout = $this->createMock(Checkout::class);
+        $shippingContext = $this->createMock(ShippingContext::class);
         $expectedMethods = (new ShippingMethodViewCollection())
             ->addMethodView('flat_rate', ['identifier' => 'flat_rate']);
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->once())
+        $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->with($checkoutMock)
-            ->willReturn($shippingContextMock);
+            ->with($checkout)
+            ->willReturn($shippingContext);
 
-        $this->shippingPriceProviderMock
-            ->expects($this->once())
+        $this->shippingPriceProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
-            ->with($shippingContextMock)
+            ->with($shippingContext)
             ->willReturn($expectedMethods);
 
-        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkoutMock);
+        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkout);
 
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
     public function testGetApplicableMethodsViewsWithSuccessor()
     {
-        $checkoutMock = $this->getCheckoutMock();
+        $checkout = $this->createMock(Checkout::class);
+        $successor = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
         $expectedMethods = (new ShippingMethodViewCollection())
             ->addMethodView('flat_rate', ['identifier' => 'flat_rate'])
             ->addMethodTypeView('flat_rate', 'flat_rate_1', ['identifier' => 'flat_rate_1']);
 
-        $successorMock = $this->getSuccessorMock();
-        $this->testedMethodsProvider->setSuccessor($successorMock);
-
-        $this->checkoutShippingContextProvider
-            ->expects($this->never())
+        $this->checkoutShippingContextProvider->expects($this->never())
             ->method('getContext');
 
-        $this->shippingPriceProviderMock
-            ->expects($this->never())
+        $this->shippingPriceProvider->expects($this->never())
             ->method('getApplicableMethodsViews');
 
-        $successorMock
-            ->expects($this->once())
+        $successor->expects($this->once())
             ->method('getApplicableMethodsViews')
-            ->with($checkoutMock)
+            ->with($checkout)
             ->willReturn($expectedMethods);
 
-        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkoutMock);
+        $this->testedMethodsProvider->setSuccessor($successor);
+        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkout);
 
         $this->assertEquals($expectedMethods, $actualMethods);
     }
@@ -104,32 +85,27 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
         $shippingMethod = 'flat_rate';
         $shippingMethodType = 'primary';
         $price = Price::create(12, 'USD');
-        $checkoutMock = $this->getCheckoutMock();
-        $shippingContextMock = $this->getShippingContextMock();
+        $checkout = $this->createMock(Checkout::class);
+        $shippingContext = $this->createMock(ShippingContext::class);
 
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($shippingMethod);
-
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getShippingMethodType')
             ->willReturn($shippingMethodType);
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->once())
+        $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->with($checkoutMock)
-            ->willReturn($shippingContextMock);
+            ->with($checkout)
+            ->willReturn($shippingContext);
 
-        $this->shippingPriceProviderMock
-            ->expects($this->once())
+        $this->shippingPriceProvider->expects($this->once())
             ->method('getPrice')
-            ->with($shippingContextMock, $shippingMethod, $shippingMethodType)
+            ->with($shippingContext, $shippingMethod, $shippingMethodType)
             ->willReturn($price);
 
-        $actualPrice = $this->testedMethodsProvider->getPrice($checkoutMock);
+        $actualPrice = $this->testedMethodsProvider->getPrice($checkout);
 
         $this->assertEquals($price, $actualPrice);
     }
@@ -137,66 +113,28 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
     public function testGetPriceWithSuccessor()
     {
         $price = Price::create(12, 'USD');
-        $checkoutMock = $this->getCheckoutMock();
+        $checkout = $this->createMock(Checkout::class);
+        $successor = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
 
-        $successorMock = $this->getSuccessorMock();
-        $this->testedMethodsProvider->setSuccessor($successorMock);
-
-        $checkoutMock
-            ->expects($this->never())
+        $checkout->expects($this->never())
             ->method('getShippingMethod');
-
-        $checkoutMock
-            ->expects($this->never())
+        $checkout->expects($this->never())
             ->method('getShippingMethodType');
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->never())
+        $this->checkoutShippingContextProvider->expects($this->never())
             ->method('getContext');
 
-        $this->shippingPriceProviderMock
-            ->expects($this->never())
+        $this->shippingPriceProvider->expects($this->never())
             ->method('getPrice');
 
-        $successorMock
-            ->expects($this->once())
+        $successor->expects($this->once())
             ->method('getPrice')
-            ->with($checkoutMock)
+            ->with($checkout)
             ->willReturn($price);
 
-        $actualPrice = $this->testedMethodsProvider->getPrice($checkoutMock);
+        $this->testedMethodsProvider->setSuccessor($successor);
+        $actualPrice = $this->testedMethodsProvider->getPrice($checkout);
 
         $this->assertEquals($price, $actualPrice);
-    }
-
-    /**
-     * @return CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getSuccessorMock()
-    {
-        return $this
-            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
-            ->getMock();
-    }
-
-    /**
-     * @return Checkout|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getCheckoutMock()
-    {
-        return $this
-            ->getMockBuilder(Checkout::class)
-            ->getMock();
-    }
-
-    /**
-     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getShippingContextMock()
-    {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 }

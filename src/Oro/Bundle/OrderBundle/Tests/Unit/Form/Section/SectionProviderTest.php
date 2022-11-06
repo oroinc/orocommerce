@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Section;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Symfony\Component\Form\FormRegistryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
 class SectionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_CLASS = 'form\class';
-    const FORM_NAME = 'form_name';
+    private const FORM_CLASS = 'form\class';
+    private const FORM_NAME = 'form_name';
+
+    /** @var FormRegistryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $formRegistry;
 
     /** @var SectionProvider */
-    protected $sectionProvider;
-
-    /** @var FormRegistryInterface */
-    protected $formRegistry;
+    private $sectionProvider;
 
     protected function setUp(): void
     {
@@ -24,25 +25,14 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
         $this->sectionProvider = new SectionProvider($this->formRegistry);
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->sectionProvider);
-    }
-
-    /**
-     * @param string $formClass
-     * @param string $formName
-     */
-    private function configureFormRegistry($formClass, $formName)
+    private function configureFormRegistry(string $formClass, string $formName): void
     {
         $formType = $this->createMock(FormTypeInterface::class);
-        $formType
-            ->expects($this->any())
+        $formType->expects($this->any())
             ->method('getBlockPrefix')
             ->willReturn($formName);
 
-        $this->formRegistry
-            ->expects($this->any())
+        $this->formRegistry->expects($this->any())
             ->method('getType')
             ->with($formClass)
             ->willReturn($formType);
@@ -65,16 +55,13 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
 
         foreach ($expectedSections as $formClass => $expectedConfig) {
             $actualSections = $this->sectionProvider->getSections($formClass);
-            $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actualSections);
+            $this->assertInstanceOf(ArrayCollection::class, $actualSections);
 
             $this->assertEquals($expectedConfig, $actualSections->toArray());
         }
     }
 
-    /**
-     * @return array
-     */
-    public function sectionsDataProvider()
+    public function sectionsDataProvider(): array
     {
         return [
             'sections are empty' => [
@@ -100,7 +87,7 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
         $this->configureFormRegistry('not\configured\class', 'not_configured_name');
         $actualSections = $this->sectionProvider->getSections('not\configured\class');
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actualSections);
+        $this->assertInstanceOf(ArrayCollection::class, $actualSections);
 
         $this->assertEquals([], $actualSections->toArray());
     }

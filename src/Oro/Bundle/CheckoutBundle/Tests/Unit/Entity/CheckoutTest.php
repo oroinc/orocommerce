@@ -134,10 +134,7 @@ class CheckoutTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(new ArrayCollection($expected), $entity->getLineItems());
     }
 
-    /**
-     * @return array
-     */
-    public function getLineItemsDataProvider()
+    public function getLineItemsDataProvider(): array
     {
         $lineItem1 = $this->createMock(CheckoutLineItem::class);
         $lineItem2 = $this->createMock(CheckoutLineItem::class);

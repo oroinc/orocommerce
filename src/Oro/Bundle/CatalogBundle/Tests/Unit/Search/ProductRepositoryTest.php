@@ -23,7 +23,7 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
     private $mappingProvider;
 
     /** @var ProductRepository */
-    protected $repository;
+    private $repository;
 
     protected function setUp(): void
     {
@@ -67,10 +67,7 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->repository->getCategoriesCounts($categories));
     }
 
-    /**
-     * @return array
-     */
-    public function getCategoryCountsDataProvider()
+    public function getCategoryCountsDataProvider(): array
     {
         return [
             'with root category' => [
@@ -96,19 +93,13 @@ class ProductRepositoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $id
-     * @param string $path
-     * @return Category
-     */
-    protected function getCategory($id, $path)
+    private function getCategory(int $id, string $path): Category
     {
         return $this->getEntity(Category::class, ['id' => $id, 'materializedPath' => $path]);
     }
 
-    protected function createIndexer($query)
+    private function createIndexer($query)
     {
-        /** @var Indexer|\PHPUnit\Framework\MockObject\MockObject $indexer */
         $indexer = $this->createMock(Indexer::class);
         $indexer->expects($this->once())
             ->method('query')

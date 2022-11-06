@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
 use Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
 use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
 
@@ -10,7 +11,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function createListenerToTest()
+    protected function createListenerToTest(): AbstractCustomerViewListener
     {
         return new CustomerViewListener(
             $this->translator,
@@ -22,7 +23,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerViewTemplate()
+    protected function getCustomerViewTemplate(): string
     {
         return '@OroSale/Customer/quote_view.html.twig';
     }
@@ -30,7 +31,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerLabel()
+    protected function getCustomerLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer.label';
     }
@@ -38,7 +39,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserViewTemplate()
+    protected function getCustomerUserViewTemplate(): string
     {
         return '@OroSale/CustomerUser/quote_view.html.twig';
     }
@@ -46,7 +47,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function getCustomerUserLabel()
+    protected function getCustomerUserLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer_user.label';
     }

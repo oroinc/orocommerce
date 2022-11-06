@@ -3,8 +3,6 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Helper;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
@@ -14,42 +12,30 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ConfirmSlugChangeFormHelper
-     */
+    /** @var ConfirmSlugChangeFormHelper */
     private $helper;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->helper = new ConfirmSlugChangeFormHelper($this->configManager);
     }
 
     /**
      * @dataProvider addConfirmSlugChangeOptionsLocalizedProvider
-     * @param bool $createRedirectEnabled
-     * @param string $strategy
-     * @param SlugPrototypesWithRedirect $data
-     * @param bool $expectDisabled
      */
     public function testAddConfirmSlugChangeOptionsLocalized(
-        $createRedirectEnabled,
-        $strategy,
+        bool $createRedirectEnabled,
+        string $strategy,
         SlugPrototypesWithRedirect $data,
-        $expectDisabled
+        bool $expectDisabled
     ) {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getData')
@@ -82,7 +68,7 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectDisabled, $view->vars['confirm_slug_change_component_options']['disabled']);
     }
 
-    public function addConfirmSlugChangeOptionsLocalizedProvider()
+    public function addConfirmSlugChangeOptionsLocalizedProvider(): array
     {
         return [
             'create redirect disabled true by option' => [
@@ -114,18 +100,13 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider addConfirmSlugChangeOptionsProvider
-     * @param bool $createRedirectEnabled
-     * @param string $strategy
-     * @param TextSlugPrototypeWithRedirect $data
-     * @param bool $expectDisabled
      */
     public function testAddConfirmSlugChangeOptions(
-        $createRedirectEnabled,
-        $strategy,
+        bool $createRedirectEnabled,
+        string $strategy,
         TextSlugPrototypeWithRedirect $data,
-        $expectDisabled
+        bool $expectDisabled
     ) {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getData')
@@ -158,10 +139,11 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectDisabled, $view->vars['confirm_slug_change_component_options']['disabled']);
     }
 
-    public function addConfirmSlugChangeOptionsProvider()
+    public function addConfirmSlugChangeOptionsProvider(): array
     {
         $emptyText = '';
         $text = 'text';
+
         return [
             'create redirect disabled true by option' => [
                 'createRedirectEnabled' => false,
@@ -188,19 +170,5 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
                 'expectDisabled' => false,
             ],
         ];
-    }
-
-    /**
-     * @return PersistentCollection
-     */
-    protected function createPersistentCollection()
-    {
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        /** @var ClassMetadata $classMetadata */
-        $classMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $collection = new ArrayCollection(['some-entry']);
-
-        return new PersistentCollection($em, $classMetadata, $collection);
     }
 }

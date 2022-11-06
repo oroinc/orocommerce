@@ -4,27 +4,31 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Security;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class AddressACLTest extends AbstractAddressACLTest
+class AddressAclTest extends AbstractAddressAclTest
 {
-    const BILLING_ADDRESS = 'billingAddress';
-    const SHIPPING_ADDRESS = 'shippingAddress';
+    private const BILLING_ADDRESS = 'billingAddress';
+    private const SHIPPING_ADDRESS = 'shippingAddress';
 
-    const COMPANY_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
-    const COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
-    const COMPANY_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
+    private const COMPANY_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
+    private const COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
+    private const COMPANY_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
 
-    const USER_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
-    const USER_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
-    const USER_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
+    private const USER_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
+    private const USER_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
+    private const USER_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
 
-    /** @var string */
-    protected $formName = 'oro_order_type';
+    private string $formName = 'oro_order_type';
 
     protected function setUp(): void
     {
@@ -32,11 +36,11 @@ class AddressACLTest extends AbstractAddressACLTest
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses',
-            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
+            LoadCustomers::class,
+            LoadCustomerAddresses::class,
+            LoadCustomerUserData::class,
+            LoadCustomerUserAddresses::class,
+            LoadOrders::class
         ]);
     }
 
@@ -56,23 +60,22 @@ class AddressACLTest extends AbstractAddressACLTest
         $order = $this->getReference('simple_order');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $order->getId()]));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         if (!empty($expected)) {
             // Check shipping addresses
-            static::assertStringContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
+            self::assertStringContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
             $this->checkAddresses($crawler, $this->formName, self::SHIPPING_ADDRESS, $expected);
         } else {
-            static::assertStringNotContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
+            self::assertStringNotContainsString('Shipping Address', $crawler->filter('.navbar-static')->html());
         }
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function checkShippingAddressesDataProvider()
+    public function checkShippingAddressesDataProvider(): array
     {
         return [
             [
@@ -560,23 +563,22 @@ class AddressACLTest extends AbstractAddressACLTest
         $order = $this->getReference('simple_order');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $order->getId()]));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         if (!empty($expected)) {
             // Check billing addresses
-            static::assertStringContainsString('Billing Address', $crawler->filter('.navbar-static')->html());
+            self::assertStringContainsString('Billing Address', $crawler->filter('.navbar-static')->html());
             $this->checkAddresses($crawler, $this->formName, self::BILLING_ADDRESS, $expected);
         } else {
-            static::assertStringNotContainsString('Billing Address', $crawler->filter('.navbar-static')->html());
+            self::assertStringNotContainsString('Billing Address', $crawler->filter('.navbar-static')->html());
         }
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function checkBillingAddressesDataProvider()
+    public function checkBillingAddressesDataProvider(): array
     {
         return [
             [

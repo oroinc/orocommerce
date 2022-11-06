@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
@@ -15,30 +16,20 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
 {
     use EntityTrait;
 
-    /**
-     * @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $lineItemRepository;
+    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemRepository;
 
-    /**
-     * @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $frontendProductPricesDataProvider;
+    /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $frontendProductPricesDataProvider;
 
-    /**
-     * @var  FrontendShoppingListProductsProvider
-     */
-    protected $provider;
+    /** @var ShoppingListLineItemsDataProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shoppingListLineItemsDataProvider;
 
-    /**
-     * @var ShoppingListLineItemsDataProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shoppingListLineItemsDataProvider;
+    /** @var ProductPriceFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceFormatter;
 
-    /**
-     * @var ProductPriceFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productPriceFormatter;
+    /** @var FrontendShoppingListProductsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -58,11 +49,11 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
     public function testGetAllPrices()
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', ['id' => 2]);
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 2]);
 
         /** @var LineItem[] $lineItems */
         $lineItems = [
-            $this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\LineItem', ['id' => 1]),
+            $this->getEntity(LineItem::class, ['id' => 1]),
         ];
         $prices = ['price_1', 'price_2'];
         $expected = ['price_1', 'price_2'];
@@ -72,8 +63,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
             ->with($shoppingList)
             ->willReturn($lineItems);
 
-        $this->frontendProductPricesDataProvider
-            ->expects($this->once())
+        $this->frontendProductPricesDataProvider->expects($this->once())
             ->method('getProductsAllPrices')
             ->with($lineItems)
             ->willReturn($prices);
@@ -101,9 +91,8 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider matchedPriceDataProvider
-     * @param ShoppingList|null $shoppingList
      */
-    public function testGetMatchedPrice($shoppingList)
+    public function testGetMatchedPrice(?ShoppingList $shoppingList)
     {
         $expected = null;
 
@@ -115,8 +104,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
                 ->willReturn($lineItems);
 
             $expected = 'expectedData';
-            $this->frontendProductPricesDataProvider
-                ->expects($this->once())
+            $this->frontendProductPricesDataProvider->expects($this->once())
                 ->method('getProductsMatchedPrice')
                 ->with($lineItems)
                 ->willReturn($expected);
@@ -136,8 +124,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
             ->willReturn($lineItems);
 
         $expected = ['expectedData'];
-        $this->frontendProductPricesDataProvider
-            ->expects($this->once())
+        $this->frontendProductPricesDataProvider->expects($this->once())
             ->method('getProductsMatchedPrice')
             ->with($lineItems)
             ->willReturn($expected);
@@ -146,10 +133,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals([42 => $expected], $result);
     }
 
-    /**
-     * @return array
-     */
-    public function matchedPriceDataProvider()
+    public function matchedPriceDataProvider(): array
     {
         return [
             'with shoppingList' => [
@@ -163,9 +147,9 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
 
     public function testGetLastProductsGroupedByShoppingList()
     {
-        $shoppingLists = [$this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')];
+        $shoppingLists = [$this->getEntity(ShoppingList::class)];
         $productCount = 1;
-        $localization = $this->getEntity('Oro\Bundle\LocaleBundle\Entity\Localization');
+        $localization = $this->getEntity(Localization::class);
         $this->lineItemRepository->expects($this->once())
             ->method('getLastProductsGroupedByShoppingList')
             ->with($shoppingLists, $productCount, $localization);

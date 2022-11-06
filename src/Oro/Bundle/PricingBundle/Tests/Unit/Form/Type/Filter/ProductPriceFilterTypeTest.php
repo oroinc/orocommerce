@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberRangeFilterTypeTest;
@@ -17,41 +16,27 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Forms;
 
 class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    protected $registry;
+    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $numberFormatter;
 
-    /**
-     * @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localeSettings;
-
-    /**
-     * @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $numberFormatter;
-
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->localeSettings = $this->createMock(LocaleSettings::class);
+        $localeSettings = $this->createMock(LocaleSettings::class);
         $locale = 'en';
-        $this->localeSettings
+        $localeSettings->expects($this->any())
             ->method('getLocale')
             ->willReturn($locale);
 
         \Locale::setDefault($locale);
 
         $this->numberFormatter = new NumberFormatter(
-            $this->localeSettings,
-            new IntlNumberFormatterFactory($this->localeSettings)
+            $localeSettings,
+            new IntlNumberFormatterFactory($localeSettings)
         );
 
         $translator = $this->createMockTranslator();
@@ -60,7 +45,6 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             new CustomFormExtension([new NumberRangeFilterType($translator)])
         ];
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|UnitLabelFormatterInterface $formatter */
         $formatter = $this->createMock(UnitLabelFormatterInterface::class);
         $formatter->expects($this->any())
             ->method('format')
@@ -69,7 +53,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 
         parent::setUp();
 
-        $this->type = new ProductPriceFilterType($translator, $this->getRegistry(), $formatter);
+        $this->type = new ProductPriceFilterType($translator, $this->getDoctrine(), $formatter);
         $this->formExtensions[] = new PreloadedExtension([$this->type], []);
 
         $this->factory = Forms::createFormFactoryBuilder()
@@ -88,49 +72,43 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     /**
      * {@inheritDoc}
      */
-    protected function getTestFormType()
+    protected function getTestFormType(): AbstractType
     {
         return $this->type;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry
-     */
-    public function getRegistry()
+    public function getDoctrine(): ManagerRegistry
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ProductUnit $productUnitMock */
         $productUnitMock = $this->createMock(ProductUnit::class);
         $productUnitMock->expects($this->any())
             ->method('getCode')
             ->willReturn('item');
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectRepository $productUnitRepository */
         $productUnitRepository = $this->createMock(ProductUnitRepository::class);
 
         $productUnitRepository->expects($this->any())
             ->method('getAllUnitCodes')
             ->willReturn(['item']);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager $entityManager */
         $entityManager = $this->createMock(EntityManager::class);
         $entityManager->expects($this->any())
             ->method('getRepository')
             ->with('OroProductBundle:ProductUnit')
             ->willReturn($productUnitRepository);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroProductBundle:ProductUnit')
             ->willReturn($entityManager);
 
-        return $this->registry;
+        return $doctrine;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function configureOptionsDataProvider()
+    public function configureOptionsDataProvider(): array
     {
         return [
             [
@@ -152,7 +130,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     /**
      * {@inheritDoc}
      */
-    public function bindDataProvider()
+    public function bindDataProvider(): array
     {
         $bindData = parent::bindDataProvider();
 

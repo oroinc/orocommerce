@@ -58,7 +58,7 @@ class ProductUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormView
 
     public function testOnProductEdit()
     {
-        $env = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
+        $env = $this->createMock(Environment::class);
         $env->expects($this->once())
             ->method('render')
             ->willReturn('Rendered template');

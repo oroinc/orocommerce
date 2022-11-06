@@ -15,14 +15,10 @@ use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigs
 
 class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 {
-    /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $configsRuleProvider;
 
-    /**
-     * @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutContextProvider;
 
     protected function setUp(): void
@@ -30,10 +26,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
         parent::setUp();
 
         $this->configsRuleProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
-
-        $this->checkoutContextProvider = $this->getMockBuilder(CheckoutShippingContextProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
 
         $this->listener = new ShippingMethodsListener(
             $this->addressProvider,
@@ -44,17 +37,10 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->checkoutContextProvider, $this->configsRuleProvider);
-
-        parent::tearDown();
-    }
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function manualEditGrantedDataProvider()
+    public function manualEditGrantedDataProvider(): array
     {
         return [
             'shipping manual edit granted and no configs returned' => [
@@ -79,9 +65,9 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function notManualEditDataProvider()
+    public function notManualEditDataProvider(): array
     {
         $customer = $this->getEntity(Customer::class);
         $customerUser = $this->getEntity(CustomerUser::class);
@@ -136,22 +122,25 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function createContext()
+    protected function createContext(): object
     {
         return $this->createMock(ShippingContextInterface::class);
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getConfigRuleProviderMethod()
+    protected function getConfigRuleProviderMethod(): string
     {
         return 'getShippingMethodsConfigsRules';
     }
 
-    protected function getAddressToCheck(Checkout $checkout)
+    /**
+     * {@inheritDoc}
+     */
+    protected function getAddressToCheck(Checkout $checkout): OrderAddress
     {
         return $checkout->getShippingAddress();
     }

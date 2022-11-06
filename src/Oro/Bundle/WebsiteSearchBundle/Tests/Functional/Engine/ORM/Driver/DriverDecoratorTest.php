@@ -79,11 +79,7 @@ class DriverDecoratorTest extends WebTestCase
         );
     }
 
-    /**
-     * @param Item $item
-     * @return array
-     */
-    private function convertItemToArray(Item $item)
+    private function convertItemToArray(Item $item): array
     {
         return [
             'id' => $item->getId(),
@@ -145,11 +141,8 @@ class DriverDecoratorTest extends WebTestCase
 
     /**
      * @dataProvider aggregationDataProvider
-     *
-     * @param string $function
-     * @param int|array $expected
      */
-    public function testSearchDefaultWebsiteCountAggregate($function, $expected)
+    public function testSearchDefaultWebsiteCountAggregate(string $function, mixed $expected)
     {
         $field = 'test_value';
         $websiteId = $this->getDefaultWebsiteId();
@@ -165,10 +158,7 @@ class DriverDecoratorTest extends WebTestCase
         $this->assertEquals($expected, $results[$field]);
     }
 
-    /**
-     * @return array
-     */
-    public function aggregationDataProvider()
+    public function aggregationDataProvider(): array
     {
         return [
             'count' => [

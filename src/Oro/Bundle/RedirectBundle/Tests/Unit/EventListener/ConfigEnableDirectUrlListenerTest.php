@@ -13,25 +13,17 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $messageProducer;
 
-    /**
-     * @var RoutingInformationProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RoutingInformationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
-    /**
-     * @var ConfigEnableDirectUrlListener
-     */
-    private $listener;
-
-    /**
-     * @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MessageFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $messageFactory;
+
+    /** @var ConfigEnableDirectUrlListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -48,10 +40,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterIsNotChanged(): void
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
         $event->expects(self::once())
             ->method('isChanged')
             ->with('oro_redirect.enable_direct_url')
@@ -67,10 +56,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterTurnedOff(): void
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
         $event->expects(self::once())
             ->method('isChanged')
             ->with('oro_redirect.enable_direct_url')
@@ -93,10 +79,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterTurnedOn(): void
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ConfigUpdateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ConfigUpdateEvent::class);
         $event->expects(self::once())
             ->method('isChanged')
             ->with('oro_redirect.enable_direct_url')

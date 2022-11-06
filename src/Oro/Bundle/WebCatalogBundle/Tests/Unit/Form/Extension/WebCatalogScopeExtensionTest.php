@@ -19,14 +19,16 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var WebCatalogScopeExtension */
-    protected $extension;
-
     /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $scopeManager;
+    private $scopeManager;
+
+    /** @var WebCatalogScopeExtension */
+    private $extension;
 
     protected function setUp(): void
     {
+        $this->scopeManager = $this->createMock(ScopeManager::class);
+
         $this->extension = new WebCatalogScopeExtension();
 
         parent::setUp();
@@ -72,21 +74,15 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         return [
             new PreloadedExtension(
                 [
                     ScopeType::class => new ScopeType($this->scopeManager),
-                    EntityIdentifierType::class => new EntityIdentifierTypeStub(
-                        [
-                            1 => $this->getEntity(WebCatalog::class, ['id' => 1])
-                        ]
-                    ),
+                    EntityIdentifierType::class => new EntityIdentifierTypeStub([
+                        1 => $this->getEntity(WebCatalog::class, ['id' => 1])
+                    ]),
                 ],
                 [
                     ScopeType::class => [$this->extension],

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -10,27 +9,18 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
 {
-    /**
-     * @var EntityRepository
-     */
+    /** @var EntityRepository */
     protected $repository;
 
-    /**
-     * @return array
-     */
-    abstract public function setToDefaultWithoutCategoryDataProvider();
+    abstract public function setToDefaultWithoutCategoryDataProvider(): array;
 
     /**
      * @dataProvider setToDefaultWithoutCategoryDataProvider
-     * @param string $categoryName
-     * @param array $deletedCategoryProducts
      */
-    public function testSetToDefaultWithoutCategory(
-        $categoryName,
-        array $deletedCategoryProducts
-    ) {
+    public function testSetToDefaultWithoutCategory(string $categoryName, array $deletedCategoryProducts)
+    {
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            static::assertContains($deletedCategoryProduct, $this->getProductsByVisibilities());
+            self::assertContains($deletedCategoryProduct, $this->getProductsByVisibilities());
         }
 
         /** @var Category $category */
@@ -38,14 +28,11 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         $this->deleteCategory($category);
         $this->repository->setToDefaultWithoutCategory();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            static::assertNotContains($deletedCategoryProduct, $this->getProductsByVisibilities());
+            self::assertNotContains($deletedCategoryProduct, $this->getProductsByVisibilities());
         }
     }
 
-    /**
-     * @return array
-     */
-    protected function getProductsByVisibilities()
+    protected function getProductsByVisibilities(): array
     {
         return array_map(
             function (VisibilityInterface $visibility) {
@@ -55,13 +42,9 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         );
     }
 
-    protected function deleteCategory(Category $category)
+    protected function deleteCategory(Category $category): void
     {
-        /* @var EntityManager $em */
-        $em = static::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category');
-
+        $em = self::getContainer()->get('doctrine')->getManagerForClass(Category::class);
         $em->remove($category);
         $em->flush();
     }

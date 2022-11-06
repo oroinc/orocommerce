@@ -17,34 +17,31 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private CheckoutManager|\PHPUnit\Framework\MockObject\MockObject $checkoutManager;
+    /** @var CheckoutManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutManager;
 
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    private LoginOnCheckoutListener $listener;
+    /** @var Request */
+    private $request;
 
-    private Request $request;
+    /** @var LoginOnCheckoutListener */
+    private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->checkoutManager = $this->getMockBuilder(CheckoutManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->checkoutManager = $this->createMock(CheckoutManager::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->request = new Request();
 
         $this->listener = new LoginOnCheckoutListener(
             $this->logger,
@@ -52,8 +49,6 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
             $this->checkoutManager,
             $this->eventDispatcher
         );
-
-        $this->request = new Request();
     }
 
     private function getEvent(object $customerUser): InteractiveLoginEvent
@@ -69,7 +64,8 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnInteractiveWrongToken(): void
     {
         $event = $this->getEvent(new \stdClass());
-        $this->configManager->expects(self::never())->method('get');
+        $this->configManager->expects(self::never())
+            ->method('get');
         $this->listener->onInteractiveLogin($event);
     }
 
@@ -80,7 +76,8 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
         $this->checkoutManager->expects(self::once())
             ->method('reassignCustomerUser')
             ->with($customerUser);
-        $this->configManager->expects(self::never())->method('get');
+        $this->configManager->expects(self::never())
+            ->method('get');
         $this->listener->onInteractiveLogin($event);
     }
 
@@ -92,7 +89,8 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(false);
-        $this->checkoutManager->expects(self::never())->method('getCheckoutById');
+        $this->checkoutManager->expects(self::never())
+            ->method('getCheckoutById');
         $this->listener->onInteractiveLogin($event);
     }
 
@@ -112,7 +110,7 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->logger->expects(self::once())
             ->method('warning')
-            ->with("Wrong checkout id - 777 passed during login from checkout");
+            ->with('Wrong checkout id - 777 passed during login from checkout');
 
         $this->listener->onInteractiveLogin($event);
     }
@@ -134,7 +132,8 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
             ->with(777)
             ->willReturn($checkout);
 
-        $this->logger->expects(self::never())->method('warning');
+        $this->logger->expects(self::never())
+            ->method('warning');
 
         $this->checkoutManager->expects(self::once())
             ->method('updateCheckoutCustomerUser')

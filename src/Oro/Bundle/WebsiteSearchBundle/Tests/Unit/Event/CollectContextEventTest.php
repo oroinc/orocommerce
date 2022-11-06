@@ -8,8 +8,7 @@ class CollectContextEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testAddContextValue()
     {
-        $websiteId = 1;
-        $event = new CollectContextEvent([], $websiteId);
+        $event = new CollectContextEvent([]);
         $stdClass = new \stdClass();
         $array = ['key' => 'value'];
 
@@ -26,10 +25,7 @@ class CollectContextEventTest extends \PHPUnit\Framework\TestCase
         ], $event->getContext());
     }
 
-    /**
-     * @return array
-     */
-    public function notStringValueDataProvider()
+    public function notStringValueDataProvider(): array
     {
         return [
             [0],
@@ -41,30 +37,23 @@ class CollectContextEventTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $name
      * @dataProvider notStringValueDataProvider
-     * @throws \InvalidArgumentException
      */
-    public function testAddContextValueWhenNameIsNotString($name)
+    public function testAddContextValueWhenNameIsNotString(mixed $name)
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Context value name must be a string');
 
-        $websiteId = 1;
-        $event = new CollectContextEvent([], $websiteId);
+        $event = new CollectContextEvent([]);
         $event->addContextValue($name, 'some value');
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
     public function testAddContextValueWhenNameIsEmptyString()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Context value name cannot be empty');
 
-        $websiteId = 1;
-        $event = new CollectContextEvent([], $websiteId);
+        $event = new CollectContextEvent([]);
         $event->addContextValue('', 'some_value');
     }
 }

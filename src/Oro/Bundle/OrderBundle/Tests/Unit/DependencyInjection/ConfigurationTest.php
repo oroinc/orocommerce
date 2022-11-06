@@ -5,18 +5,16 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * Test Configuration
-     */
     public function testGetConfigTreeBuilder()
     {
         $configuration = new Configuration();
         $builder = $configuration->getConfigTreeBuilder();
-        $this->assertInstanceOf('Symfony\Component\Config\Definition\Builder\TreeBuilder', $builder);
+        $this->assertInstanceOf(TreeBuilder::class, $builder);
     }
 
     /**
@@ -29,10 +27,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $processor->processConfiguration($configuration, $configs));
     }
 
-    /**
-     * @return array
-     */
-    public function processConfigurationDataProvider()
+    public function processConfigurationDataProvider(): array
     {
         return [
             'empty' => [

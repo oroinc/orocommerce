@@ -16,23 +16,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $confirmSlugChangeFormHelper;
+    /** @var ConfirmSlugChangeFormHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $confirmSlugChangeFormHelper;
 
-    /**
-     * @var LocalizedSlugWithRedirectType
-     */
-    protected $formType;
+    /** @var LocalizedSlugWithRedirectType */
+    private $formType;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
+
         $this->formType = new LocalizedSlugWithRedirectType($this->confirmSlugChangeFormHelper);
     }
 
@@ -43,7 +38,6 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->exactly(2))
             ->method('add')
@@ -78,28 +72,28 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())->method('setDefaults')->with(
-            $this->callback(
-                function (array $options) {
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(
+                $this->callback(function (array $options) {
                     $this->assertEquals(SlugPrototypesWithRedirect::class, $options['data_class']);
                     $this->assertTrue($options['slug_suggestion_enabled']);
                     $this->assertTrue($options['create_redirect_enabled']);
                     $this->assertEquals('oro.redirect.slug_prototypes.tooltip', $options['tooltip']);
 
                     return true;
-                }
-            )
-        );
-        $resolver->expects($this->once())->method('setRequired')->with('source_field');
+                })
+            );
+        $resolver->expects($this->once())
+            ->method('setRequired')
+            ->with('source_field');
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testBuildViewWhenGetChangedSlugsUrlOptionsIsNull()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $options = ['get_changed_slugs_url' => null];
@@ -116,7 +110,6 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewWhenGetChangedSlugsUrlOptionsIsNotNull()
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
         $changedSlugsUrl = '/some/action/3';

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
@@ -16,29 +15,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PageRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    private PageRepository $repository;
 
-    /**
-     * @var PageRepository
-     */
-    protected $repository;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadPageData::class
-        ]);
+        $this->loadFixtures([LoadPageData::class]);
 
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->repository = $this->registry->getRepository(Page::class);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(Page::class);
     }
 
     public function testFindOneByDefaultTitle()
@@ -91,19 +76,16 @@ class PageRepositoryTest extends WebTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getNonExistentPageIdsProvider()
+    public function getNonExistentPageIdsProvider(): array
     {
         return [
-            "No page ids" => [
+            'No page ids' => [
                 'checkedPageIdsCallback' => function () {
                     return [];
                 },
                 'expectedNonExistentPageIds' => [],
             ],
-            "No removed page ids" => [
+            'No removed page ids' => [
                 'checkedPageIdsCallback' => function () {
                     return [
                         $this->getReference(LoadPageData::PAGE_2)->getId(),
@@ -112,7 +94,7 @@ class PageRepositoryTest extends WebTestCase
                 },
                 'expectedNonExistentPageIds' => [],
             ],
-            "Several removed page ids" => [
+            'Several removed page ids' => [
                 'checkedPageIdsCallback' => function () {
                     return [
                         $this->getReference(LoadPageData::PAGE_2)->getId(),

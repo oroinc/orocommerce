@@ -16,51 +16,33 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ShippingPriceCache
-     */
-    protected $priceCache;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ShippingPriceCache */
+    private $priceCache;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LifecycleEventArgs
-     */
-    protected $args;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|LifecycleEventArgs */
+    private $args;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository
-     */
-    protected $repository;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRepository */
+    private $repository;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EntityManager
-     */
-    protected $em;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityManager */
+    private $em;
 
-    /**
-     * @var ShippingRuleChangeListener
-     */
-    protected $listener;
+    /** @var ShippingRuleChangeListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->args = $this->getMockBuilder(LifecycleEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceCache = $this->createMock(ShippingPriceCache::class);
+        $this->repository = $this->createMock(EntityRepository::class);
+        $this->em = $this->createMock(EntityManager::class);
+        $this->args = $this->createMock(LifecycleEventArgs::class);
+
         $this->listener = new ShippingRuleChangeListener($this->priceCache);
     }
 
     public function testMethodsWithShippingRuleInOneRequest()
     {
-        /** @var RuleInterface $entity */
         $entity = $this->getEntity(Rule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 1, 1);
         $this->triggerAllMethods($entity);
@@ -68,7 +50,6 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testMethodsWithShippingRuleInDifferentRequests()
     {
-        /** @var RuleInterface $entity */
         $entity = $this->getEntity(Rule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 3, 3);
         $listener1 = new ShippingRuleChangeListener($this->priceCache);
@@ -82,7 +63,6 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testMethodsWithNotShippingRule()
     {
-        /** @var RuleInterface $entity */
         $entity = $this->getEntity(Rule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 3, 0, false);
         $this->triggerAllMethods($entity);
@@ -90,7 +70,6 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testMethodsWithNotRuleInOneRequest()
     {
-        /** @var ShippingMethodsConfigsRule $entity */
         $entity = $this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 0, 1);
         $this->triggerAllMethods($entity);
@@ -98,7 +77,6 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testMethodsWithNotRuleInDifferentRequests()
     {
-        /** @var ShippingMethodsConfigsRule $entity */
         $entity = $this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 0, 3);
         $listener1 = new ShippingRuleChangeListener($this->priceCache);
@@ -110,34 +88,29 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
         $listener3->postRemove($entity, $this->args);
     }
 
-    /**
-     * @param RuleInterface|ShippingMethodsConfigsRule $entity
-     * @param integer $quantity
-     * @param integer $clearCacheCnt
-     * @param boolean $repositoryResult
-     */
-    protected function mockExpectedQuantity($entity, $quantity, $clearCacheCnt, $repositoryResult = true)
-    {
-        $this->repository->expects(static::exactly($quantity))
+    private function mockExpectedQuantity(
+        RuleInterface|ShippingMethodsConfigsRule $entity,
+        int $quantity,
+        int $clearCacheCnt,
+        bool $repositoryResult = true
+    ): void {
+        $this->repository->expects(self::exactly($quantity))
             ->method('findOneBy')
             ->with(['rule' => $entity])
             ->willReturn($repositoryResult ? new ShippingMethodsConfigsRule() : null);
-        $this->em->expects(static::exactly($quantity))
+        $this->em->expects(self::exactly($quantity))
             ->method('getRepository')
             ->with(ShippingMethodsConfigsRule::class)
             ->willReturn($this->repository);
-        $this->args->expects(static::exactly($quantity))
+        $this->args->expects(self::exactly($quantity))
             ->method('getEntityManager')
             ->willReturn($this->em);
         $this->priceCache
-            ->expects(static::exactly($clearCacheCnt))
+            ->expects(self::exactly($clearCacheCnt))
             ->method('deleteAllPrices');
     }
 
-    /**
-     * @param RuleInterface|ShippingMethodsConfigsRule $entity
-     */
-    protected function triggerAllMethods($entity)
+    private function triggerAllMethods(RuleInterface|ShippingMethodsConfigsRule $entity): void
     {
         $this->listener->postPersist($entity, $this->args);
         $this->listener->postUpdate($entity, $this->args);

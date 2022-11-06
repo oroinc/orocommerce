@@ -57,9 +57,8 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider productDataProvider
-     * @param boolean $freeForm
      */
-    public function testGetOrderLineItems($freeForm)
+    public function testGetOrderLineItems(bool $freeForm)
     {
         $currency = 'UAH';
         $quantity = 22;
@@ -151,10 +150,7 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($totalCurrency, $totalPrice->getCurrency());
     }
 
-    /**
-     * @return array
-     */
-    public function productDataProvider()
+    public function productDataProvider(): array
     {
         return [
             'withoutProduct' => ['freeForm' => true],
@@ -162,27 +158,16 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $currency
-     * @param float $quantity
-     * @param float $priceValue
-     * @param string $name
-     * @param string $sku
-     * @param string $comment
-     * @param \DateTime $shipBy
-     * @param Product|null $product
-     * @return OrderLineItem
-     */
     private function createLineItem(
-        $currency,
-        $quantity,
-        $priceValue,
-        $name,
-        $sku,
-        $comment,
-        $shipBy,
+        string $currency,
+        float $quantity,
+        float $priceValue,
+        string $name,
+        string $sku,
+        string $comment,
+        \DateTime $shipBy,
         Product $product = null
-    ) {
+    ): OrderLineItem {
         $lineItem = new OrderLineItem();
         $lineItem->setCurrency($currency);
         $lineItem->setQuantity($quantity);
@@ -190,10 +175,10 @@ class LineItemsExtensionTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProductSku($sku);
         $lineItem->setComment($comment);
         $lineItem->setShipBy($shipBy);
-        if (!$product) {
-            $lineItem->setFreeFormProduct($name);
-        } else {
+        if ($product) {
             $lineItem->setProduct($product);
+        } else {
+            $lineItem->setFreeFormProduct($name);
         }
 
         return $lineItem;

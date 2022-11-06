@@ -6,30 +6,27 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\LocaleBundle\Provider\CurrentLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class LocalizationIdPlaceholderTest extends TestCase
+class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
-    private LocalizationIdPlaceholder $placeholder;
+    /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationManager;
 
-    private LocalizationManager|MockObject $localizationManager;
+    /** @var CurrentLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationProvider;
 
-    private CurrentLocalizationProvider|MockObject $localizationProvider;
+    /** @var LocalizationIdPlaceholder */
+    private $placeholder;
 
     protected function setUp(): void
     {
-        $this->localizationProvider = $this->getMockBuilder(CurrentLocalizationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localizationProvider = $this->createMock(CurrentLocalizationProvider::class);
         $this->localizationManager = $this->createMock(LocalizationManager::class);
 
-        $this->placeholder = new LocalizationIdPlaceholder($this->localizationProvider, $this->localizationManager);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->placeholder, $this->localizationProvider);
+        $this->placeholder = new LocalizationIdPlaceholder(
+            $this->localizationProvider,
+            $this->localizationManager
+        );
     }
 
     public function testGetPlaceholder(): void
@@ -40,7 +37,7 @@ class LocalizationIdPlaceholderTest extends TestCase
 
     public function testReplaceDefaultByCurrentLocalization(): void
     {
-        $localization = $this->getMockBuilder(Localization::class)->getMock();
+        $localization = $this->createMock(Localization::class);
 
         $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
@@ -58,7 +55,7 @@ class LocalizationIdPlaceholderTest extends TestCase
 
     public function testReplaceDefaultByDefaultLocalization(): void
     {
-        $localization = $this->getMockBuilder(Localization::class)->getMock();
+        $localization = $this->createMock(Localization::class);
 
         $this->localizationProvider->expects($this->once())
             ->method('getCurrentLocalization')
@@ -99,7 +96,8 @@ class LocalizationIdPlaceholderTest extends TestCase
 
     public function testReplace(): void
     {
-        $this->localizationProvider->expects($this->never())->method($this->anything());
+        $this->localizationProvider->expects($this->never())
+            ->method($this->anything());
 
         $this->assertEquals(
             'string_1',
@@ -109,7 +107,8 @@ class LocalizationIdPlaceholderTest extends TestCase
 
     public function testReplaceWithoutValue(): void
     {
-        $this->localizationProvider->expects($this->never())->method($this->anything());
+        $this->localizationProvider->expects($this->never())
+            ->method($this->anything());
 
         $this->assertEquals(
             'string_LOCALIZATION_ID',

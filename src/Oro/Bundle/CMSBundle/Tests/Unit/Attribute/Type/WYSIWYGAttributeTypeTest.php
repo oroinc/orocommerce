@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Attribute\Type;
 
 use Oro\Bundle\CMSBundle\Attribute\Type\WYSIWYGAttributeType;
+use Oro\Bundle\EntityConfigBundle\Attribute\Type\AttributeTypeInterface;
 use Oro\Bundle\EntityConfigBundle\Tests\Unit\Attribute\Type\AttributeTypeTestCase;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 
@@ -21,17 +22,15 @@ class WYSIWYGAttributeTypeTest extends AttributeTypeTestCase
         $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $this->htmlTagHelper->expects($this->any())
             ->method('stripTags')
-            ->willReturnCallback(
-                function ($value) {
-                    return $value . ' stripped';
-                }
-            );
+            ->willReturnCallback(function ($value) {
+                return $value . ' stripped';
+            });
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getAttributeType()
+    protected function getAttributeType(): AttributeTypeInterface
     {
         return new WYSIWYGAttributeType($this->htmlTagHelper);
     }
@@ -39,12 +38,10 @@ class WYSIWYGAttributeTypeTest extends AttributeTypeTestCase
     /**
      * {@inheritdoc}
      */
-    public function configurationMethodsDataProvider()
+    public function configurationMethodsDataProvider(): array
     {
-        yield [
-            'isSearchable' => true,
-            'isFilterable' => true,
-            'isSortable' => false
+        return [
+            ['isSearchable' => true, 'isFilterable' => true, 'isSortable' => false]
         ];
     }
 

@@ -12,11 +12,11 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
  */
 class MoneyOrderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var MoneyOrder */
-    protected $method;
-
     /** @var MoneyOrderConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $config;
+
+    /** @var MoneyOrder */
+    private $method;
 
     protected function setUp(): void
     {
@@ -75,7 +75,9 @@ class MoneyOrderTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteNotSupported()
     {
-        $this->config->expects($this->once())->method('getPaymentMethodIdentifier')->willReturn('MoneyOrder');
+        $this->config->expects($this->once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('MoneyOrder');
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('"MoneyOrder" payment method "not_supported" action is not supported');
@@ -88,7 +90,7 @@ class MoneyOrderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('pending', $this->method->getSourceAction());
     }
 
-    public function testuUseSourcePaymentTransaction()
+    public function testUseSourcePaymentTransaction()
     {
         $this->assertTrue($this->method->useSourcePaymentTransaction());
     }
@@ -97,7 +99,7 @@ class MoneyOrderTest extends \PHPUnit\Framework\TestCase
     {
         $identifier = 'id';
 
-        $this->config->expects(static::once())
+        $this->config->expects(self::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn($identifier);
 
@@ -105,20 +107,14 @@ class MoneyOrderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param bool $expected
-     * @param string $actionName
-     *
      * @dataProvider supportsDataProvider
      */
-    public function testSupports($expected, $actionName)
+    public function testSupports(bool $expected, string $actionName)
     {
         $this->assertEquals($expected, $this->method->supports($actionName));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             [false, MoneyOrder::AUTHORIZE],
@@ -131,7 +127,6 @@ class MoneyOrderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsApplicable()
     {
-        /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertTrue($this->method->isApplicable($context));
     }

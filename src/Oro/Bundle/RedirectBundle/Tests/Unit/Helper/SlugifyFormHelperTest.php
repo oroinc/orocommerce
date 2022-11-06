@@ -7,9 +7,7 @@ use Symfony\Component\Form\FormView;
 
 class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SlugifyFormHelper
-     */
+    /** @var SlugifyFormHelper */
     private $helper;
 
     protected function setUp(): void
@@ -75,11 +73,8 @@ class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider addSlugifyOptionsFailedProvider
-     * @param bool $slugSuggestionEnabled
-     * @param string $sourceField
-     * @param FormView|null $parent
      */
-    public function testAddSlugifyOptionsFailed($slugSuggestionEnabled, $sourceField, FormView $parent = null)
+    public function testAddSlugifyOptionsFailed(bool $slugSuggestionEnabled, ?string $sourceField, ?FormView $parent)
     {
         $localizedView = new FormView($parent);
         $options = [
@@ -95,10 +90,7 @@ class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayNotHasKey('slugify_component_options', $view->vars);
     }
 
-    /**
-     * @return array
-     */
-    public function addSlugifyOptionsFailedProvider()
+    public function addSlugifyOptionsFailedProvider(): array
     {
         return [
             'slug suggestion disabled' => [

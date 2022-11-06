@@ -12,28 +12,19 @@ use Symfony\Component\Form\FormInterface;
 
 class ProductVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductVisibilityPostSubmitListener
-     */
-    protected $listener;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var VisibilityFormPostSubmitDataHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $dataHandler;
 
-    /**
-     * @var VisibilityFormPostSubmitDataHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $dataHandler;
+    /** @var ProductVisibilityPostSubmitListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->dataHandler = $this->getMockBuilder(VisibilityFormPostSubmitDataHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataHandler = $this->createMock(VisibilityFormPostSubmitDataHandler::class);
 
         $this->listener = new ProductVisibilityPostSubmitListener($this->dataHandler, $this->registry);
     }
@@ -42,20 +33,22 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCas
     {
         $form = $this->createMock(FormInterface::class);
         $product = new Product();
-        $form->method('getData')->willReturn($product);
+        $form->expects($this->any())
+            ->method('getData')
+            ->willReturn($product);
 
         $allForm = $this->createMock(FormInterface::class);
         $customerForm = $this->createMock(FormInterface::class);
         $customerGroupForm = $this->createMock(FormInterface::class);
 
-        $form->method('all')->willReturn([
-            $allForm,
-            $customerForm,
-            $customerGroupForm
-        ]);
+        $form->expects($this->any())
+            ->method('all')
+            ->willReturn([$allForm, $customerForm, $customerGroupForm]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($em);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
         // assert that all forms where saved trough data handler
         $this->dataHandler->expects($this->exactly(3))
