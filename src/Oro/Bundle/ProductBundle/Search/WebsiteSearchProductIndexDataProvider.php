@@ -20,14 +20,14 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
 {
     private AttributeTypeRegistry $attributeTypeRegistry;
     private AttributeConfigurationProviderInterface $configurationProvider;
-    private ProductIndexFieldsProvider $indexFieldsProvider;
+    private ProductIndexAttributeProviderInterface $indexFieldsProvider;
     private PropertyAccessor $propertyAccessor;
     private SearchableInformationProvider $searchableProvider;
 
     public function __construct(
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,
-        ProductIndexFieldsProvider $indexFieldsProvider,
+        ProductIndexAttributeProviderInterface $indexFieldsProvider,
         PropertyAccessor $propertyAccessor,
         SearchableInformationProvider $searchableProvider
     ) {
