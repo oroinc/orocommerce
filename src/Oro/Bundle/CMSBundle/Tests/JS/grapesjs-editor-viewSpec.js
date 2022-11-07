@@ -34,7 +34,7 @@ describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
         });
 
         it('check default content', () => {
-            expect(grapesjsEditorView.builder.getHtml()).toEqual('Default content');
+            expect(grapesjsEditorView.builder.getHtml()).toEqual('<div>Default content</div>');
         });
 
         it('check container should be created', () => {
