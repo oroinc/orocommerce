@@ -34,7 +34,7 @@ class AddCategorySortOrder implements Migration
                 'oro_options' => [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
                     'importexport' => ['excluded' => true],
-                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                     'form' => ['is_enabled' => false],
                     'email' => ['available_in_template' => false],
                     'view' => ['is_displayable' => false],
