@@ -80,6 +80,7 @@ datagrids:
                 type: localized_value
                 data_name: names
         sorters:
+            multiple_sorting: true
             columns:
                 inCategory:
                     data_name: inCategory
