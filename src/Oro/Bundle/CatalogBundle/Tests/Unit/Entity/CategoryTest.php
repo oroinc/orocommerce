@@ -23,10 +23,10 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    const LOCALIZED_VALUE = 'some string';
+    private const LOCALIZED_VALUE = 'some string';
 
     /** @var Category */
-    protected $category;
+    private $category;
 
     protected function setUp(): void
     {
@@ -248,10 +248,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription());
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultTitleExceptionDataProvider()
+    public function getDefaultTitleExceptionDataProvider(): array
     {
         return [
             'no default localized' => [[]],
@@ -313,7 +310,7 @@ class CategoryTest extends \PHPUnit\Framework\TestCase
      *
      * @return LocalizedFallbackValue
      */
-    protected function createLocalizedValue($default = false, string $className = LocalizedFallbackValue::class)
+    private function createLocalizedValue($default = false, string $className = LocalizedFallbackValue::class)
     {
         $localized = (new $className())->setString(self::LOCALIZED_VALUE);
 

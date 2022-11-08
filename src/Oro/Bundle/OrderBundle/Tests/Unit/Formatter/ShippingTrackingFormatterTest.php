@@ -8,44 +8,31 @@ use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterfa
 
 class ShippingTrackingFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|TrackingAwareShippingMethodsProviderInterface
-     */
-    protected $trackingAwareShippingMethodsProvider;
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TrackingAwareShippingMethodsProviderInterface */
+    private $trackingAwareShippingMethodsProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->trackingAwareShippingMethodsProvider = $this
-            ->getMockBuilder(TrackingAwareShippingMethodsProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->trackingAwareShippingMethodsProvider = $this->createMock(
+            TrackingAwareShippingMethodsProviderInterface::class
+        );
     }
 
-    /**
-     * @param string|null $trackingLink
-     * @param string|null $label
-     * @param bool $trackingAware
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function shippingMethodMock($trackingLink, $label, $trackingAware = true)
+    private function getShippingMethod(?string $trackingLink, ?string $label, bool $trackingAware): ShippingMethodStub
     {
+        $method = $this->createMock(ShippingMethodStub::class);
         if ($trackingAware) {
-            $method = $this->getMockBuilder(ShippingMethodStub::class)->getMock();
-            $method->expects(static::any())
+            $method->expects(self::any())
                 ->method('getTrackingLink')
                 ->willReturn('http://tracking.com?number=' . $trackingLink);
-            $method->expects(static::any())
+            $method->expects(self::any())
                 ->method('getLabel')
                 ->willReturn($label);
         } else {
-            $method = $this->getMockBuilder(ShippingMethodStub::class)->getMock();
-            $method->expects(static::any())
+            $method->expects(self::any())
                 ->method('getTrackingLink')
                 ->willReturn(null);
-            $method->expects(static::any())
+            $method->expects(self::any())
                 ->method('getLabel')
                 ->willReturn(null);
         }
@@ -54,36 +41,28 @@ class ShippingTrackingFormatterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider shippingTrackingLinkProvider
-     * @param string $shippingMethod
-     * @param string $trackingNumber
-     * @param bool $trackingAware
-     * @param string $expectedResult
      */
     public function testFormatShippingTrackingLink(
-        $shippingMethod,
-        $trackingNumber,
-        $trackingAware,
-        $expectedResult
+        string $shippingMethod,
+        string $trackingNumber,
+        bool $trackingAware,
+        string $expectedResult
     ) {
         $formatter = new ShippingTrackingFormatter($this->trackingAwareShippingMethodsProvider);
 
-        $this->trackingAwareShippingMethodsProvider
-            ->expects(static::any())
+        $this->trackingAwareShippingMethodsProvider->expects(self::any())
             ->method('getTrackingAwareShippingMethods')
             ->willReturn([
-                $shippingMethod => $this->shippingMethodMock($trackingNumber, null, $trackingAware)
+                $shippingMethod => $this->getShippingMethod($trackingNumber, null, $trackingAware)
             ]);
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedResult,
             $formatter->formatShippingTrackingLink($shippingMethod, $trackingNumber)
         );
     }
 
-    /**
-     * @return array
-     */
-    public function shippingTrackingLinkProvider()
+    public function shippingTrackingLinkProvider(): array
     {
         return [
             [
@@ -103,36 +82,28 @@ class ShippingTrackingFormatterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider shippingTrackingMethodProvider
-     * @param string $shippingMethod
-     * @param string|null $label
-     * @param bool $trackingAware
-     * @param string $expectedResult
      */
     public function testFormatShippingTrackingMethod(
-        $shippingMethod,
-        $label,
-        $trackingAware,
-        $expectedResult
+        string $shippingMethod,
+        ?string $label,
+        bool $trackingAware,
+        string $expectedResult
     ) {
         $formatter = new ShippingTrackingFormatter($this->trackingAwareShippingMethodsProvider);
 
-        $this->trackingAwareShippingMethodsProvider
-            ->expects(static::any())
+        $this->trackingAwareShippingMethodsProvider->expects(self::any())
             ->method('getTrackingAwareShippingMethods')
             ->willReturn([
-                $shippingMethod => $this->shippingMethodMock(null, $label, $trackingAware)
+                $shippingMethod => $this->getShippingMethod(null, $label, $trackingAware)
             ]);
 
-        static::assertEquals(
+        self::assertEquals(
             $expectedResult,
             $formatter->formatShippingTrackingMethod($shippingMethod)
         );
     }
 
-    /**
-     * @return array
-     */
-    public function shippingTrackingMethodProvider()
+    public function shippingTrackingMethodProvider(): array
     {
         return [
             [

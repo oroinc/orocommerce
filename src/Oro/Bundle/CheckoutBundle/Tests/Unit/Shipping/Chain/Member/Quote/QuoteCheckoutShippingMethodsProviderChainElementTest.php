@@ -17,161 +17,127 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 
 class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuoteCheckoutShippingMethodsProviderChainElement
-     */
-    private $testedMethodsProvider;
-
-    /**
-     * @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutShippingContextProvider;
 
-    /**
-     * @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingConfiguredPriceProviderMock;
+    /** @var ShippingConfiguredPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingConfiguredPriceProvider;
 
-    /**
-     * @var QuoteShippingConfigurationFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $quoteShippingConfigurationFactoryMock;
+    /** @var QuoteShippingConfigurationFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $quoteShippingConfigurationFactory;
+
+    /** @var QuoteCheckoutShippingMethodsProviderChainElement */
+    private $testedMethodsProvider;
 
     protected function setUp(): void
     {
-        $this->checkoutShippingContextProvider = $this->getMockBuilder(CheckoutShippingContextProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->shippingConfiguredPriceProviderMock = $this
-            ->getMockBuilder(ShippingConfiguredPriceProviderInterface::class)
-            ->getMock();
-
-        $this->quoteShippingConfigurationFactoryMock = $this
-            ->getMockBuilder(QuoteShippingConfigurationFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutShippingContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
+        $this->shippingConfiguredPriceProvider = $this->createMock(ShippingConfiguredPriceProviderInterface::class);
+        $this->quoteShippingConfigurationFactory = $this->createMock(QuoteShippingConfigurationFactory::class);
 
         $this->testedMethodsProvider = new QuoteCheckoutShippingMethodsProviderChainElement(
             $this->checkoutShippingContextProvider,
-            $this->shippingConfiguredPriceProviderMock,
-            $this->quoteShippingConfigurationFactoryMock
+            $this->shippingConfiguredPriceProvider,
+            $this->quoteShippingConfigurationFactory
         );
     }
 
     public function testGetApplicableMethodsViews()
     {
-        $quoteMock = $this->getQuoteMock();
-        $quoteDemandMock = $this->getQuoteDemandMock();
-        $checkoutMock = $this->getCheckoutMock();
-        $shippingContextMock = $this->getShippingContextMock();
-        $configurationMock = $this->getConfigurationMock();
+        $quote = $this->createMock(Quote::class);
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+        $checkout = $this->createMock(Checkout::class);
+        $shippingContext = $this->createMock(ShippingContext::class);
+        $configuration = $this->createMock(ComposedShippingMethodConfigurationInterface::class);
         $expectedMethods = (new ShippingMethodViewCollection())
             ->addMethodView('flat_rate', ['identifier' => 'flat_rate']);
 
-        $quoteDemandMock
-            ->expects($this->once())
+        $quoteDemand->expects($this->once())
             ->method('getQuote')
-            ->willReturn($quoteMock);
+            ->willReturn($quote);
 
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getSourceEntity')
-            ->willReturn($quoteDemandMock);
+            ->willReturn($quoteDemand);
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->once())
+        $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->with($checkoutMock)
-            ->willReturn($shippingContextMock);
+            ->with($checkout)
+            ->willReturn($shippingContext);
 
-        $this->quoteShippingConfigurationFactoryMock
-            ->expects($this->once())
+        $this->quoteShippingConfigurationFactory->expects($this->once())
             ->method('createQuoteShippingConfig')
-            ->with($quoteMock)
-            ->willReturn($configurationMock);
+            ->with($quote)
+            ->willReturn($configuration);
 
-        $this->shippingConfiguredPriceProviderMock
-            ->expects($this->once())
+        $this->shippingConfiguredPriceProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
-            ->with($configurationMock, $shippingContextMock)
+            ->with($configuration, $shippingContext)
             ->willReturn($expectedMethods);
 
-        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkoutMock);
+        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkout);
 
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
     public function testGetApplicableMethodsViewsWhenSourceEntityNotQuote()
     {
-        $quoteDemandMock = $this->getQuoteDemandMock();
-        $checkoutMock = $this->getCheckoutMock();
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+        $checkout = $this->createMock(Checkout::class);
         $expectedMethods = (new ShippingMethodViewCollection());
 
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn(new \stdClass());
 
-        $quoteDemandMock
-            ->expects($this->never())
+        $quoteDemand->expects($this->never())
             ->method('getQuote');
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->never())
+        $this->checkoutShippingContextProvider->expects($this->never())
             ->method('getContext');
 
-        $this->quoteShippingConfigurationFactoryMock
-            ->expects($this->never())
+        $this->quoteShippingConfigurationFactory->expects($this->never())
             ->method('createQuoteShippingConfig');
 
-        $this->shippingConfiguredPriceProviderMock
-            ->expects($this->never())
+        $this->shippingConfiguredPriceProvider->expects($this->never())
             ->method('getApplicableMethodsViews');
 
-        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkoutMock);
+        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkout);
 
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
     public function testGetApplicableMethodsViewsWithSuccessorNotEmpty()
     {
-        $quoteDemandMock = $this->getQuoteDemandMock();
-        $checkoutMock = $this->getCheckoutMock();
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+        $checkout = $this->createMock(Checkout::class);
+        $successor = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
         $expectedMethods = (new ShippingMethodViewCollection())
             ->addMethodView('flat_rate', ['identifier' => 'flat_rate'])
             ->addMethodTypeView('flat_rate', 'flat_rate_1', ['identifier' => 'flat_rate_1']);
 
-        $successorMock = $this->getSuccessorMock();
-        $this->testedMethodsProvider->setSuccessor($successorMock);
-
-        $successorMock
-            ->expects($this->once())
-            ->method('getApplicableMethodsViews')
-            ->with($checkoutMock)
-            ->willReturn($expectedMethods);
-
-        $checkoutMock
-            ->expects($this->never())
+        $checkout->expects($this->never())
             ->method('getSourceEntity');
 
-        $quoteDemandMock
-            ->expects($this->never())
+        $quoteDemand->expects($this->never())
             ->method('getQuote');
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->never())
+        $this->checkoutShippingContextProvider->expects($this->never())
             ->method('getContext');
 
-        $this->quoteShippingConfigurationFactoryMock
-            ->expects($this->never())
+        $this->quoteShippingConfigurationFactory->expects($this->never())
             ->method('createQuoteShippingConfig');
 
-        $this->shippingConfiguredPriceProviderMock
-            ->expects($this->never())
+        $this->shippingConfiguredPriceProvider->expects($this->never())
             ->method('getApplicableMethodsViews');
 
-        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkoutMock);
+        $successor->expects($this->once())
+            ->method('getApplicableMethodsViews')
+            ->with($checkout)
+            ->willReturn($expectedMethods);
+
+        $this->testedMethodsProvider->setSuccessor($successor);
+        $actualMethods = $this->testedMethodsProvider->getApplicableMethodsViews($checkout);
 
         $this->assertEquals($expectedMethods, $actualMethods);
     }
@@ -181,51 +147,42 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
         $price = Price::create(12, 'USD');
         $shippingMethodId = 'shippingMethodId';
         $shippingMethodTypeId = 'shippingMethodTypeId';
-        $quoteMock = $this->getQuoteMock();
-        $quoteDemandMock = $this->getQuoteDemandMock();
-        $checkoutMock = $this->getCheckoutMock();
-        $shippingContextMock = $this->getShippingContextMock();
-        $configurationMock = $this->getConfigurationMock();
+        $quote = $this->createMock(Quote::class);
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+        $checkout = $this->createMock(Checkout::class);
+        $shippingContext = $this->createMock(ShippingContext::class);
+        $configuration = $this->createMock(ComposedShippingMethodConfigurationInterface::class);
 
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getShippingMethod')
             ->willReturn($shippingMethodId);
-
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getShippingMethodType')
             ->willReturn($shippingMethodTypeId);
-
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getSourceEntity')
-            ->willReturn($quoteDemandMock);
+            ->willReturn($quoteDemand);
 
-        $quoteDemandMock
-            ->expects($this->once())
+        $quoteDemand->expects($this->once())
             ->method('getQuote')
-            ->willReturn($quoteMock);
+            ->willReturn($quote);
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->once())
+        $this->checkoutShippingContextProvider->expects($this->once())
             ->method('getContext')
-            ->with($checkoutMock)
-            ->willReturn($shippingContextMock);
+            ->with($checkout)
+            ->willReturn($shippingContext);
 
-        $this->quoteShippingConfigurationFactoryMock
-            ->expects($this->once())
+        $this->quoteShippingConfigurationFactory->expects($this->once())
             ->method('createQuoteShippingConfig')
-            ->with($quoteMock)
-            ->willReturn($configurationMock);
+            ->with($quote)
+            ->willReturn($configuration);
 
-        $this->shippingConfiguredPriceProviderMock
-            ->expects($this->once())
+        $this->shippingConfiguredPriceProvider->expects($this->once())
             ->method('getPrice')
-            ->with($shippingMethodId, $shippingMethodTypeId, $configurationMock, $shippingContextMock)
+            ->with($shippingMethodId, $shippingMethodTypeId, $configuration, $shippingContext)
             ->willReturn($price);
 
-        $actualPrice = $this->testedMethodsProvider->getPrice($checkoutMock);
+        $actualPrice = $this->testedMethodsProvider->getPrice($checkout);
 
         $this->assertEquals($price, $actualPrice);
     }
@@ -233,39 +190,30 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
     public function testGetPriceWhenSourceEntityNotQuote()
     {
         $price = null;
-        $quoteDemandMock = $this->getQuoteDemandMock();
-        $checkoutMock = $this->getCheckoutMock();
+        $quoteDemand = $this->createMock(QuoteDemand::class);
+        $checkout = $this->createMock(Checkout::class);
 
-        $checkoutMock
-            ->expects($this->never())
+        $checkout->expects($this->never())
             ->method('getShippingMethod');
-
-        $checkoutMock
-            ->expects($this->never())
+        $checkout->expects($this->never())
             ->method('getShippingMethodType');
-
-        $checkoutMock
-            ->expects($this->once())
+        $checkout->expects($this->once())
             ->method('getSourceEntity')
             ->willReturn(new \stdClass());
 
-        $quoteDemandMock
-            ->expects($this->never())
+        $quoteDemand->expects($this->never())
             ->method('getQuote');
 
-        $this->checkoutShippingContextProvider
-            ->expects($this->never())
+        $this->checkoutShippingContextProvider->expects($this->never())
             ->method('getContext');
 
-        $this->quoteShippingConfigurationFactoryMock
-            ->expects($this->never())
+        $this->quoteShippingConfigurationFactory->expects($this->never())
             ->method('createQuoteShippingConfig');
 
-        $this->shippingConfiguredPriceProviderMock
-            ->expects($this->never())
+        $this->shippingConfiguredPriceProvider->expects($this->never())
             ->method('getPrice');
 
-        $actualPrice = $this->testedMethodsProvider->getPrice($checkoutMock);
+        $actualPrice = $this->testedMethodsProvider->getPrice($checkout);
 
         $this->assertEquals($price, $actualPrice);
     }
@@ -273,80 +221,17 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit\Fram
     public function testGetPriceWithSuccessor()
     {
         $price = Price::create(12, 'USD');
-        $checkoutMock = $this->getCheckoutMock();
+        $checkout = $this->createMock(Checkout::class);
+        $successor = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
 
-        $successorMock = $this->getSuccessorMock();
-        $this->testedMethodsProvider->setSuccessor($successorMock);
-
-        $successorMock
-            ->expects($this->once())
+        $successor->expects($this->once())
             ->method('getPrice')
-            ->with($checkoutMock)
+            ->with($checkout)
             ->willReturn($price);
 
-        $actualPrice = $this->testedMethodsProvider->getPrice($checkoutMock);
+        $this->testedMethodsProvider->setSuccessor($successor);
+        $actualPrice = $this->testedMethodsProvider->getPrice($checkout);
 
         $this->assertEquals($price, $actualPrice);
-    }
-
-    /**
-     * @return CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getSuccessorMock()
-    {
-        return $this
-            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
-            ->getMock();
-    }
-
-    /**
-     * @return ComposedShippingMethodConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getConfigurationMock()
-    {
-        return $this
-            ->getMockBuilder(ComposedShippingMethodConfigurationInterface::class)
-            ->getMock();
-    }
-
-    /**
-     * @return QuoteDemand|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getQuoteDemandMock()
-    {
-        return $this
-            ->getMockBuilder(QuoteDemand::class)
-            ->getMock();
-    }
-
-    /**
-     * @return Quote|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getQuoteMock()
-    {
-        return $this
-            ->getMockBuilder(Quote::class)
-            ->getMock();
-    }
-
-    /**
-     * @return Checkout|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getCheckoutMock()
-    {
-        return $this
-            ->getMockBuilder(Checkout::class)
-            ->getMock();
-    }
-
-    /**
-     * @return ShippingContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getShippingContextMock()
-    {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 }

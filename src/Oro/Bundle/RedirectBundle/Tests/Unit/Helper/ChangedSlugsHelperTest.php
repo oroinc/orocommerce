@@ -4,7 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Helper;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
 use Oro\Bundle\DraftBundle\Helper\DraftHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -24,47 +23,29 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var FormFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
-    /**
-     * @var Request
-     */
+    /** @var Request */
     private $request;
 
-    /**
-     * @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SlugEntityGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $slugGenerator;
 
-    /**
-     * @var SlugUrlDiffer|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SlugUrlDiffer|\PHPUnit\Framework\MockObject\MockObject */
     private $slugUrlDiffer;
 
-    /**
-     * @var ChangedSlugsHelper
-     */
-    private $helper;
-
-    /**
-     * @var DraftHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DraftHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $draftHelper;
+
+    /** @var ChangedSlugsHelper */
+    private $helper;
 
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->slugGenerator = $this->getMockBuilder(SlugEntityGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->slugUrlDiffer = $this->getMockBuilder(SlugUrlDiffer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->slugGenerator = $this->createMock(SlugEntityGenerator::class);
+        $this->slugUrlDiffer = $this->createMock(SlugUrlDiffer::class);
         $this->draftHelper = $this->createMock(DraftHelper::class);
         $this->request = new Request();
 
@@ -82,13 +63,11 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetChangedSlugsJsonResponseWithIsSaveAsDraftAction(): void
     {
-        $this->draftHelper
-            ->expects($this->once())
+        $this->draftHelper->expects($this->once())
             ->method('isSaveAsDraftAction')
             ->willReturn(true);
 
         $formType = 'FormType';
-        /** @var DraftableInterface|SluggableInterface $entity */
         $entity = new Page();
 
         $this->assertEmpty($this->helper->getChangedSlugsData($entity, $formType));
@@ -97,7 +76,6 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
     public function testGetChangedSlugsJsonResponseWithIsDraft(): void
     {
         $formType = 'FormType';
-        /** @var DraftableInterface|SluggableInterface $entity */
         $entity = new Page();
         $entity->setDraftUuid(UUIDGenerator::v4());
 
@@ -107,30 +85,24 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
     public function testGetChangedSlugsJsonResponse()
     {
         $formType = 'FormType';
-        /** @var SluggableInterface $entity */
         $entity = $this->createMock(SluggableInterface::class);
 
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects($this->once())
+        $form->expects($this->once())
             ->method('handleRequest')
             ->with($this->request);
 
         $formData = $this->createMock(SluggableInterface::class);
-        $form
-            ->expects($this->once())
+        $form->expects($this->once())
             ->method('getData')
             ->willReturn($formData);
 
-        $this->formFactory
-            ->expects($this->once())
+        $this->formFactory->expects($this->once())
             ->method('create')
             ->with($formType, $entity)
             ->willReturn($form);
 
-        /** @var Localization $defaultLocalization */
         $defaultLocalization = $this->getEntity(Localization::class, ['id' => 0]);
-        /** @var Localization $defaultLocalization */
         $englishLocalization = $this->getEntity(Localization::class, ['id' => 1]);
 
         $beforeDefaultSlugUrl = new SlugUrl('beforeDefaultValue', $defaultLocalization);
@@ -139,8 +111,7 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
         $afterDefaultSlugUrl = new SlugUrl('afterDefaultValue', $defaultLocalization);
         $afterEnglishSlugUrl = new SlugUrl('afterEnglishValue', $englishLocalization);
 
-        $this->slugGenerator
-            ->expects($this->any())
+        $this->slugGenerator->expects($this->any())
             ->method('prepareSlugUrls')
             ->willReturnMap([
                 [
@@ -164,8 +135,7 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
             ['English' => ['before' => $beforeEnglishSlugUrl->getUrl(), 'after' => $afterEnglishSlugUrl->getUrl()]]
         ];
 
-        $this->slugUrlDiffer
-            ->expects($this->once())
+        $this->slugUrlDiffer->expects($this->once())
             ->method('getSlugUrlsChanges')
             ->willReturn($diffData);
 

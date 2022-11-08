@@ -13,20 +13,15 @@ use Symfony\Component\Validator\ConstraintViolation;
 class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var FlashBag */
-    protected $flashBag;
+    private $flashBag;
 
     /** @var CheckoutErrorHandler */
-    protected $handler;
+    private $handler;
 
     protected function setUp(): void
     {
         $this->flashBag = new FlashBag();
         $this->handler = new CheckoutErrorHandler($this->flashBag);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->handler, $this->flashBag);
     }
 
     /**
@@ -41,10 +36,7 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedErrorIterator, $this->handler->filterWorkflowStateError($errorIterator));
     }
 
-    /**
-     * @return array
-     */
-    public function filterWorkflowStateErrorProvider()
+    public function filterWorkflowStateErrorProvider(): array
     {
         $error = new FormError('error');
         $orderChangedError = new FormError('oro.checkout.workflow.condition.content_of_order_was_changed.message');
@@ -100,10 +92,7 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedFlashMessages, $actualFlashMessages);
     }
 
-    /**
-     * @return array
-     */
-    public function addFlashWorkflowStateWarningProvider()
+    public function addFlashWorkflowStateWarningProvider(): array
     {
         $error = new FormError('error');
         $orderChangedError = new FormError('oro.checkout.workflow.condition.content_of_order_was_changed.message');
@@ -141,17 +130,9 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $name
-     * @return FormInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function createForm($name)
+    private function createForm(string $name): FormInterface
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
-        $form = $this->getMockBuilder(FormInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getName')
             ->willReturn($name);

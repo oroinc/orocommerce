@@ -4,27 +4,22 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Condition;
 
 use Oro\Bundle\CheckoutBundle\WorkflowState\Condition\CheckCheckoutStates;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CheckoutStateDiffManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $diffManager;
+    private $diffManager;
 
     /** @var CheckCheckoutStates */
-    protected $condition;
+    private $condition;
 
     protected function setUp(): void
     {
-        $this->diffManager = $this->getMockBuilder(CheckoutStateDiffManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->diffManager = $this->createMock(CheckoutStateDiffManager::class);
 
         $this->condition = new CheckCheckoutStates($this->diffManager);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->diffManager, $this->condition);
     }
 
     public function testInitialize()
@@ -35,15 +30,12 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
             'state2' => ['state2'],
         ];
 
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize($options)
-        );
+        $this->assertInstanceOf(AbstractCondition::class, $this->condition->initialize($options));
     }
 
     public function testInitializeWithoutState1()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "state1" option');
 
         $options = [
@@ -55,7 +47,7 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeWithoutState2()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "state2" option');
 
         $options = [
@@ -68,9 +60,8 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider evaluateProvider
-     * @param bool $expected
      */
-    public function testEvaluate($expected)
+    public function testEvaluate(bool $expected)
     {
         $entity = new \stdClass();
         $state1 = ['state1'];
@@ -82,8 +73,7 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
             'state2' => $state2,
         ];
 
-        $this->diffManager
-            ->expects($this->once())
+        $this->diffManager->expects($this->once())
             ->method('isStatesEqual')
             ->with($entity, $state1, $state2)
             ->willReturn($expected);
@@ -92,18 +82,11 @@ class CheckCheckoutStatesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->condition->evaluate([]));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
         return [
-            [
-                'expected' => true,
-            ],
-            [
-                'expected' => false,
-            ],
+            [true],
+            [false]
         ];
     }
 

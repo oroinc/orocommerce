@@ -11,9 +11,17 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /**
-     * @return array
+     * @dataProvider isProductApplicableForRFPDataProvider
      */
-    public function isProductApplicableForRFPDataProvider()
+    public function testIsProductApplicableForRFP(string $type, bool $expected)
+    {
+        $provider = new ProductAvailabilityProvider();
+        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => $type]);
+
+        $this->assertEquals($expected, $provider->isProductApplicableForRFP($product));
+    }
+
+    public function isProductApplicableForRFPDataProvider(): array
     {
         return [
             'simple product' => [
@@ -25,18 +33,5 @@ class ProductAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 'expected' => false,
             ],
         ];
-    }
-
-    /**
-     * @param string $type
-     * @param bool $expected
-     * @dataProvider isProductApplicableForRFPDataProvider
-     */
-    public function testIsProductApplicableForRFP($type, $expected)
-    {
-        $provider = new ProductAvailabilityProvider();
-        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => $type]);
-
-        $this->assertEquals($expected, $provider->isProductApplicableForRFP($product));
     }
 }

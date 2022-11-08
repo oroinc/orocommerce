@@ -14,13 +14,11 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
 {
     public function testNode()
     {
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $left */
         $left = $this->createMock(NodeInterface::class);
         $left->expects($this->any())
             ->method('getNodes')
             ->willReturn([$left]);
 
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $right */
         $right = $this->createMock(NodeInterface::class);
         $right->expects($this->any())
             ->method('getNodes')
@@ -37,15 +35,12 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider booleanOperationsDataProvider
-     * @param string $operation
      */
-    public function testIsBooleanOperation($operation)
+    public function testIsBooleanOperation(string $operation)
     {
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $left */
         $left = $this->createMock(NodeInterface::class);
         $left->expects($this->never())
             ->method('isBoolean');
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $right */
         $right = $this->createMock(NodeInterface::class);
         $right->expects($this->never())
             ->method('isBoolean');
@@ -53,10 +48,7 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($node->isBoolean());
     }
 
-    /**
-     * @return array
-     */
-    public function booleanOperationsDataProvider()
+    public function booleanOperationsDataProvider(): array
     {
         return [
             ['and'],
@@ -66,15 +58,12 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider booleanExpressionsDataProvider
-     * @param string $operation
      */
-    public function testIsBooleanExpression($operation)
+    public function testIsBooleanExpression(string $operation)
     {
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $left */
         $left = $this->createMock(NodeInterface::class);
         $left->expects($this->never())
             ->method('isBoolean');
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $right */
         $right = $this->createMock(NodeInterface::class);
         $right->expects($this->never())
             ->method('isBoolean');
@@ -83,10 +72,7 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($node->isBoolean());
     }
 
-    /**
-     * @return array
-     */
-    public function booleanExpressionsDataProvider()
+    public function booleanExpressionsDataProvider(): array
     {
         return [
             ['>'],
@@ -101,18 +87,13 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider leftRightBooleanDataProvider
-     * @param bool $leftBoolean
-     * @param bool $rightBoolean
-     * @param bool $expected
      */
-    public function testIsBooleanForMathExpression($leftBoolean, $rightBoolean, $expected)
+    public function testIsBooleanForMathExpression(bool $leftBoolean, bool $rightBoolean, bool $expected)
     {
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $left */
         $left = $this->createMock(NodeInterface::class);
         $left->expects($this->any())
             ->method('isBoolean')
             ->willReturn($leftBoolean);
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $right */
         $right = $this->createMock(NodeInterface::class);
         $right->expects($this->any())
             ->method('isBoolean')
@@ -122,10 +103,7 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $node->isBoolean());
     }
 
-    /**
-     * @return array
-     */
-    public function leftRightBooleanDataProvider()
+    public function leftRightBooleanDataProvider(): array
     {
         return [
             'is boolean when left and right boolean' => [true, true, true],
@@ -137,13 +115,10 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider booleanExpressionsDataProvider
-     * @param string $operation
      */
-    public function testIsNotMathOperation($operation)
+    public function testIsNotMathOperation(string $operation)
     {
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $left */
         $left = $this->createMock(NodeInterface::class);
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $right */
         $right = $this->createMock(NodeInterface::class);
 
         $node = new BinaryNode($left, $right, $operation);
@@ -152,23 +127,17 @@ class BinaryNodeTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider mathExpressionsDataProvider
-     * @param string $operation
      */
-    public function testIsMathOperation($operation)
+    public function testIsMathOperation(string $operation)
     {
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $left */
         $left = $this->createMock(NodeInterface::class);
-        /** @var NodeInterface|\PHPUnit\Framework\MockObject\MockObject $right */
         $right = $this->createMock(NodeInterface::class);
 
         $node = new BinaryNode($left, $right, $operation);
         $this->assertTrue($node->isMathOperation());
     }
 
-    /**
-     * @return array
-     */
-    public function mathExpressionsDataProvider()
+    public function mathExpressionsDataProvider(): array
     {
         return [
             ['+'],

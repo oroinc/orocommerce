@@ -9,7 +9,6 @@ use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Provider\SluggableUrlProviderInterface;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
@@ -20,17 +19,23 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    private UrlGeneratorInterface|MockObject $baseGenerator;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $baseGenerator;
 
-    private ContextUrlProviderRegistry|MockObject $contextUrlProvider;
+    /** @var ContextUrlProviderRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextUrlProvider;
 
-    private LocalizationProviderInterface|MockObject $localizationProvider;
+    /** @var LocalizationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationProvider;
 
-    private SluggableUrlGenerator $generator;
+    /** @var SluggableUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $sluggableUrlProvider;
 
-    private SluggableUrlProviderInterface|MockObject $sluggableUrlProvider;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private ConfigManager|MockObject $configManager;
+    /** @var SluggableUrlGenerator */
+    private $generator;
 
     protected function setUp(): void
     {
@@ -51,10 +56,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testSetContext()
     {
-        /** @var RequestContext|MockObject $context */
-        $context = $this->getMockBuilder(RequestContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(RequestContext::class);
         $this->baseGenerator->expects($this->once())
             ->method('setContext')
             ->with($context);
@@ -64,10 +66,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContext()
     {
-        /** @var RequestContext|MockObject $context */
-        $context = $this->getMockBuilder(RequestContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(RequestContext::class);
         $this->baseGenerator->expects($this->once())
             ->method('getContext')
             ->with()
@@ -269,9 +268,8 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider emptyContextAwareUrlDataProvider
-     * @param string $contextUrl
      */
-    public function testGenerateWithDataStorageWithEmptyContext($contextUrl)
+    public function testGenerateWithDataStorageWithEmptyContext(?string $contextUrl)
     {
         $routeName = 'test';
         $contextType = 'test_context';
@@ -308,10 +306,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function emptyContextAwareUrlDataProvider()
+    public function emptyContextAwareUrlDataProvider(): array
     {
         return [
             'empty context' => [''],
@@ -480,15 +475,9 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('/test/1', $this->generator->generate($routeName, $routeParameters, $referenceType));
     }
 
-    /**
-     * @param string $baseUrl
-     */
-    private function assertRequestContextCalled($baseUrl)
+    private function assertRequestContextCalled(string $baseUrl): void
     {
-        /** @var RequestContext|MockObject $context */
-        $context = $this->getMockBuilder(RequestContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(RequestContext::class);
         $context->expects($this->once())
             ->method('getBaseUrl')
             ->willReturn($baseUrl);
@@ -498,7 +487,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn($context);
     }
 
-    private function initCommonMocks($contextType, $contextData, $contextUrl)
+    private function initCommonMocks(string $contextType, int $contextData, ?string $contextUrl): void
     {
         $localizationId = 1;
         $localization = $this->createMock(Localization::class);

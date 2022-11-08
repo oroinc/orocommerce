@@ -6,20 +6,18 @@ use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
-abstract class AbstractAddressACLTest extends WebTestCase
+abstract class AbstractAddressAclTest extends WebTestCase
 {
     use RolePermissionExtension;
 
     protected const ROLE = 'ROLE_ADMINISTRATOR';
 
-    /**
-     * @param Crawler $crawler
-     * @param string $formName
-     * @param string $addressType
-     * @param array $expected
-     */
-    protected function checkAddresses(Crawler $crawler, $formName, $addressType, array $expected)
-    {
+    protected function checkAddresses(
+        Crawler $crawler,
+        string $formName,
+        string $addressType,
+        array $expected
+    ): void {
         if ($expected['manually']) {
             $filter = sprintf('select[name="%s[%s][customerAddress]"]', $formName, $addressType);
             $customerAddressSelector = $crawler->filter($filter)->html();
@@ -56,20 +54,12 @@ abstract class AbstractAddressACLTest extends WebTestCase
         }
     }
 
-    /**
-     * @param string $entityClass
-     * @param int $accessLevel
-     */
-    protected function setEntityPermissions($entityClass, $accessLevel)
+    protected function setEntityPermissions(string $entityClass, int $accessLevel): void
     {
         $this->updateRolePermission(static::ROLE, $entityClass, $accessLevel);
     }
 
-    /**
-     * @param string $actionId
-     * @param bool $value
-     */
-    protected function setActionPermissions($actionId, $value)
+    protected function setActionPermissions(string $actionId, bool $value): void
     {
         $this->updateRolePermissionForAction(static::ROLE, $actionId, $value);
     }

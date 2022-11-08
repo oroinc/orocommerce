@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Security;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressACLTest;
+use Oro\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressAclTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
@@ -12,29 +12,23 @@ use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class AddressACLTest extends AbstractAddressACLTest
+class AddressAclTest extends AbstractAddressAclTest
 {
-    const SHIPPING_ADDRESS = 'shippingAddress';
+    private const SHIPPING_ADDRESS = 'shippingAddress';
 
-    const COMPANY_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
-    const COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
-    const COMPANY_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
+    private const COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
+    private const COMPANY_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
 
-    const USER_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
-    const USER_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
-    const USER_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
+    private const USER_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
+    private const USER_BILLING_SHIPPING_ADDRESS = '722 Harvest Lane, SEDALIA MO US 65301';
 
-    /** @var string */
-    protected $formName = 'oro_sale_quote';
+    private string $formName = 'oro_sale_quote';
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures([
-            LoadQuoteData::class
-        ]);
+        $this->loadFixtures([LoadQuoteData::class]);
     }
 
     /**
@@ -53,7 +47,7 @@ class AddressACLTest extends AbstractAddressACLTest
         $quote = $this->getReference('sale.quote.3');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $quote->getId()]));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         if (!empty($expected)) {
@@ -66,10 +60,9 @@ class AddressACLTest extends AbstractAddressACLTest
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function checkShippingAddressesDataProvider()
+    public function checkShippingAddressesDataProvider(): array
     {
         return [
             [

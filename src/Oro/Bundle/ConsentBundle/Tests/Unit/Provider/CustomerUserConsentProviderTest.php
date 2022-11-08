@@ -36,9 +36,6 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->consentContextProvider = $this->createMock(ConsentContextProviderInterface::class);
@@ -88,7 +85,8 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
             ->with($customerUser)
             ->willReturn($acceptedConsents);
 
-        $this->cmsPageHelper->method('getCmsPage')
+        $this->cmsPageHelper->expects($this->any())
+            ->method('getCmsPage')
             ->willReturnCallback(function (Consent $consent, ConsentAcceptance $consentAcceptance) {
                 return $consentAcceptance->getLandingPage();
             });
@@ -99,10 +97,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerUserConsentsWithAcceptancesProvider()
+    public function getCustomerUserConsentsWithAcceptancesProvider(): array
     {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42]);
 
@@ -211,9 +206,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')
             ->with([], [])
-            ->willReturn(
-                [$this->getEntity(Consent::class, ['id' => 11])]
-            );
+            ->willReturn([$this->getEntity(Consent::class, ['id' => 11])]);
 
         $this->assertTrue($this->provider->hasEnabledConsentsByCustomerUser($customerUser));
     }
@@ -232,9 +225,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->enabledConsentProvider->expects($this->once())
             ->method('getConsents')
             ->with([], [])
-            ->willReturn(
-                []
-            );
+            ->willReturn([]);
 
         $this->assertFalse($this->provider->hasEnabledConsentsByCustomerUser($customerUser));
     }

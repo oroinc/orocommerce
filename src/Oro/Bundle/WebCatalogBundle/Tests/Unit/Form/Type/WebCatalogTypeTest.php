@@ -16,21 +16,16 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 class WebCatalogTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $htmlTagProvider = $this->getMockBuilder(HtmlTagProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->createMock(ConfigManager::class);
+        $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $htmlTagProvider->expects($this->any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
         $context = $this->createMock(ContextInterface::class);
-        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $htmlTagHelper->expects($this->any())
             ->method('sanitize')
@@ -68,12 +63,8 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param WebCatalog $existingData
-     * @param array $submittedData
-     * @param WebCatalog $expectedData
      */
-    public function testSubmit($existingData, $submittedData, $expectedData)
+    public function testSubmit(WebCatalog $existingData, array $submittedData, WebCatalog $expectedData)
     {
         $form = $this->factory->create(WebCatalogType::class, $existingData);
 
@@ -86,10 +77,7 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new entity' => [

@@ -12,34 +12,30 @@ class RestrictProductVariantEventVisibilityListenerTest extends \PHPUnit\Framewo
     /** @var ProductVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject */
     private $modifier;
 
-    /** @var RestrictProductVariantEventVisibilityListener */
-    private $listener;
-
     /** @var RestrictProductVariantEvent|\PHPUnit\Framework\MockObject\MockObject */
     private $event;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var RestrictProductVariantEventVisibilityListener */
+    private $listener;
+
     protected function setUp(): void
     {
-        $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->event = $this->getMockBuilder(RestrictProductVariantEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->modifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
+        $this->event = $this->createMock(RestrictProductVariantEvent::class);
 
         $this->listener = new RestrictProductVariantEventVisibilityListener($this->modifier);
     }
 
     public function testOnRestrictProductVariantEvent()
     {
-        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->event->expects($this->exactly(1))->method('getQueryBuilder')->willReturn($queryBuilder);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->event->expects($this->once())
+            ->method('getQueryBuilder')
+            ->willReturn($queryBuilder);
 
-        $this->modifier->expects($this->once())->method('modify')->with($queryBuilder);
+        $this->modifier->expects($this->once())
+            ->method('modify')
+            ->with($queryBuilder);
 
         $this->listener->onRestrictProductVariantEvent($this->event);
     }

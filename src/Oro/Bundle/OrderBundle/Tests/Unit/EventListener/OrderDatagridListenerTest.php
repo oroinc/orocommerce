@@ -12,50 +12,46 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
 class OrderDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var OrderDatagridListener
-     */
-    protected $listener;
-
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var OrderDatagridListener */
+    private $listener;
+
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
         $this->listener = new OrderDatagridListener($this->doctrineHelper);
     }
 
     /**
      * @dataProvider methodsDataProvider
-     * @param array $returnResult
-     * @param array $expectation
      */
-    public function testOnResultAfter($returnResult, $expectation)
+    public function testOnResultAfter(array $returnResult, array $expectation)
     {
-        /** @var OrmResultAfter|\PHPUnit\Framework\MockObject\MockObject $eventMock */
-        $eventMock = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+        $event = $this->createMock(OrmResultAfter::class);
         $recordId = 1;
         $record = new ResultRecord(['id' => $recordId]);
         $records = [$record];
-        $eventMock->expects($this->once())->method('getRecords')->willReturn($records);
-        $repoMock = $this->getMockBuilder(PaymentTransactionRepository::class)->disableOriginalConstructor()->getMock();
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->with(PaymentTransaction::class)
-            ->willReturn($repoMock);
-        $repoMock->expects($this->once())->method('getPaymentMethods')->with(Order::class, [$recordId])
+        $event->expects($this->once())
+            ->method('getRecords')
+            ->willReturn($records);
+        $repo = $this->createMock(PaymentTransactionRepository::class);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(PaymentTransaction::class)
+            ->willReturn($repo);
+        $repo->expects($this->once())
+            ->method('getPaymentMethods')
+            ->with(Order::class, [$recordId])
             ->willReturn($returnResult);
 
-        $this->listener->onResultAfter($eventMock);
+        $this->listener->onResultAfter($event);
         $this->assertEquals($expectation, $record->getValue('paymentMethods'));
     }
 
-    /**
-     * @return array
-     */
-    public function methodsDataProvider()
+    public function methodsDataProvider(): array
     {
         return [
             'one method exists' => [

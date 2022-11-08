@@ -21,30 +21,24 @@ class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    private const CONFIG_PATH = 'oro_product.general_frontend_product_visibility';
 
     /** @var InventoryQuantityProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $quantityProvider;
+    private $quantityProvider;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityFallbackResolver;
+    private $entityFallbackResolver;
 
     /** @var OrderLineItemConverter */
-    protected $converter;
+    private $converter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->configManager = $this->createMock(ConfigManager::class);
-        $this->configManager->expects($this->any())
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->expects($this->any())
             ->method('get')
             ->with(self::CONFIG_PATH)
             ->willReturn([Product::INVENTORY_STATUS_IN_STOCK]);
@@ -54,7 +48,7 @@ class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
         $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
 
         $this->converter = new OrderLineItemConverter(
-            $this->configManager,
+            $configManager,
             $this->quantityProvider,
             $this->authorizationChecker,
             $this->entityFallbackResolver,
@@ -70,44 +64,32 @@ class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertDataProvider
-     *
-     * @param array $orderLineItems
-     * @param bool $canDecrement
-     * @param int $availableQuantity
-     * @param bool $isVisible
-     * @param array $checkoutLineItems
      */
     public function testConvert(
         array $orderLineItems,
-        $canDecrement,
-        $availableQuantity,
-        $isVisible,
+        bool $canDecrement,
+        int $availableQuantity,
+        bool $isVisible,
         array $checkoutLineItems,
-        $allowBackorders = false
+        bool $allowBackorders = false
     ) {
         $this->quantityProvider->expects($this->any())
             ->method('canDecrement')
-            ->willReturnCallback(
-                function (Product $product) use ($canDecrement) {
-                    return $canDecrement && $product->getId() === 3;
-                }
-            );
+            ->willReturnCallback(function (Product $product) use ($canDecrement) {
+                return $canDecrement && $product->getId() === 3;
+            });
 
         $this->quantityProvider->expects($this->any())
             ->method('getAvailableQuantity')
-            ->willReturnCallback(
-                function (Product $product) use ($availableQuantity) {
-                    return $product->getId() === 3 ? $availableQuantity : 0;
-                }
-            );
+            ->willReturnCallback(function (Product $product) use ($availableQuantity) {
+                return $product->getId() === 3 ? $availableQuantity : 0;
+            });
 
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->willReturnCallback(
-                function ($argument, Product $product) use ($isVisible) {
-                    return $isVisible && $argument === 'VIEW' && $product->getId() === 3;
-                }
-            );
+            ->willReturnCallback(function ($argument, Product $product) use ($isVisible) {
+                return $isVisible && $argument === 'VIEW' && $product->getId() === 3;
+            });
 
         $this->entityFallbackResolver->expects($this->any())
             ->method('getFallbackValue')
@@ -124,10 +106,8 @@ class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function convertDataProvider()
+    public function convertDataProvider(): array
     {
         $parentProduct = $this->getProduct(42, Product::STATUS_ENABLED, Product::INVENTORY_STATUS_IN_STOCK);
         $product1 = $this->getProduct(1, Product::STATUS_DISABLED, Product::INVENTORY_STATUS_IN_STOCK);
@@ -295,13 +275,7 @@ class OrderLineItemConverterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $id
-     * @param string $status
-     * @param string $inventoryStatus
-     * @return Product|object
-     */
-    protected function getProduct($id, $status, $inventoryStatus)
+    private function getProduct(int $id, string $status, string $inventoryStatus): Product
     {
         return $this->getEntity(
             Product::class,

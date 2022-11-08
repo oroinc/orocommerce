@@ -8,23 +8,25 @@ use Oro\Bundle\LocaleBundle\Provider\LocalizationProviderInterface;
 use Oro\Bundle\RedirectBundle\Cache\UrlCacheInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CategoryContextUrlProviderTest extends TestCase
+class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    private RequestStack|MockObject $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    private UrlCacheInterface|MockObject $cache;
+    /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cache;
 
-    private LocalizationProviderInterface|MockObject $localizationProvider;
+    /** @var LocalizationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationProvider;
 
-    private CategoryContextUrlProvider $provider;
+    /** @var CategoryContextUrlProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -41,9 +43,7 @@ class CategoryContextUrlProviderTest extends TestCase
 
     public function testGetUrlByRequest(): void
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $categoryId = 2;
         $url = '/my-category';
@@ -63,9 +63,7 @@ class CategoryContextUrlProviderTest extends TestCase
 
     public function testGetUrlFromCacheNonCategoryRoute(): void
     {
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $categoryId = 2;
         $url = '/my-url';
@@ -91,9 +89,7 @@ class CategoryContextUrlProviderTest extends TestCase
         $categoryId = 2;
         $categoryUrl = '/category';
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $slug = new Slug();
         $slug->setRouteName(CategoryContextUrlProvider::CATEGORY_ROUTE_NAME);
@@ -115,9 +111,7 @@ class CategoryContextUrlProviderTest extends TestCase
         $categoryId = 2;
         $categoryUrl = '/category';
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
 
         $slug = null;
         $request->attributes = new ParameterBag([CategoryContextUrlProvider::USED_SLUG_KEY => $slug]);
@@ -136,9 +130,7 @@ class CategoryContextUrlProviderTest extends TestCase
         $categoryId = 2;
         $categoryUrl = '/category';
 
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createMock(Request::class);
         $request->attributes = new ParameterBag();
 
         $this->requestStack->expects($this->once())

@@ -17,21 +17,15 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentNodeTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $treeHandler;
 
-    /**
-     * @var EntityTreeSelectType
-     */
-    protected $formType;
+    /** @var EntityTreeSelectType */
+    private $formType;
 
     protected function setUp(): void
     {
-        $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->treeHandler = $this->createMock(ContentNodeTreeHandler::class);
         $this->formType = new ContentNodeSelectType($this->treeHandler);
         parent::setUp();
     }
@@ -39,19 +33,15 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityIdentifierType = new EntityType(
-            [
-                1 => $this->getEntity(ContentNode::class, ['id' => 1])
-            ]
-        );
-
         return [
             new PreloadedExtension(
                 [
                     ContentNodeSelectType::class => $this->formType,
-                    EntityIdentifierType::class => $entityIdentifierType,
+                    EntityIdentifierType::class => new EntityType([
+                        1 => $this->getEntity(ContentNode::class, ['id' => 1])
+                    ])
                 ],
                 []
             )

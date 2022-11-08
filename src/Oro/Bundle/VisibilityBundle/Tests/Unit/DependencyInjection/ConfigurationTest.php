@@ -5,21 +5,16 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\DependencyInjection;
 use Oro\Bundle\VisibilityBundle\DependencyInjection\Configuration;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * Test Configuration
-     */
     public function testGetConfigTreeBuilder()
     {
         $configuration = new Configuration();
 
-        $this->assertInstanceOf(
-            'Symfony\Component\Config\Definition\Builder\TreeBuilder',
-            $configuration->getConfigTreeBuilder()
-        );
+        $this->assertInstanceOf(TreeBuilder::class, $configuration->getConfigTreeBuilder());
     }
 
     /**
@@ -32,10 +27,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $processor->processConfiguration($configuration, $configs));
     }
 
-    /**
-     * @return array
-     */
-    public function processConfigurationDataProvider()
+    public function processConfigurationDataProvider(): array
     {
         return [
             'empty' => [

@@ -12,39 +12,38 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class CurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenStorage;
+    private $tokenStorage;
 
     /** @var TokenInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $token;
+    private $token;
 
     /** @var UserLocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $localizationManager;
+    private $localizationManager;
 
     /** @var CurrentLocalizationExtension */
-    protected $extension;
+    private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->token = $this->createMock(TokenInterface::class);
-
-        $this->localizationManager = $this->getMockBuilder(UserLocalizationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localizationManager = $this->createMock(UserLocalizationManager::class);
 
         $this->extension = new CurrentLocalizationExtension($this->tokenStorage, $this->localizationManager);
     }
 
     public function testGetCurrentLocalizationAndUser()
     {
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($this->token);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($this->token);
 
-        $this->token->expects($this->once())->method('getUser')->willReturn(new User());
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(new User());
 
-        $this->localizationManager->expects($this->never())->method('getCurrentLocalization');
+        $this->localizationManager->expects($this->never())
+            ->method('getCurrentLocalization');
 
         $this->assertNull($this->extension->getCurrentLocalization());
     }
@@ -53,11 +52,17 @@ class CurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $localization = new Localization();
 
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($this->token);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn($this->token);
 
-        $this->token->expects($this->once())->method('getUser')->willReturn(new \stdClass());
+        $this->token->expects($this->once())
+            ->method('getUser')
+            ->willReturn(new \stdClass());
 
-        $this->localizationManager->expects($this->once())->method('getCurrentLocalization')->willReturn($localization);
+        $this->localizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
 
         $this->assertSame($localization, $this->extension->getCurrentLocalization());
     }
@@ -66,11 +71,16 @@ class CurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCase
     {
         $localization = new Localization();
 
-        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn(null);
+        $this->tokenStorage->expects($this->once())
+            ->method('getToken')
+            ->willReturn(null);
 
-        $this->token->expects($this->never())->method($this->anything());
+        $this->token->expects($this->never())
+            ->method($this->anything());
 
-        $this->localizationManager->expects($this->once())->method('getCurrentLocalization')->willReturn($localization);
+        $this->localizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
 
         $this->assertSame($localization, $this->extension->getCurrentLocalization());
     }

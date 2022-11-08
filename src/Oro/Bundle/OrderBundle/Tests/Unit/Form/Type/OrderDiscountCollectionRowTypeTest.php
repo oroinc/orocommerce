@@ -11,10 +11,8 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var OrderDiscountCollectionRowType
-     */
-    protected $type;
+    /** @var OrderDiscountCollectionRowType */
+    private $type;
 
     protected function setUp(): void
     {
@@ -25,20 +23,16 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        static::assertSame(OrderDiscountCollectionRowType::NAME, $this->type->getBlockPrefix());
+        self::assertSame(OrderDiscountCollectionRowType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param OrderDiscount $existing
-     * @param array $submitted
-     * @param OrderDiscount $expected
      */
     public function testSubmit(
         OrderDiscount $existing,
         array $submitted,
-        OrderDiscount $expected = null
+        OrderDiscount $expected
     ) {
         $options = [
             'data_class' => OrderDiscount::class
@@ -47,15 +41,12 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OrderDiscountCollectionRowType::class, $existing, $options);
         $form->submit($submitted);
 
-        static::assertTrue($form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($expected, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'amount discount' => [
@@ -87,7 +78,7 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $numberFormatter = $this->createMock(NumberFormatter::class);
 

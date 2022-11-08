@@ -13,31 +13,22 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ShoppingListLineItemConverter */
-    protected $converter;
+    private $converter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->converter = new ShoppingListLineItemConverter();
     }
 
     /**
-     * @param bool $expected
-     * @param mixed $source
-     *
      * @dataProvider isSourceSupportedDataProvider
      */
-    public function testIsSourceSupported($expected, $source)
+    public function testIsSourceSupported(bool $expected, mixed $source)
     {
         $this->assertEquals($expected, $this->converter->isSourceSupported($source));
     }
 
-    /**
-     * @return array
-     */
-    public function isSourceSupportedDataProvider()
+    public function isSourceSupportedDataProvider(): array
     {
         return [
             'positive' => ['expected' => true, 'source' => $this->createMock(ShoppingList::class)],
@@ -47,37 +38,36 @@ class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
 
     public function testConvert()
     {
-        /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject $shoppingList */
         $shoppingList = $this->createMock(ShoppingList::class);
-        $lineItemMock = $this->createMock(LineItem::class);
+        $lineItem = $this->createMock(LineItem::class);
 
         $shoppingList->expects($this->once())
             ->method('getLineItems')
-            ->willReturn(new ArrayCollection([$lineItemMock]));
+            ->willReturn(new ArrayCollection([$lineItem]));
 
         $product = $this->createMock(Product::class);
         $parentProduct = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
 
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getProduct')
             ->willReturn($product);
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getParentProduct')
             ->willReturn($parentProduct);
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getProductSku')
             ->willReturn('SKU');
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getProductUnit')
             ->willReturn($productUnit);
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getProductUnitCode')
             ->willReturn('UNIT_CODE');
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getNotes')
             ->willReturn('Notes');
-        $lineItemMock->expects($this->once())
+        $lineItem->expects($this->once())
             ->method('getQuantity')
             ->willReturn(1);
 

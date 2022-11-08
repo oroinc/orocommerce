@@ -29,34 +29,21 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var OrderDataStorageExtension
-     */
-    protected $extension;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceProvider;
 
-    /**
-     * @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productPriceProvider;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $featureChecker;
+    /** @var ProductPriceScopeCriteriaFactoryInterface */
+    private $priceScopeCriteriaFactory;
 
-    /**
-     * @var ProductPriceScopeCriteriaFactoryInterface
-     */
-    protected $priceScopeCriteriaFactory;
+    /** @var OrderDataStorageExtension */
+    private $extension;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);
@@ -95,7 +82,6 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('test')
             ->willReturn(true);
 
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
@@ -110,7 +96,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with($this->isType('array'), $priceScopeCriteria)
             ->willReturn($matchedPrices);
 
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->any())
             ->method('addEventListener')
             ->with(
@@ -118,10 +104,10 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                 $this->logicalAnd(
                     $this->isInstanceOf('\Closure'),
                     $this->callback(function (\Closure $closure) use ($order) {
-                        $event = $this->getMockBuilder(FormEvent::class)
-                            ->disableOriginalConstructor()
-                            ->getMock();
-                        $event->expects($this->once())->method('getData')->willReturn($order);
+                        $event = $this->createMock(FormEvent::class);
+                        $event->expects($this->once())
+                            ->method('getData')
+                            ->willReturn($order);
                         $this->assertNull($closure($event));
                         return true;
                     })
@@ -139,10 +125,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function buildFormDataProvider()
+    public function buildFormDataProvider(): array
     {
         return [
             [
@@ -189,11 +172,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $data
-     * @return Order
-     */
-    protected function getOrder(array $data)
+    private function getOrder(array $data): Order
     {
         $lineItems = new ArrayCollection();
         foreach ($data['lineItems'] as $lineItem) {
@@ -209,12 +188,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         return $this->getEntity(Order::class, $data);
     }
 
-    /**
-     * @param array $data
-     * @param Order $order
-     * @return ProductPriceScopeCriteriaInterface
-     */
-    protected function getPriceScopeCriteria(array $data, Order $order)
+    private function getPriceScopeCriteria(array $data, Order $order): ProductPriceScopeCriteriaInterface
     {
         $customer = $this->getEntity(Customer::class, $data['customer']);
         $website = $this->getEntity(Website::class, $data['website']);
@@ -226,11 +200,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param array $matchedPrices
-     * @return array
-     */
-    protected function getMatchedPrices(array $matchedPrices)
+    private function getMatchedPrices(array $matchedPrices): array
     {
         foreach ($matchedPrices as &$matchedPrice) {
             $matchedPrice = Price::create($matchedPrice['value'], $matchedPrice['currency']);
@@ -246,11 +216,10 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('test')
             ->willReturn(true);
 
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->never())
             ->method('addEventListener');
 
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
@@ -272,7 +241,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('test')
             ->willReturn(true);
 
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->never())
             ->method('addEventListener');
 
@@ -291,11 +260,10 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('test')
             ->willReturn(false);
 
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->never())
             ->method('addEventListener');
 
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->any())
             ->method('get')
@@ -310,10 +278,8 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider fillDataDataProvider
-     *
-     * @param array $data
      */
-    public function testFillDataEmptyCriteria($data)
+    public function testFillDataEmptyCriteria(array $data)
     {
         $this->extension->addFeature('test');
         $this->featureChecker->expects($this->once())
@@ -321,7 +287,6 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('test')
             ->willReturn(true);
 
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
@@ -336,14 +301,16 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getMatchedPrices');
 
         $order = $this->getOrder($data);
-        $builder = $this->getBuilderMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->any())
             ->method('addEventListener')
             ->with(
                 FormEvents::PRE_SET_DATA,
                 $this->callback(function (\Closure $closure) use ($order) {
                     $event = $this->createMock(FormEvent::class);
-                    $event->expects($this->once())->method('getData')->willReturn($order);
+                    $event->expects($this->once())
+                        ->method('getData')
+                        ->willReturn($order);
                     $closure($event);
                     return true;
                 })
@@ -352,10 +319,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension->buildForm($builder, []);
     }
 
-    /**
-     * @return array
-     */
-    public function fillDataDataProvider()
+    public function fillDataDataProvider(): array
     {
         return [
             'no line items' => [
@@ -415,13 +379,5 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
         ];
-    }
-
-    /**
-     * @return FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getBuilderMock()
-    {
-        return $this->createMock(FormBuilderInterface::class);
     }
 }

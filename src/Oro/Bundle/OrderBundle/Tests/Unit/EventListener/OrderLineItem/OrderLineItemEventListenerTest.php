@@ -15,10 +15,10 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var ConfigurableProductProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $configurableProductProvider;
+    private $configurableProductProvider;
 
     /** @var OrderLineItemEventListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
@@ -34,28 +34,25 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $lineItem = new OrderLineItem();
 
-        $this->listener->prePersist($lineItem, $this->getLifecycleEventArgs());
+        $this->listener->prePersist($lineItem, $this->createMock(LifecycleEventArgs::class));
         $this->assertEquals([], $lineItem->getProductVariantFields());
 
-        $this->listener->preUpdate($lineItem, $this->getPreUpdateEventArgs());
+        $this->listener->preUpdate($lineItem, $this->createMock(PreUpdateEventArgs::class));
         $this->assertEquals([], $lineItem->getProductVariantFields());
 
         $lineItem->setProduct(new Product());
 
-        $this->listener->prePersist($lineItem, $this->getLifecycleEventArgs());
+        $this->listener->prePersist($lineItem, $this->createMock(LifecycleEventArgs::class));
         $this->assertEquals([], $lineItem->getProductVariantFields());
 
-        $this->listener->preUpdate($lineItem, $this->getPreUpdateEventArgs());
+        $this->listener->preUpdate($lineItem, $this->createMock(PreUpdateEventArgs::class));
         $this->assertEquals([], $lineItem->getProductVariantFields());
     }
 
     /**
      * @dataProvider methodsDataProvider
-     *
-     * @param array $returnResult
-     * @param array $expectation
      */
-    public function testMethods($returnResult, $expectation)
+    public function testMethods(array $returnResult, array $expectation)
     {
         $this->configurableProductProvider->expects($this->any())
             ->method('getVariantFieldsValuesForLineItem')
@@ -67,17 +64,14 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
             ['product' => $this->getEntity(Product::class, ['id' => 42])]
         );
 
-        $this->listener->prePersist($lineItem, $this->getLifecycleEventArgs());
+        $this->listener->prePersist($lineItem, $this->createMock(LifecycleEventArgs::class));
         $this->assertEquals($expectation, $lineItem->getProductVariantFields());
 
-        $this->listener->preUpdate($lineItem, $this->getPreUpdateEventArgs());
+        $this->listener->preUpdate($lineItem, $this->createMock(PreUpdateEventArgs::class));
         $this->assertEquals($expectation, $lineItem->getProductVariantFields());
     }
 
-    /**
-     * @return array
-     */
-    public function methodsDataProvider()
+    public function methodsDataProvider(): array
     {
         return [
             'few fields' => [
@@ -124,21 +118,5 @@ class OrderLineItemEventListenerTest extends \PHPUnit\Framework\TestCase
                 'expectation' => [],
             ],
         ];
-    }
-
-    /**
-     * @return LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getLifecycleEventArgs()
-    {
-        return $this->createMock(LifecycleEventArgs::class);
-    }
-
-    /**
-     * @return PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getPreUpdateEventArgs()
-    {
-        return $this->createMock(PreUpdateEventArgs::class);
     }
 }

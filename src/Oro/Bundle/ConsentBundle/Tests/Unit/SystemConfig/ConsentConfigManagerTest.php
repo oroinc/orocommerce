@@ -15,29 +15,18 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $globalConfig;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ConsentConfigConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentConfigConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $converter;
 
-    /**
-     * @var ConsentConfigManager
-     */
+    /** @var ConsentConfigManager */
     private $consentConfigManager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -51,87 +40,55 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
+    public function configProvider(): array
     {
-        unset(
-            $this->configManager,
-            $this->globalConfig,
-            $this->converter,
-            $this->consentConfigManager
-        );
-    }
-
-    /**
-     * @return \Generator
-     */
-    public function configProvider()
-    {
-        yield "config for website with use parent" => [
-            "config" => [
-                "value" => [
-                    [
-                        "consent" => 1,
-                        "sort_order" => 1
-                    ]
+        return [
+            'config for website with use parent' => [
+                'config' => [
+                    'value' => [
+                        ['consent' => 1, 'sort_order' => 1]
+                    ],
+                    ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => true
                 ],
-                ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => true
-            ],
-            "convertedConfig" => [
-                new ConsentConfig($this->createConsent(1))
-            ],
-            "consent" => $this->createConsent(1),
-            "website" => $this->createWebsite(1)
-        ];
-
-        yield "config for website must be updated" => [
-            "config" => [
-                "value" => [
-                    [
-                        "consent" => 1,
-                        "sort_order" => 1
-                    ], [
-                        "consent" => 2,
-                        "sort_order" => 2
-                    ]
+                'convertedConfig' => [
+                    new ConsentConfig($this->createConsent(1))
                 ],
-                ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
+                'consent' => $this->createConsent(1),
+                'website' => $this->createWebsite(1)
             ],
-            "convertedConfig" => [
-                new ConsentConfig($this->createConsent(1)),
-                new ConsentConfig($this->createConsent(2))
-            ],
-            "consent" => $this->createConsent(1),
-            "website" => $this->createWebsite(1)
-        ];
-
-        yield "config for website should not be updated" => [
-            "config" => [
-                "value" => [
-                    [
-                        "consent" => 1,
-                        "sort_order" => 1
-                    ]
+            'config for website must be updated' => [
+                'config' => [
+                    'value' => [
+                        ['consent' => 1, 'sort_order' => 1],
+                        ['consent' => 2, 'sort_order' => 2]
+                    ],
+                    ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
                 ],
-                ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
+                'convertedConfig' => [
+                    new ConsentConfig($this->createConsent(1)),
+                    new ConsentConfig($this->createConsent(2))
+                ],
+                'consent' => $this->createConsent(1),
+                'website' => $this->createWebsite(1)
             ],
-            "convertedConfig" => [
-                new ConsentConfig($this->createConsent(1))
-            ],
-            "consent" => $this->createConsent(3),
-            "website" => $this->createWebsite(1)
+            'config for website should not be updated' => [
+                'config' => [
+                    'value' => [
+                        ['consent' => 1, 'sort_order' => 1]
+                    ],
+                    ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
+                ],
+                'convertedConfig' => [
+                    new ConsentConfig($this->createConsent(1))
+                ],
+                'consent' => $this->createConsent(3),
+                'website' => $this->createWebsite(1)
+            ]
         ];
     }
 
     /**
      * @dataProvider configProvider
-     *
-     * @param array $config
-     * @param ConsentConfig[] $convertedConfig
-     * @param Consent $consent
-     * @param Website $website
      */
     public function testUpdateConsentsConfigForWebsiteScope(
         array $config,
@@ -155,7 +112,7 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
                 ->with($configValue)
                 ->willReturn($convertedConfig);
             $consentIds = array_column($configValue, ConsentConfigConverter::CONSENT_KEY);
-            if (in_array($consent->getId(), $consentIds)) {
+            if (in_array($consent->getId(), $consentIds, true)) {
                 $this->converter->expects($this->once())
                     ->method('convertBeforeSave');
                 $this->configManager->expects($this->once())
@@ -167,55 +124,41 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
         $this->consentConfigManager->updateConsentsConfigForWebsiteScope($consent, $website);
     }
 
-    /**
-     * @return \Generator
-     */
-    public function globalConfigProvider()
+    public function globalConfigProvider(): array
     {
-        yield "global config must be updated" => [
-            "config" => [
-                "value" => [
-                    [
-                        "consent" => 1,
-                        "sort_order" => 1
-                    ], [
-                        "consent" => 2,
-                        "sort_order" => 2
-                    ]
+        return [
+            'global config must be updated' => [
+                'config' => [
+                    'value' => [
+                        ['consent' => 1, 'sort_order' => 1],
+                        ['consent' => 2, 'sort_order' => 2]
+                    ],
+                    ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
                 ],
-                ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
-            ],
-            "convertedConfig" => [
-                new ConsentConfig($this->createConsent(1)),
-                new ConsentConfig($this->createConsent(2))
-            ],
-            "consent" => $this->createConsent(1),
-            "website" => $this->createWebsite(1)
-        ];
-
-        yield "global config should not be updated" => [
-            "config" => [
-                "value" => [
-                    [
-                        "consent" => 1,
-                        "sort_order" => 1
-                    ]
+                'convertedConfig' => [
+                    new ConsentConfig($this->createConsent(1)),
+                    new ConsentConfig($this->createConsent(2))
                 ],
-                ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
+                'consent' => $this->createConsent(1),
+                'website' => $this->createWebsite(1)
             ],
-            "convertedConfig" => [
-                new ConsentConfig($this->createConsent(1))
-            ],
-            "consent" => $this->createConsent(3)
+            'global config should not be updated' => [
+                'config' => [
+                    'value' => [
+                        ['consent' => 1, 'sort_order' => 1]
+                    ],
+                    ConfigManager::USE_PARENT_SCOPE_VALUE_KEY => false
+                ],
+                'convertedConfig' => [
+                    new ConsentConfig($this->createConsent(1))
+                ],
+                'consent' => $this->createConsent(3)
+            ]
         ];
     }
 
     /**
      * @dataProvider globalConfigProvider
-     *
-     * @param array $config
-     * @param ConsentConfig[] $convertedConfig
-     * @param Consent $consent
      */
     public function testUpdateConsentsConfigForGlobalScope(
         array $config,
@@ -233,7 +176,7 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
             ->with($configValue)
             ->willReturn($convertedConfig);
         $consentIds = array_column($configValue, ConsentConfigConverter::CONSENT_KEY);
-        if (in_array($consent->getId(), $consentIds)) {
+        if (in_array($consent->getId(), $consentIds, true)) {
             $this->converter->expects($this->once())
                 ->method('convertBeforeSave');
             $this->globalConfig->expects($this->once())

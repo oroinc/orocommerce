@@ -7,14 +7,10 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var OpenOrdersSeparatePageConfigProvider
-     */
+    /** @var OpenOrdersSeparatePageConfigProvider */
     private $provider;
 
     protected function setUp(): void
@@ -36,10 +32,7 @@ class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($value, $this->provider->getOpenOrdersSeparatePageConfig());
     }
 
-    /**
-     * @return array
-     */
-    public function getOpenOrdersSeparatePageConfigProvider()
+    public function getOpenOrdersSeparatePageConfigProvider(): array
     {
         return [
             [true],
@@ -60,10 +53,7 @@ class OpenOrdersSeparatePageConfigProviderTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($value, $this->provider->getShowOpenOrdersConfig());
     }
 
-    /**
-     * @return array
-     */
-    public function getShowOpenOrdersConfigProvider()
+    public function getShowOpenOrdersConfigProvider(): array
     {
         return [
             [true],

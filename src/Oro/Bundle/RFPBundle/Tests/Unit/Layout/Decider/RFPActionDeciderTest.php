@@ -10,23 +10,26 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
 {
-    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    private Request|\PHPUnit\Framework\MockObject\MockObject $request;
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
+    private $request;
 
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
-
-    private RFPActionDecider $decider;
+    /** @var RFPActionDecider */
+    private $decider;
 
     protected function setUp(): void
     {
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestStack = $this->getMockBuilder(RequestStack::class)->disableOriginalConstructor()->getMock();
-        $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->requestStack->expects(self::any())->method('getMainRequest')->willReturn($this->request);
-        $this->decider = new RFPActionDecider($this->eventDispatcher, $this->requestStack);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->request = $this->createMock(Request::class);
+
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn($this->request);
+
+        $this->decider = new RFPActionDecider($this->eventDispatcher, $requestStack);
     }
 
     public function testShouldFormSubmitWithErrorsReturnFalseIfNoListeners(): void
@@ -47,14 +50,12 @@ class RFPActionDeciderTest extends \PHPUnit\Framework\TestCase
             ->willReturn('testName');
         $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
-            ->willReturnCallback(
-                function (FormSubmitCheckEvent $event, string $eventName) {
-                    self::assertEquals('rfp.form_submit_check.testName', $eventName);
-                    $event->setShouldSubmitOnError(true);
+            ->willReturnCallback(function (FormSubmitCheckEvent $event, string $eventName) {
+                self::assertEquals('rfp.form_submit_check.testName', $eventName);
+                $event->setShouldSubmitOnError(true);
 
-                    return $event;
-                }
-            );
+                return $event;
+            });
         self::assertTrue($this->decider->shouldFormSubmitWithErrors());
     }
 }
