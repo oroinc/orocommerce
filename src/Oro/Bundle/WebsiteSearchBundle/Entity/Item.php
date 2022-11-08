@@ -7,6 +7,8 @@ use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 
 /**
+ * Stores items in the index
+ *
  * @ORM\Table(
  *    name="oro_website_search_item",
  *    uniqueConstraints={
@@ -37,5 +39,18 @@ class Item extends AbstractItem
         $this->saveData($objectData, $this->decimalFields, new IndexDecimal(), SearchQuery::TYPE_DECIMAL);
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllFields()
+    {
+        return [
+            SearchQuery::TYPE_TEXT => $this->textFields,
+            SearchQuery::TYPE_INTEGER => $this->integerFields,
+            SearchQuery::TYPE_DATETIME => $this->datetimeFields,
+            SearchQuery::TYPE_DECIMAL => $this->decimalFields,
+        ];
     }
 }
