@@ -249,7 +249,6 @@ datagrids:
                     data_name: categorySortOrder
             default:
                 categorySortOrder: ASC
-                createdAt: DESC
         actions:
             add_to_excluded:
                 type:          trigger-event

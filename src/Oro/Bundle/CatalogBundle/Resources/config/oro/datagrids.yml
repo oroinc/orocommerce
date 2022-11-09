@@ -101,7 +101,6 @@ datagrids:
             default:
                 inCategory: DESC
                 categorySortOrder: ASC
-                createdAt: DESC
         filters:
             columns:
                 inCategory:
