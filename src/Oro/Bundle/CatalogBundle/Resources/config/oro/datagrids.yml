@@ -106,6 +106,9 @@ datagrids:
                 inCategory:
                     type:      boolean
                     data_name: inCategory
+                categorySortOrder:
+                    type:      number-range
+                    data_name: categorySortOrder
                 sku:
                     type:      string
                     data_name: product.sku
