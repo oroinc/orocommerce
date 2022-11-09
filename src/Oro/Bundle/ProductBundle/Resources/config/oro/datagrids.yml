@@ -249,6 +249,11 @@ datagrids:
                     data_name: categorySortOrder
             default:
                 categorySortOrder: ASC
+        filters:
+            columns:
+                categorySortOrder:
+                    type: number-range
+                    data_name: categorySortOrder
         actions:
             add_to_excluded:
                 type:          trigger-event
