@@ -551,13 +551,17 @@
         right: 0;
         bottom: 0;
         left: 0;
-        z-index: 1000;
+        z-index: $grapesjs-content-editor-fullscreen-z-index;
         // stylelint-disable-next-line declaration-no-important
         padding: $grapesjs-content-editor-fullscreen-offset !important;
         // stylelint-disable-next-line declaration-no-important
         width: auto !important;
         // stylelint-disable-next-line declaration-no-important
         height: auto !important;
+    }
+
+    &-loading-mask-fullscreen {
+        z-index: $grapesjs-content-editor-fullscreen-z-index + 1;
     }
 }
 
