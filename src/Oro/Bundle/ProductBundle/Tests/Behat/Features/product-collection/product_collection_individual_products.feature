@@ -35,13 +35,13 @@ Feature: Product collection individual products
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
       | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
       | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
 
   Scenario: User is able to exclude product manually from Excluded tab
     When I click "Excluded"

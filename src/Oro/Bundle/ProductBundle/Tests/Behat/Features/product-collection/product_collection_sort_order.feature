@@ -27,11 +27,11 @@ Feature: Product collection sort order
     And I click on "Preview Results"
     Then I should see following grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
-      | PSKU4 | Product 4 |
-      | PSKU3 | Product 3 |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
+      | PSKU3 | Product 3 |
+      | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
     And I type "Some Custom Segment Name" in "Segment Name"
     And I fill "Product Collection Grid Form" with:
       | PSKU2 | 2 |

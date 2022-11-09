@@ -21,8 +21,8 @@ Feature: Product collection edit
     And I click on "Preview Results"
     Then I should see following grid:
       | SKU   | NAME      |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
     And type "Some Custom Segment Name" in "Segment Name"
 
   Scenario: Edited Product Collection can be saved

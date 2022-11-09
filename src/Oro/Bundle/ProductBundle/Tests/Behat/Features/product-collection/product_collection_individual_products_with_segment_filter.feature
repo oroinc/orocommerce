@@ -21,10 +21,10 @@ Feature: Product collection individual products with segment filter
     And I click on "Preview Results"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
 
   Scenario: Excluded Product disappears from All Added when filters applied
     When I click "Excluded"
