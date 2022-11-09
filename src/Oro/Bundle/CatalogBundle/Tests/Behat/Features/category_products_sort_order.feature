@@ -39,8 +39,8 @@ Feature: Category products sort order
       | PSKU4 | Product 4 |
       | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
-      | PSKU3 | Product 3 |
       | PSKU5 | Product 5 |
+      | PSKU3 | Product 3 |
 #
   Scenario: Category correctly sorted in frontend
     Given I operate as the Buyer
@@ -64,16 +64,16 @@ Feature: Category products sort order
       | PSKU5 | 0             |
     And click "Save"
 
-  Scenario: Category sort order has been saved
+  Scenario: Category sort order has been saved again
     When I save form
     Then I should see "Category has been saved" flash message
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU5 | Product 5 |
       | PSKU3 | Product 3 |
-      | PSKU1 | Product 1 |
-      | PSKU2 | Product 2 |
       | PSKU4 | Product 4 |
+      | PSKU2 | Product 2 |
+      | PSKU1 | Product 1 |
 
   Scenario: Category sort order updated in frontend
     Given I operate as the Buyer
