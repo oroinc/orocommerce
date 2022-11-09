@@ -16,11 +16,11 @@ Feature: Category products sort order
     And I click "Create Category"
     Then I should see following grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
-      | PSKU4 | Product 4 |
-      | PSKU3 | Product 3 |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
+      | PSKU3 | Product 3 |
+      | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
     And I click on PSKU1 in grid
     And I click on PSKU2 in grid
     And I click on PSKU4 in grid
@@ -38,9 +38,9 @@ Feature: Category products sort order
       | SKU   | NAME      |
       | PSKU4 | Product 4 |
       | PSKU2 | Product 2 |
-      | PSKU5 | Product 5 |
       | PSKU1 | Product 1 |
       | PSKU3 | Product 3 |
+      | PSKU5 | Product 5 |
 #
   Scenario: Category correctly sorted in frontend
     Given I operate as the Buyer
@@ -71,9 +71,9 @@ Feature: Category products sort order
       | SKU   | NAME      |
       | PSKU5 | Product 5 |
       | PSKU3 | Product 3 |
-      | PSKU4 | Product 4 |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
+      | PSKU4 | Product 4 |
 
   Scenario: Category sort order updated in frontend
     Given I operate as the Buyer

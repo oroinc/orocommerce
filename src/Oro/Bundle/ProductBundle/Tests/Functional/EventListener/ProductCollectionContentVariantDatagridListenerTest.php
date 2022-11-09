@@ -97,10 +97,10 @@ class ProductCollectionContentVariantDatagridListenerTest extends WebTestCase
                     'sd_' . $gridName => $segmentDefinition
                 ],
                 'expectedFilteredProducts' => [
-                    LoadProductData::PRODUCT_4,
-                    LoadProductData::PRODUCT_3,
-                    LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_4,
                 ]
             ],
             'validate sort order' => [
