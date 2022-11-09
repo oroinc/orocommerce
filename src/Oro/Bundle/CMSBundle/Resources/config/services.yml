@@ -251,11 +251,6 @@ services:
             # Must be called before oro_message_queue.consumption.doctrine_clear_identity_map_extension
             - { name: oro_message_queue.consumption.extension }
 
-    oro_cms.entity_listener.image_slide:
-        class: Oro\Bundle\CMSBundle\Entity\EntityListener\ImageSlideEntityListener
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\CMSBundle\Entity\ImageSlide', event: preRemove }
-
     oro_cms.content_widget.type_registry:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry
         arguments:
@@ -425,20 +420,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: entity_form.render.before, method: onBeforeFormRender, priority: -255 }
 
-    oro_cms.content_widget_type.image_slider:
-        class: Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: oro_cms.content_widget.type }
-
-    oro_cms.event_listener.content_widget_form:
-        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetFormEventListener
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
-
     oro_cms.provider.preview_metadata:
         decorates: oro_digital_asset.provider.preview_metadata
         class: Oro\Bundle\CMSBundle\Provider\PreviewMetadataProvider
@@ -504,13 +485,6 @@ services:
         tags:
             - { name: oro.requirements_provider }
 
-    oro_cms.twig.image_slider_extension:
-        class: 'Oro\Bundle\CMSBundle\Twig\ImageSliderExtension'
-        arguments:
-            - '@oro_platform.twig.service_locator'
-        tags:
-            - { name: twig.extension }
-
     oro_cms.decorator.wysiwyg_entity_audit_strategy:
         class: 'Oro\Bundle\CMSBundle\DataAudit\Strategy\WYSIWYGAuditStrategyProcessor'
         decorates: oro_dataaudit.strategy_processor.entity_audit_strategy_delegate
@@ -542,3 +516,10 @@ services:
 
     oro_cms.entity.repository.content_template:
         alias: Oro\Bundle\CMSBundle\Entity\Repository\ContentTemplateRepository
+
+    oro_cms.validator.not_empty_content_widget_layout:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\NotEmptyContentWidgetLayoutValidator
+        arguments:
+            - '@oro_cms.provider.content_widget_layout'
+        tags:
+            - { name: validator.constraint_validator }

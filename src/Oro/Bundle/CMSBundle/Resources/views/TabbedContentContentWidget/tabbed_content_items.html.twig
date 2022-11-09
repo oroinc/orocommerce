@@ -1,0 +1,23 @@
+<div class="view">
+    <table class="grid table table-bordered" id="tabbed-content-widget-tabs">
+        <thead>
+        <tr>
+            <th>{{ 'oro.cms.tabbedcontentitem.title.label'|trans }}</th>
+            <th>{{ 'oro.cms.tabbedcontentitem.item_order.label'|trans }}</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in tabbedContentItems %}
+            <tr>
+                <td>
+                    {{ item.title }}
+                </td>
+                <td>
+                    {{ item.itemOrder }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -371,6 +371,54 @@ oro_behat_extension:
                 type: 'xpath'
                 locator: '//img[contains(@alt,"CMSPage1 Image")]/parent::picture'
 
+
+        Tabbed Content Widget Layout Select:
+            selector: 'select[name="oro_cms_content_widget[layout]"]'
+
+        Clear Tabbed Content Widget Layout Select:
+            selector:
+                type: xpath
+                locator: '//div[contains(@id, "s2id_oro_cms_content_widget_layout-uid")]//abbr[@class="select2-search-choice-close"]'
+
+        Tabbed Content Widget Form:
+            selector: 'form[name="oro_cms_content_widget"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Tab 1 Title: 'oro_cms_content_widget[settings][tabbedContentItems][0][title]'
+                    Tab 1 Order: 'oro_cms_content_widget[settings][tabbedContentItems][0][itemOrder]'
+
+                    Tab 2 Title: 'oro_cms_content_widget[settings][tabbedContentItems][1][title]'
+                    Tab 2 Order: 'oro_cms_content_widget[settings][tabbedContentItems][1][itemOrder]'
+
+        Tabbed Content Widget Tab 1 Content:
+            selector: "textarea[name='oro_cms_content_widget[settings][tabbedContentItems][0][content]']"
+
+        Tabbed Content Widget Tab 2 Content:
+            selector: "textarea[name='oro_cms_content_widget[settings][tabbedContentItems][1][content]']"
+
+        Tabbed Content Widget Tabs Table:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+            selector: 'table#tabbed-content-widget-tabs'
+
+        Tab 1 Accordion Trigger:
+            selector: 'button.accordion-group__trigger span.accordion-group__trigger-text:contains("Tab 1 Title")'
+
+        Tab 2 Accordion Trigger:
+            selector: 'button.accordion-group__trigger span.accordion-group__trigger-text:contains("Tab 2 Title")'
+
+        Tabbed Content Widget Tabs 1:
+            selector: 'div.tabbed-content--tabs:nth-child(1)'
+
+        Tabbed Content Widget Tabs 2:
+            selector: 'div.tabbed-content--tabs:nth-child(2)'
+
+        Tabbed Content Widget Accordion 1:
+            selector: 'div.tabbed-content--accordion:nth-child(1)'
+
+        Tabbed Content Widget Accordion 2:
+            selector: 'div.tabbed-content--accordion:nth-child(2)'
+
     suites:
         OroCMSBundle:
             contexts:
