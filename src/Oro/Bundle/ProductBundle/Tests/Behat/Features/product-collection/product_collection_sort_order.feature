@@ -47,9 +47,9 @@ Feature: Product collection sort order
       | SKU   | NAME      |
       | PSKU4 | Product 4 |
       | PSKU2 | Product 2 |
-      | PSKU5 | Product 5 |
-      | PSKU3 | Product 3 |
       | PSKU1 | Product 1 |
+      | PSKU3 | Product 3 |
+      | PSKU5 | Product 5 |
 
   Scenario: Product Collection correctly sorted in frontend
     Given I operate as the Buyer
@@ -67,7 +67,7 @@ Feature: Product collection sort order
       | PSKU3 | 0 |
       | PSKU1 | 0.1 |
 
-  Scenario: Product Collection sort order has been saved
+  Scenario: Product Collection sort order has been saved again
     When I save form
     Then I should see "Content Node has been saved" flash message
     When I reload the page
@@ -78,8 +78,8 @@ Feature: Product collection sort order
       | PSKU3 | Product 3 |
       | PSKU1 | Product 1 |
       | PSKU4 | Product 4 |
-      | PSKU5 | Product 5 |
       | PSKU2 | Product 2 |
+      | PSKU5 | Product 5 |
 
   Scenario: Product Collection sort order updated in frontend
     Given I operate as the Buyer

@@ -38,9 +38,9 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
 
   Scenario: Already excluded products don't appear in Excluded popup
     When I click "Excluded"
@@ -70,14 +70,14 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
     And I click Exclude on PSKU10 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
       | PSKU1  | Product 1  |
+      | PSKU11 | Product 11 |
 
   Scenario: Save collection and check All Added products are valid
     When I save form
@@ -85,8 +85,8 @@ Feature: Product collection individual products with segment filter
     And I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU11 | Product 11 |
       | PSKU1  | Product 1  |
+      | PSKU11 | Product 11 |
 
   Scenario: Remove product from Excluded tab with help of Remove grid action
     When I click "Excluded"
@@ -103,10 +103,10 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU11 | Product 11 |
+      | PSKU12 | Product 12 |
 
   Scenario: Adding product manually is possible when filter is not complete
     When I drag and drop "Field Condition" on "Drop condition here"
@@ -117,9 +117,9 @@ Feature: Product collection individual products with segment filter
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
-      | PSKU12 | Product 12 |
-      | PSKU10 | Product 10 |
       | PSKU1  | Product 1  |
+      | PSKU10 | Product 10 |
+      | PSKU12 | Product 12 |
 
   Scenario: No records found if grid filter is empty and no Manually added products exist
     When I click on "Remove Filter Button"

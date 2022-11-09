@@ -35,8 +35,8 @@ Feature: Product collection individual products
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU4 | Product 4 |
       | PSKU5 | Product 5 |
+      | PSKU4 | Product 4 |
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -109,16 +109,16 @@ Feature: Product collection individual products
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU9 | Product 9 |
-      | PSKU7 | Product 7 |
-      | PSKU4 | Product 4 |
       | PSKU1 | Product 1 |
+      | PSKU4 | Product 4 |
+      | PSKU7 | Product 7 |
+      | PSKU9 | Product 9 |
     When I click Exclude on PSKU7 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU9 | Product 9 |
-      | PSKU4 | Product 4 |
       | PSKU1 | Product 1 |
+      | PSKU4 | Product 4 |
+      | PSKU9 | Product 9 |
     When I click "Excluded"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |

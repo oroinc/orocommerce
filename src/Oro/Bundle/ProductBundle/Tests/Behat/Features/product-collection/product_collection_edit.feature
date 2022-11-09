@@ -33,8 +33,8 @@ Feature: Product collection edit
     Then I should see 1 element "Product Collection Variant Label"
     And I should see following grid:
       | SKU   | NAME      |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
 
   Scenario: Modification of Product Collection segment's name, reflected in Manage Segments section
     Given I proceed as the Admin
