@@ -9,11 +9,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class QuickAddRow
 {
+    public const INDEX = 'index';
     public const SKU = 'sku';
     public const UNIT = 'unit';
     public const QUANTITY = 'quantity';
 
     use QuickAddFieldTrait;
+
     /**
      * @var int
      */

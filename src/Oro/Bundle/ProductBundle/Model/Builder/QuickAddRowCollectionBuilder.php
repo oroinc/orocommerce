@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -99,7 +100,9 @@ class QuickAddRowCollectionBuilder
         $collection = new QuickAddRowCollection();
         if ($products) {
             foreach ($products as $index => $product) {
-                $collection->add($this->quickAddRowInputParser->createFromArray($product, $index));
+                $collection->add(
+                    $this->quickAddRowInputParser->createFromArray($product, $product[QuickAddRow::INDEX] ?? $index)
+                );
             }
 
             $this->mapProducts($collection);

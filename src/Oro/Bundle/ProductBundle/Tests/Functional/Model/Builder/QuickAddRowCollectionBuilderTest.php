@@ -85,6 +85,7 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
     {
         $data = [
             [
+                QuickAddRow::INDEX => 0,
                 QuickAddRow::SKU => LoadProductData::PRODUCT_1,
                 QuickAddRow::QUANTITY => '1',
                 QuickAddRow::UNIT => 'item',
@@ -94,15 +95,18 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
                 QuickAddRow::UNIT => 'item',
             ],
             [
+                QuickAddRow::INDEX => 2,
                 QuickAddRow::SKU => LoadProductData::PRODUCT_7,
                 QuickAddRow::QUANTITY => '2',
                 QuickAddRow::UNIT => 'item',
             ],
             [
+                QuickAddRow::INDEX => 3,
                 QuickAddRow::QUANTITY => '1',
                 QuickAddRow::UNIT => 'item',
             ],
             [
+                QuickAddRow::INDEX => 10,
                 QuickAddRow::SKU => LoadProductData::PRODUCT_9,
                 QuickAddRow::QUANTITY => '3',
                 QuickAddRow::UNIT => 'item',
@@ -114,25 +118,30 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
         self::assertEquals(5, $quickAddRowCollection->count());
 
         self::assertEquals(LoadProductData::PRODUCT_1, $quickAddRowCollection->get(0)->getSku());
+        self::assertEquals(0, $quickAddRowCollection->get(0)->getIndex());
         self::assertEquals('1', $quickAddRowCollection->get(0)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(0)->getUnit());
         self::assertInstanceOf(Product::class, $quickAddRowCollection->get(0)->getProduct());
 
+        self::assertEquals(1, $quickAddRowCollection->get(1)->getIndex());
         self::assertEquals('SKIP1', $quickAddRowCollection->get(1)->getSku());
         self::assertEquals(0, $quickAddRowCollection->get(1)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
         self::assertNull($quickAddRowCollection->get(1)->getProduct());
 
+        self::assertEquals(2, $quickAddRowCollection->get(2)->getIndex());
         self::assertEquals(LoadProductData::PRODUCT_7, $quickAddRowCollection->get(2)->getSku());
         self::assertEquals('2', $quickAddRowCollection->get(2)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(2)->getUnit());
         self::assertInstanceOf(Product::class, $quickAddRowCollection->get(2)->getProduct());
 
+        self::assertEquals(3, $quickAddRowCollection->get(3)->getIndex());
         self::assertEquals('', $quickAddRowCollection->get(3)->getSku());
         self::assertEquals(1, $quickAddRowCollection->get(3)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(3)->getUnit());
         self::assertNull($quickAddRowCollection->get(3)->getProduct());
 
+        self::assertEquals(10, $quickAddRowCollection->get(4)->getIndex());
         self::assertEquals(LoadProductData::PRODUCT_9, $quickAddRowCollection->get(4)->getSku());
         self::assertEquals('3', $quickAddRowCollection->get(4)->getQuantity());
         self::assertEquals('item', $quickAddRowCollection->get(4)->getUnit());

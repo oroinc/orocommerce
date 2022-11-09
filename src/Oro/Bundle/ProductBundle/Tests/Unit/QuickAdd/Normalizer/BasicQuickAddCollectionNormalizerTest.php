@@ -114,7 +114,8 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        0 => [
+                        1 => [
+                            'index' => 1,
                             'sku' => $quickAddRowWithoutProductAndAdditional->getSku(),
                             'product_name' => '',
                             'unit_label' => $quickAddRowWithoutProductAndAdditional->getUnit(),
@@ -130,7 +131,8 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        0 => [
+                        2 => [
+                            'index' => 2,
                             'sku' => $quickAddRowWithoutAdditionalFields->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit_label' => $quickAddRowWithoutAdditionalFields->getUnit() . ' [label]',
@@ -149,7 +151,8 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        0 => [
+                        3 => [
+                            'index' => 3,
                             'sku' => $quickAddRowWithAdditionalFields->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit_label' => $quickAddRowWithAdditionalFields->getUnit() . ' [label]',
@@ -171,7 +174,8 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        0 => [
+                        4 => [
+                            'index' => 4,
                             'sku' => $quickAddRowWithErrors->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit_label' => $quickAddRowWithErrors->getUnit() . ' [label]',
@@ -195,7 +199,8 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                 [
                     'errors' => [],
                     'items' => [
-                        0 => [
+                        5 => [
+                            'index' => 5,
                             'sku' => $quickAddRowWithInvalidUnit->getSku(),
                             'product_name' => $product->getDefaultName()->getString(),
                             'unit_label' => $quickAddRowWithInvalidUnit->getUnit(),

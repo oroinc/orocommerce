@@ -31,12 +31,12 @@ class QuickAddCollectionNormalizer implements QuickAddCollectionNormalizerInterf
         }
 
         $result['errors'] = array_merge(...$result['errors']);
-        $result['items'] = array_map(
+        $result['items'] = array_values(array_map(
             static function (array $normalizedItems) {
                 return array_merge(...$normalizedItems);
             },
             $result['items']
-        );
+        ));
 
         return $result;
     }
