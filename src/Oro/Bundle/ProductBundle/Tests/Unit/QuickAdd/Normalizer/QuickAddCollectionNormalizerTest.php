@@ -24,7 +24,7 @@ class QuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $results1 = [
             'errors' => [],
-            'items' => ['1' => ['sku' => 'sku1', 'product_name' => 'name1']],
+            'items' => [1 => ['index' => 1, 'sku' => 'sku1', 'product_name' => 'name1']],
         ];
         $provider1 = $this->createMock(QuickAddCollectionNormalizerInterface::class);
         $provider1
@@ -36,8 +36,8 @@ class QuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
         $results2 = [
             'errors' => [['message' => 'sample error', 'propertyPath' => '']],
             'items' => [
-                '1' => ['product_name' => 'overridden name1'],
-                '2' => ['sku' => 'sku2', 'product_name' => 'name2'],
+                1 => ['index' => 1, 'product_name' => 'overridden name1'],
+                2 => ['index' => 2, 'sku' => 'sku2', 'product_name' => 'name2'],
             ],
         ];
         $provider2 = $this->createMock(QuickAddCollectionNormalizerInterface::class);
@@ -52,8 +52,8 @@ class QuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
             [
                 'errors' => [['message' => 'sample error', 'propertyPath' => '']],
                 'items' => [
-                    '1' => ['sku' => 'sku1', 'product_name' => 'overridden name1'],
-                    '2' => ['sku' => 'sku2', 'product_name' => 'name2'],
+                    ['index' => 1, 'sku' => 'sku1', 'product_name' => 'overridden name1'],
+                    ['index' => 2, 'sku' => 'sku2', 'product_name' => 'name2'],
                 ],
             ],
             $quickAddCollectionNormalizer->normalize($quickAddRowCollection)

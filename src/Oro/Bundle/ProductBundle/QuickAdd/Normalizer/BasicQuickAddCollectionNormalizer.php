@@ -45,10 +45,12 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
         ];
 
         /** @var QuickAddRow $quickAddRow */
-        foreach ($quickAddRowCollection as $index => $quickAddRow) {
+        foreach ($quickAddRowCollection as $quickAddRow) {
             $sku = $quickAddRow->getSku();
+            $index = $quickAddRow->getIndex();
             $results['items'][$index] = [
                 'sku' => $sku,
+                'index' => $index,
                 'product_name' => '',
                 'quantity' => $quickAddRow->getQuantity(),
                 'errors' => array_map(
