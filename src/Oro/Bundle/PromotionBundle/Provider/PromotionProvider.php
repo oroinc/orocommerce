@@ -9,54 +9,46 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
+/**
+ * Provides information about promotions applicable to a specific source entity.
+ */
 class PromotionProvider
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var RuleFiltrationServiceInterface
-     */
-    private $ruleFiltrationService;
-
-    /**
-     * @var ContextDataConverterInterface
-     */
-    private $contextDataConverter;
-
-    /**
-     * @var AppliedPromotionMapper
-     */
-    private $promotionMapper;
+    private ManagerRegistry $doctrine;
+    private RuleFiltrationServiceInterface $ruleFiltrationService;
+    private ContextDataConverterInterface $contextDataConverter;
+    private AppliedPromotionMapper $promotionMapper;
+    private TokenAccessorInterface $tokenAccessor;
 
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         RuleFiltrationServiceInterface $ruleFiltrationService,
         ContextDataConverterInterface $contextDataConverter,
-        AppliedPromotionMapper $promotionMapper
+        AppliedPromotionMapper $promotionMapper,
+        TokenAccessorInterface $tokenAccessor
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->ruleFiltrationService = $ruleFiltrationService;
         $this->contextDataConverter = $contextDataConverter;
         $this->promotionMapper = $promotionMapper;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
      * @param object $sourceEntity
-     * @return array|PromotionDataInterface[]
+     *
+     * @return PromotionDataInterface[]
      */
-    public function getPromotions($sourceEntity): array
+    public function getPromotions(object $sourceEntity): array
     {
         $promotions = [];
-
         if ($sourceEntity instanceof AppliedPromotionsAwareInterface) {
             $promotions = $this->getAppliedPromotions($sourceEntity);
         }
-
         $promotions = array_merge($promotions, $this->getAllPromotions());
 
         return $this->filterPromotions($sourceEntity, $promotions);
@@ -65,14 +57,14 @@ class PromotionProvider
     /**
      * Checks whether promotion has been already applied to a given source entity.
      *
-     * @param object $sourceEntity
+     * @param object                 $sourceEntity
      * @param PromotionDataInterface $promotion
+     *
      * @return bool
      */
-    public function isPromotionApplied($sourceEntity, PromotionDataInterface $promotion): bool
+    public function isPromotionApplied(object $sourceEntity, PromotionDataInterface $promotion): bool
     {
         $promotions = $this->getPromotions($sourceEntity);
-
         foreach ($promotions as $appliedPromotion) {
             if ($appliedPromotion->getId() === $promotion->getId()) {
                 return true;
@@ -85,13 +77,14 @@ class PromotionProvider
     /**
      * Checks whether promotion can be applied to a given source entity.
      *
-     * @param $sourceEntity
+     * @param object                 $sourceEntity
      * @param PromotionDataInterface $promotion
-     * @param array|string[] $skipFilters
+     * @param string[]               $skipFilters
+     *
      * @return bool
      */
     public function isPromotionApplicable(
-        $sourceEntity,
+        object $sourceEntity,
         PromotionDataInterface $promotion,
         array $skipFilters = []
     ): bool {
@@ -99,12 +92,13 @@ class PromotionProvider
     }
 
     /**
-     * @param object $sourceEntity
-     * @param array|PromotionDataInterface[] $promotions
-     * @param array|string[] $skipFilters
-     * @return array|\Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface[]
+     * @param object                   $sourceEntity
+     * @param PromotionDataInterface[] $promotions
+     * @param string[]                 $skipFilters
+     *
+     * @return RuleOwnerInterface[]
      */
-    private function filterPromotions($sourceEntity, array $promotions, array $skipFilters = []): array
+    private function filterPromotions(object $sourceEntity, array $promotions, array $skipFilters = []): array
     {
         $contextData = $this->contextDataConverter->getContextData($sourceEntity);
         if (!empty($skipFilters)) {
@@ -115,21 +109,24 @@ class PromotionProvider
     }
 
     /**
-     * @return array|PromotionDataInterface[]
+     * @return PromotionDataInterface[]
      */
-    private function getAllPromotions()
+    private function getAllPromotions(): array
     {
-        return $this->registry
-            ->getManagerForClass(Promotion::class)
-            ->getRepository(Promotion::class)
-            ->findAll();
+        $organizationId = $this->tokenAccessor->getOrganizationId();
+        if (null === $organizationId) {
+            return [];
+        }
+
+        return $this->doctrine->getRepository(Promotion::class)->getAllPromotions($organizationId);
     }
 
     /**
      * @param AppliedPromotionsAwareInterface $sourceEntity
-     * @return array|PromotionDataInterface[]
+     *
+     * @return PromotionDataInterface[]
      */
-    private function getAppliedPromotions(AppliedPromotionsAwareInterface $sourceEntity)
+    private function getAppliedPromotions(AppliedPromotionsAwareInterface $sourceEntity): array
     {
         $appliedPromotions = [];
         foreach ($sourceEntity->getAppliedPromotions() as $appliedPromotionEntity) {

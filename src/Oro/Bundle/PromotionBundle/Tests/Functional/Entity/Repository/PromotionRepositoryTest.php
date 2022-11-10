@@ -17,22 +17,28 @@ class PromotionRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadCouponData::class,
-            ]
+        $this->loadFixtures([LoadCouponData::class]);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(Promotion::class);
+    }
+
+    private function getPromotion(string $reference): Promotion
+    {
+        return $this->getReference($reference);
+    }
+
+    public function testGetAllPromotions(): void
+    {
+        $promotions = $this->repository->getAllPromotions(
+            $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getOrganization()->getId()
         );
-        $this->repository = self::getContainer()->get('doctrine')
-            ->getManagerForClass(Promotion::class)
-            ->getRepository(Promotion::class);
+        self::assertCount(3, $promotions);
     }
 
     public function testFindPromotionByProductSegment(): void
     {
         /** @var Segment $segment */
         $segment = $this->getReference(LoadSegmentData::PRODUCT_DYNAMIC_SEGMENT);
-        /** @var Promotion $expectedPromotion */
-        $expectedPromotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
+        $expectedPromotion = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
 
         $actual = $this->repository->findPromotionByProductSegment($segment);
         self::assertInstanceOf(Promotion::class, $actual);
@@ -41,8 +47,7 @@ class PromotionRepositoryTest extends WebTestCase
 
     public function testGetPromotionsWithLabelsByIds(): void
     {
-        /** @var Promotion $expectedPromotion */
-        $expectedPromotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
+        $expectedPromotion = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
 
         $actual = $this->repository->getPromotionsWithLabelsByIds([$expectedPromotion->getId(), 0]);
         self::assertSame([$expectedPromotion->getId() => $expectedPromotion], $actual);
@@ -50,9 +55,8 @@ class PromotionRepositoryTest extends WebTestCase
 
     public function testGetPromotionsNamesByIds(): void
     {
-        /** @var Promotion $expectedPromotion */
-        $promotion1 = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
-        $promotion2 = $this->getReference(LoadPromotionData::SHIPPING_PROMOTION);
+        $promotion1 = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
+        $promotion2 = $this->getPromotion(LoadPromotionData::SHIPPING_PROMOTION);
 
         $actual = $this->repository->getPromotionsNamesByIds([$promotion1->getId(), $promotion2->getId(), 0, '', null]);
         self::assertEquals(

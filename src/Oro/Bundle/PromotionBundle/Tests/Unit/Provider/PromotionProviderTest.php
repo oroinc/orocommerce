@@ -4,68 +4,62 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class PromotionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $registry;
-
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $ruleFiltrationService;
 
-    /**
-     * @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $contextDataConverter;
 
-    /**
-     * @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionMapper;
 
-    /**
-     * @var PromotionProvider
-     */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
+
+    /** @var PromotionProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->ruleFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->contextDataConverter = $this->createMock(ContextDataConverterInterface::class);
         $this->promotionMapper = $this->createMock(AppliedPromotionMapper::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->provider = new PromotionProvider(
-            $this->registry,
+            $this->doctrine,
             $this->ruleFiltrationService,
             $this->contextDataConverter,
-            $this->promotionMapper
+            $this->promotionMapper,
+            $this->tokenAccessor
         );
     }
 
     public function testGetPromotions()
     {
-        $appliedPromotionEntity1 = $this->getEntity(AppliedPromotion::class, ['promotionData' => ['some data']]);
-        $appliedPromotionEntity2 = $this->getEntity(AppliedPromotion::class, ['promotionData' => ['some data']]);
+        $appliedPromotionEntity1 = new AppliedPromotion();
+        $appliedPromotionEntity1->setPromotionData(['some data']);
+        $appliedPromotionEntity2 = new AppliedPromotion();
+        $appliedPromotionEntity2->setPromotionData(['some data']);
         $appliedPromotionEntity3 = new AppliedPromotion();
 
         $appliedPromotion1 = $this->createMock(AppliedPromotionData::class);
@@ -82,7 +76,6 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
                 $appliedPromotion2
             );
 
-        /** @var AppliedPromotionsAwareInterface|\PHPUnit\Framework\MockObject\MockObject $sourceEntity */
         $sourceEntity = $this->createMock(AppliedPromotionsAwareInterface::class);
         $sourceEntity->expects($this->any())
             ->method('getAppliedPromotions')
@@ -112,10 +105,60 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([$appliedPromotion1, $appliedPromotion2, $filteredPromotion], $result);
     }
 
+
+    public function testGetPromotionsWhenNoOrganizationInSecurityContext()
+    {
+        $appliedPromotionEntity1 = new AppliedPromotion();
+        $appliedPromotionEntity1->setPromotionData(['some data']);
+        $appliedPromotionEntity2 = new AppliedPromotion();
+        $appliedPromotionEntity2->setPromotionData(['some data']);
+        $appliedPromotionEntity3 = new AppliedPromotion();
+
+        $appliedPromotion1 = $this->createMock(AppliedPromotionData::class);
+        $appliedPromotion2 = $this->createMock(AppliedPromotionData::class);
+
+        $this->promotionMapper->expects($this->exactly(2))
+            ->method('mapAppliedPromotionToPromotionData')
+            ->withConsecutive(
+                [$appliedPromotionEntity1],
+                [$appliedPromotionEntity2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $appliedPromotion1,
+                $appliedPromotion2
+            );
+
+        $sourceEntity = $this->createMock(AppliedPromotionsAwareInterface::class);
+        $sourceEntity->expects($this->any())
+            ->method('getAppliedPromotions')
+            ->willReturn(new ArrayCollection([
+                $appliedPromotionEntity1,
+                $appliedPromotionEntity2,
+                $appliedPromotionEntity3
+            ]));
+
+        $context = ['some context item'];
+
+        $this->doctrine->expects($this->never())
+            ->method('getRepository');
+
+        $this->contextDataConverter->expects($this->once())
+            ->method('getContextData')
+            ->with($sourceEntity)
+            ->willReturn($context);
+
+        $this->ruleFiltrationService->expects($this->once())
+            ->method('getFilteredRuleOwners')
+            ->with([$appliedPromotion1, $appliedPromotion2], $context)
+            ->willReturn([$appliedPromotion1, $appliedPromotion2]);
+
+        $result = $this->provider->getPromotions($sourceEntity);
+        $this->assertSame([$appliedPromotion1, $appliedPromotion2], $result);
+    }
+
     public function testIsPromotionAppliedWhenPromotionIsApplied()
     {
         $sourceEntity = new \stdClass();
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -141,13 +184,11 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
     public function testIsPromotionAppliedWhenPromotionIsNotApplied()
     {
         $sourceEntity = new \stdClass();
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $anotherPromotion */
         $anotherPromotion = $this->createMock(PromotionDataInterface::class);
         $anotherPromotion->expects($this->any())
             ->method('getId')
             ->willReturn(7);
 
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -174,7 +215,6 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
     {
         $sourceEntity = new \stdClass();
 
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -198,8 +238,6 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
     {
         $sourceEntity = new \stdClass();
 
-        /** @var Promotion $promotion */
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -224,8 +262,6 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
         $sourceEntity = new \stdClass();
         $skippedFilters = ['SomeFilterClass'];
 
-        /** @var Promotion $promotion */
-        /** @var PromotionDataInterface|\PHPUnit\Framework\MockObject\MockObject $promotion */
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getId')
@@ -251,24 +287,24 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array|Promotion[] $promotions
+     * @param Promotion[] $promotions
      */
-    private function expectsPromotions(array $promotions)
+    private function expectsPromotions(array $promotions): void
     {
-        $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects($this->once())
-            ->method('findAll')
+        $organizationId = 1;
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganizationId')
+            ->willReturn($organizationId);
+
+        $repository = $this->createMock(PromotionRepository::class);
+        $repository->expects($this->once())
+            ->method('getAllPromotions')
+            ->with($organizationId)
             ->willReturn($promotions);
 
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(Promotion::class)
-            ->willReturn($objectRepository);
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Promotion::class)
-            ->willReturn($objectManager);
+            ->willReturn($repository);
     }
 }
