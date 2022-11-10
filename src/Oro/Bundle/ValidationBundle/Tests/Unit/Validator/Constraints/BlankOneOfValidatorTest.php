@@ -20,10 +20,7 @@ class BlankOneOfValidatorTest extends ConstraintValidatorTestCase
                 return $id . ' (translated)';
             });
 
-        return new BlankOneOfValidator(
-            $translator,
-            new PropertyAccessor()
-        );
+        return new BlankOneOfValidator($translator, new PropertyAccessor());
     }
 
     public function testGetTargets()
