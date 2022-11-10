@@ -95,7 +95,7 @@ Feature: Product collection adding popup select all
     And I check All Visible records in "Add Products Popup" grid
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
-      | SKU    | NAME      |
+      | SKU   | NAME      |
       | PSKU1 | Product 1 |
       | PSKU2 | Product 2 |
     Then I click "Cancel"
