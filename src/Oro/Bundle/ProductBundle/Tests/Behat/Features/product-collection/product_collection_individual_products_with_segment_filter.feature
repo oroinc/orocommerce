@@ -92,8 +92,8 @@ Feature: Product collection individual products with segment filter
     When I click "Excluded"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
       | PSKU10 | Product 10 |
+      | PSKU12 | Product 12 |
     And I click Remove on PSKU12 in grid "Active Grid"
     And I click Remove on PSKU10 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
