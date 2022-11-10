@@ -298,9 +298,6 @@ datagrids:
             bind_parameters:
                 hiddenProducts:
                     default: 0
-        sorters:
-            default:
-                createdAt: DESC
         mass_actions:
             add:
                 type: trigger-event-for-selected-product-ids
