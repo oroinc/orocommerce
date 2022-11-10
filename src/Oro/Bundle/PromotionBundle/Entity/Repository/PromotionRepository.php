@@ -14,6 +14,18 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 class PromotionRepository extends ServiceEntityRepository
 {
     /**
+     * @return Promotion[]
+     */
+    public function getAllPromotions(int $organizationId): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->where('p.organization = :organizationId')
+            ->setParameter('organizationId', $organizationId);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param Segment $segment
      * @return object|Promotion|null
      */
