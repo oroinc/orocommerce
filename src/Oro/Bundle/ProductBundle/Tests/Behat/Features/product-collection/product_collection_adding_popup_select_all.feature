@@ -16,17 +16,17 @@ Feature: Product collection adding popup select all
     And I should see "A limit of selected products (5) was exceeded. Do you want to force add your selection?"
     And I click "Yes"
     Then I should see following grid:
-      | SKU    | NAME      |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
+      | SKU    | NAME       |
+      | PSKU1  | Product 1  |
+      | PSKU2  | Product 2  |
+      | PSKU3  | Product 3  |
+      | PSKU4  | Product 4  |
+      | PSKU5  | Product 5  |
+      | PSKU6  | Product 6  |
+      | PSKU7  | Product 7  |
+      | PSKU8  | Product 8  |
+      | PSKU9  | Product 9  |
       | PSKU10 | Product 10 |
-      | PSKU9  | Product 9 |
-      | PSKU8  | Product 8 |
-      | PSKU7  | Product 7 |
-      | PSKU6  | Product 6 |
-      | PSKU5  | Product 5 |
-      | PSKU4  | Product 4 |
-      | PSKU3  | Product 3 |
     And number of records should be 12
     Then I click "Cancel"
 
@@ -38,17 +38,17 @@ Feature: Product collection adding popup select all
     And I check all records in "Add Products Popup" grid
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
-      | SKU    | NAME      |
-      | PSKU12 | Product 12 |
-      | PSKU11 | Product 11 |
+      | SKU    | NAME       |
+      | PSKU1  | Product 1  |
+      | PSKU2  | Product 2  |
+      | PSKU3  | Product 3  |
+      | PSKU4  | Product 4  |
+      | PSKU5  | Product 5  |
+      | PSKU6  | Product 6  |
+      | PSKU7  | Product 7  |
+      | PSKU8  | Product 8  |
+      | PSKU9  | Product 9  |
       | PSKU10 | Product 10 |
-      | PSKU9  | Product 9 |
-      | PSKU8  | Product 8 |
-      | PSKU7  | Product 7 |
-      | PSKU6  | Product 6 |
-      | PSKU5  | Product 5 |
-      | PSKU4  | Product 4 |
-      | PSKU3  | Product 3 |
     And number of records should be 12
     Then I click "Cancel"
 
@@ -58,21 +58,21 @@ Feature: Product collection adding popup select all
     And I click "Add Button"
     And I check all records in "Add Products Popup" grid
     And I uncheck PSKU11 record in grid
-    And I uncheck PSKU12 record in grid
     And I press next page button in grid "Add Products Popup"
+    And I uncheck PSKU1 record in grid
     And I uncheck PSKU2 record in grid
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
-      | SKU    | NAME      |
+      | SKU    | NAME       |
+      | PSKU3  | Product 3  |
+      | PSKU4  | Product 4  |
+      | PSKU5  | Product 5  |
+      | PSKU6  | Product 6  |
+      | PSKU7  | Product 7  |
+      | PSKU8  | Product 8  |
+      | PSKU9  | Product 9  |
       | PSKU10 | Product 10 |
-      | PSKU9  | Product 9 |
-      | PSKU8  | Product 8 |
-      | PSKU7  | Product 7 |
-      | PSKU6  | Product 6 |
-      | PSKU5  | Product 5 |
-      | PSKU4  | Product 4 |
-      | PSKU3  | Product 3 |
-      | PSKU1  | Product 1 |
+      | PSKU12 | Product 12 |
     Then I click "Cancel"
 
   Scenario: Add with help of "select all", products from grid that is filtered with grid's controls
@@ -96,8 +96,8 @@ Feature: Product collection adding popup select all
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following grid:
       | SKU    | NAME      |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
     Then I click "Cancel"
 
   Scenario: "Mass action limit" setting should accept only positive numbers
