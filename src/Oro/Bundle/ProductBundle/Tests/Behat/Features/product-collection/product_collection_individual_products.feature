@@ -35,8 +35,8 @@ Feature: Product collection individual products
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
       | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
     When I click "All Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -71,8 +71,8 @@ Feature: Product collection individual products
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
       | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
 
   Scenario: Added Product disappears from Excluded tab
     When I click "Excluded"
@@ -83,8 +83,8 @@ Feature: Product collection individual products
     When I click "Manually Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU5 | Product 5 |
       | PSKU4 | Product 4 |
+      | PSKU5 | Product 5 |
     When I click Reset to Default on PSKU5 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -100,10 +100,10 @@ Feature: Product collection individual products
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU9 | Product 9 |
-      | PSKU7 | Product 7 |
-      | PSKU4 | Product 4 |
       | PSKU1 | Product 1 |
+      | PSKU4 | Product 4 |
+      | PSKU7 | Product 7 |
+      | PSKU9 | Product 9 |
 
   Scenario: Exclude product from All Added grid
     When I click "All Added"
@@ -129,15 +129,15 @@ Feature: Product collection individual products
     And I click Reset to Default on PSKU9 in grid "Active Grid"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU4 | Product 4 |
       | PSKU1 | Product 1 |
+      | PSKU4 | Product 4 |
 
   Scenario: Excluded products appear in Manually Added popup but already added don't
     When I click "Manually Added"
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
-      | PSKU4 | Product 4 |
       | PSKU1 | Product 1 |
+      | PSKU4 | Product 4 |
     When I click "Add Button"
     Then I should see following "Add Products Popup" grid:
       | SKU    | NAME       |
