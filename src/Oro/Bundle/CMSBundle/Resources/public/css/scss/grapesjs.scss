@@ -249,6 +249,8 @@
         animation: none;
 
         .#{$app-prefix}btn-prim {
+            // Positions that button should be above CodeMirror container
+            position: relative;
             display: inline-flex;
             padding: 0 16px;
             font-size: .875rem;
@@ -364,6 +366,11 @@
         .#{$app-prefix}am-close {
             top: -10px;
         }
+    }
+
+    // Place some actions above some elements that overlap them, like CodeMirror container
+    &action {
+        position: relative;
     }
 }
 
