@@ -31,14 +31,10 @@ import ColumnsItemTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns
 import ContainerTypeBuilder from 'orocms/js/app/grapesjs/type-builders/columns/container-type-builder';
 import TilesTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tiles/tiles-type-builder';
 import TilesItemTypeBuilder from 'orocms/js/app/grapesjs/type-builders/tiles/tiles-item-type-builder';
-import TextnodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/textnode-type-builder';
 
 ComponentManager.registerComponentTypes({
     'wrapper': {
         Constructor: WrapperTypeBuilder
-    },
-    'textnode': {
-        Constructor: TextnodeTypeBuilder
     },
     'text-style': {
         Constructor: TextWrapperTypeBuilder

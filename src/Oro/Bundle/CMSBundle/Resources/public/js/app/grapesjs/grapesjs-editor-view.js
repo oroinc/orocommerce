@@ -552,6 +552,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'update', this._onUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'component:update', this._onComponentUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'changeTheme', this._updateTheme.bind(this));
+        this.listenTo(this.builder, 'component:add', this.componentAdd.bind(this));
         this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
         this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
@@ -731,6 +732,12 @@ const GrapesjsEditorView = BaseView.extend({
 
     componentRemove(model) {
         model.trigger('model:remove', model);
+    },
+
+    componentAdd(model) {
+        if (model.get('type') === 'textnode' && model.parent()?.get('type') === 'wrapper') {
+            model.replaceWith(`<div>${model.get('content')}</div>`);
+        }
     },
 
     componentDeselected(model) {

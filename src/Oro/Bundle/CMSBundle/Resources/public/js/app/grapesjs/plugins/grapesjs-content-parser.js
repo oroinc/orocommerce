@@ -58,6 +58,7 @@ const postParseModel = model => {
  */
 export default function ContentParser(editor) {
     const originParseNode = editor.Parser.parserHtml.parseNode;
+
     editor.Parser.parserHtml.parseNode = (...args) =>
         originParseNode.apply(editor.Parser.parserHtml, args).map(postParseModel);
 
