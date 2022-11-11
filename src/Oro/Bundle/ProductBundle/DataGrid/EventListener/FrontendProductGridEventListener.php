@@ -11,9 +11,7 @@ use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -57,11 +55,11 @@ class FrontendProductGridEventListener
     /** @var FamilyAttributeCountsProvider */
     private $familyAttributeCountsProvider;
 
+    /** @var null|array */
+    private $families = null;
+
     /** @var bool */
     private $inProgress = false;
-
-    /** @var array */
-    private $attributesToHide = [];
 
     public function __construct(
         AttributeManager $attributeManager,
@@ -85,6 +83,11 @@ class FrontendProductGridEventListener
         $this->familyAttributeCountsProvider = $familyAttributeCountsProvider;
     }
 
+    /**
+     * @param PreBuild $event
+     *
+     * @return void
+     */
     public function onPreBuild(PreBuild $event)
     {
         if ($this->inProgress) {
@@ -92,60 +95,24 @@ class FrontendProductGridEventListener
         }
         $this->inProgress = true;
 
-        $config = $event->getConfig();
-        $attrs = $this->attributeManager->getAttributesByClass(Product::class);
-
-        $addedFilterAttrs = [];
-        $addedSorterAttrs = [];
-
-        foreach ($attrs as $attr) {
-            $attributeType = $this->getAttributeType($attr);
-            if (!$attributeType) {
+        $attributes = $this->getAttributes($event->getConfig(), $event->getParameters());
+        foreach ($attributes as $attribute) {
+            $type = $this->getAttributeType($attribute);
+            if (!$type) {
                 continue;
             }
 
-            $label = $this->configurationProvider->getAttributeLabel($attr);
-
-            if ($attributeType->isFilterable($attr) && $this->configurationProvider->isAttributeFilterable($attr)) {
-                $addedFilterAttrs[$attr->getId()] = $this->addFilter($config, $attr, $attributeType, $label);
+            $label = $this->configurationProvider->getAttributeLabel($attribute);
+            if ($type->isFilterable($attribute) && $this->configurationProvider->isAttributeFilterable($attribute)) {
+                $this->addFilter($event->getConfig(), $attribute, $type, $label);
             }
 
-            if ($attributeType->isSortable($attr) && $this->configurationProvider->isAttributeSortable($attr)) {
-                $addedSorterAttrs[$attr->getId()] = $this->addSorter($config, $attr, $attributeType, $label);
+            if ($type->isSortable($attribute) && $this->configurationProvider->isAttributeSortable($attribute)) {
+                $this->addSorter($event->getConfig(), $attribute, $type, $label);
             }
-        }
-
-        $hideAttrs = $this->getAttributesToHide(
-            $config,
-            $event->getParameters(),
-            array_unique(array_merge(array_keys($addedFilterAttrs), array_keys($addedSorterAttrs)))
-        );
-
-        if ($hideAttrs) {
-            $this->checkFilters($event, $addedFilterAttrs, $hideAttrs);
-            $this->checkSorters($event, $addedSorterAttrs, $hideAttrs);
         }
 
         $this->inProgress = false;
-    }
-
-    /**
-     * @param FieldConfigModel $attribute
-     *
-     * @return null|SearchAttributeTypeInterface
-     */
-    protected function getAttributeType(FieldConfigModel $attribute)
-    {
-        if (!$this->configurationProvider->isAttributeActive($attribute)) {
-            return null;
-        }
-
-        $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
-        if (!$attributeType instanceof SearchAttributeTypeInterface) {
-            return null;
-        }
-
-        return $attributeType;
     }
 
     /**
@@ -153,6 +120,7 @@ class FrontendProductGridEventListener
      * @param FieldConfigModel $attribute
      * @param SearchAttributeTypeInterface $attributeType
      * @param string $label
+     *
      * @return string
      */
     protected function addFilter(
@@ -180,6 +148,15 @@ class FrontendProductGridEventListener
         return $alias;
     }
 
+    /**
+     * @deprecated
+     *
+     * @param PreBuild $event
+     * @param array $addedFilterAttrs
+     * @param array $hideAttrs
+     *
+     * @return void
+     */
     protected function checkFilters(PreBuild $event, array $addedFilterAttrs, array $hideAttrs): void
     {
         $config = $event->getConfig();
@@ -197,14 +174,16 @@ class FrontendProductGridEventListener
      * @param FieldConfigModel $attribute
      * @param SearchAttributeTypeInterface $attributeType
      * @param array $params
+     *
      * @return array
      */
     protected function applyAdditionalParams(
         FieldConfigModel $attribute,
         SearchAttributeTypeInterface $attributeType,
         array $params
-    ) {
-        $fieldType = $attributeType->getFilterStorageFieldTypes()[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
+    ): array {
+        $fieldTypes = $attributeType->getFilterStorageFieldTypes($attribute);
+        $fieldType = $fieldTypes[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
         $entityFilterTypes = [
             SearchAttributeTypeInterface::FILTER_TYPE_ENUM,
@@ -228,6 +207,7 @@ class FrontendProductGridEventListener
      * @param FieldConfigModel $attribute
      * @param SearchAttributeTypeInterface $attributeType
      * @param string $label
+     *
      * @return string
      */
     protected function addSorter(
@@ -242,14 +222,21 @@ class FrontendProductGridEventListener
         $config->addColumn($alias, ['label' => $label]);
         $config->addSorter(
             $alias,
-            [
-                'data_name' => sprintf('%s.%s', $attributeType->getSorterStorageFieldType(), $name),
-            ]
+            ['data_name' => sprintf('%s.%s', $attributeType->getSorterStorageFieldType(), $name)]
         );
 
         return $alias;
     }
 
+    /**
+     * @deprecated
+     *
+     * @param PreBuild $event
+     * @param array $addedSorterAttrs
+     * @param array $hideAttrs
+     *
+     * @return void
+     */
     protected function checkSorters(PreBuild $event, array $addedSorterAttrs, array $hideAttrs): void
     {
         $config = $event->getConfig();
@@ -297,50 +284,55 @@ class FrontendProductGridEventListener
         return $mapping['targetEntity'] ?? null;
     }
 
-    private function getAttributesToHide(
-        DatagridConfiguration $config,
-        ParameterBag $parameterBag,
-        array $attributes
-    ): array {
+    /**
+     * @param DatagridConfiguration $config
+     * @param ParameterBag $parameters
+     *
+     * @return array
+     */
+    private function getAttributes(DatagridConfiguration $config, ParameterBag $parameters): array
+    {
+        $families = $this->getGridActiveAttributeFamilies($config, $parameters);
+
+        return $this->attributeManager->getSortableOrFilterableAttributesByClass(Product::class, $families);
+    }
+
+    /**
+     * @param FieldConfigModel $attribute
+     *
+     * @return SearchAttributeTypeInterface|null
+     */
+    private function getAttributeType(FieldConfigModel $attribute): ?SearchAttributeTypeInterface
+    {
+        $attributeType = $this->attributeTypeRegistry->getAttributeType($attribute);
+
+        return $attributeType instanceof SearchAttributeTypeInterface ? $attributeType : null;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param ParameterBag $parameterBag
+     *
+     * @return array
+     */
+    private function getGridActiveAttributeFamilies(DatagridConfiguration $config, ParameterBag $parameterBag): array
+    {
         $gridName = $config->getName();
-        if (!array_key_exists($gridName, $this->attributesToHide) &&
-            !$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)
-        ) {
-            $this->attributesToHide[$gridName] = [];
 
-            $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
-            if ($this->configManager->get($configKey)) {
-                $familyAttributeCounts = $this->familyAttributeCountsProvider->getFamilyAttributeCounts($gridName);
+        if (null !== $this->families) {
+            return $this->families;
+        }
 
-                $activeAttributeFamilyIds = [];
-                if (!empty($familyAttributeCounts['familyAttributesCount'])) {
-                    $activeAttributeFamilyIds = array_keys($familyAttributeCounts['familyAttributesCount']);
-                }
-
-                $this->attributesToHide[$gridName] = $this->getDisabledSortAndFilterAttributes(
-                    $attributes,
-                    $activeAttributeFamilyIds
-                );
+        $this->families = [];
+        $configKey = Configuration::getConfigKeyByName(Configuration::LIMIT_FILTERS_SORTERS_ON_PRODUCT_LISTING);
+        if (!$this->datagridParametersHelper->isDatagridExtensionSkipped($parameterBag)
+            && $this->configManager->get($configKey)) {
+            $familyAttributes = $this->familyAttributeCountsProvider->getFamilyAttributeCounts($gridName);
+            if (!empty($familyAttributes['familyAttributesCount'])) {
+                $this->families = array_keys($familyAttributes['familyAttributesCount']);
             }
         }
 
-        return $this->attributesToHide[$gridName] ?? [];
-    }
-
-    private function getDisabledSortAndFilterAttributes(array $attributes, array $activeAttributeFamilyIds): array
-    {
-        /** @var AttributeFamilyRepository $attributeFamilyRepository */
-        $attributeFamilyRepository = $this->doctrineHelper->getEntityRepository(AttributeFamily::class);
-        $familyIdsForAttributes = $attributeFamilyRepository->getFamilyIdsForAttributes($attributes);
-
-        return array_filter(
-            $attributes,
-            function ($attrId) use ($familyIdsForAttributes, $activeAttributeFamilyIds) {
-                // skip attributes without product families or
-                return empty($familyIdsForAttributes[$attrId]) ||
-                    // skip attributes that are not included to active attribute families
-                    empty(array_intersect($activeAttributeFamilyIds, $familyIdsForAttributes[$attrId]));
-            }
-        );
+        return $this->families;
     }
 }
