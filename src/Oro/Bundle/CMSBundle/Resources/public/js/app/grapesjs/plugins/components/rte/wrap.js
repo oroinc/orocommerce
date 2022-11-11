@@ -28,15 +28,24 @@ export default {
         const selection = rte.selection();
         const range = selection.getRangeAt(0);
         const container = range.commonAncestorContainer;
+
+        const unwrapSpan = container => {
+            const node = foundClosestParentByTagName(container, 'span', true);
+            unwrap(node);
+        };
+
         if (isTagUnderSelection(rte, 'SPAN')) {
             if (selection.type === 'Caret') {
-                const node = foundClosestParentByTagName(container, 'span', true);
-                unwrap(node);
+                unwrapSpan(container);
             } else if (selection.type === 'Range') {
-                const nodes = [...container.childNodes].filter(
-                    node => range.intersectsNode(node) && node.tagName === 'SPAN'
-                );
-                nodes.forEach(node => unwrap(node));
+                if (container.nodeType === Node.TEXT_NODE) {
+                    unwrapSpan(container);
+                } else {
+                    const nodes = [...container.childNodes].filter(
+                        node => range.intersectsNode(node) && node.tagName === 'SPAN'
+                    );
+                    nodes.forEach(node => unwrap(node));
+                }
             }
 
             rte.el.normalize();

@@ -27,9 +27,9 @@ const TableResponsiveTypeBuilder = BaseTypeBuilder.extend({
     modelMixin: {
         defaults: {
             tagName: 'div',
-            draggable: ['div'],
             droppable: ['table'],
-            classes: ['table-responsive']
+            classes: ['table-responsive'],
+            name: __('oro.cms.wysiwyg.component.table_responsive.label')
         },
 
         ...TableTypeDecorator,

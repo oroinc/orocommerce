@@ -6,6 +6,25 @@
  */
 
 const postParseModel = model => {
+    /**
+     * Move style props to attributes.style to display styles as inline
+     * Need for "indent" and "outdent" action in RTE editor
+     */
+    if (model.style && model.type === 'text') {
+        ['padding-left', 'padding-right'].map(prop => {
+            if (model.style[prop]) {
+                const styleProps = model.attributes.style ? model.attributes.style.split(';') : [];
+                styleProps.push(`padding-left: ${model.style[prop]}`);
+
+                model.attributes = {
+                    ...model.attributes,
+                    style: styleProps.join(';') + ';'
+                };
+                delete model.style[prop];
+            }
+        });
+    }
+
     if (model.components) {
         if (model.components.length) {
             const isTextContain = model.components.some(
@@ -58,6 +77,7 @@ const postParseModel = model => {
  */
 export default function ContentParser(editor) {
     const originParseNode = editor.Parser.parserHtml.parseNode;
+
     editor.Parser.parserHtml.parseNode = (...args) =>
         originParseNode.apply(editor.Parser.parserHtml, args).map(postParseModel);
 
