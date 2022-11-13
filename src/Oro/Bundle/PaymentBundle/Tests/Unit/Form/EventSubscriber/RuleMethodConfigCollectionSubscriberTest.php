@@ -12,11 +12,13 @@ use Oro\Bundle\FormBundle\Tests\Unit\Stub\StripTagsExtensionStub;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
@@ -30,18 +32,15 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
     private const PAYMENT_TYPE = 'payment_type_mock';
 
-    /** @var RuleMethodConfigCollectionSubscriberProxy */
+    /** @var RuleMethodConfigCollectionSubscriber */
     private $subscriber;
-
-    /** @var CompositePaymentMethodProvider */
-    private $paymentMethodProvider;
 
     protected function setUp(): void
     {
-        $this->paymentMethodProvider = new CompositePaymentMethodProvider([]);
-        $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();
+        $this->subscriber = new RuleMethodConfigCollectionSubscriber(
+            $this->createMock(PaymentMethodProviderInterface::class)
+        );
         parent::setUp();
-        $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->paymentMethodProvider);
     }
 
     public function test()
@@ -51,7 +50,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                 FormEvents::PRE_SET_DATA => 'preSet',
                 FormEvents::PRE_SUBMIT => 'preSubmit'
             ],
-            RuleMethodConfigCollectionSubscriberProxy::getSubscribedEvents()
+            RuleMethodConfigCollectionSubscriber::getSubscribedEvents()
         );
     }
 
@@ -106,17 +105,23 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $paymentMethodProvider = new CompositePaymentMethodProvider([]);
         $methodViewProvider = new CompositePaymentMethodViewProvider([]);
 
         return [
             new PreloadedExtension(
                 [
-                    PaymentMethodsConfigsRuleType::class
-                        => new PaymentMethodsConfigsRuleType($this->paymentMethodProvider, $methodViewProvider),
-                    PaymentMethodConfigCollectionType::class
-                        => new PaymentMethodConfigCollectionType($this->subscriber),
-                    PaymentMethodConfigType::class
-                        => new PaymentMethodConfigType($this->paymentMethodProvider, $methodViewProvider),
+                    PaymentMethodsConfigsRuleType::class => new PaymentMethodsConfigsRuleType(
+                        $paymentMethodProvider,
+                        $methodViewProvider
+                    ),
+                    PaymentMethodConfigCollectionType::class => new PaymentMethodConfigCollectionType(
+                        $this->subscriber
+                    ),
+                    PaymentMethodConfigType::class => new PaymentMethodConfigType(
+                        $paymentMethodProvider,
+                        $methodViewProvider
+                    ),
                     CurrencySelectionType::class => new CurrencySelectionType(
                         $currencyProvider,
                         $this->createMock(LocaleSettings::class),
