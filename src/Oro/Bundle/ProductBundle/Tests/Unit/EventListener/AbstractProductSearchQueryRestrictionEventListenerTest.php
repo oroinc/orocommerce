@@ -11,75 +11,36 @@ use Oro\Bundle\SearchBundle\Query\Query;
 
 abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $frontendConfigPath = '/front/end/cfg/path';
 
-    /**
-     * @var ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject */
     protected $modifier;
 
-    /**
-     * @var ProductSearchQueryRestrictionEventListener
-     */
+    /** @var ProductSearchQueryRestrictionEventListener */
     protected $listener;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $statuses = ['in_stock'];
 
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $frontendHelper;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->modifier = $this->getQueryModifier();
-
-        $this->frontendHelper = $this->getFrontendHelper();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->modifier = $this->createMock(ProductVisibilitySearchQueryModifier::class);
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
 
         $this->listener = $this->createListener();
     }
 
-    /**
-     * @return FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getFrontendHelper()
-    {
-        /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject $frontendHelper */
-        $frontendHelper = $this->getMockBuilder(FrontendHelper::class)
-            ->disableOriginalConstructor()->getMock();
-
-        return $frontendHelper;
-    }
-
-    /**
-     * @return ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getQueryModifier()
-    {
-        /** @var ProductVisibilitySearchQueryModifier|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
-        $queryModifier = $this->getMockBuilder(ProductVisibilitySearchQueryModifier::class)->getMock();
-
-        return $queryModifier;
-    }
-
     protected function configureDependenciesForFrontend()
     {
-        $this->frontendHelper
-            ->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->atLeastOnce())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
@@ -94,8 +55,7 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
 
     protected function configureDependenciesForBackend()
     {
-        $this->frontendHelper
-            ->expects($this->atLeastOnce())
+        $this->frontendHelper->expects($this->atLeastOnce())
             ->method('isFrontendRequest')
             ->willReturn(false);
 
@@ -108,16 +68,10 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
             ->willReturn($this->statuses);
     }
 
-    /**
-     * @return ProductSearchQueryRestrictionEvent
-     */
-    protected function getEvent()
+    protected function getEvent(): ProductSearchQueryRestrictionEvent
     {
         return new ProductSearchQueryRestrictionEvent(new Query());
     }
 
-    /**
-     * @return ProductSearchQueryRestrictionEventListener
-     */
-    abstract protected function createListener();
+    abstract protected function createListener(): ProductSearchQueryRestrictionEventListener;
 }

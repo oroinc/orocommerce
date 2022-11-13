@@ -23,15 +23,13 @@ class ProductSearchQueryRestrictionEventListenerTest extends AbstractProductSear
     /**
      * {@inheritdoc}
      */
-    protected function createListener()
+    protected function createListener(): ProductSearchQueryRestrictionEventListener
     {
-        $listener = new ProductSearchQueryRestrictionEventListener(
+        return new ProductSearchQueryRestrictionEventListener(
             $this->configManager,
             $this->modifier,
             $this->frontendHelper,
             $this->frontendConfigPath
         );
-
-        return $listener;
     }
 }

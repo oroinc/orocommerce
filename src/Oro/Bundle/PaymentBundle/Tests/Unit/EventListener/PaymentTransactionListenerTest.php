@@ -10,28 +10,28 @@ use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 class PaymentTransactionListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentStatusManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $managerMock;
+    private $manager;
 
     /** @var TransactionCompleteEvent */
-    protected $event;
+    private $event;
 
     /** @var PaymentTransactionListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->managerMock = $this->getMockBuilder(PaymentStatusManager::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->manager = $this->createMock(PaymentStatusManager::class);
 
-        $transaction = new PaymentTransaction();
-        $this->event = new TransactionCompleteEvent($transaction);
-        $this->listener = new PaymentTransactionListener($this->managerMock);
+        $this->event = new TransactionCompleteEvent(new PaymentTransaction());
+        $this->listener = new PaymentTransactionListener($this->manager);
     }
 
     public function testOnTransactionComplete()
     {
         $transaction = $this->event->getTransaction();
-        $this->managerMock->expects($this->once())->method('updateStatus')->with($transaction);
+        $this->manager->expects($this->once())
+            ->method('updateStatus')
+            ->with($transaction);
         $this->listener->onTransactionComplete($this->event);
     }
 }

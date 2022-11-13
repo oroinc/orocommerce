@@ -9,32 +9,27 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuickAddCollectionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuickAddHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $quickAddHandler;
+    /** @var QuickAddHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $quickAddHandler;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @var QuickAddCollectionProvider
-     */
-    protected $provider;
+    /** @var QuickAddCollectionProvider */
+    private $provider;
 
-    /**
-     * @var Request|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $request;
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
+    private $request;
 
     protected function setUp(): void
     {
-        $this->quickAddHandler = $this->getMockBuilder(QuickAddHandler::class)->disableOriginalConstructor()->getMock();
-        $this->requestStack = $this->getMockBuilder(RequestStack::class)->disableOriginalConstructor()->getMock();
-        $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->quickAddHandler = $this->createMock(QuickAddHandler::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->request = $this->createMock(Request::class);
+        $this->requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
+
         $this->provider = new QuickAddCollectionProvider($this->quickAddHandler, $this->requestStack);
     }
 

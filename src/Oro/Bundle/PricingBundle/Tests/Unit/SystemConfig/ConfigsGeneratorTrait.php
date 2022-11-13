@@ -9,12 +9,13 @@ trait ConfigsGeneratorTrait
 {
     /**
      * @param int $count
+     *
      * @return PriceListConfig[]
      */
-    public function createConfigs($count)
+    private function createConfigs(int $count): array
     {
         $result = [];
-        $reflectionClass = new \ReflectionClass('Oro\Bundle\PricingBundle\Entity\PriceList');
+        $reflectionClass = new \ReflectionClass(PriceList::class);
 
         for ($i = 1; $i <= $count; $i++) {
             $priceList = new PriceList();
@@ -27,7 +28,7 @@ trait ConfigsGeneratorTrait
             $config->setPriceList($priceList)
                 ->setSortOrder($i * 100);
             $config->setMergeAllowed(true);
-            if ($i % 2 == 0) {
+            if (($i % 2) === 0) {
                 $config->setMergeAllowed(false);
             }
 

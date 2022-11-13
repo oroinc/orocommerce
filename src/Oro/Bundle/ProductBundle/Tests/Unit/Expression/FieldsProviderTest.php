@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
@@ -12,24 +11,19 @@ use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
  */
 class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private EntityFieldProvider|\PHPUnit\Framework\MockObject\MockObject $entityFieldProvider;
+    /** @var EntityFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityFieldProvider;
 
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
-
-    private FieldsProvider $fieldsProvider;
+    /** @var FieldsProvider */
+    private $fieldsProvider;
 
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityFieldProvider = $this->createMock(EntityFieldProvider::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->fieldsProvider = new FieldsProvider(
             $this->entityFieldProvider,
@@ -39,21 +33,19 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider ruleFieldsDataProvider
-     * @throws \Exception
      */
     public function testFieldsForRule(array $fields, array $expectedFields): void
     {
         $className = 'ClassName';
-        $this->entityFieldProvider->method('getEntityFields')->willReturn($fields);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn($fields);
 
         $actualFields = $this->fieldsProvider->getFields($className, true);
 
         self::assertEquals($expectedFields, $actualFields);
     }
 
-    /**
-     * @return array
-     */
     public function ruleFieldsDataProvider(): array
     {
         return [
@@ -76,20 +68,18 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider conditionalFieldsDataProvider
-     * @throws \Exception
      */
     public function testFieldsForCondition(array $fields, array $expectedFields): void
     {
         $className = 'ClassName';
-        $this->entityFieldProvider->method('getEntityFields')->willReturn($fields);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn($fields);
 
         $actualFields = $this->fieldsProvider->getFields($className, false, true);
         self::assertEquals($expectedFields, $actualFields);
     }
 
-    /**
-     * @return array
-     */
     public function conditionalFieldsDataProvider(): array
     {
         return [
@@ -129,7 +119,9 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $className = 'ClassName';
-        $this->entityFieldProvider->method('getEntityFields')->willReturn($fields);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn($fields);
 
         $this->fieldsProvider->addFieldToWhiteList($className, 'field3');
         $actualFields = $this->fieldsProvider->getFields($className, true);
@@ -151,7 +143,9 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $className = 'ClassName';
-        $this->entityFieldProvider->method('getEntityFields')->willReturn($fields);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn($fields);
 
         $this->fieldsProvider->addFieldToBlackList($className, 'field2');
         $actualFields = $this->fieldsProvider->getFields($className, true);
@@ -179,7 +173,9 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $className = 'ClassName';
-        $this->entityFieldProvider->method('getEntityFields')->willReturn($fields);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn($fields);
 
         $actualFields = $this->fieldsProvider->getFields($className, false, true);
         self::assertEquals($expectedFields, $actualFields);
@@ -193,11 +189,8 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider classNameDataProvider
-     * @param string $className
-     * @param string $field
-     * @param string $expectedClassName
      */
-    public function testGetRealClassName($className, $field, $expectedClassName): void
+    public function testGetRealClassName(string $className, ?string $field, string $expectedClassName): void
     {
         $fields = [
             [
@@ -207,13 +200,12 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
                 'related_entity_name' => 'DateTime'
             ]
         ];
-        $this->entityFieldProvider->method('getEntityFields')->willReturn($fields);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn($fields);
         self::assertEquals($expectedClassName, $this->fieldsProvider->getRealClassName($className, $field));
     }
 
-    /**
-     * @return array
-     */
     public function classNameDataProvider(): array
     {
         return [
@@ -234,13 +226,15 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Field "field" is not found in class stdClass');
-        $this->entityFieldProvider->method('getEntityFields')->willReturn([]);
+        $this->entityFieldProvider->expects(self::any())
+            ->method('getEntityFields')
+            ->willReturn([]);
         $this->fieldsProvider->getRealClassName('stdClass::field');
     }
 
     public function testIsRelation(): void
     {
-        $this->entityFieldProvider
+        $this->entityFieldProvider->expects(self::any())
             ->method('getEntityFields')
             ->with('stdClass')
             ->willReturn(
@@ -258,7 +252,7 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsRelationNoField(): void
     {
-        $this->entityFieldProvider
+        $this->entityFieldProvider->expects(self::any())
             ->method('getEntityFields')
             ->with('stdClass')
             ->willReturn(
@@ -276,7 +270,7 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testIsRelationNotRelation(): void
     {
-        $this->entityFieldProvider
+        $this->entityFieldProvider->expects(self::any())
             ->method('getEntityFields')
             ->with('stdClass')
             ->willReturn(

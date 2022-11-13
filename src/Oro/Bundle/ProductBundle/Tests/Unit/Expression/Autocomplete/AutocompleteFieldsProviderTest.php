@@ -6,10 +6,8 @@ use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 
 class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
 {
-    /**
-     * @var AutocompleteFieldsProvider
-     */
-    protected $provider;
+    /** @var AutocompleteFieldsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -68,9 +66,8 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @dataProvider getFieldsDataProvider
-     * @param array $fieldsData
      */
-    public function testGetAutocompleteData($fieldsData)
+    public function testGetAutocompleteData(array $fieldsData)
     {
         $numericalOnly = false;
         $withRelations = true;
@@ -153,9 +150,8 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function getFieldsDataProvider()
+    public function getFieldsDataProvider(): array
     {
         return [
             [

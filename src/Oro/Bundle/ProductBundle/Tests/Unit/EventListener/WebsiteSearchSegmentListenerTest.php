@@ -15,29 +15,19 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContentVariantSegmentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contentVariantSegmentProvider;
 
-    /**
-     * @var StaticSegmentManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var StaticSegmentManager|\PHPUnit\Framework\MockObject\MockObject */
     private $staticSegmentManager;
 
-    /**
-     * @var WebsiteSearchSegmentListener
-     */
+    /** @var WebsiteSearchSegmentListener */
     private $websiteSearchSegmentListener;
 
     protected function setUp(): void
     {
-        $this->contentVariantSegmentProvider = $this->getMockBuilder(ContentVariantSegmentProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->staticSegmentManager = $this->getMockBuilder(StaticSegmentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);
+        $this->staticSegmentManager = $this->createMock(StaticSegmentManager::class);
 
         $this->websiteSearchSegmentListener = new WebsiteSearchSegmentListener(
             $this->contentVariantSegmentProvider,
@@ -47,9 +37,8 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processWithoutProductEntityProvider
-     * @param mixed $classOrClasses
      */
-    public function testProcessWithoutProductEntity($classOrClasses)
+    public function testProcessWithoutProductEntity(string|array $classOrClasses)
     {
         $this->contentVariantSegmentProvider->expects($this->never())
             ->method('getContentVariantSegments');
@@ -94,10 +83,7 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
         $segment2 = new Segment();
         $this->contentVariantSegmentProvider->expects($this->exactly(2))
             ->method('getContentVariantSegmentsByWebsiteId')
-            ->withConsecutive(
-                [1],
-                [2]
-            )
+            ->withConsecutive([1], [2])
             ->willReturnOnConsecutiveCalls([$segment1], [$segment2]);
         $this->staticSegmentManager->expects($this->exactly(2))
             ->method('run')
@@ -111,10 +97,8 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider processProvider
-     * @param mixed $classOrClasses
-     * @param array $context
      */
-    public function testProcess($classOrClasses, array $context)
+    public function testProcess(string|array $classOrClasses, array $context)
     {
         $segment1 = new Segment();
         $segment2 = new Segment();

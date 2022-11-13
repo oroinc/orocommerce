@@ -12,24 +12,19 @@ use Psr\Http\Message\ResponseInterface;
 class NVPClientTest extends TestCase
 {
     /** @var ClientInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $httpClient;
+    private $httpClient;
 
     /** @var EncoderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $encoder;
+    private $encoder;
 
     /** @var NVPClient */
-    protected $client;
+    private $client;
 
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(ClientInterface::class);
         $this->encoder = $this->createMock(EncoderInterface::class);
         $this->client = new NVPClient($this->httpClient, $this->encoder);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->client, $this->encoder, $this->httpClient);
     }
 
     public function testSend()
@@ -39,23 +34,17 @@ class NVPClientTest extends TestCase
         $responseString = 'response=string';
         $responseArray = ['response' => 'string'];
 
-        $this->encoder
-            ->expects($this->once())
+        $this->encoder->expects($this->once())
             ->method('encode')
             ->with($options)
             ->willReturn($encodedData);
 
-        $response = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $response
-            ->expects($this->once())
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->once())
             ->method('getBody')
             ->willReturn($responseString);
 
-        $this->httpClient
-            ->expects($this->once())
+        $this->httpClient->expects($this->once())
             ->method('request')
             ->with(
                 'POST',
@@ -67,8 +56,7 @@ class NVPClientTest extends TestCase
             )
             ->willReturn($response);
 
-        $this->encoder
-            ->expects($this->once())
+        $this->encoder->expects($this->once())
             ->method('decode')
             ->with($responseString)
             ->willReturn($responseArray);
@@ -76,10 +64,7 @@ class NVPClientTest extends TestCase
         $this->assertEquals($responseArray, $this->client->send(HostAddressProvider::PILOT_HOST_ADDRESS, $options));
     }
 
-    /**
-     * @return array
-     */
-    public function connectionOptionsDataProvider()
+    public function connectionOptionsDataProvider(): array
     {
         return [
             'default options' => [
@@ -147,20 +132,14 @@ class NVPClientTest extends TestCase
         $options = [];
         $response = $this->createMock(ResponseInterface::class);
 
-        $this->encoder
-            ->expects($this->once())
+        $this->encoder->expects($this->once())
             ->method('encode')
             ->with($options)
             ->willReturn('');
 
-        $this->httpClient
-            ->expects($this->once())
+        $this->httpClient->expects($this->once())
             ->method('request')
-            ->with(
-                'POST',
-                $address,
-                $expectedClientOptions
-            )
+            ->with('POST', $address, $expectedClientOptions)
             ->willReturn($response);
 
         $this->client->send($address, $options, $connectionOptions);

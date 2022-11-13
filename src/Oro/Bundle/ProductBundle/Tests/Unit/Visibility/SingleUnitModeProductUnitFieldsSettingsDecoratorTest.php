@@ -20,44 +20,34 @@ use Oro\Bundle\ProductBundle\Visibility\SingleUnitModeProductUnitFieldsSettingsD
  */
 class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_UNIT_CODE = 'each';
-    const TEST_DEFAULT_UNIT_CODE = 'set';
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    private const TEST_UNIT_CODE = 'each';
+    private const TEST_DEFAULT_UNIT_CODE = 'set';
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductUnitFieldsSettingsInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $decoratedSettings;
 
-    /**
-     * @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SingleUnitModeServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $singleUnitService;
 
-    /**
-     * @var SingleUnitModeProductUnitFieldsSettingsDecorator
-     */
+    /** @var SingleUnitModeProductUnitFieldsSettingsDecorator */
     private $settings;
 
-    /**
-     * @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitRepo;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->productUnitRepo = $this->createMock(EntityRepository::class);
-        $this->doctrineHelper->method('getEntityRepository')->willReturn($this->productUnitRepo);
-
-        $this->singleUnitService = $this->getMockBuilder(SingleUnitModeServiceInterface::class)
-            ->disableOriginalConstructor()->getMock();
-
+        $this->singleUnitService = $this->createMock(SingleUnitModeServiceInterface::class);
         $this->decoratedSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);
+
+        $this->doctrineHelper->expects(self::any())
+            ->method('getEntityRepository')
+            ->willReturn($this->productUnitRepo);
 
         $this->settings = new SingleUnitModeProductUnitFieldsSettingsDecorator(
             $this->decoratedSettings,
@@ -68,7 +58,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
 
     public function testIsProductUnitSelectionVisibleDefault()
     {
-        /** @var Product $product */
         $product = $this->createMock(Product::class);
 
         $this->singleUnitService->expects($this->once())
@@ -96,7 +85,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
         array $additionalUnits,
         $expectedVisibility
     ) {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
         $product = $this->createMock(Product::class);
 
         $this->singleUnitService->expects($this->once())
@@ -120,7 +108,8 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
             ->method('getPrimaryUnitPrecision')
             ->willReturn($unitPrecision);
 
-        $product->method('getAdditionalUnitPrecisions')
+        $product->expects(self::any())
+            ->method('getAdditionalUnitPrecisions')
             ->willReturn(new ArrayCollection($additionalUnits));
 
         $this->singleUnitService->expects($this->once())
@@ -132,7 +121,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
 
     public function testIsProductPrimaryUnitVisibleDefault()
     {
-        /** @var Product $product */
         $product = $this->createMock(Product::class);
 
         $this->singleUnitService->expects($this->once())
@@ -172,7 +160,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
         array $additionalUnits,
         $expectedVisibility
     ) {
-        /** @var Product|\PHPUnit\Framework\MockObject\MockObject $product */
         $product = $this->createMock(Product::class);
 
         $this->singleUnitService->expects($this->once())
@@ -196,7 +183,8 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
             ->method('getPrimaryUnitPrecision')
             ->willReturn($unitPrecision);
 
-        $product->method('getAdditionalUnitPrecisions')
+        $product->expects(self::any())
+            ->method('getAdditionalUnitPrecisions')
             ->willReturn(new ArrayCollection($additionalUnits));
 
         $this->singleUnitService->expects($this->once())
@@ -206,10 +194,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
         $this->assertEquals($expectedVisibility, $this->settings->isProductPrimaryUnitVisible($product));
     }
 
-    /**
-     * @return array
-     */
-    public function productUnitsDataProvider()
+    public function productUnitsDataProvider(): array
     {
         $sellAdditionalUnitPrecision = $this->createMock(ProductUnitPrecision::class);
         $sellAdditionalUnitPrecision->expects($this->once())
@@ -270,10 +255,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
         $this->assertFalse($this->settings->isAddingAdditionalUnitsToProductAvailable($product));
     }
 
-    /**
-     * @return array
-     */
-    public function productsDataProvider()
+    public function productsDataProvider(): array
     {
         return [
             [null],
@@ -351,7 +333,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
 
     public function testGetAvailablePrimaryUnitChoicesPrimaryDefault()
     {
-        list($product, $unit) = $this->prepareProduct(self::TEST_UNIT_CODE);
+        [$product, $unit] = $this->prepareProduct(self::TEST_UNIT_CODE);
 
         $this->productUnitRepo->expects($this->once())
             ->method('find')
@@ -365,7 +347,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
 
     public function testGetAvailablePrimaryUnitChoices()
     {
-        list($product, $unit) = $this->prepareProduct(self::TEST_DEFAULT_UNIT_CODE);
+        [$product, $unit] = $this->prepareProduct(self::TEST_DEFAULT_UNIT_CODE);
 
         $defaultUnit = $this->createMock(ProductUnit::class);
 
@@ -379,11 +361,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
         $this->assertSame([$defaultUnit, $unit], $this->settings->getAvailablePrimaryUnitChoices($product));
     }
 
-    /**
-     * @param string $defaultUnitCode
-     * @return array
-     */
-    protected function prepareProduct($defaultUnitCode)
+    private function prepareProduct(string $defaultUnitCode): array
     {
         $product = $this->createMock(Product::class);
 
@@ -409,6 +387,6 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
             ->method('getDefaultUnitCode')
             ->willReturn($defaultUnitCode);
 
-        return array($product, $unit);
+        return [$product, $unit];
     }
 }

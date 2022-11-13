@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
@@ -26,58 +27,46 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
     use ConfigsGeneratorTrait;
 
     /** @var array */
-    protected $testPriceLists = [];
+    private $testPriceLists = [];
 
     /** @var array */
-    protected $testPriceListConfigs = [];
+    private $testPriceListConfigs = [];
 
     /** @var PriceListSystemConfigType */
-    protected $formType;
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->formType = new PriceListSystemConfigType(
-            'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig',
-            'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigBag'
-        );
+        $this->formType = new PriceListSystemConfigType(PriceListConfig::class);
         $this->testPriceListConfigs = $this->createConfigs(2);
         foreach ($this->testPriceListConfigs as $config) {
-            $this->testPriceLists[$config->getPriceList()->getId()] = $config->getPriceList()->setName('');
+            $priceList = $config->getPriceList();
+            $this->testPriceLists[$priceList->getId()] = $priceList->setName('');
         }
 
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub(
-            $this->testPriceLists
-        );
-        $oroCollectionType = new CollectionType();
-        $priceListCollectionType = new PriceListCollectionType();
-        $priceListWithPriorityType = new PriceListSelectWithPriorityType();
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('get')
             ->with('oro_pricing.price_strategy')
             ->willReturn(MergePricesCombiningStrategy::NAME);
+
         return [
             new PreloadedExtension(
                 [
                     PriceListSystemConfigType::class => $this->formType,
-                    CollectionType::class => $oroCollectionType,
-                    PriceListCollectionType::class => $priceListCollectionType,
-                    PriceListSelectWithPriorityType::class => $priceListWithPriorityType,
+                    CollectionType::class => new CollectionType(),
+                    PriceListCollectionType::class => new PriceListCollectionType(),
+                    PriceListSelectWithPriorityType::class => new PriceListSelectWithPriorityType(),
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => $entityType,
+                    EntityType::class => new EntityTypeStub($this->testPriceLists),
                 ],
                 [
                     FormType::class => [new SortableExtension()],
