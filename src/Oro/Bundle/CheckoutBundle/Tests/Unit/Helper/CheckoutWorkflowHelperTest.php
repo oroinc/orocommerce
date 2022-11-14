@@ -24,18 +24,15 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var CheckoutWorkflowHelper */
-    private $helper;
-
     /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
     private $workflowManager;
 
     /** @var ActionGroupRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $actionGroupRegistry;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var CheckoutWorkflowHelper */
+    private $helper;
+
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
@@ -66,7 +63,7 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider workflowItemProvider
      */
-    public function testGetWorkflowItem($items, $expectException, $expected)
+    public function testGetWorkflowItem(array $items, bool $expectException, WorkflowItem $expected)
     {
         $checkout = $this->createMock(Checkout::class);
         $this->workflowManager->expects($this->once())
@@ -94,8 +91,11 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
             ],
         );
         $actionGroup = $this->createMock(ActionGroup::class);
-        $this->actionGroupRegistry->expects(self::once())->method('findByName')->willReturn($actionGroup);
-        $actionGroup->expects(self::once())->method('execute');
+        $this->actionGroupRegistry->expects(self::once())
+            ->method('findByName')
+            ->willReturn($actionGroup);
+        $actionGroup->expects(self::once())
+            ->method('execute');
 
         $items = [
             $this->getEntity(WorkflowItem::class, ['id' => 1]),
@@ -105,8 +105,11 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
             ->with($checkout)
             ->willReturn($items);
 
-        $this->workflowManager->expects(self::never())->method('transitIfAllowed');
-        $this->workflowManager->expects(self::any())->method('getTransitionsByWorkflowItem')->willReturn([]);
+        $this->workflowManager->expects(self::never())
+            ->method('transitIfAllowed');
+        $this->workflowManager->expects(self::any())
+            ->method('getTransitionsByWorkflowItem')
+            ->willReturn([]);
 
         $this->helper->processWorkflowAndGetCurrentStep($request, $checkout);
     }
@@ -122,8 +125,11 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
             ],
         );
         $actionGroup = $this->createMock(ActionGroup::class);
-        $this->actionGroupRegistry->expects(self::once())->method('findByName')->willReturn($actionGroup);
-        $actionGroup->expects(self::once())->method('execute');
+        $this->actionGroupRegistry->expects(self::once())
+            ->method('findByName')
+            ->willReturn($actionGroup);
+        $actionGroup->expects(self::once())
+            ->method('execute');
 
         $items = [
             $this->getEntity(WorkflowItem::class, ['id' => 1]),
@@ -133,33 +139,34 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
             ->with($checkout)
             ->willReturn($items);
 
-        $this->workflowManager->expects(self::any())->method('getTransitionsByWorkflowItem')->willReturn([]);
+        $this->workflowManager->expects(self::any())
+            ->method('getTransitionsByWorkflowItem')
+            ->willReturn([]);
 
-        $this->workflowManager->expects(self::once())->method('transitIfAllowed');
+        $this->workflowManager->expects(self::once())
+            ->method('transitIfAllowed');
 
         $this->helper->processWorkflowAndGetCurrentStep($request, $checkout);
     }
 
-    /**
-     * @return \Generator
-     */
-    public function workflowItemProvider()
+    public function workflowItemProvider(): array
     {
-        yield 'Items count equals one' => [
-            'items' => [
-                $this->getEntity(WorkflowItem::class, ['id' => 1])
+        return [
+            'Items count equals one' => [
+                'items' => [
+                    $this->getEntity(WorkflowItem::class, ['id' => 1])
+                ],
+                'expectException' => false,
+                'expectedResult' => $this->getEntity(WorkflowItem::class, ['id' => 1])
             ],
-            'expectException' => false,
-            'expectedResult' => $this->getEntity(WorkflowItem::class, ['id' => 1])
-        ];
-
-        yield 'Items count more than one' => [
-            'items' => [
-                $this->getEntity(WorkflowItem::class, ['id' => 1]),
-                $this->getEntity(WorkflowItem::class, ['id' => 2]),
-            ],
-            'expectException' => true,
-            'expectedResult' => $this->getEntity(WorkflowItem::class, ['id' => 1])
+            'Items count more than one' => [
+                'items' => [
+                    $this->getEntity(WorkflowItem::class, ['id' => 1]),
+                    $this->getEntity(WorkflowItem::class, ['id' => 2]),
+                ],
+                'expectException' => true,
+                'expectedResult' => $this->getEntity(WorkflowItem::class, ['id' => 1])
+            ]
         ];
     }
 }

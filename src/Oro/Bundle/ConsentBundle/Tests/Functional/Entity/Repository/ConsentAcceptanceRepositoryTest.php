@@ -12,35 +12,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ConsentAcceptanceRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ConsentAcceptanceRepository
-     */
-    protected $repository;
+    private ConsentAcceptanceRepository $repository;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadConsentsData::class]);
 
-        $this->loadFixtures([
-            LoadConsentsData::class,
-        ]);
-
-        $this->repository = $this
-            ->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepositoryForClass(ConsentAcceptance::class);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->repository);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(ConsentAcceptance::class);
     }
 
     public function testGetAcceptedConsentsByCustomer()
@@ -106,10 +86,7 @@ class ConsentAcceptanceRepositoryTest extends WebTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function landingPagesProvider()
+    public function landingPagesProvider(): array
     {
         return [
             'landing page has consents' => [
@@ -136,10 +113,7 @@ class ConsentAcceptanceRepositoryTest extends WebTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function hasAcceptedConsentsProvider()
+    public function hasAcceptedConsentsProvider(): array
     {
         return [
             'consent has acceptances' => [

@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @method \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client getClient()
+ * @property \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client $client
  */
 class ProductControllerTest extends WebTestCase
 {
@@ -26,11 +26,8 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider viewDataProvider
-     *
-     * @param bool $includeSubcategories
-     * @param array $expected
      */
-    public function testView($includeSubcategories, $expected)
+    public function testView(bool $includeSubcategories, array $expected)
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -51,10 +48,7 @@ class ProductControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
+    public function viewDataProvider(): array
     {
         return [
             'includeSubcategories' => [
@@ -99,7 +93,7 @@ class ProductControllerTest extends WebTestCase
     /**
      * @dataProvider navigationBarTestDataProvider
      */
-    public function testNavigationBar($category, array $expectedParts)
+    public function testNavigationBar(string $category, array $expectedParts)
     {
         $category = $this->getReference($category);
 
@@ -131,9 +125,8 @@ class ProductControllerTest extends WebTestCase
         $text = $navigationBarNode->textContent;
 
         $foundParts = [];
-
         foreach ($expectedParts as $expectedPart) {
-            if (strstr($text, $expectedPart)) {
+            if (str_contains($text, $expectedPart)) {
                 $foundParts[] = $expectedPart;
             }
         }
@@ -141,10 +134,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($expectedParts, $foundParts);
     }
 
-    /**
-     * @return array
-     */
-    public function navigationBarTestDataProvider()
+    public function navigationBarTestDataProvider(): array
     {
         return [
             [

@@ -9,9 +9,6 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 class RequestAdditionalNoteTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,7 +25,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
         $expectedCount = LoadRequestData::NUM_REQUESTS
             * (LoadRequestAdditionalNoteData::NUM_CUSTOMER_NOTES + LoadRequestAdditionalNoteData::NUM_SELLER_NOTES);
 
-        $this->assertResponseCount($expectedCount, $response);
+        self::assertResponseCount($expectedCount, $response);
     }
 
     public function testGet()
@@ -41,7 +38,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
             ['entity' => 'rfqadditionalnotes', 'id' => $entity->getId()]
         );
 
-        $this->assertResponseNotEmpty($response);
+        self::assertResponseNotEmpty($response);
     }
 
     public function testOptionsForList()
@@ -64,12 +61,8 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
 
     /**
      * @dataProvider notAllowedActionProvider
-     *
-     * @param string $method
-     * @param string $routeName
-     * @param array $param
      */
-    public function testNotAllowedActions($method, $routeName, array $param = [])
+    public function testNotAllowedActions(string $method, string $routeName, array $param = [])
     {
         $response = $this->request(
             $method,
@@ -78,10 +71,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    /**
-     * @return array
-     */
-    public function notAllowedActionProvider()
+    public function notAllowedActionProvider(): array
     {
         return [
             'create action' => [

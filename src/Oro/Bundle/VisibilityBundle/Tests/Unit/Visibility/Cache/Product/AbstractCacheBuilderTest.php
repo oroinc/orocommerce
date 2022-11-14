@@ -42,28 +42,28 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testResolveVisibilitySettings()
     {
-        $mock = $this->createMock(VisibilityInterface::class);
+        $visibility = $this->createMock(VisibilityInterface::class);
         $concreteBuilder = $this->createMock($this->cacheBuilderInterface);
 
         $concreteBuilder->expects($this->once())
             ->method('isVisibilitySettingsSupported')
-            ->with($mock)
+            ->with($visibility)
             ->willReturn(true);
 
         $concreteBuilder->expects($this->once())
             ->method('resolveVisibilitySettings')
-            ->with($mock);
+            ->with($visibility);
 
         $this->cacheBuilder->addBuilder($concreteBuilder);
 
         foreach ($this->builders as $builder) {
             $builder->expects($this->once())
                 ->method('isVisibilitySettingsSupported')
-                ->with($mock)
+                ->with($visibility)
                 ->willReturn(false);
         }
 
-        $this->assertCallAllBuilders('resolveVisibilitySettings', $mock, 0);
+        $this->assertCallAllBuilders('resolveVisibilitySettings', $visibility, 0);
     }
 
     public function testIsVisibilitySettingsSupportedFalse()

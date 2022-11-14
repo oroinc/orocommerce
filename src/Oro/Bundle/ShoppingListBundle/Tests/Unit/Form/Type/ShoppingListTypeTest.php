@@ -24,7 +24,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -45,12 +45,8 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param mixed $defaultData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit(mixed $defaultData, mixed $submittedData, mixed $expectedData)
     {
         $form = $this->factory->create(ShoppingListType::class, $defaultData, []);
 
@@ -64,10 +60,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $expectedShoppingList = new ShoppingList();
         $expectedShoppingList->setLabel('new label');

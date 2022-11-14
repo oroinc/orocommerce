@@ -17,60 +17,57 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class UniqueEntityValidator extends ConstraintValidator
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
     }
 
     /**
-     * @inheritDoc
-     *
-     * @throws ConstraintDefinitionException
-     * @throws UnexpectedTypeException
+     * {@inheritDoc}
      */
-    public function validate($entity, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        $this->validateConstraintOptions($constraint);
+        if (!$constraint instanceof UniqueEntity) {
+            throw new UnexpectedTypeException($constraint, UniqueEntity::class);
+        }
 
-        $em = $this->getEm($entity, $constraint);
+        if (!\is_array($constraint->fields) && !\is_string($constraint->fields)) {
+            throw new UnexpectedTypeException($constraint->fields, 'array');
+        }
 
-        $criteria = $this->buildCriteria($entity, $constraint, $em);
+        if (null !== $constraint->errorPath && !\is_string($constraint->errorPath)) {
+            throw new UnexpectedTypeException($constraint->errorPath, 'string or null');
+        }
 
-        $result = $this->getResult($criteria, $entity, $constraint, $em);
-
-        if ($this->isNoDuplicates($result, $entity)) {
+        $em = $this->getEntityManager($value, $constraint);
+        $criteria = $this->buildCriteria($value, $constraint, $em);
+        $result = $this->getResult($criteria, $value, $constraint, $em);
+        if ($this->isNoDuplicates($result, $value)) {
             return;
         }
 
-        if (!$constraint->buildViolationAtEntityLevel) {
+        if ($constraint->buildViolationAtEntityLevel) {
+            $this->buildViolationAtEntityLevel($constraint);
+        } else {
             $this->buildViolationAtPath($constraint, $criteria);
-
-            return;
         }
-
-        $this->buildViolationAtEntityLevel($constraint);
     }
 
-    protected function buildViolationAtPath(UniqueEntity $constraint, $criteria)
+    private function buildViolationAtPath(UniqueEntity $constraint, array $criteria): void
     {
         $fields = (array)$constraint->fields;
-
-        $errorPath = null !== $constraint->errorPath ? $constraint->errorPath : $fields[0];
-        $invalidValue = isset($criteria[$errorPath]) ? $criteria[$errorPath] : $criteria[$fields[0]];
+        $errorPath = $constraint->errorPath ?? $fields[0];
 
         $this->context->buildViolation($constraint->message)
             ->atPath($errorPath)
-            ->setInvalidValue($invalidValue)
+            ->setInvalidValue($criteria[$errorPath] ?? $criteria[$fields[0]])
             ->setCode(UniqueEntity::NOT_UNIQUE_ERROR)
             ->addViolation();
     }
 
-    protected function buildViolationAtEntityLevel(UniqueEntity $constraint)
+    private function buildViolationAtEntityLevel(UniqueEntity $constraint): void
     {
         $this->context->buildViolation($constraint->message)
             ->setParameter('unique_key', implode(',', $constraint->fields))
@@ -78,87 +75,47 @@ class UniqueEntityValidator extends ConstraintValidator
             ->addViolation();
     }
 
-    /**
-     * @throws ConstraintDefinitionException
-     */
-    protected function getEm($entity, Constraint $constraint) : ObjectManager
+    private function getEntityManager(object $entity, UniqueEntity $constraint) : ObjectManager
     {
         if ($constraint->em) {
-            $em = $this->registry->getManager($constraint->em);
-
+            $em = $this->doctrine->getManager($constraint->em);
             if (!$em) {
-                throw new ConstraintDefinitionException(
-                    sprintf('Object manager "%s" does not exist.', $constraint->em)
-                );
+                throw new ConstraintDefinitionException(sprintf(
+                    'Object manager "%s" does not exist.',
+                    $constraint->em
+                ));
             }
 
             return $em;
         }
 
-        $em = $this->registry->getManagerForClass(get_class($entity));
-
+        $em = $this->doctrine->getManagerForClass(\get_class($entity));
         if (!$em) {
-            throw new ConstraintDefinitionException(
-                sprintf(
-                    'Unable to find the object manager associated with an entity of class "%s".',
-                    get_class($entity)
-                )
-            );
+            throw new ConstraintDefinitionException(sprintf(
+                'Unable to find the object manager associated with an entity of class "%s".',
+                \get_class($entity)
+            ));
         }
 
         return $em;
     }
 
-    /**
-     * @throws UnexpectedTypeException
-     */
-    protected function validateConstraintOptions(Constraint $constraint)
-    {
-        if (!$constraint instanceof UniqueEntity) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\UniqueEntity');
-        }
-
-        if (!is_array($constraint->fields) && !is_string($constraint->fields)) {
-            throw new UnexpectedTypeException($constraint->fields, 'array');
-        }
-
-        if (null !== $constraint->errorPath && !is_string($constraint->errorPath)) {
-            throw new UnexpectedTypeException($constraint->errorPath, 'string or null');
-        }
-
-        if (null !== $constraint->buildViolationAtEntityLevel && !is_bool($constraint->buildViolationAtEntityLevel)) {
-            throw new UnexpectedTypeException($constraint->buildViolationAtEntityLevel, 'boolean');
-        }
-    }
-
-    /**
-     * @param $entity
-     * @param Constraint $constraint
-     * @param ObjectManager $em
-     *
-     * @return array
-     *
-     * @throws ConstraintDefinitionException
-     */
-    protected function buildCriteria($entity, Constraint $constraint, ObjectManager $em)
+    private function buildCriteria(object $entity, UniqueEntity $constraint, ObjectManager $em): array
     {
         $fields = (array)$constraint->fields;
-
-        if (0 === count($fields)) {
+        if (0 === \count($fields)) {
             throw new ConstraintDefinitionException('At least one field has to be specified.');
         }
 
-        $class = $em->getClassMetadata(get_class($entity));
+        $class = $em->getClassMetadata(\get_class($entity));
 
         $criteria = [];
         foreach ($fields as $fieldName) {
             if (!$class->hasField($fieldName) && !$class->hasAssociation($fieldName)) {
-                throw new ConstraintDefinitionException(
-                    sprintf(
-                        'The field "%s" is not mapped by Doctrine, so it cannot be validated for uniqueness.',
-                        $fieldName
-                    )
-                );
+                throw new ConstraintDefinitionException(sprintf(
+                    'The field "%s" is not mapped by Doctrine, so it cannot be validated for uniqueness.',
+                    $fieldName
+                ));
             }
 
             $criteria[$fieldName] = $class->reflFields[$fieldName]->getValue($entity);
@@ -175,17 +132,9 @@ class UniqueEntityValidator extends ConstraintValidator
         return $criteria;
     }
 
-    /**
-     * @param array $criteria
-     * @param $entity
-     * @param Constraint $constraint
-     * @param ObjectManager $em
-     *
-     * @return array|\Traversable
-     */
-    protected function getResult(array $criteria, $entity, Constraint $constraint, ObjectManager $em)
+    private function getResult(array $criteria, object $entity, Constraint $constraint, ObjectManager $em): mixed
     {
-        $repository = $em->getRepository(get_class($entity));
+        $repository = $em->getRepository(\get_class($entity));
         $result = $repository->{$constraint->repositoryMethod}($criteria);
 
         if ($result instanceof \IteratorAggregate) {
@@ -194,24 +143,20 @@ class UniqueEntityValidator extends ConstraintValidator
 
         if ($result instanceof \Iterator) {
             $result->rewind();
-        } elseif (is_array($result)) {
+        } elseif (\is_array($result)) {
             reset($result);
         }
 
         return $result;
     }
 
-    protected function isNoDuplicates($result, $entity) : bool
+    private function isNoDuplicates(mixed $result, object $entity) : bool
     {
-        if (0 === count($result) ||
-            (
-                1 === count($result)
+        return
+            0 === \count($result)
+            || (
+                1 === \count($result)
                 && $entity === ($result instanceof \Iterator ? $result->current() : current($result))
-            )
-        ) {
-            return true;
-        }
-
-        return false;
+            );
     }
 }

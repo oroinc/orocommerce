@@ -11,41 +11,25 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use PHPUnit\Framework\TestCase;
 
-class FixedProductMethodFromChannelFactoryTest extends TestCase
+class FixedProductMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected IntegrationIconProviderInterface $integrationIconProvider;
+    /** @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $integrationIconProvider;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected IntegrationIdentifierGeneratorInterface $identifierGenerator;
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $identifierGenerator;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected LocalizationHelper $localizationHelper;
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationHelper;
 
-    /**
-     * @var FixedProductMethodFromChannelFactory
-     */
-    protected FixedProductMethodFromChannelFactory $factory;
+    /** @var FixedProductMethodFromChannelFactory */
+    private $factory;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
-
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->integrationIconProvider = $this->createMock(IntegrationIconProviderInterface::class);
 
         $this->factory = new FixedProductMethodFromChannelFactory(
@@ -64,8 +48,7 @@ class FixedProductMethodFromChannelFactoryTest extends TestCase
         $identifier = 'fixed_product_1';
         $iconUri = 'bundles/icon-uri.png';
 
-        $this->integrationIconProvider
-            ->expects($this->once())
+        $this->integrationIconProvider->expects($this->once())
             ->method('getIcon')
             ->with($channel)
             ->willReturn($iconUri);
@@ -90,10 +73,8 @@ class FixedProductMethodFromChannelFactoryTest extends TestCase
 
     private function getChannel(): Channel
     {
-        $settings = new FixedProductSettings();
-
         $channel = new Channel();
-        $channel->setTransport($settings);
+        $channel->setTransport(new FixedProductSettings());
         $channel->setEnabled(true);
 
         return $channel;

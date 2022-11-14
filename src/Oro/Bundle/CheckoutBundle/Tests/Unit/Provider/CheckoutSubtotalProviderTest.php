@@ -27,52 +27,43 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
     use EntityTrait;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
-
-    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $roundingService;
+    private $translator;
 
     /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productPriceProvider;
+    private $productPriceProvider;
 
     /** @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    protected $priceListTreeHandler;
+    private $priceListTreeHandler;
 
     /** @var CheckoutSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $provider;
+    private $provider;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    protected $featureChecker;
-
-    /** @var ProductPriceScopeCriteriaFactory */
-    protected $priceScopeCriteriaFactory;
+    private $featureChecker;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
-        $this->roundingService->expects($this->any())
-            ->method('round')
-            ->willReturnCallback(
-                function ($value) {
-                    return round($value);
-                }
-            );
-
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->priceScopeCriteriaFactory = new ProductPriceScopeCriteriaFactory();
+
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(function ($value) {
+                return round($value);
+            });
 
         $this->provider = new CheckoutSubtotalProvider(
             $this->translator,
-            $this->roundingService,
+            $roundingService,
             $this->productPriceProvider,
             $this->priceListTreeHandler,
             new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider),
-            $this->priceScopeCriteriaFactory
+            new ProductPriceScopeCriteriaFactory()
         );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('oro_price_lists_combined');
@@ -100,50 +91,37 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     /**
      * @dataProvider getPriceDataProvider
-     * @param float $value
-     * @param string $identifier
-     * @param float $defaultQuantity
-     * @param float $quantity
-     * @param int $precision
-     * @param string $code
-     * @param float $expectedValue
-     * @param string $expectedSubtotalCurrency
-     * @param string|null $subtotalCurrency
-     * @param string|null $entityCurrency
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testGetSubtotalByCurrencyWithEnabledPriceListFeature(
-        $value,
-        $identifier,
-        $defaultQuantity,
-        $quantity,
-        $precision,
-        $code,
-        $expectedValue,
-        $expectedSubtotalCurrency,
-        $subtotalCurrency = null,
-        $entityCurrency = null
+        float $value,
+        string $identifier,
+        float $defaultQuantity,
+        float $quantity,
+        int $precision,
+        string $code,
+        float $expectedValue,
+        string $expectedSubtotalCurrency,
+        ?string $subtotalCurrency = null,
+        ?string $entityCurrency = null
     ) {
         $customer = new Customer();
         $website = new Website();
         $defaultCurrency = 'USD';
 
-        $this->featureChecker
-            ->expects($this->any())
+        $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('oro_price_lists_combined')
             ->willReturn(true);
 
-        $this->translator
-            ->expects($this->once())
+        $this->translator->expects($this->once())
             ->method('trans')
             ->with(CheckoutSubtotalProvider::LABEL)
             ->willReturn('test');
 
-        $product = $this->prepareProduct();
-        $productUnit = $this->prepareProductUnit($code, $precision);
-        $this->preparePrice($value, $identifier, $defaultQuantity);
+        $product = $this->getProduct();
+        $productUnit = $this->getProductUnit($code, $precision);
+        $this->expectsGetMatchedPrices($value, $identifier, $defaultQuantity);
 
         $lineItem = new CheckoutLineItem();
         $lineItem->setProduct($product)
@@ -181,35 +159,23 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     /**
      * @dataProvider getPriceDataProvider
-     * @param float $value
-     * @param string $identifier
-     * @param float $defaultQuantity
-     * @param float $quantity
-     * @param int $precision
-     * @param string $code
-     * @param float $expectedValue
-     * @param string $expectedSubtotalCurrency
-     * @param string|null $subtotalCurrency
-     * @param string|null $entityCurrency
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testGetSubtotalByCurrencyWithDisabledPriceListFeature(
-        $value,
-        $identifier,
-        $defaultQuantity,
-        $quantity,
-        $precision,
-        $code,
-        $expectedValue,
-        $expectedSubtotalCurrency,
-        $subtotalCurrency = null,
-        $entityCurrency = null
+        float $value,
+        string $identifier,
+        float $defaultQuantity,
+        float $quantity,
+        int $precision,
+        string $code,
+        float $expectedValue,
+        string $expectedSubtotalCurrency,
+        ?string $subtotalCurrency = null,
+        ?string $entityCurrency = null
     ) {
         $defaultCurrency = 'USD';
 
-        $this->featureChecker
-            ->expects($this->any())
+        $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('oro_price_lists_combined')
             ->willReturn(false);
@@ -219,9 +185,9 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with(CheckoutSubtotalProvider::LABEL)
             ->willReturn('test');
 
-        $product = $this->prepareProduct();
-        $productUnit = $this->prepareProductUnit($code, $precision);
-        $this->preparePrice($value, $identifier, $defaultQuantity);
+        $product = $this->getProduct();
+        $productUnit = $this->getProductUnit($code, $precision);
+        $this->expectsGetMatchedPrices($value, $identifier, $defaultQuantity);
 
         $lineItem = new CheckoutLineItem();
         $lineItem->setProduct($product)
@@ -232,7 +198,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $entity->addLineItem($lineItem)
             ->setCurrency($entityCurrency ?: $defaultCurrency);
 
-        $this->priceListTreeHandler->expects($this->never())->method('getPriceList');
+        $this->priceListTreeHandler->expects($this->never())
+            ->method('getPriceList');
 
         $subtotal = $subtotalCurrency
             ? $this->provider->getSubtotalByCurrency($entity, $subtotalCurrency)
@@ -250,37 +217,24 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     /**
      * @dataProvider getPriceDataProviderWithFixedPrice
-     * @param float $value
-     * @param string $identifier
-     * @param float $defaultQuantity
-     * @param float $quantity
-     * @param int $precision
-     * @param string $code
-     * @param float $expectedValue
-     * @param Price $lineItemPrice
-     * @param string $expectedSubtotalCurrency
-     * @param string|null $subtotalCurrency
-     * @param string|null $entityCurrency
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testGetSubtotalByCurrencyWithFixedPriceLineItem(
-        $value,
-        $identifier,
-        $defaultQuantity,
-        $quantity,
-        $precision,
-        $code,
-        $expectedValue,
+        float $value,
+        string $identifier,
+        float $defaultQuantity,
+        float $quantity,
+        int $precision,
+        string $code,
+        float $expectedValue,
         Price $lineItemPrice,
-        $expectedSubtotalCurrency,
-        $entityCurrency = null,
-        $subtotalCurrency = null
+        string $expectedSubtotalCurrency,
+        ?string $entityCurrency = null,
+        ?string $subtotalCurrency = null
     ) {
         $defaultCurrency = 'USD';
 
-        $this->featureChecker
-            ->expects($this->any())
+        $this->featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('oro_price_lists_combined')
             ->willReturn(true);
@@ -290,9 +244,9 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with(CheckoutSubtotalProvider::LABEL)
             ->willReturn('test');
 
-        $product = $this->prepareProduct();
-        $productUnit = $this->prepareProductUnit($code, $precision);
-        $this->preparePrice($value, $identifier, $defaultQuantity);
+        $product = $this->getProduct();
+        $productUnit = $this->getProductUnit($code, $precision);
+        $this->expectsGetMatchedPrices($value, $identifier, $defaultQuantity);
 
         $lineItem = new CheckoutLineItem();
         $lineItem->setProduct($product)
@@ -305,7 +259,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $entity->addLineItem($lineItem)
             ->setCurrency($entityCurrency ?: $defaultCurrency);
 
-        $this->priceListTreeHandler->expects($this->never())->method('getPriceList');
+        $this->priceListTreeHandler->expects($this->never())
+            ->method('getPriceList');
 
         $subtotal = $subtotalCurrency
             ? $this->provider->getSubtotalByCurrency($entity, $subtotalCurrency)
@@ -333,12 +288,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertFalse($this->provider->isSupported($entity));
     }
 
-    /**
-     * @param string $code
-     * @param int $precision
-     * @return ProductUnit|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareProductUnit($code, $precision)
+    private function getProductUnit(string $code, int $precision): ProductUnit
     {
         $productUnit = $this->createMock(ProductUnit::class);
         $productUnit->expects($this->any())
@@ -351,10 +301,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         return $productUnit;
     }
 
-    /**
-     * @return Product|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareProduct()
+    private function getProduct(): Product
     {
         $product = $this->createMock(Product::class);
         $product->expects($this->any())
@@ -364,7 +311,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         return $product;
     }
 
-    protected function preparePrice($value, $identifier, $defaultQuantity)
+    private function expectsGetMatchedPrices($value, $identifier, $defaultQuantity): void
     {
         $price = $this->createMock(Price::class);
         $price->expects($this->any())
@@ -376,10 +323,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn([$identifier => $price]);
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceDataProvider()
+    public function getPriceDataProvider(): array
     {
         return [
             'kilogram' => [
@@ -418,10 +362,7 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceDataProviderWithFixedPrice()
+    public function getPriceDataProviderWithFixedPrice(): array
     {
         $kgLineItemPrice = new Price();
         $kgLineItemPrice->setValue(25.2);

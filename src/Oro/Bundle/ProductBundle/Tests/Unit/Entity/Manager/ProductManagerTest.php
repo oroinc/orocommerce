@@ -13,10 +13,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class ProductManagerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $eventDispatcher;
+    private $eventDispatcher;
 
     /** @var ProductManager */
-    protected $productManager;
+    private $productManager;
 
     protected function setUp(): void
     {
@@ -26,8 +26,7 @@ class ProductManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testRestrictQueryBuilder()
     {
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $qb */
-        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
         $params = ['some' => 'params'];
 
         $this->eventDispatcher->expects($this->once())

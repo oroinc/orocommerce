@@ -15,19 +15,19 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cacheProvider;
+    private $cacheProvider;
 
     /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cacheItem;
+    private $cacheItem;
 
     /** @var TokenAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
     /** @var CategoryCountsCache */
-    protected $cache;
+    private $cache;
 
     protected function setUp(): void
     {
@@ -90,12 +90,8 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider cacheDataProvider
-     *
-     * @param string $key
-     * @param int $userId
-     * @param string $expectedKey
      */
-    public function testGetCounts($key, $userId, $expectedKey)
+    public function testGetCounts(string $key, ?int $userId, string $expectedKey)
     {
         $data = ['cache' => 'data'];
         $website = $this->getEntity(Website::class, ['id' => 33]);
@@ -125,12 +121,8 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider cacheDataProvider
-     *
-     * @param string $key
-     * @param int $userId
-     * @param string $expectedKey
      */
-    public function testSetCounts($key, $userId, $expectedKey)
+    public function testSetCounts(string $key, ?int $userId, string $expectedKey)
     {
         $data = ['cache' => 'data'];
         $lifeTime = 100500;
@@ -163,10 +155,7 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
         $this->cache->setCounts($key, $data, $lifeTime);
     }
 
-    /**
-     * @return array
-     */
-    public function cacheDataProvider()
+    public function cacheDataProvider(): array
     {
         return [
             'empty key and userId' => [

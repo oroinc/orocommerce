@@ -15,14 +15,10 @@ use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsR
 
 class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
 {
-    /**
-     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $configsRuleProvider;
 
-    /**
-     * @var CheckoutPaymentContextProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CheckoutPaymentContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $checkoutContextProvider;
 
     protected function setUp(): void
@@ -30,10 +26,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
         parent::setUp();
 
         $this->configsRuleProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
-
-        $this->checkoutContextProvider = $this->getMockBuilder(CheckoutPaymentContextProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);
 
         $this->listener = new PaymentMethodsListener(
             $this->addressProvider,
@@ -44,17 +37,10 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->checkoutContextProvider, $this->configsRuleProvider);
-
-        parent::tearDown();
-    }
-
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function manualEditGrantedDataProvider()
+    public function manualEditGrantedDataProvider(): array
     {
         return [
             'manual edit granted and no configs returned' => [
@@ -74,9 +60,9 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function notManualEditDataProvider()
+    public function notManualEditDataProvider(): array
     {
         $customer = $this->getEntity(Customer::class);
         $customerUser = $this->getEntity(CustomerUser::class);
@@ -122,25 +108,25 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function createContext()
+    protected function createContext(): object
     {
         return $this->createMock(PaymentContextInterface::class);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getConfigRuleProviderMethod()
+    protected function getConfigRuleProviderMethod(): string
     {
         return 'getPaymentMethodsConfigsRules';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getAddressToCheck(Checkout $checkout)
+    protected function getAddressToCheck(Checkout $checkout): OrderAddress
     {
         return $checkout->getBillingAddress();
     }

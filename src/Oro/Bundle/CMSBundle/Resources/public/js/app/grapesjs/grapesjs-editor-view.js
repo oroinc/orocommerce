@@ -12,6 +12,7 @@ import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
 import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
+import 'orocms/js/app/grapesjs/plugins/components/sorter-hints';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import 'orocms/js/app/grapesjs/plugins/import/import';
@@ -197,7 +198,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     styleManager: {
-        clearProperties: false,
+        clearProperties: true,
         sectors: []
     },
 
@@ -319,6 +320,7 @@ const GrapesjsEditorView = BaseView.extend({
                 btnLabel: __('oro.cms.wysiwyg.export.btn_label')
             }
         },
+        'sorter-hints': {},
         'grapesjs-components': {},
         'grapesjs-style-isolation': {},
         'grapesjs-import': {},
@@ -547,6 +549,7 @@ const GrapesjsEditorView = BaseView.extend({
         this.listenTo(this.builder, 'update', this._onUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'component:update', this._onComponentUpdatedBuilder.bind(this));
         this.listenTo(this.builder, 'changeTheme', this._updateTheme.bind(this));
+        this.listenTo(this.builder, 'component:add', this.componentAdd.bind(this));
         this.listenTo(this.builder, 'component:selected', this.componentSelected.bind(this));
         this.listenTo(this.builder, 'component:deselected', this.componentDeselected.bind(this));
         this.listenTo(this.builder, 'component:remove:before', this.componentBeforeRemove.bind(this));
@@ -728,6 +731,12 @@ const GrapesjsEditorView = BaseView.extend({
         model.trigger('model:remove', model);
     },
 
+    componentAdd(model) {
+        if (model.get('type') === 'textnode' && model.parent()?.get('type') === 'wrapper') {
+            model.replaceWith(`<div>${model.get('content')}</div>`);
+        }
+    },
+
     componentDeselected(model) {
         this.builder.editor.view.$el.find('.gjs-toolbar').off('mouseover');
         this.getToolbarItems().each(function() {
@@ -739,6 +748,7 @@ const GrapesjsEditorView = BaseView.extend({
         });
 
         model.trigger('model:deselected', model);
+        this.togglePrivateClasses(model, false);
     },
 
     componentSelected(model) {
@@ -791,6 +801,7 @@ const GrapesjsEditorView = BaseView.extend({
             });
 
         this.toggleSelectorManager(model);
+        this.togglePrivateClasses(model, true);
     },
 
     /**
@@ -816,6 +827,13 @@ const GrapesjsEditorView = BaseView.extend({
                 delete SelectorManager.selectorTags.messageContainer;
             }
         }
+    },
+
+    togglePrivateClasses(model, state) {
+        const selectors = this.builder.Selectors.getSelected();
+        const privateClasses = model.get('privateClasses') || [];
+
+        selectors.forEach(selector => privateClasses.includes(selector.get('name')) && selector.set('private', state));
     },
 
     /**

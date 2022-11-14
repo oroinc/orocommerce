@@ -24,31 +24,24 @@ class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(OrderShippingTrackingType::class);
         $form->submit($submitted);
 
-        static::assertTrue($form->isValid());
-        static::assertEquals($expected, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'test' => [
-                'submitted' => [
-                        'method' => 'UPS',
-                        'number' => '1Z111',
-
-                ],
+                'submitted' => ['method' => 'UPS', 'number' => '1Z111'],
                 'expected' => (new OrderShippingTracking())->setMethod('UPS')->setNumber('1Z111'),
             ]
         ];
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -65,6 +58,6 @@ class OrderShippingTrackingTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefix()
     {
         $type = new OrderShippingTrackingType();
-        static::assertSame(OrderShippingTrackingType::NAME, $type->getBlockPrefix());
+        self::assertSame(OrderShippingTrackingType::NAME, $type->getBlockPrefix());
     }
 }

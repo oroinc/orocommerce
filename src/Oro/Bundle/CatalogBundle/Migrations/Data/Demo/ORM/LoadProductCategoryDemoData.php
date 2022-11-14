@@ -85,6 +85,9 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
             $row = array_combine($headers, array_values($data));
 
             $product = $this->getProductBySku($manager, $row['sku']);
+            if (!empty($row['category_sort_order'])) {
+                $product->setCategorySortOrder($row['category_sort_order']);
+            }
             $category = $this->getCategoryByDefaultTitle($manager, $row['category'], $defaultOrganization);
             if ($category) {
                 $category->addProduct($product);

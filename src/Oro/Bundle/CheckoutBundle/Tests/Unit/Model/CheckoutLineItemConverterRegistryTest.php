@@ -55,7 +55,7 @@ class CheckoutLineItemConverterRegistryTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider exceptionDataProvider
      */
-    public function testGetConverterWhenNoConvertersSupportSource($object, $expectedMessage)
+    public function testGetConverterWhenNoConvertersSupportSource(mixed $object, string $expectedMessage)
     {
         $this->converter1->expects($this->once())
             ->method('isSourceSupported')
@@ -76,10 +76,7 @@ class CheckoutLineItemConverterRegistryTest extends \PHPUnit\Framework\TestCase
         $this->registry->getConverter($object);
     }
 
-    /**
-     * @return array
-     */
-    public function exceptionDataProvider()
+    public function exceptionDataProvider(): array
     {
         return [
             'null' => [

@@ -14,26 +14,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var QuickAddRowCollection|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var QuickAddRowCollection|\PHPUnit\Framework\MockObject\MockObject */
     protected $constraint;
 
-    /**
-     * @var QuickAddRowCollectionValidator
-     */
+    /** @var QuickAddRowCollectionValidator */
     protected $validator;
 
-    /**
-     * @var ValidatorInterface
-     */
-    protected $validatorInterface;
+    /** @var ValidatorInterface */
+    private $validatorInterface;
 
     protected function setUp(): void
     {
-        $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validatorInterface = $this->createMock(ValidatorInterface::class);
 
         parent::setUp();
 
@@ -44,14 +36,17 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $this->validator->initialize($this->context);
     }
 
+    protected function createValidator(): QuickAddRowCollectionValidator
+    {
+        return new QuickAddRowCollectionValidator($this->validatorInterface);
+    }
+
     public function testValidItemsOfCollection()
     {
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
 
         $quickAddRow->setProduct($product);
 
@@ -59,7 +54,8 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
 
         $violations = new ConstraintViolationList();
 
-        $this->validatorInterface->method('validate')
+        $this->validatorInterface->expects(self::any())
+            ->method('validate')
             ->with($quickAddRow, null)
             ->willReturn($violations);
 
@@ -73,9 +69,7 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $quickAddRow->setProduct($product);
         $collection->add($quickAddRow);
 
@@ -84,37 +78,35 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $violation = $this->createMock(ConstraintViolation::class);
 
         $violationMessage = 'some.message';
-        $violation->method('getMessage')
+        $violation->expects(self::any())
+            ->method('getMessage')
             ->willReturn($violationMessage);
 
         $violationParameters = ['{{ sku }}' => 'SKU1', '{{ unit }}' => 'item'];
-        $violation->method('getParameters')
+        $violation->expects(self::any())
+            ->method('getParameters')
             ->willReturn($violationParameters);
 
-        $iterator->method('current')
+        $iterator->expects(self::any())
+            ->method('current')
             ->willReturn($violation);
 
         $violations = $this->createMock(ConstraintViolationList::class);
-        $violations->method('getIterator')
+        $violations->expects(self::any())
+            ->method('getIterator')
             ->willReturn($iterator);
 
-        $violations->method('count')
+        $violations->expects(self::any())
+            ->method('count')
             ->willReturn(1);
 
-        $this->validatorInterface->method('validate')
+        $this->validatorInterface->expects(self::any())
+            ->method('validate')
             ->with($quickAddRow, null, $this->anything())
             ->willReturn($violations);
 
         $this->validator->validate($collection, $this->constraint);
 
         $this->assertEquals(1, $collection->getInvalidRows()->count());
-    }
-
-    /**
-     * @return QuickAddRowCollectionValidator
-     */
-    protected function createValidator()
-    {
-        return new QuickAddRowCollectionValidator($this->validatorInterface);
     }
 }

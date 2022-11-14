@@ -16,32 +16,19 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  */
 class ProductFlushEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var InventoryManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $inventoryManager;
+    /** @var InventoryManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $inventoryManager;
 
-    /**
-     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $entityManager;
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityManager;
 
-    /**
-     * @var ProductFlushEventListener
-     */
-    protected $productFlushEventListener;
+    /** @var ProductFlushEventListener */
+    private $productFlushEventListener;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
-        $this->inventoryManager = $this->getMockBuilder(InventoryManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->entityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->inventoryManager = $this->createMock(InventoryManager::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
 
         $this->productFlushEventListener = new ProductFlushEventListener($this->inventoryManager);
     }
@@ -97,20 +84,14 @@ class ProductFlushEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->productFlushEventListener->onFlush($eventArgs);
     }
 
-    /**
-     * @param bool $insertEntities
-     * @param bool $deleteEntities
-     * @param bool $hasProduct
-     *
-     * @return OnFlushEventArgs
-     */
-    protected function prepareEvent($insertEntities = true, $deleteEntities = true, $hasProduct = true)
-    {
+    private function prepareEvent(
+        bool $insertEntities = true,
+        bool $deleteEntities = true,
+        bool $hasProduct = true
+    ): OnFlushEventArgs {
         $eventArgs = new OnFlushEventArgs($this->entityManager);
         $entity = $this->createMock(ProductUnitPrecision::class);
-        $unitOfWork = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $unitOfWork = $this->createMock(UnitOfWork::class);
         $unitOfWork->expects($this->once())
             ->method('getScheduledEntityInsertions')
             ->willReturn($insertEntities ? [$entity] : []);

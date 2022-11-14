@@ -17,78 +17,48 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $customerMock;
+    /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
+    private $customer;
 
-    /**
-     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $customerUserMock;
+    /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
+    private $customerUser;
 
-    /**
-     * @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $lineItemsCollectionMock;
+    /** @var PaymentLineItemCollectionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemsCollection;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $billingAddressMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $billingAddress;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingAddressMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingAddress;
 
-    /**
-     * @var Price|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $subtotalMock;
+    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
+    private $subtotal;
 
-    /**
-     * @var Checkout|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $sourceEntityMock;
+    /** @var Checkout|\PHPUnit\Framework\MockObject\MockObject */
+    private $sourceEntity;
 
-    /**
-     * @var PaymentLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $paymentLineItemCollectionFactoryMock;
+    /** @var PaymentLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentLineItemCollectionFactory;
 
-    /**
-     * @var Website|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $websiteMock;
+    /** @var Website|\PHPUnit\Framework\MockObject\MockObject */
+    private $website;
 
-    /**
-     * @var ShippingOrigin|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingOriginMock;
+    /** @var ShippingOrigin|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingOrigin;
 
     protected function setUp(): void
     {
-        $this->customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->lineItemsCollectionMock = $this->createMock(PaymentLineItemCollectionInterface::class);
-        $this->billingAddressMock = $this->createMock(AddressInterface::class);
-        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
-        $this->subtotalMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->paymentLineItemCollectionFactoryMock = $this->createMock(
-            PaymentLineItemCollectionFactoryInterface::class
-        );
-        $this->websiteMock = $this->createMock(Website::class);
-        $this->shippingOriginMock = $this->createMock(ShippingOrigin::class);
+        $this->customer = $this->createMock(Customer::class);
+        $this->customerUser = $this->createMock(CustomerUser::class);
+        $this->lineItemsCollection = $this->createMock(PaymentLineItemCollectionInterface::class);
+        $this->billingAddress = $this->createMock(AddressInterface::class);
+        $this->shippingAddress = $this->createMock(AddressInterface::class);
+        $this->subtotal = $this->createMock(Price::class);
+        $this->sourceEntity = $this->createMock(Checkout::class);
+        $this->paymentLineItemCollectionFactory = $this->createMock(PaymentLineItemCollectionFactoryInterface::class);
+        $this->website = $this->createMock(Website::class);
+        $this->shippingOrigin = $this->createMock(ShippingOrigin::class);
     }
 
     public function testFullContextBuilding()
@@ -101,35 +71,33 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
             new PaymentLineItem([PaymentLineItem::FIELD_QUANTITY => 5])
         ];
 
-        $this->lineItemsCollectionMock
-            ->expects(static::once())
+        $this->lineItemsCollection->expects(self::once())
             ->method('toArray')
             ->willReturn($lineItems);
 
-        $this->paymentLineItemCollectionFactoryMock
-            ->expects(static::once())
+        $this->paymentLineItemCollectionFactory->expects(self::once())
             ->method('createPaymentLineItemCollection')
             ->with($lineItems)
-            ->willReturn($this->lineItemsCollectionMock);
+            ->willReturn($this->lineItemsCollection);
 
         $builder = new BasicPaymentContextBuilder(
-            $this->sourceEntityMock,
+            $this->sourceEntity,
             $entityId,
-            $this->paymentLineItemCollectionFactoryMock
+            $this->paymentLineItemCollectionFactory
         );
 
         $totalAmount = 10.0;
         $builder
             ->setCurrency($currency)
-            ->setSubTotal($this->subtotalMock)
-            ->setLineItems($this->lineItemsCollectionMock)
-            ->setShippingAddress($this->shippingAddressMock)
-            ->setBillingAddress($this->billingAddressMock)
-            ->setCustomer($this->customerMock)
-            ->setCustomerUser($this->customerUserMock)
+            ->setSubTotal($this->subtotal)
+            ->setLineItems($this->lineItemsCollection)
+            ->setShippingAddress($this->shippingAddress)
+            ->setBillingAddress($this->billingAddress)
+            ->setCustomer($this->customer)
+            ->setCustomerUser($this->customerUser)
             ->setShippingMethod($shippingMethod)
-            ->setWebsite($this->websiteMock)
-            ->setShippingOrigin($this->shippingOriginMock)
+            ->setWebsite($this->website)
+            ->setShippingOrigin($this->shippingOrigin)
             ->setTotal($totalAmount);
 
         $expectedContext = $this->getExpectedFullContext(
@@ -140,7 +108,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
         );
         $context = $builder->getResult();
 
-        static::assertEquals($expectedContext, $context);
+        self::assertEquals($expectedContext, $context);
     }
 
     public function testOptionalFields()
@@ -148,67 +116,53 @@ class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
         $entityId = '12';
         $lineItems = [];
 
-        $this->paymentLineItemCollectionFactoryMock
-            ->expects(static::once())
+        $this->paymentLineItemCollectionFactory->expects(self::once())
             ->method('createPaymentLineItemCollection')
             ->with($lineItems)
-            ->willReturn($this->lineItemsCollectionMock);
+            ->willReturn($this->lineItemsCollection);
 
         $builder = new BasicPaymentContextBuilder(
-            $this->sourceEntityMock,
+            $this->sourceEntity,
             $entityId,
-            $this->paymentLineItemCollectionFactoryMock
+            $this->paymentLineItemCollectionFactory
         );
 
         $expectedContext = $this->getExpectedContextWithoutOptionalFields($entityId);
 
         $context = $builder->getResult();
 
-        static::assertEquals($expectedContext, $context);
+        self::assertEquals($expectedContext, $context);
     }
 
-    /**
-     * @param $shippingMethod
-     * @param $currency
-     * @param $entityId
-     * @param float $total
-     *
-     * @return PaymentContext
-     */
-    private function getExpectedFullContext($shippingMethod, $currency, $entityId, $total)
-    {
-        $params = [
-            PaymentContext::FIELD_CUSTOMER => $this->customerMock,
-            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUserMock,
-            PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
-            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddressMock,
-            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddressMock,
+    private function getExpectedFullContext(
+        string $shippingMethod,
+        string $currency,
+        int $entityId,
+        float $total
+    ): PaymentContext {
+        return new PaymentContext([
+            PaymentContext::FIELD_CUSTOMER => $this->customer,
+            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
+            PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollection,
+            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddress,
+            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddress,
             PaymentContext::FIELD_SHIPPING_METHOD => $shippingMethod,
             PaymentContext::FIELD_CURRENCY => $currency,
-            PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
-            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
+            PaymentContext::FIELD_SUBTOTAL => $this->subtotal,
+            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
-            PaymentContext::FIELD_WEBSITE => $this->websiteMock,
-            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOriginMock,
+            PaymentContext::FIELD_WEBSITE => $this->website,
+            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOrigin,
             PaymentContext::FIELD_TOTAL => $total
-        ];
-
-        return new PaymentContext($params);
+        ]);
     }
 
-    /**
-     * @param $entityId
-     *
-     * @return PaymentContext
-     */
-    private function getExpectedContextWithoutOptionalFields($entityId)
+    private function getExpectedContextWithoutOptionalFields(int $entityId): PaymentContext
     {
-        $params = [
-            PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
-            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
+        return new PaymentContext([
+            PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollection,
+            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
-        ];
-
-        return new PaymentContext($params);
+        ]);
     }
 }

@@ -40,9 +40,6 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
     /** @var FrontendCustomerUserProfileExtension */
     private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
@@ -211,15 +208,12 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
     private function getCollection(array $items = []): PersistentCollection
     {
         $uow = new UnitOfWork();
-        /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject $em */
-        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
-        $em->method('getUnitOfWork')
+        $em = $this->createMock(EntityManager::class);
+        $em->expects($this->any())
+            ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $collection = new PersistentCollection($em, $metadata, new ArrayCollection($items));
 

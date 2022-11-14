@@ -20,29 +20,22 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
     {
         $this->initClient();
         $this->setCurrentWebsite('default');
-        $this->loadFixtures(
-            [
-                LoadOrdersACLData::class,
-                LoadCheckoutACLData::class,
-            ]
-        );
+        $this->loadFixtures([LoadOrdersACLData::class, LoadCheckoutACLData::class]);
     }
 
     /**
      * @group frontend-ACL
-     * @dataProvider gridACLProvider
-     *
-     * @param string $user
-     * @param string $indexResponseStatus
-     * @param string $gridResponseStatus
-     * @param array $data
+     * @dataProvider gridAclProvider
      */
-    public function testOrdersGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
-    {
-        $this->initClient([], static::generateBasicAuthHeader($user, $user));
+    public function testOrdersGridAcl(
+        string $user,
+        int $indexResponseStatus,
+        int $gridResponseStatus,
+        array $data = []
+    ) {
+        $this->initClient([], self::generateBasicAuthHeader($user, $user));
 
-        $configManager = self::getConfigManager('global');
-
+        $configManager = self::getConfigManager();
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
 
@@ -74,10 +67,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function gridACLProvider()
+    public function gridAclProvider(): array
     {
         return [
             'NOT AUTHORISED' => [
@@ -120,12 +110,8 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
 
     /**
      * @dataProvider viewDataProvider
-     *
-     * @param string $resource
-     * @param string $user
-     * @param int $status
      */
-    public function testView($resource, $user, $status)
+    public function testView(string $resource, string $user, int $status)
     {
         $this->initClient([], $this->generateBasicAuthHeader($user, $user));
         /** @var Checkout $checkout */
@@ -136,10 +122,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
         $this->assertHtmlResponseStatusCodeEquals($response, $status);
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
+    public function viewDataProvider(): array
     {
         return [
             'anonymous user' => [

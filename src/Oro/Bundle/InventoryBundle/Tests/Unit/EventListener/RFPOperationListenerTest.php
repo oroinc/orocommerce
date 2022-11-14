@@ -11,21 +11,16 @@ use Oro\Bundle\RFPBundle\Event\FormSubmitCheckEvent;
 
 class RFPOperationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var QuickAddCollectionProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $collectionProvider;
+    /** @var QuickAddCollectionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $collectionProvider;
 
-    /**
-     * @var RFPOperationListener
-     */
-    protected $listener;
+    /** @var RFPOperationListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->collectionProvider = $this->getMockBuilder(QuickAddCollectionProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionProvider = $this->createMock(QuickAddCollectionProvider::class);
+
         $this->listener = new RFPOperationListener($this->collectionProvider);
     }
 

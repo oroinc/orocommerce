@@ -22,18 +22,19 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    private OrderMapper $mapper;
+    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldHelper;
 
-    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
+    /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTermAssociationProvider;
 
-    private PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject $paymentTermAssociationProvider;
+    /** @var OrderMapper */
+    private $mapper;
 
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);
-        $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);
 
         $this->mapper = new OrderMapper(
             $this->fieldHelper,
@@ -48,7 +49,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityFields')
             ->with(
                 Order::class,
-                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
                 | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
             )
             ->willReturn(
@@ -104,7 +106,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityFields')
             ->with(
                 Order::class,
-                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
                 | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
             )
             ->willReturn([]);
@@ -128,7 +131,8 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
             ->method('getEntityFields')
             ->with(
                 Order::class,
-                EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
+                EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_UNIDIRECTIONAL
                 | EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
             )
             ->willReturn(

@@ -12,31 +12,19 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var PaymentTermType
-     */
-    protected $formType;
+    /** @var PaymentTermType */
+    private $formType;
 
-    /**
-     * @var PaymentTerm
-     */
-    protected $newPaymentTerm;
-
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
-        $this->newPaymentTerm = new PaymentTerm();
-
-        $this->formType = new PaymentTermType(\get_class($this->newPaymentTerm));
+        $this->formType = new PaymentTermType(PaymentTerm::class);
         parent::setUp();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([$this->formType], [])
@@ -45,11 +33,8 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param mixed $defaultData
-     * @param array $submittedData
-     * @param array $expectedData
      */
-    public function testSubmit($defaultData, array $submittedData, array $expectedData)
+    public function testSubmit(mixed $defaultData, array $submittedData, array $expectedData)
     {
         $form = $this->factory->create(PaymentTermType::class, $defaultData);
 
@@ -65,10 +50,7 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData['label'], $result->getLabel());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new payment term' => [

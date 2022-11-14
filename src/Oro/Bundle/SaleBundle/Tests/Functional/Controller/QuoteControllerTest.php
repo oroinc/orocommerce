@@ -27,11 +27,11 @@ class QuoteControllerTest extends WebTestCase
     private const OVERRIDDEN_SHIPPING_COST_CURRENCY = 'USD';
 
     private static string $qid;
-    private static string$qidUpdated;
+    private static string $qidUpdated;
 
     public static function setUpBeforeClass(): void
     {
-        self::$qid = 'TestQuoteID - ' . time() . '-' . rand();
+        self::$qid = 'TestQuoteID - ' . time() . '-' . mt_rand();
         self::$qidUpdated = self::$qid . ' - updated';
     }
 

@@ -2,43 +2,21 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 class CustomerGroupProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
-    /** @var CustomerGroupProductVisibilityRepository */
-    protected $repository;
-
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->repository = $this->registry->getRepository(
-            'OroVisibilityBundle:Visibility\CustomerGroupProductVisibility'
-        );
-
-        $this->loadFixtures(
-            [LoadProductVisibilityData::class]
-        );
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility');
+        $this->loadFixtures([LoadProductVisibilityData::class]);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(CustomerGroupProductVisibility::class);
     }
 
-    /**
-     * @return array
-     */
-    public function setToDefaultWithoutCategoryDataProvider()
+    public function setToDefaultWithoutCategoryDataProvider(): array
     {
         return [
             [

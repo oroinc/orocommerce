@@ -1,28 +1,28 @@
 services:
     oro_validation.validator_constraints.not_blank_one_of:
-        class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator'
+        class: Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator
         arguments:
             - '@translator'
         tags:
-            - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.not_blank_one_of_validator }
+            - { name: validator.constraint_validator }
 
     oro_validation.validator_constraints.blank_one_of:
-        class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator'
+        class: Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator
         arguments:
             - '@translator'
             - '@property_accessor'
         tags:
-            - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.blank_one_of_validator }
+            - { name: validator.constraint_validator }
 
     oro_validation.validator_constraints.unique_entity:
-        class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntityValidator'
+        class: Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntityValidator
         arguments:
             - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.unique_entity }
 
     oro_validation.validator_constraints.dates_chain:
-        class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator'
+        class: Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator
         arguments:
             - '@property_accessor'
         tags:

@@ -94,7 +94,8 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
             tagName: 'div',
             classes: ['content-block', 'content-placeholder'],
             contentBlock: null,
-            droppable: false
+            droppable: false,
+            name: 'Content Block'
         },
 
         initialize(...args) {

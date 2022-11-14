@@ -12,21 +12,15 @@ use Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy;
 
 class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var InventoryLevelStrategy|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $inventoryLevelStrategy;
+    /** @var InventoryLevelStrategy|\PHPUnit\Framework\MockObject\MockObject */
+    private $inventoryLevelStrategy;
 
-    /**
-     * @var InventoryLevelsImportListener
-     */
-    protected $inventoryLevelsImportListener;
+    /** @var InventoryLevelsImportListener */
+    private $inventoryLevelsImportListener;
 
     protected function setUp(): void
     {
-        $this->inventoryLevelStrategy = $this->getMockBuilder(InventoryLevelStrategy::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->inventoryLevelStrategy = $this->createMock(InventoryLevelStrategy::class);
 
         $this->inventoryLevelsImportListener = new InventoryLevelsImportListener(
             $this->inventoryLevelStrategy
@@ -40,7 +34,7 @@ class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
             InventoryLevel::class
         );
 
-        $this->inventoryLevelStrategy->expects($this->exactly(1))
+        $this->inventoryLevelStrategy->expects($this->once())
             ->method('clearCache');
 
         $this->inventoryLevelsImportListener->onBatchStepCompleted($event);
@@ -53,19 +47,13 @@ class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
             'some class'
         );
 
-        $this->inventoryLevelStrategy->expects($this->exactly(0))
+        $this->inventoryLevelStrategy->expects($this->never())
             ->method('clearCache');
 
         $this->inventoryLevelsImportListener->onBatchStepCompleted($event);
     }
 
-    /**
-     * @param string $processorAlias
-     * @param string $entityName
-     *
-     * @return StepExecution
-     */
-    protected function getEvent($processorAlias, $entityName)
+    private function getEvent(string $processorAlias, string $entityName): StepExecutionEvent
     {
         $executionContext = new ExecutionContext();
         $executionContext->put('processorAlias', $processorAlias);
@@ -74,8 +62,6 @@ class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
         $jobExecution = new JobExecution();
         $jobExecution->setExecutionContext($executionContext);
 
-        $stepExecution = new StepExecution('import', $jobExecution);
-
-        return new StepExecutionEvent($stepExecution);
+        return new StepExecutionEvent(new StepExecution('import', $jobExecution));
     }
 }

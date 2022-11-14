@@ -17,13 +17,9 @@ class RedirectControllerTest extends WebTestCase
     }
 
     /**
-     * Test slugify
-     *
      * @dataProvider slugifyActionDataProvider
-     * @param string $string
-     * @param string $slug
      */
-    public function testSlugifyAction($string, $slug)
+    public function testSlugifyAction(string $string, string $slug)
     {
         $this->client->jsonRequest(
             'GET',
@@ -36,10 +32,7 @@ class RedirectControllerTest extends WebTestCase
         $this->assertEquals($slug, $result['slug']);
     }
 
-    /**
-     * @return array
-     */
-    public function slugifyActionDataProvider()
+    public function slugifyActionDataProvider(): array
     {
         return [
             [

@@ -8,25 +8,14 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    /**
-     * @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $totalProcessorProvider;
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $totalProcessorProvider;
 
     protected function setUp(): void
     {
-        $this->totalProcessorProvider = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
 
         parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        unset($this->totalProcessorProvider);
     }
 
     public function testGetName()
@@ -40,8 +29,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $total->setAmount(1264);
         $total->setCurrency('EUR');
 
-        $this->totalProcessorProvider
-            ->expects($this->once())
+        $this->totalProcessorProvider->expects($this->once())
             ->method('getTotal')
             ->with($this->checkout)
             ->willReturn($total);
@@ -74,18 +62,13 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     /**
      * @dataProvider isStatesEqualFalseProvider
-     * @param array $state1
-     * @param array $state2
      */
-    public function testIsStatesEqualFalse($state1, $state2)
+    public function testIsStatesEqualFalse(array $state1, array $state2)
     {
         $this->assertFalse($this->mapper->isStatesEqual($this->checkout, $state1, $state2));
     }
 
-    /**
-     * @return array
-     */
-    public function isStatesEqualFalseProvider()
+    public function isStatesEqualFalseProvider(): array
     {
         return [
             'with different currency and amount' => [

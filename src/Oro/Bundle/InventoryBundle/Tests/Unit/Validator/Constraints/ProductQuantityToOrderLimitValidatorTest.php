@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimit;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductQuantityToOrderLimitValidatorTest extends ConstraintValidatorTestCase
@@ -19,12 +22,26 @@ class ProductQuantityToOrderLimitValidatorTest extends ConstraintValidatorTestCa
         parent::setUp();
     }
 
-    protected function createValidator()
+    protected function createValidator(): ProductQuantityToOrderLimitValidator
     {
         return new ProductQuantityToOrderLimitValidator($this->validatorService);
     }
 
-    public function testValidateEmptyValue()
+    public function testValidateForUnexpectedConstraint()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate(new Product(), $this->createMock(Constraint::class));
+    }
+
+    public function testValidateWhenValueIsNotProductEntity()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate(new \stdClass(), new ProductQuantityToOrderLimit());
+    }
+
+    public function testValidateWhenValueIsNull()
     {
         $constraint = new ProductQuantityToOrderLimit();
         $this->validator->validate(null, $constraint);
@@ -32,22 +49,12 @@ class ProductQuantityToOrderLimitValidatorTest extends ConstraintValidatorTestCa
         $this->assertNoViolation();
     }
 
-    public function testValidateNoProductValue()
+    public function testValidateForNewProduct()
     {
-        $constraint = new ProductQuantityToOrderLimit();
-        $this->validator->validate(new \stdClass(), $constraint);
+        $product = new Product();
 
-        $this->assertNoViolation();
-    }
-
-    public function testValidateWithoutAddingConstraint()
-    {
-        $product = new ProductStub();
-        $product->setId(1);
-        $this->validatorService->expects($this->once())
-            ->method('isMaxLimitLowerThenMinLimit')
-            ->with($product)
-            ->willReturn(false);
+        $this->validatorService->expects($this->never())
+            ->method('isMaxLimitLowerThenMinLimit');
 
         $constraint = new ProductQuantityToOrderLimit();
         $this->validator->validate($product, $constraint);
@@ -55,10 +62,12 @@ class ProductQuantityToOrderLimitValidatorTest extends ConstraintValidatorTestCa
         $this->assertNoViolation();
     }
 
-    public function testValidateIgnoredIfNoProductId()
+    public function testValidateWithoutAddingConstraint()
     {
-        $product = new ProductStub();
-        $this->validatorService->expects($this->never())
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+
+        $this->validatorService->expects($this->once())
             ->method('isMaxLimitLowerThenMinLimit')
             ->with($product)
             ->willReturn(false);
@@ -71,8 +80,9 @@ class ProductQuantityToOrderLimitValidatorTest extends ConstraintValidatorTestCa
 
     public function testValidate()
     {
-        $product = new ProductStub();
-        $product->setId(1);
+        $product = new Product();
+        ReflectionUtil::setId($product, 1);
+
         $this->validatorService->expects($this->once())
             ->method('isMaxLimitLowerThenMinLimit')
             ->with($product)

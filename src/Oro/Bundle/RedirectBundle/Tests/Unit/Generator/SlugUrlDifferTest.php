@@ -15,27 +15,18 @@ class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var SlugUrlDiffer
-     */
+    /** @var SlugUrlDiffer */
     private $differ;
 
     protected function setUp(): void
     {
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->differ = new SlugUrlDiffer($this->localizationHelper, $this->translator);
@@ -51,7 +42,6 @@ class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(LocalizedFallbackValue::class, ['id' => 2, 'string' => 'French label'])
         ]);
 
-        /** @var Localization $englishLocalization */
         $englishLocalization = $this->getEntity(Localization::class, ['id' => 1, 'titles' => $englishTitles]);
 
         $frenchLocalization = $this->getEntity(Localization::class, ['id' => 2, 'titles' => $frenchTitles]);
@@ -68,22 +58,19 @@ class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
             new SlugUrl('/french/url', $frenchLocalization),
         ]);
 
-        $this->translator
-            ->expects($this->any())
+        $this->translator->expects($this->any())
             ->method('trans')
             ->with('oro.locale.fallback.type.default')
             ->willReturn('Default label');
 
-        $this->localizationHelper
-            ->expects($this->any())
+        $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
             ->willReturnMap([
                 [$englishTitles, null, 'English label'],
                 [$frenchTitles, null, 'French label'],
             ]);
 
-        $this->localizationHelper
-            ->expects($this->any())
+        $this->localizationHelper->expects($this->any())
             ->method('getLocalizations')
             ->willReturn([$englishLocalization, $frenchLocalization]);
 
@@ -100,7 +87,6 @@ class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
             $this->getEntity(LocalizedFallbackValue::class, ['id' => 2, 'string' => 'French label'])
         ]);
 
-        /** @var Localization $englishLocalization */
         $englishLocalization = $this->getEntity(Localization::class, ['id' => 1, 'titles' => $englishTitles]);
 
         $frenchLocalization = $this->getEntity(Localization::class, ['id' => 2, 'titles' => $frenchTitles]);
@@ -117,21 +103,18 @@ class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
             new SlugUrl('/french/urlnew', $frenchLocalization),
         ]);
 
-        $this->translator
-            ->expects($this->any())
+        $this->translator->expects($this->any())
             ->method('trans')
             ->with('oro.locale.fallback.type.default')
             ->willReturn('Default label');
 
-        $this->localizationHelper
-            ->expects($this->any())
+        $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
             ->willReturnCallback(function ($titles) {
                 return $titles[0]->getString();
             });
 
-        $this->localizationHelper
-            ->expects($this->any())
+        $this->localizationHelper->expects($this->any())
             ->method('getLocalizations')
             ->willReturn([$englishLocalization, $frenchLocalization]);
 

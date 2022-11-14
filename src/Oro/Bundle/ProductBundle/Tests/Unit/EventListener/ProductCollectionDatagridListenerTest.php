@@ -82,6 +82,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
         $parameters = new ParameterBag([
             'params' => [
+                'segmentId' => '1',
                 'segmentDefinition' => '{}',
                 'includedProducts' => '1,2',
                 'excludedProducts' => '5'

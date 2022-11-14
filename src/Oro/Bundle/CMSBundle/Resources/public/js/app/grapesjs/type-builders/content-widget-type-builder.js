@@ -50,7 +50,8 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
             contentWidget: null,
             droppable: false,
             editable: false,
-            stylable: false
+            stylable: false,
+            name: 'Content Widget'
         },
 
         initialize(...args) {
@@ -133,7 +134,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         },
 
         onActive(event) {
-            this.em.get('Commands').run(this.model.getSettingsCommandName());
+            this.em.get('Commands').run(this.model.getSettingsCommandName(), this.model);
 
             event && event.stopPropagation();
         }
@@ -177,6 +178,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
                         data-type="${data.model.get('widgetType')}"
                         class="content-widget-inline"
                         >{{ widget("${data.model.get('name')}") }}</span>`);
+                    sel.syncContent();
                 } else {
                     sel.onContentBlockChange(sel, data.model);
                 }

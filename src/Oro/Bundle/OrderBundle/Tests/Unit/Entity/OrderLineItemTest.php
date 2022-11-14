@@ -139,14 +139,13 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isRequirePriceRecalculationDataProvider
-     *
-     * @param OrderLineItem $entity
-     * @param string $method
-     * @param mixed $value
-     * @param bool $expectedResult
      */
-    public function testIsRequirePriceRecalculation(OrderLineItem $entity, $method, $value, $expectedResult)
-    {
+    public function testIsRequirePriceRecalculation(
+        OrderLineItem $entity,
+        string $method,
+        mixed $value,
+        bool $expectedResult
+    ) {
         ReflectionUtil::setPropertyValue($entity, 'requirePriceRecalculation', false);
         $this->assertFalse($entity->isRequirePriceRecalculation());
 
@@ -154,10 +153,7 @@ class OrderLineItemTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $entity->isRequirePriceRecalculation());
     }
 
-    /**
-     * @return array
-     */
-    public function isRequirePriceRecalculationDataProvider()
+    public function isRequirePriceRecalculationDataProvider(): array
     {
         $lineItemWithProduct = new OrderLineItem();
         $lineItemWithProduct->setProduct($this->getProduct(42));

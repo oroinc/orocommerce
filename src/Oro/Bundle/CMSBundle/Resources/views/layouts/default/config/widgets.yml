@@ -1,4 +1,4 @@
 layouts:
-    tabbed_content:
+    oro_tabbed_content:
         tabs: 'oro.cms.contentwidget.layouts.tabbed_content.tabs.label'
         accordion: 'oro.cms.contentwidget.layouts.tabbed_content.accordion.label'

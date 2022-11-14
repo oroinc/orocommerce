@@ -85,7 +85,6 @@ class LoadProductCollectionData extends AbstractFixture implements DependentFixt
         $segmentSnapshot2 = new SegmentSnapshot($segment);
         $segmentSnapshot2->setIntegerEntityId($this->getReference(self::PRODUCT_REMOVED)->getId());
         $manager->persist($segmentSnapshot2);
-
         $manager->flush();
     }
 }

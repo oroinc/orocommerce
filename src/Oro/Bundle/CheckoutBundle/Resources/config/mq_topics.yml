@@ -1,6 +1,6 @@
 services:
-  _defaults:
-    tags:
-      - { name: oro_message_queue.topic }
+    _defaults:
+        tags:
+            - { name: oro_message_queue.topic }
 
-  Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic: ~
+    Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic: ~

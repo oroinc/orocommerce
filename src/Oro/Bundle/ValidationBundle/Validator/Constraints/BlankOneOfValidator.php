@@ -2,31 +2,21 @@
 
 namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
-use Symfony\Component\PropertyAccess\Exception\AccessException;
-use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
-use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Validates that one of fields should be blank.
+ * This validator checks that one of fields should be blank.
  */
 class BlankOneOfValidator extends ConstraintValidator
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
+    private PropertyAccessorInterface $propertyAccessor;
 
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
-    public function __construct(TranslatorInterface $translator, PropertyAccessor $propertyAccessor)
+    public function __construct(TranslatorInterface $translator, PropertyAccessorInterface $propertyAccessor)
     {
         $this->translator = $translator;
         $this->propertyAccessor = $propertyAccessor;
@@ -34,13 +24,13 @@ class BlankOneOfValidator extends ConstraintValidator
 
     /**
      * {@inheritDoc}
-     *
-     * @throws AccessException
-     * @throws InvalidArgumentException
-     * @throws UnexpectedTypeException
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
+        if (!$constraint instanceof BlankOneOf) {
+            throw new UnexpectedTypeException($constraint, BlankOneOf::class);
+        }
+
         foreach ($constraint->fields as $fieldGroup) {
             if (!$this->validateFieldGroup($value, $fieldGroup)) {
                 $this->addViolation($fieldGroup, $constraint);
@@ -48,22 +38,11 @@ class BlankOneOfValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param mixed    $value
-     * @param string[] $fieldGroup
-     *
-     * @return bool
-     *
-     * @throws AccessException
-     * @throws InvalidArgumentException
-     * @throws UnexpectedTypeException
-     */
-    private function validateFieldGroup($value, array $fieldGroup)
+    private function validateFieldGroup(mixed $value, array $fieldGroup): bool
     {
         $fieldNames = array_keys($fieldGroup);
         foreach ($fieldNames as $fieldName) {
             $fieldValue = $this->propertyAccessor->getValue($value, $fieldName);
-
             if (false === $fieldValue || (empty($fieldValue) && '0' != $fieldValue)) {
                 return true;
             }
@@ -72,23 +51,15 @@ class BlankOneOfValidator extends ConstraintValidator
         return false;
     }
 
-    private function addViolation(array $fieldGroup, Constraint $constraint)
+    private function addViolation(array $fieldGroup, BlankOneOf $constraint): void
     {
-        $fieldsTranslation = implode(', ', array_map(function ($value) {
-            return $this->translator->trans((string) $value);
-        }, $fieldGroup));
-
         $fieldNames = array_keys($fieldGroup);
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-
-        $context
-            ->buildViolation(
-                $constraint->message,
-                [
-                    '%fields%' => $fieldsTranslation
-                ]
-            )
+        $this->context
+            ->buildViolation($constraint->message, [
+                '%fields%' => implode(', ', array_map(function ($value) {
+                    return $this->translator->trans((string) $value);
+                }, $fieldGroup))
+            ])
             ->atPath($fieldNames[0])
             ->addViolation();
     }

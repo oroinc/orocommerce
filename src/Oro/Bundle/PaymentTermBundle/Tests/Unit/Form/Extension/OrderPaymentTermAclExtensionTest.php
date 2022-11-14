@@ -11,20 +11,17 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var OrderPaymentTermAclExtension */
-    protected $extension;
+    private $extension;
 
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTermAssociationProvider;
+    private $paymentTermAssociationProvider;
 
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     protected function setUp(): void
     {
-        $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->extension = new OrderPaymentTermAclExtension(
@@ -53,8 +50,11 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
     public function testBuildWithoutIsGrantedLeavePaymentTermFields()
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-        $this->authorizationChecker->expects($this->once())->method('isGranted')->willReturn(true);
-        $this->paymentTermAssociationProvider->expects($this->never())->method($this->anything());
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method($this->anything());
 
         $this->extension->buildForm($builder, []);
     }
@@ -62,9 +62,13 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
     public function testBuildWithoutNotIsGrantedWithoitAssociations()
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-        $this->authorizationChecker->expects($this->once())->method('isGranted')->willReturn(false);
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(false);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn([]);
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }
@@ -72,13 +76,19 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
     public function testBuildWithoutNotIsGrantedShouldRemovePaymentTermFieldsWithoutField()
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-        $this->authorizationChecker->expects($this->once())->method('isGranted')->willReturn(false);
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(false);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
 
-        $builder->expects($this->once())->method('has')->willReturn(false);
-        $builder->expects($this->never())->method('remove');
+        $builder->expects($this->once())
+            ->method('has')
+            ->willReturn(false);
+        $builder->expects($this->never())
+            ->method('remove');
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }
@@ -86,13 +96,20 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
     public function testBuildWithoutNotIsGrantedShouldRemovePaymentTermFields()
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-        $this->authorizationChecker->expects($this->once())->method('isGranted')->willReturn(false);
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(false);
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
 
-        $builder->expects($this->once())->method('has')->willReturn(true);
-        $builder->expects($this->once())->method('remove')->with('paymentTerm');
+        $builder->expects($this->once())
+            ->method('has')
+            ->willReturn(true);
+        $builder->expects($this->once())
+            ->method('remove')
+            ->with('paymentTerm');
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }

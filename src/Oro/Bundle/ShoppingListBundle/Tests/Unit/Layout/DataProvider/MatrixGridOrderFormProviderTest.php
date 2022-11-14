@@ -45,9 +45,8 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getLineItemsDataProvider
      */
-    public function testGetMatrixOrderForm(ShoppingList $shoppingList = null)
+    public function testGetMatrixOrderForm(?ShoppingList $shoppingList)
     {
-        /** @var Product $product **/
         $product = $this->getEntity(Product::class);
 
         $collection = new MatrixCollection();
@@ -69,9 +68,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMatrixOrderByUnitForm(): void
     {
-        /** @var Product $product **/
         $product = $this->getEntity(Product::class);
-
         $productUnit = $this->getEntity(ProductUnit::class);
 
         $shoppingList = new ShoppingList();
@@ -96,24 +93,16 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getLineItemsDataProvider
      */
-    public function testGetMatrixOrderFormView(ShoppingList $shoppingList = null)
+    public function testGetMatrixOrderFormView(?ShoppingList $shoppingList)
     {
-        /** @var Product $product1 **/
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
-
-        /** @var Product $product1 **/
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
         $collection1 = new MatrixCollection();
-        $collection1->rows = [
-            'row1',
-        ];
+        $collection1->rows = ['row1'];
 
         $collection2 = new MatrixCollection();
-        $collection2->rows = [
-            'row1',
-            'row2',
-        ];
+        $collection2->rows = ['row1', 'row2'];
 
         $form1 = $this->createMock(FormInterface::class);
         $formView1 = $this->createMock(FormView::class);
@@ -161,10 +150,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMatrixByUnitOrderFormView(): void
     {
-        /** @var Product $product1 **/
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
-
-        /** @var Product $product1 **/
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
         $productUnit = $this->getEntity(ProductUnit::class);
@@ -172,15 +158,10 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
         $shoppingList = new ShoppingList();
 
         $collection1 = new MatrixCollection();
-        $collection1->rows = [
-            'row1',
-        ];
+        $collection1->rows = ['row1'];
 
         $collection2 = new MatrixCollection();
-        $collection2->rows = [
-            'row1',
-            'row2',
-        ];
+        $collection2->rows = ['row1', 'row2'];
 
         $form1 = $this->createMock(FormInterface::class);
         $formView1 = $this->createMock(FormView::class);
@@ -229,20 +210,19 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getLineItemsDataProvider
      */
-    public function testGetMatrixOrderFormHtml(ShoppingList $shoppingList = null)
+    public function testGetMatrixOrderFormHtml(?ShoppingList $shoppingList)
     {
+        $product = $this->getEntity(Product::class);
+
         $collection = new MatrixCollection();
 
-        /** @var Product $product **/
-        $product = $this->getEntity(Product::class);
+        $form = $this->createMock(FormInterface::class);
+        $formView = $this->createMock(FormView::class);
 
         $this->matrixOrderManager->expects($this->once())
             ->method('getMatrixCollection')
             ->with($product, $shoppingList)
             ->willReturn($collection);
-
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -263,10 +243,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider->getMatrixOrderFormHtml($product, $shoppingList);
     }
 
-    /**
-     * @return array
-     */
-    public function getLineItemsDataProvider()
+    public function getLineItemsDataProvider(): array
     {
         return [
             'without shopping list' => [

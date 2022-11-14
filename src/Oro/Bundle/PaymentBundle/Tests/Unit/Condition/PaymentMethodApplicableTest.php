@@ -6,23 +6,22 @@ use Oro\Bundle\PaymentBundle\Condition\PaymentMethodApplicable;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\ApplicablePaymentMethodsProvider;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
 {
-    const METHOD = 'Method';
-
-    /** @var PaymentMethodApplicable */
-    protected $condition;
+    private const METHOD = 'Method';
 
     /** @var ApplicablePaymentMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentMethodProvider;
+    private $paymentMethodProvider;
+
+    /** @var PaymentMethodApplicable */
+    private $condition;
 
     protected function setUp(): void
     {
-        $this->paymentMethodProvider = $this
-            ->getMockBuilder(ApplicablePaymentMethodsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethodProvider = $this->createMock(ApplicablePaymentMethodsProvider::class);
 
         $this->condition = new PaymentMethodApplicable($this->paymentMethodProvider);
     }
@@ -34,22 +33,22 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
 
     public function testInitializeInvalidFirstArguments()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "payment_method" option');
 
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([])
         );
     }
 
     public function testInitializeInvalidSecondArguments()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "context" option');
 
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize(['payment_method'])
         );
     }
@@ -57,7 +56,7 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     public function testInitialize()
     {
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([self::METHOD, new \stdClass()])
         );
     }
@@ -66,13 +65,12 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     {
         $context = $this->createMock(PaymentContextInterface::class);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects(static::once())
+        $paymentMethod->expects(self::once())
             ->method('getIdentifier')
             ->willReturn(self::METHOD);
 
-        $this->paymentMethodProvider->expects(static::once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('getApplicablePaymentMethods')
             ->with($context)
             ->willReturn([$paymentMethod]);
@@ -85,13 +83,12 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     {
         $context = $this->createMock(PaymentContextInterface::class);
 
-        /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects(static::once())
+        $paymentMethod->expects(self::once())
             ->method('getIdentifier')
             ->willReturn('another_method');
 
-        $this->paymentMethodProvider->expects(static::once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('getApplicablePaymentMethods')
             ->with($context)
             ->willReturn([$paymentMethod]);
@@ -104,7 +101,7 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     {
         $context = $this->createMock(PaymentContextInterface::class);
 
-        $this->paymentMethodProvider->expects(static::once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('getApplicablePaymentMethods')
             ->with($context)
             ->willReturn([]);

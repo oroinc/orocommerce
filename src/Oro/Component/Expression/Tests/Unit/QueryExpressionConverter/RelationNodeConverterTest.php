@@ -21,16 +21,15 @@ class RelationNodeConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider convertDataProvider
-     *
-     * @param string $container
-     * @param string $field
-     * @param string $relationField
-     * @param int|null $containerId
-     * @param array $aliasMapping
-     * @param string $expected
      */
-    public function testConvert($container, $field, $relationField, $containerId, array $aliasMapping, $expected)
-    {
+    public function testConvert(
+        string $container,
+        string $field,
+        string $relationField,
+        ?int $containerId,
+        array $aliasMapping,
+        string $expected
+    ) {
         $expr = new Expr();
         $params = [];
 
@@ -40,10 +39,7 @@ class RelationNodeConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $converter->convert($node, $expr, $params, $aliasMapping));
     }
 
-    /**
-     * @return array
-     */
-    public function convertDataProvider()
+    public function convertDataProvider(): array
     {
         return [
             [

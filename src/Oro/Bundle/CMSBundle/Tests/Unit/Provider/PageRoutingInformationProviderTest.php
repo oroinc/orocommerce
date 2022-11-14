@@ -5,7 +5,6 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Provider\PageRoutingInformationProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -13,21 +12,16 @@ class PageRoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RoutingInformationProviderInterface
-     */
-    protected $provider;
-
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
+
+    /** @var PageRoutingInformationProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+
         $this->provider = new PageRoutingInformationProvider($this->configManager);
     }
 

@@ -17,66 +17,40 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
 class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
 {
-    /**
-     * @var OrderShippingContextFactory
-     */
-    private $factory;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingLineItemConverter;
 
-    /**
-     * @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingLineItemConverterMock;
+    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingContextBuilderFactory;
 
-    /**
-     * @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingContextBuilderFactoryMock;
+    /** @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    /**
-     * @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $repositoryMock;
+    /** @var PaymentTransaction|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransaction;
 
-    /**
-     * @var PaymentTransaction|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $paymentTransactionMock;
-
-    /**
-     * @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $contextBuilder;
+
+    /** @var OrderShippingContextFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->shippingLineItemConverterMock = $this->createMock(OrderShippingLineItemConverterInterface::class);
-
-        $this->shippingContextBuilderFactoryMock = $this->createMock(ShippingContextBuilderFactoryInterface::class);
-
-        $this->repositoryMock = $this
-            ->getMockBuilder(PaymentTransactionRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentTransactionMock = $this->getMockBuilder(PaymentTransaction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
+        $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);
+        $this->repository = $this->createMock(PaymentTransactionRepository::class);
+        $this->paymentTransaction = $this->createMock(PaymentTransaction::class);
         $this->contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
 
         $this->factory = new OrderShippingContextFactory(
             $this->doctrineHelper,
-            $this->shippingLineItemConverterMock,
-            $this->shippingContextBuilderFactoryMock
+            $this->shippingLineItemConverter,
+            $this->shippingContextBuilderFactory
         );
     }
 
@@ -101,8 +75,7 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
 
         $shippingLineItemCollection = new DoctrineShippingLineItemCollection($shippingLineItems);
 
-        $this->shippingLineItemConverterMock
-            ->expects($this->once())
+        $this->shippingLineItemConverter->expects($this->once())
             ->method('convertLineItems')
             ->with($order->getLineItems())
             ->willReturn($shippingLineItemCollection);
@@ -117,18 +90,15 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             $order->getCustomerUser()
         );
 
-        $this->contextBuilder
-            ->expects($this->once())
+        $this->contextBuilder->expects($this->once())
             ->method('setPaymentMethod')
             ->with(self::TEST_PAYMENT_METHOD);
 
-        $this->contextBuilder
-            ->expects($this->once())
+        $this->contextBuilder->expects($this->once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
 
-        $this->shippingContextBuilderFactoryMock
-            ->expects($this->once())
+        $this->shippingContextBuilderFactory->expects($this->once())
             ->method('createShippingContextBuilder')
             ->with($order, (string)$order->getId())
             ->willReturn($this->contextBuilder);
@@ -143,8 +113,7 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
     {
         $order = $this->prepareOrder();
 
-        $this->shippingLineItemConverterMock
-            ->expects($this->once())
+        $this->shippingLineItemConverter->expects($this->once())
             ->method('convertLineItems')
             ->with($order->getLineItems())
             ->willReturn(null);
@@ -159,17 +128,14 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             $order->getCustomerUser()
         );
 
-        $this->contextBuilder
-            ->expects($this->once())
+        $this->contextBuilder->expects($this->once())
             ->method('setPaymentMethod')
             ->with(self::TEST_PAYMENT_METHOD);
 
-        $this->contextBuilder
-            ->expects($this->never())
+        $this->contextBuilder->expects($this->never())
             ->method('setLineItems');
 
-        $this->shippingContextBuilderFactoryMock
-            ->expects($this->once())
+        $this->shippingContextBuilderFactory->expects($this->once())
             ->method('createShippingContextBuilder')
             ->with($order, (string)$order->getId())
             ->willReturn($this->contextBuilder);
@@ -181,10 +147,9 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
     {
         $this->factory = new OrderShippingContextFactory(
             $this->doctrineHelper,
-            $this->shippingLineItemConverterMock
+            $this->shippingLineItemConverter
         );
-        $this->shippingContextBuilderFactoryMock
-            ->expects(static::never())
+        $this->shippingContextBuilderFactory->expects(self::never())
             ->method('createShippingContextBuilder');
 
         $this->assertNull($this->factory->create(new Order()));
@@ -198,21 +163,18 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
 
     protected function prepareOrder()
     {
-        $this->paymentTransactionMock
-            ->expects(static::once())
+        $this->paymentTransaction->expects(self::once())
             ->method('getPaymentMethod')
             ->willReturn(self::TEST_PAYMENT_METHOD);
 
-        $this->repositoryMock
-            ->expects(static::once())
+        $this->repository->expects(self::once())
             ->method('findOneBy')
-            ->willReturn($this->paymentTransactionMock);
+            ->willReturn($this->paymentTransaction);
 
-        $this->doctrineHelper
-            ->expects(static::once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(PaymentTransaction::class)
-            ->willReturn($this->repositoryMock);
+            ->willReturn($this->repository);
 
         return parent::prepareOrder();
     }

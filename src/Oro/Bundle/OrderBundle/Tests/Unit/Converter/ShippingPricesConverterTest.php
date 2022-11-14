@@ -9,16 +9,14 @@ class ShippingPricesConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider convertPricesToArrayProvider
-     * @param array $inputData
-     * @param array $expectedResults
      */
-    public function testConvertPricesToArray($inputData, $expectedResults)
+    public function testConvertPricesToArray(array $inputData, array $expectedResults)
     {
         $converter = new ShippingPricesConverter();
-        static::assertEquals($expectedResults, $converter->convertPricesToArray($inputData));
+        self::assertEquals($expectedResults, $converter->convertPricesToArray($inputData));
     }
 
-    public function convertPricesToArrayProvider()
+    public function convertPricesToArrayProvider(): array
     {
         return [
             [

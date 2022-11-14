@@ -13,21 +13,16 @@ class ProductRoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RoutingInformationProviderInterface
-     */
-    protected $provider;
-
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
+
+    /** @var RoutingInformationProviderInterface */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+
         $this->provider = new ProductRoutingInformationProvider($this->configManager);
     }
 

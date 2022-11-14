@@ -1,0 +1,3 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroProductBundle:product_sort_order.yml'

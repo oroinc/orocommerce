@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,22 +14,18 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends
  AbstractProductSearchQueryRestrictionEventListenerTest
 // @codingStandardsIgnoreEnd
 {
-    const SCOPE = 'test_scope';
+    private const SCOPE = 'test_scope';
 
-    /**
-     * @var ScopedProductSearchQueryRestrictionEventListener
-     */
+    /** @var ScopedProductSearchQueryRestrictionEventListener */
     protected $listener;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
     /**
      * {@inheritdoc}
      */
-    protected function createListener()
+    protected function createListener(): ProductSearchQueryRestrictionEventListener
     {
         $this->requestStack = $this->createMock(RequestStack::class);
 

@@ -7,13 +7,15 @@ use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * This validator checks whether the product's maximum inventory quantity is higher or equal to
+ * the product's minimum inventory quantity.
+ */
 class ProductQuantityToOrderLimitValidator extends ConstraintValidator
 {
-    /**
-     * @var QuantityToOrderValidatorService
-     */
-    private $validatorService;
+    private QuantityToOrderValidatorService $validatorService;
 
     public function __construct(QuantityToOrderValidatorService $validatorService)
     {
@@ -21,15 +23,23 @@ class ProductQuantityToOrderLimitValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        if (!$value instanceof Product || !$value->getId()) {
+        if (!$constraint instanceof ProductQuantityToOrderLimit) {
+            throw new UnexpectedTypeException($constraint, ProductQuantityToOrderLimit::class);
+        }
+
+        if (null === $value) {
             return;
         }
 
-        if ($this->validatorService->isMaxLimitLowerThenMinLimit($value)) {
+        if (!$value instanceof Product) {
+            throw new UnexpectedTypeException($value, Product::class);
+        }
+
+        if ($value->getId() && $this->validatorService->isMaxLimitLowerThenMinLimit($value)) {
             $this->context->buildViolation($constraint->message)
                 ->atPath(Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER)
                 ->addViolation();

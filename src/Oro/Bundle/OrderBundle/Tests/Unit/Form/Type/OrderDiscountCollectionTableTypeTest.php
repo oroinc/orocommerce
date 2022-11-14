@@ -19,9 +19,9 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $numberFormatter = $this->createMock(NumberFormatter::class);
 
@@ -39,7 +39,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $formType = new OrderDiscountCollectionTableType();
-        static::assertEquals(OrderCollectionTableType::class, $formType->getParent());
+        self::assertEquals(OrderCollectionTableType::class, $formType->getParent());
     }
 
     public function testDefaultOptions()
@@ -63,14 +63,14 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider orderOptionRequiredDataProvider
      */
-    public function testOrderOptionRequired($exception, $exceptionMessage, $formOptions)
+    public function testOrderOptionRequired(string $exception, string $exceptionMessage, array $formOptions)
     {
         $this->expectException($exception);
         $this->expectExceptionMessage($exceptionMessage);
         $this->factory->create(OrderDiscountCollectionTableType::class, null, $formOptions);
     }
 
-    public function orderOptionRequiredDataProvider()
+    public function orderOptionRequiredDataProvider(): array
     {
         return [
             'order option required' => [
@@ -90,7 +90,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefix()
     {
         $formType = new OrderDiscountCollectionTableType();
-        static::assertEquals('oro_order_discount_collection_table', $formType->getBlockPrefix());
+        self::assertEquals('oro_order_discount_collection_table', $formType->getBlockPrefix());
     }
 
     public function testView()

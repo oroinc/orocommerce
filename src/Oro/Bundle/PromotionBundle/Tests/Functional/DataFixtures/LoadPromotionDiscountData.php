@@ -14,37 +14,30 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadSegmentData::class,
         ];
     }
 
-    public function load(ObjectManager $manager)
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         $userRepository = $manager->getRepository(User::class);
+        /** @var User $user */
         $user = $userRepository->findOneBy(['email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL]);
 
         foreach ($this->getPromotionsData() as $reference => $promotionData) {
@@ -59,6 +52,7 @@ class LoadPromotionDiscountData extends AbstractFixture implements ContainerAwar
 
             $promotion = new Promotion();
             $promotion->setOwner($user);
+            $promotion->setOrganization($user->getOrganization());
             $promotion->setRule($rule);
             $promotion->setUseCoupons(!empty($promotionData['useCoupons']) ? $promotionData['useCoupons'] : false);
 

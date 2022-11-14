@@ -64,7 +64,7 @@ const openDigitalAssetsCommand = {
     },
 
     _openChooseDialog: function(editor) {
-        return new DigitalAssetDialogWidget({
+        const options = {
             title: this.options.title,
             url: routing.generate(
                 this.options.routeName,
@@ -73,7 +73,15 @@ const openDigitalAssetsCommand = {
             dialogOptions: {
                 modal: true
             }
-        });
+        };
+
+        if (editor.Commands.isActive('fullscreen') ) {
+            options.loadingProperties = {
+                extraClassName: 'grapesjs-loading-mask-fullscreen'
+            };
+        }
+
+        return new DigitalAssetDialogWidget(options);
     }
 };
 
