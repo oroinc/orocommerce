@@ -28,6 +28,8 @@ class ProductCollectionVariantType extends AbstractType
                 ProductCollectionSegmentType::class,
                 [
                     'add_name_field' => true,
+                    'add_sort_order' => true,
+                    'results_grid' => 'product-collection-content-variant-grid',
                     'scope_value' => $builder->getName()
                 ]
             )

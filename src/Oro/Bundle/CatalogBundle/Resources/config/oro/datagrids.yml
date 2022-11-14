@@ -25,6 +25,18 @@ datagrids:
                                 THEN true ELSE false END
                             END
                         ) as inCategory
+                    - >
+                        (
+                            CASE WHEN (:category_id IS NOT NULL) THEN
+                                CASE WHEN
+                                    product.category = :category_id
+                                    OR product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
+                                THEN product.category_sort_order ELSE NULLIF(1,1) END
+                            ELSE
+                                CASE WHEN product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
+                                THEN product.category_sort_order ELSE NULLIF(1,1) END
+                            END
+                        ) as categorySortOrder
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 join:
@@ -39,6 +51,10 @@ datagrids:
                 label:         oro.catalog.product.in_category.label
                 editable:      true
                 frontend_type: boolean
+            categorySortOrder:
+                label:         oro.catalog.product.category_sort_order.label
+                editable:      true
+                frontend_type: string # can't use decimal because of inappropriate formatter
             sku:
                 label:         oro.product.sku.label
             name:
@@ -64,9 +80,12 @@ datagrids:
                 type: localized_value
                 data_name: names
         sorters:
+            multiple_sorting: true
             columns:
                 inCategory:
                     data_name: inCategory
+                categorySortOrder:
+                    data_name: categorySortOrder
                 sku:
                     data_name: product.sku
                 name:
@@ -81,11 +100,15 @@ datagrids:
                     data_name: product.updatedAt
             default:
                 inCategory: DESC
+                categorySortOrder: ASC
         filters:
             columns:
                 inCategory:
                     type:      boolean
                     data_name: inCategory
+                categorySortOrder:
+                    type:      number-range
+                    data_name: categorySortOrder
                 sku:
                     type:      string
                     data_name: product.sku
@@ -111,6 +134,13 @@ datagrids:
         options:
             entityHint: oro.product.entity_plural_label
             entity_pagination: true
+            jsmodules:
+                - oroproduct/datagrid/builder/sort-order-builder
+            cellSelection:
+                dataField: id
+                columnName:
+                    - categorySortOrder
+                selector: '#categorySortOrder'
             rowSelection:
                 dataField: id
                 columnName: inCategory
@@ -119,26 +149,26 @@ datagrids:
                     excluded: '#categoryRemoveProducts'
 
     frontend-catalog-allproducts-grid:
-            extends: frontend-product-search-grid
-            source:
-                query:
-                    select:
-                        - integer.category_id as categoryId
-                        - text.category_title_LOCALIZATION_ID as categoryTitle
+        extends: frontend-product-search-grid
+        source:
+            query:
+                select:
+                    - integer.category_id as categoryId
+                    - text.category_title_LOCALIZATION_ID as categoryTitle
+        columns:
+            categoryId: ~
+            categoryTitle: ~
+        sorters:
+            toolbar_sorting: false
+            disable_default_sorting: false
+            multiple_sorting: true
             columns:
-                categoryId: ~
-                categoryTitle: ~
-            sorters:
-                toolbar_sorting: false
-                disable_default_sorting: false
-                multiple_sorting: true
-                columns:
-                    categoryTitle:
-                        data_name: text.category_title_LOCALIZATION_ID
-                        type: string
-                default:
-                    categoryTitle: ASC
-            options:
-                toolbarOptions:
-                    pagination:
-                        onePage: true
+                categoryTitle:
+                    data_name: text.category_title_LOCALIZATION_ID
+                    type: string
+            default:
+                categoryTitle: ASC
+        options:
+            toolbarOptions:
+                pagination:
+                    onePage: true

@@ -606,7 +606,7 @@ oro_behat_extension:
       selector: ".content-variant-add-btn-container .dropdown-toggle"
 
     Product Collection Preview Grid:
-      selector: 'div[id*="grid-product-collection-grid-"]'
+      selector: 'div[id*="grid-product-collection-content-variant-grid-"]'
 
     AdvancedFilter:
       selector: '.btn .fa-filter'
@@ -1170,6 +1170,27 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/../*[contains(@class,"filter-criteria-selector-icon-wrap")]'
+
+    Product Collection Grid Form:
+      selector: 'form[name="oro_web_catalog_content_node"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          PSKU1:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU1")]]//input[contains (@name,"sortOrder_")]'
+            type: xpath
+          PSKU2:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU2")]]//input[contains (@name,"sortOrder_")]'
+            type: xpath
+          PSKU3:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU3")]]//input[contains (@name,"sortOrder_")]'
+            type: xpath
+          PSKU4:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU4")]]//input[contains (@name,"sortOrder_")]'
+            type: xpath
+          PSKU5:
+            locator: '//tbody/tr[.//td[contains(text(), "PSKU5")]]//input[contains (@name,"sortOrder_")]'
+            type: xpath
 
     Product Item Preview:
       selector: '.product-item .product-item__preview'

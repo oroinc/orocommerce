@@ -1281,6 +1281,15 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
+    oro_product.event_listener.product_collection_content_variant_datagrid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionContentVariantDatagridListener
+        arguments:
+            - '@request_stack'
+            - '@oro_datagrid.datagrid.name_strategy'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-collection-content-variant-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-content-variant-grid, method: onBuildAfter }
+
     oro_product.event_listener.product_collection_datagrid:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener
         arguments:
@@ -1291,6 +1300,7 @@ services:
             - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-content-variant-grid, method: onBuildAfter }
 
     oro_product.provider.segment_with_relations_provider:
         class: Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider
@@ -1350,6 +1360,22 @@ services:
         class: Oro\Bundle\ProductBundle\Handler\SearchProductHandler
         arguments: ['@request_stack']
 
+    oro_product.event_listener.product_collection_sort_order_listener:
+        public: false
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionSortOrderListener
+        arguments:
+            - '@request_stack'
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    oro_product.handler.collection_sort_order:
+        class: Oro\Bundle\ProductBundle\Handler\CollectionSortOrderHandler
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
     oro_product.handler.async_reindex_product_collection_handler:
         class: Oro\Bundle\ProductBundle\Handler\AsyncReindexProductCollectionHandler
         arguments:
@@ -1371,6 +1397,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
 
     oro_product.datagrid.event_listener.search_event_listener:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener

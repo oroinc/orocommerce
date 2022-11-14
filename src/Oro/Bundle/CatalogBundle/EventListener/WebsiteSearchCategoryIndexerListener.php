@@ -23,6 +23,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
  * - category title (category_title_LOCALIZATION_ID)
  * - category short description (all_text_LOCALIZATION_ID)
  * - category long description (all_text_LOCALIZATION_ID)
+ * - category sort order (category_sort_order) which is in its own attribute group category_sort_order
  */
 class WebsiteSearchCategoryIndexerListener
 {
@@ -60,9 +61,11 @@ class WebsiteSearchCategoryIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event)
+    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
-        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')
+            && !$this->hasContextFieldGroup($event->getContext(), 'category_sort_order')
+        ) {
             return;
         }
 
@@ -73,6 +76,22 @@ class WebsiteSearchCategoryIndexerListener
             return;
         }
 
+        if ($this->hasContextFieldGroup($event->getContext(), 'main')) {
+            $this->addInformationToIndex($event, $websiteId);
+        }
+
+        if ($this->hasContextFieldGroup($event->getContext(), 'category_sort_order')) {
+            $this->addCategorySortOrderInformationToIndex($event);
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param int $websiteId
+     * @return void
+     */
+    protected function addInformationToIndex(IndexEntityEvent $event, int $websiteId): void
+    {
         /** @var Product[] $products */
         $products = $event->getEntities();
 
@@ -121,7 +140,27 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category)
+    /**
+     * @param IndexEntityEvent $event
+     * @return void
+     */
+    protected function addCategorySortOrderInformationToIndex(IndexEntityEvent $event): void
+    {
+        /** @var Product[] $products */
+        $products = $event->getEntities();
+
+        foreach ($products as $product) {
+            $event->addField($product->getId(), 'category_sort_order', $product->getCategorySortOrder());
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param Product $product
+     * @param Category $category
+     * @return void
+     */
+    protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category): void
     {
         $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
 
@@ -146,7 +185,7 @@ class WebsiteSearchCategoryIndexerListener
     /**
      * @return CategoryRepository
      */
-    protected function getRepository()
+    protected function getRepository(): CategoryRepository
     {
         if (!$this->repository) {
             $this->repository = $this->doctrineHelper->getEntityRepository(Category::class);
