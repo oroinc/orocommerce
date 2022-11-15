@@ -6,17 +6,16 @@ use Oro\Bundle\FormBundle\Autocomplete\SearchHandler as BaseSearchHandler;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
- * The autocomplete handler to search product TAX codes.
+ * The autocomplete handler to search product and customer tax codes.
  */
-class SearchHandler extends BaseSearchHandler
+class TaxCodeSearchHandler extends BaseSearchHandler
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $queryBuilder = $this->entityRepository->createQueryBuilder('e');
-
         if ($search) {
             $idx = 0;
             foreach ($this->getProperties() as $fieldName) {
@@ -32,12 +31,9 @@ class SearchHandler extends BaseSearchHandler
                 $idx++;
             }
         }
-
         $queryBuilder->setMaxResults($maxResults);
         $queryBuilder->setFirstResult($firstResult);
 
-        $query = $this->aclHelper->apply($queryBuilder);
-
-        return $query->getArrayResult();
+        return $this->aclHelper->apply($queryBuilder)->getResult();
     }
 }

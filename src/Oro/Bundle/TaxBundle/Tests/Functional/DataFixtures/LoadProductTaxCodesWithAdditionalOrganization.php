@@ -6,105 +6,76 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadProductTaxCodesWithAdditionalOrganization extends AbstractFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
 
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-    const TAX_3 = 'TAX3';
+    public const REFERENCE_PREFIX = 'product_tax_code';
 
-    const DESCRIPTION_1 = 'Tax description 1';
-    const DESCRIPTION_2 = 'Tax description 2';
-    const DESCRIPTION_3 = 'Tax description 3';
+    public const TAX_1 = 'TAX1';
+    public const TAX_2 = 'TAX2';
+    public const TAX_3 = 'TAX3';
 
-    const REFERENCE_PREFIX = 'product_tax_code';
+    private const DATA = [
+        self::TAX_1 => [
+            'description' => 'Tax description 1',
+            'products'    => [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
+        ],
+        self::TAX_2 => [
+            'description' => 'Tax description 2',
+            'products'    => [LoadProductData::PRODUCT_3]
+        ],
+        self::TAX_3 => [
+            'description' => 'Tax description 3',
+            'products'    => [],
+            'anotherOrg'  => true
+        ]
+    ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [LoadProductData::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        if (!$this->hasReference('acme_organization')) {
-            $this->createAdditionalOrganization($manager);
+        $organization = $this->getFirstUser($manager)->getOrganization();
+        $anotherOrganization = $this->getAnotherOrganization($manager);
+        foreach (self::DATA as $code => $item) {
+            $productTaxCode = new ProductTaxCode();
+            $productTaxCode->setCode($code);
+            $productTaxCode->setDescription($item['description']);
+            $productTaxCode->setOrganization(isset($item['anotherOrg']) ? $anotherOrganization : $organization);
+            foreach ($item['products'] as $productRef) {
+                /** @var Product $product */
+                $product = $this->getReference($productRef);
+                $product->setTaxCode($productTaxCode);
+            }
+            $manager->persist($productTaxCode);
+            $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $productTaxCode);
         }
-        /** @var Organization $organizationAcme */
-        $organizationAcme = $this->getReference('acme_organization');
-
-        $this->createProductTaxCode(
-            $manager,
-            self::TAX_1,
-            self::DESCRIPTION_1,
-            [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
-        );
-        $this->createProductTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, [LoadProductData::PRODUCT_3]);
-        $this->createProductTaxCode($manager, self::TAX_3, self::DESCRIPTION_3, [], $organizationAcme);
-
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     * @param string $description
-     * @param array $productRefs
-     * @param OrganizationInterface|null $organization
-     * @return ProductTaxCode
-     */
-    protected function createProductTaxCode(
-        ObjectManager $manager,
-        $code,
-        $description,
-        $productRefs,
-        OrganizationInterface $organization = null
-    ) {
-        /** @var User $user */
-        $user = $this->getFirstUser($manager);
-
-        if (null === $organization) {
-            /** @var OrganizationInterface $organization */
-            $organization = $user->getOrganization();
-        }
-
-        $productTaxCode = new ProductTaxCode();
-        $productTaxCode->setCode($code);
-        $productTaxCode->setDescription($description);
-        $productTaxCode->setOrganization($organization);
-        foreach ($productRefs as $productRef) {
-            /** @var Product $product */
-            $product = $this->getReference($productRef);
-            $product->setTaxCode($productTaxCode);
-        }
-
-        $manager->persist($productTaxCode);
-        $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $productTaxCode);
-
-        return $productTaxCode;
-    }
-
-    protected function createAdditionalOrganization(ObjectManager $manager)
+    private function getAnotherOrganization(ObjectManager $manager): Organization
     {
         $organization = new Organization();
-        $organization->setName('acme_organization');
+        $organization->setName('Acme');
         $organization->setEnabled(true);
-
         $this->setReference('acme_organization', $organization);
-
         $manager->persist($organization);
+
+        return $organization;
     }
 }

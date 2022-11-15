@@ -2,24 +2,35 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
-class CountryMatcherTest extends AbstractMatcherTest
+class CountryMatcherTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxRuleRepository;
+
     /** @var CountryMatcher */
-    protected $matcher;
+    private $matcher;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);
 
-        $this->matcher = new CountryMatcher($this->doctrineHelper, TaxRule::class);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(TaxRule::class)
+            ->willReturn($this->taxRuleRepository);
+
+        $this->matcher = new CountryMatcher($doctrine);
     }
 
     /**

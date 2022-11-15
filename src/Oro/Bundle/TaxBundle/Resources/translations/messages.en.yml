@@ -1,11 +1,17 @@
 oro.tax:
-    code.label: 'Code'
-    description.label: 'Description'
     entity_label: 'Tax'
     entity_plural_label: 'Taxes'
     entity_grid_all_view_label: 'All %entity_plural_label%'
-    id.label: 'id'
-    rate.label: 'Rate'
+    id.label: ID
+    code:
+        label: Code
+        description: The code of the tax.
+    description:
+        label: Description
+        description: The description of the tax.
+    rate:
+        label: Rate
+        description: The tax rate.
     taxcode.label: 'Tax Code'
     taxcode.customergroup.label: 'Customer Group Tax Code'
 
@@ -28,13 +34,13 @@ oro.tax:
         list:
             description:      'List of Product Tax Codes'
         products.label:       'Products'
-        id.label:             'ID'
+        id.label: ID
         code:
-            label:            'Code'
-            description:      The code of the tax
+            label: Code
+            description: The code of the tax.
         description:
-            label:            'Description'
-            description:      The description of the tax
+            label: Description
+            description: The description of the tax.
         organization:
             label: Organization
             description: An organization that the product tax code belongs to.
@@ -48,13 +54,13 @@ oro.tax:
             description: List of Customer Tax Codes
         customers.label: 'Customers'
         customer_groups.label: 'Customer Groups'
-        id.label: 'ID'
+        id.label: ID
         code:
             label: Code
-            description: The code of the tax
+            description: The code of the tax.
         description:
             label: Description
-            description: The description of the tax
+            description: The description of the tax.
         customer_group.view.label: 'Defined for Customer Group'
         organization:
             label: Organization
@@ -68,26 +74,47 @@ oro.tax:
         entity_plural_label: 'Tax Rules'
         entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Rules'
-        description.label: 'Description'
-        id.label: 'ID'
-        customer_tax_code.label: 'Customer Tax Code'
-        product_tax_code.label: 'Product Tax Code'
-        tax.label: 'Tax'
-        tax_jurisdiction.label: 'Tax Jurisdiction'
+        id.label: ID
+        description.label: Description
+        description.description: The description of the tax rule.
+        customer_tax_code:
+            label: Customer Tax Code
+            description: The customer tax code.
+        product_tax_code:
+            label: Product Tax Code
+            description: The product tax code
+        tax:
+            label: Tax
+            description: The tax.
+        tax_jurisdiction:
+            label: Tax Jurisdiction
+            description: The tax jurisdiction.
+        organization.label: 'Organization'
 
     taxjurisdiction:
+        form.choose: 'Choose Tax Jurisdiction'
         entity_label: 'Tax Jurisdiction'
         entity_plural_label: 'Tax Jurisdictions'
         entity_grid_all_view_label: 'All %entity_plural_label%'
         description: 'List of Tax Jurisdictions'
-        id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
-        country.label: 'Country'
-        region.label: 'State'
-        region_text.label: 'State'
-        form.choose: 'Choose Tax Jurisdiction'
-        zip_codes.label: 'Zip Codes'
+        id.label: ID
+        code:
+            label: Code
+            description: The code of the tax jurisdiction.
+        description.label: Description
+        description.description: The description of the tax jurisdiction.
+        country:
+            label: Country
+            description: The country of the tax jurisdiction.
+        region:
+            label: State
+            description: The state or region of the tax jurisdiction.
+        region_text:
+            label: State
+            description: The region name for cases when a country does not have predefined regions.
+        zip_codes:
+            label: Zip Codes
+            description: The list of zip codes of the tax jurisdiction.
 
     zipcode:
         entity_label: 'Zip Code'

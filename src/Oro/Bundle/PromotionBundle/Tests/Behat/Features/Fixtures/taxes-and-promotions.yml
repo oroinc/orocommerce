@@ -76,6 +76,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
         customerTaxCode: '@customer_tax_code'
         taxJurisdiction: '@tax_jurisdiction'
         tax: '@tax'
+        organization: '@organization'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address:

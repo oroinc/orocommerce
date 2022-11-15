@@ -1,0 +1,59 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountriesAndRegions
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    product_tax_code_1:
+        code: 'TAX_CODE_1'
+        description: 'tax code 1'
+        organization: '@organization'
+    product_tax_code_2:
+        code: 'TAX_CODE_2'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code_1:
+        code: 'TAX_CODE_1'
+        description: 'tax code 1'
+        owner: '@user'
+        organization: '@organization'
+    customer_tax_code_2:
+        code: 'TAX_CODE_2'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_1:
+        code: 'TAX_1'
+        description: 'tax 1'
+        rate: 0.1
+    tax_2:
+        code: 'TAX_2'
+        rate: 0.1
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_1:
+        code: 'TAX_JURISDICTION_1'
+        description: 'tax jurisdiction 1'
+        country: '@country_usa'
+        region: '@region_usa_california'
+    tax_jurisdiction_2:
+        code: 'TAX_JURISDICTION_2'
+        country: '@country_usa'
+        region: '@region_usa_california'
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule_1:
+        description: 'tax rule 1'
+        productTaxCode: '@product_tax_code_1'
+        customerTaxCode: '@customer_tax_code_1'
+        tax: '@tax_1'
+        taxJurisdiction: '@tax_jurisdiction_1'
+        organization: '@organization'
+    tax_rule_2:
+        productTaxCode: '@product_tax_code_2'
+        customerTaxCode: '@customer_tax_code_2'
+        tax: '@tax_2'
+        taxJurisdiction: '@tax_jurisdiction_2'
+        organization: '@organization'

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
  * Entity that represents tax rule
@@ -22,6 +23,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              "type"="ACL",
  *              "group_name"=""
  *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          }
  *      }
  * )
  */
@@ -160,6 +166,12 @@ class TaxRule implements DatesAwareInterface
      * @var bool
      */
     protected $updatedAtSet;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    private ?Organization $organization = null;
 
     /**
      * @return int
@@ -318,5 +330,17 @@ class TaxRule implements DatesAwareInterface
     public function isUpdatedAtSet()
     {
         return $this->updatedAtSet;
+    }
+
+    public function getOrganization(): ?Organization
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(?Organization $organization): self
+    {
+        $this->organization = $organization;
+
+        return $this;
     }
 }

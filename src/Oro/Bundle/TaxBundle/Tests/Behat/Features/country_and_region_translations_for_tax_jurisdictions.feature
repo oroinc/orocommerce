@@ -18,7 +18,7 @@ Feature: Country and region translations for tax jurisdictions
   Scenario: Check tax jurisdictions UI
     Given go to Taxes/ Tax Jurisdictions
     And click edit "tazJurisdiction" in grid
-    When I fill "Tax Jurisdiction Form" with:
+    When I fill form with:
       | Country | GermanyZulu |
       | State   | BerlinZulu  |
     And save and close form

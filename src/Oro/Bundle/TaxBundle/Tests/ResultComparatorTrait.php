@@ -6,10 +6,6 @@ use Brick\Math\BigNumber;
 use Oro\Bundle\TaxBundle\Model\AbstractResult;
 use Oro\Bundle\TaxBundle\Model\Result;
 
-/**
- * @method void assertEquals($expected, $actual, $message = '')
- * @method void assertTrue($condition, $message = '')
- */
 trait ResultComparatorTrait
 {
     /**
@@ -48,12 +44,10 @@ trait ResultComparatorTrait
         $expected = $this->extractScalarValues($expected);
         $actual = $this->extractScalarValues($actual);
 
-        if (!$expected) {
-            $this->assertEquals([], $actual);
-
-            return;
+        if ($expected) {
+            self::assertEquals($expected, $actual);
+        } else {
+            self::assertEquals([], $actual);
         }
-
-        $this->assertEquals($expected, $actual);
     }
 }

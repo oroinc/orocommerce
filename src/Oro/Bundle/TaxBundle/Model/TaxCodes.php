@@ -2,96 +2,89 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+/**
+ * Represents a collection of tax codes.
+ */
 class TaxCodes
 {
-    /** @var \ArrayObject|TaxCode[] */
-    protected $codes;
+    /** @var TaxCode[] */
+    private array $codes;
+    private ?array $typedTaxCodes = null;
+    private ?bool $fullFilledTaxCode = null;
 
     /**
      * @param TaxCode[] $codes
      */
     public function __construct(array $codes = [])
     {
-        $this->codes = new \ArrayObject();
-
+        $this->codes = [];
         foreach ($codes as $code) {
-            $this->addCode($code);
+            if ($code->getCode()) {
+                $this->codes[] = $code;
+            }
         }
     }
 
     /**
      * @param TaxCode[] $codes
+     *
      * @return TaxCodes
      */
-    public static function create(array $codes = [])
+    public static function create(array $codes = []): TaxCodes
     {
         return new static($codes);
     }
 
     /**
-     * @param TaxCode $code
-     */
-    public function addCode($code)
-    {
-        if (!$code instanceof TaxCode) {
-            return;
-        }
-
-        if (!$code->getCode()) {
-            return;
-        }
-
-        $this->codes->append($code);
-    }
-
-    /**
      * @return TaxCode[]
      */
-    public function getCodes()
+    public function getCodes(): array
     {
-        return $this->codes->getArrayCopy();
+        return $this->codes;
     }
 
     /**
-     * @return array
+     * @return string[] [type => code, ...]
      */
-    public function getPlainTypedCodes()
+    public function getPlainTypedCodes(): array
     {
-        $typedTaxCodes = [];
-
-        foreach ($this->getCodes() as $code) {
-            $typedTaxCodes[$code->getType()][] = $code->getCode();
+        if (null === $this->typedTaxCodes) {
+            $this->typedTaxCodes = [];
+            foreach ($this->codes as $code) {
+                $this->typedTaxCodes[$code->getType()][] = $code->getCode();
+            }
         }
 
-        return $typedTaxCodes;
+        return $this->typedTaxCodes;
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getAvailableTypes()
+    public function getAvailableTypes(): array
     {
         return [TaxCodeInterface::TYPE_PRODUCT, TaxCodeInterface::TYPE_ACCOUNT];
     }
 
-    /**
-     * @return string
-     */
-    public function getHash()
+    public function getHash(): string
     {
-        return md5(json_encode($this->getPlainTypedCodes()));
+        return md5(json_encode($this->getPlainTypedCodes(), JSON_THROW_ON_ERROR));
     }
 
-    /** @return bool */
-    public function isFullFilledTaxCode()
+    public function isFullFilledTaxCode(): bool
     {
-        $plainTypeCodes = $this->getPlainTypedCodes();
-        foreach ($this->getAvailableTypes() as $availableType) {
-            if (!array_key_exists($availableType, $plainTypeCodes)) {
-                return false;
+        if (null === $this->fullFilledTaxCode) {
+            $this->fullFilledTaxCode = true;
+            $plainTypeCodes = $this->getPlainTypedCodes();
+            $availableTypes = $this->getAvailableTypes();
+            foreach ($availableTypes as $availableType) {
+                if (!\array_key_exists($availableType, $plainTypeCodes)) {
+                    $this->fullFilledTaxCode = false;
+                    break;
+                }
             }
         }
 
-        return true;
+        return $this->fullFilledTaxCode;
     }
 }
