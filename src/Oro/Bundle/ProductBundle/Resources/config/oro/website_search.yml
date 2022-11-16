@@ -83,6 +83,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: schema_org_brand_name_LOCALIZATION_ID
             type: text
             fulltext: false
+        -
+            name: relevance_weight
+            type: decimal
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

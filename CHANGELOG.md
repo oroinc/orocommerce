@@ -18,6 +18,8 @@ The current file describes significant changes in the code that may affect the u
   for more information.
 
 #### ProductBundle
+* `relevance_weight` field is added to the website search mapping for the Product entity 
+
 * Product Collections. Added sort order management for Products in Product Collections:
     - New entity `ProductCollectionSortOrder` and website search field `assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID` have been added to link Products to Segments with a SortOrder to manage sort orders in Product Collections
     - New default ordering behaviour added for related frontend grids (`frontend-product-search-grid` based on ProductCollection)
