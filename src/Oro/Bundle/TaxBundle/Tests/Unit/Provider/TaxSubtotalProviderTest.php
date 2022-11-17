@@ -8,79 +8,66 @@ use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Factory\TaxFactory;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
+use Oro\Bundle\TaxBundle\Provider\AbstractTaxSubtotalProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class TaxSubtotalProviderTest extends TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxProviderInterface */
-    private $taxProvider;
+    protected AbstractTaxSubtotalProvider $provider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxFactory */
-    private $taxFactory;
+    protected MockObject|TranslatorInterface $translator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TaxationSettingsProvider */
-    private $taxationSettingsProvider;
+    protected MockObject|TaxProviderInterface $taxProvider;
 
-    /** @var TaxSubtotalProvider */
-    private $provider;
+    protected MockObject|TaxProviderRegistry $taxProviderRegistry;
+
+    protected MockObject|TaxFactory $taxFactory;
+
+    protected MockObject|TaxationSettingsProvider $taxSettingsProvider;
 
     protected function setUp(): void
     {
-        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
-        $this->taxFactory = $this->createMock(TaxFactory::class);
-        $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
-
-        $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->any())
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(function ($message) {
                 return ucfirst($message);
             });
 
-        $taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
-        $taxProviderRegistry->expects($this->any())
+        $this->taxProvider = $this->createMock(TaxProviderInterface::class);
+        $this->taxFactory = $this->createMock(TaxFactory::class);
+        $this->taxSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
+        $this->taxProviderRegistry = $this->createMock(TaxProviderRegistry::class);
+        $this->taxProviderRegistry->expects($this->any())
             ->method('getEnabledProvider')
             ->willReturn($this->taxProvider);
 
         $this->provider = new TaxSubtotalProvider(
-            $translator,
-            $taxProviderRegistry,
+            $this->translator,
+            $this->taxProviderRegistry,
             $this->taxFactory,
-            $this->taxationSettingsProvider
+            $this->taxSettingsProvider
         );
     }
 
-    public function testGetSubtotal()
+    protected function tearDown(): void
     {
-        $this->taxationSettingsProvider->expects($this->once())
-            ->method('isProductPricesIncludeTax')
-            ->willReturn(false);
-
-        $total = $this->getTotalResultElement(150, 'USD');
-        $tax = $this->getTaxResultWithTotal($total);
-
-        $this->taxProvider->expects($this->once())
-            ->method('getTax')
-            ->willReturn($tax);
-
-        $subtotal = $this->provider->getSubtotal(new Order());
-
-        $this->assertSubtotal($subtotal, $total);
-        $this->assertEquals(Subtotal::OPERATION_ADD, $subtotal->getOperation());
+        unset($this->translator, $this->provider);
     }
 
-    public function testGetSubtotalProductPricesIncludeTax()
+    public function testGetSubtotal(): void
     {
-        $this->taxationSettingsProvider->expects($this->once())
-            ->method('isProductPricesIncludeTax')
-            ->willReturn(true);
-
-        $total = $this->getTotalResultElement(150, 'USD');
-        $tax = $this->getTaxResultWithTotal($total);
+        $total = $this->createTotalResultElement(150, 'USD');
+        $tax   = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -92,14 +79,10 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Subtotal::OPERATION_IGNORE, $subtotal->getOperation());
     }
 
-    public function testGetCachedSubtotal()
+    public function testGetCachedSubtotal(): void
     {
-        $this->taxationSettingsProvider->expects($this->once())
-            ->method('isProductPricesIncludeTax')
-            ->willReturn(false);
-
-        $total = $this->getTotalResultElement(150, 'USD');
-        $tax = $this->getTaxResultWithTotal($total);
+        $total = $this->createTotalResultElement(150, 'USD');
+        $tax   = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('loadTax')
@@ -108,10 +91,10 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal = $this->provider->getCachedSubtotal(new Order());
 
         $this->assertSubtotal($subtotal, $total);
-        $this->assertEquals(Subtotal::OPERATION_ADD, $subtotal->getOperation());
+        $this->assertEquals(Subtotal::OPERATION_IGNORE, $subtotal->getOperation());
     }
 
-    public function testGetCachedSubtotalEmptyIfTaxationDisabled()
+    public function testGetCachedSubtotalEmptyIfTaxationDisabled(): void
     {
         $this->taxProvider->expects($this->once())
             ->method('loadTax')
@@ -122,7 +105,7 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($subtotal->getAmount());
     }
 
-    public function testGetSubtotalWithException()
+    public function testGetSubtotalWithException(): void
     {
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -131,11 +114,11 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal = $this->provider->getSubtotal(new Order());
         $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(TaxSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals('Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
+        $this->assertEquals($this->getLabel(), $subtotal->getLabel());
         $this->assertFalse($subtotal->isVisible());
     }
 
-    public function testIsSupported()
+    public function testIsSupported(): void
     {
         $this->taxFactory->expects($this->once())
             ->method('supports')
@@ -143,7 +126,7 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->provider->isSupported(new \stdClass()));
     }
 
-    public function testSupportsCachedSubtotal()
+    public function testSupportsCachedSubtotal(): void
     {
         $this->taxFactory->expects($this->once())
             ->method('supports')
@@ -151,18 +134,19 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->provider->supportsCachedSubtotal(new \stdClass()));
     }
 
-    private function assertSubtotal(Subtotal $subtotal, ResultElement $total)
+    protected function assertSubtotal(Subtotal $subtotal, ResultElement $total): void
     {
         $this->assertInstanceOf(Subtotal::class, $subtotal);
         $this->assertEquals(TaxSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals('Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
+        $this->assertEquals($this->getLabel(), $subtotal->getLabel());
         $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
-        $this->assertEquals(500, $subtotal->getSortOrder());
-        $this->assertTrue($subtotal->isVisible());
+        $this->assertEquals($this->getOrder(), $subtotal->getSortOrder());
+        $this->assertEquals($this->isVisible(), $subtotal->isVisible());
+        $this->assertEquals($this->isRemovable(), $subtotal->isRemovable());
     }
 
-    private function getTotalResultElement(int $amount, string $currency): ResultElement
+    protected function createTotalResultElement(int $amount, string $currency): ResultElement
     {
         $total = new ResultElement();
         $total
@@ -172,11 +156,31 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         return $total;
     }
 
-    private function getTaxResultWithTotal(ResultElement $total): Result
+    protected function createTaxResult(ResultElement $total): Result
     {
         $tax = new Result();
         $tax->offsetSet(Result::TOTAL, $total);
 
         return $tax;
+    }
+
+    protected function getLabel(): string
+    {
+        return 'Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE;
+    }
+
+    protected function getOrder(): int
+    {
+        return 500;
+    }
+
+    protected function isVisible(): bool
+    {
+        return true;
+    }
+
+    protected function isRemovable(): bool
+    {
+        return false;
     }
 }
