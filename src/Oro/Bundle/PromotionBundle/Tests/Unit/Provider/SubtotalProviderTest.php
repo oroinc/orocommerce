@@ -206,6 +206,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal->setCurrency($currency);
         $subtotal->setSortOrder($order);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
+        $subtotal->setRemovable(false);
 
         return $subtotal;
     }

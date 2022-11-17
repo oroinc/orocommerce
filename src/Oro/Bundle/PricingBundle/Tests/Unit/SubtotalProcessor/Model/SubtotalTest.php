@@ -21,6 +21,7 @@ class SubtotalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());
         $this->assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());
         $this->assertEquals(true, $subtotal->setVisible(true)->isVisible());
+        $this->assertEquals(false, $subtotal->setRemovable(false)->isRemovable());
         $this->assertEquals(['some value'], $subtotal->setData(['some value'])->getData());
         $this->assertEquals(987, $subtotal->setSortOrder(987)->getSortOrder());
         $this->assertEquals(

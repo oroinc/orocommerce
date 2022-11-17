@@ -110,6 +110,10 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
             $rowTotal = $subtotal->getAmount();
 
             $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
+
+            if ($subtotal->isRemovable()) {
+                $subtotals->removeElement($subtotal);
+            }
         }
         $total->setAmount($this->rounding->round($totalAmount));
 
@@ -118,7 +122,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
 
     /**
      * Calculates and returns total based on all subtotals (which is already calculated)
-     * This method is optimazed alternative of `createTotal`
+     * This method is optimized alternative of `createTotal`
      *
      * @param object $entity
      * @param array|ArrayCollection $subtotals
