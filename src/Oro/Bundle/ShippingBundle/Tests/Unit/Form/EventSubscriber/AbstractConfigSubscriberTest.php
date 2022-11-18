@@ -23,7 +23,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
@@ -132,7 +132,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $choicesProvider = $this->createMock(ShippingMethodChoicesProvider::class);
         $choicesProvider->expects($this->any())
             ->method('getMethods')
             ->willReturn([]);

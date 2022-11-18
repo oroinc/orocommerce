@@ -21,7 +21,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
@@ -60,10 +60,9 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $shippingMethodType = new ShippingMethodTypeStub();
         $shippingMethodType->setIdentifier(self::METHOD_TYPE_IDENTIFIER);
         $shippingMethod = new ShippingMethodStub();
-        $shippingMethod
-            ->setIdentifier(self::METHOD_IDENTIFIER)
-            ->setIsGrouped(false)
-            ->setTypes([$shippingMethodType]);
+        $shippingMethod->setIdentifier(self::METHOD_IDENTIFIER);
+        $shippingMethod->setIsGrouped(false);
+        $shippingMethod->setTypes([$shippingMethodType]);
         $shippingMethods = [$shippingMethod->getIdentifier() => $shippingMethod];
 
         $shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
@@ -194,7 +193,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $choicesProvider = $this->createMock(ShippingMethodChoicesProvider::class);
         $choicesProvider->expects($this->any())
             ->method('getMethods')
             ->willReturn([]);
