@@ -41,7 +41,7 @@ Feature: Category products sort order
       | PSKU1 | Product 1 |
       | PSKU5 | Product 5 |
       | PSKU3 | Product 3 |
-#
+
   Scenario: Category correctly sorted in frontend
     Given I operate as the Buyer
     When I am on homepage

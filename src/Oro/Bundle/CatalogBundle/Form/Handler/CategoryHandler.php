@@ -103,8 +103,7 @@ class CategoryHandler
      */
     protected function appendProducts(Category $category, array $products)
     {
-        $categoryRepository = $this->manager->getRepository('OroCatalogBundle:Category');
-        /** @var $product Product */
+        $categoryRepository = $this->manager->getRepository(Category::class);
         foreach ($products as $product) {
             $productCategory = $categoryRepository->findOneByProduct($product);
 
@@ -136,7 +135,6 @@ class CategoryHandler
      */
     protected function removeProducts(Category $category, array $products)
     {
-        /** @var $product Product */
         foreach ($products as $product) {
             $category->removeProduct($product);
         }
@@ -164,7 +162,7 @@ class CategoryHandler
              *   - Check that the field is in the newly selected fields or already in collection
              *   - Check that the field is not in the removed products
              *   - Compare the old value and the new value
-            */
+             */
             if (($category->getProducts()->contains($product) || in_array($product, $appendProducts))
                 && !in_array($product, $removeProducts)
                 && $sortDataInputValue !== $product->getCategorySortOrder()

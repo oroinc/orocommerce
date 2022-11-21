@@ -7,6 +7,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
@@ -84,10 +85,13 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
 
     private function buildProductCollectionVariant(ObjectManager $manager): ContentVariant
     {
+        $organization = $this->getOrganization($manager);
+
         $segmentType = $manager->getRepository(SegmentType::class)->find(SegmentType::TYPE_STATIC);
         $segment = new Segment();
         $segment->setName('Product Static Segment');
         $segment->setEntity(Product::class);
+        $segment->setOrganization($organization);
         $segment->setType($segmentType);
         $segment->setDefinition(json_encode([
             'columns' => [
@@ -121,5 +125,15 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
         $contentVariant->setDefault(true);
 
         return $contentVariant;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return Organization
+     */
+    private function getOrganization(ObjectManager $manager)
+    {
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 }

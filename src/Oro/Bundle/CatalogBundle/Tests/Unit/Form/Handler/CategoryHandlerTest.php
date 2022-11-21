@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -13,38 +12,23 @@ use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
+class CategoryHandlerTest extends FormHandlerTestCase
 {
-    private const FORM_DATA = ['field' => 'value'];
-
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $manager;
-
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $form;
-
-    /** @var CategoryStub */
-    private $entity;
-
-    /** @var CategoryHandler */
-    private $handler;
-
     protected function setUp(): void
     {
-        $this->manager = $this->createMock(ObjectManager::class);
+        parent::setUp();
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->form = $this->createMock(Form::class);
         $this->entity = $this->createMock(CategoryStub::class);
 
-        $this->handler = new CategoryHandler($this->manager, $this->eventDispatcher);
+        $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
     }
 
     private function expectsAppendRemoveSortProducts(): void
@@ -104,18 +88,17 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessSupportedRequest(string $method): void
+    public function testProcessSupportedRequest(string $method, bool $isValid, bool $isProcessed): void
     {
-        $request = new Request();
-        $request->initialize([], self::FORM_DATA);
-        $request->setMethod($method);
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod($method);
 
         $this->form->expects(self::once())
             ->method('setData')
             ->with($this->entity);
         $this->form->expects(self::once())
             ->method('isValid')
-            ->willReturn(true);
+            ->willReturn($isValid);
 
         $this->expectsAppendRemoveSortProducts();
         $this->expectsCategoryUnitPrecisionUpdate();
@@ -145,19 +128,18 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(['id' => [1]])
             ->willReturn([$product]);
 
-        self::assertTrue($this->handler->process($this->entity, $this->form, $request));
+        self::assertTrue($this->handler->process($this->entity));
     }
 
     public function supportedMethods(): array
     {
-        return [['POST'], ['PUT']];
+        return [['POST', true, true], ['PUT', true, true]];
     }
 
     public function testProcessSupportedRequestWithInvalidData(): void
     {
-        $request = new Request();
-        $request->initialize([], self::FORM_DATA);
-        $request->setMethod('POST');
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod('POST');
 
         $this->form->expects(self::once())
             ->method('setData')
@@ -173,14 +155,13 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
         $this->manager->expects(self::never())
             ->method('getRepository');
 
-        self::assertFalse($this->handler->process($this->entity, $this->form, $request));
+        self::assertFalse($this->handler->process($this->entity));
     }
 
     public function testProcessValidData(): void
     {
-        $request = new Request();
-        $request->initialize([], self::FORM_DATA);
-        $request->setMethod('POST');
+        $this->request->initialize([], self::FORM_DATA);
+        $this->request->setMethod('POST');
 
         $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
@@ -224,6 +205,6 @@ class CategoryHandlerTest extends \PHPUnit\Framework\TestCase
         $this->manager->expects(self::once())
             ->method('flush');
 
-        self::assertTrue($this->handler->process($this->entity, $this->form, $request));
+        self::assertTrue($this->handler->process($this->entity));
     }
 }
