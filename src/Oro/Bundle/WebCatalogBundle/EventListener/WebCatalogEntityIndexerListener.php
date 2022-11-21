@@ -6,7 +6,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -60,19 +59,13 @@ class WebCatalogEntityIndexerListener
      */
     private $localizationHelper;
 
-    /**
-     * @var ValueFormatterInterface
-     */
-    private $decimalValueFormatter;
-
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
         WebsiteContextManager $websiteContextManager,
         ContentVariantProviderInterface $contentVariantProvider,
-        LocalizationHelper $localizationHelper,
-        ValueFormatterInterface $decimalValueFormatter
+        LocalizationHelper $localizationHelper
     ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
@@ -80,7 +73,6 @@ class WebCatalogEntityIndexerListener
         $this->websiteContextManager = $websiteContextManager;
         $this->contentVariantProvider = $contentVariantProvider;
         $this->localizationHelper = $localizationHelper;
-        $this->decimalValueFormatter = $decimalValueFormatter;
     }
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
@@ -307,7 +299,7 @@ class WebCatalogEntityIndexerListener
         $event->addPlaceholderField(
             $recordId,
             'assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID',
-            $this->decimalValueFormatter->format($recordSortOrderValue),
+            $recordSortOrderValue,
             [
                 AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
                 AssignIdPlaceholder::NAME => $variantId,
