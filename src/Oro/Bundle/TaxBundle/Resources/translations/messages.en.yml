@@ -10,6 +10,8 @@ oro.tax:
     taxcode.customergroup.label: 'Customer Group Tax Code'
 
     subtotals.tax: 'Tax'
+    subtotals.lineitem_tax: 'Subtotal Tax'
+    subtotals.shipping_tax: 'Shipping Tax'
 
     form:
         choose: 'Choose a tax'
