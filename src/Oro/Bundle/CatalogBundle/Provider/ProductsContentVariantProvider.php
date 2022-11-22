@@ -89,12 +89,4 @@ class ProductsContentVariantProvider implements ContentVariantProviderInterface
     {
         return $item['categoryProductId'];
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRecordSortOrder(array $item)
-    {
-        return null;
-    }
 }

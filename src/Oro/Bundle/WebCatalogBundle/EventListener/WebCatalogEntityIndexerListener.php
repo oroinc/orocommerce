@@ -19,6 +19,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
+use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 
 /**
  * This class adds information about web catalog association to website search index
@@ -284,7 +285,9 @@ class WebCatalogEntityIndexerListener
      */
     protected function addCollectionSortOrderInformation(IndexEntityEvent $event, array $relation): void
     {
-        $variantId = $relation['variantId'];
+        if (!$this->contentVariantProvider instanceof SortableContentVariantProviderInterface) {
+            return;
+        }
 
         $recordId = $this->contentVariantProvider->getRecordId($relation);
         if (!$recordId) {
@@ -302,7 +305,7 @@ class WebCatalogEntityIndexerListener
             $recordSortOrderValue,
             [
                 AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
-                AssignIdPlaceholder::NAME => $variantId,
+                AssignIdPlaceholder::NAME => $relation['variantId'],
             ]
         );
     }

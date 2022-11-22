@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
-use Oro\Component\WebCatalog\ContentVariantProviderInterface;
+use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 /**
@@ -15,7 +15,7 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  * for ProductCollectionSegment variant.
  * Fetching for this data from snapshot of related segment.
  */
-class ProductCollectionContentVariantProvider implements ContentVariantProviderInterface
+class ProductCollectionContentVariantProvider implements SortableContentVariantProviderInterface
 {
     /**
      * {@inheritdoc}

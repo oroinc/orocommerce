@@ -4,12 +4,13 @@ namespace Oro\Bundle\WebCatalogBundle\Provider;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
+use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 /**
  * Delegates the getting information about a content variant to child providers.
  */
-class ContentVariantProvider implements ContentVariantProviderInterface
+class ContentVariantProvider implements SortableContentVariantProviderInterface
 {
     /** @var iterable|ContentVariantProviderInterface[] */
     private $providers;
@@ -101,6 +102,9 @@ class ContentVariantProvider implements ContentVariantProviderInterface
     public function getRecordSortOrder(array $item)
     {
         foreach ($this->providers as $provider) {
+            if (!$provider instanceof SortableContentVariantProviderInterface) {
+                continue;
+            }
             $recordSortOrder = $provider->getRecordSortOrder($item);
             if (!is_null($recordSortOrder)) {
                 return $recordSortOrder;
