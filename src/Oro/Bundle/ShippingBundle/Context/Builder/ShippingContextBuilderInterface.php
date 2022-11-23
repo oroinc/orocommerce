@@ -10,80 +10,30 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollec
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Provides an interface for shipping context builder.
+ */
 interface ShippingContextBuilderInterface
 {
-    /**
-     * @return ShippingContextInterface
-     */
-    public function getResult();
+    public function getResult(): ShippingContextInterface;
 
-    /**
-     * @param AddressInterface $shippingOrigin
-     *
-     * @return self
-     */
-    public function setShippingOrigin(AddressInterface $shippingOrigin);
+    public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection): static;
 
-    /**
-     * @param ShippingLineItemCollectionInterface $lineItemCollection
-     *
-     * @return self
-     */
-    public function setLineItems(ShippingLineItemCollectionInterface $lineItemCollection);
+    public function setBillingAddress(?AddressInterface $billingAddress): static;
 
-    /**
-     * @param AddressInterface $shippingAddress
-     *
-     * @return self
-     */
-    public function setShippingAddress(AddressInterface $shippingAddress);
+    public function setShippingAddress(?AddressInterface $shippingAddress): static;
 
-    /**
-     * @param AddressInterface $billingAddress
-     *
-     * @return self
-     */
-    public function setBillingAddress(AddressInterface $billingAddress);
+    public function setShippingOrigin(?AddressInterface $shippingOrigin): static;
 
-    /**
-     * @param string $paymentMethod
-     *
-     * @return self
-     */
-    public function setPaymentMethod($paymentMethod);
+    public function setPaymentMethod(?string $paymentMethod): static;
 
-    /**
-     * @param Customer $customer
-     *
-     * @return self
-     */
-    public function setCustomer(Customer $customer);
+    public function setCustomer(?Customer $customer): static;
 
-    /**
-     * @param CustomerUser $customerUser
-     *
-     * @return self
-     */
-    public function setCustomerUser(CustomerUser $customerUser);
+    public function setCustomerUser(?CustomerUser $customerUser): static;
 
-    /**
-     * @param Price $subTotal
-     *
-     * @return self
-     */
-    public function setSubTotal(Price $subTotal);
+    public function setSubTotal(?Price $subTotal): static;
 
-    /**
-     * @param string $currency
-     *
-     * @return self
-     */
-    public function setCurrency($currency);
+    public function setCurrency(?string $currency): static;
 
-    /**
-     * @param Website $website
-     *
-     * @return self
-     */
-    public function setWebsite(Website $website);
+    public function setWebsite(?Website $website): static;
 }

@@ -11,12 +11,12 @@ Feature: System configuration shipping origin filter
     And follow "Commerce/Shipping/Shipping Origin" on configuration sidebar
     And I should not see "Shipping Choose State Select"
     When I fill "Shipping Origin System Config Form" with:
-      | Use default | true |
+      | Use Default | true |
     And I should not see "Shipping Choose State Select"
     And I click "Save settings"
     And I should not see "Shipping Choose State Select"
     When I fill "Shipping Origin System Config Form" with:
-      | Use default      | false         |
+      | Use Default      | false         |
       | Country          | United States |
       | Region/State     | California    |
       | Zip/Postal Code  | 90401         |

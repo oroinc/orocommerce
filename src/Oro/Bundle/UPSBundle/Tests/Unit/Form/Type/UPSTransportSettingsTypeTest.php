@@ -17,7 +17,7 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -28,35 +28,27 @@ use Symfony\Component\Validator\Validation;
 
 class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    private const DATA_CLASS = UPSTransport::class;
-
-    /** @var TransportInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $transport;
-
     /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingOriginProvider;
-
-    /** @var UPSTransportSettingsType */
-    private $formType;
 
     /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
 
+    /** @var UPSTransportSettingsType */
+    private $formType;
+
     protected function setUp(): void
     {
         $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
-
-        $this->transport = $this->createMock(TransportInterface::class);
-        $this->transport->expects(self::any())
-            ->method('getSettingsEntityFQCN')
-            ->willReturn(self::DATA_CLASS);
-
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
 
+        $transport = $this->createMock(TransportInterface::class);
+        $transport->expects(self::any())
+            ->method('getSettingsEntityFQCN')
+            ->willReturn(UPSTransport::class);
+
         $this->formType = new UPSTransportSettingsType(
-            $this->transport,
+            $transport,
             $this->shippingOriginProvider
         );
 
@@ -69,50 +61,44 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         $country = new Country('US');
-        $countryType = new EntityTypeStub(['US' => $country], 'oro_country');
-
-        $entityType = new EntityTypeStub(
-            [
-                1 => $this->getEntity(
-                    ShippingService::class,
-                    [
-                        'id' => 1,
-                        'code' => '01',
-                        'description' => 'UPS Next Day Air',
-                        'country' => $country
-                    ]
-                ),
-                2 => $this->getEntity(
-                    ShippingService::class,
-                    [
-                        'id' => 2,
-                        'code' => '03',
-                        'description' => 'UPS Ground',
-                        'country' => $country
-                    ]
-                ),
-            ],
-            'entity'
-        );
-
-        $localizedFallbackValue = new LocalizedFallbackValueCollectionType(
-            $this->createMock(ManagerRegistry::class)
-        );
 
         return [
             new PreloadedExtension(
                 [
-                    EntityType::class => $entityType,
+                    EntityType::class => new EntityTypeStub(
+                        [
+                            1 => $this->getShippingService(1, '01', 'UPS Next Day Air', $country),
+                            2 => $this->getShippingService(2, '03', 'UPS Ground', $country)
+                        ],
+                        'entity'
+                    ),
                     UPSTransportSettingsType::class => $this->formType,
-                    CountryType::class => $countryType,
+                    CountryType::class => new EntityTypeStub(['US' => $country], 'oro_country'),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
-                    LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
+                        $this->createMock(ManagerRegistry::class)
+                    ),
                     new OroEncodedPlaceholderPasswordType($this->crypter),
                 ],
                 []
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
+    }
+
+    private function getShippingService(
+        int $id,
+        string $code,
+        string $description,
+        Country $country,
+    ): ShippingService {
+        $shippingService = new ShippingService();
+        ReflectionUtil::setId($shippingService, $id);
+        $shippingService->setCode($code);
+        $shippingService->setDescription($description);
+        $shippingService->setCountry($country);
+
+        return $shippingService;
     }
 
     /**
@@ -160,15 +146,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
     public function submitProvider(): array
     {
-        $expectedShippingService = $this->getEntity(
-            ShippingService::class,
-            [
-                'id' => 1,
-                'code' => '01',
-                'description' => 'UPS Next Day Air',
-                'country' => new Country('US')
-            ]
-        );
         return [
             'service without value' => [
                 'defaultData' => new UPSTransport(),
@@ -205,7 +182,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     ->setUpsPickupType('01')
                     ->setUpsUnitOfWeight('KGS')
                     ->setUpsCountry(new Country('US'))
-                    ->addApplicableShippingService($expectedShippingService)
+                    ->addApplicableShippingService(
+                        $this->getShippingService(1, '01', 'UPS Next Day Air', new Country('US'))
+                    )
                     ->addLabel((new LocalizedFallbackValue())->setString('first label'))
             ]
         ];
@@ -216,13 +195,13 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects(self::once())
             ->method('setDefaults')
-            ->with(['data_class' => $this->transport->getSettingsEntityFQCN()]);
+            ->with(['data_class' => UPSTransport::class]);
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testGetBlockPrefix()
     {
-        self::assertEquals(UPSTransportSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        self::assertEquals('oro_ups_transport_settings', $this->formType->getBlockPrefix());
     }
 }

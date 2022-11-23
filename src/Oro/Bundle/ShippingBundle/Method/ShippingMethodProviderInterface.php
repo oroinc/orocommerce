@@ -8,7 +8,7 @@ namespace Oro\Bundle\ShippingBundle\Method;
 interface ShippingMethodProviderInterface
 {
     /**
-     * @return ShippingMethodInterface[]
+     * @return ShippingMethodInterface[] [shipping method name => shipping method, ...]
      */
     public function getShippingMethods(): array;
 
