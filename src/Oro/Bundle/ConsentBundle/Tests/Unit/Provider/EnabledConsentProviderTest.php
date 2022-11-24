@@ -18,29 +18,18 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var ConsentConfigConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentConfigConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $converter;
 
-    /**
-     * @var ConsentContextProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentContextProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contextProvider;
 
-    /**
-     * @var EnabledConsentProvider
-     */
+    /** @var EnabledConsentProvider */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -55,37 +44,17 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->provider,
-            $this->configManager,
-            $this->converter
-        );
-    }
-
-    /**
      * @dataProvider getConsentsProvider
-     *
-     * @param array $consentConfigValue
-     * @param array $consentIdToMandatoryMapping
-     * @param ConsentFilterInterface|null $filter
-     * @param array $enabledFilters
-     * @param Website|null $website
-     * @param array $expectedConsents
      */
     public function testGetConsents(
         array $consentConfigValue,
         array $consentIdToMandatoryMapping,
-        ConsentFilterInterface $filter = null,
+        ?ConsentFilterInterface $filter,
         array $enabledFilters,
-        Website $website = null,
-        $expectedConsents
+        ?Website $website,
+        array $expectedConsents
     ) {
-        $this->contextProvider
-            ->expects($this->once())
+        $this->contextProvider->expects($this->once())
             ->method('getWebsite')
             ->willReturn($website);
 
@@ -96,19 +65,17 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->converter->expects($this->any())
             ->method('convertFromSaved')
-            ->willReturnCallback(
-                function (array $consentConfigValue) use ($consentIdToMandatoryMapping) {
-                    return array_map(function ($configItem) use ($consentIdToMandatoryMapping) {
-                        $consentId = $configItem[ConsentConfigConverter::CONSENT_KEY];
-                        $consent = $this->getEntity(Consent::class, [
-                            'id' => $consentId,
-                            'mandatory' => $consentIdToMandatoryMapping[$consentId]
-                        ]);
+            ->willReturnCallback(function (array $consentConfigValue) use ($consentIdToMandatoryMapping) {
+                return array_map(function ($configItem) use ($consentIdToMandatoryMapping) {
+                    $consentId = $configItem[ConsentConfigConverter::CONSENT_KEY];
+                    $consent = $this->getEntity(Consent::class, [
+                        'id' => $consentId,
+                        'mandatory' => $consentIdToMandatoryMapping[$consentId]
+                    ]);
 
-                        return new ConsentConfig($consent);
-                    }, $consentConfigValue);
-                }
-            );
+                    return new ConsentConfig($consent);
+                }, $consentConfigValue);
+            });
 
         if ($filter) {
             $this->provider->addFilter($filter);
@@ -128,8 +95,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
             ['id' => 2, 'consent' => $this->getEntity(Consent::class, ['id' => 2])]
         );
 
-        $this->contextProvider
-            ->expects($this->once())
+        $this->contextProvider->expects($this->once())
             ->method('getWebsite')
             ->willReturn($website);
 
@@ -138,22 +104,19 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
             ->with('oro_consent.enabled_consents', false, false, $website)
             ->willReturn($consentConfigValue);
 
-        $this->converter
-            ->expects($this->any())
+        $this->converter->expects($this->any())
             ->method('convertFromSaved')
-            ->willReturnCallback(
-                function (array $consentConfigValue) use ($consentIdToMandatoryMapping) {
-                    return array_map(function ($configItem) use ($consentIdToMandatoryMapping) {
-                        $consentId = $configItem[ConsentConfigConverter::CONSENT_KEY];
-                        $consent = $this->getEntity(Consent::class, [
-                            'id' => $consentId,
-                            'mandatory' => $consentIdToMandatoryMapping[$consentId]
-                        ]);
+            ->willReturnCallback(function (array $consentConfigValue) use ($consentIdToMandatoryMapping) {
+                return array_map(function ($configItem) use ($consentIdToMandatoryMapping) {
+                    $consentId = $configItem[ConsentConfigConverter::CONSENT_KEY];
+                    $consent = $this->getEntity(Consent::class, [
+                        'id' => $consentId,
+                        'mandatory' => $consentIdToMandatoryMapping[$consentId]
+                    ]);
 
-                        return new ConsentConfig($consent);
-                    }, $consentConfigValue);
-                }
-            );
+                    return new ConsentConfig($consent);
+                }, $consentConfigValue);
+            });
 
         $this->provider->addFilter(new RequiredConsentFilter());
 
@@ -161,10 +124,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([1 => $this->getEntity(Consent::class, ['id' => 3])], $consents);
     }
 
-    /**
-     * @return array
-     */
-    public function getConsentsProvider()
+    public function getConsentsProvider(): array
     {
         $filter = new RequiredConsentFilter();
 

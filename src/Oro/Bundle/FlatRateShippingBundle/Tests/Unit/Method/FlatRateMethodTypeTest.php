@@ -14,11 +14,10 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @internal */
-    const LABEL = 'Flat Rate';
+    private const LABEL = 'Flat Rate';
 
     /** @var FlatRateMethodType */
-    protected $flatRateType;
+    private $flatRateType;
 
     protected function setUp(): void
     {
@@ -27,17 +26,17 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIdentifier()
     {
-        static::assertEquals(FlatRateMethodType::IDENTIFIER, $this->flatRateType->getIdentifier());
+        self::assertEquals(FlatRateMethodType::IDENTIFIER, $this->flatRateType->getIdentifier());
     }
 
     public function testGetLabel()
     {
-        static::assertEquals(self::LABEL, $this->flatRateType->getLabel());
+        self::assertEquals(self::LABEL, $this->flatRateType->getLabel());
     }
 
     public function testGetOptionsConfigurationFormType()
     {
-        static::assertEquals(
+        self::assertEquals(
             FlatRateOptionsType::class,
             $this->flatRateType->getOptionsConfigurationFormType()
         );
@@ -45,17 +44,13 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSortOrder()
     {
-        static::assertEquals(0, $this->flatRateType->getSortOrder());
+        self::assertEquals(0, $this->flatRateType->getSortOrder());
     }
 
     /**
-     * @param array $currency
-     * @param array $options
-     * @param float $expectedPrice
-     *
      * @dataProvider ruleConfigProvider
      */
-    public function testCalculatePrice($currency, array $options, $expectedPrice)
+    public function testCalculatePrice(string $currency, array $options, float $expectedPrice)
     {
         $shippingLineItems = [
             new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 3]),
@@ -69,15 +64,12 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
 
         $price = $this->flatRateType->calculatePrice($context, [], $options);
 
-        static::assertInstanceOf(Price::class, $price);
-        static::assertEquals($expectedPrice, $price->getValue());
-        static::assertEquals($context->getCurrency(), $price->getCurrency());
+        self::assertInstanceOf(Price::class, $price);
+        self::assertEquals($expectedPrice, $price->getValue());
+        self::assertEquals($context->getCurrency(), $price->getCurrency());
     }
 
-    /**
-     * @return array
-     */
-    public function ruleConfigProvider()
+    public function ruleConfigProvider(): array
     {
         return [
             [

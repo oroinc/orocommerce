@@ -3,9 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
@@ -13,43 +10,18 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
+/**
+ * @property \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client $client
+ */
 class OrderControllerTest extends WebTestCase
 {
-    const ORDER_PO_NUMBER = 'PO-NUMBER';
-    const QUICK_ADD_ORDER_PO_NUMBER = 'QUICK-ADD-PO-NUMBER';
-    const ORDER_PO_NUMBER_UPDATED = 'PO-NUMBER-UP';
-
-    /**
-     * @var Client
-     */
-    protected $client;
-
-    /**
-     * @var DateTimeFormatterInterface
-     */
-    protected $dateFormatter;
-
-    /**
-     * @var NumberFormatter
-     */
-    protected $numberFormatter;
-
     protected function setUp(): void
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-
-        $this->loadFixtures(
-            [
-                LoadOrders::class,
-                LoadOrdersACLData::class,
-            ]
-        );
-
-        $this->dateFormatter = $this->getContainer()->get('oro_locale.formatter.date_time');
-        $this->numberFormatter = $this->getContainer()->get('oro_locale.formatter.number');
+        $this->loadFixtures([LoadOrders::class, LoadOrdersACLData::class]);
     }
 
     public function testIndex()
@@ -58,14 +30,14 @@ class OrderControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('frontend-orders-grid', $crawler->html());
+        self::assertStringContainsString('frontend-orders-grid', $crawler->html());
     }
 
     public function testOrdersGrid()
     {
         $response = $this->client->requestFrontendGrid('frontend-orders-grid');
 
-        $result = static::getJsonResponseContent($response, 200);
+        $result = self::getJsonResponseContent($response, 200);
 
         $myOrderData = [];
         foreach ($result['data'] as $row) {
@@ -81,15 +53,14 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @group frontend-ACL
-     * @dataProvider gridACLProvider
-     *
-     * @param string $user
-     * @param string $indexResponseStatus
-     * @param string $gridResponseStatus
-     * @param array $data
+     * @dataProvider gridAclProvider
      */
-    public function testOrdersGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
-    {
+    public function testOrdersGridAcl(
+        string $user,
+        int $indexResponseStatus,
+        int $gridResponseStatus,
+        array $data = []
+    ) {
         $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
@@ -116,10 +87,7 @@ class OrderControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function gridACLProvider()
+    public function gridAclProvider(): array
     {
         return [
             'NOT AUTHORISED' => [
@@ -161,13 +129,9 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testViewDataProvider
-     *
-     * @param string $resource
-     * @param string $user
-     * @param int $status
+     * @dataProvider viewDataProvider
      */
-    public function testView($resource, $user, $status)
+    public function testView(string $resource, string $user, int $status)
     {
         $this->loginUser($user);
 
@@ -183,10 +147,7 @@ class OrderControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function testViewDataProvider()
+    public function viewDataProvider(): array
     {
         return [
             'anonymous user' => [
@@ -227,11 +188,11 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    public function assertViewPage(Crawler $crawler, array $expectedViewData)
+    public function assertViewPage(Crawler $crawler, array $expectedViewData): void
     {
         $html = $crawler->html();
         foreach ($expectedViewData as $data) {
-            static::assertStringContainsString($data, $html);
+            self::assertStringContainsString($data, $html);
         }
     }
 }

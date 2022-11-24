@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Form\Type\ShippingMethodTypesChoiceType;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
@@ -16,24 +15,16 @@ use Symfony\Component\Asset\Packages;
 
 class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
-    /**
-     * @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $iconProvider;
 
-    /**
-     * @var Packages|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Packages|\PHPUnit\Framework\MockObject\MockObject */
     private $assetHelper;
 
-    /**
-     * @var ShippingMethodTypesChoiceType
-     */
+    /** @var ShippingMethodTypesChoiceType */
     private $formType;
 
     protected function setUp(): void
@@ -43,26 +34,22 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         $this->assetHelper = $this->createMock(Packages::class);
 
         $this->formType = new ShippingMethodTypesChoiceType($this->provider, $this->iconProvider, $this->assetHelper);
+
         parent::setUp();
     }
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array|null $existingData
-     * @param array $submittedData
-     * @param array $expectedData
      */
-    public function testSubmit($existingData, $submittedData, $expectedData)
+    public function testSubmit(?array $existingData, string $submittedData, array $expectedData)
     {
         $flatRatePrimaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('primary');
 
-        $flatRateShippingMethod = (new ShippingMethodStub())
-            ->setIdentifier('flat_rate_2')
-            ->setTypes([$flatRatePrimaryShippingType]);
+        $flatRateShippingMethod = new ShippingMethodStub();
+        $flatRateShippingMethod->setIdentifier('flat_rate_2');
+        $flatRateShippingMethod->setTypes([$flatRatePrimaryShippingType]);
 
-        $this->provider
-            ->expects($this->any())
+        $this->provider->expects($this->any())
             ->method('getShippingMethods')
             ->willReturn([$flatRateShippingMethod, $this->getUpsShippingMethod()]);
 
@@ -74,10 +61,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'create new value' => [
@@ -105,8 +89,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
     public function testDefaultOptions()
     {
         $options = [];
-        $this->provider
-            ->expects($this->any())
+        $this->provider->expects($this->any())
             ->method('getShippingMethods')
             ->willReturn([$this->getUpsShippingMethod()]);
 
@@ -114,8 +97,8 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
 
         $formOptions = $form->getConfig()->getOptions();
 
-        $this->assertEquals(false, $formOptions['placeholder']);
-        $this->assertSame(true, $formOptions['configs']['showIcon']);
+        $this->assertNull($formOptions['placeholder']);
+        $this->assertTrue($formOptions['configs']['showIcon']);
         $this->assertSame(1, $formOptions['configs']['minimumResultsForSearch']);
         $this->assertSame([
             'UPS 2 Day Air' => '{"shipping_method":"ups_4","shipping_method_type":"02"}',
@@ -134,9 +117,9 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -148,10 +131,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return ShippingMethodStub|ShippingMethodInterface
-     */
-    private function getUpsShippingMethod()
+    private function getUpsShippingMethod(): ShippingMethodStub
     {
         $ups2DayAir = (new ShippingMethodTypeStub())
             ->setIdentifier('02')
@@ -160,8 +140,10 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
             ->setIdentifier('12')
             ->setLabel('UPS 3 Day Select');
 
-        return (new ShippingMethodStub())
-            ->setIdentifier('ups_4')
-            ->setTypes([$ups2DayAir, $ups3DaySelect]);
+        $upsShippingMethod = new ShippingMethodStub();
+        $upsShippingMethod->setIdentifier('ups_4');
+        $upsShippingMethod->setTypes([$ups2DayAir, $ups3DaySelect]);
+
+        return $upsShippingMethod;
     }
 }

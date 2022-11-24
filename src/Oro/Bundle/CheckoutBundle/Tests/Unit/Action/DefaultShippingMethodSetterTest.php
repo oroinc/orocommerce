@@ -7,30 +7,21 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class DefaultShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutShippingMethodsProvider;
 
-    /**
-     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $checkoutShippingMethodsProviderMock;
-
-    /**
-     * @var DefaultShippingMethodSetter
-     */
+    /** @var DefaultShippingMethodSetter */
     private $defaultShippingMethodSetter;
 
     protected function setUp(): void
     {
-        $this->checkoutShippingMethodsProviderMock = $this
-            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
-            ->getMock();
+        $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
 
         $this->defaultShippingMethodSetter = new DefaultShippingMethodSetter(
-            $this->checkoutShippingMethodsProviderMock
+            $this->checkoutShippingMethodsProvider
         );
 
         parent::setUp();
@@ -38,13 +29,10 @@ class DefaultShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 
     public function testSetDefaultShippingMethodAlreadySet()
     {
-        $checkout = $this->getEntity(
-            Checkout::class,
-            [
-                'shippingMethod' => 'custom_shipping_method',
-            ]
-        );
-        $this->checkoutShippingMethodsProviderMock->expects($this->never())
+        $checkout = new Checkout();
+        $checkout->setShippingMethod('custom_shipping_method');
+
+        $this->checkoutShippingMethodsProvider->expects($this->never())
             ->method('getApplicableMethodsViews');
 
         $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
@@ -52,9 +40,9 @@ class DefaultShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 
     public function testSetDefaultShippingMethodEmptyApplicable()
     {
-        $checkout = $this->getEntity(Checkout::class);
+        $checkout = new Checkout();
 
-        $this->checkoutShippingMethodsProviderMock->expects($this->once())
+        $this->checkoutShippingMethodsProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
             ->with($checkout)
             ->willReturn(new ShippingMethodViewCollection());
@@ -64,14 +52,13 @@ class DefaultShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
 
     public function testSetDefaultShippingMethod()
     {
-        /** @var Checkout $checkout */
-        $checkout = $this->getEntity(Checkout::class);
+        $checkout = new Checkout();
 
         $method = 'custom_method';
         $methodType = 'custom_method_type';
 
         $price = Price::create(10, 'USD');
-        $this->checkoutShippingMethodsProviderMock->expects($this->once())
+        $this->checkoutShippingMethodsProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
             ->with($checkout)
             ->willReturn(

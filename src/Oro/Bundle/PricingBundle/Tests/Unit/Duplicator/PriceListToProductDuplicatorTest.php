@@ -12,35 +12,24 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 
 class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $manager;
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $manager;
 
-    /**
-     * @var InsertFromSelectQueryExecutor|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $insertQueryExecutor;
+    /** @var InsertFromSelectQueryExecutor|\PHPUnit\Framework\MockObject\MockObject */
+    private $insertQueryExecutor;
 
-    /**
-     * @var PriceListToProductDuplicator
-     */
-    protected $priceListToProductDuplicator;
+    /** @var PriceListToProductDuplicator */
+    private $priceListToProductDuplicator;
 
     protected function setUp(): void
     {
-        $this->manager = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->manager = $this->createMock(ObjectManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->insertQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->insertQueryExecutor = $this->createMock(InsertFromSelectQueryExecutor::class);
+
         $this->priceListToProductDuplicator = new PriceListToProductDuplicator(
             $this->registry,
             $this->insertQueryExecutor
@@ -49,19 +38,14 @@ class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicate()
     {
-        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $sourcePriceList **/
         $sourcePriceList = $this->createMock(PriceList::class);
 
-        /** @var PriceList|\PHPUnit\Framework\MockObject\MockObject $targetPriceList **/
         $targetPriceList = $this->createMock(PriceList::class);
 
         $entityName = PriceListToProduct::class;
         $this->priceListToProductDuplicator->setEntityName($entityName);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject $repository */
-        $repository = $this->getMockBuilder(PriceListToProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(PriceListToProductRepository::class);
 
         $this->manager->expects($this->once())
             ->method('getRepository')

@@ -9,20 +9,18 @@ use Oro\Bundle\WebsiteSearchBundle\Query\Factory\CompositeQueryFactory;
 class CompositeQueryFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $backendQueryFactory;
+    private $backendQueryFactory;
 
     /** @var QueryFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $websiteQueryFactory;
+    private $websiteQueryFactory;
 
-    /**
-     * @var CompositeQueryFactory
-     */
-    protected $factory;
+    /** @var CompositeQueryFactory */
+    private $factory;
 
     protected function setUp(): void
     {
-        $this->backendQueryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->getMock();
-        $this->websiteQueryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->getMock();
+        $this->backendQueryFactory = $this->createMock(QueryFactoryInterface::class);
+        $this->websiteQueryFactory = $this->createMock(QueryFactoryInterface::class);
 
         $this->factory = new CompositeQueryFactory($this->backendQueryFactory, $this->websiteQueryFactory);
     }
@@ -41,7 +39,7 @@ class CompositeQueryFactoryTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
+        $query = $this->createMock(SearchQueryInterface::class);
 
         $this->backendQueryFactory->expects($this->never())
             ->method('create');
@@ -59,7 +57,7 @@ class CompositeQueryFactoryTest extends \PHPUnit\Framework\TestCase
             'search_index' => null
         ];
 
-        $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
+        $query = $this->createMock(SearchQueryInterface::class);
 
         $this->backendQueryFactory->expects($this->once())
             ->method('create')

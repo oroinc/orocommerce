@@ -15,33 +15,32 @@ use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 
 class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DatagridListener */
-    private $listener;
-
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $associationProvider;
 
+    /** @var DatagridListener */
+    private $listener;
+
     protected function setUp(): void
     {
-        $this->provider = $this->getMockBuilder(PaymentTermProvider::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->associationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->provider = $this->createMock(PaymentTermProvider::class);
+        $this->associationProvider = $this->createMock(PaymentTermAssociationProvider::class);
 
         $this->listener = new DatagridListener($this->associationProvider, $this->provider);
     }
 
     public function testOnBuildBeforeWithoutExtendClass()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->never())->method($this->anything());
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->never())
+            ->method($this->anything());
 
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
@@ -49,14 +48,16 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildBeforeWithoutAssociationNames()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn([]);
 
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
@@ -64,14 +65,16 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildBeforeWithAssociationNames()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
 
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
@@ -93,16 +96,21 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnResultAfterWithoutExtendClass()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
-        $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
+        $datagrid->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config);
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->never())->method($this->anything());
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->never())
+            ->method($this->anything());
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->never())->method($this->anything());
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->never())
+            ->method($this->anything());
 
         $event = new OrmResultAfter($datagrid, []);
         $this->listener->onResultAfter($event);
@@ -110,15 +118,19 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnResultAfterWithoutAssociationNames()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
-        $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
+        $datagrid->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config);
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn([]);
 
         $event = new OrmResultAfter($datagrid, []);
         $this->listener->onResultAfter($event);
@@ -126,15 +138,19 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnResultAfterNotResultRecord()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
-        $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
+        $datagrid->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config);
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
 
         $event = new OrmResultAfter($datagrid, [new \stdClass()]);
         $this->listener->onResultAfter($event);
@@ -142,15 +158,19 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnResultAfterNotCustomerOwner()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
-        $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
+        $datagrid->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config);
 
-        $this->provider->expects($this->never())->method($this->anything());
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
+        $this->provider->expects($this->never())
+            ->method($this->anything());
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
 
         $event = new OrmResultAfter($datagrid, [new ResultRecord([])]);
         $this->listener->onResultAfter($event);
@@ -158,18 +178,22 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnResultWithCustomerOwner()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             ['extended_entity_name' => \stdClass::class]
         );
-        $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
+        $datagrid->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config);
 
         $paymentTerm = new PaymentTerm();
         $paymentTerm->setLabel('label');
-        $this->provider->expects($this->once())->method('getCustomerGroupPaymentTermByOwner')
+        $this->provider->expects($this->once())
+            ->method('getCustomerGroupPaymentTermByOwner')
             ->willReturn($paymentTerm);
-        $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
+        $this->associationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn(['paymentTerm']);
 
         $resultRecord = new ResultRecord(['data' => 'value', new PaymentTermAwareStub()]);
         $event = new OrmResultAfter($datagrid, [$resultRecord]);

@@ -8,10 +8,14 @@ entity_config:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.searchable.tooltip
                 filterable:
+                    options:
+                        indexed: true
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.filterable.tooltip
                 sortable:
+                    options:
+                        indexed: true
                     form:
                         options:
                             tooltip: oro.product.entity_config.field.items.attribute.sortable.tooltip

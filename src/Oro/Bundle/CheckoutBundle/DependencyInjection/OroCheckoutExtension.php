@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * This is the class that loads and manages CheckoutBundle service configuration
+ */
 class OroCheckoutExtension extends Extension
 {
     /**
@@ -22,6 +25,7 @@ class OroCheckoutExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('form_types.yml');
         $loader->load('controllers.yml');
+        $loader->load('mq_topics.yml');
 
         if (\array_key_exists('OroSaleBundle', $container->getParameter('kernel.bundles'))) {
             $loader->load('sale_services.yml');

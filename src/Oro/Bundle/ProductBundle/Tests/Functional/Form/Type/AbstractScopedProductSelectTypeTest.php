@@ -15,9 +15,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     /** @var string */
     protected $configPath;
 
-    /**
-     * @var int|object|null
-     */
+    /** @var int|object|null */
     protected $configScopeIdentifier;
 
     protected string $configScopeName = 'global';
@@ -38,9 +36,9 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function restrictionSelectDataProvider()
+    public function restrictionSelectDataProvider(): array
     {
         return [
             [
@@ -84,10 +82,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function restrictionGridDataProvider()
+    public function restrictionGridDataProvider(): array
     {
         return [
             [
@@ -134,10 +129,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         ];
     }
 
-    /**
-     * @param string $configPath
-     */
-    public function setConfigPath($configPath)
+    public function setConfigPath(string $configPath): void
     {
         $this->configPath = $configPath;
     }

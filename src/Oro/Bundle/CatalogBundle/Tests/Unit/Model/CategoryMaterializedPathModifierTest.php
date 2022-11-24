@@ -11,30 +11,19 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CategoryMaterializedPathModifier
-     */
-    protected $modifier;
+    /** @var ExtraActionEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var ExtraActionEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $repository;
 
-    /**
-     * @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $repository;
-    /**
-     * {@inheritdoc}
-     */
+    /** @var CategoryMaterializedPathModifier */
+    private $modifier;
+
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->repository = static::createMock(CategoryRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->repository = $this->createMock(CategoryRepository::class);
 
         $this->modifier = new CategoryMaterializedPathModifier($this->doctrineHelper);
     }
@@ -49,8 +38,9 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
         $category->setParentCategory($parent);
         ReflectionUtil::setId($category, 3);
 
-        $this->repository->expects(static::once())->method('updateMaterializedPath');
-        $this->doctrineHelper->expects(static::once())
+        $this->repository->expects(self::once())
+            ->method('updateMaterializedPath');
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepositoryForClass')
             ->willReturn($this->repository);
         $this->modifier->calculateMaterializedPath($category, true);
@@ -70,9 +60,9 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
 
         $children = [$category];
 
-        $this->repository->expects(static::exactly(count($children)))
+        $this->repository->expects(self::exactly(count($children)))
             ->method('updateMaterializedPath');
-        $this->doctrineHelper->expects(static::exactly(count($children)))
+        $this->doctrineHelper->expects(self::exactly(count($children)))
             ->method('getEntityRepositoryForClass')
             ->willReturn($this->repository);
 

@@ -25,13 +25,8 @@ class PaymentTermAssociationProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->configProvider = $this->createMock(ConfigProvider::class);
 
         $this->paymentTermAssociationProvider = new PaymentTermAssociationProvider(
             $this->doctrineHelper,
@@ -82,9 +77,14 @@ class PaymentTermAssociationProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetTargetField()
     {
         $config = $this->createMock(ConfigInterface::class);
-        $config->expects($this->once())->method('get')->with('target_field')->willReturn('target_field_val');
+        $config->expects($this->once())
+            ->method('get')
+            ->with('target_field')
+            ->willReturn('target_field_val');
 
-        $this->configProvider->expects($this->once())->method('getConfig')->with(\stdClass::class, 'fieldName')
+        $this->configProvider->expects($this->once())
+            ->method('getConfig')
+            ->with(\stdClass::class, 'fieldName')
             ->willReturn($config);
 
         $this->assertSame(
@@ -95,15 +95,17 @@ class PaymentTermAssociationProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAssociationNamesDefaultShouldBeFirst()
     {
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock(ClassMetadata::class);
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityMetadataForClass')->willReturn($metadata);
-        $metadata->expects($this->once())->method('hasAssociation')->willReturn(true);
-        $metadata->expects($this->once())->method('getAssociationsByTargetClass')->willReturn(
-            [['fieldName' => 'field1'], ['fieldName' => 'field2']]
-        );
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityMetadataForClass')
+            ->willReturn($metadata);
+        $metadata->expects($this->once())
+            ->method('hasAssociation')
+            ->willReturn(true);
+        $metadata->expects($this->once())
+            ->method('getAssociationsByTargetClass')
+            ->willReturn([['fieldName' => 'field1'], ['fieldName' => 'field2']]);
 
         $this->assertEquals(
             ['payment_term_7c4f1e8e', 'field1', 'field2'],
@@ -113,15 +115,17 @@ class PaymentTermAssociationProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAssociationNamesWithoutDefault()
     {
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock(ClassMetadata::class);
 
-        $this->doctrineHelper->expects($this->once())->method('getEntityMetadataForClass')->willReturn($metadata);
-        $metadata->expects($this->once())->method('hasAssociation')->willReturn(false);
-        $metadata->expects($this->once())->method('getAssociationsByTargetClass')->willReturn(
-            [['fieldName' => 'field1'], ['fieldName' => 'field2']]
-        );
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityMetadataForClass')
+            ->willReturn($metadata);
+        $metadata->expects($this->once())
+            ->method('hasAssociation')
+            ->willReturn(false);
+        $metadata->expects($this->once())
+            ->method('getAssociationsByTargetClass')
+            ->willReturn([['fieldName' => 'field1'], ['fieldName' => 'field2']]);
 
         $this->assertEquals(
             ['field1', 'field2'],

@@ -49,7 +49,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function configureGetCachedExpectations(string $optionKey, mixed $optionValue, string$methodName): void
+    private function configureGetCachedExpectations(string $optionKey, mixed $optionValue, string $methodName): void
     {
         $cacheKey = UniversalCacheKeyGenerator::normalizeCacheKey(
             TaxationSettingsProvider::class . '::' . $methodName

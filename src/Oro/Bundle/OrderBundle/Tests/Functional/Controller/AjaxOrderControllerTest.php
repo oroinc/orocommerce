@@ -53,7 +53,7 @@ class AjaxOrderControllerTest extends WebTestCase
      * @param Crawler $crawler
      * @param null|int $id
      */
-    protected function assertTotal(Crawler $crawler, $id = null)
+    private function assertTotal(Crawler $crawler, $id = null)
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -111,10 +111,7 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertArrayHasKey('customerGroupPaymentTerm', $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getRelatedDataActionDataProvider()
+    public function getRelatedDataActionDataProvider(): array
     {
         return [
             [

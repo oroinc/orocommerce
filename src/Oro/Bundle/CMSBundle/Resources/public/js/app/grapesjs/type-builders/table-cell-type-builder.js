@@ -1,3 +1,4 @@
+import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import TableTypeDecorator from '../controls/table-edit/table-type-decorator';
 
@@ -8,7 +9,8 @@ const TableCellTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             removable: false,
             copyable: false,
-            draggable: false
+            draggable: false,
+            name: __('oro.cms.wysiwyg.component.table_cell.label')
         },
 
         ...TableTypeDecorator,
@@ -18,7 +20,12 @@ const TableCellTypeBuilder = BaseTypeBuilder.extend({
             if (!components.length) {
                 components.add({
                     type: 'text',
-                    content: this.get('tagName') === 'th' ? 'Header cell' : 'Body cell'
+                    components: [{
+                        type: 'textnode',
+                        content: this.get('tagName') === 'th'
+                            ? __('oro.cms.wysiwyg.component.table.header_cell_label')
+                            : __('oro.cms.wysiwyg.component.table.body_cell_label')
+                    }]
                 });
             }
 

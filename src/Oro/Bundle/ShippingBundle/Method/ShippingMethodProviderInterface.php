@@ -2,22 +2,17 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
+/**
+ * Represents a service to provide shipping methods.
+ */
 interface ShippingMethodProviderInterface
 {
     /**
-     * @return ShippingMethodInterface[]
+     * @return ShippingMethodInterface[] [shipping method name => shipping method, ...]
      */
-    public function getShippingMethods();
+    public function getShippingMethods(): array;
 
-    /**
-     * @param string $name
-     * @return ShippingMethodInterface
-     */
-    public function getShippingMethod($name);
+    public function getShippingMethod(string $name): ?ShippingMethodInterface;
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasShippingMethod($name);
+    public function hasShippingMethod(string $name): bool;
 }

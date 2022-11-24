@@ -6,14 +6,9 @@ use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage;
 
 class ExtraActionEntityStorageTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ExtraActionEntityStorage
-     */
-    protected $storage;
+    /** @var ExtraActionEntityStorage */
+    private $storage;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->storage = new ExtraActionEntityStorage();
@@ -47,10 +42,7 @@ class ExtraActionEntityStorageTest extends \PHPUnit\Framework\TestCase
         $this->storage->scheduleForExtraInsert($type);
     }
 
-    /**
-     * @return array
-     */
-    public function invalidTypeDataProvider()
+    public function invalidTypeDataProvider(): array
     {
         return [
             [[], 'Expected type is object, array given'],

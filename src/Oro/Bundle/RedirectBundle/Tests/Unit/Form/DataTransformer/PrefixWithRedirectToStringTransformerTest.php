@@ -7,10 +7,8 @@ use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 
 class PrefixWithRedirectToStringTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PrefixWithRedirectToStringTransformer
-     */
-    protected $transformer;
+    /** @var PrefixWithRedirectToStringTransformer */
+    private $transformer;
 
     protected function setUp(): void
     {
@@ -19,19 +17,13 @@ class PrefixWithRedirectToStringTransformerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider transformDataProvider
-     *
-     * @param string|null $value
-     * @param PrefixWithRedirect|null $expected
      */
-    public function testTransform($value, $expected)
+    public function testTransform(?string $value, ?PrefixWithRedirect $expected)
     {
         $this->assertEquals($expected, $this->transformer->transform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function transformDataProvider()
+    public function transformDataProvider(): array
     {
         return [
             [
@@ -51,19 +43,13 @@ class PrefixWithRedirectToStringTransformerTest extends \PHPUnit\Framework\TestC
 
     /**
      * @dataProvider reverseTransformDataProvider
-     *
-     * @param PrefixWithRedirect|null $value
-     * @param string|null $expected
      */
-    public function testReverseTransform($value, $expected)
+    public function testReverseTransform(?PrefixWithRedirect $value, ?string $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
         return [
             [

@@ -11,41 +11,24 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 class BasicPaymentLineItemBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Price|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $priceMock;
+    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
+    private $price;
 
-    /**
-     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productUnitMock;
+    /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnit;
 
-    /**
-     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productHolderMock;
+    /** @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productHolder;
 
-    /**
-     * @var Product
-     */
-    private $productMock;
+    /** @var Product|\PHPUnit\Framework\MockObject\MockObject */
+    private $product;
 
     protected function setUp(): void
     {
-        $this->priceMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitMock = $this->getMockBuilder(ProductUnit::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productHolderMock = $this->createMock(ProductHolderInterface::class);
-
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->price = $this->createMock(Price::class);
+        $this->productUnit = $this->createMock(ProductUnit::class);
+        $this->productHolder = $this->createMock(ProductHolderInterface::class);
+        $this->product = $this->createMock(Product::class);
     }
 
     public function testFullBuild()
@@ -55,37 +38,36 @@ class BasicPaymentLineItemBuilderTest extends \PHPUnit\Framework\TestCase
         $productSku = 'someSku';
         $entityIdentifier = 'someId';
 
-        $this->productHolderMock
-            ->expects(static::once())
+        $this->productHolder->expects(self::once())
             ->method('getEntityIdentifier')
             ->willReturn($entityIdentifier);
 
         $builder = new BasicPaymentLineItemBuilder(
-            $this->productUnitMock,
+            $this->productUnit,
             $unitCode,
             $quantity,
-            $this->productHolderMock
+            $this->productHolder
         );
 
         $builder
-            ->setPrice($this->priceMock)
-            ->setProduct($this->productMock)
+            ->setPrice($this->price)
+            ->setProduct($this->product)
             ->setProductSku($productSku);
 
         $paymentLineItem = $builder->getResult();
 
         $expectedPaymentLineItem = new PaymentLineItem([
-            PaymentLineItem::FIELD_PRICE => $this->priceMock,
-            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+            PaymentLineItem::FIELD_PRICE => $this->price,
+            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
             PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
             PaymentLineItem::FIELD_QUANTITY => $quantity,
-            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
-            PaymentLineItem::FIELD_PRODUCT => $this->productMock,
+            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
+            PaymentLineItem::FIELD_PRODUCT => $this->product,
             PaymentLineItem::FIELD_PRODUCT_SKU => $productSku,
             PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier
         ]);
 
-        static::assertEquals($expectedPaymentLineItem, $paymentLineItem);
+        self::assertEquals($expectedPaymentLineItem, $paymentLineItem);
     }
 
     public function testOptionalBuild()
@@ -94,28 +76,27 @@ class BasicPaymentLineItemBuilderTest extends \PHPUnit\Framework\TestCase
         $quantity = 15;
         $entityIdentifier = 'someId';
 
-        $this->productHolderMock
-            ->expects(static::once())
+        $this->productHolder->expects(self::once())
             ->method('getEntityIdentifier')
             ->willReturn($entityIdentifier);
 
         $builder = new BasicPaymentLineItemBuilder(
-            $this->productUnitMock,
+            $this->productUnit,
             $unitCode,
             $quantity,
-            $this->productHolderMock
+            $this->productHolder
         );
 
         $paymentLineItem = $builder->getResult();
 
         $expectedPaymentLineItem = new PaymentLineItem([
-            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
             PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
             PaymentLineItem::FIELD_QUANTITY => $quantity,
-            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
             PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier
         ]);
 
-        static::assertEquals($expectedPaymentLineItem, $paymentLineItem);
+        self::assertEquals($expectedPaymentLineItem, $paymentLineItem);
     }
 }

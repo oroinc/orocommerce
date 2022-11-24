@@ -8,9 +8,7 @@ use Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy;
 
 class ProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductImportProcessor
-     */
+    /** @var ProductImportProcessor */
     private $processor;
 
     protected function setUp(): void
@@ -20,10 +18,7 @@ class ProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testCloseWithClosableStrategy()
     {
-        /** @var ProductStrategy|\PHPUnit\Framework\MockObject\MockObject $strategy */
-        $strategy = $this->getMockBuilder(ProductStrategy::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $strategy = $this->createMock(ProductStrategy::class);
         $strategy->expects($this->once())
             ->method('close');
         $this->processor->setStrategy($strategy);
@@ -32,7 +27,6 @@ class ProductImportProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testCloseWithNonClosableStrategy()
     {
-        /** @var StrategyInterface|\PHPUnit\Framework\MockObject\MockObject $strategy */
         $strategy = $this->createMock(StrategyInterface::class);
         $strategy->expects($this->never())
             ->method($this->anything());

@@ -12,24 +12,16 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
  */
 class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $persistentCache;
 
-    /**
-     * @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $persistentCacheItem;
 
-    /**
-     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $localCache;
 
-    /**
-     * @var UrlKeyValueCache
-     */
+    /** @var UrlKeyValueCache */
     private $urlCache;
 
     protected function setUp(): void
@@ -43,11 +35,8 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider hasDataProvider
-     * @param bool $hasInLocal
-     * @param bool $hasInPersistent
-     * @param bool $expected
      */
-    public function testHas($hasInLocal, $hasInPersistent, $expected)
+    public function testHas(bool $hasInLocal, bool $hasInPersistent, bool $expected)
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
@@ -67,10 +56,7 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->urlCache->has($routeName, $routeParameters, $localization));
     }
 
-    /**
-     * @return array
-     */
-    public function hasDataProvider()
+    public function hasDataProvider(): array
     {
         return [
             'do not contains' => [false, false, false],

@@ -22,19 +22,13 @@ class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getProvider
-     *
-     * @param string $sourceDocumentClass
-     * @param integer $sourceDocumentId
-     * @param string $sourceDocumentIdentifier
-     * @param $expectedFormat
-     * @param $expectUseGetEntityClassName
      */
     public function testFormat(
-        $sourceDocumentClass,
-        $sourceDocumentId,
-        $sourceDocumentIdentifier,
-        $expectedFormat,
-        $expectUseGetEntityClassName
+        ?string $sourceDocumentClass,
+        ?int $sourceDocumentId,
+        ?string $sourceDocumentIdentifier,
+        string $expectedFormat,
+        bool $expectUseGetEntityClassName
     ) {
         if ($expectUseGetEntityClassName) {
             $this->entityClassNameProvider->expects($this->once())
@@ -54,10 +48,7 @@ class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedFormat, $response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProvider()
+    public function getProvider(): array
     {
         return [
             'empty class and empty identifier' => [

@@ -22,7 +22,7 @@ use Twig\Error\SyntaxError;
  */
 class TabbedContentWidgetType extends AbstractContentWidgetType
 {
-    public const CONTENT_WIDGET_NAME = 'tabbed_content';
+    public const CONTENT_WIDGET_NAME = 'oro_tabbed_content';
 
     private ManagerRegistry $managerRegistry;
 

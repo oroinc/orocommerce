@@ -18,25 +18,19 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
 {
     use EntityTrait;
 
-    /**
-     * @var DoctrineShippingLineItemCollectionFactory
-     */
+    /** @var DoctrineShippingLineItemCollectionFactory */
     private $collectionFactory;
 
-    /**
-     * @var BasicOrderShippingLineItemConverter
-     */
-    private $orderShippingLineItemConverter;
-
-    /**
-     * @var BasicShippingLineItemBuilderFactory
-     */
+    /** @var BasicShippingLineItemBuilderFactory */
     private $shippingLineItemBuilderFactory;
+
+    /** @var BasicOrderShippingLineItemConverter */
+    private $orderShippingLineItemConverter;
 
     protected function setUp(): void
     {
-        $this->shippingLineItemBuilderFactory = new BasicShippingLineItemBuilderFactory();
         $this->collectionFactory = new DoctrineShippingLineItemCollectionFactory();
+        $this->shippingLineItemBuilderFactory = new BasicShippingLineItemBuilderFactory();
 
         $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
             $this->collectionFactory,
@@ -44,10 +38,7 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-    /**
-     * @return array
-     */
-    public function missingDependenciesDataProvider()
+    public function missingDependenciesDataProvider(): array
     {
         return [
             [
@@ -69,8 +60,8 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
      * @dataProvider missingDependenciesDataProvider
      */
     public function testConvertLineItemsWhenSomeDependencyMissing(
-        DoctrineShippingLineItemCollectionFactory $collectionFactory = null,
-        BasicShippingLineItemBuilderFactory $shippingLineItemBuilderFactory = null
+        ?DoctrineShippingLineItemCollectionFactory $collectionFactory,
+        ?BasicShippingLineItemBuilderFactory $shippingLineItemBuilderFactory
     ) {
         $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
             $collectionFactory,
@@ -83,18 +74,15 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
     /**
      * @dataProvider lineItemsDataProvider
      */
-    public function testConvertLineItems(array $lineItems, array $expectetdShippingLineItems)
+    public function testConvertLineItems(array $lineItems, array $expectedShippingLineItems)
     {
         $this->assertEquals(
-            new DoctrineShippingLineItemCollection($expectetdShippingLineItems),
+            new DoctrineShippingLineItemCollection($expectedShippingLineItems),
             $this->orderShippingLineItemConverter->convertLineItems(new ArrayCollection($lineItems))
         );
     }
 
-    /**
-     * @return array
-     */
-    public function lineItemsDataProvider()
+    public function lineItemsDataProvider(): array
     {
         $product = $this->getEntity(Product::class, ['id' => 123]);
         $unit1 = $this->getEntity(ProductUnit::class, ['code' => 'item']);
@@ -138,11 +126,7 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         ];
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @return array
-     */
-    private function createExpected(OrderLineItem $lineItem)
+    private function createExpected(OrderLineItem $lineItem): array
     {
         return [
             'quantity' => $lineItem->getQuantity(),
@@ -153,20 +137,12 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         ];
     }
 
-    /**
-     * @param float $price
-     * @return Price
-     */
-    private function getPrice($price)
+    private function getPrice(float $price): Price
     {
         return $this->getEntity(Price::class, ['value' => $price]);
     }
 
-    /**
-     * @param array $data
-     * @return OrderLineItem
-     */
-    private function getLineItem(array $data)
+    private function getLineItem(array $data): OrderLineItem
     {
         return $this->getEntity(OrderLineItem::class, $data);
     }

@@ -19,34 +19,22 @@ use Twig\Environment;
 
 abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     protected $env;
 
-    /**
-     * @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $websiteProvider;
 
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     protected $requestStack;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     protected $featureChecker;
 
     /**
@@ -66,28 +54,22 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
 
     abstract protected function processEvent(BeforeListRenderEvent $event);
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $id . '.trans';
+            });
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
-        $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
         $website = new Website();
-        $this->websiteProvider->method('getWebsites')->willReturn([$website]);
+        $this->websiteProvider->expects($this->any())
+            ->method('getWebsites')
+            ->willReturn([$website]);
 
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
@@ -135,7 +117,9 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
 
         $request = new Request(['id' => $customerId]);
 
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
 
         $priceLists = $this->setRepositoryExpectations();
 

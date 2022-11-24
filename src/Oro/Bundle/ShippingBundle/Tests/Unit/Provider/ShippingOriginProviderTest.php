@@ -48,8 +48,8 @@ class ShippingOriginProviderTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityReference')
             ->willReturnMap([
-                ['OroAddressBundle:Country', $configData['country'], $country],
-                ['OroAddressBundle:Region', $configData['region'], $region]
+                [Country::class, $configData['country'], $country],
+                [Region::class, $configData['region'], $region]
             ]);
 
         $shippingOrigin = $this->shippingOriginModelFactory->create($configData);

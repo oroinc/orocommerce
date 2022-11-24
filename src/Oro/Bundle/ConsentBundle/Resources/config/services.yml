@@ -122,7 +122,7 @@ services:
     oro_consent.validator.unique_consent:
         class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\UniqueConsentValidator'
         tags:
-            - { name: validator.constraint_validator, alias: oro_consent_unique_consent_validator }
+            - { name: validator.constraint_validator }
 
     oro_consent.validator.required_consents:
         class: 'Oro\Bundle\ConsentBundle\Validator\Constraints\RequiredConsentsValidator'

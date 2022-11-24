@@ -9,8 +9,7 @@ class RestrictProductVariantEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetQueryBuilder()
     {
-        /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject $queryBuilder */
-        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
         $event = new RestrictProductVariantEvent($queryBuilder);
         $this->assertSame($queryBuilder, $event->getQueryBuilder());

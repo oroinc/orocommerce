@@ -26,56 +26,32 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $quantityManager;
+    /** @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $quantityManager;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /**
-     * @var InventoryStatusHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $statusHandler;
+    /** @var InventoryStatusHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $statusHandler;
 
-    /**
-     * @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $entityFallbackResolver;
+    /** @var EntityFallbackResolver|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityFallbackResolver;
 
-    /**
-     * @var CreateOrderEventListener
-     */
-    protected $createOrderEventListener;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
-    /**
-     * @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $checkoutLineItemsManager;
+    /** @var CreateOrderEventListener */
+    private $createOrderEventListener;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->statusHandler = $this->getMockBuilder(InventoryStatusHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->quantityManager = $this->getMockBuilder(InventoryQuantityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->checkoutLineItemsManager = $this->getMockBuilder(CheckoutLineItemsManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);
+        $this->statusHandler = $this->createMock(InventoryStatusHandler::class);
+        $this->quantityManager = $this->createMock(InventoryQuantityManager::class);
+        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
+
         $this->createOrderEventListener = new CreateOrderEventListener(
             $this->quantityManager,
             $this->statusHandler,
@@ -90,9 +66,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $inventoryLevel = $this->createMock(InventoryLevel::class);
 
-        $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
@@ -120,10 +94,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
     public function testWrongContext()
     {
         $workflowData = $this->createMock(WorkflowData::class);
-        /** @var ExtendableActionEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ExtendableActionEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ExtendableActionEvent::class);
         $event->expects($this->any())
             ->method('getContext');
         $workflowData->expects($this->never())
@@ -140,9 +111,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->prepareEvent();
 
         $inventoryLevel = $this->createMock(InventoryLevel::class);
-        $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
@@ -172,9 +141,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InventoryLevelNotFoundException::class);
 
         $event = $this->prepareEvent();
-        $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(InventoryLevel::class)
@@ -194,9 +161,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->prepareConditionEvent();
 
         $inventoryLevel = $this->createMock(InventoryLevel::class);
-        $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
@@ -224,9 +189,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $event = $this->prepareConditionEvent();
 
         $inventoryLevel = $this->createMock(InventoryLevel::class);
-        $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
@@ -251,9 +214,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InventoryLevelNotFoundException::class);
 
         $event = $this->prepareConditionEvent();
-        $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $inventoryLevelRepository = $this->createMock(InventoryLevelRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(InventoryLevel::class)
@@ -268,12 +229,10 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->createOrderEventListener->onBeforeOrderCreate($event);
     }
 
-    protected function prepareEvent()
+    private function prepareEvent(): ExtendableActionEvent
     {
         $numberOfItems = 5;
-        $event = $this->getMockBuilder(ExtendableActionEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ExtendableActionEvent::class);
         $workflowItem = $this->createMock(WorkflowItem::class);
         $workflowData = $this->createMock(WorkflowData::class);
         $order = $this->createMock(Order::class);
@@ -314,15 +273,10 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         return $event;
     }
 
-    /**
-     * @return ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function prepareConditionEvent()
+    private function prepareConditionEvent(): ExtendableConditionEvent|\PHPUnit\Framework\MockObject\MockObject
     {
         $numberOfItems = 5;
-        $event = $this->getMockBuilder(ExtendableConditionEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ExtendableConditionEvent::class);
         $workflowItem = $this->createMock(WorkflowItem::class);
         $checkout = $this->createMock(Checkout::class);
         $checkoutSource = $this->createMock(CheckoutSourceStub::class);

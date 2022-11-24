@@ -8,41 +8,27 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const CLASS_NAME = 'className';
-    const IS_RELATION = 'isRelation';
-    const FIELDS = 'fields';
+    protected const CLASS_NAME = 'className';
+    protected const IS_RELATION = 'isRelation';
+    protected const FIELDS = 'fields';
 
-    /**
-     * @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject */
     protected $expressionParser;
 
-    /**
-     * @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     protected function setUp(): void
     {
-        $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->expressionParser = $this->createMock(ExpressionParser::class);
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
     }
 
-    /**
-     * @param array $fieldsData
-     * @param bool $numericalOnly
-     * @param bool $withRelations
-     * @return array
-     */
-    protected function getMap(array $fieldsData, $numericalOnly, $withRelations)
+    protected function getMap(array $fieldsData, bool $numericalOnly, bool $withRelations): array
     {
         $map = [];
         foreach ($fieldsData as $data) {
@@ -57,20 +43,13 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
         return $map;
     }
 
-    /**
-     * @param array $fieldsData
-     * @param bool $numericalOnly
-     * @param bool $withRelations
-     */
-    protected function configureDependencies(array $fieldsData, $numericalOnly, $withRelations)
+    protected function configureDependencies(array $fieldsData, bool $numericalOnly, bool $withRelations): void
     {
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($str) {
-                    return $str . ' TRANS';
-                }
-            );
+            ->willReturnCallback(function ($str) {
+                return $str . ' TRANS';
+            });
         $this->expressionParser->expects($this->any())
             ->method('getReverseNameMapping')
             ->willReturn(['ProductClass' => 'product']);

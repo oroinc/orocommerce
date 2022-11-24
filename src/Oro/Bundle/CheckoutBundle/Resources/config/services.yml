@@ -398,8 +398,8 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.provider.checkout_subtotal'
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
+            - '@oro_shipping.shipping_origin.provider'
             - '@?oro_shipping.context.builder_factory_basic'
 
     oro_checkout.factory.payment_context_factory:

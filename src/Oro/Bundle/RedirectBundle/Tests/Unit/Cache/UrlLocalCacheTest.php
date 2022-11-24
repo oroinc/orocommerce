@@ -8,27 +8,23 @@ use Psr\Cache\CacheItemPoolInterface;
 
 class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UrlLocalCache
-     */
-    private $urlCache;
-
-    /**
-     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
+
+    /** @var UrlLocalCache */
+    private $urlCache;
 
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheItemPoolInterface::class);
+
         $this->urlCache = new UrlLocalCache($this->cache);
     }
 
     /**
      * @dataProvider trueFalseDataProvider
-     * @param bool $expected
      */
-    public function testHas($expected)
+    public function testHas(bool $expected)
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
@@ -42,10 +38,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->urlCache->has($routeName, $routeParameters, $localization));
     }
 
-    /**
-     * @return array
-     */
-    public function trueFalseDataProvider()
+    public function trueFalseDataProvider(): array
     {
         return [
             'true' => [true],
@@ -55,10 +48,8 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider urlDataProvider
-     * @param array|null $data
-     * @param string|bool $expected
      */
-    public function testGetUrl($data, $expected)
+    public function testGetUrl(?array $data, string|false|null $expected)
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
@@ -80,10 +71,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->urlCache->getUrl($routeName, $routeParameters, $localization));
     }
 
-    /**
-     * @return array
-     */
-    public function urlDataProvider()
+    public function urlDataProvider(): array
     {
         return [
             'has in cache' => [[UrlLocalCache::URL_KEY => '/test', UrlLocalCache::SLUG_KEY => 'test'], '/test'],
@@ -94,10 +82,8 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider slugDataProvider
-     * @param array|null $data
-     * @param string|bool $expected
      */
-    public function testGetSlug($data, $expected)
+    public function testGetSlug(?array $data, string|bool $expected)
     {
         $routeName = 'test';
         $routeParameters = ['id' => 1];
@@ -119,10 +105,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->urlCache->getSlug($routeName, $routeParameters, $localization));
     }
 
-    /**
-     * @return array
-     */
-    public function slugDataProvider()
+    public function slugDataProvider(): array
     {
         return [
             'has in cache' => [[UrlLocalCache::URL_KEY => '/test', UrlLocalCache::SLUG_KEY => 'test'], 'test'],

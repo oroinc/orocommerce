@@ -14,32 +14,19 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RestrictDisabledProductsEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilityQueryBuilderModifier
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilityQueryBuilderModifier */
     private $queryBuilderModifier;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilitySearchQueryModifier
-     */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilitySearchQueryModifier */
     private $searchQueryModifier;
 
-    /**
-     * @var RestrictDisabledProductsEventListener
-     */
+    /** @var RestrictDisabledProductsEventListener */
     private $listener;
 
     protected function setUp(): void
     {
-        $this->searchQueryModifier = $this
-            ->getMockBuilder(ProductVisibilitySearchQueryModifier::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->queryBuilderModifier = $this
-            ->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->searchQueryModifier = $this->createMock(ProductVisibilitySearchQueryModifier::class);
+        $this->queryBuilderModifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
 
         $this->listener = new RestrictDisabledProductsEventListener(
             $this->searchQueryModifier,
@@ -49,10 +36,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit\Framework\TestC
 
     public function testOnDBQuery()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|QueryBuilder $qb */
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
         $event = new ProductDBQueryRestrictionEvent($qb, new ParameterBag([]));
         $this->queryBuilderModifier->expects($this->once())
@@ -64,10 +48,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit\Framework\TestC
 
     public function testOnSearchQuery()
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Query $query */
-        $query = $this->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $query = $this->createMock(Query::class);
 
         $event = new ProductSearchQueryRestrictionEvent($query, new ParameterBag([]));
         $this->searchQueryModifier->expects($this->once())

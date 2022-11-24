@@ -12,28 +12,19 @@ use Symfony\Component\Form\Test\FormInterface;
 
 class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CategoryVisibilityPostSubmitListener
-     */
-    protected $listener;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var VisibilityFormPostSubmitDataHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $dataHandler;
 
-    /**
-     * @var VisibilityFormPostSubmitDataHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $dataHandler;
+    /** @var CategoryVisibilityPostSubmitListener */
+    private $listener;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->dataHandler = $this->getMockBuilder(VisibilityFormPostSubmitDataHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataHandler = $this->createMock(VisibilityFormPostSubmitDataHandler::class);
 
         $this->listener = new CategoryVisibilityPostSubmitListener($this->dataHandler, $this->registry);
     }
@@ -43,12 +34,19 @@ class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCa
         $form = $this->createMock(FormInterface::class);
         $category = new Category();
         $visibilityForm = $this->createMock(FormInterface::class);
-        $visibilityForm->method('getData')->willReturn($category);
-        $form->method('get')->with('visibility')->willReturn($visibilityForm);
+        $visibilityForm->expects($this->any())
+            ->method('getData')
+            ->willReturn($category);
+        $form->expects($this->any())
+            ->method('get')
+            ->with('visibility')
+            ->willReturn($visibilityForm);
         $event = new AfterFormProcessEvent($form, $category);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($em);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
         $this->dataHandler->expects($this->once())
             ->method('saveForm')

@@ -5,47 +5,52 @@ namespace Oro\Bundle\TaxBundle\Form\DataTransformer;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * The data transformer for the tax jurisdiction zip code form type.
+ */
 class ZipCodeTransformer implements DataTransformerInterface
 {
     /**
-     * {@inheritdoc}
-     * @param ZipCode $zipCode
+     * {@inheritDoc}
      */
-    public function transform($zipCode)
+    public function transform($value)
     {
-        if (null === $zipCode) {
+        /** @var ZipCode|null $value */
+
+        if (null === $value) {
             return null;
         }
 
-        if ($zipCode->isSingleZipCode()) {
-            $zipCode
-                ->setZipRangeStart($zipCode->getZipCode())
-                ->setZipCode(null);
+        if ($value->isSingleZipCode()) {
+            $value->setZipRangeStart($value->getZipCode());
+            $value->setZipCode(null);
         }
 
-        return $zipCode;
+        return $value;
     }
 
     /**
-     * {@inheritdoc}
-     * @param ZipCode $zipCode
+     * {@inheritDoc}
      */
-    public function reverseTransform($zipCode)
+    public function reverseTransform($value)
     {
-        if (null === $zipCode) {
+        /** @var ZipCode|null $value */
+
+        if (null === $value) {
             return null;
         }
 
-        $zipRangeStart = $zipCode->getZipRangeStart();
-        $zipRangeEnd = $zipCode->getZipRangeEnd();
-
-        if ($zipRangeStart === $zipRangeEnd || ($zipRangeStart && !$zipRangeEnd) || (!$zipRangeStart && $zipRangeEnd)) {
-            $zipCode
-                ->setZipCode($zipRangeStart ?: $zipRangeEnd)
-                ->setZipRangeStart(null)
-                ->setZipRangeEnd(null);
+        $zipRangeStart = $value->getZipRangeStart();
+        $zipRangeEnd = $value->getZipRangeEnd();
+        if ($zipRangeStart === $zipRangeEnd
+            || ($zipRangeStart && !$zipRangeEnd)
+            || (!$zipRangeStart && $zipRangeEnd)
+        ) {
+            $value->setZipCode($zipRangeStart ?: $zipRangeEnd);
+            $value->setZipRangeStart(null);
+            $value->setZipRangeEnd(null);
         }
 
-        return $zipCode;
+        return $value;
     }
 }

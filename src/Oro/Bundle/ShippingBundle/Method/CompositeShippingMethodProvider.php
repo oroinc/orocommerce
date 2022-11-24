@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Method;
 
 /**
- * The registry of shipping method providers.
+ * Uses all registered shipping method providers to get shipping methods.
  */
 class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
 {
     /** @var iterable|ShippingMethodProviderInterface[] */
-    private $providers;
+    private iterable $providers;
 
     /**
      * @param iterable|ShippingMethodProviderInterface[] $providers
@@ -21,21 +21,7 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getShippingMethod($identifier)
-    {
-        foreach ($this->providers as $provider) {
-            if ($provider->hasShippingMethod($identifier)) {
-                return $provider->getShippingMethod($identifier);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getShippingMethods()
+    public function getShippingMethods(): array
     {
         $items = [];
         foreach ($this->providers as $provider) {
@@ -51,7 +37,21 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function hasShippingMethod($name)
+    public function getShippingMethod(string $name): ?ShippingMethodInterface
+    {
+        foreach ($this->providers as $provider) {
+            if ($provider->hasShippingMethod($name)) {
+                return $provider->getShippingMethod($name);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasShippingMethod(string $name): bool
     {
         foreach ($this->providers as $provider) {
             if ($provider->hasShippingMethod($name)) {

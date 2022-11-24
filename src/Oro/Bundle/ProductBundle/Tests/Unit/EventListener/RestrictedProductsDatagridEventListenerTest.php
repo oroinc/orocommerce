@@ -15,39 +15,30 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RestrictedProductsDatagridEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productManager;
+    private $productManager;
 
     /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    protected $qb;
+    private $qb;
 
     /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
-    protected $requestStack;
+    private $requestStack;
 
     /** @var RestrictedProductsDatagridEventListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->requestStack = $this->getMockBuilder(RequestStack::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productManager = $this->getMockBuilder(ProductManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->qb = $this->createMock(QueryBuilder::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->productManager = $this->createMock(ProductManager::class);
 
         $this->listener = new RestrictedProductsDatagridEventListener($this->requestStack, $this->productManager);
     }
 
     /**
-     * @dataProvider testOnBuildAfterDataProvider
-     * @param Request|null $request
-     * @param array $expectedParamsResult
+     * @dataProvider onBuildAfterDataProvider
      */
-    public function testOnBuildAfter($request, array $expectedParamsResult)
+    public function testOnBuildAfter(?Request $request, array $expectedParamsResult)
     {
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -55,17 +46,11 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit\Framework\Tes
         $event = $this->createEvent();
         $this->productManager->expects($this->once())
             ->method('restrictQueryBuilder')
-            ->with(
-                $this->qb,
-                $expectedParamsResult
-            );
+            ->with($this->qb, $expectedParamsResult);
         $this->listener->onBuildAfter($event);
     }
 
-    /**
-     * @return array
-     */
-    public function testOnBuildAfterDataProvider()
+    public function onBuildAfterDataProvider(): array
     {
         $emptyParamsRequest = new Request();
         $emptyParamsRequest->request->set(ProductSelectType::DATA_PARAMETERS, []);
@@ -82,20 +67,17 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit\Framework\Tes
             ];
     }
 
-    /**
-     * @return BuildAfter
-     */
-    protected function createEvent()
+    private function createEvent(): BuildAfter
     {
-        /** @var OrmDatasource|\PHPUnit\Framework\MockObject\MockObject $dataSource */
-        $dataSource = $this->getMockBuilder(OrmDatasource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $dataSource->expects($this->once())->method('getQueryBuilder')->willReturn($this->qb);
+        $dataSource = $this->createMock(OrmDatasource::class);
+        $dataSource->expects($this->once())
+            ->method('getQueryBuilder')
+            ->willReturn($this->qb);
 
-        /** @var DatagridInterface|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(DatagridInterface::class);
-        $dataGrid->expects($this->once())->method('getDatasource')->willReturn($dataSource);
+        $dataGrid->expects($this->once())
+            ->method('getDatasource')
+            ->willReturn($dataSource);
 
         return new BuildAfter($dataGrid);
     }

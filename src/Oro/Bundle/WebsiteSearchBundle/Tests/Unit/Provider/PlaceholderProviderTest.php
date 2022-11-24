@@ -9,30 +9,19 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PlaceholderProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $provider;
-
-    /**
-     * @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PlaceholderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $placeholder;
 
-    /**
-     * @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $mappingProvider;
+
+    /** @var PlaceholderProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->placeholder = $this->getMockBuilder(PlaceholderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->mappingProvider = $this->getMockBuilder(AbstractSearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->placeholder = $this->createMock(PlaceholderInterface::class);
+        $this->mappingProvider = $this->createMock(AbstractSearchMappingProvider::class);
 
         $this->provider = new PlaceholderProvider($this->placeholder, $this->mappingProvider);
     }
@@ -44,14 +33,12 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
             'Cannot find name field for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct class'
         );
 
-        $this->mappingProvider
-            ->expects($this->once())
+        $this->mappingProvider->expects($this->once())
             ->method('getEntityMapParameter')
             ->with(TestProduct::class, 'fields')
             ->willReturn([]);
 
-        $this->placeholder
-            ->expects($this->never())
+        $this->placeholder->expects($this->never())
             ->method('replace');
 
         $this->provider->getPlaceholderFieldName(TestProduct::class, 'name', ['LOCALIZATION_ID' => 1]);
@@ -60,8 +47,7 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetPlaceholderFieldNameWhenFieldExists()
     {
         $name = 'names_LOCALIZATION_ID';
-        $this->mappingProvider
-            ->expects($this->once())
+        $this->mappingProvider->expects($this->once())
             ->method('getEntityMapParameter')
             ->with(TestProduct::class, 'fields')
             ->willReturn([
@@ -72,8 +58,7 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
 
         $placeholders = ['LOCALIZATION_ID' => 1];
 
-        $this->placeholder
-            ->expects($this->once())
+        $this->placeholder->expects($this->once())
             ->method('replace')
             ->with($name, $placeholders);
 
@@ -82,16 +67,14 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPlaceholderEntityAlias()
     {
-        $this->mappingProvider
-            ->expects($this->once())
+        $this->mappingProvider->expects($this->once())
             ->method('getEntityAlias')
             ->with(TestProduct::class)
             ->willReturn('alias_WEBSITE_ID');
 
         $placeholders = ['WEBSITE_ID' => 1];
 
-        $this->placeholder
-            ->expects($this->once())
+        $this->placeholder->expects($this->once())
             ->method('replace')
             ->with('alias_WEBSITE_ID', $placeholders);
 

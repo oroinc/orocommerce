@@ -35,29 +35,19 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     use DefaultWebsiteIdTestTrait;
     use SearchExtensionTrait;
 
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mappingProviderMock;
+    /** @var AbstractSearchMappingProvider|\PHPUnit\Framework\MockObject\MockObject */
+    protected $mappingProvider;
 
-    /**
-     * @var EntityAliasResolver
-     */
+    /** @var EntityAliasResolver */
     protected $entityAliasResolver;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     protected $listener;
 
     /** @var AbstractIndexer */
@@ -88,24 +78,19 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
     /**
      * @param array $options
+     *
      * @return Item[]
      */
-    abstract protected function getResultItems(array $options);
+    abstract protected function getResultItems(array $options): array;
 
-    /**
-     * @param int $expectedCount
-     */
-    abstract protected function assertItemsCount($expectedCount);
+    abstract protected function assertItemsCount(int $expectedCount): void;
 
     /** Check for engine before initialization but after init client */
-    abstract protected function preSetUp();
+    abstract protected function preSetUp(): void;
 
-    /** Check for engine after test excution */
-    abstract protected function preTearDown();
+    /** Check for engine after test execution */
+    abstract protected function preTearDown(): void;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
@@ -123,17 +108,11 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
     }
 
-    /**
-     * @return string
-     */
-    protected function getRestrictEntityEventName()
+    protected function getRestrictEntityEventName(): string
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'testproduct');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         $this->preTearDown();
@@ -144,7 +123,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->clearIndexTextTable(IndexText::class);
     }
 
-    protected function setListener()
+    protected function setListener(): void
     {
         $listener = function (IndexEntityEvent $event) {
             /** @var TestProduct[] $entities */
@@ -159,52 +138,38 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             }
         };
 
-        $this->dispatcher->addListener(
-            IndexEntityEvent::NAME,
-            $listener,
-            -255
-        );
+        $this->dispatcher->addListener(IndexEntityEvent::NAME, $listener, -255);
 
         $this->listener = $listener;
     }
 
-    /**
-     * @param string $eventName
-     */
-    protected function clearRestrictListeners($eventName)
+    protected function clearRestrictListeners(string $eventName): void
     {
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {
             $this->dispatcher->removeListener($eventName, $listener);
         }
     }
 
-    /**
-     * @param string $class
-     * @param bool $return
-     */
-    protected function setClassSupportedExpectation($class, $return)
+    protected function setClassSupportedExpectation(string $class, bool $return): void
     {
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('isClassSupported')
             ->with($class)
             ->willReturn($return);
     }
 
-    protected function setEntityAliasExpectation()
+    protected function setEntityAliasExpectation(): void
     {
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('getEntityAlias')
             ->willReturnCallback(function ($class) {
                 return $this->mappingConfig[$class]['alias'];
             });
     }
 
-    protected function setGetEntityConfigExpectation()
+    protected function setGetEntityConfigExpectation(): void
     {
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('getEntityConfig')
             ->willReturnCallback(function ($class) {
                 return $this->mappingConfig[$class];
@@ -266,8 +231,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
         $this->dispatcher->addListener(CollectDependentClassesEvent::NAME, $collectDependentClassesListener, -255);
 
-        $this->mappingProviderMock
-            ->expects($this->any())
+        $this->mappingProvider->expects($this->any())
             ->method('isClassSupported')
             ->willReturn(true);
 
@@ -393,8 +357,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testReindexOfAllWebsites()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock
-            ->expects($this->once())
+        $this->mappingProvider->expects($this->once())
             ->method('getEntityClasses')
             ->willReturn([TestProduct::class]);
 
@@ -540,10 +503,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         );
     }
 
-    /**
-     * @param Item $item
-     * @return string
-     */
     protected function getItemName(Item $item) : string
     {
         $fieldName = 'names_' . $this->getDefaultLocalizationId();

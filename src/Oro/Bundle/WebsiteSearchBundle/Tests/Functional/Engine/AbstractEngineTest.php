@@ -24,14 +24,10 @@ abstract class AbstractEngineTest extends WebTestCase
     use DefaultLocalizationIdTestTrait;
     use SearchExtensionTrait;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     protected $listener;
 
-    /**
-     * @var AbstractEngine
-     */
+    /** @var AbstractEngine */
     protected $engine;
 
     protected function setUp(): void
@@ -58,22 +54,16 @@ abstract class AbstractEngineTest extends WebTestCase
     }
 
     /**
-     * @param Query $query
      * @return Result\Item[]
      */
-    protected function getSearchItems(Query $query)
+    protected function getSearchItems(Query $query): array
     {
-        $searchResults = $this->engine->search($query);
-
-        return $searchResults->getElements();
+        return $this->engine->search($query)->getElements();
     }
 
-    /**
-     * @return callable
-     */
-    protected function getIndexEntityListener()
+    protected function getIndexEntityListener(): callable
     {
-        $listener = function (IndexEntityEvent $event) {
+        return function (IndexEntityEvent $event) {
             $defaultLocalizationId = $this->getDefaultLocalizationId();
 
             $items = $this->getContainer()->get('doctrine')
@@ -101,8 +91,6 @@ abstract class AbstractEngineTest extends WebTestCase
                 $event->addField($item->getId(), IndexerInterface::WEIGHT_FIELD, $item->decimalValue);
             }
         };
-
-        return $listener;
     }
 
     public function testSearchAll()
@@ -168,11 +156,8 @@ abstract class AbstractEngineTest extends WebTestCase
 
     /**
      * @dataProvider aggregationDataProvider
-     *
-     * @param string $function
-     * @param int|array $expected
      */
-    public function testAggregateWithCriteria($function, $expected)
+    public function testAggregateWithCriteria(string $function, mixed $expected)
     {
         $expr = new Comparison('integer.integerValue', '>', 5000);
         $criteria = new Criteria($expr);
@@ -192,10 +177,7 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->assertSame($expected, $aggregatedData[$field]);
     }
 
-    /**
-     * @return array
-     */
-    public function aggregationDataProvider()
+    public function aggregationDataProvider(): array
     {
         return [
             'count' => [
@@ -226,11 +208,7 @@ abstract class AbstractEngineTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $field
-     * @param Item $item
-     */
-    protected function getSelectData($field, Item $item)
+    protected function getSelectData(string $field, Item $item): mixed
     {
         $selectedData = $item->getSelectedData();
 
@@ -241,8 +219,5 @@ abstract class AbstractEngineTest extends WebTestCase
         return $selectedData[$field];
     }
 
-    /**
-     * @return AbstractEngine
-     */
-    abstract protected function getSearchEngine();
+    abstract protected function getSearchEngine(): AbstractEngine;
 }

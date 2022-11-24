@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
@@ -15,63 +14,46 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var DeleteMessageTextGenerator */
-    protected $extension;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|RouterInterface */
-    protected $router;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|PaymentTermManager */
-    protected $paymentTermManager;
+    private $paymentTermManager;
+
+    /** @var DeleteMessageTextGenerator */
+    private $extension;
 
     protected function setUp(): void
     {
-        $this->router = $this->createMock(RouterInterface::class);
-        $this->router->expects($this->any())
-            ->method('generate')
-            ->willReturnCallback(
-                function ($route, $params, $referenceType) {
-                    $this->assertEquals(RouterInterface::ABSOLUTE_URL, $referenceType);
-                    return serialize($params);
-                }
-            );
+        $this->paymentTermManager = $this->createMock(PaymentTermManager::class);
 
-        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
-        $twig = $this->getMockBuilder(Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $router = $this->createMock(RouterInterface::class);
+        $router->expects($this->any())
+            ->method('generate')
+            ->willReturnCallback(function ($route, $params, $referenceType) {
+                $this->assertEquals(RouterInterface::ABSOLUTE_URL, $referenceType);
+
+                return serialize($params);
+            });
+
+        $twig = $this->createMock(Environment::class);
         $twig->expects($this->any())
             ->method('render')
-            ->willReturnCallback(
-                function ($template, $params) {
-                    return serialize($params);
-                }
-            );
-
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentTermManager = $this->getMockBuilder(PaymentTermManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturnCallback(function ($template, $params) {
+                return serialize($params);
+            });
 
         $this->extension = new DeleteMessageTextGenerator(
-            $this->router,
+            $router,
             $twig,
             $this->paymentTermManager
         );
     }
 
     /**
-     * @param PaymentTerm $paymentTerm
-     * @param bool $customer
-     * @param bool $group
      * @dataProvider getDeleteMessageTextDataProvider
      */
-    public function testGetDeleteMessageText(PaymentTerm $paymentTerm, $customer, $group)
+    public function testGetDeleteMessageText(PaymentTerm $paymentTerm, bool $customer, bool $group)
     {
-        $this->paymentTermManager->expects($this->exactly(2))->method('hasAssignedPaymentTerm')
+        $this->paymentTermManager->expects($this->exactly(2))
+            ->method('hasAssignedPaymentTerm')
             ->willReturnOnConsecutiveCalls($customer, $group);
         $message = $this->extension->getDeleteMessageText($paymentTerm);
         $this->assertDeleteMessage(
@@ -86,8 +68,12 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $paymentTermId = 1;
 
-        $this->paymentTermManager->expects($this->once())->method('getReference')->willReturn(new PaymentTerm());
-        $this->paymentTermManager->expects($this->atLeastOnce())->method('hasAssignedPaymentTerm')->willReturn(false);
+        $this->paymentTermManager->expects($this->once())
+            ->method('getReference')
+            ->willReturn(new PaymentTerm());
+        $this->paymentTermManager->expects($this->atLeastOnce())
+            ->method('hasAssignedPaymentTerm')
+            ->willReturn(false);
 
         $message = $this->extension->getDeleteMessageTextForDataGrid($paymentTermId);
         $this->assertDeleteMessage(
@@ -103,19 +89,19 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('PaymentTerm #1 not found');
 
-        $this->paymentTermManager->expects($this->once())->method('getReference')->willReturn(null);
+        $this->paymentTermManager->expects($this->once())
+            ->method('getReference')
+            ->willReturn(null);
 
         $this->extension->getDeleteMessageTextForDataGrid(1);
     }
 
-    /**
-     * @param string $message
-     * @param int $paymentTermId
-     * @param int $customerGroupCount
-     * @param int $customerCount
-     */
-    public function assertDeleteMessage($message, $paymentTermId, $customerGroupCount, $customerCount)
-    {
+    public function assertDeleteMessage(
+        string $message,
+        int $paymentTermId,
+        int $customerGroupCount,
+        int $customerCount
+    ): void {
         $message = unserialize($message);
 
         $this->assertArrayHasKey('customerGroupFilterUrl', $message);
@@ -146,10 +132,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getDeleteMessageTextDataProvider()
+    public function getDeleteMessageTextDataProvider(): array
     {
         return [
             'payment with customer and customer group' => [
@@ -175,12 +158,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $gridName
-     * @param int $paymentTermId
-     * @return array
-     */
-    private function generateUrlParameters($gridName, $paymentTermId)
+    private function generateUrlParameters(string $gridName, int $paymentTermId): array
     {
         return [
             'grid' => [
@@ -197,14 +175,12 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param int $paymentTermId
-     * @param string $customerFilterUrl
-     * @param string $gridName
-     * @param string $label
-     */
-    private function assertDataFromDeleteMessage($paymentTermId, $customerFilterUrl, $gridName, $label)
-    {
+    private function assertDataFromDeleteMessage(
+        int $paymentTermId,
+        array $customerFilterUrl,
+        string $gridName,
+        string $label
+    ): void {
         $urlParameters = unserialize($customerFilterUrl['urlPath']);
 
         $this->assertEquals(

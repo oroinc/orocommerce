@@ -9,21 +9,16 @@ use Oro\Bundle\SEOBundle\EventListener\UpdateCronDefinitionConfigListener;
 
 class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DeferredScheduler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DeferredScheduler|\PHPUnit\Framework\MockObject\MockObject */
     private $deferredScheduler;
 
-    /**
-     * @var UpdateCronDefinitionConfigListener
-     */
+    /** @var UpdateCronDefinitionConfigListener */
     private $listener;
 
     protected function setUp(): void
     {
-        $this->deferredScheduler = $this->getMockBuilder(DeferredScheduler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->deferredScheduler = $this->createMock(DeferredScheduler::class);
+
         $this->listener = new UpdateCronDefinitionConfigListener($this->deferredScheduler);
     }
 

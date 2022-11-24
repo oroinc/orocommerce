@@ -36,18 +36,14 @@ class RuleTypeTest extends FormIntegrationTestCase
             ->setEnabled(false)
             ->setExpression('2')
             ->setCreatedAt($rule->getCreatedAt())
-            ->setUpdatedAt($rule->getUpdatedAt())
-        ;
+            ->setUpdatedAt($rule->getUpdatedAt());
 
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
         $this->assertEquals($newRule, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [new Rule()],

@@ -33,44 +33,27 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $router;
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
 
-    /**
-     * @var ContentNodeType
-     */
-    protected $type;
+    /** @var ContentNodeType */
+    private $type;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
 
         $this->type = new ContentNodeType($this->router);
+
         parent::setUp();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function tearDown(): void
+    protected function getExtensions(): array
     {
-        unset($this->type);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getExtensions()
-    {
-        /** @var ContentVariantTypeRegistry|\PHPUnit\Framework\MockObject\MockObject $variantTypeRegistry */
-        $variantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $variantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
         $variantTypeRegistry->expects($this->any())
             ->method('getFormTypeByType')
             ->with('system_page')
@@ -79,13 +62,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             ->method('getAllowedContentVariantTypes')
             ->willReturn([]);
 
-        $variantCollection = new ContentVariantCollectionType($variantTypeRegistry);
-
-        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
-        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         return [
             new PreloadedExtension(
                 [
@@ -93,16 +69,15 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     TextType::class => new TextType(),
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     ScopeCollectionType::class => new ScopeCollectionTypeStub(),
-                    ContentVariantCollectionType::class => $variantCollection,
-                    RouteChoiceType::class => new RouteChoiceTypeStub(
-                        [
-                            'some_route' => 'some_route',
-                            'other_route' => 'other_route'
-                        ]
-                    ),
+                    ContentVariantCollectionType::class => new ContentVariantCollectionType($variantTypeRegistry),
+                    RouteChoiceType::class => new RouteChoiceTypeStub([
+                        'some_route' => 'some_route',
+                        'other_route' => 'other_route'
+                    ]),
                     LocalizedSlugType::class => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::class
-                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    LocalizedSlugWithRedirectType::class => new LocalizedSlugWithRedirectType(
+                        $this->createMock(ConfirmSlugChangeFormHelper::class)
+                    ),
                 ],
                 [
                     SystemPageVariantType::class => [new PageVariantTypeExtension()],
@@ -152,12 +127,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param ContentNode $existingData
-     * @param array $submittedData
-     * @param ContentNode $expectedData
      */
-    public function testSubmit($existingData, $submittedData, $expectedData)
+    public function testSubmit(ContentNode $existingData, array $submittedData, ContentNode $expectedData)
     {
         $form = $this->factory->create(ContentNodeType::class, $existingData);
 
@@ -186,8 +157,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     public function testGenerateChangedSlugsUrlOnPresetData()
     {
         $generatedUrl = '/some/url';
-        $this->router
-            ->expects($this->once())
+        $this->router->expects($this->once())
             ->method('generate')
             ->with('oro_content_node_get_changed_urls', ['id' => 1])
             ->willReturn($generatedUrl);
@@ -214,9 +184,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @return array
      */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new root entity' => [

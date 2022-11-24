@@ -19,16 +19,11 @@ use Symfony\Component\Validator\Validation;
 
 class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions';
+    private const DATA_CLASS = CategoryDefaultProductOptions::class;
 
-    /**
-     * @var CategoryUnitPrecisionType
-     */
-    protected $formType;
+    /** @var CategoryUnitPrecisionType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->formType = new CategoryDefaultProductOptionsType();
@@ -37,23 +32,27 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $categoryUnitPrecisionType = new CategoryUnitPrecisionType($this->getVisibilityMock());
-        $categoryUnitPrecisionType->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
+        $visibility = $this->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);
+        $visibility->expects(self::any())
+            ->method('isDefaultUnitPrecisionSelectionAvailable')
+            ->willReturn(true);
+
+        $categoryUnitPrecisionType = new CategoryUnitPrecisionType($visibility);
+        $categoryUnitPrecisionType->setDataClass(CategoryUnitPrecision::class);
+
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
                     CategoryUnitPrecisionType::class => $categoryUnitPrecisionType,
-                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
-                        [
-                            'item' => (new ProductUnit())->setCode('item'),
-                            'kg' => (new ProductUnit())->setCode('kg')
-                        ]
-                    )
+                    ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub([
+                        'item' => (new ProductUnit())->setCode('item'),
+                        'kg' => (new ProductUnit())->setCode('kg')
+                    ])
                 ],
                 [
                     FormType::class => [new IntegerExtension()]
@@ -64,14 +63,11 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param CategoryDefaultProductOptions $defaultData
-     * @param array|CategoryUnitPrecision $submittedData
-     * @param CategoryDefaultProductOptions $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
         CategoryDefaultProductOptions $defaultData,
-        $submittedData,
+        array|CategoryUnitPrecision $submittedData,
         CategoryDefaultProductOptions $expectedData
     ) {
         $form = $this->factory->create(CategoryDefaultProductOptionsType::class, $defaultData, []);
@@ -84,10 +80,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'UnitPrecisionWithoutValue' => [
@@ -109,19 +102,5 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
                         ->setPrecision(5))
             ],
         ];
-    }
-
-    /**
-     * @return CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getVisibilityMock()
-    {
-        $defaultProductOptionsVisibility = $this
-            ->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);
-        $defaultProductOptionsVisibility->expects(static::any())
-            ->method('isDefaultUnitPrecisionSelectionAvailable')
-            ->willReturn(true);
-
-        return $defaultProductOptionsVisibility;
     }
 }

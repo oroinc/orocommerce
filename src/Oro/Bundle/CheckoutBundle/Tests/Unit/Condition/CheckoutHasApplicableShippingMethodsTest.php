@@ -6,28 +6,28 @@ use Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
+use Oro\Component\ConfigExpression\Condition\AbstractCondition;
+use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const METHOD = 'Method';
-
-    /** @var CheckoutHasApplicableShippingMethods */
-    protected $condition;
+    private const METHOD = 'Method';
 
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutShippingMethodsProviderMock;
+    private $checkoutShippingMethodsProvider;
+
+    /** @var CheckoutHasApplicableShippingMethods */
+    private $condition;
 
     protected function setUp(): void
     {
-        $this->checkoutShippingMethodsProviderMock = $this
-            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
-            ->getMock();
+        $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
 
         $this->condition = new CheckoutHasApplicableShippingMethods(
-            $this->checkoutShippingMethodsProviderMock
+            $this->checkoutShippingMethodsProvider
         );
     }
 
@@ -38,32 +38,26 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
 
     public function testInitializeInvalid()
     {
-        $this->expectException(\Oro\Component\ConfigExpression\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "checkout" option');
 
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize([])
-        );
+        $this->assertInstanceOf(AbstractCondition::class, $this->condition->initialize([]));
     }
 
     public function testInitialize()
     {
         $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
+            AbstractCondition::class,
             $this->condition->initialize([self::METHOD, new \stdClass()])
         );
     }
 
     /**
      * @dataProvider evaluateProvider
-     *
-     * @param array $methods
-     * @param bool $expected
      */
-    public function testEvaluate($methods, $expected)
+    public function testEvaluate(ShippingMethodViewCollection $methods, bool $expected)
     {
-        $this->checkoutShippingMethodsProviderMock->expects($this->once())
+        $this->checkoutShippingMethodsProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
             ->willReturn($methods);
 
@@ -71,10 +65,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expected, $this->condition->evaluate([]));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluateProvider()
+    public function evaluateProvider(): array
     {
         return [
             'no_rules_no_methods' => [

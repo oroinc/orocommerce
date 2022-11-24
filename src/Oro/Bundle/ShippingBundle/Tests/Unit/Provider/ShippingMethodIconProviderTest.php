@@ -2,90 +2,82 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProvider;
-use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
+use Psr\Log\LoggerInterface;
 
 class ShippingMethodIconProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use LoggerAwareTraitTestTrait;
+    private const SHIPPING_METHOD = 'shipping_method_1';
 
-    const SHIPPING_METHOD = 'shipping_method_1';
-    const ICON = 'bundles/icon-uri.png';
-
-    /**
-     * @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingMethodProvider;
 
-    /**
-     * @var ShippingMethodIconProvider
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var ShippingMethodIconProvider */
     private $provider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
-        $this->provider = new ShippingMethodIconProvider($this->shippingMethodProvider);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->setUpLoggerMock($this->provider);
+        $this->provider = new ShippingMethodIconProvider($this->shippingMethodProvider);
+        $this->provider->setLogger($this->logger);
     }
 
     public function testGetIcon()
     {
-        $shippingMethod = $this->createMock(ShippingMethodIconAwareInterface::class);
-        $shippingMethod
+        $icon = 'bundles/icon-uri.png';
+
+        $shippingMethod = $this->createMock(ShippingMethodStub::class);
+        $shippingMethod->expects(self::once())
             ->method('getIcon')
-            ->willReturn(self::ICON);
+            ->willReturn($icon);
 
-        $this->configureShippingMethodRegistry(self::SHIPPING_METHOD, $shippingMethod);
+        $this->shippingMethodProvider->expects(self::once())
+            ->method('hasShippingMethod')
+            ->with(self::SHIPPING_METHOD)
+            ->willReturn(true);
+        $this->shippingMethodProvider->expects(self::once())
+            ->method('getShippingMethod')
+            ->with(self::SHIPPING_METHOD)
+            ->willReturn($shippingMethod);
 
-        static::assertSame(self::ICON, $this->provider->getIcon(self::SHIPPING_METHOD));
+        static::assertSame($icon, $this->provider->getIcon(self::SHIPPING_METHOD));
     }
 
     public function testGetIconIfNotIconAware()
     {
         $shippingMethod = $this->createMock(ShippingMethodInterface::class);
-        $this->configureShippingMethodRegistry(self::SHIPPING_METHOD, $shippingMethod);
+
+        $this->shippingMethodProvider->expects(self::once())
+            ->method('hasShippingMethod')
+            ->with(self::SHIPPING_METHOD)
+            ->willReturn(true);
+        $this->shippingMethodProvider->expects(self::once())
+            ->method('getShippingMethod')
+            ->with(self::SHIPPING_METHOD)
+            ->willReturn($shippingMethod);
 
         static::assertNull($this->provider->getIcon(self::SHIPPING_METHOD));
     }
 
     public function testGetIconIfNoShippingMethod()
     {
-        $this->shippingMethodProvider
+        $this->shippingMethodProvider->expects(self::once())
             ->method('hasShippingMethod')
             ->with(self::SHIPPING_METHOD)
             ->willReturn(false);
 
-        $this->assertLoggerWarningMethodCalled();
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with(sprintf('Requested icon for non-existing shipping method "%s"', self::SHIPPING_METHOD));
 
         static::assertNull($this->provider->getIcon(self::SHIPPING_METHOD));
-    }
-
-    /**
-     * @param string                                   $identifier
-     * @param \PHPUnit\Framework\MockObject\MockObject $shippingMethod
-     *
-     * @return ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function configureShippingMethodRegistry($identifier, $shippingMethod)
-    {
-        $this->shippingMethodProvider
-            ->method('hasShippingMethod')
-            ->with($identifier)
-            ->willReturn(true);
-
-        $this->shippingMethodProvider
-            ->method('getShippingMethod')
-            ->with($identifier)
-            ->willReturn($shippingMethod);
-
-        return $this->shippingMethodProvider;
     }
 }

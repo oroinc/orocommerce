@@ -34,10 +34,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return Category
-     */
-    private function getCategoryAndSetSchedulerExpectation()
+    private function getCategoryAndSetSchedulerExpectation(): Category
     {
         $category = new Category();
 
@@ -66,9 +63,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdate()
     {
         $category = $this->getCategoryAndSetSchedulerExpectation();
-        $emMock = $this
-            ->getMockBuilder(EntityManagerInterface::class)
-            ->getMock();
+        $emMock = $this->createMock(EntityManagerInterface::class);
 
         $changesSet = ['some_changes' => 1];
         $event = new PreUpdateEventArgs($category, $emMock, $changesSet);
@@ -78,13 +73,12 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdateNoChangesSet()
     {
         $category = new Category();
-        $emMock = $this
-            ->getMockBuilder(EntityManagerInterface::class)
-            ->getMock();
+        $emMock = $this->createMock(EntityManagerInterface::class);
 
         $changesSet = [];
         $event = new PreUpdateEventArgs($category, $emMock, $changesSet);
-        $this->productIndexScheduler->expects($this->never())->method('scheduleProductsReindex');
+        $this->productIndexScheduler->expects($this->never())
+            ->method('scheduleProductsReindex');
         $this->listener->preUpdate($category, $event);
     }
 }

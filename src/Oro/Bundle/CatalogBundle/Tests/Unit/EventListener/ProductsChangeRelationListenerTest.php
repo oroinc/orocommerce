@@ -13,49 +13,31 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductsChangeRelationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $em;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    /**
-     * @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $unitOfWork;
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
+    private $unitOfWork;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $eventDispatcher;
+    /** @var OnFlushEventArgs */
+    private $onFlushEvent;
 
-    /**
-     * @var ProductsChangeRelationListener
-     */
-    protected $listener;
-
-    /**
-     * @var OnFlushEventArgs
-     */
-    protected $onFlushEvent;
+    /** @var ProductsChangeRelationListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->em = $this
-            ->getMockBuilder(EntityManagerInterface::class)
-            ->getMock();
-        $this->unitOfWork = $this
-            ->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->em->expects($this->any())
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->unitOfWork = $this->createMock(UnitOfWork::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($this->unitOfWork);
-        $this->eventDispatcher = $this
-            ->getMockBuilder(EventDispatcherInterface::class)
-            ->getMock();
+
+        $this->onFlushEvent = new OnFlushEventArgs($em);
 
         $this->listener = new ProductsChangeRelationListener($this->eventDispatcher);
-        $this->onFlushEvent = new OnFlushEventArgs($this->em);
     }
 
     public function testOnFlush()

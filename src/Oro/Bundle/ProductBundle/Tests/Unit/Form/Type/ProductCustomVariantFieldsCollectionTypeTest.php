@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
@@ -14,30 +13,17 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductCustomVariantFieldsCollectionType
-     */
-    protected $formType;
+    /** @var ProductCustomVariantFieldsCollectionType */
+    private $formType;
 
-    /**
-     * @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $variantFieldProvider;
+    /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $variantFieldProvider;
 
-    /**
-     * @var string
-     */
-    protected $productClass = 'stdClass';
+    /** @var AttributeFamily */
+    private $attributeFamily;
 
-    /**
-     * @var AttributeFamily
-     */
-    protected $attributeFamily;
-
-    /**
-     * @var array
-     */
-    protected $exampleCustomVariantFields = [
+    /** @var array */
+    private $exampleCustomVariantFields = [
         'size' => [
             'name' => 'size',
             'type' => 'enum',
@@ -70,10 +56,8 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $submitCustomVariantFields = [
+    /** @var array */
+    private $submitCustomVariantFields = [
         'size' => [
             'size' => [
                 'priority' => 0,
@@ -106,10 +90,8 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $emptyFieldsValues = [
+    /** @var array */
+    private $emptyFieldsValues = [
         'size' => [
             'priority' => 9999,
             'is_selected' => false,
@@ -120,34 +102,27 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
 
-        $this->formType = new ProductCustomVariantFieldsCollectionType(
-            $this->variantFieldProvider,
-            $this->productClass
-        );
+        $this->formType = new ProductCustomVariantFieldsCollectionType($this->variantFieldProvider);
 
         $this->attributeFamily = new AttributeFamily();
+
         parent::setUp();
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
                 [
                     $this->formType,
-                    OroCollectionType::class => new OroCollectionType(),
+                    CollectionType::class => new CollectionType(),
                     ProductVariantFieldType::class => new ProductVariantFieldType(),
                 ],
                 []
@@ -157,12 +132,8 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
 
     /**
      * @dataProvider submitProvider
-     *
-     * @param array $variantFields
-     * @param array $submittedData
-     * @param string $expectedData
      */
-    public function testSubmit(array $variantFields, array $submittedData, $expectedData)
+    public function testSubmit(array $variantFields, array $submittedData, array $expectedData)
     {
         $this->variantFieldProvider->expects($this->once())
             ->method('getVariantFields')
@@ -182,13 +153,11 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         $variantFields[] = new VariantField('size', 'Size label');
         $variantFields[] = new VariantField('color', 'Color label');
+
         return [
             'empty' => [
                 'variantFields' => $variantFields,

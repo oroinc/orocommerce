@@ -16,14 +16,9 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVariantProvider */
     private $productVariantProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->availabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->availabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
 
         $this->productVariantProvider = new ProductVariantProvider($this->availabilityProvider);
     }

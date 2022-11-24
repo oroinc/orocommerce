@@ -1,0 +1,5 @@
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_1:
+        code: 'TAX_1'
+        description: 'Tax 1'
+        rate: 0.1

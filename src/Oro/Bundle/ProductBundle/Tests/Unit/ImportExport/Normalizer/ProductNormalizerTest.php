@@ -11,20 +11,21 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    private ProductNormalizer $productNormalizer;
+    /** @var FieldHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldHelper;
 
-    private FieldHelper|\PHPUnit\Framework\MockObject\MockObject $fieldHelper;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    private string $productClass;
+    /** @var string */
+    private $productClass;
 
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
+    /** @var ProductNormalizer */
+    private $productNormalizer;
 
     protected function setUp(): void
     {
-        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->fieldHelper = $this->createMock(FieldHelper::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->productClass = Product::class;
@@ -52,21 +53,17 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->fieldHelper->expects(self::once())
             ->method('getObjectValue')
-            ->willReturnMap(
-                [
-                    [$product, 'sku', 'SKU-1'],
-                ]
-            );
+            ->with($product, 'sku')
+            ->willReturn('SKU-1');
 
-        $this->eventDispatcher->expects(self::once())->method('dispatch')
-            ->withConsecutive(
-                [
-                    self::isInstanceOf(ProductNormalizerEvent::class),
-                    self::logicalAnd(
-                        self::isType('string'),
-                        self::equalTo('oro_product.normalizer.normalizer')
-                    ),
-                ]
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                self::isInstanceOf(ProductNormalizerEvent::class),
+                self::logicalAnd(
+                    self::isType('string'),
+                    self::equalTo('oro_product.normalizer.normalizer')
+                )
             );
 
         $result = $this->productNormalizer->normalize($product);
@@ -92,21 +89,18 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->fieldHelper->expects(self::once())
             ->method('setObjectValue')
-            ->willReturnCallback(
-                function (Product $result, $fieldName, $value) {
-                    return $result->{'set' . ucfirst($fieldName)}($value);
-                }
-            );
+            ->willReturnCallback(function (Product $result, $fieldName, $value) {
+                return $result->{'set' . ucfirst($fieldName)}($value);
+            });
 
-        $this->eventDispatcher->expects(self::once())->method('dispatch')
-            ->withConsecutive(
-                [
-                    self::isInstanceOf(ProductNormalizerEvent::class),
-                    self::logicalAnd(
-                        self::isType('string'),
-                        self::equalTo('oro_product.normalizer.denormalizer')
-                    ),
-                ]
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                self::isInstanceOf(ProductNormalizerEvent::class),
+                self::logicalAnd(
+                    self::isType('string'),
+                    self::equalTo('oro_product.normalizer.denormalizer')
+                )
             );
 
         $result = $this->productNormalizer->denormalize($data, $this->productClass);
@@ -115,19 +109,13 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param mixed $data
-     * @param bool $expected
-     *
      * @dataProvider normalizationDataProvider
      */
-    public function testSupportsNormalization($data, $expected): void
+    public function testSupportsNormalization(mixed $data, bool $expected): void
     {
         self::assertEquals($expected, $this->productNormalizer->supportsNormalization($data));
     }
 
-    /**
-     * @return array
-     */
     public function normalizationDataProvider(): array
     {
         return [
@@ -143,19 +131,13 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $type
-     * @param bool $expected
-     *
      * @dataProvider denormalizationDataProvider
      */
-    public function testSupportsDenormalization($type, $expected): void
+    public function testSupportsDenormalization(string $type, bool $expected): void
     {
         self::assertEquals($expected, $this->productNormalizer->supportsDenormalization([], $type));
     }
 
-    /**
-     * @return array
-     */
     public function denormalizationDataProvider(): array
     {
         return [

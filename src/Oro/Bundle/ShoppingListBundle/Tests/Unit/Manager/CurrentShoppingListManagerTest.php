@@ -16,7 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListStorage;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
@@ -28,11 +28,6 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /** @var CurrentShoppingListManager */
-    private $currentShoppingListManager;
-
     /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListManager;
 
@@ -51,14 +46,14 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListEntityManager;
-
     /** @var ShoppingListRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListRepository;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
     private $configManager;
+
+    /** @var CurrentShoppingListManager */
+    private $currentShoppingListManager;
 
     protected function setUp(): void
     {
@@ -69,18 +64,19 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-
-        $this->shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
         $this->shoppingListRepository = $this->createMock(ShoppingListRepository::class);
+
+        $shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
+        $shoppingListEntityManager->expects($this->any())
+            ->method('getRepository')
+            ->with(ShoppingList::class)
+            ->willReturn($this->shoppingListRepository);
+
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(ShoppingList::class)
-            ->willReturn($this->shoppingListEntityManager);
-        $this->shoppingListEntityManager->expects($this->any())
-            ->method('getRepository')
-            ->with(ShoppingList::class)
-            ->willReturn($this->shoppingListRepository);
+            ->willReturn($shoppingListEntityManager);
 
         $this->currentShoppingListManager = new CurrentShoppingListManager(
             $this->shoppingListManager,
@@ -93,24 +89,20 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return ShoppingList
-     */
-    private function getShoppingList($id = null)
+    private function getShoppingList(int $id): ShoppingList
     {
-        return $this->getEntity(ShoppingList::class, ['id' => $id]);
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
+
+        return $shoppingList;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return CustomerUser
-     */
-    private function getCustomerUser($id = null)
+    private function getCustomerUser(int $id): CustomerUser
     {
-        return $this->getEntity(CustomerUser::class, ['id' => $id]);
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, $id);
+
+        return $customerUser;
     }
 
     private function expectGetCurrentShoppingList(?ShoppingList $shoppingList)
@@ -122,7 +114,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($customerUser);
 
         if (null === $shoppingList) {
-            $this->expectCacheFetchAndNoSave($customerUserId, false);
+            $this->expectCacheFetchAndNoSave($customerUserId, null);
 
             $this->shoppingListRepository->expects($this->never())
                 ->method('findByUserAndId');
@@ -145,20 +137,18 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->method('create');
     }
 
-    /**
-     * @param int      $customerUserId
-     * @param int|bool $fetchShoppingListId
-     * @param int      $saveShoppingListId
-     */
-    private function expectCacheFetchAndSave($customerUserId, $fetchShoppingListId, $saveShoppingListId)
-    {
+    private function expectCacheFetchAndSave(
+        int $customerUserId,
+        ?int $fetchShoppingListId,
+        int $saveShoppingListId
+    ): void {
         $this->cache->expects($this->any())
             ->method('getItem')
             ->with($customerUserId)
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('isHit')
-            ->willReturn($fetchShoppingListId ? true : false);
+            ->willReturn(null !== $fetchShoppingListId);
         if ($fetchShoppingListId) {
             $this->cacheItem->expects(self::once())
                 ->method('get')
@@ -173,11 +163,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->cacheItem);
     }
 
-    /**
-     * @param int      $customerUserId
-     * @param int|bool $fetchShoppingListId
-     */
-    private function expectCacheFetchAndNoSave($customerUserId, $fetchShoppingListId)
+    private function expectCacheFetchAndNoSave(int $customerUserId, ?int $fetchShoppingListId): void
     {
         $this->cache->expects($this->once())
             ->method('getItem')
@@ -185,7 +171,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('isHit')
-            ->willReturn($fetchShoppingListId ? true : false);
+            ->willReturn(null !== $fetchShoppingListId);
         if ($fetchShoppingListId) {
             $this->cacheItem->expects(self::once())
                 ->method('get')
@@ -268,7 +254,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList->setCustomerUser($customerUser);
     }
 
-    public function labelDataProvider()
+    public function labelDataProvider(): array
     {
         return [
             'without label' => [],
@@ -339,8 +325,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The customer user ID must not be empty.');
 
-        $this->currentShoppingListManager
-            ->setCurrent($this->getCustomerUser(), $this->getShoppingList(123));
+        $this->currentShoppingListManager->setCurrent(new CustomerUser(), $this->getShoppingList(123));
     }
 
     public function testSetCurrentWhenNewShoppingListIsPassed()
@@ -348,13 +333,12 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The shopping list ID must not be empty.');
 
-        $this->currentShoppingListManager
-            ->setCurrent($this->getCustomerUser(234), $this->getShoppingList());
+        $this->currentShoppingListManager->setCurrent($this->getCustomerUser(234), new ShoppingList());
     }
 
     public function testGetCurrentForGuestShoppingListWithCreate()
     {
-        $shoppingList = $this->getShoppingList();
+        $shoppingList = new ShoppingList();
 
         $this->expectCreateGuestShoppingList($shoppingList);
         $this->expectCacheNoFetchAndNoSave();
@@ -364,7 +348,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentForGuestShoppingListWithoutCreate()
     {
-        $shoppingList = $this->getShoppingList();
+        $shoppingList = new ShoppingList();
 
         $this->expectGetGuestShoppingList($shoppingList);
         $this->expectCacheNoFetchAndNoSave();
@@ -547,7 +531,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->setCustomerUserForTokenAccessor($customerUserId);
 
         $this->expectNoGuestShoppingList();
-        $this->expectCacheFetchAndSave($customerUserId, false, $newShoppingListId);
+        $this->expectCacheFetchAndSave($customerUserId, null, $newShoppingListId);
 
         $this->shoppingListRepository->expects($this->once())
             ->method('findByUserAndId')
@@ -606,7 +590,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->setCustomerUserForTokenAccessor($customerUserId);
 
         $this->expectNoGuestShoppingList();
-        $this->expectCacheFetchAndSave($customerUserId, false, $newShoppingListId);
+        $this->expectCacheFetchAndSave($customerUserId, null, $newShoppingListId);
 
         $this->shoppingListRepository->expects($this->never())
             ->method('findByUserAndId');
@@ -817,7 +801,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             ->method('getUser')
             ->willReturn($customerUser);
 
-        $this->expectCacheFetchAndNoSave($customerUserId, false);
+        $this->expectCacheFetchAndNoSave($customerUserId, null);
 
         $this->shoppingListRepository->expects($this->never())
             ->method('findByUserAndId');
@@ -841,8 +825,7 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $customerUserId = 234;
         $currentShoppingList = $this->getShoppingList(123);
-        /** @var CustomerUser $customerUser1 */
-        $customerUser1 = $this->getEntity(CustomerUser::class, ['id' => $customerUserId]);
+        $customerUser1 = $this->getCustomerUser($customerUserId);
         $currentShoppingList->setCustomerUser($customerUser1);
 
         $shoppingLists = [$this->getShoppingList(11)];
@@ -885,12 +868,11 @@ class CurrentShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $customerUserId = 234;
         $currentShoppingList = $this->getShoppingList(123);
-        /** @var CustomerUser $customerUser1 */
-        $customerUser1 = $this->getEntity(CustomerUser::class, ['id' => 42]);
+        $customerUser1 = $this->getCustomerUser(42);
         $currentShoppingList->setCustomerUser($customerUser1);
 
         $shoppingLists = [$this->getShoppingList(11)];
-        $shoppingLists[0]->setCustomerUser($this->getEntity(CustomerUser::class, ['id' => $customerUserId]));
+        $shoppingLists[0]->setCustomerUser($this->getCustomerUser($customerUserId));
         $expectedShoppingLists = [$shoppingLists[0]];
 
         $customerUser = $this->getCustomerUser($customerUserId);

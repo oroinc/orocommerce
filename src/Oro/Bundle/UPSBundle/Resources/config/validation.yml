@@ -1,6 +1,6 @@
 Oro\Bundle\UPSBundle\Entity\UPSTransport:
     constraints:
-        - Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint: ~
+        - Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServices: ~
         - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
         upsApiUser:

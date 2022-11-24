@@ -14,15 +14,11 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var PriceListReferenceChecker
-     */
-    protected $priceListReferenceChecker;
+    /** @var PriceListReferenceChecker */
+    private $priceListReferenceChecker;
 
     protected function setUp(): void
     {
@@ -32,12 +28,8 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
 
     public function testReferential()
     {
-        $em = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(ObjectManager::class);
+        $repository = $this->createMock(PriceRuleLexemeRepository::class);
 
         $repository->expects($this->once())
             ->method('getRelationIds')
@@ -58,12 +50,8 @@ class PriceListReferenceCheckerTest extends \PHPUnit\Framework\TestCase
 
     public function testNotReferential()
     {
-        $em = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository = $this->getMockBuilder(PriceRuleLexemeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->createMock(ObjectManager::class);
+        $repository = $this->createMock(PriceRuleLexemeRepository::class);
 
         $repository->expects($this->once())
             ->method('getRelationIds')

@@ -123,9 +123,9 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
         $flatRatePrimaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('primary');
         $flatRateSecondaryShippingType = (new ShippingMethodTypeStub())->setIdentifier('secondary');
 
-        $flatRateShippingMethod = (new ShippingMethodStub())
-            ->setIdentifier('flat_rate_2')
-            ->setTypes([$flatRatePrimaryShippingType, $flatRateSecondaryShippingType]);
+        $flatRateShippingMethod = new ShippingMethodStub();
+        $flatRateShippingMethod->setIdentifier('flat_rate_2');
+        $flatRateShippingMethod->setTypes([$flatRatePrimaryShippingType, $flatRateSecondaryShippingType]);
 
         $provider->expects($this->any())
             ->method('getShippingMethods')

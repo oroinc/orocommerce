@@ -3,13 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\ChoiceFilterType;
-use Oro\Bundle\FilterBundle\Form\Type\Filter\EntityFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
 
 class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 {
@@ -31,6 +31,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->provider = $this->createMock(PriceListProvider::class);
         $this->priceListClass = PriceList::class;
+
         $this->type = new DefaultPriceListFilterType(
             $translator,
             $this->provider,
@@ -42,9 +43,9 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     }
 
     /**
-     * @return EntityFilterType
+     * {@inheritDoc}
      */
-    protected function getTestFormType()
+    protected function getTestFormType(): AbstractType
     {
         return $this->type;
     }
@@ -57,16 +58,8 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     /**
      * @dataProvider configureOptionsDataProvider
      */
-    public function testConfigureOptions(array $parentDefaultOptions, array $requiredOptions = [])
+    public function testConfigureOptions(array $defaultOptions, array $requiredOptions = [])
     {
-        $defaultOptions = [
-            'field_options' => [
-                'class' => $this->priceListClass,
-                'choice_label' => 'name'
-            ],
-            'required' => true,
-        ];
-
         $this->shardManager->expects($this->once())
             ->method('isShardingEnabled')
             ->willReturn(true);
@@ -74,7 +67,18 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         $resolver = $this->createMockOptionsResolver();
         $resolver->expects($this->exactly(2))
             ->method('setDefaults')
-            ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
+            ->withConsecutive(
+                [$defaultOptions],
+                [
+                    [
+                        'field_options' => [
+                            'class' => $this->priceListClass,
+                            'choice_label' => 'name'
+                        ],
+                        'required' => true
+                    ]
+                ]
+            )
             ->willReturnSelf();
 
         $this->getTestFormType()->configureOptions($resolver);
@@ -109,7 +113,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     /**
      * {@inheritDoc}
      */
-    public function configureOptionsDataProvider()
+    public function configureOptionsDataProvider(): array
     {
         return [
             [
@@ -137,7 +141,7 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     /**
      * {@inheritDoc}
      */
-    public function bindDataProvider()
+    public function bindDataProvider(): array
     {
         return [
             'defaultOptions' =>  [

@@ -14,12 +14,9 @@ class AttributeBlockTypeMapperTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)->getMock();
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->mapper = new AttributeBlockTypeMapper($this->registry);
     }

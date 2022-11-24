@@ -8,25 +8,20 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\EventListener\CheckoutWorkflowListener;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Event\WorkflowChangesEvent;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    const ENTITY_CLASS = 'stdClass';
+    private const ENTITY_CLASS = 'stdClass';
 
     /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $repository;
+    private $repository;
 
     /** @var CheckoutWorkflowListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->repository = $this->getMockBuilder(CheckoutRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(CheckoutRepository::class);
 
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
@@ -34,26 +29,21 @@ class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
             ->with(self::ENTITY_CLASS)
             ->willReturn($this->repository);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(self::ENTITY_CLASS)
             ->willReturn($manager);
 
-        $this->listener = new CheckoutWorkflowListener($registry, self::ENTITY_CLASS);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener, $this->workflowScopeManager);
+        $this->listener = new CheckoutWorkflowListener($doctrine, self::ENTITY_CLASS);
     }
 
     public function testOnDeactivationWorkflowDefinition()
     {
         $event = new WorkflowChangesEvent($this->createWorkflowDefinition());
 
-        $this->repository->expects($this->once())->method('deleteWithoutWorkflowItem');
+        $this->repository->expects($this->once())
+            ->method('deleteWithoutWorkflowItem');
 
         $this->listener->onDeactivationWorkflowDefinition($event);
     }
@@ -62,17 +52,17 @@ class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = new WorkflowChangesEvent($this->createWorkflowDefinition('UnknownEntity'));
 
-        $this->repository->expects($this->never())->method('deleteWithoutWorkflowItem');
+        $this->repository->expects($this->never())
+            ->method('deleteWithoutWorkflowItem');
 
         $this->listener->onDeactivationWorkflowDefinition($event);
     }
 
-    /**
-     * @param string $entityClass
-     * @return WorkflowDefinition
-     */
-    protected function createWorkflowDefinition($entityClass = self::ENTITY_CLASS)
+    private function createWorkflowDefinition(string $entityClass = self::ENTITY_CLASS): WorkflowDefinition
     {
-        return $this->getEntity(WorkflowDefinition::class, ['relatedEntity' => $entityClass]);
+        $workflowDefinition = new WorkflowDefinition();
+        $workflowDefinition->setRelatedEntity($entityClass);
+
+        return $workflowDefinition;
     }
 }

@@ -7,6 +7,7 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CustomerTaxCodeTest extends RestJsonApiTestCase
 {
@@ -159,29 +160,6 @@ class CustomerTaxCodeTest extends RestJsonApiTestCase
         self::assertEquals($organizationId, $taxCode->getOrganization()->getId());
     }
 
-    public function testUpdate(): void
-    {
-        $taxCodeId = $this->getReference('tax_code1')->getId();
-
-        $data = [
-            'data' => [
-                'type'       => 'customertaxcodes',
-                'id'         => (string)$taxCodeId,
-                'attributes' => [
-                    'description' => 'updated tax code'
-                ]
-            ]
-        ];
-        $response = $this->patch(
-            ['entity' => 'customertaxcodes', 'id' => (string)$taxCodeId],
-            $data
-        );
-
-        $taxCode = $this->getEntityManager()->find(CustomerTaxCode::class, $this->getResourceId($response));
-        self::assertNotNull($taxCode);
-        self::assertEquals('updated tax code', $taxCode->getDescription());
-    }
-
     public function testTryToCreateTaxCodeWithoutCode(): void
     {
         $response = $this->post(
@@ -199,6 +177,48 @@ class CustomerTaxCodeTest extends RestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testTryToCreateTaxCodeWithDuplicateCode(): void
+    {
+        $response = $this->post(
+            ['entity' => 'customertaxcodes'],
+            ['data' => ['type' => 'customertaxcodes', 'attributes' => ['code' => 'TAX_CODE_2']]],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unique tax code constraint',
+                'detail' => 'This value is already used.',
+                'source' => ['pointer' => '/data/attributes/code']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdate(): void
+    {
+        $taxCodeId = $this->getReference('tax_code1')->getId();
+
+        $data = [
+            'data' => [
+                'type'       => 'customertaxcodes',
+                'id'         => (string)$taxCodeId,
+                'attributes' => [
+                    'description' => 'updated tax code'
+                ]
+            ]
+        ];
+        $this->patch(
+            ['entity' => 'customertaxcodes', 'id' => (string)$taxCodeId],
+            $data
+        );
+
+        $taxCode = $this->getEntityManager()->find(CustomerTaxCode::class, $taxCodeId);
+        self::assertNotNull($taxCode);
+        self::assertEquals('updated tax code', $taxCode->getDescription());
     }
 
     public function testTryToSetCodeToNull(): void
@@ -228,5 +248,104 @@ class CustomerTaxCodeTest extends RestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testTryToSetDuplicateCode(): void
+    {
+        $taxCodeId = $this->getReference('tax_code1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'customertaxcodes', 'id' => (string)$taxCodeId],
+            [
+                'data' => [
+                    'type'       => 'customertaxcodes',
+                    'id'         => (string)$taxCodeId,
+                    'attributes' => [
+                        'code' => 'TAX_CODE_2'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'unique tax code constraint',
+                'detail' => 'This value is already used.',
+                'source' => ['pointer' => '/data/attributes/code']
+            ],
+            $response
+        );
+    }
+
+    public function testGetSubresourceForOwner()
+    {
+        $response = $this->getSubresource(
+            ['entity' => 'customertaxcodes', 'id' => '<toString(@tax_code1->id)>', 'association' => 'owner']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'users', 'id' => '<toString(@user->id)>']],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForOwner()
+    {
+        $response = $this->getRelationship(
+            ['entity' => 'customertaxcodes', 'id' => '<toString(@tax_code1->id)>', 'association' => 'owner']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'users', 'id' => '<toString(@user->id)>']],
+            $response
+        );
+    }
+
+    public function testTryToUpdateRelationshipForOwner(): void
+    {
+        $response = $this->patchRelationship(
+            ['entity' => 'customertaxcodes', 'id' => '<toString(@tax_code1->id)>', 'association' => 'owner'],
+            ['data' => ['type' => 'users', 'id' => '<toString(@user->id)>']],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testGetSubresourceForOrganization()
+    {
+        $response = $this->getSubresource(
+            ['entity' => 'customertaxcodes', 'id' => '<toString(@tax_code1->id)>', 'association' => 'organization']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForOrganization()
+    {
+        $response = $this->getRelationship(
+            ['entity' => 'customertaxcodes', 'id' => '<toString(@tax_code1->id)>', 'association' => 'organization']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']],
+            $response
+        );
+    }
+
+    public function testTryToUpdateRelationshipForOrganization(): void
+    {
+        $response = $this->patchRelationship(
+            ['entity' => 'customertaxcodes', 'id' => '<toString(@tax_code1->id)>', 'association' => 'organization'],
+            ['data' => ['type' => 'organizations', 'id' => '<toString(@organization->id)>']],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 }

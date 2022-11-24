@@ -24,6 +24,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: assigned_to.ASSIGN_TYPE_ASSIGN_ID
             type: integer
         -
+            name: assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID
+            type: decimal
+            group: collection_sort_order
+        -
             name: image_product_large
             type: text
             fulltext: false
@@ -79,6 +83,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: schema_org_brand_name_LOCALIZATION_ID
             type: text
             fulltext: false
+        -
+            name: relevance_weight
+            type: decimal
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     alias: oro_brand_WEBSITE_ID

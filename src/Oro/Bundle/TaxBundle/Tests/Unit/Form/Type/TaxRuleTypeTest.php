@@ -42,7 +42,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                 1 => $this->getEntity(ProductTaxCode::class, ['id' => 1]),
                 2 => $this->getEntity(ProductTaxCode::class, ['id' => 2])
             ],
-            ProductTaxCodeAutocompleteType::NAME
+            'oro_product_tax_code_autocomplete'
         );
 
         $customerTaxCodeAutocomplete = new EntityType(
@@ -50,7 +50,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                 1 => $this->getEntity(CustomerTaxCode::class, ['id' => 1]),
                 2 => $this->getEntity(CustomerTaxCode::class, ['id' => 2])
             ],
-            CustomerTaxCodeAutocompleteType::NAME
+            'oro_customer_tax_code_autocomplete'
         );
 
         $taxSelect = new EntityType(

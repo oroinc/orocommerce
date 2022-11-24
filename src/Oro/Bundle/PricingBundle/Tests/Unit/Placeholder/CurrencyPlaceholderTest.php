@@ -7,21 +7,15 @@ use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 
 class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CurrencyPlaceholder
-     */
-    private $placeholder;
-
-    /**
-     * @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currencyManager;
+
+    /** @var CurrencyPlaceholder */
+    private $placeholder;
 
     protected function setUp(): void
     {
-        $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
 
         $this->placeholder = new CurrencyPlaceholder($this->currencyManager);
     }
@@ -33,27 +27,27 @@ class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
 
     public function testReplaceValue()
     {
-        $this->assertSame("test_USD", $this->placeholder->replace("test_CURRENCY", ["CURRENCY" => "USD"]));
+        $this->assertSame('test_USD', $this->placeholder->replace('test_CURRENCY', ['CURRENCY' => 'USD']));
     }
 
     public function testReplaceDefault()
     {
         $this->currencyManager->expects($this->once())
-            ->method("getUserCurrency")
-            ->willReturn("USD");
+            ->method('getUserCurrency')
+            ->willReturn('USD');
 
-        $this->assertSame("test_USD", $this->placeholder->replaceDefault("test_CURRENCY"));
+        $this->assertSame('test_USD', $this->placeholder->replaceDefault('test_CURRENCY'));
     }
 
     public function testReplaceDefaultCplNotFound()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("Can't get current currency");
+        $this->expectExceptionMessage('Can\'t get current currency');
 
         $this->currencyManager->expects($this->once())
-            ->method("getUserCurrency")
+            ->method('getUserCurrency')
             ->willReturn(null);
 
-        $this->placeholder->replaceDefault("test_CURRENCY");
+        $this->placeholder->replaceDefault('test_CURRENCY');
     }
 }

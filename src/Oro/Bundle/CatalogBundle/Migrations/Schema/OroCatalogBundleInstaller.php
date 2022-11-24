@@ -36,6 +36,7 @@ class OroCatalogBundleInstaller implements
 
     const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
     const ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'oro_category_def_prod_opts';
+    const ORO_PRODUCT_TABLE_NAME = 'oro_product';
     const ORO_PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
@@ -65,7 +66,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_19';
+        return 'v1_20';
     }
 
     /**
@@ -118,6 +119,8 @@ class OroCatalogBundleInstaller implements
         $this->addCategoryProductRelation($schema);
 
         $this->addContentVariantTypes($schema);
+
+        $this->createProductCategorySortOrder($schema);
     }
 
     /**
@@ -463,5 +466,30 @@ class OroCatalogBundleInstaller implements
                 'importexport' => ['excluded' => true],
             ]
         );
+    }
+
+    /**
+     * Adds category_sort_order field to oro_product table & related extended field
+     * @param Schema $schema
+     * @return void
+     */
+    protected function createProductCategorySortOrder(Schema $schema): void
+    {
+        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_PRODUCT_TABLE_NAME);
+        if (!$table->hasColumn('category_sort_order')) {
+            $table->addColumn('category_sort_order', 'float', [
+                'notnull' => false,
+                'default' => null,
+                'oro_options' => [
+                    'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'importexport' => ['excluded' => true],
+                    'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                    'form' => ['is_enabled' => false],
+                    'email' => ['available_in_template' => false],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                ],
+            ]);
+        }
     }
 }

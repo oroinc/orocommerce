@@ -17,35 +17,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CustomerFormExtension */
-    protected $extension;
+    private $extension;
 
     /** @var TranslatorInterface */
-    protected $translator;
+    private $translator;
 
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTermProvider;
+    private $paymentTermProvider;
 
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $paymentTermAssociationProvider;
+    private $paymentTermAssociationProvider;
 
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                static function (string $key) {
-                    return sprintf('[trans]%s[/trans]', $key);
-                }
-            );
+            ->willReturnCallback(static function (string $key) {
+                return sprintf('[trans]%s[/trans]', $key);
+            });
 
-        $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);
+        $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);
 
         $this->extension = new CustomerFormExtension(
             $this->paymentTermProvider,
@@ -62,10 +55,14 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
     public function testBuildFormWithoutData()
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->once())->method('getData')->willReturn(null);
+        $builder->expects($this->once())
+            ->method('getData')
+            ->willReturn(null);
 
-        $this->paymentTermAssociationProvider->expects($this->never())->method($this->anything());
-        $this->paymentTermProvider->expects($this->never())->method($this->anything());
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method($this->anything());
+        $this->paymentTermProvider->expects($this->never())
+            ->method($this->anything());
 
         $this->extension->buildForm($builder, []);
     }
@@ -77,8 +74,10 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn(new Customer());
 
-        $this->paymentTermAssociationProvider->expects($this->never())->method($this->anything());
-        $this->paymentTermProvider->expects($this->never())->method($this->anything());
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method($this->anything());
+        $this->paymentTermProvider->expects($this->never())
+            ->method($this->anything());
 
         $this->extension->buildForm($builder, []);
     }
@@ -90,8 +89,11 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
-        $this->paymentTermProvider->expects($this->never())->method($this->anything());
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
+            ->willReturn([]);
+        $this->paymentTermProvider->expects($this->never())
+            ->method($this->anything());
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }
@@ -103,10 +105,13 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
 
-        $this->paymentTermProvider->expects($this->once())->method('getCustomerGroupPaymentTerm')->willReturn(null);
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCustomerGroupPaymentTerm')
+            ->willReturn(null);
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }
@@ -118,13 +123,17 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
 
-        $this->paymentTermProvider->expects($this->once())->method('getCustomerGroupPaymentTerm')
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCustomerGroupPaymentTerm')
             ->willReturn(new PaymentTerm());
 
-        $builder->expects($this->once())->method('has')->willReturn(false);
+        $builder->expects($this->once())
+            ->method('has')
+            ->willReturn(false);
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }
@@ -136,27 +145,43 @@ class CustomerFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('getData')
             ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
-        $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
 
-        $this->paymentTermProvider->expects($this->once())->method('getCustomerGroupPaymentTerm')
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCustomerGroupPaymentTerm')
             ->willReturn(new PaymentTerm());
 
-        $builder->expects($this->once())->method('has')->willReturn(true);
+        $builder->expects($this->once())
+            ->method('has')
+            ->willReturn(true);
 
         $field = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->once())->method('get')->willReturn($field);
-        $field->expects($this->once())->method('getOptions')->willReturn([]);
-        $field->expects($this->once())->method('getName')->willReturn('name');
+        $builder->expects($this->once())
+            ->method('get')
+            ->willReturn($field);
+        $field->expects($this->once())
+            ->method('getOptions')
+            ->willReturn([]);
+        $field->expects($this->once())
+            ->method('getName')
+            ->willReturn('name');
         $type = $this->createMock(ResolvedFormTypeInterface::class);
-        $field->expects($this->once())->method('getType')->willReturn($type);
-        $type->expects($this->once())->method('getInnerType')->willReturn(new FormType());
+        $field->expects($this->once())
+            ->method('getType')
+            ->willReturn($type);
+        $type->expects($this->once())
+            ->method('getInnerType')
+            ->willReturn(new FormType());
 
-        $builder->expects($this->once())->method('add')->with(
-            'name',
-            FormType::class,
-            ['configs' => ['placeholder' => '[trans]oro.paymentterm.customer.customer_group_defined[/trans]']]
-        );
+        $builder->expects($this->once())
+            ->method('add')
+            ->with(
+                'name',
+                FormType::class,
+                ['configs' => ['placeholder' => '[trans]oro.paymentterm.customer.customer_group_defined[/trans]']]
+            );
 
         $this->extension->buildForm($builder, ['data_class' => \stdClass::class]);
     }

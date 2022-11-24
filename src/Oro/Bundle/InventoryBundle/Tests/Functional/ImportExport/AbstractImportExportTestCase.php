@@ -30,20 +30,14 @@ abstract class AbstractImportExportTestCase extends WebTestCase
      */
     abstract public function getImportLevelFile();
 
-    /**
-     * @return array
-     */
-    public function inventoryStatusDataProvider()
+    public function inventoryStatusDataProvider(): array
     {
         $filePath = $this->getFilePath() . $this->getImportStatusFile();
 
         return Yaml::parse(file_get_contents($filePath));
     }
 
-    /**
-     * @return array
-     */
-    public function inventoryLevelsDataProvider()
+    public function inventoryLevelsDataProvider(): array
     {
         $filePath = $this->getFilePath() . $this->getImportLevelFile();
 

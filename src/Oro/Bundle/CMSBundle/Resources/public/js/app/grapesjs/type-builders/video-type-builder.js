@@ -86,6 +86,12 @@ const VideoTypeBuilder = BaseTypeBuilder.extend({
                 }
             }
 
+            if (tagName === 'iframe') {
+                if (this.get('poster')) {
+                    delete attr.poster;
+                }
+            }
+
             return attr;
         },
 

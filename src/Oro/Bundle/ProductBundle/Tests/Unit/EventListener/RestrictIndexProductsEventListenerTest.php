@@ -12,33 +12,29 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const CONFIG_PATH = 'config.path';
+    private const CONFIG_PATH = 'config.path';
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ProductVisibilityQueryBuilderModifier */
-    protected $modifier;
+    private $modifier;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
-    protected $configManager;
-
-    /** @var RestrictIndexProductsEventListener */
-    protected $listener;
+    private $configManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|QueryBuilder */
-    protected $queryBuilder;
+    private $queryBuilder;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|WebsiteContextManager */
-    protected $websiteContext;
+    private $websiteContext;
+
+    /** @var RestrictIndexProductsEventListener */
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->modifier = $this->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
-        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->websiteContext = $this->getMockBuilder(WebsiteContextManager::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->modifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->websiteContext = $this->createMock(WebsiteContextManager::class);
 
         $this->listener = new RestrictIndexProductsEventListener(
             $this->configManager,

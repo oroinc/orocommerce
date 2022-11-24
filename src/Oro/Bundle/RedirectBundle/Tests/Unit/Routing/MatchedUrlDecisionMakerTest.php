@@ -12,9 +12,7 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->frontendHelper = $this->createMock(FrontendHelper::class);
     }
 
     /**
@@ -30,10 +28,7 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $maker->matches($url));
     }
 
-    /**
-     * @return array
-     */
-    public function urlDataProvider()
+    public function urlDataProvider(): array
     {
         return [
             'allowed url' => [

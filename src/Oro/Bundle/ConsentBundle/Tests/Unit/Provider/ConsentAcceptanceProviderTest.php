@@ -25,9 +25,6 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentAcceptanceProvider */
     private $consentAcceptanceProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -88,10 +85,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomerConsentAcceptancesProvider()
+    public function getCustomerConsentAcceptancesProvider(): array
     {
         return [
             'There is no consentAcceptance signed by CustomerUser' => [
@@ -143,10 +137,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getGetCustomerConsentAcceptanceByConsentId()
+    public function getGetCustomerConsentAcceptanceByConsentId(): array
     {
         $consentAcceptance1 = $this->getEntity(
             ConsentAcceptance::class,
@@ -230,10 +221,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getGetCustomerConsentAcceptancesByConsents()
+    public function getGetCustomerConsentAcceptancesByConsents(): array
     {
         $consent1 = $this->getEntity(Consent::class, ['id' => 1]);
         $consent2 = $this->getEntity(Consent::class, ['id' => 2]);

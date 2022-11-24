@@ -9,20 +9,16 @@ use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
 class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var UnitsMapper
-     */
-    protected $mapper;
+    /** @var UnitsMapper */
+    private $mapper;
 
     protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->registry = $this->createMock(ManagerRegistry::class);
+
         $this->mapper = new UnitsMapper($this->registry);
     }
 
@@ -36,7 +32,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUPSUnitCode()
     {
-        static::assertEquals(
+        self::assertEquals(
             UPSTransport::UNIT_OF_WEIGHT_KGS,
             $this->mapper->getUPSUnitByCode(UnitsMapper::UNIT_OF_WEIGHT_KG)
         );
@@ -52,7 +48,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUPSUnit()
     {
-        static::assertEquals(
+        self::assertEquals(
             UPSTransport::UNIT_OF_WEIGHT_KGS,
             $this->mapper->getUPSUnitByShippingUnit((new WeightUnit())->setCode('kg'))
         );
@@ -68,7 +64,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOROUnitCode()
     {
-        static::assertEquals(
+        self::assertEquals(
             UnitsMapper::UNIT_OF_WEIGHT_KG,
             $this->mapper->getShippingUnitCode(UPSTransport::UNIT_OF_WEIGHT_KGS)
         );
@@ -78,15 +74,16 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
     {
         $kgUnit = (new WeightUnit)->setCode('kg');
 
-        $repository = $this->getMockBuilder(ObjectRepository::class)->disableOriginalConstructor()->getMock();
-        $repository->expects(self::any())->method('findOneBy')->willReturn($kgUnit);
-        $this->registry
-            ->expects(self::once())
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects(self::any())
+            ->method('findOneBy')
+            ->willReturn($kgUnit);
+        $this->registry->expects(self::once())
             ->method('getRepository')
             ->with('OroShippingBundle:WeightUnit')
             ->willReturn($repository);
 
-        static::assertEquals(
+        self::assertEquals(
             $kgUnit,
             $this->mapper->getShippingUnitByUPSUnit(UPSTransport::UNIT_OF_WEIGHT_KGS)
         );
@@ -96,15 +93,16 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
     {
         $kgUnit = (new WeightUnit)->setCode('inch');
 
-        $repository = $this->getMockBuilder(ObjectRepository::class)->disableOriginalConstructor()->getMock();
-        $repository->expects(self::any())->method('findOneBy')->willReturn($kgUnit);
-        $this->registry
-            ->expects(self::once())
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository->expects(self::any())
+            ->method('findOneBy')
+            ->willReturn($kgUnit);
+        $this->registry->expects(self::once())
             ->method('getRepository')
             ->with('OroShippingBundle:LengthUnit')
             ->willReturn($repository);
 
-        static::assertEquals(
+        self::assertEquals(
             $kgUnit,
             $this->mapper->getShippingUnitByUPSUnit(UPSTransport::UNIT_OF_LENGTH_INCH)
         );
