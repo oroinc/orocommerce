@@ -155,9 +155,10 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
     /**
      * @dataProvider fieldsGroupDataProvider
      */
-    public function testOnWebsiteSearchIndexProductClass(?array $fieldsGroup)
+    public function testOnWebsiteSearchIndexProductClass(string $engineName, ?array $fieldsGroup)
     {
         $defaultValueLocale = null;
+        $this->listener->setSearchEngineName($engineName);
 
         /** @var Localization $customLocale */
         $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
@@ -247,12 +248,19 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
 
     public function fieldsGroupDataProvider(): \Generator
     {
-        yield [null];
-        yield [['main']];
+        yield ['orm', null];
+        yield ['elastic_search', null];
+        yield ['orm', ['main']];
+        yield ['elastic_search', ['main']];
     }
 
-    public function testOnWebsiteSearchCategorySortOrderFieldGroup()
+    /**
+     * @dataProvider engineNameProvider
+     */
+    public function testOnWebsiteSearchCategorySortOrderFieldGroup(string $engineName)
     {
+        $this->listener->setSearchEngineName($engineName);
+
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1, 'category_sort_order' => 1]);
 
@@ -276,8 +284,13 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
         $this->assertEquals($expected, $event->getEntitiesData());
     }
 
-    public function testOnWebsiteSearchIndexUnsupportedFieldsGroup()
+    /**
+     * @dataProvider engineNameProvider
+     */
+    public function testOnWebsiteSearchIndexUnsupportedFieldsGroup(string $engineName)
     {
+        $this->listener->setSearchEngineName($engineName);
+
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
@@ -293,5 +306,14 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
             ->method($this->anything());
 
         $this->listener->onWebsiteSearchIndex($event);
+    }
+
+    /**
+     * @dataProvider engineNameProvider
+     */
+    public function engineNameProvider(): \Generator
+    {
+        yield ['orm'];
+        yield ['elastic_search'];
     }
 }

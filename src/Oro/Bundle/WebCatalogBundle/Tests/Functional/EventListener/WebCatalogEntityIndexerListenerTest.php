@@ -5,8 +5,10 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EventListener;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
+    use MysqlVersionCheckTrait;
 
     protected function setUp(): void
     {
@@ -30,7 +33,17 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 
     public function testOnWebsiteSearchIndex()
     {
-        $container = $this->getContainer();
+        if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
+            self::markTestSkipped(
+                'Skipped because current test implementation isn\'t compatible with InnoDB Full-Text index'
+            );
+        }
+        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
+
+        $configManager = self::getConfigManager('global');
+        $originalValue = $configManager->get($key);
+        $configManager->set($key, true);
+        $configManager->flush();
 
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME);
@@ -40,6 +53,16 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
             'oro_web_catalog.web_catalog',
             $webCatalog->getId()
         );
+
+        $this->assertQueries();
+
+        $configManager->set($key, $originalValue);
+        $configManager->flush();
+    }
+
+    private function assertQueries()
+    {
+        $container = $this->getContainer();
 
         /** @var LocalizedFallbackValue $metaDescription */
         /** @var ContentVariant $contentVariant1 */

@@ -246,7 +246,7 @@ datagrids:
         sorters:
             columns:
                 categorySortOrder:
-                    data_name: categorySortOrder
+                    data_name: categorySortOrderFilled
             default:
                 categorySortOrder: ASC
         filters:

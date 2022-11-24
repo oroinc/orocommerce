@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
@@ -51,6 +52,11 @@ class WebsiteSearchCategoryIndexerListener
      */
     private $websiteContextManager;
 
+    /**
+     * @var string
+     */
+    private $searchEngineName;
+
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -61,6 +67,18 @@ class WebsiteSearchCategoryIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
+    /**
+     * @param string $searchEngineName
+     */
+    public function setSearchEngineName(string $searchEngineName): void
+    {
+        $this->searchEngineName = $searchEngineName;
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @return void
+     */
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'main')
@@ -150,7 +168,15 @@ class WebsiteSearchCategoryIndexerListener
         $products = $event->getEntities();
 
         foreach ($products as $product) {
-            $event->addField($product->getId(), 'category_sort_order', $product->getCategorySortOrder());
+            $sortOrder = $product->getCategorySortOrder();
+            if (is_null($sortOrder) && $this->searchEngineName !== 'elastic_search') {
+                $sortOrder = (float)Query::INFINITY;
+            }
+            $event->addField(
+                $product->getId(),
+                'category_sort_order',
+                $sortOrder
+            );
         }
     }
 

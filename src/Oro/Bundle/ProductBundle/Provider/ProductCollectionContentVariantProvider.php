@@ -7,8 +7,8 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
-use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 
 /**
  * Mix into contentVariant query information about related products & collection sort orders,

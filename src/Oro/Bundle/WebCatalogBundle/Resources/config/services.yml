@@ -82,11 +82,17 @@ services:
             - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
-            - '@oro_product.handler.collection_sort_order'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postRemove }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }
+
+    oro_web_catalog.event_listener.orm.content_node_entity_sort_order_listener:
+        class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeSortOrderListener'
+        arguments:
+            - '@oro_product.handler.collection_sort_order'
+        tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_web_catalog_content_node, method: onFormAfterFlush }
 
     oro_web_catalog.event_listener.orm.content_variant_entity_listener:
@@ -270,6 +276,8 @@ services:
             - '@oro_locale.helper.localization'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+        calls:
+            - [ setSearchEngineName, [ '%oro_website_search.engine%' ] ]
 
     oro_web_catalog.cacheable_content_node_tree_resolver:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeResolver

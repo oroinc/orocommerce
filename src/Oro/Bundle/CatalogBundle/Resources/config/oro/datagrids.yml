@@ -37,6 +37,24 @@ datagrids:
                                 THEN product.category_sort_order ELSE NULLIF(1,1) END
                             END
                         ) as categorySortOrder
+                    - >
+                        (
+                            CASE WHEN (:category_id IS NOT NULL) THEN
+                                CASE WHEN
+                                    product.category = :category_id
+                                    OR product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
+                                THEN 
+                                    CASE WHEN product.category_sort_order IS NULL
+                                    THEN 10000000 ELSE product.category_sort_order END
+                                ELSE NULLIF(1,1) END
+                            ELSE
+                                CASE WHEN product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
+                                THEN 
+                                    CASE WHEN product.category_sort_order IS NULL
+                                    THEN 10000000 ELSE product.category_sort_order END
+                                ELSE NULLIF(1,1) END
+                            END
+                        ) as categorySortOrderFilled
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 join:
@@ -85,7 +103,7 @@ datagrids:
                 inCategory:
                     data_name: inCategory
                 categorySortOrder:
-                    data_name: categorySortOrder
+                    data_name: categorySortOrderFilled
                 sku:
                     data_name: product.sku
                 name:

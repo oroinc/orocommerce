@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionContentVariantDatagridListener;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,9 +65,17 @@ class ProductCollectionContentVariantDatagridListenerTest extends \PHPUnit\Frame
         $qb->expects($this->once())
             ->method('expr')
             ->willReturn($expr);
-        $qb->expects($this->once())
+        $qb->expects($this->exactly(2))
             ->method('addSelect')
-            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->withConsecutive(
+                ['collectionSortOrder.sortOrder as categorySortOrder'],
+                [sprintf(
+                    '(CASE WHEN %1$s IS NULL THEN %2$s ELSE %1$s END) as %3$s',
+                    'collectionSortOrder.sortOrder',
+                    (float)Query::INFINITY,
+                    'categorySortOrderFilled'
+                )]
+            )
             ->willReturnSelf();
         $qb->expects($this->once())
             ->method('leftJoin')
@@ -169,9 +178,17 @@ class ProductCollectionContentVariantDatagridListenerTest extends \PHPUnit\Frame
         $qb->expects($this->once())
             ->method('expr')
             ->willReturn($expr);
-        $qb->expects($this->once())
+        $qb->expects($this->exactly(2))
             ->method('addSelect')
-            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->withConsecutive(
+                ['collectionSortOrder.sortOrder as categorySortOrder'],
+                [sprintf(
+                    '(CASE WHEN %1$s IS NULL THEN %2$s ELSE %1$s END) as %3$s',
+                    'collectionSortOrder.sortOrder',
+                    (float)Query::INFINITY,
+                    'categorySortOrderFilled'
+                )]
+            )
             ->willReturnSelf();
         $qb->expects($this->once())
             ->method('leftJoin')
@@ -240,9 +257,17 @@ class ProductCollectionContentVariantDatagridListenerTest extends \PHPUnit\Frame
         $qb->expects($this->once())
             ->method('expr')
             ->willReturn($expr);
-        $qb->expects($this->once())
+        $qb->expects($this->exactly(2))
             ->method('addSelect')
-            ->with('collectionSortOrder.sortOrder as categorySortOrder')
+            ->withConsecutive(
+                ['collectionSortOrder.sortOrder as categorySortOrder'],
+                [sprintf(
+                    '(CASE WHEN %1$s IS NULL THEN %2$s ELSE %1$s END) as %3$s',
+                    'collectionSortOrder.sortOrder',
+                    (float)Query::INFINITY,
+                    'categorySortOrderFilled'
+                )]
+            )
             ->willReturnSelf();
         $qb->expects($this->once())
             ->method('leftJoin')

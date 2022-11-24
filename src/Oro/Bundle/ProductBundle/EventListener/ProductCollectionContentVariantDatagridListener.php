@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -65,7 +66,15 @@ class ProductCollectionContentVariantDatagridListener
     {
         $expr = $queryBuilder->expr();
         $queryBuilder
-            ->addSelect('collectionSortOrder.sortOrder as categorySortOrder');
+            ->addSelect('collectionSortOrder.sortOrder as categorySortOrder')
+            ->addSelect(
+                sprintf(
+                    '(CASE WHEN %1$s IS NULL THEN %2$s ELSE %1$s END) as %3$s',
+                    'collectionSortOrder.sortOrder',
+                    (float)Query::INFINITY,
+                    'categorySortOrderFilled'
+                )
+            );
 
         $joinCollectionSortOrdersExpr = $expr->andX()
             ->add(

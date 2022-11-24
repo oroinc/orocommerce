@@ -4,8 +4,8 @@ namespace Oro\Bundle\WebCatalogBundle\Provider;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
-use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 
 /**
  * Delegates the getting information about a content variant to child providers.

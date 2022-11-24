@@ -160,6 +160,8 @@ services:
             - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+        calls:
+            - [ setSearchEngineName, [ '%oro_website_search.engine%' ] ]
 
     oro_catalog.entity_listener.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener'

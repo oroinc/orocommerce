@@ -57,8 +57,12 @@ class CategoryHandler
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
+                $this->onSuccess($category, $appendProducts, $removeProducts);
+
                 $sortOrder = $this->form->get('sortOrder')->getData()->toArray();
-                $this->onSuccess($category, $appendProducts, $removeProducts, $sortOrder);
+                $this->sortProducts($category, $appendProducts, $removeProducts, $sortOrder);
+                $this->cleanProducts($appendProducts, $removeProducts, $sortOrder);
+                $this->manager->flush();
 
                 $this->eventDispatcher->dispatch(
                     new AfterFormProcessEvent($this->form, $category),
@@ -76,18 +80,14 @@ class CategoryHandler
      * @param Category $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
-     * @param Product[] $sortOrder
      */
     protected function onSuccess(
         Category $category,
         array $appendProducts,
-        array $removeProducts,
-        array $sortOrder
+        array $removeProducts
     ): void {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
-        $this->sortProducts($category, $appendProducts, $removeProducts, $sortOrder);
-        $this->cleanProducts($appendProducts, $removeProducts, $sortOrder);
 
         if ($category->getDefaultProductOptions()) {
             $category->getDefaultProductOptions()->updateUnitPrecision();

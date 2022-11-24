@@ -202,7 +202,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->willReturn([$product]);
         $this->manager->expects(self::exactly(2))
             ->method('persist');
-        $this->manager->expects(self::once())
+        $this->manager->expects(self::exactly(2))
             ->method('flush');
 
         self::assertTrue($this->handler->process($this->entity));

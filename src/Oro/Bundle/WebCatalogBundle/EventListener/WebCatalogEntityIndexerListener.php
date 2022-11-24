@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -60,6 +61,11 @@ class WebCatalogEntityIndexerListener
      */
     private $localizationHelper;
 
+    /**
+     * @var string
+     */
+    private $searchEngineName;
+
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -74,6 +80,14 @@ class WebCatalogEntityIndexerListener
         $this->websiteContextManager = $websiteContextManager;
         $this->contentVariantProvider = $contentVariantProvider;
         $this->localizationHelper = $localizationHelper;
+    }
+
+    /**
+     * @param string $searchEngineName
+     */
+    public function setSearchEngineName(string $searchEngineName): void
+    {
+        $this->searchEngineName = $searchEngineName;
     }
 
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
@@ -145,13 +159,10 @@ class WebCatalogEntityIndexerListener
     ): void {
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
-        if ($this->hasContextFieldGroup($event->getContext(), 'main') &&
-            $this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')
-        ) {
-            $this->addInformationToIndex($event, $localizations, $relations, $nodes, true);
-        } elseif ($this->hasContextFieldGroup($event->getContext(), 'main')) {
+        if ($this->hasContextFieldGroup($event->getContext(), 'main')) {
             $this->addInformationToIndex($event, $localizations, $relations, $nodes);
-        } elseif ($this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
+        }
+        if ($this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
             $this->addCollectionSortOrderInformationToIndex($event, $relations);
         }
     }
@@ -190,14 +201,12 @@ class WebCatalogEntityIndexerListener
      * @param Localization[] $localizations
      * @param array $relations
      * @param ContentNode[] $nodes
-     * @param bool $addSortOrder
      */
     protected function addInformationToIndex(
         IndexEntityEvent $event,
         array $localizations,
         array $relations,
-        array $nodes,
-        bool $addSortOrder = false
+        array $nodes
     ): void {
         foreach ($relations as $relation) {
             if (empty($relation['nodeId'])) {
@@ -225,10 +234,6 @@ class WebCatalogEntityIndexerListener
                     AssignIdPlaceholder::NAME => $variantId,
                 ]
             );
-
-            if ($addSortOrder && !is_null($relation['sortOrderValue'])) {
-                $this->addCollectionSortOrderInformation($event, $relation);
-            }
 
             foreach ($localizations as $localization) {
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
@@ -295,14 +300,14 @@ class WebCatalogEntityIndexerListener
         }
 
         $recordSortOrderValue = $this->contentVariantProvider->getRecordSortOrder($relation);
-        if (is_null($recordSortOrderValue)) {
+        if (is_null($recordSortOrderValue) && $this->searchEngineName === 'elastic_search') {
             return;
         }
 
         $event->addPlaceholderField(
             $recordId,
             'assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID',
-            $recordSortOrderValue,
+            is_null($recordSortOrderValue) ? (float)Query::INFINITY : $recordSortOrderValue,
             [
                 AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
                 AssignIdPlaceholder::NAME => $relation['variantId'],

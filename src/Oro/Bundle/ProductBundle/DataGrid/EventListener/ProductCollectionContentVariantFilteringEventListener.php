@@ -14,6 +14,7 @@ use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
@@ -134,7 +135,12 @@ class ProductCollectionContentVariantFilteringEventListener
         $contentVariantId = $event->getDatagrid()->getConfig()->offsetGetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH);
         if ($contentVariantId) {
             if (!$event->getQuery()->getSortOrder()) {
-                $event->getQuery()->setOrderBy(sprintf('decimal.assigned_to_sort_order.variant_%s', $contentVariantId));
+                $event->getQuery()
+                    ->setOrderBy(
+                        sprintf('decimal.assigned_to_sort_order.variant_%s', $contentVariantId),
+                        Query::ORDER_ASC,
+                        Query::TYPE_DECIMAL
+                    );
             }
         }
     }
