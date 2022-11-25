@@ -162,12 +162,18 @@ const QuickOrderFromView = BaseView.extend({
     },
 
     async clearRows() {
-        const bathes = _.chunk(this.$(this.elem.rows), this.options.rowsBatchSize);
-        await bathes.map(async rows => {
+        const $rows = this.$(this.elem.rows).addClass('stale');
+        await this.addRows(this.rowsCountInitial);
+        this.listenToOnce(this, 'rows-initialization-done', async () => {
             await window.sleep(0);
-            rows.forEach(rowElem => $(rowElem).trigger('content:remove').remove());
+            const bathes = _.chunk($rows, this.options.rowsBatchSize);
+            await bathes.map(async rows => {
+                await window.sleep(0);
+                const $rows = $(rows);
+                this.componentManager.eraseElement($rows);
+                $rows.remove();
+            });
         });
-        this.addRows(this.rowsCountInitial);
     },
 
     checkRowsQuantity(collection, options) {
@@ -226,7 +232,7 @@ const QuickOrderFromView = BaseView.extend({
     },
 
     getRowsCount() {
-        return this.$(this.elem.rows).length;
+        return this.$(this.elem.rows).filter(':not(.stale)').length;
     },
 
     onProductSkuUpdate() {

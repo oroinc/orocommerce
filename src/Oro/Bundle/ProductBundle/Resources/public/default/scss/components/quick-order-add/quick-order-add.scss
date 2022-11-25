@@ -17,6 +17,9 @@
         display: block;
       }
     }
+    &.stale {
+      display: none;
+    }
   }
 
   &__row-content {
