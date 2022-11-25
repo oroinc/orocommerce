@@ -11,24 +11,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var QuickAddImportFromFileType
-     */
-    protected $formType;
-
-    /**
      * {@inheritDoc}
      */
-    protected function setUp(): void
-    {
-        $this->formType = new QuickAddImportFromFileType();
-
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([], []),
@@ -38,11 +23,8 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param array $data
-     * @param array $expectedData
-     * @param bool $isValid
      */
-    public function testSubmit(array $data, array $expectedData, $isValid)
+    public function testSubmit(array $data, array $expectedData, bool $isValid)
     {
         $formBuilder = $this->factory->createBuilder(QuickAddImportFromFileType::class);
         $formBuilder->get(QuickAddImportFromFileType::FILE_FIELD_NAME)
@@ -55,10 +37,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $invalidFile = $this->createUploadedFile('quick-order.doc');
         $validFile = $this->createUploadedFile('quick-order.csv');
@@ -103,19 +82,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->formType);
-    }
-
-    /**
-     * @param string $fileName
-     * @return UploadedFile
-     */
-    private function createUploadedFile($fileName)
+    private function createUploadedFile(string $fileName): UploadedFile
     {
         return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, true);
     }

@@ -9,37 +9,28 @@ class PackageTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    const PACKAGING_TYPE_CODE = '02';
-    const DIMENSION_CODE = 'IN';
-    const DIMENSION_LENGTH = '1';
-    const DIMENSION_WIDTH = '2';
-    const DIMENSION_HEIGHT = '3';
-    const WEIGHT_CODE = 'LB';
-    const WEIGHT = '4';
+    private const PACKAGING_TYPE_CODE = '02';
+    private const DIMENSION_CODE = 'IN';
+    private const DIMENSION_LENGTH = '1';
+    private const DIMENSION_WIDTH = '2';
+    private const DIMENSION_HEIGHT = '3';
+    private const WEIGHT_CODE = 'LB';
+    private const WEIGHT = '4';
 
-    /**
-     * @var Package
-     */
-    protected $model;
+    /** @var array */
+    private $resultArray;
 
-    /**
-     * @var  array
-     */
-    protected $resultArray;
+    /** @var Package */
+    private $model;
 
     protected function setUp(): void
     {
         $this->model = new Package();
     }
 
-    protected function tearDown(): void
+    public function testGettersAndSetters()
     {
-        unset($this->model);
-    }
-
-    public function testAccessors()
-    {
-        static::assertPropertyAccessors(
+        self::assertPropertyAccessors(
             $this->model,
             [
                 ['packagingTypeCode', self::PACKAGING_TYPE_CODE],
@@ -53,14 +44,14 @@ class PackageTest extends \PHPUnit\Framework\TestCase
     {
         $this->initPackage();
 
-        static::assertEquals($this->resultArray, $this->model->toArray());
+        self::assertEquals($this->resultArray, $this->model->toArray());
     }
 
     public function testToJson()
     {
         $this->initPackage();
 
-        static::assertEquals(json_encode($this->resultArray), $this->model->toJson());
+        self::assertEquals(json_encode($this->resultArray, JSON_THROW_ON_ERROR), $this->model->toJson());
     }
 
     public function initPackage()
@@ -90,7 +81,7 @@ class PackageTest extends \PHPUnit\Framework\TestCase
             self::WEIGHT
         );
 
-        static::assertEquals(self::WEIGHT_CODE, $package->getWeightCode());
-        static::assertEquals(self::WEIGHT, $package->getWeight());
+        self::assertEquals(self::WEIGHT_CODE, $package->getWeightCode());
+        self::assertEquals(self::WEIGHT, $package->getWeight());
     }
 }

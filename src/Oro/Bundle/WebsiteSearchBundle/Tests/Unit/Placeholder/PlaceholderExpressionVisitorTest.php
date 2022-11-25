@@ -19,12 +19,8 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->placeholder = $this->createMock(PlaceholderInterface::class);
-        $this->visitor = new PlaceholderExpressionVisitor($this->placeholder);
-    }
 
-    protected function tearDown(): void
-    {
-        unset($this->visitor, $this->placeholder);
+        $this->visitor = new PlaceholderExpressionVisitor($this->placeholder);
     }
 
     public function testWalkValue()
@@ -36,11 +32,11 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
 
     public function testWalkComparison()
     {
-        $expr = new Comparison("field_name_NAME_ID", "=", "value");
+        $expr = new Comparison('field_name_NAME_ID', '=', 'value');
 
         $this->placeholder->expects($this->once())
             ->method('replaceDefault')
-            ->with("field_name_NAME_ID")
+            ->with('field_name_NAME_ID')
             ->willReturn('field_name_1');
 
         $result = $this->visitor->walkComparison($expr);
@@ -52,7 +48,7 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
 
     public function testWalkCompositeExpression()
     {
-        $exprs = new CompositeExpression(
+        $expr = new CompositeExpression(
             CompositeExpression::TYPE_AND,
             [
                 new Comparison('field_name_NAME_ID', '=', 'value'),
@@ -60,7 +56,7 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $result = $this->visitor->walkCompositeExpression($exprs);
+        $result = $this->visitor->walkCompositeExpression($expr);
 
         $this->assertInstanceOf(CompositeExpression::class, $result);
         $this->assertCount(2, $result->getExpressionList());

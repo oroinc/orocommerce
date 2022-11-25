@@ -11,21 +11,16 @@ class WeightTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var Weight */
-    protected $model;
+    private $model;
 
     protected function setUp(): void
     {
         $this->model = new Weight();
     }
 
-    protected function tearDown(): void
+    public function testGettersAndSetters()
     {
-        unset($this->model);
-    }
-
-    public function testAccessors()
-    {
-        static::assertPropertyAccessors(
+        self::assertPropertyAccessors(
             $this->model,
             [
                 ['value', 42.5],

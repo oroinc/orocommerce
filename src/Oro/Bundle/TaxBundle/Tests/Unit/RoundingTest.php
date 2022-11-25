@@ -8,13 +8,9 @@ use Brick\Math\RoundingMode;
 class RoundingTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @param string $rangeStart
-     * @param string $rangeEnd
-     * @param string $expected
-     *
      * @dataProvider dataProvider
      */
-    public function testRound($rangeStart, $rangeEnd, $expected)
+    public function testRound(string $rangeStart, string $rangeEnd, string $expected)
     {
         $start = BigDecimal::of($rangeStart);
         $end = BigDecimal::of($rangeEnd);
@@ -29,11 +25,9 @@ class RoundingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function dataProvider()
+    public function dataProvider(): array
     {
         return [
             ['0.10', '0.29', '0.01'],

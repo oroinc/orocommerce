@@ -10,25 +10,16 @@ abstract class AbstractCheckoutDiffMapperTest extends \PHPUnit\Framework\TestCas
 {
     use EntityTrait;
 
-    /**
-     * @var CheckoutStateDiffMapperInterface
-     */
-    protected $mapper;
-
-    /**
-     * @var Checkout
-     */
+    /** @var Checkout */
     protected $checkout;
+
+    /** @var CheckoutStateDiffMapperInterface */
+    protected $mapper;
 
     protected function setUp(): void
     {
         $this->checkout = $this->getEntity(Checkout::class, ['id' => 1]);
         $this->mapper = $this->getMapper();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->mapper, $this->checkout);
     }
 
     public function testIsEntitySupported()

@@ -23,11 +23,6 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->translator, $this->provider);
-    }
-
     public function testGetSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
@@ -35,7 +30,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
             ->willReturn(false);
 
         $total = $this->createTotalResultElement(100, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -54,7 +49,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
             ->willReturn(true);
 
         $total = $this->createTotalResultElement(100, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -73,7 +68,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
             ->willReturn(false);
 
         $total = $this->createTotalResultElement(100, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('loadTax')

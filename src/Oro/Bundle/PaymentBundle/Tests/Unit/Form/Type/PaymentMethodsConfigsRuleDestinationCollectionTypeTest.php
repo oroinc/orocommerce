@@ -22,10 +22,6 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array|PaymentMethodsConfigsRuleDestination[] $existing
-     * @param array $submitted
-     * @param array|PaymentMethodsConfigsRuleDestination[] $expected
      */
     public function testSubmit(array $existing, array $submitted, array $expected = null)
     {
@@ -38,15 +34,12 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
         $form = $this->factory->create(PaymentMethodsConfigsRuleDestinationCollectionType::class, $existing, $options);
         $form->submit($submitted);
 
-        static::assertTrue($form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($expected, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expected, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'test' => [
@@ -79,14 +72,11 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
         ];
     }
 
-    /**
-     * @param string $countryCode
-     * @param string $regionCode
-     * @param array $postalCodes
-     * @return PaymentMethodsConfigsRuleDestination
-     */
-    protected function getDestination($countryCode, $regionCode, array $postalCodes)
-    {
+    private function getDestination(
+        string $countryCode,
+        string $regionCode,
+        array $postalCodes
+    ): PaymentMethodsConfigsRuleDestination {
         $country = new Country($countryCode);
 
         $region = new Region($regionCode);
@@ -108,9 +98,9 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return array_merge(
             parent::getExtensions(),
@@ -131,12 +121,12 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
     public function testGetParent()
     {
         $type = new PaymentMethodsConfigsRuleDestinationCollectionType();
-        static::assertSame(CollectionType::class, $type->getParent());
+        self::assertSame(CollectionType::class, $type->getParent());
     }
 
     public function testGetBlockPrefix()
     {
         $type = new PaymentMethodsConfigsRuleDestinationCollectionType();
-        static::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $type->getBlockPrefix());
+        self::assertSame(PaymentMethodsConfigsRuleDestinationCollectionType::NAME, $type->getBlockPrefix());
     }
 }

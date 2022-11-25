@@ -10,21 +10,16 @@ class DimensionsValueTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var DimensionsValue */
-    protected $model;
+    private $model;
 
     protected function setUp(): void
     {
         $this->model = new DimensionsValue();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->model);
-    }
-
     public function testAccessors()
     {
-        static::assertPropertyAccessors(
+        self::assertPropertyAccessors(
             $this->model,
             [
                 ['length', 12.3],
@@ -38,28 +33,23 @@ class DimensionsValueTest extends \PHPUnit\Framework\TestCase
     {
         $model = DimensionsValue::create(12, 34, 56);
 
-        static::assertInstanceOf(DimensionsValue::class, $model);
-        static::assertSame(12, $model->getLength());
-        static::assertSame(34, $model->getWidth());
-        static::assertSame(56, $model->getHeight());
+        self::assertInstanceOf(DimensionsValue::class, $model);
+        self::assertSame(12, $model->getLength());
+        self::assertSame(34, $model->getWidth());
+        self::assertSame(56, $model->getHeight());
     }
 
     /**
      * @dataProvider isEmptyDataProvider
-     *
-     * @param float $length
-     * @param float $width
-     * @param float $height
-     * @param bool $expected
      */
-    public function testIsEmpty($length, $width, $height, $expected)
+    public function testIsEmpty(?float $length, ?float $width, ?float $height, bool $expected)
     {
         $model = DimensionsValue::create($length, $width, $height);
 
         $this->assertEquals($expected, $model->isEmpty());
     }
 
-    public function isEmptyDataProvider()
+    public function isEmptyDataProvider(): array
     {
         return [
             [

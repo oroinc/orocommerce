@@ -4,14 +4,36 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Calculator;
 
 use Oro\Bundle\TaxBundle\Calculator\IncludedTaxCalculator;
 
-class IncludedTaxCalculatorTest extends AbstractTaxCalculatorTest
+class IncludedTaxCalculatorTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var IncludedTaxCalculator */
+    private $calculator;
+
+    protected function setUp(): void
+    {
+        $this->calculator = new IncludedTaxCalculator();
+    }
+
+    public function testAmountKey(): void
+    {
+        $this->assertIsString($this->calculator->getAmountKey());
+    }
+
     /**
-     * @return array
-     *
+     * @dataProvider calculateDataProvider
+     */
+    public function testCalculate(array $expectedResult, string $taxableAmount, string $taxRate): void
+    {
+        $this->assertEquals(
+            $expectedResult,
+            array_values($this->calculator->calculate($taxableAmount, $taxRate)->getArrayCopy())
+        );
+    }
+
+    /**
      * @link http://salestax.avalara.com/
      */
-    public function calculateDataProvider()
+    public function calculateDataProvider(): array
     {
         return [
             // use cases
@@ -28,13 +50,5 @@ class IncludedTaxCalculatorTest extends AbstractTaxCalculatorTest
             [['15.98', '15.956066', '0.023934'], '15.98', '0.0015'],
             [['15.98', '13.316667', '2.663333'], '15.98', '-0.2'],
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getCalculator()
-    {
-        return new IncludedTaxCalculator();
     }
 }
