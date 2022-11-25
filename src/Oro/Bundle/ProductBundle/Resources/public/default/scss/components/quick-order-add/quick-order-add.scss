@@ -24,6 +24,10 @@
                 display: block;
             }
         }
+
+        &.stale {
+            display: none;
+        }
     }
 
     &__row-content {
@@ -156,7 +160,7 @@
                 .mass-action-controls {
                     width: 100%;
                 }
-                
+
                 .dropdown-toggle {
                     flex-grow: 0;
                 }
