@@ -8,19 +8,12 @@ use Oro\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider;
 
 class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceListPermissionProvider
-     */
-    protected $provider;
+    /** @var PriceListPermissionProvider */
+    private $provider;
 
     protected function setUp(): void
     {
         $this->provider = new PriceListPermissionProvider();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->provider);
     }
 
     /**
@@ -34,10 +27,7 @@ class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function permissionsDataProvider()
+    public function permissionsDataProvider(): array
     {
         return [
             'without action' => [

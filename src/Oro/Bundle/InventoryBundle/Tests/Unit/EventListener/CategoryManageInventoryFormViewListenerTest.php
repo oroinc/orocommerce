@@ -9,7 +9,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
     /** @var CategoryManageInventoryFormViewListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
@@ -22,25 +22,18 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-
-        parent::tearDown();
-    }
-
     /**
-     * @return void
+     * {@inheritDoc}
      */
-    protected function callTestMethod()
+    protected function callTestMethod(): void
     {
         $this->listener->onCategoryEdit($this->event);
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExpectedScrollData()
+    protected function getExpectedScrollData(): array
     {
         return [
             ScrollData::DATA_BLOCKS => [
@@ -53,9 +46,9 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
     }
 
     /**
-     * @return Category
+     * {@inheritDoc}
      */
-    protected function getEntity()
+    protected function getEntity(): object
     {
         return new Category();
     }

@@ -13,24 +13,15 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $scopeManager;
 
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    /**
-     * @var ConsentContextProvider
-     */
+    /** @var ConsentContextProvider */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
@@ -42,20 +33,8 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->scopeManager,
-            $this->provider
-        );
-    }
-
     public function testGetScope()
     {
-        /** @var Scope $contentScope */
         $contentScope = $this->getEntity(Scope::class, ['id' => 123]);
 
         $this->scopeManager->expects($this->once())
@@ -71,7 +50,6 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSetWebsite()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
         $this->provider->setWebsite($website);
 
@@ -86,7 +64,6 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentWebsite()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->once())
@@ -101,7 +78,6 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDefaultWebsite()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
         $this->websiteManager->expects($this->once())

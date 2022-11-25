@@ -37,7 +37,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
             ->willReturn(false);
 
         $total = $this->createTotalResultElement(10, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -56,7 +56,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
             ->willReturn(true);
 
         $total = $this->createTotalResultElement(10, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -75,7 +75,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
             ->willReturn(false);
 
         $total = $this->createTotalResultElement(10, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('loadTax')

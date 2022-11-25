@@ -9,7 +9,7 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFieldsFormViewTest
 {
     /** @var CategoryInventoryThresholdFormViewListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
@@ -22,25 +22,18 @@ class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFie
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->listener);
-
-        parent::tearDown();
-    }
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function callTestMethod()
+    protected function callTestMethod(): void
     {
         $this->listener->onCategoryEdit($this->event);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExpectedScrollData()
+    protected function getExpectedScrollData(): array
     {
         return [
             ScrollData::DATA_BLOCKS => [
@@ -53,9 +46,9 @@ class CategoryInventoryThresholdFormViewListenerTest extends AbstractFallbackFie
     }
 
     /**
-     * @return Category
+     * {@inheritDoc}
      */
-    protected function getEntity()
+    protected function getEntity(): object
     {
         return new Category();
     }

@@ -20,9 +20,6 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param array $data
-     * @param array $expectedData
-     * @param bool $isValid
      */
     public function testSubmit(array $data, array $expectedData, bool $isValid): void
     {

@@ -13,26 +13,30 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class TaxSubtotalProviderTest extends TestCase
+class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
-    protected AbstractTaxSubtotalProvider $provider;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $translator;
 
-    protected MockObject|TranslatorInterface $translator;
+    /** @var TaxProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $taxProvider;
 
-    protected MockObject|TaxProviderInterface $taxProvider;
+    /** @var TaxProviderRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    protected $taxProviderRegistry;
 
-    protected MockObject|TaxProviderRegistry $taxProviderRegistry;
+    /** @var TaxFactory|\PHPUnit\Framework\MockObject\MockObject */
+    protected $taxFactory;
 
-    protected MockObject|TaxFactory $taxFactory;
+    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    protected $taxSettingsProvider;
 
-    protected MockObject|TaxationSettingsProvider $taxSettingsProvider;
+    /** @var AbstractTaxSubtotalProvider */
+    protected $provider;
 
     protected function setUp(): void
     {
@@ -59,15 +63,10 @@ class TaxSubtotalProviderTest extends TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->translator, $this->provider);
-    }
-
     public function testGetSubtotal(): void
     {
         $total = $this->createTotalResultElement(150, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('getTax')
@@ -82,7 +81,7 @@ class TaxSubtotalProviderTest extends TestCase
     public function testGetCachedSubtotal(): void
     {
         $total = $this->createTotalResultElement(150, 'USD');
-        $tax   = $this->createTaxResult($total);
+        $tax = $this->createTaxResult($total);
 
         $this->taxProvider->expects($this->once())
             ->method('loadTax')

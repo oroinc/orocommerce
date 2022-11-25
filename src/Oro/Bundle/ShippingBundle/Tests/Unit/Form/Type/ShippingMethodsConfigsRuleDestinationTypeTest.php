@@ -19,10 +19,10 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     use EntityTrait;
 
     /** @var ShippingMethodsConfigsRuleDestinationType */
-    protected $formType;
+    private $formType;
 
     /** @var AddressCountryAndRegionSubscriber */
-    protected $subscriber;
+    private $subscriber;
 
     protected function setUp(): void
     {
@@ -56,16 +56,14 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     {
         $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class);
         $options = $form->getConfig()->getOptions();
-        static::assertContainsEquals('region_route', $options);
-        static::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
+        self::assertContainsEquals('region_route', $options);
+        self::assertStringContainsString('oro_api_country_get_regions', $options['region_route']);
     }
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param null|ShippingMethodsConfigsRuleDestination $data
      */
-    public function testSubmit($data)
+    public function testSubmit(?ShippingMethodsConfigsRuleDestination $data)
     {
         $form = $this->factory->create(ShippingMethodsConfigsRuleDestinationType::class, $data);
 
@@ -100,10 +98,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         );
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty default form data' => [
@@ -115,14 +110,11 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         ];
     }
 
-    /**
-     * @param string $countryCode
-     * @param string $regionCode
-     * @param array $postalCodes
-     * @return ShippingMethodsConfigsRuleDestination
-     */
-    protected function getDestination($countryCode, $regionCode, array $postalCodes)
-    {
+    private function getDestination(
+        string $countryCode,
+        string $regionCode,
+        array $postalCodes
+    ): ShippingMethodsConfigsRuleDestination {
         $country = new Country($countryCode);
 
         $region = new Region($regionCode);
@@ -143,9 +135,9 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return array_merge(
             parent::getExtensions(),

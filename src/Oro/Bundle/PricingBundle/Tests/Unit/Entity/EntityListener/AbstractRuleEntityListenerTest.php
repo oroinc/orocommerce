@@ -38,33 +38,11 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener = $this->getListener();
     }
 
-    protected function tearDown(): void
-    {
-        unset(
-            $this->priceListTriggerHandler,
-            $this->fieldsProvider,
-            $this->registry,
-            $this->listener,
-            $this->featureChecker
-        );
-    }
+    abstract protected function getEntityClassName(): string;
 
-    /**
-     * @return string
-     */
-    abstract protected function getEntityClassName();
+    abstract protected function getListener(): AbstractRuleEntityListener;
 
-    /**
-     * @return AbstractRuleEntityListener
-     */
-    abstract protected function getListener();
-
-    /**
-     * @param string $feature
-     * @param bool $isEnabled
-     * @return AbstractRuleEntityListener
-     */
-    protected function assertFeatureChecker(string $feature, bool $isEnabled = true)
+    protected function assertFeatureChecker(string $feature, bool $isEnabled = true): AbstractRuleEntityListener
     {
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -95,18 +73,12 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
         $this->assertRecalculateByEntity($handlerNumberOfCalls, $updatedFields, [$product], $relationId);
     }
 
-    /**
-     * @param int $numberOfCalls
-     * @param array $updatedFields
-     * @param array $products
-     * @param null $relationId
-     */
     protected function assertRecalculateByEntity(
         int $numberOfCalls,
         array $updatedFields,
         array $products = [],
-        $relationId = null
-    ) {
+        ?int $relationId = null
+    ): void {
         $this->priceRuleLexemeTriggerHandler->expects($this->exactly($numberOfCalls))
             ->method('findEntityLexemes')
             ->with($this->getEntityClassName(), $updatedFields, $relationId)

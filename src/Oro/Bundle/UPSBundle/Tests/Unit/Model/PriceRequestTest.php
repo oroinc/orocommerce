@@ -11,40 +11,34 @@ class PriceRequestTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    const USERNAME = 'user';
-    const PASSWORD = 'password';
-    const ACCESS_LICENSE_NUMBER = '123';
-    const REQUEST_OPTION = 'Rate';
-    const SERVICE_CODE = '02';
-    const SERVICE_DESCRIPTION = 'Service Code Description';
-    const SHIPPER_NAME = 'Shipper Name';
-    const SHIPPER_NUMBER = '123';
-    const SHIP_FROM_NAME = 'Ship From Name';
-    const SHIP_TO_NAME = 'Ship To Name';
+    private const PACKAGING_TYPE_CODE = '02';
+    private const WEIGHT_CODE = 'LB';
+    private const WEIGHT = '4';
+    private const USERNAME = 'user';
+    private const PASSWORD = 'password';
+    private const ACCESS_LICENSE_NUMBER = '123';
+    private const REQUEST_OPTION = 'Rate';
+    private const SERVICE_CODE = '02';
+    private const SERVICE_DESCRIPTION = 'Service Code Description';
+    private const SHIPPER_NAME = 'Shipper Name';
+    private const SHIPPER_NUMBER = '123';
+    private const SHIP_FROM_NAME = 'Ship From Name';
+    private const SHIP_TO_NAME = 'Ship To Name';
 
-    /**
-     * @var PriceRequest
-     */
-    protected $model;
+    /** @var array */
+    private $resultArray;
 
-    /**
-     * @var  array
-     */
-    protected $resultArray;
+    /** @var PriceRequest */
+    private $model;
 
     protected function setUp(): void
     {
         $this->model = new PriceRequest();
     }
 
-    protected function tearDown(): void
+    public function testGettersAndSetters()
     {
-        unset($this->model);
-    }
-
-    public function testAccessors()
-    {
-        static::assertPropertyAccessors(
+        self::assertPropertyAccessors(
             $this->model,
             [
                 ['username', self::USERNAME],
@@ -67,15 +61,15 @@ class PriceRequestTest extends \PHPUnit\Framework\TestCase
     public function testToJson()
     {
         $this->initPriceRequest();
-        static::assertEquals(json_encode($this->resultArray), $this->model->toJson());
+        self::assertEquals(json_encode($this->resultArray, JSON_THROW_ON_ERROR), $this->model->toJson());
     }
 
     public function initPriceRequest()
     {
         $package = (new Package())
-            ->setPackagingTypeCode(PackageTest::PACKAGING_TYPE_CODE)
-            ->setWeightCode(PackageTest::WEIGHT_CODE)
-            ->setWeight(PackageTest::WEIGHT);
+            ->setPackagingTypeCode(self::PACKAGING_TYPE_CODE)
+            ->setWeightCode(self::WEIGHT_CODE)
+            ->setWeight(self::WEIGHT);
         $address = new AddressStub();
         $this->model
             ->setSecurity(self::USERNAME, self::PASSWORD, self::ACCESS_LICENSE_NUMBER)
@@ -88,9 +82,9 @@ class PriceRequestTest extends \PHPUnit\Framework\TestCase
 
         $addressArray = [
             'AddressLine'       => [
-                    $address->getStreet(),
-                    $address->getStreet2()
-                ],
+                $address->getStreet(),
+                $address->getStreet2()
+            ],
             'City'              => $address->getCity(),
             'StateProvinceCode' => $address->getRegionCode(),
             'PostalCode'        => $address->getPostalCode(),
@@ -98,39 +92,39 @@ class PriceRequestTest extends \PHPUnit\Framework\TestCase
         ];
         $this->resultArray = [
             'UPSSecurity' => [
-                    'UsernameToken'      => [
-                            'Username' => self::USERNAME,
-                            'Password' => self::PASSWORD,
-                        ],
-                    'ServiceAccessToken' => [
-                            'AccessLicenseNumber' => self::ACCESS_LICENSE_NUMBER,
-                        ],
+                'UsernameToken'      => [
+                    'Username' => self::USERNAME,
+                    'Password' => self::PASSWORD,
                 ],
+                'ServiceAccessToken' => [
+                    'AccessLicenseNumber' => self::ACCESS_LICENSE_NUMBER,
+                ],
+            ],
             'RateRequest' => [
-                    'Request'  => [
-                            'RequestOption' => self::REQUEST_OPTION,
-                        ],
-                    'Shipment' => [
-                            'Shipper'  => [
-                                    'Name'          => self::SHIPPER_NAME,
-                                    'ShipperNumber' => self::SHIPPER_NUMBER,
-                                    'Address'       => $addressArray,
-                                ],
-                            'ShipTo'   => [
-                                    'Name'    => self::SHIP_TO_NAME,
-                                    'Address' => $addressArray,
-                                ],
-                            'ShipFrom' => [
-                                    'Name'    => self::SHIP_FROM_NAME,
-                                    'Address' => $addressArray,
-                                ],
-                            'Package'  => [$package->toArray()],
-                            'Service'  => [
-                                'Code'        => self::SERVICE_CODE,
-                                'Description' => self::SERVICE_DESCRIPTION,
-                            ],
-                        ],
+                'Request'  => [
+                    'RequestOption' => self::REQUEST_OPTION,
                 ],
+                'Shipment' => [
+                    'Shipper'  => [
+                        'Name'          => self::SHIPPER_NAME,
+                        'ShipperNumber' => self::SHIPPER_NUMBER,
+                        'Address'       => $addressArray,
+                    ],
+                    'ShipTo'   => [
+                        'Name'    => self::SHIP_TO_NAME,
+                        'Address' => $addressArray,
+                    ],
+                    'ShipFrom' => [
+                        'Name'    => self::SHIP_FROM_NAME,
+                        'Address' => $addressArray,
+                    ],
+                    'Package'  => [$package->toArray()],
+                    'Service'  => [
+                        'Code'        => self::SERVICE_CODE,
+                        'Description' => self::SERVICE_DESCRIPTION,
+                    ],
+                ],
+            ],
         ];
     }
 }

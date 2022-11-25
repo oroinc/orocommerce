@@ -18,24 +18,17 @@ use Oro\Bundle\ShippingBundle\Model\DimensionsValue;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    private CheckoutShippingContextProvider|MockObject $shipContextProvider;
+    /** @var CheckoutShippingContextProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $shipContextProvider;
 
     protected function setUp(): void
     {
         $this->shipContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
 
         parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        unset($this->shipContextProvider);
     }
 
     public function testGetName(): void
@@ -70,8 +63,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $shipContext->expects($this->once())
             ->method('getLineItems')
             ->willReturn([$item1, $item2]);
-        $this->shipContextProvider
-            ->expects($this->once())
+        $this->shipContextProvider->expects($this->once())
             ->method('getContext')
             ->with($checkout)
             ->willReturn($shipContext);
@@ -112,8 +104,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $shipContext->expects($this->once())
             ->method('getLineItems')
             ->willReturn([$item1, $item2]);
-        $this->shipContextProvider
-            ->expects($this->once())
+        $this->shipContextProvider->expects($this->once())
             ->method('getContext')
             ->with($checkout)
             ->willReturn($shipContext);

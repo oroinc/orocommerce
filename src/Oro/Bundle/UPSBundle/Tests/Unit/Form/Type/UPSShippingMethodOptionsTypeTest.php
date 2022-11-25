@@ -12,16 +12,15 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 {
     /** @var UPSShippingMethodOptionsType */
-    protected $formType;
+    private $formType;
 
     protected function setUp(): void
     {
-        /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject $roundingService */
-        $roundingService = $this->getMockForAbstractClass(RoundingServiceInterface::class);
-        $roundingService->expects(static::any())
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService->expects(self::any())
             ->method('getPrecision')
             ->willReturn(4);
-        $roundingService->expects(static::any())
+        $roundingService->expects(self::any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
@@ -30,9 +29,9 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -49,32 +48,25 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        static::assertEquals(UPSShippingMethodOptionsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        self::assertEquals(UPSShippingMethodOptionsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 
     /**
-     * @param array $submittedData
-     * @param mixed $expectedData
-     * @param mixed $defaultData
-     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($submittedData, $expectedData, $defaultData = null)
+    public function testSubmit(array $submittedData, mixed $expectedData, mixed $defaultData = null)
     {
         $form = $this->factory->create(UPSShippingMethodOptionsType::class, $defaultData);
 
-        static::assertEquals($defaultData, $form->getData());
+        self::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        static::assertTrue($form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($expectedData, $form->getData());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'empty default data' => [

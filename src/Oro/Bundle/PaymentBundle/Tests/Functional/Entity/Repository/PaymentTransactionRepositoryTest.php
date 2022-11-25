@@ -10,10 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PaymentTransactionRepositoryTest extends WebTestCase
 {
-    /**
-     * @var PaymentTransactionRepository
-     */
-    private $repository;
+    private PaymentTransactionRepository $repository;
 
     protected function setUp(): void
     {
@@ -28,30 +25,27 @@ class PaymentTransactionRepositoryTest extends WebTestCase
     {
         $id = 1;
         $result = $this->repository->getPaymentMethods(PaymentTransaction::class, [$id]);
-        static::assertCount($id, $result);
-        static::assertEquals([$id => ['payment_method']], $result);
+        self::assertCount($id, $result);
+        self::assertEquals([$id => ['payment_method']], $result);
     }
 
     public function testFindByType()
     {
         $transactions = $this->repository->findByPaymentMethod(LoadPaymentTransactionData::PAYMENT_METHOD);
 
-        static::assertContains(
+        self::assertContains(
             $this->getReference(LoadPaymentTransactionData::AUTHORIZE_ACTIVE_TRANSACTION),
             $transactions
         );
-        static::assertContains($this->getReference(LoadPaymentTransactionData::AUTHORIZE_TRANSACTION), $transactions);
-        static::assertContains($this->getReference(LoadPaymentTransactionData::VALIDATE_TRANSACTION), $transactions);
+        self::assertContains($this->getReference(LoadPaymentTransactionData::AUTHORIZE_TRANSACTION), $transactions);
+        self::assertContains($this->getReference(LoadPaymentTransactionData::VALIDATE_TRANSACTION), $transactions);
     }
 
     /**
-     * @param string $sourceTransactionReference
-     * @param array  $expectedRelatedTransactionsReferences
-     *
      * @dataProvider findSuccessfulRelatedTransactionsByActionDataProvider
      */
     public function findSuccessfulRelatedTransactionsByAction(
-        $sourceTransactionReference,
+        string $sourceTransactionReference,
         array $expectedRelatedTransactionsReferences
     ) {
         $authorizationTransaction = $this->getReference($sourceTransactionReference);
@@ -66,13 +60,10 @@ class PaymentTransactionRepositoryTest extends WebTestCase
             $expectedTransactions[] = $this->getReference($expectedRelatedTransactionReference);
         }
 
-        static::assertEquals($expectedTransactions, $actualRelatedTransactions);
+        self::assertEquals($expectedTransactions, $actualRelatedTransactions);
     }
 
-    /**
-     * @return array
-     */
-    public function findSuccessfulRelatedTransactionsByActionDataProvider()
+    public function findSuccessfulRelatedTransactionsByActionDataProvider(): array
     {
         return [
             [

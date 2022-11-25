@@ -29,39 +29,27 @@ class ProductControllerTest extends WebTestCase
     /**
      * @dataProvider viewDataProvider
      */
-    public function testView($product, $contains)
+    public function testView(string $product, string $contains)
     {
-        $product = $this->getProduct($product);
+        /** @var Product $product */
+        $product = $this->getReference($product);
 
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $priceTable = $crawler->filter('.product-prices__table');
-        static::assertStringContainsString($contains, $priceTable->text());
+        self::assertStringContainsString($contains, $priceTable->text());
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
+    public function viewDataProvider(): array
     {
         return [
             'unit without prices'       => ['product' => LoadProductData::PRODUCT_2, 'contains' => 'Get Quote'],
             'unit with empty price'     => ['product' => LoadProductData::PRODUCT_6, 'contains' => '$200.50'],
             'unit with not empty price' => ['product' => LoadProductData::PRODUCT_7, 'contains' => '$0.00']
         ];
-    }
-
-    /**
-     * @param string $reference
-     *
-     * @return Product
-     */
-    protected function getProduct($reference)
-    {
-        return $this->getReference($reference);
     }
 }

@@ -15,68 +15,44 @@ use Twig\Environment;
 
 abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /**
-     * @var EntityManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
-    /**
-     * @var Environment|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     protected $env;
 
-    /**
-     * @var RequestStack
-     */
+    /** @var RequestStack */
     protected $requestStack;
 
-    /**
-     * @var Request|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
-    /**
-     * @var BeforeListRenderEvent
-     */
+    /** @var BeforeListRenderEvent */
     protected $event;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrine;
 
-    abstract protected function callTestMethod();
+    abstract protected function callTestMethod(): void;
 
-    /**
-     * @return object
-     */
-    abstract protected function getEntity();
+    abstract protected function getEntity(): object;
 
-    /**
-     * @return array
-     */
-    abstract protected function getExpectedScrollData();
+    abstract protected function getExpectedScrollData(): array;
 
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $id . '.trans';
+            });
 
         $this->env = $this->createMock(Environment::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -93,18 +69,6 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
             new ScrollData(),
             new \stdClass()
         );
-    }
-
-    protected function tearDown(): void
-    {
-        unset(
-            $this->event,
-            $this->doctrine,
-            $this->requestStack,
-            $this->request
-        );
-
-        parent::tearDown();
     }
 
     public function testOnCategoryEditIgnoredIfNoId()
