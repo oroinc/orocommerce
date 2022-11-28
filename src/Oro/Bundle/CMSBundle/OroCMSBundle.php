@@ -6,7 +6,6 @@ use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\AttributeBlockTypeMapperPa
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\DbalTypeDefaultValuePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\EntityExtendFieldTypePass;
 use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\ExtendFieldValidationLoaderPass;
-use Oro\Bundle\CMSBundle\DependencyInjection\Compiler\LayoutManagerPass;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\EntityFallbackFieldsStoragePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -24,7 +23,6 @@ class OroCMSBundle extends Bundle
         $container->addCompilerPass(new DbalTypeDefaultValuePass());
         $container->addCompilerPass(new ExtendFieldValidationLoaderPass());
         $container->addCompilerPass(new AttributeBlockTypeMapperPass());
-        $container->addCompilerPass(new LayoutManagerPass());
         $container->addCompilerPass(new EntityFallbackFieldsStoragePass([
             'Oro\Bundle\CMSBundle\Entity\Page' => [
                 'slugPrototype' => 'slugPrototypes',

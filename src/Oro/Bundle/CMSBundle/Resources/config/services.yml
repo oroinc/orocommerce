@@ -48,27 +48,8 @@ services:
         arguments:
             - '@oro_layout.theme_manager'
         tags:
-            - { name: layout.resource.path_provider }
-
-    oro_cms.theme_extension.visitor.import:
-        class: Oro\Component\Layout\Extension\Theme\Visitor\ImportVisitor
-        arguments:
-            - '@oro_layout.loader'
-            - '@oro_layout.dependency_initializer'
-            - '@oro_layout.theme_extension.resource_provider.theme'
-            - '@oro_layout.theme_manager'
-        calls:
-            - [setRootName, ['content_widget_root']]
-
-    oro_cms.layout_extension.content_widget:
-        class: Oro\Bundle\CMSBundle\Layout\Extension\ContentWidgetExtension
-        arguments:
-            - '@oro_layout.loader'
-            - '@oro_layout.dependency_initializer'
-            - '@oro_layout.loader.path_provider'
-            - '@oro_layout.theme_extension.resource_provider.theme'
-        calls:
-            - [addVisitor, ['@oro_cms.theme_extension.visitor.import']]
+            # Should be called as late as possible to ensure it can override previously added paths.
+            - { name: layout.resource.path_provider, priority: -100 }
 
     oro_rfp.layout.data_provider.content_widget:
         class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\ContentWidgetDataProvider'
@@ -310,12 +291,6 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_cms }
 
-    oro_cms.layout_factory_builder:
-        synthetic: true
-
-    oro_cms.layout_manager:
-        synthetic: true
-
     oro_cms.content_widget.provider:
         class: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetProvider
         arguments:
@@ -326,7 +301,7 @@ services:
         arguments:
             - '@oro_cms.content_widget.provider'
             - '@oro_cms.content_widget.type_registry'
-            - '@oro_cms.layout_manager'
+            - '@oro_layout.layout_manager'
             - '@oro_frontend.request.frontend_helper'
             - '@oro_cms.content_widget.frontend_emulator'
             - '%kernel.debug%'
