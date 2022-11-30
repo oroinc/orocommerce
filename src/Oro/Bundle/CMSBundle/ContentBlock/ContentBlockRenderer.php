@@ -38,11 +38,6 @@ class ContentBlockRenderer implements LoggerAwareInterface
         $this->logger = new NullLogger();
     }
 
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
     public function render(string $blockAlias): string
     {
         $content = '';
