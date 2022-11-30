@@ -38,9 +38,12 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
             $skus = array_column($results['results'], 'sku');
             $skus = array_map('mb_strtoupper', $skus);
             $priceResults = $this->productWithPricesSearchHandler->search($query, $page, $perPage, $searchById);
-            $priceResults['results'] = array_filter($priceResults['results'], function ($result) use ($skus) {
-                return \in_array(mb_strtoupper($result['sku']), $skus, true);
-            });
+            $priceResults['results'] = array_values(array_filter(
+                $priceResults['results'],
+                function ($result) use ($skus) {
+                    return \in_array(mb_strtoupper($result['sku']), $skus, true);
+                }
+            ));
 
             return $priceResults;
         }

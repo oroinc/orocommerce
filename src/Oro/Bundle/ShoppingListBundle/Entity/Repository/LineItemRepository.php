@@ -79,10 +79,10 @@ class LineItemRepository extends ServiceEntityRepository
 
         $qb->andWhere($qb->expr()->orX(
             $qb->expr()->isNull('li.parentProduct'),
-            $qb->expr()->in('li.parentProduct', ':products')
+            $qb->expr()->in('li.parentProduct', ':products'),
+            $qb->expr()->isNotNull('productExpr'),
+            $qb->expr()->isNotNull('parentVariantLinksExpr')
         ))
-        ->orWhere($qb->expr()->isNotNull('productExpr'))
-        ->orWhere($qb->expr()->isNotNull('parentVariantLinksExpr'))
         ->setParameter('products', $products)
         ->addOrderBy($qb->expr()->asc('li.id'));
 

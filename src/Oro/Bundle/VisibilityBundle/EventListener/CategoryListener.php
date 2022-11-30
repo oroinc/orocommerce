@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Oro\Bundle\VisibilityBundle\Async\Topics;
+use Oro\Bundle\VisibilityBundle\Async\Topic\VisibilityOnChangeProductCategoryTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -42,7 +42,10 @@ class CategoryListener implements OptionalListenerInterface
             // Message should be send only for already existing products
             // New products has own queue message for visibility calculation
             if ($product->getId()) {
-                $this->messageProducer->send(Topics::CHANGE_PRODUCT_CATEGORY, ['id' => $product->getId()]);
+                $this->messageProducer->send(
+                    VisibilityOnChangeProductCategoryTopic::getName(),
+                    ['id' => $product->getId()]
+                );
             }
         }
     }

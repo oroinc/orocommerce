@@ -79,7 +79,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => ReindexRequestItemProductsByRelatedJobIdTopic::NAME
+                    'topic' => ReindexRequestItemProductsByRelatedJobIdTopic::getName()
                 ]
             );
 
@@ -160,6 +160,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      * @param int $websiteId
      * @param array $productIds
      * @param int $batchId
+     * @param array|null $fieldGroups
      * @return void
      */
     protected function sendToReindexWithFieldGroups(
@@ -192,17 +193,18 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
      */
     private function getUniqueJobName(int $relatedJobId): string
     {
-        $jobKey = sprintf(
+        return sprintf(
             '%s:%s',
-            ReindexRequestItemProductsByRelatedJobIdTopic::NAME,
+            ReindexRequestItemProductsByRelatedJobIdTopic::getName(),
             $relatedJobId
         );
-
-        return $jobKey;
     }
 
+    /**
+     * @return array<string>
+     */
     public static function getSubscribedTopics()
     {
-        return [ReindexRequestItemProductsByRelatedJobIdTopic::NAME];
+        return [ReindexRequestItemProductsByRelatedJobIdTopic::getName()];
     }
 }

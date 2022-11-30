@@ -241,4 +241,13 @@
     .extra-block-bg {
         background-color: $cms-typography-extra-block-bg-color;
     }
+
+    .nav-tabs {
+        margin: $cms-typography-nav-tabs-offset;
+        padding: $cms-typography-nav-tabs-inner-offset;
+    }
+
+    .tabbed-content {
+        margin-bottom: $cms-typography-tabbed-content-bottom-offset;
+    }
 }

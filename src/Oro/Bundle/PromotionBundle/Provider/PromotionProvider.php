@@ -10,39 +10,34 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
+/**
+ * Provides information about promotions applicable to a specific source entity.
+ */
 class PromotionProvider
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @var RuleFiltrationServiceInterface
-     */
-    private $ruleFiltrationService;
-
-    /**
-     * @var ContextDataConverterInterface
-     */
-    private $contextDataConverter;
-
-    /**
-     * @var AppliedPromotionMapper
-     */
-    private $promotionMapper;
+    private ManagerRegistry $doctrine;
+    private RuleFiltrationServiceInterface $ruleFiltrationService;
+    private ContextDataConverterInterface $contextDataConverter;
+    private AppliedPromotionMapper $promotionMapper;
+    private TokenAccessorInterface $tokenAccessor;
 
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $doctrine,
         RuleFiltrationServiceInterface $ruleFiltrationService,
         ContextDataConverterInterface $contextDataConverter,
         AppliedPromotionMapper $promotionMapper
     ) {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->ruleFiltrationService = $ruleFiltrationService;
         $this->contextDataConverter = $contextDataConverter;
         $this->promotionMapper = $promotionMapper;
+    }
+
+    public function setTokenAccessor(TokenAccessorInterface $tokenAccessor): void
+    {
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -115,14 +110,16 @@ class PromotionProvider
     }
 
     /**
-     * @return array|PromotionDataInterface[]
+     * @return PromotionDataInterface[]
      */
-    private function getAllPromotions()
+    private function getAllPromotions(): array
     {
-        return $this->registry
-            ->getManagerForClass(Promotion::class)
-            ->getRepository(Promotion::class)
-            ->findAll();
+        $organizationId = $this->tokenAccessor->getOrganizationId();
+        if (null === $organizationId) {
+            return [];
+        }
+
+        return $this->doctrine->getRepository(Promotion::class)->getAllPromotions($organizationId);
     }
 
     /**

@@ -10,7 +10,11 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Adds field "category" to the create product form
+ */
 class ProductStepOneFormExtension extends AbstractTypeExtension
 {
     /**
@@ -18,9 +22,16 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
      */
     protected $defaultProductUnitProvider;
 
+    private ?AuthorizationCheckerInterface $authorizationChecker = null;
+
     public function __construct(CategoryDefaultProductUnitProvider $defaultProductUnitProvider)
     {
         $this->defaultProductUnitProvider = $defaultProductUnitProvider;
+    }
+
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker): void
+    {
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -36,6 +47,10 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
         $builder
             ->add(
                 'category',

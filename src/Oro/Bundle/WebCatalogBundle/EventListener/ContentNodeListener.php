@@ -6,7 +6,8 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
@@ -77,8 +78,8 @@ class ContentNodeListener
                 $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
             }
         } else {
-            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, [
-                'webCatalogId' => $contentNode->getWebCatalog()->getId()
+            $this->messageProducer->send(WebCatalogCalculateCacheTopic::getName(), [
+                WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $contentNode->getWebCatalog()->getId(),
             ]);
         }
     }
@@ -94,6 +95,9 @@ class ContentNodeListener
 
     protected function scheduleContentNodeRecalculation(ContentNode $contentNode)
     {
-        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($contentNode));
+        $this->messageProducer->send(
+            WebCatalogResolveContentNodeSlugsTopic::getName(),
+            $this->messageFactory->createMessage($contentNode)
+        );
     }
 }

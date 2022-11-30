@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Async;
 
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ShoppingListBundle\Async\Topic\InvalidateTotalsByInventoryStatusPerProductTopic;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -11,30 +12,23 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
  * Invalidate shopping list totals for shopping lists applicable for given context.
  */
 class InvalidateTotalsByInventoryStatusPerProductProcessor implements
+    LoggerAwareInterface,
     MessageProcessorInterface,
     TopicSubscriberInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    use LoggerAwareTrait;
 
-    /**
-     * @var MessageFactory
-     */
-    private $messageFactory;
+    private ManagerRegistry $registry;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private MessageFactory $messageFactory;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -51,7 +45,7 @@ class InvalidateTotalsByInventoryStatusPerProductProcessor implements
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::INVALIDATE_TOTALS_BY_INVENTORY_STATUS_PER_PRODUCT];
+        return [InvalidateTotalsByInventoryStatusPerProductTopic::getName()];
     }
 
     /**
@@ -59,7 +53,7 @@ class InvalidateTotalsByInventoryStatusPerProductProcessor implements
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $data = JSON::decode($message->getBody());
+        $data = $message->getBody();
         $context = $this->messageFactory->getContext($data);
         if (!$context instanceof Website) {
             return self::ACK;
@@ -71,7 +65,7 @@ class InvalidateTotalsByInventoryStatusPerProductProcessor implements
             /** @var ShoppingListTotalRepository $repo */
             $repo = $this->registry
                 ->getManagerForClass(ShoppingListTotal::class)
-                ->getRepository(ShoppingListTotal::class);
+                ?->getRepository(ShoppingListTotal::class);
             $repo->invalidateByProducts($context, $products);
         } catch (RetryableException $e) {
             $this->logger->error(

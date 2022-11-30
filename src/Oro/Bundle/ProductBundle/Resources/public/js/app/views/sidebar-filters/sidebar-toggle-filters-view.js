@@ -58,10 +58,7 @@ const SidebarToggleFiltersView = BaseView.extend({
     },
 
     saveState() {
-        this.$el.attr({
-            'disabled': true,
-            'data-has-focus': this.hasFocus()
-        });
+        this.disable();
 
         $.ajax({
             method: 'POST',
@@ -72,6 +69,15 @@ const SidebarToggleFiltersView = BaseView.extend({
                 this.render();
             }
         });
+    },
+
+    disable() {
+        this.$el.attr({
+            'disabled': true,
+            'data-has-focus': this.hasFocus()
+        });
+
+        return this;
     },
 
     hasFocus() {
@@ -120,10 +126,8 @@ const SidebarToggleFiltersView = BaseView.extend({
 
     toggleSidebar(e) {
         if (this.sidebarExpanded) {
-            this.sidebarExpanded = false;
             this.collapse();
         } else {
-            this.sidebarExpanded = true;
             this.expand();
         }
 
@@ -131,12 +135,14 @@ const SidebarToggleFiltersView = BaseView.extend({
         this.saveState();
     },
 
-    collapse(e) {
-        this.doCollapseAnimation(this.animationDuration);
+    collapse(duration = this.animationDuration) {
+        this.sidebarExpanded = false;
+        this.doCollapseAnimation(duration);
     },
 
-    expand(e) {
-        this.doExpandAnimation(this.animationDuration);
+    expand(duration = this.animationDuration) {
+        this.sidebarExpanded = true;
+        this.doExpandAnimation(duration);
     },
 
     doAnimation(doDesignFn, duration = 250) {

@@ -5,7 +5,6 @@ import QuickAddCollection from 'oroproduct/js/app/models/quick-add-collection';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 import LoadingBarView from 'oroui/js/app/views/loading-bar-view';
 import Progress from 'oroui/js/app/services/progress';
-import messenger from 'oroui/js/messenger';
 
 const QuickOrderFromView = BaseView.extend({
     elem: {
@@ -23,7 +22,6 @@ const QuickOrderFromView = BaseView.extend({
         return {
             [`content:initialized ${this.elem.rowsCollection}`]: 'onContentInitialized',
             [`click ${this.elem.clear}`]: 'clearRows',
-            [`validate-element ${this.elem.collectionValidation}`]: 'onValidateCollection',
             [`change ${this.elem.productSkus}`]: 'onProductSkuUpdate'
         };
     },
@@ -46,6 +44,8 @@ const QuickOrderFromView = BaseView.extend({
     topButtons: null,
 
     constructor: function QuickOrderFromView(options) {
+        this.checkRowsQuantity = _.debounce(this.checkRowsQuantity.bind(this), 25);
+        this.onProductSkuUpdate = _.debounce(this.onProductSkuUpdate.bind(this), 25);
         QuickOrderFromView.__super__.constructor.call(this, options);
     },
 
@@ -53,8 +53,6 @@ const QuickOrderFromView = BaseView.extend({
      * @inheritdoc
      */
     initialize(options) {
-        this.checkRowsQuantity = _.debounce(this.checkRowsQuantity.bind(this), 25);
-
         this.options = $.extend(true, {}, this.options, options);
         const collectionOptions = Object.assign({
             ajaxOptions: {
@@ -131,9 +129,16 @@ const QuickOrderFromView = BaseView.extend({
 
     createTopButtonCache() {
         const $buttons = this.$(this.elem.buttons);
+        const suffix = _.uniqueId('clone');
 
-        this.topButtons = $buttons[0].outerHTML
-            .replace(/\sid="[\w\-]+|#[\w\-]+/gm, '$&-clone');
+        this.topButtons = $buttons[0].outerHTML;
+        const matches = this.topButtons.matchAll(/\sid="([\w\-]+)"/gm);
+
+        for (const [, id] of matches) {
+            // update not only id value, but also references to that id,
+            // such as `href="#..."`, `aria-labelledby="..."` and etc.
+            this.topButtons.replace(new RegExp(id, 'g'), `${id}-${suffix}`);
+        }
     },
 
     showTopButtons() {
@@ -221,17 +226,11 @@ const QuickOrderFromView = BaseView.extend({
         this.$(this.elem.collectionValidation).valid();
     },
 
+    /**
+     * @deprecated
+     */
     onValidateCollection({target, invalid}) {
-        if (!invalid) {
-            messenger.clear('quick-order-collection-validation');
-            return;
-        }
-        const validator = this.$(this.elem.form).data('validator');
-        validator.errorsFor(target).hide();
-        messenger.notificationFlashMessage('error', validator.errorMap[target.name], {
-            hideCloseButton: true,
-            namespace: 'quick-order-collection-validation'
-        });
+
     }
 });
 

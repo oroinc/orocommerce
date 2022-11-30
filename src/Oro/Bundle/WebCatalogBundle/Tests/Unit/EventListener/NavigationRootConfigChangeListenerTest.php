@@ -4,24 +4,18 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic;
 use Oro\Bundle\WebCatalogBundle\EventListener\NavigationRootConfigChangeListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $layoutCacheProvider;
+    private CacheProvider|\PHPUnit\Framework\MockObject\MockObject $layoutCacheProvider;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $messageProducer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /** @var NavigationRootConfigChangeListener */
-    private $configListener;
+    private NavigationRootConfigChangeListener $configListener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->layoutCacheProvider = $this->createMock(CacheProvider::class);
@@ -32,33 +26,36 @@ class NavigationRootConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnConfigUpdate()
+    public function testOnConfigUpdate(): void
     {
         $event = new ConfigUpdateEvent(['oro_web_catalog.navigation_root' => ['old' => 1, 'new' => 2]], null, 1);
-        $this->layoutCacheProvider->expects($this->once())
+        $this->layoutCacheProvider->expects(self::once())
             ->method('deleteAll');
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::CALCULATE_CONTENT_NODE_CACHE, ['contentNodeId' => 2]);
+            ->with(
+                WebCatalogCalculateContentNodeCacheTopic::getName(),
+                [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => 2]
+            );
         $this->configListener->onConfigUpdate($event);
     }
 
-    public function testOnConfigUpdateWithNull()
+    public function testOnConfigUpdateWithNull(): void
     {
         $event = new ConfigUpdateEvent(['oro_web_catalog.navigation_root' => ['old' => 1, 'new' => null]], null, 1);
-        $this->layoutCacheProvider->expects($this->once())
+        $this->layoutCacheProvider->expects(self::once())
             ->method('deleteAll');
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
         $this->configListener->onConfigUpdate($event);
     }
 
-    public function testOnConfigUpdateOtherSetting()
+    public function testOnConfigUpdateOtherSetting(): void
     {
         $event = new ConfigUpdateEvent(['some_other_setting_changed' => ['old' => 1, 'new' => 2]]);
-        $this->layoutCacheProvider->expects($this->never())
+        $this->layoutCacheProvider->expects(self::never())
             ->method('deleteAll');
-        $this->messageProducer->expects($this->never())
+        $this->messageProducer->expects(self::never())
             ->method('send');
         $this->configListener->onConfigUpdate($event);
     }

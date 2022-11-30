@@ -49,7 +49,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionTypeStub(),
                     new TextContentVariantCollectionType(),
                     new TextContentVariantType(),
-                    WYSIWYGType::class => $this->createWysiwygType()
+                    WYSIWYGType::class => $this->createWysiwygType(),
                 ],
                 []
             ),

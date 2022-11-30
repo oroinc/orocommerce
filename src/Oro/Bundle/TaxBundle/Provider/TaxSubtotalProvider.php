@@ -11,12 +11,13 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Subtotal provider for taxes.
+ * Subtotal provider for taxes. Here to only save a number to show up. Taxes used to calculate total please see
+ * ShippingTaxSubtotalProvider and LineItemTaxSubtotalProvider.
  */
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
-    const TYPE = 'tax';
-    const SUBTOTAL_ORDER = 500;
+    public const TYPE = 'tax';
+    public const SUBTOTAL_ORDER = 500;
 
     /**
      * @var TranslatorInterface
@@ -93,6 +94,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal->setLabel($this->translator->trans($label));
         $subtotal->setVisible(false);
         $subtotal->setSortOrder(self::SUBTOTAL_ORDER);
+        $subtotal->setRemovable(false);
 
         return $subtotal;
     }
@@ -107,11 +109,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $subtotal->setAmount($tax->getTotal()->getTaxAmount());
         $subtotal->setCurrency($tax->getTotal()->getCurrency());
         $subtotal->setVisible((bool)$tax->getTotal()->getTaxAmount());
-
-        if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
-            $subtotal->setOperation(Subtotal::OPERATION_IGNORE);
-        }
-
+        $subtotal->setOperation(Subtotal::OPERATION_IGNORE); // Only for show up, always ignore.
         $subtotal->setData($tax->getArrayCopy());
 
         return $subtotal;

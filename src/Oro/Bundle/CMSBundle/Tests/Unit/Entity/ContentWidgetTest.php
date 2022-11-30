@@ -12,7 +12,7 @@ class ContentWidgetTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessors(): void
     {
-        $this->assertPropertyAccessors(
+        self::assertPropertyAccessors(
             new ContentWidget(),
             [
                 ['id', 42],
@@ -28,19 +28,63 @@ class ContentWidgetTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testToString(): void
+    /**
+     * @dataProvider toStringDataProvider
+     */
+    public function testToString(?string $layout, string $expectedResult): void
     {
-        $contentWidget = new ContentWidget();
-        $contentWidget->setName('test_name');
+        $contentWidget = (new ContentWidget())
+            ->setName('test_name')
+            ->setLayout($layout);
 
-        $this->assertEquals('name:test_name', $contentWidget->toString());
+        self::assertEquals($expectedResult, $contentWidget->toString());
     }
 
-    public function testGetHash(): void
+    public function toStringDataProvider(): array
     {
-        $contentWidget = new ContentWidget();
-        $contentWidget->setName('test_name');
+        return [
+            'no layout' => [
+                'layout' => null,
+                'expectedResult' => 'name:test_name, layout:',
+            ],
+            'empty layout' => [
+                'layout' => '',
+                'expectedResult' => 'name:test_name, layout:',
+            ],
+            'layout' => [
+                'layout' => 'layout_name',
+                'expectedResult' => 'name:test_name, layout:layout_name',
+            ],
+        ];
+    }
 
-        $this->assertEquals('0fe1d212bc31c0eb10b7836616fb8a02', $contentWidget->getHash());
+    /**
+     * @dataProvider getHashDataProvider
+     */
+    public function testGetHash(?string $layout, string $expectedResult): void
+    {
+        $contentWidget = (new ContentWidget())
+            ->setName('test_name')
+            ->setLayout($layout);
+
+        self::assertEquals($expectedResult, $contentWidget->getHash());
+    }
+
+    public function getHashDataProvider(): array
+    {
+        return [
+            'no layout' => [
+                'layout' => null,
+                'expectedResult' => '154d353f9f9fbe6b5ad2325ebb386f41',
+            ],
+            'empty layout' => [
+                'layout' => '',
+                'expectedResult' => '154d353f9f9fbe6b5ad2325ebb386f41',
+            ],
+            'layout' => [
+                'layout' => 'layout_name',
+                'expectedResult' => '177ef02cfa8ff573b2182abf72713776',
+            ],
+        ];
     }
 }

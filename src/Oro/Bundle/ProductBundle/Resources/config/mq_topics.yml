@@ -4,4 +4,7 @@ services:
             - { name: oro_message_queue.topic }
 
     Oro\Bundle\ProductBundle\Async\Topic\AccumulateReindexProductCollectionBySegmentTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic: ~
     Oro\Bundle\ProductBundle\Async\Topic\ReindexRequestItemProductsByRelatedJobIdTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ReindexProductsByAttributesTopic: ~
+    Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic: ~

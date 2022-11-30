@@ -5,22 +5,24 @@ namespace Oro\Bundle\RedirectBundle\Async;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Updates scopes of Redirects by Slug id
  */
-class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var ManagerRegistry
      */
@@ -31,10 +33,8 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
      */
     protected $logger;
 
-    public function __construct(
-        ManagerRegistry $registry,
-        LoggerInterface $logger
-    ) {
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
+    {
         $this->registry = $registry;
         $this->logger = $logger;
     }
@@ -44,33 +44,31 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        try {
-            $messageData = $this->getResolvedMessageData(JSON::decode($message->getBody()));
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
-        }
+        $messageData = $message->getBody();
 
         /** @var Slug $slug */
-        $slug = $this->registry->getManagerForClass(Slug::class)
+        $slug = $this->registry
             ->getRepository(Slug::class)
-            ->find($messageData['slugId']);
+            ->find($messageData[SyncSlugRedirectsTopic::SLUG_ID]);
 
         // Slug not found, do nothing
         if (!$slug) {
+            $this->logger->info('Slug #{slugId} is not found.', $messageData);
+
             return self::REJECT;
         }
 
-        /** @var EntityManager $manager */
-        $manager = $this->registry->getManagerForClass(Redirect::class);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->registry->getManagerForClass(Redirect::class);
         /** @var Redirect[] $redirects */
-        $redirects = $manager->getRepository(Redirect::class)->findBy(['slug' => $slug]);
+        $redirects = $entityManager->getRepository(Redirect::class)->findBy(['slug' => $slug]);
         // No redirects found, nothing to do.
         if (!$redirects) {
+            $this->logger->info(
+                'Nothing to synchronize for slug #{slugId}: redirects are not found.',
+                $messageData + ['slug' => $slug]
+            );
+
             return self::REJECT;
         }
 
@@ -79,7 +77,7 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         }
 
         try {
-            $manager->flush();
+            $entityManager->flush();
         } catch (\Exception $e) {
             $this->logger->error(
                 'Unexpected exception occurred during scopes update of Redirects by Slug',
@@ -101,15 +99,6 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::SYNC_SLUG_REDIRECTS];
-    }
-
-    private function getResolvedMessageData(array $message): array
-    {
-        $optionsResolver = new OptionsResolver();
-        $optionsResolver->setRequired(['slugId']);
-        $optionsResolver->setAllowedTypes('slugId', ['integer', 'string']);
-
-        return $optionsResolver->resolve($message);
+        return [SyncSlugRedirectsTopic::getName()];
     }
 }

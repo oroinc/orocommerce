@@ -62,10 +62,15 @@
         {% else %}
             {{ UI.renderProperty('oro.order.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
-        {% if entity.shippingTrackings is defined %}
-            {{ UI.renderHtmlProperty('oro.order.shipping_tracking.entity_label'|trans, dataGrid.renderGrid('order-shipping-trackings-grid', { order_id: entity.id }, { cssClass: 'inner-grid order-shipping-trackings-grid' })) }}
-        {% endif %}
     {% endset %}
+
+    {% set shippingSubBlocks = [{'data' : [shippingInformation]}] %}
+
+    {% if entity.shippingTrackings is defined %}
+        {% set shippingSubBlocks = shippingSubBlocks|merge([{'data' : [
+            oro_order_get_template_content('@OroOrder/Order/shipping_tracking.html.twig', {entity: entity})
+        ]}]) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.order_line_items'|trans,
@@ -76,7 +81,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.shipping_information'|trans,
         'priority': -100,
-        'subblocks': [{'data' : [shippingInformation]}]
+        'subblocks': shippingSubBlocks
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge({

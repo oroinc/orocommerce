@@ -5,17 +5,13 @@ namespace Oro\Bundle\ProductBundle\Async;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Manager\ImageResizeManagerInterface;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Exception\InvalidArgumentException as MessageQueueInvalidArgumentException;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
-use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException as OptionsResolverInvalidArgumentException;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Generates images of all available dimensions for specified product image.
@@ -44,9 +40,9 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
     /**
      * {@inheritdoc}
      */
-    public function process(MessageInterface $message, SessionInterface $session)
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $data = $this->getMessageData($message);
+        $data = $message->getBody();
 
         /** @var ProductImage $productImage */
         if (!$productImage = $this->getProductImage($data['productImageId'])) {
@@ -66,38 +62,11 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
     }
 
     /**
-     * {@inheritdoc}
+     * @return array<string>
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::PRODUCT_IMAGE_RESIZE];
-    }
-
-    private function getMessageData(MessageInterface $message): array
-    {
-        try {
-            $body = JSON::decode($message->getBody());
-
-            return $this->getOptionsResolver()->resolve((array)$body);
-        } catch (OptionsResolverInvalidArgumentException|\JsonException $e) {
-            throw new MessageQueueInvalidArgumentException($e->getMessage(), $e->getCode());
-        }
-    }
-
-    private function getOptionsResolver(): OptionsResolver
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setRequired(['productImageId']);
-        $resolver->setDefault('force', false);
-        $resolver->setDefault('dimensions', []);
-        $resolver->setAllowedTypes('productImageId', 'int');
-        $resolver->setAllowedTypes('force', ['bool', 'null']);
-        $resolver->setAllowedTypes('dimensions', ['array', 'null']);
-        $resolver->setNormalizer('force', static function (Options $options, $value) {
-            return (bool)$value;
-        });
-
-        return $resolver;
+        return [ResizeProductImageTopic::getName()];
     }
 
     private function getProductImage(int $id): ?ProductImage
@@ -106,7 +75,7 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
     }
 
     /**
-     * @param ProductImage  $productImage
+     * @param ProductImage $productImage
      * @param string[]|null $dimensions
      *
      * @return string[]

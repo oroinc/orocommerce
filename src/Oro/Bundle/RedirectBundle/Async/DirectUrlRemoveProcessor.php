@@ -2,43 +2,39 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Async\Topic\CalculateSlugCacheMassTopic;
+use Oro\Bundle\RedirectBundle\Async\Topic\RemoveDirectUrlForEntityTypeTopic;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
-class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+/**
+ * Removes Slug URLs for the entities of specified type.
+ */
+class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    use LoggerAwareTrait;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private ManagerRegistry $managerRegistry;
 
-    /**
-     * @var MessageProducerInterface
-     */
-    private $producer;
+    private MessageProducerInterface $messageProducer;
 
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry $managerRegistry,
         LoggerInterface $logger,
-        MessageProducerInterface $producer
+        MessageProducerInterface $messageProducer
     ) {
-        $this->registry = $registry;
+        $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
-        $this->producer = $producer;
+        $this->messageProducer = $messageProducer;
     }
 
     /**
@@ -46,29 +42,24 @@ class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscr
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $em = null;
+        $entityManager = null;
         try {
-            $entityClass = JSON::decode($message->getBody());
+            $entityClass = $message->getBody();
+            $entityManager = $this->managerRegistry->getManagerForClass($entityClass);
 
-            /** @var EntityManager $em */
-            if (!$em = $this->registry->getManagerForClass($entityClass)) {
-                $this->logger->error(
-                    sprintf('Entity manager is not defined for class: "%s"', $entityClass)
-                );
+            $entityManager->beginTransaction();
+            $entityManager
+                ->getRepository(Slug::class)
+                ->deleteSlugAttachedToEntityByClass($entityClass);
+            $entityManager->commit();
 
-                return self::REJECT;
-            }
-            /** @var SlugRepository $repository */
-            $repository = $em->getRepository(Slug::class);
-
-            $em->beginTransaction();
-            $repository->deleteSlugAttachedToEntityByClass($entityClass);
-            $em->commit();
-            $this->producer->send(Topics::CALCULATE_URL_CACHE_MASS, '');
+            $this->messageProducer->send(
+                CalculateSlugCacheMassTopic::getName(),
+                [DirectUrlMessageFactory::ENTITY_CLASS_NAME => $entityClass, DirectUrlMessageFactory::ID => []]
+            );
         } catch (\Exception $e) {
-            if ($em) {
-                $em->rollback();
-            }
+            $entityManager?->rollback();
+
             $this->logger->error(
                 'Unexpected exception occurred during Direct URL removal',
                 ['exception' => $e]
@@ -85,8 +76,6 @@ class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscr
      */
     public static function getSubscribedTopics()
     {
-        return [
-            Topics::REMOVE_DIRECT_URL_FOR_ENTITY_TYPE
-        ];
+        return [RemoveDirectUrlForEntityTypeTopic::getName()];
     }
 }

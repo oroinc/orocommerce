@@ -655,8 +655,11 @@ services:
         arguments:
             - '@oro_checkout.model.checkout_subtotal_updater'
             - '@monolog.logger'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
         tags:
             - { name: oro_message_queue.client.message_processor }
+            - { name: monolog.logger, channel: oro_checkout }
 
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'

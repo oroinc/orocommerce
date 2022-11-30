@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\OnClearEventArgs;
-use Oro\Bundle\AttachmentBundle\Async\Topics;
+use Oro\Bundle\AttachmentBundle\Async\Topic\AttachmentRemoveImageTopic;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -65,14 +65,14 @@ class RemoveProductImageListener
             $count++;
 
             if ($count === $this->batchSize) {
-                $this->messageProducer->send(Topics::ATTACHMENT_REMOVE_IMAGE, $imagesBatch);
+                $this->messageProducer->send(AttachmentRemoveImageTopic::getName(), $imagesBatch);
                 $imagesBatch = [];
                 $count = 0;
             }
         }
 
         if ($imagesBatch) {
-            $this->messageProducer->send(Topics::ATTACHMENT_REMOVE_IMAGE, $imagesBatch);
+            $this->messageProducer->send(AttachmentRemoveImageTopic::getName(), $imagesBatch);
         }
     }
 

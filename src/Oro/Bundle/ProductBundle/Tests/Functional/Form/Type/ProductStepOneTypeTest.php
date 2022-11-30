@@ -8,20 +8,16 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class ProductStepOneTypeTest extends WebTestCase
 {
     const CATEGORY_ID = 1;
 
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /** @var AttributeFamily */
-    protected $defaultFamily;
-
-    /** @var CsrfTokenManagerInterface */
-    protected $tokenManager;
+    protected FormFactoryInterface $formFactory;
+    protected AttributeFamily $defaultFamily;
+    protected CsrfTokenManagerInterface $tokenManager;
 
     protected function setUp(): void
     {
@@ -36,6 +32,12 @@ class ProductStepOneTypeTest extends WebTestCase
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
+
+        $request = Request::createFromGlobals();
+        $this->loginUser(self::AUTH_USER);
+        $this->updateUserSecurityToken(self::AUTH_USER);
+
+        $this->getClientInstance()->getContainer()->get('request_stack')->push($request);
     }
 
     /**

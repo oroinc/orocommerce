@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your app/config files
- */
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = OroProductExtension::ALIAS;
@@ -83,6 +80,9 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_PRICES_EXPORT_ENABLED = 'product_prices_export_enabled';
     const PRODUCT_PRICE_TIERS_ENABLED = 'product_price_tiers_export_enabled';
     const MICRODATA_WITHOUT_PRICES_DISABLED = 'microdata_without_prices_disabled';
+    const SCHEMA_ORG_DESCRIPTION_FIELD_ENABLED = 'schema_org_description_field_enabled';
+    const SCHEMA_ORG_DESCRIPTION_FIELD = 'schema_org_description_field';
+    const SCHEMA_ORG_DEFAULT_DESCRIPTION = 'oro_product_full_description';
 
     /**
      * {@inheritDoc}
@@ -207,6 +207,14 @@ class Configuration implements ConfigurationInterface
                     'value' => false
                 ],
                 static::MICRODATA_WITHOUT_PRICES_DISABLED => [
+                    'type' => 'boolean',
+                    'value' => false
+                ],
+                static::SCHEMA_ORG_DESCRIPTION_FIELD => [
+                    'type' => 'string',
+                    'value' => static::SCHEMA_ORG_DEFAULT_DESCRIPTION
+                ],
+                static::SCHEMA_ORG_DESCRIPTION_FIELD_ENABLED => [
                     'type' => 'boolean',
                     'value' => false
                 ]

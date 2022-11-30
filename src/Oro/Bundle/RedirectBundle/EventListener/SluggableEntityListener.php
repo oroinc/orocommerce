@@ -13,7 +13,7 @@ use Oro\Bundle\DraftBundle\Helper\DraftHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\GenerateDirectUrlForEntitiesTopic;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -130,7 +130,7 @@ class SluggableEntityListener implements OptionalListenerInterface
                     $idsBatch = array_splice($ids, 0, self::BATCH_SIZE);
                     $message = $this->messageFactory->createMassMessage($entityClass, $idsBatch, (bool)$createRedirect);
 
-                    $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+                    $this->messageProducer->send(GenerateDirectUrlForEntitiesTopic::getName(), $message);
                 }
             }
         }

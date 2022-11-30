@@ -111,7 +111,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
 
     viewMixin: {
         events: {
-            dblclick: 'onDoubleClick'
+            dblclick: 'onActive'
         },
 
         onRender() {
@@ -134,7 +134,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
         },
 
         onDoubleClick(event) {
-            this.em.get('Commands').run(this.model.getSettingsCommandName());
+            this.em.get('Commands').run(this.model.getSettingsCommandName(), this.model);
 
             event && event.stopPropagation();
         },
@@ -237,7 +237,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     isComponent(el) {
         let result = null;
 
-        if (el.nodeType === 1 &&
+        if (el.nodeType === Node.ELEMENT_NODE &&
             (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'))
         ) {
             result = {

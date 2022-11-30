@@ -161,7 +161,7 @@ class IndexDataProvider
             }
 
             unset($preparedIndexData[$entityId][Query::TYPE_TEXT][$allTextL10N]);
-            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId]);
+            $preparedIndexData[$entityId] = $this->squashAllTextFields($preparedIndexData[$entityId] ?? []);
         }
 
         return $preparedIndexData;

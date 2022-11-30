@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Async;
 
+use Oro\Bundle\ProductBundle\Async\Topic\ReindexProductCollectionBySegmentTopic;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Provider\SegmentSnapshotDeltaProvider;
@@ -18,7 +18,6 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -78,11 +77,11 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
-            $body = JSON::decode($message->getBody());
-            $segment = $this->messageFactory->getSegmentFromMessage($body);
-            $websiteIds = $this->messageFactory->getWebsiteIdsFromMessage($body);
-            $isFull = $this->messageFactory->getIsFull($body);
-            $additionalProducts = $this->messageFactory->getAdditionalProductsFromMessage($body) ?? [];
+            $body = $message->getBody();
+            $segment = $this->messageFactory->getSegment($body);
+            $websiteIds = $body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS];
+            $isFull = $body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL];
+            $additionalProducts = $body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS];
             $jobName = $this->getUniqueJobName($segment, $websiteIds);
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
@@ -103,18 +102,11 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             );
 
             return $result ? self::ACK : self::REJECT;
-        } catch (InvalidArgumentException $e) {
-            $this->logger->error(
-                'Queue Message is invalid',
-                ['exception' => $e]
-            );
-
-            return self::REJECT;
         } catch (\Exception $e) {
             $this->logger->error(
                 'Unexpected exception occurred during segment product collection reindexation',
                 [
-                    'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                    'topic' => ReindexProductCollectionBySegmentTopic::getName(),
                     'exception' => $e
                 ]
             );
@@ -128,7 +120,7 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT];
+        return [ReindexProductCollectionBySegmentTopic::getName()];
     }
 
     /**
@@ -190,12 +182,11 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
     private function getUniqueJobName(Segment $segment, $websiteIds): string
     {
         sort($websiteIds);
-        $jobKey = sprintf(
+
+        return sprintf(
             '%s:%s',
-            Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+            ReindexProductCollectionBySegmentTopic::getName(),
             md5($segment->getDefinition()) . ':' . md5(implode($websiteIds))
         );
-
-        return $jobKey;
     }
 }

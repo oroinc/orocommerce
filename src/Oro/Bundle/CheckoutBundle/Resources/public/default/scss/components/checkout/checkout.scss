@@ -38,6 +38,12 @@
         }
     }
 
+    &-form {
+        &-errors {
+            margin: 0 0 $offset-y;
+        }
+    }
+
     &__approval-note {
         margin: $checkout-approval-note-margin;
     }

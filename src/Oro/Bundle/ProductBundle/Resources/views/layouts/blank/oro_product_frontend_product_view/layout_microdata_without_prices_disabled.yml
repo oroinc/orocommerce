@@ -11,6 +11,9 @@ layout:
             prepend: true
             options:
                 productPrices: '=data["frontend_product_prices"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
+                microdataWithoutPricesDisabled: '=context["microdata_without_prices_disabled"]'
+                schemaOrgDescriptionEnabled: '=data["system_config_provider"].getValue("oro_product.schema_org_description_field_enabled")'
+                schemaOrgDescription: '=data["oro_product_schema_org_product_description"].getDescription(data["product"])'
         - '@move':
             id: product_view_primary_wrapper
             parentId: product_view_microdata_container
@@ -20,5 +23,3 @@ layout:
         - '@move':
             id: product_view_additional_container
             parentId: product_view_microdata_container
-
-    conditions: 'context["microdata_without_prices_disabled"]'

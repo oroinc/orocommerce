@@ -25,6 +25,8 @@ class OroWebCatalogExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('controllers.yml');
         $loader->load('actions.yml');
+        $loader->load('mq_processors.yml');
+        $loader->load('mq_topics.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

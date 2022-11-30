@@ -163,6 +163,10 @@
         // stylelint-disable-next-line declaration-no-important
         width: 70px !important;
     }
+
+    .order-line-item-type-product {
+        word-break: break-word;
+    }
 }
 
 td.order-discount-item-remove {
@@ -202,10 +206,6 @@ td.order-discount-item-remove {
         padding: 5px 10px 5px 0;
         width: 20px;
     }
-}
-
-.oro-discount-collection {
-    max-width: 1000px;
 }
 
 .oro-discount-collection.grid-container {
@@ -249,10 +249,6 @@ td.order-discount-item-remove {
         padding-top: 3px;
         color: $primary-500;
     }
-}
-
-.order-shipping-trackings-grid {
-    width: 300px;
 }
 
 .possible-shipping-methods-info {

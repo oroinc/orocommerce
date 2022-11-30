@@ -17,15 +17,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class DirectUrlMessageFactory implements MessageFactoryInterface
 {
-    const ID = 'id';
-    const JOB_ID = 'jobId';
-    const ENTITY_CLASS_NAME = 'class';
-    const CREATE_REDIRECT = 'createRedirect';
-
-    /**
-     * @var OptionsResolver
-     */
-    private $resolver;
+    public const ID = 'id';
+    public const ENTITY_CLASS_NAME = 'class';
+    public const CREATE_REDIRECT = 'createRedirect';
+    public const JOB_ID = 'jobId';
 
     /**
      * @var ManagerRegistry
@@ -53,15 +48,11 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
             $createRedirect = $entity->getSlugPrototypesWithRedirect()->getCreateRedirect();
         }
 
-        $resolver = $this->getOptionsResolver();
-
-        return $resolver->resolve(
-            [
-                self::ID => $entity->getId(),
-                self::ENTITY_CLASS_NAME => ClassUtils::getClass($entity),
-                self::CREATE_REDIRECT => $createRedirect
-            ]
-        );
+        return [
+            self::ID => $entity->getId(),
+            self::ENTITY_CLASS_NAME => ClassUtils::getClass($entity),
+            self::CREATE_REDIRECT => $createRedirect,
+        ];
     }
 
     /**
@@ -69,15 +60,11 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
      */
     public function createMassMessage($entityClass, $id, $createRedirect = true)
     {
-        $resolver = $this->getOptionsResolver();
-
-        return $resolver->resolve(
-            [
-                self::ID => $id,
-                self::ENTITY_CLASS_NAME => $entityClass,
-                self::CREATE_REDIRECT => $createRedirect
-            ]
-        );
+        return [
+            self::ID => $id,
+            self::ENTITY_CLASS_NAME => $entityClass,
+            self::CREATE_REDIRECT => $createRedirect,
+        ];
     }
 
     /**
@@ -85,7 +72,6 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
      */
     public function getEntitiesFromMessage($data)
     {
-        $data = $this->getResolvedData($data);
         $className = $data[self::ENTITY_CLASS_NAME];
 
         /** @var EntityManager $em */
@@ -102,8 +88,6 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
      */
     public function getEntityClassFromMessage($data)
     {
-        $data = $this->getResolvedData($data);
-
         return $data[self::ENTITY_CLASS_NAME];
     }
 
@@ -112,8 +96,6 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
      */
     public function getCreateRedirectFromMessage($data)
     {
-        $data = $this->getResolvedData($data);
-
         return $data[self::CREATE_REDIRECT];
     }
 

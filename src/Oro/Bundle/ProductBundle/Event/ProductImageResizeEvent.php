@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
+use Oro\Bundle\ProductBundle\Async\Topic\ResizeProductImageTopic;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -48,5 +49,10 @@ class ProductImageResizeEvent extends Event
             'force' => $this->forceOption,
             'dimensions' => $this->dimensions
         ];
+    }
+
+    public function getTopicName(): string
+    {
+        return ResizeProductImageTopic::getName();
     }
 }

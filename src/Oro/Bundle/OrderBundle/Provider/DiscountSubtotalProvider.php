@@ -77,6 +77,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
             $subtotal->setLabel($title);
             $subtotal->setVisible(true);
             $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
+            $subtotal->setRemovable(false);
 
             $subtotalAmount = $this->getSubtotalAmount($discount, $entity);
 

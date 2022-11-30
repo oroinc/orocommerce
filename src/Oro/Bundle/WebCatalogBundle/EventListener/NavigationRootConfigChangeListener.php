@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateContentNodeCacheTopic;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 /**
@@ -36,8 +36,8 @@ class NavigationRootConfigChangeListener implements OptionalListenerInterface
 
         $contentNodeId = $event->getNewValue('oro_web_catalog.navigation_root');
         if ($contentNodeId) {
-            $this->messageProducer->send(Topics::CALCULATE_CONTENT_NODE_CACHE, [
-                'contentNodeId' => (int)$contentNodeId
+            $this->messageProducer->send(WebCatalogCalculateContentNodeCacheTopic::getName(), [
+                WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => (int)$contentNodeId
             ]);
         }
 

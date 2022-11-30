@@ -49,7 +49,7 @@ class VisibilityIdHelper
         EntityDefinitionFieldConfig $idFieldConfig
     ): string {
         $items = [];
-        $propertyPaths = $idFieldConfig->getDependsOn();
+        $propertyPaths = $idFieldConfig->getDependsOn() ?? [];
         foreach ($propertyPaths as $propertyPath) {
             if (!\array_key_exists($propertyPath, $visibilityId)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -89,7 +89,7 @@ class VisibilityIdHelper
         string $encodedVisibilityId,
         EntityDefinitionFieldConfig $idFieldConfig
     ): ?array {
-        $propertyPaths = $idFieldConfig->getDependsOn();
+        $propertyPaths = $idFieldConfig->getDependsOn() ?? [];
         $count = count($propertyPaths);
         $values = explode(self::DELIMITER, $encodedVisibilityId);
         if (count($values) !== $count) {

@@ -4,6 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Async;
 
 /**
  * Redirect bundle MQ Topics holder.
+ * @deprecated Will be removed in 5.1, use MQ topic classes instead:
+ * {@see \Oro\Component\MessageQueue\Topic\TopicInterface}
  */
 class Topics
 {

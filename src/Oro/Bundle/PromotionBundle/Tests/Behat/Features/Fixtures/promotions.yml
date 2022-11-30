@@ -1,3 +1,13 @@
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+    second_organization:
+        name: 'Second Organization'
+        enabled: true
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    bu_second_organization:
+        name: 'Business Unit (Second Organization)'
+        organization: '@second_organization'
+
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     lineItemDiscountPromotionLabel:
         string: 'Line Item Discount Promotion'
@@ -11,6 +21,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Shipping Discount Promotion'
     shippingDiscountPromotionDesc:
         string: 'Shipping Discount Promotion Description'
+    orderDiscountPromotionForSecondOrganizationLabel:
+        string: 'Order Discount Promotion (Second Organization)'
 
 Oro\Bundle\SegmentBundle\Entity\Segment:
     lineItemDiscountPromotionSegment:
@@ -27,6 +39,13 @@ Oro\Bundle\SegmentBundle\Entity\Segment:
         definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@business_unit'
+    orderDiscountPromotionForSecondOrganizationSegment:
+        name: 'Promotion Matching Products (Second Organization)'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@bu_second_organization'
 
 Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
     lineItemDiscountPromotionDiscountConfiguration:
@@ -51,6 +70,11 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
             shipping_options:
                 shipping_method: 'flat_rate_1'
                 shipping_method_type: 'primary'
+    orderDiscountPromotionDiscountForSecondOrganizationConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 5
 
 Oro\Bundle\RuleBundle\Entity\Rule:
     lineItemDiscountPromotionRule:
@@ -65,6 +89,10 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         enabled: true
         sortOrder: 1
         name: 'shipping Discount Promotion'
+    orderDiscountPromotionForSecondOrganizationRule:
+        enabled: true
+        sortOrder: 1
+        name: 'order Discount Promotion (Second Organization)'
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     lineItemDiscountPromotion:
@@ -98,5 +126,15 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         rule: '@shippingDiscountPromotionRule'
         discountConfiguration: '@shippingDiscountPromotionDiscountConfiguration'
         organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+    orderDiscountPromotionForSecondOrganization:
+        __calls:
+            - addLabel: ['@orderDiscountPromotionForSecondOrganizationLabel']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderDiscountPromotionForSecondOrganizationSegment'
+        rule: '@orderDiscountPromotionForSecondOrganizationRule'
+        discountConfiguration: '@orderDiscountPromotionDiscountForSecondOrganizationConfiguration'
+        organization: '@second_organization'
         owner: '@admin'
         useCoupons: false

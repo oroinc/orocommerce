@@ -11,5 +11,6 @@ placeholders:
     items:
         product_sidebar_category_selector:
             action: Oro\Bundle\CatalogBundle\Controller\ProductController::sidebarAction
+            acl: oro_catalog_category_view
         product_step_two_category_info:
             template: '@@OroCatalog/Product/category_info.html.twig'

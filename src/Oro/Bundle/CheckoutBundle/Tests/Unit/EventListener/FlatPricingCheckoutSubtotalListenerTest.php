@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\CheckoutBundle\EventListener\FlatPricingCheckoutSubtotalListener;
@@ -18,20 +18,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|MockObject
-     */
-    private $registry;
+    private ManagerRegistry|MockObject $registry;
 
-    /**
-     * @var MessageProducerInterface|MockObject
-     */
-    private $messageProducer;
+    private MessageProducerInterface|MockObject $messageProducer;
 
-    /**
-     * @var FlatPricingCheckoutSubtotalListener
-     */
-    private $listener;
+    private FlatPricingCheckoutSubtotalListener $listener;
 
     protected function setUp(): void
     {
@@ -41,13 +32,13 @@ class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener = new FlatPricingCheckoutSubtotalListener($this->registry, $this->messageProducer);
     }
 
-    public function testOnPriceListUpdate()
+    public function testOnPriceListUpdate(): void
     {
         $priceListIds = [1, 3];
         $event = new MassStorageUpdateEvent($priceListIds);
 
         $repo = $this->assertRepositoryCall();
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('invalidateByPriceList')
             ->with($priceListIds);
         $this->assertMqCall();
@@ -55,13 +46,13 @@ class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onPriceListUpdate($event);
     }
 
-    public function testOnCustomerPriceListUpdate()
+    public function testOnCustomerPriceListUpdate(): void
     {
         $data = [['customers' => [1, 3], 'websiteId' => 5]];
         $event = new CustomerRelationUpdateEvent($data);
 
         $repo = $this->assertRepositoryCall();
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('invalidateByCustomers')
             ->with([1, 3], 5);
         $this->assertMqCall();
@@ -69,13 +60,13 @@ class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onCustomerPriceListUpdate($event);
     }
 
-    public function testOnCustomerGroupPriceListUpdate()
+    public function testOnCustomerGroupPriceListUpdate(): void
     {
         $data = [['customerGroups' => [1, 3], 'websiteId' => 5]];
         $event = new CustomerGroupRelationUpdateEvent($data);
 
         $repo = $this->assertRepositoryCall();
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('invalidateByCustomerGroups')
             ->with([1, 3], 5);
         $this->assertMqCall();
@@ -83,13 +74,13 @@ class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onCustomerGroupPriceListUpdate($event);
     }
 
-    public function testOnWebsitePriceListUpdate()
+    public function testOnWebsitePriceListUpdate(): void
     {
         $websiteIds = [1, 5];
         $event = new WebsiteRelationUpdateEvent($websiteIds);
 
         $repo = $this->assertRepositoryCall();
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('invalidateByWebsites')
             ->with($websiteIds);
         $this->assertMqCall();
@@ -97,19 +88,16 @@ class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onWebsitePriceListUpdate($event);
     }
 
-    /**
-     * @return CheckoutSubtotalRepository|MockObject
-     */
-    private function assertRepositoryCall()
+    private function assertRepositoryCall(): CheckoutSubtotalRepository|MockObject
     {
         $repo = $this->createMock(CheckoutSubtotalRepository::class);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getRepository')
             ->with(CheckoutSubtotal::class)
             ->willReturn($repo);
-        $this->registry->expects($this->once())
+        $this->registry->expects(self::once())
             ->method('getManagerForClass')
             ->with(CheckoutSubtotal::class)
             ->willReturn($em);
@@ -117,11 +105,11 @@ class FlatPricingCheckoutSubtotalListenerTest extends \PHPUnit\Framework\TestCas
         return $repo;
     }
 
-    private function assertMqCall()
+    private function assertMqCall(): void
     {
         $message = new Message();
-        $this->messageProducer->expects($this->once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
-            ->with(Topics::RECALCULATE_CHECKOUT_SUBTOTALS, $message);
+            ->with(RecalculateCheckoutSubtotalsTopic::getName(), $message);
     }
 }

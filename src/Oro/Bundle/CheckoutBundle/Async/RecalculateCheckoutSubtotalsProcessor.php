@@ -2,15 +2,26 @@
 
 namespace Oro\Bundle\CheckoutBundle\Async;
 
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
-class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+/**
+ * Processor for recalculate checkout subtotals
+ */
+class RecalculateCheckoutSubtotalsProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /** @var CheckoutSubtotalUpdater */
     protected $checkoutSubtotalUpdater;
 
@@ -26,7 +37,9 @@ class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param MessageInterface $message
+     * @param SessionInterface $session
+     * @return string
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
@@ -37,7 +50,7 @@ class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'topic' => Topics::RECALCULATE_CHECKOUT_SUBTOTALS,
+                    'topic' => RecalculateCheckoutSubtotalsTopic::getName(),
                 ]
             );
 
@@ -48,10 +61,10 @@ class RecalculateCheckoutSubtotalsProcessor implements MessageProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @return array<string>
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RECALCULATE_CHECKOUT_SUBTOTALS];
+        return [RecalculateCheckoutSubtotalsTopic::getName()];
     }
 }

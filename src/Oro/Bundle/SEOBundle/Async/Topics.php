@@ -4,6 +4,8 @@ namespace Oro\Bundle\SEOBundle\Async;
 
 /**
  * MQ topics used during sitemaps generation.
+ * @deprecated Will be removed in 5.1, use MQ topic classes instead:
+ * {@see \Oro\Component\MessageQueue\Topic\TopicInterface}
  */
 class Topics
 {

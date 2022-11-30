@@ -22,10 +22,10 @@
     .product-view {
         &__attributes-container {
             border: $product-view-attributes-container-border-radius-mobile-l;
-        }
 
-        .tab-content {
-            display: $product-view-attributes-tab-content-display-mobile-l;
+            .tab-content {
+                display: $product-view-attributes-tab-content-display-mobile-l;
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Cache;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
+use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -15,29 +15,14 @@ class ContentNodeTreeCacheWarmerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $messageProducer;
+    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $doctrineHelper;
+    private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $configManager;
+    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
 
-    /**
-     * @var ContentNodeTreeCacheWarmer
-     */
-    private $warmer;
+    private ContentNodeTreeCacheWarmer $warmer;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
@@ -50,35 +35,35 @@ class ContentNodeTreeCacheWarmerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsOptional()
+    public function testIsOptional(): void
     {
-        $this->assertTrue($this->warmer->isOptional());
+        self::assertTrue($this->warmer->isOptional());
     }
 
-    public function testWarmUp()
+    public function testWarmUp(): void
     {
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
         $website2 = $this->getEntity(Website::class, ['id' => 2]);
 
         $repository = $this->createMock(EntityRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('findAll')
             ->willReturn([$website1, $website2]);
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(Website::class)
             ->willReturn($repository);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('getValues')
             ->with('oro_web_catalog.web_catalog', [$website1, $website2])
             ->willReturn([1 => 3, 2 => 4]);
 
-        $this->messageProducer->expects($this->exactly(2))
+        $this->messageProducer->expects(self::exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => 3]],
-                [Topics::CALCULATE_WEB_CATALOG_CACHE, ['webCatalogId' => 4]]
+                [WebCatalogCalculateCacheTopic::getName(), [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => 3]],
+                [WebCatalogCalculateCacheTopic::getName(), [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => 4]]
             );
 
         $this->warmer->warmUp(__DIR__);

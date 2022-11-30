@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Async;
 
 use Oro\Bundle\CheckoutBundle\Async\RecalculateCheckoutSubtotalsProcessor;
-use Oro\Bundle\CheckoutBundle\Async\Topics;
+use Oro\Bundle\CheckoutBundle\Async\Topic\RecalculateCheckoutSubtotalsTopic;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutSubtotalUpdater;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -12,20 +12,15 @@ use Psr\Log\LoggerInterface;
 
 class RecalculateCheckoutSubtotalsProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CheckoutSubtotalUpdater|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutSubtotalUpdater;
+    private CheckoutSubtotalUpdater|\PHPUnit\Framework\MockObject\MockObject $checkoutSubtotalUpdater;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
+    private LoggerInterface|\PHPUnit\Framework\MockObject\MockObject $logger;
 
-    /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $message;
+    private MessageInterface|\PHPUnit\Framework\MockObject\MockObject $message;
 
-    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $session;
+    private SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session;
 
-    /** @var RecalculateCheckoutSubtotalsProcessor */
-    protected $processor;
+    private RecalculateCheckoutSubtotalsProcessor $processor;
 
     protected function setUp(): void
     {
@@ -34,45 +29,53 @@ class RecalculateCheckoutSubtotalsProcessorTest extends \PHPUnit\Framework\TestC
         $this->message = $this->createMock(MessageInterface::class);
         $this->session = $this->createMock(SessionInterface::class);
 
-        $this->processor = new RecalculateCheckoutSubtotalsProcessor($this->checkoutSubtotalUpdater, $this->logger);
+        $this->processor = new RecalculateCheckoutSubtotalsProcessor(
+            $this->checkoutSubtotalUpdater,
+            $this->logger
+        );
+
+        $this->processor->setLogger($this->logger);
     }
 
-    public function testProcessWhenThrowsException()
+    public function testProcessWhenThrowsException(): void
     {
         $exception = new \Exception('Test Exception');
-        $this->checkoutSubtotalUpdater->expects($this->once())
+        $this->checkoutSubtotalUpdater->expects(self::once())
             ->method('recalculateInvalidSubtotals')
             ->willThrowException($exception);
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('error')
             ->with(
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $exception,
-                    'topic' => Topics::RECALCULATE_CHECKOUT_SUBTOTALS,
+                    'topic' => RecalculateCheckoutSubtotalsTopic::getName(),
                 ]
             );
 
-        $this->assertEquals(
+        self::assertEquals(
             MessageProcessorInterface::REJECT,
             $this->processor->process($this->message, $this->session)
         );
     }
 
-    public function testProcess()
+    public function testProcess(): void
     {
-        $this->checkoutSubtotalUpdater->expects($this->once())
+        $this->checkoutSubtotalUpdater->expects(self::once())
             ->method('recalculateInvalidSubtotals');
-        $this->logger->expects($this->never())
+        $this->logger->expects(self::never())
             ->method('error');
 
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($this->message, $this->session));
+        self::assertEquals(
+            MessageProcessorInterface::ACK,
+            $this->processor->process($this->message, $this->session)
+        );
     }
 
-    public function testGetSubscribedTopics()
+    public function testGetSubscribedTopics(): void
     {
-        $this->assertEquals(
-            [Topics::RECALCULATE_CHECKOUT_SUBTOTALS],
+        self::assertEquals(
+            [RecalculateCheckoutSubtotalsTopic::getName()],
             RecalculateCheckoutSubtotalsProcessor::getSubscribedTopics()
         );
     }

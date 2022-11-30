@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\EventListener\DoctrineFlushProgressListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use ProxyManager\Proxy\VirtualProxyInterface;
 
 /**
  * Class provides a methods to work with TaxValue entity
@@ -236,7 +237,9 @@ class TaxValueManager
      */
     protected function getTaxValueEntityManager()
     {
-        return $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
+        $em = $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
+
+        return $em instanceof VirtualProxyInterface ? $em->getWrappedValueHolderValue() : $em;
     }
 
     /**

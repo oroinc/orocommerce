@@ -12,30 +12,25 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
-use Oro\Component\MessageQueue\Exception\InvalidArgumentException as MessageQueueInvalidArgumentException;
 use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 
 class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 {
     private const PRODUCT_IMAGE_ID = 1;
-    private const FORCE_OPTION     = false;
+    private const FORCE_OPTION = false;
 
     private const ORIGINAL = 'original';
-    private const LARGE    = 'large';
-    private const SMALL    = 'small';
+    private const LARGE = 'large';
+    private const SMALL = 'small';
 
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $em;
+    private EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em;
 
-    /** @var ProductImagesDimensionsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $imageDimensionsProvider;
+    private ProductImagesDimensionsProvider|\PHPUnit\Framework\MockObject\MockObject $imageDimensionsProvider;
 
-    /** @var ImageResizeManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $imageResizeManager;
+    private ImageResizeManagerInterface|\PHPUnit\Framework\MockObject\MockObject $imageResizeManager;
 
-    /** @var ResizeProductImageMessageProcessor */
-    private $processor;
+    private ResizeProductImageMessageProcessor $processor;
 
     protected function setUp(): void
     {
@@ -66,9 +61,9 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('getDimensionsForProductImage')
             ->with($productImage)
             ->willReturn([
-                'main'       => new ThemeImageTypeDimension(self::ORIGINAL, null, null),
-                'listing'    => new ThemeImageTypeDimension(self::LARGE, 100, 100),
-                'additional' => new ThemeImageTypeDimension(self::SMALL, 50, 50)
+                'main' => new ThemeImageTypeDimension(self::ORIGINAL, null, null),
+                'listing' => new ThemeImageTypeDimension(self::LARGE, 100, 100),
+                'additional' => new ThemeImageTypeDimension(self::SMALL, 50, 50),
             ]);
 
         $this->em->expects(self::once())
@@ -79,32 +74,12 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         return $image;
     }
 
-    public function testProcessInvalidJson()
-    {
-        $this->expectException(MessageQueueInvalidArgumentException::class);
-
-        $message = new Message();
-        $message->setBody('not valid json');
-
-        $this->processor->process($message, $this->createMock(SessionInterface::class));
-    }
-
-    public function testProcessInvalidData()
-    {
-        $this->expectException(MessageQueueInvalidArgumentException::class);
-
-        $message = new Message();
-        $message->setBody(['abc']);
-
-        $this->processor->process($message, $this->createMock(SessionInterface::class));
-    }
-
     public function testProcessProductImageNotFound()
     {
         $message = new Message();
         $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force'          => self::FORCE_OPTION
+            'force' => self::FORCE_OPTION,
         ]);
 
         $this->em->expects(self::once())
@@ -123,7 +98,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $message = new Message();
         $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force'          => self::FORCE_OPTION
+            'force' => self::FORCE_OPTION,
         ]);
 
         $this->em->expects(self::once())
@@ -137,36 +112,13 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testResizeValidDataWithoutPassedDimensions()
-    {
-        $message = new Message();
-        $message->setBody([
-            'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force'          => self::FORCE_OPTION
-        ]);
-
-        $image = $this->getImageFile();
-        $this->imageResizeManager->expects(self::exactly(3))
-            ->method('applyFilter')
-            ->withConsecutive(
-                [$image, self::ORIGINAL, false],
-                [$image, self::LARGE, false],
-                [$image, self::SMALL, false]
-            );
-
-        self::assertEquals(
-            MessageProcessorInterface::ACK,
-            $this->processor->process($message, $this->createMock(SessionInterface::class))
-        );
-    }
-
     public function testResizeValidDataWithPassedNullDimensions()
     {
         $message = new Message();
         $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force'          => self::FORCE_OPTION,
-            'dimensions'     => null
+            'force' => self::FORCE_OPTION,
+            'dimensions' => null,
         ]);
 
         $image = $this->getImageFile();
@@ -186,8 +138,8 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
         $message = new Message();
         $message->setBody([
             'productImageId' => self::PRODUCT_IMAGE_ID,
-            'force'          => self::FORCE_OPTION,
-            'dimensions'     => [self::ORIGINAL, self::SMALL]
+            'force' => self::FORCE_OPTION,
+            'dimensions' => [self::ORIGINAL, self::SMALL],
         ]);
 
         $image = $this->getImageFile();

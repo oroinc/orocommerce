@@ -6,12 +6,14 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
-use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Async\Topic\SyncSlugRedirectsTopic;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+/**
+ * Sends messages to the message queue to synchronize redirect scopes for all changed slugs.
+ */
 class SlugListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
@@ -62,9 +64,6 @@ class SlugListener implements OptionalListenerInterface
 
     protected function synchronizeRedirectScopes(Slug $slug)
     {
-        $this->messageProducer->send(
-            Topics::SYNC_SLUG_REDIRECTS,
-            new Message(['slugId' => $slug->getId()])
-        );
+        $this->messageProducer->send(SyncSlugRedirectsTopic::getName(), ['slugId' => $slug->getId()]);
     }
 }

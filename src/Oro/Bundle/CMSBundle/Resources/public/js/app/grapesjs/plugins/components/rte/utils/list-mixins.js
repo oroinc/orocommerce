@@ -9,7 +9,10 @@ import {
     getOffsetProp,
     focusCursor,
     isFormattedText,
-    isTag
+    isTag,
+    formattingNodeSliceToNodes,
+    getNodeSiblings,
+    findClosestFormattingBlock
 } from './utils';
 
 export default class ListMixin {
@@ -42,9 +45,14 @@ export default class ListMixin {
 
     mergeLists(list) {
         const prev = list.previousSibling;
-        const next = list.nextSibling;
+        let next = list.nextSibling;
 
-        if (prev && prev.nodeType === 1 && prev.tagName === this.listType) {
+        if (isTag(next, 'br')) {
+            next.remove();
+            next = list.nextSibling;
+        }
+
+        if (isTag(prev, this.listType)) {
             [...prev.childNodes].reverse().forEach(child => {
                 list.prepend(child);
             });
@@ -54,7 +62,7 @@ export default class ListMixin {
             prev.remove();
         }
 
-        if (next && next.nodeType === 1 && next.tagName === this.listType) {
+        if (isTag(next, this.listType)) {
             [...next.childNodes].forEach(child => {
                 list.append(child);
             });
@@ -83,7 +91,7 @@ export default class ListMixin {
         let current = node.nextSibling;
 
         while (current) {
-            if (current.nodeType === 1) {
+            if (current.nodeType === Node.ELEMENT_NODE) {
                 siblings.push(current);
             }
             current = current.nextSibling;
@@ -92,7 +100,7 @@ export default class ListMixin {
     }
 
     clearOffset(node) {
-        if (node.nodeType !== 1) {
+        if (node.nodeType !== Node.ELEMENT_NODE) {
             return;
         }
         const offsetProp = getOffsetProp();
@@ -123,6 +131,23 @@ export default class ListMixin {
         return listItem;
     }
 
+    beforeListInsert(nodes) {
+        const firstNode = nodes[0];
+        const lastNode = nodes[nodes.length - 1];
+        const isFormatted = node => node.nodeType === Node.TEXT_NODE || isFormattedText(node);
+
+        const prevSiblings = firstNode && isFormatted(firstNode) ? getNodeSiblings(firstNode, {
+            callback: isFormatted,
+            direction: 'previous'
+        }) : [];
+
+        const nextSiblings = lastNode && isFormatted(lastNode) ? getNodeSiblings(lastNode, {
+            callback: isFormatted
+        }) : [];
+
+        return [...prevSiblings, ...nodes, ...nextSiblings];
+    }
+
     insertNodeToList(node) {
         const list = document.createElement(this.listType);
         node.parentNode.insertBefore(list, node);
@@ -135,6 +160,7 @@ export default class ListMixin {
     }
 
     insertNodesToList(nodes, parent) {
+        nodes = this.beforeListInsert(nodes);
         const list = document.createElement(this.listType);
         parent.insertBefore(list, nodes[0]);
 
@@ -144,7 +170,7 @@ export default class ListMixin {
             Array.isArray(node) ? node.forEach(n => listItem.append(n)) : listItem.append(node);
             list.append(listItem);
 
-            if (listItem.firstChild.nodeType === 1 && listItem.firstChild.tagName === this.listType) {
+            if (listItem.firstChild.nodeType === Node.ELEMENT_NODE && listItem.firstChild.tagName === this.listType) {
                 listItem.classList.add('list-style-none');
             }
         }
@@ -154,8 +180,7 @@ export default class ListMixin {
 
     chunkNodes(nodes) {
         const chunks = [];
-
-        const isList = list => list && list.nodeType === 1 && list.tagName === this.listType;
+        const isList = list => list && list.nodeType === Node.ELEMENT_NODE && list.tagName === this.listType;
         for (const node of nodes) {
             const key = chunks.length - 1;
             if (isBlockFormatted(node) ||
@@ -176,7 +201,7 @@ export default class ListMixin {
             } else if (isFormattedText(node) || isTag(node, 'span')) {
                 if (Array.isArray(chunks[key])) {
                     chunks[key] = [...chunks[key], node];
-                } else if (chunks.length === 1 && chunks[key].nodeType === 3) {
+                } else if (chunks.length === 1 && chunks[key].nodeType === Node.TEXT_NODE) {
                     chunks[key] = [chunks[key], node];
                 } else {
                     chunks.push([node]);
@@ -208,7 +233,7 @@ export default class ListMixin {
         const parent = list.parentNode;
         const count = list.childNodes.length;
 
-        if (list.previousSibling && list.previousSibling.nodeType === 3) {
+        if (list.previousSibling && list.previousSibling.nodeType === Node.TEXT_NODE) {
             parent.insertBefore(document.createElement('BR'), list);
         }
 
@@ -219,7 +244,7 @@ export default class ListMixin {
                         isBlockFormatted(child.firstChild) ||
                         [this.listType, 'DIV'].includes(child.firstChild.tagName)
                     ) ||
-                    (child.childNodes[child.childNodes.length - 1].nodeType === 3 && index < count - 1)
+                    (child.childNodes[child.childNodes.length - 1].nodeType === Node.TEXT_NODE && index < count - 1)
                 ) {
                     child.append(document.createElement('BR'));
                 }
@@ -248,13 +273,13 @@ export default class ListMixin {
             editor.trigger('change:canvasOffset');
         };
 
-        if (container.nodeType === 3) {
+        if (container.nodeType === Node.TEXT_NODE) {
             const node = findParentTag(container, 'li', true);
             undoLi(node);
             return;
         }
 
-        if (container.nodeType === 1 && container.tagName === 'LI' && !container.childNodes.length) {
+        if (container.nodeType === Node.ELEMENT_NODE && container.tagName === 'LI' && !container.childNodes.length) {
             undoLi(container);
         }
     }
@@ -268,7 +293,7 @@ export default class ListMixin {
         let newNode;
         if (node.innerHTML.length) {
             let offsetNode;
-            if (selection.type === 'Caret' && container.nodeType === 3) {
+            if (selection.type === 'Caret' && container.nodeType === Node.TEXT_NODE) {
                 offsetNode = container.splitText(range.startOffset);
             }
 
@@ -380,7 +405,7 @@ export default class ListMixin {
 
         if (selection.type === 'Range') {
             if (remove) {
-                if (container.nodeType === 3) {
+                if (container.nodeType === Node.TEXT_NODE) {
                     return removeSubList();
                 }
 
@@ -424,7 +449,7 @@ export default class ListMixin {
 
                 return;
             } else {
-                if (container.nodeType === 3) {
+                if (container.nodeType === Node.TEXT_NODE) {
                     return createSubList();
                 }
 
@@ -471,8 +496,9 @@ export default class ListMixin {
         }
 
         const makeList = () => {
-            if (isBlockFormatted(container.parentNode)) {
-                this.insertNodeToList(container.parentNode);
+            const parentNode = findClosestFormattingBlock(container);
+            if (parentNode) {
+                this.insertNodeToList(parentNode);
                 editor.trigger('change:canvasOffset');
                 cursor();
                 return;
@@ -490,7 +516,7 @@ export default class ListMixin {
                 cursor();
                 return;
             } else {
-                if (container.nodeType === 3) {
+                if (container.nodeType === Node.TEXT_NODE) {
                     return makeList();
                 }
             }
@@ -503,12 +529,20 @@ export default class ListMixin {
                 cursor();
                 return;
             } else {
-                if (container.nodeType === 3) {
+                if (container.nodeType === Node.TEXT_NODE) {
                     return makeList();
                 }
 
                 if (isBlockFormatted(container) || isTag(container, 'span')) {
                     this.insertNodeToList(container);
+                    cursor();
+                    editor.trigger('change:canvasOffset');
+                    return;
+                }
+
+                if (isFormattedText(container)) {
+                    const [nodes, parent] = formattingNodeSliceToNodes(container);
+                    this.insertNodesToList(nodes, parent);
                     cursor();
                     editor.trigger('change:canvasOffset');
                     return;
@@ -529,7 +563,7 @@ export default class ListMixin {
     }
 
     isTag(node, tagName) {
-        return node && node.nodeType === 1 && node.tagName.toLowerCase() === tagName.toLowerCase();
+        return node && node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === tagName.toLowerCase();
     }
 
     changeListType(list, type) {

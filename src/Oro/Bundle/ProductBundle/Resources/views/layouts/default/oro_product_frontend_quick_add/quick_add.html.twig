@@ -36,6 +36,7 @@
         '~data-page-component-options': pageComponentOptions
     }) %}
     {{ block('form_start_widget') }}
+    {{ form_errors(form) }}
 {% endblock %}
 
 {% block _quick_add_form_fields_widget %}
@@ -48,7 +49,6 @@
     {{ form_row(form.component) }}
     {{ form_row(form.additional) }}
     {{ form_row(form.transition) }}
-    {{ form_errors(form) }}
 {% endblock %}
 
 {% block _quick_add_form_buttons_wrapper_widget %}
