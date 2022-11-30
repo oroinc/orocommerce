@@ -17,10 +17,7 @@ class PaymentDeleteActionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $paymentDeleteAction->getOptions());
     }
 
-    /**
-     * @return array
-     */
-    public function setOptionsDataProvider()
+    public function setOptionsDataProvider(): array
     {
         $link = 'http://localhost';
         return [

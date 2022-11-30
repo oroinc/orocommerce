@@ -9,20 +9,14 @@ class TaxCodeNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider normalizeDataProvider
-     * @param object $object
-     * @param array $context
-     * @param array|null $expected
      */
-    public function testNormalize($object, array $context = [], array $expected = null)
+    public function testNormalize(object $object, array $context = [], array $expected = null)
     {
         $serializer = new TaxCodeNormalizer();
         $this->assertSame($expected, $serializer->normalize($object, null, $context));
     }
 
-    /**
-     * @return array
-     */
-    public function normalizeDataProvider()
+    public function normalizeDataProvider(): array
     {
         return [
             'full' => [
@@ -50,19 +44,14 @@ class TaxCodeNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider denormalizeDataProvider
-     * @param array|string $data
-     * @param object $expected
      */
-    public function testDenormalize($data, $expected)
+    public function testDenormalize(array|string $data, object $expected)
     {
         $serializer = new TaxCodeNormalizer();
         $this->assertEquals($expected, $serializer->denormalize($data, ProductTaxCode::class));
     }
 
-    /**
-     * @return array
-     */
-    public function denormalizeDataProvider()
+    public function denormalizeDataProvider(): array
     {
         return [
             'full' => [

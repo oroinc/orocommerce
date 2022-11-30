@@ -3,47 +3,23 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
 use Oro\Bundle\FormBundle\Form\Type\OroUnstructuredHiddenType;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
-class ShippingMethodStub implements ShippingMethodInterface
+class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
-    /**
-     * @var ShippingMethodTypeStub[]
-     */
-    protected $types = [];
+    /** @var ShippingMethodTypeStub[] */
+    private array $types = [];
+    private ?string $identifier = null;
+    private ?string $label = null;
+    private ?int $sortOrder = null;
+    private string $optionsConfigurationFormType = OroUnstructuredHiddenType::class;
+    private bool $isEnabled = true;
+    private bool $isGrouped = false;
+    private ?string $icon = null;
 
     /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var string
-     */
-    protected $label;
-
-    /**
-     * @var int
-     */
-    protected $sortOrder;
-
-    /**
-     * @var string
-     */
-    protected $optionsConfigurationFormType = OroUnstructuredHiddenType::class;
-
-    /**
-     * @var bool
-     */
-    protected $isEnabled = true;
-
-    /**
-     * @var bool
-     */
-    protected $isGrouped = false;
-
-    /**
-     * @return ShippingMethodTypeStub[]
+     * {@inheritDoc}
      */
     public function getTypes()
     {
@@ -52,26 +28,14 @@ class ShippingMethodStub implements ShippingMethodInterface
 
     /**
      * @param ShippingMethodTypeStub[] $types
-     * @return $this
      */
-    public function setTypes($types)
+    public function setTypes(array $types): void
     {
         $this->types = $types;
-
-        return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * @param string $identifier
-     * @return null|ShippingMethodTypeStub
+     * {@inheritDoc}
      */
     public function getType($identifier)
     {
@@ -85,97 +49,93 @@ class ShippingMethodStub implements ShippingMethodInterface
     }
 
     /**
-     * @param string $identifier
-     * @return $this
+     * {@inheritDoc}
      */
-    public function setIdentifier($identifier)
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
-
-        return $this;
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
     }
 
-    /**
-     * @param string $label
-     * @return $this
-     */
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
-
-        return $this;
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getSortOrder()
     {
         return $this->sortOrder;
     }
 
-    /**
-     * @param int $sortOrder
-     * @return $this
-     */
-    public function setSortOrder($sortOrder)
+    public function setSortOrder(int $sortOrder): void
     {
         $this->sortOrder = $sortOrder;
-
-        return $this;
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getOptionsConfigurationFormType()
     {
         return $this->optionsConfigurationFormType;
     }
 
-    /**
-     * @param string $optionsConfigurationFormType
-     * @return $this
-     */
-    public function setOptionsConfigurationFormType($optionsConfigurationFormType)
+    public function setOptionsConfigurationFormType(string $optionsConfigurationFormType): void
     {
         $this->optionsConfigurationFormType = $optionsConfigurationFormType;
-
-        return $this;
     }
 
     /**
-     * @return boolean
+     * {@inheritDoc}
      */
     public function isGrouped()
     {
         return $this->isGrouped;
     }
 
+    public function setIsGrouped(bool $isGrouped): void
+    {
+        $this->isGrouped = $isGrouped;
+    }
+
     /**
-     * @return boolean
+     * {@inheritDoc}
      */
     public function isEnabled()
     {
         return $this->isEnabled;
     }
 
-    /**
-     * @param boolean $isGrouped
-     * @return $this
-     */
-    public function setIsGrouped($isGrouped)
+    public function setIsEnabled(bool $isEnabled): void
     {
-        $this->isGrouped = $isGrouped;
+        $this->isEnabled = $isEnabled;
+    }
 
-        return $this;
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(string $icon): void
+    {
+        $this->icon = $icon;
     }
 }

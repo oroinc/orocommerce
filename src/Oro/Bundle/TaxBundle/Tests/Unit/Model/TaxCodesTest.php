@@ -40,13 +40,6 @@ class TaxCodesTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($codes, $taxCodes->getCodes());
     }
 
-    public function testInvalidTaxCodeTypeIgnored()
-    {
-        $taxCodes = new TaxCodes([new \stdClass()]);
-
-        $this->assertEquals([], $taxCodes->getCodes());
-    }
-
     public function testInvalidTaxCodeIgnored()
     {
         $taxCodes = new TaxCodes([TaxCode::create('', 'type')]);
@@ -56,20 +49,15 @@ class TaxCodesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isFullFilledTaxCodeProvide
-     * @param array $codes
-     * @param bool $expected
      */
-    public function testIsFullFilledTaxCode(array $codes, $expected)
+    public function testIsFullFilledTaxCode(array $codes, bool $expected)
     {
         $taxCodes = TaxCodes::create($codes);
 
         $this->assertEquals($expected, $taxCodes->isFullFilledTaxCode());
     }
 
-    /**
-     * @return array
-     */
-    public function isFullFilledTaxCodeProvide()
+    public function isFullFilledTaxCodeProvide(): array
     {
         return [
             'all taxCodes' => [

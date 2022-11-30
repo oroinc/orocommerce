@@ -60,10 +60,7 @@ class CallbackControllerTest extends WebTestCase
         $this->assertEquals($expectedData, $paymentTransaction->getResponse());
     }
 
-    /**
-     * @return array[]
-     */
-    public function allowedIPsDataProvider()
+    public function allowedIPsDataProvider(): array
     {
         return [
             'Paypal\'s IP address 1 should be allowed' => ['255.255.255.1'],
@@ -75,10 +72,8 @@ class CallbackControllerTest extends WebTestCase
 
     /**
      * @dataProvider allowedIPsDataProvider
-     *
-     * @param string $remoteAddress
      */
-    public function testNotifyAllowedIPFiltering($remoteAddress)
+    public function testNotifyAllowedIPFiltering(string $remoteAddress)
     {
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
@@ -100,10 +95,7 @@ class CallbackControllerTest extends WebTestCase
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
     }
 
-    /**
-     * @return array[]
-     */
-    public function notAllowedIPsDataProvider()
+    public function notAllowedIPsDataProvider(): array
     {
         return [
             'Google\'s IP address 5 should not be allowed' => ['216.58.214.206'],
@@ -113,10 +105,8 @@ class CallbackControllerTest extends WebTestCase
 
     /**
      * @dataProvider notAllowedIPsDataProvider
-     *
-     * @param string $remoteAddress
      */
-    public function testNotifyNotAllowedIPFiltering($remoteAddress)
+    public function testNotifyNotAllowedIPFiltering(string $remoteAddress)
     {
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $this->getReference(LoadPaymentTransactionData::PAYFLOW_AUTHORIZE_TRANSACTION);
@@ -281,10 +271,7 @@ class CallbackControllerTest extends WebTestCase
         $this->assertRedirectToFailureUrl($this->client->getResponse());
     }
 
-    /**
-     * @param RedirectResponse|Response|null $response
-     */
-    private function assertRedirectToFailureUrl(?Response $response)
+    private function assertRedirectToFailureUrl(?Response $response): void
     {
         $this->assertNotNull($response);
         $this->assertResponseStatusCodeEquals($response, 302);

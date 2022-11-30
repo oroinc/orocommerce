@@ -3,22 +3,19 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
+class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingMethodProvider;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /** @var BasicShippingMethodChoicesProvider */
+    /** @var ShippingMethodChoicesProvider */
     private $choicesProvider;
 
     protected function setUp(): void
@@ -26,10 +23,25 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->choicesProvider = new BasicShippingMethodChoicesProvider(
+        $this->choicesProvider = new ShippingMethodChoicesProvider(
             $this->shippingMethodProvider,
             $this->translator
         );
+    }
+
+    private function getShippingMethod(
+        string $identifier,
+        int $sortOrder,
+        string $label,
+        bool $enabled
+    ): ShippingMethodStub {
+        $shippingMethod = new ShippingMethodStub();
+        $shippingMethod->setIdentifier($identifier);
+        $shippingMethod->setSortOrder($sortOrder);
+        $shippingMethod->setLabel($label);
+        $shippingMethod->setIsEnabled($enabled);
+
+        return $shippingMethod;
     }
 
     /**
@@ -59,52 +71,18 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'some_methods' => [
                     'methods' => [
-                        'flat_rate' => $this->getEntity(
-                            ShippingMethodStub::class,
-                            [
-                                'identifier' => 'flat_rate',
-                                'sortOrder' => 1,
-                                'label' => 'flat rate',
-                                'isEnabled' => true,
-                                'types' => [],
-                            ]
-                        ),
-                        'ups' => $this->getEntity(
-                            ShippingMethodStub::class,
-                            [
-                                'identifier' => 'ups',
-                                'sortOrder' => 1,
-                                'label' => 'ups',
-                                'isEnabled' => false,
-                                'types' => [],
-                            ]
-                        ),
+                        'flat_rate' => $this->getShippingMethod('flat_rate', 1, 'flat rate', true),
+                        'disabled' => $this->getShippingMethod('disabled', 2, 'disabled', false),
+                        'ups' => $this->getShippingMethod('ups', 3, 'ups', true)
                     ],
                     'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups'],
                     'translate' => false,
                 ],
                 'some_methods_with_translation' => [
                     'methods' => [
-                        'flat_rate' => $this->getEntity(
-                            ShippingMethodStub::class,
-                            [
-                                'identifier' => 'flat_rate',
-                                'sortOrder' => 1,
-                                'label' => 'flat rate',
-                                'isEnabled' => true,
-                                'types' => [],
-                            ]
-                        ),
-                        'ups' => $this->getEntity(
-                            ShippingMethodStub::class,
-                            [
-                                'identifier' => 'ups',
-                                'sortOrder' => 1,
-                                'label' => 'ups',
-                                'isEnabled' => false,
-                                'types' => [],
-                            ]
-                        ),
+                        'flat_rate' => $this->getShippingMethod('flat_rate', 1, 'flat rate', true),
+                        'disabled' => $this->getShippingMethod('disabled', 2, 'disabled', false),
+                        'ups' => $this->getShippingMethod('ups', 3, 'ups', true)
                     ],
                     'result' => ['flat rate translated' => 'flat_rate', 'ups translated' => 'ups'],
                     'translate' => true,

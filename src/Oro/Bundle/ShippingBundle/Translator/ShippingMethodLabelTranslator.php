@@ -5,13 +5,13 @@ namespace Oro\Bundle\ShippingBundle\Translator;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * The shipping method label translator.
+ */
 class ShippingMethodLabelTranslator
 {
-    /** @var ShippingMethodLabelFormatter */
-    private $formatter;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private ShippingMethodLabelFormatter $formatter;
+    private TranslatorInterface $translator;
 
     public function __construct(
         ShippingMethodLabelFormatter $formatter,
@@ -21,16 +21,10 @@ class ShippingMethodLabelTranslator
         $this->translator = $translator;
     }
 
-    /**
-     * @param string $shippingMethodName
-     * @param string $shippingTypeName
-     *
-     * @return string
-     */
-    public function getShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName)
+    public function getShippingMethodWithTypeLabel(?string $shippingMethodName, ?string $shippingTypeName): string
     {
-        $label = $this->formatter->formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName);
-
-        return $this->translator->trans($label);
+        return $this->translator->trans(
+            $this->formatter->formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName)
+        );
     }
 }

@@ -20,44 +20,27 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
 {
     use EntityTrait;
 
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
-    /**
-     * @var ConsentContentNodeValidator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentContentNodeValidator|\PHPUnit\Framework\MockObject\MockObject */
     private $contentNodeValidator;
 
-    /**
-     * @var FrontendConsentContentNodeValidFilter
-     */
-    private $filter;
-
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $webCatalogProvider;
 
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    /**
-     * @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $consentAcceptanceProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var FrontendConsentContentNodeValidFilter */
+    private $filter;
+
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
@@ -66,6 +49,7 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
         $this->webCatalogProvider = $this->createMock(WebCatalogProvider::class);
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);
+
         $this->filter = new FrontendConsentContentNodeValidFilter(
             $this->webCatalogProvider,
             $this->logger,
@@ -73,21 +57,6 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
             $this->frontendHelper,
             $this->contentNodeValidator,
             $this->consentAcceptanceProvider
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->frontendHelper,
-            $this->contentNodeValidator,
-            $this->logger,
-            $this->webCatalogProvider,
-            $this->websiteManager,
-            $this->filter
         );
     }
 

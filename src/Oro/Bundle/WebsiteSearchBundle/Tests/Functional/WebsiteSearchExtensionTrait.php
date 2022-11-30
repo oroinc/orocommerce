@@ -27,6 +27,16 @@ trait WebsiteSearchExtensionTrait
         return self::getContainer()->get('oro_website_search.indexer');
     }
 
+    protected static function getIndexAgent()
+    {
+        return self::getContainer()->get('oro_website_elastic_search.engine.index_agent');
+    }
+
+    protected static function getIndexPrefix()
+    {
+        return static::getContainer()->get('oro_website_search.engine.parameters')->getParamValue('prefix');
+    }
+
     protected static function reindexProductData(): void
     {
         self::getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();

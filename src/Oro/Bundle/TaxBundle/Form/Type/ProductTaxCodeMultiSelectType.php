@@ -6,44 +6,35 @@ use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type to select several product tax codes.
+ */
 class ProductTaxCodeMultiSelectType extends AbstractType
 {
-    const NAME = 'oro_tax_product_tax_code_multiselect';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getBlockPrefix(): string
     {
-        return $this->getBlockPrefix();
+        return 'oro_tax_product_tax_code_multiselect';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
+    public function getParent(): string
     {
         return OroJquerySelect2HiddenType::class;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(
-            [
-                'autocomplete_alias' => ProductTaxCodeAutocompleteType::AUTOCOMPLETE_ALIAS,
-                'configs' => ['multiple' => true, 'forceSelectedData' => true],
-            ]
-        );
+        $resolver->setDefaults([
+            'autocomplete_alias' => 'oro_product_tax_code',
+            'configs'            => ['multiple' => true, 'forceSelectedData' => true]
+        ]);
     }
 }

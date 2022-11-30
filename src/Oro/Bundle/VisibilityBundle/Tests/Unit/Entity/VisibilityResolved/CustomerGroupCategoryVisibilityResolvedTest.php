@@ -14,36 +14,26 @@ class CustomerGroupCategoryVisibilityResolvedTest extends \PHPUnit\Framework\Tes
     use EntityTestCaseTrait;
 
     /** @var CustomerGroupCategoryVisibilityResolved */
-    protected $customerGroupCategoryVisibilityResolved;
+    private $customerGroupCategoryVisibilityResolved;
 
     /** @var Category */
-    protected $category;
+    private $category;
 
     /** @var Scope */
-    protected $scope;
+    private $scope;
 
     protected function setUp(): void
     {
         $this->category = new Category();
         $this->scope = new Scope();
+
         $this->customerGroupCategoryVisibilityResolved = new CustomerGroupCategoryVisibilityResolved(
             $this->category,
             $this->scope
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->customerGroupCategoryVisibilityResolved, $this->category, $this->scope);
-    }
-
-    /**
-     * Test setters getters
-     */
-    public function testAccessors()
+    public function testGettersAndSetters()
     {
         $this->assertPropertyAccessors(
             $this->customerGroupCategoryVisibilityResolved,

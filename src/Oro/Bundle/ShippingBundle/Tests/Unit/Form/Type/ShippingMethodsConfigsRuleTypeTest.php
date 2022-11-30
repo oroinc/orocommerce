@@ -20,10 +20,12 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationTyp
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -36,18 +38,49 @@ use Symfony\Component\Validator\Constraints\ExpressionLanguageSyntaxValidator;
 
 class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 {
-    private ShippingMethodProviderStub $shippingMethodProvider;
+    public const METHOD_IDENTIFIER = 'test';
+    public const METHOD_TYPE_IDENTIFIER = 'test_type';
+
+    private ShippingMethodProviderInterface $shippingMethodProvider;
     private MethodConfigSubscriberProxy $methodConfigSubscriber;
 
     protected function setUp(): void
     {
-        $this->shippingMethodProvider = new ShippingMethodProviderStub();
+        $this->shippingMethodProvider = $this->getShippingMethodProvider();
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
 
         parent::setUp();
 
         $this->methodConfigSubscriber->setFactory($this->factory);
         $this->methodConfigSubscriber->setShippingMethodProvider($this->shippingMethodProvider);
+    }
+
+    private function getShippingMethodProvider(): ShippingMethodProviderInterface
+    {
+        $shippingMethodType = new ShippingMethodTypeStub();
+        $shippingMethodType->setIdentifier(self::METHOD_TYPE_IDENTIFIER);
+        $shippingMethod = new ShippingMethodStub();
+        $shippingMethod->setIdentifier(self::METHOD_IDENTIFIER);
+        $shippingMethod->setIsGrouped(false);
+        $shippingMethod->setTypes([$shippingMethodType]);
+        $shippingMethods = [$shippingMethod->getIdentifier() => $shippingMethod];
+
+        $shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $shippingMethodProvider->expects(self::any())
+            ->method('getShippingMethods')
+            ->willReturn($shippingMethods);
+        $shippingMethodProvider->expects(self::any())
+            ->method('getShippingMethod')
+            ->willReturnCallback(function ($name) use ($shippingMethods) {
+                return $shippingMethods[$name] ?? null;
+            });
+        $shippingMethodProvider->expects(self::any())
+            ->method('getShippingMethod')
+            ->willReturnCallback(function ($name) use ($shippingMethods) {
+                return isset($shippingMethods[$name]);
+            });
+
+        return $shippingMethodProvider;
     }
 
     public function testGetBlockPrefix()
@@ -74,12 +107,12 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             'currency' => 'USD',
             'methodConfigs' => [
                 [
-                    'method' => ShippingMethodProviderStub::METHOD_IDENTIFIER,
+                    'method' => self::METHOD_IDENTIFIER,
                     'options' => ['option' => 1],
                     'typeConfigs' => [
                         [
                             'enabled' => true,
-                            'type' => ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER,
+                            'type' => self::METHOD_TYPE_IDENTIFIER,
                             'options' => [
                                 'price' => 12,
                                 'type' => 'per_item',
@@ -101,12 +134,12 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->setCurrency('USD')
             ->addMethodConfig(
                 (new ShippingMethodConfig())
-                    ->setMethod(ShippingMethodProviderStub::METHOD_IDENTIFIER)
+                    ->setMethod(self::METHOD_IDENTIFIER)
                     ->setOptions(['option' => 1])
                     ->addTypeConfig(
                         (new ShippingMethodTypeConfig())
                             ->setEnabled(true)
-                            ->setType(ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER)
+                            ->setType(self::METHOD_TYPE_IDENTIFIER)
                             ->setOptions([
                                 'price' => 12,
                                 'type' => 'per_item',
@@ -160,7 +193,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
-        $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $choicesProvider = $this->createMock(ShippingMethodChoicesProvider::class);
         $choicesProvider->expects($this->any())
             ->method('getMethods')
             ->willReturn([]);

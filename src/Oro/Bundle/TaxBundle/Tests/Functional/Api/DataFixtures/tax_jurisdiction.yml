@@ -1,0 +1,22 @@
+dependencies:
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountriesAndRegions
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_1:
+        code: 'TAX_JURISDICTION_1'
+        description: 'Tax jurisdiction 1'
+        country: '@country_usa'
+        region: '@region_usa_california'
+    tax_jurisdiction_2:
+        code: 'TAX_JURISDICTION_2'
+        country: '@country_usa'
+        region: '@region_usa_florida'
+
+Oro\Bundle\TaxBundle\Entity\ZipCode:
+    tax_jurisdiction_1_zip_code_1:
+        taxJurisdiction: '@tax_jurisdiction_1'
+        zipCode: 90011
+    tax_jurisdiction_1_zip_code_2:
+        taxJurisdiction: '@tax_jurisdiction_1'
+        zipRangeStart: 90201
+        zipRangeEnd: 90280

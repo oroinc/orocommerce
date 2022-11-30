@@ -95,18 +95,6 @@ services:
         tags:
             - { name: form.type, alias: oro_tax_jurisdiction_select }
 
-    oro_tax.form.type.zip_code_collection:
-        class: 'Oro\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType'
-        tags:
-            - { name: form.type, alias: oro_tax_zip_code_collection_type }
-
-    oro_tax.form.type.zip_code:
-        class: 'Oro\Bundle\TaxBundle\Form\Type\ZipCodeType'
-        calls:
-            - [setDataClass, ['Oro\Bundle\TaxBundle\Entity\ZipCode']]
-        tags:
-            - { name: form.type, alias: oro_tax_zip_code_type }
-
     oro_tax.form.type.tax_provider_type:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxProviderType'
         arguments:

@@ -14,16 +14,16 @@ class WYSIWYGFieldTwigConsumptionExtensionTest extends \PHPUnit\Framework\TestCa
     /** @var WYSIWYGFieldTwigConsumptionExtension */
     private $extension;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->wysiwygFieldTwigListener = $this->createMock(WYSIWYGFieldTwigListener::class);
+
         $this->extension = new WYSIWYGFieldTwigConsumptionExtension($this->wysiwygFieldTwigListener);
     }
 
     public function testOnPostReceived(): void
     {
-        $this->wysiwygFieldTwigListener
-            ->expects($this->once())
+        $this->wysiwygFieldTwigListener->expects($this->once())
             ->method('onTerminate');
 
         $this->extension->onPostReceived($this->createMock(Context::class));

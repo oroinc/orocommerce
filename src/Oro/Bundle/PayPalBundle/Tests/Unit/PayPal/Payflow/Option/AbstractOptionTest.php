@@ -9,18 +9,20 @@ abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
     /** @var Option\AbstractOption[] */
     protected $options;
 
-    /** @return Option\AbstractOption[] */
-    abstract protected function getOptions();
-
     protected function setUp(): void
     {
         $this->options = $this->getOptions();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->options);
-    }
+    /**
+     * @return Option\AbstractOption[]
+     */
+    abstract protected function getOptions();
+
+    /**
+     * @return array
+     */
+    abstract public function configureOptionDataProvider();
 
     /**
      * @dataProvider configureOptionDataProvider
@@ -31,7 +33,7 @@ abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
         array $exceptionAndMessage = []
     ) {
         if ($exceptionAndMessage) {
-            list($exception, $message) = $exceptionAndMessage;
+            [$exception, $message] = $exceptionAndMessage;
             $this->expectException($exception);
             $this->expectExceptionMessage($message);
         }
@@ -49,9 +51,4 @@ abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
             $this->assertSame($expectedResult, $resolvedOptions);
         }
     }
-
-    /**
-     * @return array
-     */
-    abstract public function configureOptionDataProvider();
 }

@@ -10,23 +10,18 @@ class AjaxUPSControllerTest extends WebTestCase
 {
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->loadFixtures([LoadShippingServices::class]);
     }
 
     /**
      * @dataProvider getShippingServicesByCountryDataProvider
-     *
-     * @param string $countryCode
-     * @param array $expectedServices
      */
-    public function testGetShippingServicesByCountryAction($countryCode, array $expectedServices)
+    public function testGetShippingServicesByCountryAction(string $countryCode, array $expectedServices)
     {
-        $this
-            ->client
-            ->request('GET', $this->getUrl('oro_ups_country_shipping_services', ['code' => $countryCode]));
+        $this->client->request('GET', $this->getUrl('oro_ups_country_shipping_services', ['code' => $countryCode]));
 
-        $result = static::getJsonResponseContent($this->client->getResponse(), 200);
+        $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
         /** @var ShippingService[]|array $expectedShippingServices */
         $expectedShippingServices = $this->getEntitiesByReferences($expectedServices);
@@ -35,13 +30,10 @@ class AjaxUPSControllerTest extends WebTestCase
             $expected[] = ['id' => $service->getId(), 'description' => $service->getDescription()];
         }
 
-        static::assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getShippingServicesByCountryDataProvider()
+    public function getShippingServicesByCountryDataProvider(): array
     {
         return [
             [
@@ -68,11 +60,7 @@ class AjaxUPSControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param array $rules
-     * @return array
-     */
-    protected function getEntitiesByReferences(array $rules)
+    private function getEntitiesByReferences(array $rules): array
     {
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);

@@ -56,7 +56,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $entityType = new EntityType(
             [

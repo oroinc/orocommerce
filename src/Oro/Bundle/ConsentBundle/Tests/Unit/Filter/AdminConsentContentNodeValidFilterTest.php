@@ -15,50 +15,28 @@ class AdminConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
-    /**
-     * @var ConsentContentNodeValidator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentContentNodeValidator|\PHPUnit\Framework\MockObject\MockObject */
     private $contentNodeValidator;
 
-    /**
-     * @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConsentAcceptanceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $consentAcceptanceProvider;
 
-    /**
-     * @var AdminConsentContentNodeValidFilter
-     */
+    /** @var AdminConsentContentNodeValidFilter */
     private $filter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
         $this->contentNodeValidator = $this->createMock(ConsentContentNodeValidator::class);
         $this->consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);
+
         $this->filter = new AdminConsentContentNodeValidFilter(
             $this->frontendHelper,
             $this->contentNodeValidator,
             $this->consentAcceptanceProvider
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->frontendHelper,
-            $this->contentNodeValidator,
-            $this->filter
         );
     }
 

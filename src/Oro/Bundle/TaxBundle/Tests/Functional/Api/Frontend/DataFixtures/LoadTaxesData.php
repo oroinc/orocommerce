@@ -6,8 +6,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountriesAndRegions;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
@@ -23,9 +21,9 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
     use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadUser::class,
@@ -35,9 +33,9 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->createTaxRule(
             $manager,
@@ -60,22 +58,19 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         TaxJurisdiction $taxJurisdiction
     ): void {
         $taxRule = new TaxRule();
-        $taxRule
-            ->setTax($tax)
-            ->setCustomerTaxCode($customerTaxCode)
-            ->setProductTaxCode($productTaxCode)
-            ->setTaxJurisdiction($taxJurisdiction);
-
+        $taxRule->setCustomerTaxCode($customerTaxCode);
+        $taxRule->setProductTaxCode($productTaxCode);
+        $taxRule->setTaxJurisdiction($taxJurisdiction);
+        $taxRule->setTax($tax);
+        $taxRule->setOrganization($productTaxCode->getOrganization());
         $manager->persist($taxRule);
     }
 
     private function createTax(ObjectManager $manager, float $rate): Tax
     {
         $tax = new Tax();
-        $tax
-            ->setCode('TAX1')
-            ->setRate($rate);
-
+        $tax->setCode('TAX1');
+        $tax->setRate($rate);
         $manager->persist($tax);
 
         return $tax;
@@ -84,16 +79,11 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
     private function createCustomerTaxCode(ObjectManager $manager): CustomerTaxCode
     {
         $customerTaxCode = new CustomerTaxCode();
-        $customerTaxCode
-            ->setCode('TAX1')
-            ->setOwner($this->getUser())
-            ->setOrganization($this->getUser()->getOrganization());
-
-        /** @var Customer $customer */
-        $customer = $this->getReference('customer');
-        $customer->setTaxCode($customerTaxCode);
-
+        $customerTaxCode->setCode('TAX1');
+        $customerTaxCode->setOwner($this->getUser());
+        $customerTaxCode->setOrganization($this->getUser()->getOrganization());
         $manager->persist($customerTaxCode);
+        $this->getReference('customer')->setTaxCode($customerTaxCode);
 
         return $customerTaxCode;
     }
@@ -101,15 +91,10 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
     private function createProductTaxCode(ObjectManager $manager): ProductTaxCode
     {
         $productTaxCode = new ProductTaxCode();
-        $productTaxCode
-            ->setCode('TAX1')
-            ->setOrganization($this->getUser()->getOrganization());
-
-        /** @var Product $product */
-        $product = $this->getReference('product1');
-        $product->setTaxCode($productTaxCode);
-
+        $productTaxCode->setCode('TAX1');
+        $productTaxCode->setOrganization($this->getUser()->getOrganization());
         $manager->persist($productTaxCode);
+        $this->getReference('product1')->setTaxCode($productTaxCode);
 
         return $productTaxCode;
     }
@@ -117,10 +102,8 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
     private function createTaxJurisdiction(ObjectManager $manager): TaxJurisdiction
     {
         $taxJurisdiction = new TaxJurisdiction();
-        $taxJurisdiction
-            ->setCode('TAX1')
-            ->setCountry($this->getReference('country_usa'));
-
+        $taxJurisdiction->setCode('TAX1');
+        $taxJurisdiction->setCountry($this->getReference('country_usa'));
         $manager->persist($taxJurisdiction);
 
         return $taxJurisdiction;

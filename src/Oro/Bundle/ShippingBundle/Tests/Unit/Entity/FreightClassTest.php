@@ -10,19 +10,14 @@ class FreightClassTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var FreightClass */
-    protected $entity;
+    private $entity;
 
     protected function setUp(): void
     {
         $this->entity = new FreightClass();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->entity);
-    }
-
-    public function testAccessors()
+    public function testGettersAndSetters()
     {
         $properties = [
             ['code', '123'],
