@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -62,6 +63,11 @@ class WebCatalogEntityIndexerListener
     private $localizationHelper;
 
     /**
+     * @var ValueFormatterInterface
+     */
+    private $decimalFormatter;
+
+    /**
      * @var string
      */
     private $searchEngineName;
@@ -80,6 +86,14 @@ class WebCatalogEntityIndexerListener
         $this->websiteContextManager = $websiteContextManager;
         $this->contentVariantProvider = $contentVariantProvider;
         $this->localizationHelper = $localizationHelper;
+    }
+
+    /**
+     * @param ValueFormatterInterface $decimalFormatter
+     */
+    public function setDecimalFormatter(ValueFormatterInterface $decimalFormatter): void
+    {
+        $this->decimalFormatter = $decimalFormatter;
     }
 
     /**
@@ -304,10 +318,14 @@ class WebCatalogEntityIndexerListener
             return;
         }
 
+        if (is_null($recordSortOrderValue)) {
+            $recordSortOrderValue = (float)Query::INFINITY;
+        }
+
         $event->addPlaceholderField(
             $recordId,
             'assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID',
-            is_null($recordSortOrderValue) ? (float)Query::INFINITY : $recordSortOrderValue,
+            $this->decimalFormatter->format($recordSortOrderValue),
             [
                 AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
                 AssignIdPlaceholder::NAME => $relation['variantId'],

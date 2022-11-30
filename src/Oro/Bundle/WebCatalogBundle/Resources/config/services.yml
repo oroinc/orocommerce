@@ -277,6 +277,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
         calls:
+            - [ setDecimalFormatter, [ '@oro_website_search.formatter.decimal_flat_value_formatter' ] ]
             - [ setSearchEngineName, [ '%oro_website_search.engine%' ] ]
 
     oro_web_catalog.cacheable_content_node_tree_resolver:
