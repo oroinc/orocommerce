@@ -14,3 +14,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: category_paths.CATEGORY_PATH
             type: integer
+        -
+            name: category_sort_order
+            type: decimal
+            group: category_sort_order

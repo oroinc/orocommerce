@@ -98,7 +98,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
                 'oro_product.accumulate_reindex_product_collection_by_segment'
                 . ':listener:433143095836f9cab5eb7d9c9374cab5',
                 false,
-                ['main']
+                ['main', 'collection_sort_order']
             );
 
         $this->listener->postFlush();
@@ -154,7 +154,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
                 'oro_product.accumulate_reindex_product_collection_by_segment'
                 . ':listener:823a241bbe36fd0f41c4b4dd1f838185',
                 false,
-                ['main']
+                ['main', 'collection_sort_order']
             );
 
         $this->listener->postFlush();

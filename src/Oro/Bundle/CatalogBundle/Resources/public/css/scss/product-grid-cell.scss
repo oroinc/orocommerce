@@ -1,0 +1,16 @@
+/* @theme: admin.oro; */
+
+.layout-content {
+    .category-data {
+        .grid-body-cell-categorySortOrder {
+            &[data-blank-content]::after {
+                content: none;
+            }
+
+            input,
+            span {
+                max-width: 100px;
+            }
+        }
+    }
+}

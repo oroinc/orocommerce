@@ -191,7 +191,7 @@ datagrids:
             disable_default_sorting: true
 
     product-collection-base-grid:
-        extends: products-select-grid-base
+        extends: products-select-grid-base-without-default-sorting
         columns:
             type:
                 renderable: true
@@ -208,6 +208,52 @@ datagrids:
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
+        actions:
+            add_to_excluded:
+                type:          trigger-event
+                event_name:    product-collection-add-to-excluded
+                label:         oro.product.grid.action.product_collection.add_to_exclude
+                icon:          remove
+        mass_actions:
+            add_to_excluded:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.add_to_exclude
+                icon:            remove
+                data_identifier: product.id
+                event_name:      product-collection-add-to-excluded
+        sorters:
+            default:
+                createdAt: DESC
+
+    product-collection-content-variant-grid:
+        extends: product-collection-base-grid
+        options:
+            jsmodules:
+                - oroproduct/datagrid/builder/sort-order-builder
+            cellSelection:
+                dataField: id
+                columnName:
+                    - categorySortOrder
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+        columns:
+            categorySortOrder:
+                order: -1
+                label: oro.catalog.product.category_sort_order.label
+                editable: true
+                frontend_type: string # can't use decimal because of inappropriate formatter
+        sorters:
+            columns:
+                categorySortOrder:
+                    data_name: categorySortOrderFilled
+            default:
+                categorySortOrder: ASC
+        filters:
+            columns:
+                categorySortOrder:
+                    type: number-range
+                    data_name: categorySortOrder
         actions:
             add_to_excluded:
                 type:          trigger-event
@@ -252,6 +298,9 @@ datagrids:
             bind_parameters:
                 hiddenProducts:
                     default: 0
+        sorters:
+            default:
+                createdAt: DESC
         mass_actions:
             add:
                 type: trigger-event-for-selected-product-ids

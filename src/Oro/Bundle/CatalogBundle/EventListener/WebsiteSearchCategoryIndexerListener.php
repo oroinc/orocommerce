@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Placeholder\CategoryPathPlaceholder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
@@ -23,6 +24,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
  * - category title (category_title_LOCALIZATION_ID)
  * - category short description (all_text_LOCALIZATION_ID)
  * - category long description (all_text_LOCALIZATION_ID)
+ * - category sort order (category_sort_order) which is in its own attribute group category_sort_order
  */
 class WebsiteSearchCategoryIndexerListener
 {
@@ -50,6 +52,11 @@ class WebsiteSearchCategoryIndexerListener
      */
     private $websiteContextManager;
 
+    /**
+     * @var string
+     */
+    private $searchEngineName;
+
     public function __construct(
         DoctrineHelper $doctrineHelper,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -60,9 +67,23 @@ class WebsiteSearchCategoryIndexerListener
         $this->websiteContextManager = $websiteContextManager;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event)
+    /**
+     * @param string $searchEngineName
+     */
+    public function setSearchEngineName(string $searchEngineName): void
     {
-        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+        $this->searchEngineName = $searchEngineName;
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @return void
+     */
+    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
+    {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')
+            && !$this->hasContextFieldGroup($event->getContext(), 'category_sort_order')
+        ) {
             return;
         }
 
@@ -73,6 +94,22 @@ class WebsiteSearchCategoryIndexerListener
             return;
         }
 
+        if ($this->hasContextFieldGroup($event->getContext(), 'main')) {
+            $this->addInformationToIndex($event, $websiteId);
+        }
+
+        if ($this->hasContextFieldGroup($event->getContext(), 'category_sort_order')) {
+            $this->addCategorySortOrderInformationToIndex($event);
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param int $websiteId
+     * @return void
+     */
+    protected function addInformationToIndex(IndexEntityEvent $event, int $websiteId): void
+    {
         /** @var Product[] $products */
         $products = $event->getEntities();
 
@@ -121,7 +158,35 @@ class WebsiteSearchCategoryIndexerListener
         }
     }
 
-    protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category)
+    /**
+     * @param IndexEntityEvent $event
+     * @return void
+     */
+    protected function addCategorySortOrderInformationToIndex(IndexEntityEvent $event): void
+    {
+        /** @var Product[] $products */
+        $products = $event->getEntities();
+
+        foreach ($products as $product) {
+            $sortOrder = $product->getCategorySortOrder();
+            if (is_null($sortOrder) && $this->searchEngineName !== 'elastic_search') {
+                $sortOrder = (float)Query::INFINITY;
+            }
+            $event->addField(
+                $product->getId(),
+                'category_sort_order',
+                $sortOrder
+            );
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param Product $product
+     * @param Category $category
+     * @return void
+     */
+    protected function addCategoryPathInformation(IndexEntityEvent $event, Product $product, Category $category): void
     {
         $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
 
@@ -146,7 +211,7 @@ class WebsiteSearchCategoryIndexerListener
     /**
      * @return CategoryRepository
      */
-    protected function getRepository()
+    protected function getRepository(): CategoryRepository
     {
         if (!$this->repository) {
             $this->repository = $this->doctrineHelper->getEntityRepository(Category::class);

@@ -155,9 +155,10 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
     /**
      * @dataProvider fieldsGroupDataProvider
      */
-    public function testOnWebsiteSearchIndexProductClass(?array $fieldsGroup)
+    public function testOnWebsiteSearchIndexProductClass(string $engineName, ?array $fieldsGroup)
     {
         $defaultValueLocale = null;
+        $this->listener->setSearchEngineName($engineName);
 
         /** @var Localization $customLocale */
         $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
@@ -173,7 +174,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
             ->willReturn($this->repository);
 
         /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1, 'category_sort_order' => 1]);
         $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product);
         $this->repository
             ->expects($this->once())
@@ -234,18 +235,62 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
                 ]
             ],
         ];
+        if (is_null($context[AbstractIndexer::CONTEXT_FIELD_GROUPS])) {
+            $expected[$product->getId()]['category_sort_order'] = [
+                [
+                    'value' => 1, 'all_text' => false
+                ]
+            ];
+        }
 
         $this->assertEquals($expected, $event->getEntitiesData());
     }
 
     public function fieldsGroupDataProvider(): \Generator
     {
-        yield [null];
-        yield [['main']];
+        yield ['orm', null];
+        yield ['elastic_search', null];
+        yield ['orm', ['main']];
+        yield ['elastic_search', ['main']];
     }
 
-    public function testOnWebsiteSearchIndexUnsupportedFieldsGroup()
+    /**
+     * @dataProvider engineNameProvider
+     */
+    public function testOnWebsiteSearchCategorySortOrderFieldGroup(string $engineName)
     {
+        $this->listener->setSearchEngineName($engineName);
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1, 'category_sort_order' => 1]);
+
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['category_sort_order']];
+        $event = new IndexEntityEvent(Product::class, [$product], $context);
+
+        $this->websiteContextManager
+            ->expects($this->once())
+            ->method('getWebsiteId')
+            ->with($context)
+            ->willReturn(1);
+
+        $this->listener->onWebsiteSearchIndex($event);
+
+        $expected[$product->getId()]['category_sort_order'] = [
+            [
+                'value' => 1, 'all_text' => false
+            ]
+        ];
+
+        $this->assertEquals($expected, $event->getEntitiesData());
+    }
+
+    /**
+     * @dataProvider engineNameProvider
+     */
+    public function testOnWebsiteSearchIndexUnsupportedFieldsGroup(string $engineName)
+    {
+        $this->listener->setSearchEngineName($engineName);
+
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['image']];
@@ -261,5 +306,14 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
             ->method($this->anything());
 
         $this->listener->onWebsiteSearchIndex($event);
+    }
+
+    /**
+     * @dataProvider engineNameProvider
+     */
+    public function engineNameProvider(): \Generator
+    {
+        yield ['orm'];
+        yield ['elastic_search'];
     }
 }

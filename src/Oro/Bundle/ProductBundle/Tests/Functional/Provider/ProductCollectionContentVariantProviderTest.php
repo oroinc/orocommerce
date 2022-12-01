@@ -53,15 +53,18 @@ class ProductCollectionContentVariantProviderTest extends WebTestCase
         $expectedResult = [
             'product1 in productCollectionVariant' => [
                 'variant_id' => $productCollectionTestVariant->getId(),
-                'productCollectionProductId' => $testProduct1->getId()
+                'productCollectionProductId' => $testProduct1->getId(),
+                'sortOrderValue' => 0.1,
             ],
             'product2 in productCollectionVariant' => [
                 'variant_id' => $productCollectionTestVariant->getId(),
-                'productCollectionProductId' => $testProduct2->getId()
+                'productCollectionProductId' => $testProduct2->getId(),
+                'sortOrderValue' => 0.2
             ],
             'no product in variantWithoutSegment' => [
                 'variant_id' => $testVariantWithoutSegment->getId(),
-                'productCollectionProductId' => null
+                'productCollectionProductId' => null,
+                'sortOrderValue' => null
             ],
         ];
 

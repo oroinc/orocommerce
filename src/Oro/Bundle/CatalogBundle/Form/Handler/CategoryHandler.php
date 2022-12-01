@@ -59,6 +59,11 @@ class CategoryHandler
                 $removeProducts = $this->form->get('removeProducts')->getData();
                 $this->onSuccess($category, $appendProducts, $removeProducts);
 
+                $sortOrder = $this->form->get('sortOrder')->getData()->toArray();
+                $this->sortProducts($category, $appendProducts, $removeProducts, $sortOrder);
+                $this->cleanProducts($appendProducts, $removeProducts, $sortOrder);
+                $this->manager->flush();
+
                 $this->eventDispatcher->dispatch(
                     new AfterFormProcessEvent($this->form, $category),
                     'oro_catalog.category.edit'
@@ -76,8 +81,11 @@ class CategoryHandler
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
      */
-    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts)
-    {
+    protected function onSuccess(
+        Category $category,
+        array $appendProducts,
+        array $removeProducts
+    ): void {
         $this->appendProducts($category, $appendProducts);
         $this->removeProducts($category, $removeProducts);
 
@@ -95,8 +103,7 @@ class CategoryHandler
      */
     protected function appendProducts(Category $category, array $products)
     {
-        $categoryRepository = $this->manager->getRepository('OroCatalogBundle:Category');
-        /** @var $product Product */
+        $categoryRepository = $this->manager->getRepository(Category::class);
         foreach ($products as $product) {
             $productCategory = $categoryRepository->findOneByProduct($product);
 
@@ -128,9 +135,75 @@ class CategoryHandler
      */
     protected function removeProducts(Category $category, array $products)
     {
-        /** @var $product Product */
         foreach ($products as $product) {
             $category->removeProduct($product);
+        }
+    }
+
+    /**
+     * @param Category $category
+     * @param array $appendProducts
+     * @param array $removeProducts
+     * @param array $sortOrder
+     * @return void
+     */
+    protected function sortProducts(
+        Category $category,
+        array $appendProducts,
+        array $removeProducts,
+        array $sortOrder
+    ): void {
+        $productRepository = $this->manager->getRepository(Product::class);
+        $products = $productRepository->findBy(['id' => array_keys($sortOrder)]);
+        foreach ($products as $product) {
+            $sortDataInputValue = $sortOrder[$product->getId()]['data']['categorySortOrder'];
+            /**
+             * We need to :
+             *   - Check that the field is in the newly selected fields or already in collection
+             *   - Check that the field is not in the removed products
+             *   - Compare the old value and the new value
+             */
+            if (($category->getProducts()->contains($product) || in_array($product, $appendProducts))
+                && !in_array($product, $removeProducts)
+                && $sortDataInputValue !== $product->getCategorySortOrder()
+            ) {
+                $product->setCategorySortOrder(is_null($sortDataInputValue) ? null : (float)$sortDataInputValue);
+                $this->manager->persist($product);
+            }
+        }
+    }
+
+    /**
+     * @param array $appendProducts
+     * @param array $removeProducts
+     * @param array $sortOrder
+     * @return void
+     */
+    protected function cleanProducts(
+        array $appendProducts,
+        array $removeProducts,
+        array $sortOrder
+    ): void {
+        /**
+         * We need to reset the sorting value of all appended products that have no sorting specified.
+         * Their sort value must go back to default in case they were previously associated to another category
+         * This behaviour is coherent to the datagrid field loading data only if the right category is selected
+         * => see categorySortOrder selection in Oro/Bundle/CatalogBundle/Resources/config/oro/datagrids.yml
+         */
+        foreach ($appendProducts as $product) {
+            if (!array_key_exists($product->getId(), $sortOrder) && !is_null($product->getCategorySortOrder())) {
+                $product->setCategorySortOrder(null);
+                $this->manager->persist($product);
+            }
+        }
+
+        /**
+         * We need to reset the sorting value of all removed products.
+         * Their sort value must go back to default in case they are added to another category after
+         */
+        foreach ($removeProducts as $product) {
+            $product->setCategorySortOrder(null);
+            $this->manager->persist($product);
         }
     }
 }

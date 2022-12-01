@@ -34,6 +34,10 @@ define(function(require) {
                     type: 'filtered'
                 },
                 {
+                    name: 'product-collection-content-variant-grid',
+                    type: 'filtered'
+                },
+                {
                     name: 'product-collection-included-products-grid',
                     type: 'included'
                 },

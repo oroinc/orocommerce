@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Mix into contentVariant query information about simple products & variants, for Product variant.
+ */
 class ProductContentVariantProvider implements ContentVariantProviderInterface
 {
     /**
