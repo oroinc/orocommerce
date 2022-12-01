@@ -27,6 +27,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: assigned_to.ASSIGN_TYPE_ASSIGN_ID
             type: integer
         -
+            name: assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID
+            type: decimal
+            group: collection_sort_order
+        -
             name: image_product_large
             type: text
             fulltext: false

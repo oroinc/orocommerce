@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Provides localized information about metadata fields, for Content variant.
+ */
 class ContentNodeContentVariantProvider implements ContentVariantProviderInterface
 {
     /**

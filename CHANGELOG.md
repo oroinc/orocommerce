@@ -6,6 +6,16 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### CatalogBundle
+* Category. Added sort order management for Products in categories:
+    - New field `category_sort_order` in Product entity & website search index to manage sort orders in Categories
+    - New input fields in Category edition grid in backend
+    - New default ordering behaviour for related frontend grids  (`frontend-product-search-grid` based on Category)
+    - Main changes that could impact customizations :
+        - `Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener` updated with new methods for the new fields indexation
+        - `Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler` updated with new methods to save sorting
+        - `Oro\Bundle\CatalogBundle\Form\Type\CategoryType.php` updated with a new field in form builder
+
 #### CMSBundle
 * WYSIWYG editor. Added a new control option to add/remove cells and rows in the table.
 * Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
@@ -15,6 +25,21 @@ The current file describes significant changes in the code that may affect the u
 #### ProductBundle
 * Added `product_original_filenames` feature. This feature is enabled when `oro_attachment.original_file_names_enabled`
   is disabled and `oro_product.original_file_names_enabled` is enabled.
+* Product Collections. Added sort order management for Products in Product Collections:
+    - New entity `ProductCollectionSortOrder` and website search field `assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID` have been added to link Products to Segments with a SortOrder to manage sort orders in Product Collections
+    - New default ordering behaviour added for related frontend grids (`frontend-product-search-grid` based on ProductCollection)
+    - Main changes that could impact customizations :
+        - `Oro\Bundle\ProductBundle\EventListenerProductCollectionVariantReindexMessageSendListener` & `Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand` both now include 'collection_sort_order' scope for reindexation
+        - `Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType` has been extended with new default configurations
+        - `Oro\Bundle\ProductBundle\Provider\ProductCollectionContentVariantProvider` now extends `SortableContentVariantProviderInterface` (see WebCatalogBundle changes)
+
+#### WebCatalogBundle
+* ProductCollection ContentVariant. Added sort order management for Products in categories
+    - New input fields in ProductCollection ContentVariant edition grid
+    - New `SortableContentVariantProviderInterface` interface for search indexation of ContentVariants with sortable elements
+    - Main changes that could impact customizations :
+        - `Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener` updated with new methods for the new fields indexation
+        - `Oro\Bundle\WebCatalogBundle\Provider\ContentVariantProvider` now extends `SortableContentVariantProviderInterface`
 
 ### Changed
 

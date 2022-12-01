@@ -464,6 +464,9 @@ class CategoryControllerTest extends WebTestCase
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
                 . $this->getProductBySku(LoadProductData::PRODUCT_2)->getId();
+            $form['oro_catalog_category[sortOrder]'] = json_encode([
+                $this->getProductBySku(LoadProductData::PRODUCT_2)->getId() => ['categorySortOrder' => 0.2]
+            ]);
         } else {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
@@ -483,6 +486,9 @@ class CategoryControllerTest extends WebTestCase
         static::assertStringContainsString($longDescription, $html);
         static::assertStringContainsString($smallImage->getFilename(), $html);
         static::assertStringContainsString($largeImage->getFilename(), $html);
+        if ($parentId === $this->masterCatalog->getId()) {
+            static::assertStringContainsString('"categorySortOrder":"0.2"', $html);
+        }
         $this->assertEquals($unitPrecision['code'], $crawler->filter('.unit option[selected]')->attr('value'));
         $this->assertEquals($unitPrecision['precision'], $crawler->filter('.precision')->attr('value'));
 
@@ -531,15 +537,18 @@ class CategoryControllerTest extends WebTestCase
         $testProductThree = $this->getProductBySku(LoadProductData::PRODUCT_3);
         $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
         $appendProduct = $testProductThree;
+        $sortOrder = [$testProductTwo->getId() => ['categorySortOrder' => 0.22]];
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
-        };
+            $sortOrder = [$appendProduct->getId() => ['categorySortOrder' => 0.4]];
+        }
         $crfToken = $this->getCsrfToken('category')->getValue();
         $params = [
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => [
                 '_token' => $crfToken,
+                'sortOrder' => json_encode($sortOrder),
                 'appendProducts' => $appendProduct->getId(),
                 'removeProducts' => $testProductOne->getId()
             ]
@@ -589,6 +598,14 @@ class CategoryControllerTest extends WebTestCase
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
             $productThreeCategory = $this->getProductCategoryByProduct($testProductThree);
+            $this->assertEquals(
+                0.22,
+                $this->getProductBySku(LoadProductData::PRODUCT_2)->getCategorySortOrder()
+            );
+            $this->assertEquals(
+                null,
+                $this->getProductBySku(LoadProductData::PRODUCT_3)->getCategorySortOrder()
+            );
 
             $this->assertCategoryDefaultLocalized(
                 $productThreeCategory,
@@ -607,6 +624,10 @@ class CategoryControllerTest extends WebTestCase
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
+            $this->assertEquals(
+                0.4,
+                $this->getProductBySku(LoadProductData::PRODUCT_4)->getCategorySortOrder()
+            );
 
             $this->assertCategoryDefaultLocalized(
                 $productFourCategory,

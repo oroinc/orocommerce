@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type\Stub\CategorySortOrderGridTypeStub;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
@@ -18,6 +19,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
@@ -51,7 +53,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
     public function testBuildForm(): void
     {
         $builder = $this->createMock(FormBuilder::class);
-        $builder->expects(self::exactly(9))
+        $builder->expects(self::exactly(10))
             ->method('add')
             ->withConsecutive(
                 [
@@ -99,6 +101,11 @@ class CategoryTypeTest extends FormIntegrationTestCase
                     'removeProducts',
                     EntityIdentifierType::class,
                     ['class' => Product::class, 'required' => false, 'mapped' => false, 'multiple' => true]
+                ],
+                [
+                    'sortOrder',
+                    CategorySortOrderGridType::class,
+                    ['required' => false, 'mapped' => false]
                 ],
                 [
                     'smallImage',
@@ -179,6 +186,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->type,
+                    CategorySortOrderGridType::class => new CategorySortOrderGridTypeStub(),
                     ImageType::class => new ImageTypeStub(),
                     EntityIdentifierType::class => new EntityType([
                         1 => $this->getCategory(1)

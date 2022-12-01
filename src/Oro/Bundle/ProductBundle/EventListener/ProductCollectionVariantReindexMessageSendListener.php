@@ -90,7 +90,7 @@ class ProductCollectionVariantReindexMessageSendListener
                 $scheduledPartialMessages,
                 $rootJobName,
                 false,
-                ['main']
+                ['main', 'collection_sort_order']
             );
         } else {
             $this->collectionIndexationHandler->handle($scheduledPartialMessages, $rootJobName);

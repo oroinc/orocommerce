@@ -6,6 +6,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -19,6 +21,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
+use Oro\Component\WebCatalog\SortableContentVariantProviderInterface;
 
 /**
  * This class adds information about web catalog association to website search index
@@ -59,6 +62,16 @@ class WebCatalogEntityIndexerListener
      */
     private $localizationHelper;
 
+    /**
+     * @var ValueFormatterInterface
+     */
+    private $decimalFormatter;
+
+    /**
+     * @var string
+     */
+    private $searchEngineName;
+
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
@@ -75,9 +88,26 @@ class WebCatalogEntityIndexerListener
         $this->localizationHelper = $localizationHelper;
     }
 
-    public function onWebsiteSearchIndex(IndexEntityEvent $event)
+    /**
+     * @param ValueFormatterInterface $decimalFormatter
+     */
+    public function setDecimalFormatter(ValueFormatterInterface $decimalFormatter): void
     {
-        if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {
+        $this->decimalFormatter = $decimalFormatter;
+    }
+
+    /**
+     * @param string $searchEngineName
+     */
+    public function setSearchEngineName(string $searchEngineName): void
+    {
+        $this->searchEngineName = $searchEngineName;
+    }
+
+    public function onWebsiteSearchIndex(IndexEntityEvent $event): void
+    {
+        if (!$this->hasContextFieldGroup($event->getContext(), 'main')
+            && !$this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
             return;
         }
 
@@ -123,16 +153,39 @@ class WebCatalogEntityIndexerListener
             return;
         }
 
+        $this->processInformationAndAddToIndex($event, $websiteId, $relations, $nodes);
+    }
+
+    /**
+     * Rules which information to add to index depending on context (partial indexation group)
+     *
+     * @param IndexEntityEvent $event
+     * @param int $websiteId
+     * @param array $relations
+     * @param array $nodes
+     * @return void
+     */
+    protected function processInformationAndAddToIndex(
+        IndexEntityEvent $event,
+        int $websiteId,
+        array $relations,
+        array $nodes
+    ): void {
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
-        $this->addInformationToIndex($event, $localizations, $relations, $nodes);
+        if ($this->hasContextFieldGroup($event->getContext(), 'main')) {
+            $this->addInformationToIndex($event, $localizations, $relations, $nodes);
+        }
+        if ($this->hasContextFieldGroup($event->getContext(), 'collection_sort_order')) {
+            $this->addCollectionSortOrderInformationToIndex($event, $relations);
+        }
     }
 
     /**
      * @param array $relations
      * @return ContentNode[]
      */
-    protected function getRelatedNodes(array $relations)
+    protected function getRelatedNodes(array $relations): array
     {
         $nodeIds = [];
         foreach ($relations as $relation) {
@@ -168,7 +221,7 @@ class WebCatalogEntityIndexerListener
         array $localizations,
         array $relations,
         array $nodes
-    ) {
+    ): void {
         foreach ($relations as $relation) {
             if (empty($relation['nodeId'])) {
                 continue;
@@ -227,5 +280,56 @@ class WebCatalogEntityIndexerListener
                 }
             }
         }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param array $relations
+     */
+    protected function addCollectionSortOrderInformationToIndex(IndexEntityEvent $event, array $relations): void
+    {
+        foreach ($relations as $relation) {
+            if (empty($relation['nodeId'])) {
+                continue;
+            }
+
+            $this->addCollectionSortOrderInformation($event, $relation);
+        }
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param array $relation
+     * @return void
+     */
+    protected function addCollectionSortOrderInformation(IndexEntityEvent $event, array $relation): void
+    {
+        if (!$this->contentVariantProvider instanceof SortableContentVariantProviderInterface) {
+            return;
+        }
+
+        $recordId = $this->contentVariantProvider->getRecordId($relation);
+        if (!$recordId) {
+            return;
+        }
+
+        $recordSortOrderValue = $this->contentVariantProvider->getRecordSortOrder($relation);
+        if (is_null($recordSortOrderValue) && $this->searchEngineName === 'elastic_search') {
+            return;
+        }
+
+        if (is_null($recordSortOrderValue)) {
+            $recordSortOrderValue = (float)Query::INFINITY;
+        }
+
+        $event->addPlaceholderField(
+            $recordId,
+            'assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID',
+            $this->decimalFormatter->format($recordSortOrderValue),
+            [
+                AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
+                AssignIdPlaceholder::NAME => $relation['variantId'],
+            ]
+        );
     }
 }

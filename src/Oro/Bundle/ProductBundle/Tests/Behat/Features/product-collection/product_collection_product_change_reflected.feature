@@ -77,8 +77,8 @@ Feature: Product collection product change reflected
     And I click on "First Content Variant Expand Button"
     Then I should see following grid:
       | SKU   | NAME      |
-      | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
+      | PSKU2 | Product 2 |
 
   Scenario: "Product 2" that confirm to filter again, included into product collection grid at frontend
     Given I operate as the Buyer
