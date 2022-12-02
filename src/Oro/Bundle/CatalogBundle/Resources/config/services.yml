@@ -355,3 +355,20 @@ services:
             - [addCacheToClear, ['@oro_catalog.layout.data_provider.category.cache']]
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_catalog.menu.menu_categories_provider:
+        class: Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider
+        arguments:
+            - '@oro_catalog.provider.category_tree_provider'
+            - '@oro_locale.helper.localization'
+
+    oro_catalog.menu.menu_categories_caching_provider:
+        class: Oro\Bundle\CatalogBundle\Menu\MenuCategoriesCachingProvider
+        decorates: oro_catalog.menu.menu_categories_provider
+        arguments:
+            - '@.inner'
+            - '@oro_locale.helper.localization'
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_security.token_accessor'
+        calls:
+            - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]

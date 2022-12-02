@@ -23,10 +23,7 @@ services:
             - '@doctrine'
             - '@oro_catalog.provider.category_tree_provider'
             - '@oro_security.token_accessor'
-            - '@oro_locale.helper.localization'
             - '@oro_catalog.provider.master_catalog_root'
-        calls:
-            - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
         tags:
             - { name: layout.data_provider, alias: category }
 
