@@ -225,7 +225,7 @@
                     ignoreSubPromises: true,
                     unitErrorText: 'oro.product.validation.unit.invalid_for_sku',
                     selectors: {
-                        display_name: '[data-name="' ~ form.product.vars['attr']['data-name'] ~ '"]',
+                        product: '[data-name="' ~ form.product.vars['attr']['data-name'] ~ '"]',
                         sku: '[data-name="' ~ form.sku.vars['attr']['data-name'] ~ '"]',
                         unit: '[data-name="' ~ form.unit.vars['attr']['data-name'] ~ '"]',
                         quantity: '[data-name="' ~ form.quantity.vars['attr']['data-name'] ~ '"]',
@@ -266,8 +266,7 @@
                 {{ form_widget(form.unit, {attr: {
                     'class': 'disabled',
                     'aria-label': 'oro.product.productunitprecision.unit.label',
-                    'data-skip-input-widgets': '',
-                    'data-validation': {'QuickAddUnit': {}}|json_encode(constant('JSON_FORCE_OBJECT'))
+                    'data-skip-input-widgets': ''
                 }|merge(form.unit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields with {
