@@ -1,7 +1,5 @@
 aliases:
     jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
-app-modules:
-    - oroproduct/js/app/modules/frontend-validator-constraints-module
 configs:
     oroproduct/js/app/datagrid/backend-grid: {}
     oroproduct/js/app/datagrid/frontend-product-process-options-builder: {}
@@ -14,7 +12,6 @@ dynamic-imports:
         - oroproduct/js/app/views/base-product-view
         - oroproduct/js/app/views/search-autocomplete-view
         - oroproduct/js/content-processor/product-add-to-dropdown-button
-        - oroproduct/js/validator/quick-add-unit
     orodatagrid:
         - oroproduct/js/app/components/catalog-switch-component
         - oroproduct/js/app/datagrid/backend-datagrid-component

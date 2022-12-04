@@ -52,8 +52,7 @@
                 {{ form_widget(form.unit, {attr: {
                     'class': 'disabled',
                     'aria-label': 'oro.product.productunitprecision.unit.label',
-                    'data-skip-input-widgets': '',
-                    'data-validation': {'QuickAddUnit': {}}|json_encode(constant('JSON_FORCE_OBJECT'))
+                    'data-skip-input-widgets': ''
                 }|merge(form.unit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
             </div>
             {% placeholder oro_product_quick_add_additional_fields with {

@@ -51,11 +51,11 @@ const QuickAddModel = BaseModel.extend({
     },
 
     /**
-     * Getter for `display_name` attribute
+     * Getter for `product` attribute
      *
      * @return {string|*}
      */
-    get_display_name() {
+    get_product() {
         const sku = this.get('sku');
         const productName = this.get('product_name');
 
