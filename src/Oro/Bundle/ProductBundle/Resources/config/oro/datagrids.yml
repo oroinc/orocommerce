@@ -242,6 +242,7 @@ datagrids:
                 order: -1
                 label: oro.catalog.product.category_sort_order.label
                 editable: true
+                cellClassName: 'editing-cell'
                 frontend_type: string # can't use decimal because of inappropriate formatter
         sorters:
             columns:

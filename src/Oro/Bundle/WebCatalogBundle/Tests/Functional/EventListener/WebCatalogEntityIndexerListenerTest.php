@@ -12,7 +12,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogWithContentNodes;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
 use Symfony\Component\HttpFoundation\Request;
 
 class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
@@ -22,7 +21,6 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        OrmIndexerTest::checkSearchEngine($this);
         $this->setCurrentWebsite();
         $this->loadFixtures([
             LoadWebCatalogWithContentNodes::class,
