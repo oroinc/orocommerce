@@ -10,12 +10,14 @@ use Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
+use Oro\Component\MessageQueue\Transport\Message;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -39,6 +41,10 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeSlugsProcessor $processor;
 
+    private EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $entityManager;
+
+    private WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepo;
+
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -57,28 +63,35 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->setUpLoggerMock($this->processor);
+
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->registry
+            ->expects(self::any())
+            ->method('getManagerForClass')
+            ->with(ContentNode::class)
+            ->willReturn($this->entityManager);
+
+        $this->webCatalogRepo = $this->createMock(WebCatalogRepository::class);
+        $this->registry
+            ->expects(self::any())
+            ->method('getRepository')
+            ->with(WebCatalog::class)
+            ->willReturn($this->webCatalogRepo);
     }
 
     public function testProcess(): void
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('beginTransaction');
 
-        $em->expects(self::never())
+        $this->entityManager->expects(self::never())
             ->method('rollback');
 
-        $em->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('flush');
 
-        $em->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('commit');
-
-        $this->registry->expects(self::once())
-            ->method('getManagerForClass')
-            ->with(ContentNode::class)
-            ->willReturn($em);
 
         $contentNodeId = 42;
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 2]);
@@ -88,10 +101,8 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
             WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT => true,
         ];
 
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects(self::once())
-            ->method('getBody')
-            ->willReturn($body);
+        $message = new Message();
+        $message->setBody($body);
 
         $session = $this->createMock(SessionInterface::class);
 
@@ -112,9 +123,15 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('generate')
             ->with($contentNode, true);
 
+        $scopeIds = [42, 142];
+        $this->webCatalogRepo
+            ->expects(self::once())
+            ->method('getUsedScopesIds')
+            ->with($webCatalog)
+            ->willReturn($scopeIds);
         $this->contentNodeTreeCache->expects(self::once())
-            ->method('deleteForNode')
-            ->with($contentNode);
+            ->method('deleteMultiple')
+            ->with([[$contentNodeId, [$scopeIds[0]]], [$contentNodeId, [$scopeIds[1]]]]);
 
         self::assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
@@ -129,10 +146,8 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
             WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT => true,
         ];
 
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects(self::once())
-            ->method('getBody')
-            ->willReturn($body);
+        $message = new Message();
+        $message->setBody($body);
 
         $session = $this->createMock(SessionInterface::class);
 
@@ -165,10 +180,8 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
             WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT => true,
         ];
 
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects(self::once())
-            ->method('getBody')
-            ->willReturn($body);
+        $message = new Message();
+        $message->setBody($body);
 
         $session = $this->createMock(SessionInterface::class);
 
@@ -184,17 +197,17 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->defaultVariantScopesResolver->expects(self::once())
             ->method('resolve')
             ->willThrowException($this->createMock(UniqueConstraintViolationException::class));
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())
+
+        $this->entityManager->expects(self::once())
             ->method('beginTransaction');
-        $em->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('rollback');
-        $em->expects(self::never())
+        $this->entityManager->expects(self::never())
             ->method('commit');
         $this->registry->expects(self::once())
             ->method('getManagerForClass')
             ->with(ContentNode::class)
-            ->willReturn($em);
+            ->willReturn($this->entityManager);
 
         $this->messageProducer->expects(self::never())
             ->method('send');
@@ -244,23 +257,16 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
 
     protected function assertRollback(): void
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('beginTransaction');
 
-        $em->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('rollback');
 
-        $em->expects(self::never())
+        $this->entityManager->expects(self::never())
             ->method('commit');
 
         $this->loggerMock->expects(self::once())
             ->method('error');
-
-        $this->registry->expects(self::once())
-            ->method('getManagerForClass')
-            ->with(ContentNode::class)
-            ->willReturn($em);
     }
 }

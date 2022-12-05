@@ -44,16 +44,41 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         $this->scopeManager = $scopeManager;
     }
 
-    public function getResolvedContentNode(ContentNode $node, Scope $scope): ?ResolvedContentNode
-    {
-        $criteria = $this->getCriteriaByScope($scope);
-        $nodeIds = $this->loadContentNodeIds($node, $criteria);
-        if (!$nodeIds) {
+    /**
+     * @param ContentNode $node
+     * @param Scope|array $scopes
+     * @param array $context Available context options:
+     *  [
+     *      'tree_depth' => int, // Restricts the maximum tree depth. -1 stands for unlimited.
+     *  ]
+     * @return ResolvedContentNode|null
+     */
+    public function getResolvedContentNode(
+        ContentNode $node,
+        Scope|array $scopes,
+        array $context = []
+    ): ?ResolvedContentNode {
+        $scopes = !is_array($scopes) ? [$scopes] : $scopes;
+        $treeDepth = (int) ($context['tree_depth'] ?? -1);
+
+        $criteriaByScope = [];
+        $nodeIdsByScope = [];
+        foreach ($scopes as $scope) {
+            $criteria = $this->getCriteriaByScope($scope);
+            $criteriaByScope[$scope->getId()] = $criteria;
+            $nodeIdsByScope[$scope->getId()] = $this->loadContentNodeIds($node, $criteria, $treeDepth);
+        }
+        $nodeIdsByScope = array_filter($nodeIdsByScope);
+
+        /** @var int[] $nodeIdsByScope */
+        if (!$nodeIdsByScope) {
             return null;
         }
 
+        $nodeIds = array_unique(array_merge(...$nodeIdsByScope));
         $nodes = $this->loadContentNodes($nodeIds);
-        $variants = $this->loadContentVariants($nodeIds, $criteria);
+        $variants = $this->loadContentVariants($nodeIdsByScope, $criteriaByScope);
+        /** @var ClassMetadata $variantMetadata */
         $variantMetadata = $this->doctrineHelper->getEntityMetadataForClass(ContentVariant::class);
 
         $rootNodeId = array_shift($nodeIds);
@@ -80,18 +105,25 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     }
 
     /**
-     * @param ContentNode   $node
+     * @param ContentNode $node
      * @param ScopeCriteria $criteria
+     * @param int $treeDepth
      *
      * @return int[]
      */
-    private function loadContentNodeIds(ContentNode $node, ScopeCriteria $criteria): array
+    private function loadContentNodeIds(ContentNode $node, ScopeCriteria $criteria, int $treeDepth = -1): array
     {
         $qb = $this->doctrineHelper
             ->createQueryBuilder(ContentNode::class, 'node')
             ->where('node.left >= :left AND node.right <= :right')
             ->setParameter('left', $node->getLeft())
             ->setParameter('right', $node->getRight());
+
+        if ($treeDepth > -1) {
+            $qb
+                ->andWhere('node.level <= :max_level')
+                ->setParameter('max_level', $node->getLevel() + $treeDepth);
+        }
 
         return $this->contentNodeProvider->getContentNodeIds($qb, $criteria);
     }
@@ -103,53 +135,55 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
      */
     private function loadContentNodes(array $nodeIds): array
     {
-        /** @var ContentNode[] $nodes */
-        $nodes = $this->doctrineHelper
-            ->createQueryBuilder(ContentNode::class, 'node')
+        return $this->doctrineHelper
+            ->createQueryBuilder(ContentNode::class, 'node', 'node.id')
             ->where('node.id IN (:ids)')
-            ->setParameter('ids', $nodeIds)
+            ->setParameter('ids', array_values($nodeIds))
             ->getQuery()
             ->getResult();
-
-        $result = [];
-        foreach ($nodes as $node) {
-            $result[$node->getId()] = $node;
-        }
-
-        return $result;
     }
 
     /**
-     * @param int[]         $nodeIds
-     * @param ScopeCriteria $criteria
+     * @param array<int,int[]> $nodeIdsByScope
+     *     [
+     *          int $scopeId => int[] $nodeIds,
+     *          // ...
+     *     ]
+     * @param array<int,ScopeCriteria> $criteriaByScope
+     *     [
+     *          int $scopeId => ScopeCriteria,
+     *          // ...
+     *     ]
      *
-     * @return ContentVariant[] [node id => content variant id, ...]
+     * @return array<int,ContentVariant>
+     *     [
+     *          int $nodeId => ContentVariant,
+     *          // ...
+     *     ]
      */
-    private function loadContentVariants(array $nodeIds, ScopeCriteria $criteria): array
+    private function loadContentVariants(array $nodeIdsByScope, array $criteriaByScope): array
     {
-        $variantIds = $this->contentNodeProvider->getContentVariantIds($nodeIds, $criteria);
+        $contentVariantsByScope = [];
+        foreach ($nodeIdsByScope as $scopeId => $nodeIds) {
+            $variantIds = $this->contentNodeProvider->getContentVariantIds($nodeIds, $criteriaByScope[$scopeId]);
 
-        /** @var ContentVariant[] $variants */
-        $variants = $this->doctrineHelper
-            ->createQueryBuilder(ContentVariant::class, 'variant')
-            ->where('variant.id IN (:ids)')
-            ->setParameter('ids', array_values($variantIds))
-            ->getQuery()
-            ->getResult();
+            /** @var ContentVariant[] $contentVariants */
+            $contentVariants = $this->doctrineHelper
+                ->createQueryBuilder(ContentVariant::class, 'variant', 'variant.id')
+                ->where('variant.id IN (:ids)')
+                ->setParameter('ids', array_values($variantIds))
+                ->getQuery()
+                ->getResult();
 
-        $variantMap = [];
-        foreach ($variants as $variant) {
-            $variantMap[$variant->getId()] = $variant;
-        }
-
-        $result = [];
-        foreach ($variantIds as $nodeId => $variantId) {
-            if (isset($variantMap[$variantId])) {
-                $result[$nodeId] = $variantMap[$variantId];
+            $contentVariantsByScope[$scopeId] = [];
+            foreach ($variantIds as $nodeId => $variantId) {
+                if (isset($contentVariants[$variantId])) {
+                    $contentVariantsByScope[$scopeId][$nodeId] = $contentVariants[$variantId];
+                }
             }
         }
 
-        return $result;
+        return array_replace([], ...array_reverse($contentVariantsByScope));
     }
 
     /**
@@ -236,7 +270,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
     }
 
     /**
-     * @param Collection|Slug[]      $slugs
+     * @param Collection<Slug> $slugs
      * @param ResolvedContentVariant $resolvedVariant
      */
     private function fillSlugs(Collection $slugs, ResolvedContentVariant $resolvedVariant): void
