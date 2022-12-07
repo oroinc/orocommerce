@@ -109,3 +109,46 @@ Feature: Configurable product in quick order form
       | Paste your order | White_Shirt_L_sku 1 |
     And I click "Verify Order"
     Then I should see that "Quick Add Copy Paste Validation" contains "Some of the product SKUs, units or quantities are not valid. Please make corrections and try again."
+
+  Scenario: Enable optimized quick order form
+    Given I proceed as the Admin
+    And I login as administrator
+    And go to System/ Configuration
+    And I follow "Commerce/Sales/Quick Order Form" on configuration sidebar
+    And fill "Quick Order Configuration Form" with:
+      | Enable Optimized Quick Order Form Default | false |
+      | Enable Optimized Quick Order Form         | true  |
+    And click "Save settings"
+
+  Scenario: Check validation for configurable products and simple products from the configurable product on the optimized quick order form
+    Given I proceed as the User
+    When I click "Quick Order Form"
+    And I fill "Quick Order Form Optimized" with:
+      | SKU1 | Shirt_Sku |
+    And I wait for products to load
+    Then I should see text matching "Item Number Cannot Be Found"
+    When I click "Quick Order Form"
+    And I fill "Quick Order Form Optimized" with:
+      | SKU1 | EmptyShirt_Sku |
+    And I wait for products to load
+    Then I should see text matching "Item Number Cannot Be Found"
+    When I click "Quick Order Form"
+    And I fill "Quick Order Form Optimized" with:
+      | SKU1 | Black_Shirt_L_sku |
+    And I wait for products to load
+    Then I should see text matching "Item Number Cannot Be Found"
+    When I click "Quick Order Form"
+    And I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | Shirt_Sku 1 |
+    And I click "Verify Order"
+    Then I should see text matching "Item number cannot be found"
+    When I click "Quick Order Form"
+    And I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | EmptyShirt_Sku 1 |
+    And I click "Verify Order"
+    Then I should see text matching "Item number cannot be found"
+    When I click "Quick Order Form"
+    And I fill "Quick Add Copy Paste Form" with:
+      | Paste your order | White_Shirt_L_sku 1 |
+    And I click "Verify Order"
+    Then I should see text matching "Item number cannot be found"

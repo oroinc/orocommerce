@@ -121,7 +121,11 @@ const GrapesjsEditorView = BaseView.extend({
         /**
          * Modal Export Title text
          */
-        textViewCode: __('oro.cms.wysiwyg.export.title')
+        textViewCode: __('oro.cms.wysiwyg.export.title'),
+
+        Parser: {
+            returnArray: true
+        }
     },
 
     /**

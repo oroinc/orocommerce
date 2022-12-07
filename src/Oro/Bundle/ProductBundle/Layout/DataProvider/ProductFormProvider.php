@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -21,15 +23,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ProductFormProvider extends AbstractFormProvider
 {
-    const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'oro_product_frontend_quick_add';
-    const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME   = 'oro_product_frontend_quick_add_copy_paste';
-    const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME       = 'oro_product_frontend_quick_add_import';
-    const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS   = 'oro_product_frontend_ajax_product_variant_get_available';
+    public const PRODUCT_QUICK_ADD_ROUTE_NAME = 'oro_product_frontend_quick_add';
+    public const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME = 'oro_product_frontend_quick_add_copy_paste';
+    public const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME = 'oro_product_frontend_quick_add_import';
+    public const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'oro_product_frontend_ajax_product_variant_get_available';
 
-    /**
-     * @var ProductVariantAvailabilityProvider
-     */
-    private $productVariantAvailabilityProvider;
+    private ProductVariantAvailabilityProvider $productVariantAvailabilityProvider;
+
+    private ?ConfigManager $configManager = null;
 
     /**
      * {@inheritdoc}
@@ -43,6 +44,11 @@ class ProductFormProvider extends AbstractFormProvider
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
     }
 
+    public function setConfigManager(?ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
+    }
+
     /**
      * @param null  $data
      * @param array $options
@@ -52,6 +58,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddFormView($data = null, array $options = [])
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
         return $this->getFormView(QuickAddType::class, $data, $options, $cacheKeyOptions);
@@ -66,6 +73,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddForm($data = null, array $options = [])
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
         return $this->getForm(QuickAddType::class, $data, $options, $cacheKeyOptions);
@@ -77,6 +85,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddCopyPasteFormView()
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getFormView(QuickAddCopyPasteType::class, null, $options);
     }
@@ -87,6 +96,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddCopyPasteForm()
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getForm(QuickAddCopyPasteType::class, null, $options);
     }
@@ -97,6 +107,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddImportFormView()
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getFormView(QuickAddImportFromFileType::class, null, $options);
     }
@@ -107,6 +118,7 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddImportForm()
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['is_optimized'] = $this->isOptimizedFormEnabled();
 
         return $this->getForm(QuickAddImportFromFileType::class, null, $options);
     }
@@ -203,5 +215,16 @@ class ProductFormProvider extends AbstractFormProvider
             'parentProduct' => $product,
             'dynamic_fields_disabled' => true
         ];
+    }
+
+    protected function isOptimizedFormEnabled(): bool
+    {
+        if ($this->configManager) {
+            return (bool)($this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED)
+            ) ?? false);
+        }
+
+        return false;
     }
 }

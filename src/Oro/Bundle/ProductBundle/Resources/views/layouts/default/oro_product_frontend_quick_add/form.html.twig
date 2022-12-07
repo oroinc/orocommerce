@@ -4,8 +4,10 @@
     {% set disabled = form.parent.vars.disabled %}
     {% set allow_delete = form.parent.vars.allow_delete %}
     {% set row_component_name = form.vars.attr['data-ftid'] %}
+    {% set attr = attr|merge({
+        'data-validation-optional-group': ''
+    }) %}
     <div data-content="{{ name }}"
-         data-validation-optional-group
          data-role="row"
          class="quick-order-add__row fields-row"
          {{ block('widget_container_attributes') }}
@@ -58,7 +60,7 @@
                 _collection_unique_prefix: form.parent.vars.unique_block_prefix
             } %}
             {% if allow_delete %}
-                <button class="btn btn--plain quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
+                <button class="btn btn--plain quick-order-add__remove-row hidden removeRow" data-role="row-remove" type="button"
                         aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
                 </button>
             {% endif %}
@@ -86,6 +88,16 @@
                  data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %}
                  data-prototype="{{ prototype_html|escape }}"{% endif %}
             >
+                {% set collectionValidation = {
+                    NotBlankGroup: {
+                        message: 'oro.product.at_least_one_item'|trans,
+                        selector: '[data-name="field__product-display-name"], [data-name="field__product-sku"], [data-name="field__product-quantity"]'
+                    }
+                } %}
+                <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}"
+                       class="collection-validation-input"
+                       data-name="collection-validation" disabled data-validate-element
+                       data-validation="{{ collectionValidation|json_encode }}">
                 {% if form.children|length %}
                     {% for child in form.children %}
                         {{ form_widget(child) }}
@@ -100,7 +112,8 @@
 
         {% if allow_add %}
             <button class="btn btn--primary btn--block add-list-item"
-               data-container=".js-item-collection" type="button"
+                    data-container=".js-item-collection" type="button"
+                    data-validate-collection="false"
             >
                 <span class="fa-plus-circle" aria-hidden="true"></span>
                 <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
@@ -132,4 +145,140 @@
             placeholder: "oro.product.frontend.quick_add.copy_paste.placeholder"
         }}) }}
     {% endspaceless %}
+{% endblock %}
+
+{% block oro_product_quick_add_row_collection_widget %}
+    {% apply spaceless %}
+        {% if prototype is defined %}
+            {% set prototype_html = form_widget(form.vars.prototype) %}
+        {% endif %}
+        {% set attr = attr|merge({
+            'class': (attr.class is defined ? attr.class ~ ' ' : '') ~  'quick-order-add__grid grid-container',
+            'data-validation': false
+        }) %}
+        {% set id = id ~ '_collection' %}
+        {% set prototype_name = form.vars.prototype_name %}
+        <div {{ block('widget_container_attributes') }}>
+            {% set data_last_index = form.children ? form.children|length : form.vars.row_count_initial %}
+            <div class="quick-order-add__body js-item-collection"
+                 data-last-index="{{ data_last_index }}"
+                 data-row-count-add="{{ form.vars.row_count_add }}"
+                 data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %}
+                 data-prototype="{{ prototype_html|escape }}"{% endif %}
+            >
+                {% set collectionValidation = {
+                    NotBlankGroup: {
+                        message: 'oro.product.at_least_one_item'|trans,
+                        selector: '[data-name="field__product"], [data-name="field__sku"], [data-name="field__quantity"]'
+                    }
+                } %}
+                <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}"
+                       class="collection-validation-input"
+                       data-name="collection-validation" disabled data-validate-element
+                       data-validation="{{ collectionValidation|json_encode }}">
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ form_widget(child) }}
+                    {% endfor %}
+                {% elseif show_form_when_empty and prototype_html is defined %}
+                    {% for i in 0..(form.vars.row_count_initial - 1) %}
+                        {{ prototype_html|replace({(prototype_name): i})|raw }}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        {% if allow_add %}
+            <button class="btn btn--primary btn--block add-list-item"
+                    data-container=".js-item-collection" type="button"
+                    data-validate-collection="false"
+            >
+                <span class="fa-plus-circle" aria-hidden="true"></span>
+                <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
+            </button>
+        {% endif %}
+    {% placeholder oro_product_quick_add_collection_after with {
+        _collection_unique_prefix: form.vars.unique_block_prefix
+    } %}
+    {% endapply %}
+{% endblock %}
+
+{% block oro_product_quick_add_row_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% set name = form.vars.full_name %}
+    {% set disabled = form.parent.vars.disabled %}
+    {% set allow_delete = form.parent.vars.allow_delete %}
+    {% set row_component_name = form.vars.attr['data-ftid'] %}
+    {% set attr = attr|merge({
+        'data-validation-optional-group': ''
+    }) %}
+    <div data-content="{{ name }}"
+         data-role="row"
+         class="quick-order-add__row fields-row"
+            {{ block('widget_container_attributes') }}
+    >
+        <div class="quick-order-add__row-content"
+            {{ UI.renderPageComponentAttributes({
+                view: "oroproduct/js/app/views/quick-add-row-view-optimized",
+                name: row_component_name,
+                options: {
+                    ignoreSubPromises: true,
+                    unitErrorText: 'oro.product.validation.unit.invalid_for_sku',
+                    selectors: {
+                        product: '[data-name="' ~ form.product.vars['attr']['data-name'] ~ '"]',
+                        sku: '[data-name="' ~ form.sku.vars['attr']['data-name'] ~ '"]',
+                        unit: '[data-name="' ~ form.unit.vars['attr']['data-name'] ~ '"]',
+                        quantity: '[data-name="' ~ form.quantity.vars['attr']['data-name'] ~ '"]',
+                    }
+                }
+            }) }}
+        >
+            <div class="quick-order-add__col quick-order-add__product"
+                 data-page-component-init-on="click,focusin"
+                 data-label="{{ 'oro.product.item_number.label'|trans }}"
+            >
+                {{ form_widget(form.product, {attr: {
+                    placeholder: "oro.product.sku.placeholder",
+                    'aria-label': "oro.product.sku.aria_label",
+                    'data-value': form.product.vars.value,
+                    'data-required': "data-required",
+                    'data-dropdown-classes':{
+                        holder: 'select2-drop oro-select2__dropdown',
+                        menu: 'select2-results',
+                        item: 'select2-result',
+                        link: 'select2-result-label'
+                    }|json_encode
+                }}) }}
+                {{ form_widget(form.sku) }}
+            </div>
+            <div class="quick-order-add__col quick-order-add__quantity"
+                 data-label="{{ 'oro.product.quantity.label'|trans }}"
+            >
+                {{ form_widget(form.quantity, {attr: {
+                    class: ' quick-order-add__quantity-input',
+                    placeholder: "oro.product.quantity.placeholder",
+                    'aria-label': "oro.product.quantity.aria_label"
+                }}) }}
+            </div>
+            <div class="quick-order-add__col quick-order-add__unit"
+                 data-label="{{ 'oro.product.productunitprecision.unit.label'|trans }}"
+            >
+                {{ form_widget(form.unit, {attr: {
+                    'class': 'disabled',
+                    'aria-label': 'oro.product.productunitprecision.unit.label',
+                    'data-skip-input-widgets': ''
+                }|merge(form.unit.vars.value is empty ? {'disabled': 'disabled'} : {})}) }}
+            </div>
+            {% placeholder oro_product_quick_add_additional_fields with {
+                row_component_name: row_component_name,
+                _collection_unique_prefix: form.parent.vars.unique_block_prefix
+            } %}
+            {% if allow_delete %}
+                <button class="btn btn--plain quick-order-add__remove-row hidden removeRow" data-role="row-remove" type="button"
+                        aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
+                </button>
+            {% endif %}
+        </div>
+        <div class="quick-order-add__error fields-row-error">{{ form_errors(form.quantity) }}</div>
+    </div>
 {% endblock %}

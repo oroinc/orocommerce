@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -29,6 +31,9 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
      */
     protected $validatorInterface;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     protected function setUp(): void
     {
         $this->validatorInterface = $this->getMockBuilder(ValidatorInterface::class)
@@ -42,10 +47,19 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $this->context = $this->createContext();
         $this->validator = $this->createValidator();
         $this->validator->initialize($this->context);
+
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->validator->setConfigManager($this->configManager);
     }
 
     public function testValidItemsOfCollection()
     {
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(false);
+
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
@@ -68,14 +82,18 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $this->assertEquals(1, $collection->getValidRows()->count());
     }
 
-    public function testNotValidItemsOfCollection()
+    public function testNotValidItemsOfCollection(): void
     {
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(false);
+
         $collection = new QuickAddRowCollection();
         $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $quickAddRow->setProduct($product);
         $collection->add($quickAddRow);
 
@@ -84,14 +102,26 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
         $violation = $this->createMock(ConstraintViolation::class);
 
         $violationMessage = 'some.message';
-        $violation->method('getMessage')
+        $violation
+            ->expects(self::once())
+            ->method('getMessageTemplate')
             ->willReturn($violationMessage);
 
         $violationParameters = ['{{ sku }}' => 'SKU1', '{{ unit }}' => 'item'];
-        $violation->method('getParameters')
+        $violation
+            ->expects(self::once())
+            ->method('getParameters')
             ->willReturn($violationParameters);
 
-        $iterator->method('current')
+        $propertyPath = 'samplePath';
+        $violation
+            ->expects(self::once())
+            ->method('getPropertyPath')
+            ->willReturn($propertyPath);
+
+        $iterator
+            ->expects(self::once())
+            ->method('current')
             ->willReturn($violation);
 
         $violations = $this->createMock(ConstraintViolationList::class);
@@ -102,12 +132,48 @@ class QuickAddRowCollectionValidatorTest extends ConstraintValidatorTestCase
             ->willReturn(1);
 
         $this->validatorInterface->method('validate')
-            ->with($quickAddRow, null, $this->anything())
+            ->with($quickAddRow, null, self::anything())
             ->willReturn($violations);
 
         $this->validator->validate($collection, $this->constraint);
 
-        $this->assertEquals(1, $collection->getInvalidRows()->count());
+        self::assertEquals(1, $collection->getInvalidRows()->count());
+        self::assertEquals(
+            [
+                [
+                    'message' => $violationMessage,
+                    'parameters' => array_merge($violationParameters, [
+                        '{{ index }}' => $quickAddRow->getIndex(),
+                        '{{ sku }}' => $quickAddRow->getSku(),
+                    ]),
+                    'propertyPath' => $propertyPath,
+                ],
+            ],
+            $collection->getInvalidRows()[0]->getErrors()
+        );
+    }
+
+    public function testValidateWhenIsOptimized(): void
+    {
+        $this->configManager
+            ->expects(self::once())
+            ->method('get')
+            ->with(Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED))
+            ->willReturn(true);
+
+        $quickAddRow = new QuickAddRow(1, 'SKU1', 3, 'item');
+        $quickAddRow->setProduct(new Product());
+
+        $quickAddRowCollection = new QuickAddRowCollection();
+        $quickAddRowCollection->add($quickAddRow);
+
+        $this->validatorInterface
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->validator->validate($quickAddRowCollection, $this->constraint);
+
+        $this->assertNoViolation();
     }
 
     /**

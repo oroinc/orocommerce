@@ -205,14 +205,13 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
             sell: true
             message: oro.product.frontend.quick_add.validation.invalid_unit
+            path: 'unit'
             groups: [ProductUnit]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
             message: oro.product.frontend.quick_add.validation.invalid_precision
+            path: 'quantity'
             groups: [QuantityUnitPrecision]
     properties:
-        sku:
-            - NotBlank:
-                message: oro.product.frontend.quick_add.validation.not_found
         product:
             - NotNull:
                 message: oro.product.frontend.quick_add.validation.product_not_found
@@ -226,7 +225,8 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 message: oro.product.frontend.quick_add.validation.quantity_min
         unit:
-            - NotBlank: ~
+            - NotBlank:
+                message: oro.product.frontend.quick_add.validation.unit_not_blank
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     properties:

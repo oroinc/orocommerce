@@ -385,6 +385,12 @@ system_configuration:
                 label: oro.product.system_configuration.fields.guest_quick_order_form.title
                 tooltip: oro.product.system_configuration.fields.guest_quick_order_form.tooltip
 
+        oro_product.enable_quick_order_form_optimized:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.enable_quick_order_form_optimized.title
+
         oro_product.product_direct_url_prefix:
             data_type: string
             type: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType
@@ -820,6 +826,7 @@ system_configuration:
                                     quick_order_form:
                                         children:
                                             - oro_product.enable_quick_order_form
+                                            - oro_product.enable_quick_order_form_optimized
                                     guest_quick_order_form:
                                         children:
                                             - oro_product.guest_quick_order_form

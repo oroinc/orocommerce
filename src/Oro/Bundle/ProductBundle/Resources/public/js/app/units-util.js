@@ -19,7 +19,7 @@ define(function(require) {
             return units;
         },
 
-        updateSelect: function(model, $el) {
+        updateSelect: function(model, $el, silent = false) {
             const options = [];
             const oldValue = $el.val();
             const units = this.getUnitsLabel(model);
@@ -37,7 +37,7 @@ define(function(require) {
             let value = model.get('unit_deferred') || model.get('unit') || oldValue;
             const wishfulLabel = model.get('unit_label');
             if (_.isEmpty(units) || wishfulLabel && !value) {
-                // no units loaded or there's wishful unit label and it could not be resolved to a unit
+                // no units loaded or there's wishful unit label, and it could not be resolved to a unit
                 // add placeholder option
                 if (!model.has('unit_placeholder')) {
                     model.set('unit_placeholder', $el.find('option[value=""]').text() || '');
@@ -53,7 +53,10 @@ define(function(require) {
 
             model.set('unit', value);
             if (value !== oldValue || value !== $el.val()) {
-                $el.val(value).change();
+                $el.val(value);
+                if (!silent) {
+                    $el.change();
+                }
             }
 
             if (InputWidgetManager.hasWidget($el)) {

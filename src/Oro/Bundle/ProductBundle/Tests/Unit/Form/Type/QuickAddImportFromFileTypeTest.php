@@ -10,29 +10,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var QuickAddImportFromFileType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp(): void
-    {
-        $this->formType = new QuickAddImportFromFileType();
-
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([], []),
-            $this->getValidatorExtension(true)
+            $this->getValidatorExtension(true),
         ];
     }
 
@@ -42,7 +24,7 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
      * @param array $expectedData
      * @param bool $isValid
      */
-    public function testSubmit(array $data, array $expectedData, $isValid)
+    public function testSubmit(array $data, array $expectedData, bool $isValid): void
     {
         $formBuilder = $this->factory->createBuilder(QuickAddImportFromFileType::class);
         $formBuilder->get(QuickAddImportFromFileType::FILE_FIELD_NAME)
@@ -50,15 +32,12 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
         $form = $formBuilder->getForm();
 
         $form->submit($data);
-        $this->assertEquals($isValid, $form->isValid());
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $invalidFile = $this->createUploadedFile('quick-order.doc');
         $validFile = $this->createUploadedFile('quick-order.csv');
@@ -66,56 +45,60 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
         return [
             'null' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => null
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => null,
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => null
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => null,
                 ],
-                'isValid' => false
+                'isValid' => false,
             ],
             'invalid value' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => 'abcdef'
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => 'abcdef',
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => null
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => null,
                 ],
-                'isValid' => false
+                'isValid' => false,
             ],
             'invalid file' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile,
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile,
                 ],
-                'isValid' => false
+                'isValid' => false,
             ],
             'valid file' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile,
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile,
                 ],
-                'isValid' => true
+                'isValid' => true,
             ],
         ];
     }
 
     /**
-     * {@inheritDoc}
+     * @dataProvider isOptimizedDataProvider
      */
-    protected function tearDown(): void
+    public function testFinishView(bool $isOptimized): void
     {
-        unset($this->formType);
+        $form = $this->factory->create(QuickAddImportFromFileType::class, null, ['is_optimized' => $isOptimized]);
+        $formView = $form->createView();
+
+        self::assertSame($isOptimized, $formView->vars['is_optimized']);
     }
 
-    /**
-     * @param string $fileName
-     * @return UploadedFile
-     */
-    private function createUploadedFile($fileName)
+    public function isOptimizedDataProvider(): array
+    {
+        return [[true], [false]];
+    }
+
+    private function createUploadedFile(string $fileName): UploadedFile
     {
         return new UploadedFile(__DIR__ . '/files/' . $fileName, $fileName, null, null, null, true);
     }

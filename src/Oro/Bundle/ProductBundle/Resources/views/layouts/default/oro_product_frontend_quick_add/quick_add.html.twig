@@ -4,10 +4,21 @@
 {% endblock %}
 
 {% block _quick_add_container_widget %}
+    {% if form.vars.is_optimized %}
+        {% set pageComponentOptions = {
+            'selectors': {
+                rows: '[data-name="field__row"]',
+                productSkus: '[data-name="field__sku"]',
+            }
+        } %}
+        {% set viewModuleName =  'oroproduct/js/app/views/quick-order-view' %}
+    {% endif %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' quick-order',
         'data-focusable': true,
-        'data-page-component-view': 'oroproduct/js/app/views/quick-order-form-view',
+        'data-page-component-view': viewModuleName|default('oroproduct/js/app/views/quick-order-form-view'),
+        'data-page-component-options': pageComponentOptions|default({}),
         'data-layout': 'separate',
     }) %}
     <div {{ block('block_attributes') }}>
@@ -30,9 +41,17 @@
         'componentSelector': '#' ~ form.component.vars.id,
         'additionalSelector': '#' ~ form.additional.vars.id
     } %}
+    {% if form.vars.is_optimized %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-view': 'oroproduct/js/app/views/quick-add-form-view'
+        }) %}
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroproduct/js/app/components/quick-add-component'
+        }) %}
+    {% endif %}
     {% set attr = layout_attr_defaults(attr, {
         'autocomplete': 'off',
-        'data-page-component-module': 'oroproduct/js/app/components/quick-add-component',
         '~data-page-component-options': pageComponentOptions,
         'name': 'oro_product_quick_add'
     }) %}
@@ -46,10 +65,12 @@
     <div {{ block('block_attributes') }}>
         {{ form_widget(form.products) }}
     </div>
-    {{ form_row(form.component) }}
-    {{ form_row(form.additional) }}
-    {{ form_row(form.transition) }}
-    {{ form_errors(form) }}
+    <fieldset data-name="rest-fields">
+        {{ form_row(form.component) }}
+        {{ form_row(form.additional) }}
+        {{ form_row(form.transition) }}
+        {{ form_rest(form) }}
+    </fieldset>
 {% endblock %}
 
 {% block _quick_add_form_buttons_wrapper_widget %}

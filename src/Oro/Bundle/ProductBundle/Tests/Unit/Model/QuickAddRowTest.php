@@ -38,4 +38,51 @@ class QuickAddRowTest extends \PHPUnit\Framework\TestCase
         $row->setValid(true);
         $this->assertTrue($row->isValid());
     }
+
+    public function testAddErrorWithoutPropertyPath(): void
+    {
+        $row = new QuickAddRow(self::INDEX, self::SKU, self::QUANTITY, self::UNIT);
+
+        $message = 'sample message';
+        $additionalParameters = ['sample_key' => 'sample_value'];
+        $row->addError($message, $additionalParameters);
+
+        self::assertEquals(
+            [
+                [
+                    'message' => $message,
+                    'parameters' => array_merge(
+                        $additionalParameters,
+                        ['{{ sku }}' => $row->getSku(), '{{ index }}' => $row->getIndex()]
+                    ),
+                    'propertyPath' => '',
+                ],
+            ],
+            $row->getErrors()
+        );
+    }
+
+    public function testAddErrorWithPropertyPath(): void
+    {
+        $row = new QuickAddRow(self::INDEX, self::SKU, self::QUANTITY, self::UNIT);
+
+        $message = 'sample message';
+        $additionalParameters = ['sample_key' => 'sample_value'];
+        $propertyPath = 'samplePath';
+        $row->addError($message, $additionalParameters, $propertyPath);
+
+        self::assertEquals(
+            [
+                [
+                    'message' => $message,
+                    'parameters' => array_merge(
+                        $additionalParameters,
+                        ['{{ sku }}' => $row->getSku(), '{{ index }}' => $row->getIndex()]
+                    ),
+                    'propertyPath' => $propertyPath,
+                ],
+            ],
+            $row->getErrors()
+        );
+    }
 }

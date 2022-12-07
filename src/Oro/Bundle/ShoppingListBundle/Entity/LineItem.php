@@ -15,6 +15,8 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
+ * Represents a line item in a shopping list.
+ *
  * @ORM\Table(
  *      name="oro_shopping_list_line_item",
  *      uniqueConstraints={
@@ -102,7 +104,6 @@ class LineItem extends ExtendLineItem implements
      *
      * @ORM\ManyToOne(
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
-     *      cascade={"persist"},
      *      inversedBy="lineItems"
      * )
      * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")

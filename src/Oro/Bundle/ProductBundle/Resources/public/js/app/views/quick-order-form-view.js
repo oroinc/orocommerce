@@ -149,7 +149,7 @@ const QuickOrderFromView = BaseView.extend({
     hideTopButtons() {
         this.$(this.elem.clear).addClass('hidden');
 
-        if (!this.topButtons || !this.topButtons instanceof $) {
+        if (!this.topButtons || !(this.topButtons instanceof $)) {
             return;
         }
         this.topButtons.detach();

@@ -87,6 +87,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
             return false;
         }
 
+        // @deprecated all below in this method
         this.disableForm();
 
         const lines = _.compact(this.$field.val().split('\n'));
@@ -99,6 +100,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
             mediator.execute('showFlashMessage', 'error', __('oro.ui.unexpected_error'));
         }
 
+        // @deprecated invalid items remain on QOF and not returned to copy-paste textarea
         if (result) {
             const failed = result.invalid || [];
             if (failed.length) {
@@ -137,6 +139,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
      * @param {Array<string>} lines
      * @return {[{raw: [string], sku: string, quantity: string, unit_label: string|null}]}
      * @private
+     * @deprecated
      */
     _prepareFieldItems(lines) {
         const items = [];
@@ -170,6 +173,9 @@ const QuickAddCopyPasteFormView = BaseView.extend({
         return items;
     },
 
+    /**
+     * @deprecated
+     */
     _showErrorMessage() {
         const fieldName = this.$field.attr('name');
         if (!this.isEmptyField()) {

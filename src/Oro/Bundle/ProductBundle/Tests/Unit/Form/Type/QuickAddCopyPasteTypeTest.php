@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
+use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
@@ -151,5 +152,21 @@ TEXT
                 'isValid' => false
             ],
         ];
+    }
+
+    /**
+     * @dataProvider isOptimizedDataProvider
+     */
+    public function testFinishView(bool $isOptimized): void
+    {
+        $form = $this->factory->create(QuickAddImportFromFileType::class, null, ['is_optimized' => $isOptimized]);
+        $formView = $form->createView();
+
+        self::assertSame($isOptimized, $formView->vars['is_optimized']);
+    }
+
+    public function isOptimizedDataProvider(): array
+    {
+        return [[true], [false]];
     }
 }

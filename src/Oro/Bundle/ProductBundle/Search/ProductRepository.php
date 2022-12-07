@@ -13,6 +13,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -160,6 +161,7 @@ class ProductRepository extends WebsiteSearchRepository
     public function getSearchQueryBySkuOrName($search, $firstResult = 0, $maxResults = null): SearchQueryInterface
     {
         $operator = $this->getProductSearchOperator();
+        QueryBuilderUtil::checkParameter($firstResult);
 
         $query = $this->createQuery();
         $query

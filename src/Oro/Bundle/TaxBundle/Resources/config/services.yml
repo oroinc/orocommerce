@@ -141,6 +141,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.digital_products_eu, method: beforeSave }
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_tax.event_listener.config.digital_products_us:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
@@ -152,6 +154,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.digital_products_us, method: beforeSave }
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_tax.event_listener.config.shipping_tax_code:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
@@ -163,6 +167,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.shipping_tax_code, method: beforeSave }
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_tax.event_listener.grid.order_line_item:
         class: 'Oro\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener'
@@ -294,7 +300,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
         public: true
         arguments:
-            - '@oro_config.global'
+            - '@oro_config.manager'
             - '@oro_tax.factory.tax_base_exclusion'
             - '@oro_tax.factory.address_model_factory'
             - '@oro_tax.taxation_provider.cache'

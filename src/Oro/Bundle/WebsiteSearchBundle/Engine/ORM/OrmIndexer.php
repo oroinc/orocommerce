@@ -82,20 +82,7 @@ class OrmIndexer extends AbstractIndexer
 
         // Build items for search index
         foreach ($entitiesData as $entityId => $indexData) {
-            $item = $this->getDriver()->createItem();
-
-            if (isset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
-                $item->setWeight($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
-                unset($indexData[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
-            }
-
-            $item->setEntity($entityClass)
-                ->setRecordId($entityId)
-                ->setAlias($entityAliasTemp)
-                ->setTitle($this->getEntityTitle($indexData))
-                ->setChanged(false)
-                ->saveItemData($indexData);
-            $this->getDriver()->writeItem($item);
+            $this->createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $indexData);
         }
 
         // Remove old data to prevent possible conflicts with unique indexes
@@ -153,8 +140,12 @@ class OrmIndexer extends AbstractIndexer
         }
     }
 
-    protected function savePartialIndexData($entityClass, array $entitiesData, $entityAliasTemp, array $context)
-    {
+    protected function savePartialIndexData(
+        $entityClass,
+        array $entitiesData,
+        $entityAliasTemp,
+        array $context
+    ) {
         $realAlias = $this->getEntityAlias($entityClass, $context);
 
         if (null === $realAlias) {
@@ -184,14 +175,14 @@ class OrmIndexer extends AbstractIndexer
                 continue;
             }
 
-            $item = $existingDocuments[$entityId];
-            $item->setAlias($entityAliasTemp);
-            foreach ($fieldTypes as $fieldType) {
-                $this->processFieldsCollection($item, $newFields, $newRegexps, $entityData, $fieldType);
-            }
-            $item->saveItemData($entityData);
-            $this->getDriver()->writeItem($item);
+            $this->processFieldsCollection($existingDocuments[$entityId], $newFields, $newRegexps, $entityData);
+
+            $this->createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $entityData);
         }
+        // Remove old data to prevent possible conflicts with unique indexes
+        $this->deleteEntities($entityClass, $entityIds, $context);
+
+        // Insert data to the database
         $this->getDriver()->flushWrites();
 
         return $entityIds;
@@ -201,33 +192,31 @@ class OrmIndexer extends AbstractIndexer
         Item $item,
         array $newFields,
         array $newRegexps,
-        array &$entityData,
-        string $fieldType
+        array &$entityData
     ): void {
-        $method = 'get' . ucfirst($fieldType) . 'Fields';
         /** @var Collection|ItemFieldInterface[] $collection */
-        $collection = $item->{$method}();
-        $removedItems = [];
-        foreach ($collection as $fieldItem) {
-            $name = $fieldItem->getField();
+        foreach ($item->getAllFields() as $fieldType => $collection) {
+            foreach ($collection as $fieldItem) {
+                $name = $fieldItem->getField();
 
-            // Skip update of fields if data is already in the index
-            if (isset($entityData[$fieldType][$name]) && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
-                continue;
-            }
-            if ($this->shouldBeRemoved($name, $newRegexps, $newRegexps)) {
-                $removedItems[] = $fieldItem;
-                continue;
-            }
+                // Skip update of fields if data is already in the index
+                if (isset($entityData[$fieldType][$name])
+                    && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
+                    continue;
+                }
+                if ($this->shouldBeRemoved($name, $newFields, $newRegexps)) {
+                    $collection->removeElement($fieldItem);
+                    continue;
+                }
 
-            // Add fields from other groups back to $entityData to prevent their removal
-            if (isset($entityData[$fieldType]) && !array_key_exists($name, $entityData[$fieldType])) {
-                $entityData[$fieldType][$name] = $fieldItem->getValue();
+                // Add fields from other groups back to $entityData to prevent their removal
+                if (!array_key_exists($fieldType, $entityData)) {
+                    $entityData[$fieldType] = [];
+                }
+                if (!array_key_exists($name, $entityData[$fieldType])) {
+                    $entityData[$fieldType][$name] = $fieldItem->getValue();
+                }
             }
-        }
-
-        foreach ($removedItems as $removedItem) {
-            $collection->removeElement($removedItem);
         }
     }
 
@@ -292,6 +281,25 @@ class OrmIndexer extends AbstractIndexer
             ->setParameter('ids', $entityIds);
 
         return $qb;
+    }
+
+    private function createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $data)
+    {
+        $item = $this->getDriver()->createItem();
+
+        if (isset($data[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD])) {
+            $item->setWeight($data[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+            unset($data[SearchQuery::TYPE_DECIMAL][self::WEIGHT_FIELD]);
+        }
+
+        $item->setEntity($entityClass)
+            ->setRecordId($entityId)
+            ->setAlias($entityAliasTemp)
+            ->setTitle($this->getEntityTitle($data))
+            ->setChanged(false)
+            ->saveItemData($data);
+
+        $this->getDriver()->writeItem($item);
     }
 
     private function collectFieldNamesAndRegexps(array $context, string $entityClass): array

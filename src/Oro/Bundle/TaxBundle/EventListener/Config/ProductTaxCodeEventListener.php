@@ -6,34 +6,21 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 /**
  * Manages Tax shipping form in system configuration
  */
 class ProductTaxCodeEventListener
 {
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var TokenAccessorInterface
-     */
-    protected $tokenAccessor;
-
-    /**
-     * @var string
-     */
-    protected $settingsKey;
-
-    /**
-     * @var string
-     */
-    protected $taxCodeClass;
+    protected DoctrineHelper $doctrineHelper;
+    protected TokenAccessorInterface $tokenAccessor;
+    protected string $settingsKey;
+    protected string $taxCodeClass;
+    private AclHelper $aclHelper;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -53,6 +40,11 @@ class ProductTaxCodeEventListener
         $this->settingsKey = (string)$settingsKey;
     }
 
+    public function setAclHelper(AclHelper $aclHelper): void
+    {
+        $this->aclHelper = $aclHelper;
+    }
+
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
@@ -62,17 +54,18 @@ class ProductTaxCodeEventListener
             return;
         }
 
-        $organization = $this->tokenAccessor->getOrganization();
-
         $result = [];
-        $codes = $settings[$key]['value'];
+        $codes = $settings[$key][ConfigManager::VALUE_KEY];
         if ($codes) {
-            /** @var AbstractTaxCodeRepository $repository */
-            $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-            $result = $repository->findByCodes($this->filterCodes($codes), $organization);
+            $qb = $this->doctrineHelper->createQueryBuilder(ProductTaxCode::class, 'taxCode');
+            $qb
+                ->where($qb->expr()->in('taxCode.code', ':codes'))
+                ->setParameter('codes', $codes);
+
+            $result = $this->aclHelper->apply($qb)->getResult();
         }
 
-        $settings[$key]['value'] = $result;
+        $settings[$key][ConfigManager::VALUE_KEY] = $result;
         $event->setSettings($settings);
     }
 
@@ -80,12 +73,12 @@ class ProductTaxCodeEventListener
     {
         $settings = $event->getSettings();
 
-        if (!array_key_exists('value', $settings)) {
+        if (!array_key_exists(ConfigManager::VALUE_KEY, $settings)) {
             return;
         }
 
         $result = [];
-        $ids = (array)$settings['value'];
+        $ids = (array)$settings[ConfigManager::VALUE_KEY];
 
         if ($ids) {
             $taxCodes = $this->doctrineHelper->getEntityRepository($this->taxCodeClass)
@@ -99,7 +92,7 @@ class ProductTaxCodeEventListener
             );
         }
 
-        $settings['value'] = $result;
+        $settings[ConfigManager::VALUE_KEY] = $result;
         $event->setSettings($settings);
     }
 

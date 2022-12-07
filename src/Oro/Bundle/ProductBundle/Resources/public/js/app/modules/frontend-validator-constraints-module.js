@@ -1,3 +1,4 @@
+// @deprecated
 define(function(require) {
     'use strict';
 

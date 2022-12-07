@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import $ from 'jquery';
 import BaseView from 'oroui/js/app/views/base/view';
 import UnitsUtil from 'oroproduct/js/app/units-util';
 import QuantityHelper from 'oroproduct/js/app/quantity-helper';
@@ -228,7 +229,26 @@ const QuickAddRowView = BaseView.extend({
         if (!this.model.isValidUnit()) {
             this.$el.closest('form').validate().element(this.$(this.attrElem.unit)[0]);
         }
-        this.$(this.elem.remove).toggle(Boolean(this.model.get('sku')));
+        this.$(this.elem.remove).toggleClass('hidden', !Boolean(this.model.get('sku')));
+    },
+
+    showErrors() {
+        const errors = this.model.get('errors') || [];
+        const $errorsContainer = this.$el.closest('[data-role="row"]').find('.fields-row-error');
+        $errorsContainer.empty();
+
+        _.each(errors, error => {
+            const errorHtml = this.errorTemplate({
+                message: error.message
+            });
+
+            if (this.attrElem[error.propertyPath]) {
+                this.$(this.attrElem[error.propertyPath])
+                    .addClass($.validator.defaults.errorElementClassName);
+            }
+
+            $errorsContainer.append(errorHtml);
+        });
     },
 
     onModelRemoved() {

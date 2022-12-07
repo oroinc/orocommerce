@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -29,6 +30,9 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $registry;
 
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
+
     /**
      * @var ProductFormExtension
      */
@@ -37,7 +41,9 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->extension = new ProductFormExtension($this->registry);
+        $this->extension->setAuthorizationChecker($this->authorizationChecker);
     }
 
     /**
@@ -46,9 +52,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     protected function prepareRegistry($expects = false)
     {
         $this->categoryRepository =
-            $this->getMockBuilder('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
+            $this->createMock('Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository');
 
         $entityManager = $this->createMock('Doctrine\Persistence\ObjectManager');
         $entityManager->expects($expects ? $this->once() : $this->never())
@@ -69,6 +73,12 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testBuildForm()
     {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(true);
+
         /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
@@ -90,6 +100,23 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->at(2))
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
+
+        $this->extension->buildForm($builder, []);
+    }
+
+    public function testBuildFormWhenCatalogViewDisabledByAcl()
+    {
+        $this->authorizationChecker
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_catalog_category_view')
+            ->willReturn(false);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->never())
+            ->method('add');
+        $builder->expects($this->never())
+            ->method('addEventListener');
 
         $this->extension->buildForm($builder, []);
     }

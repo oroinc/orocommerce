@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -10,6 +12,9 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Validates {@see \Oro\Bundle\ProductBundle\Model\QuickAddRowCollection}.
+ */
 class QuickAddRowCollectionValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_quick_add_row_collection_validator';
@@ -19,9 +24,16 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
      */
     protected $validator;
 
+    private ?ConfigManager $configManager = null;
+
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
+    }
+
+    public function setConfigManager(?ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -29,6 +41,10 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if ($this->isOptimizedFormEnabled()) {
+            return;
+        }
+
         /** @var QuickAddRow $quickAddRow */
         foreach ($value->getIterator() as $quickAddRow) {
             /** @var ConstraintViolationListInterface $violations */
@@ -41,10 +57,25 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
             if ($violations->count()) {
                 /** @var ConstraintViolation $violation */
                 $violation = $violations->getIterator()->current();
-                $quickAddRow->addError($violation->getMessageTemplate(), $violation->getParameters());
+                $quickAddRow->addError(
+                    $violation->getMessageTemplate(),
+                    $violation->getParameters(),
+                    $violation->getPropertyPath()
+                );
             } else {
                 $quickAddRow->setValid(true);
             }
         }
+    }
+
+    private function isOptimizedFormEnabled(): bool
+    {
+        if ($this->configManager) {
+            return (bool)($this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::ENABLE_QUICK_ORDER_FORM_OPTIMIZED)
+            ) ?? false);
+        }
+
+        return false;
     }
 }
