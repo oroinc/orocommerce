@@ -42,7 +42,7 @@ class ExportDatagridListenerTest extends WebTestCase
         sort($expected);
         sort($ids);
 
-        $this->assertEquals($expected, $ids);
+        self::assertEquals($expected, $ids);
     }
 
     public function testFilteredEntityReaderIncludeNotCategorized()
@@ -52,7 +52,7 @@ class ExportDatagridListenerTest extends WebTestCase
             'includeNotCategorizedProducts' => true,
         ]);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 $this->getReference(LoadProductData::PRODUCT_9)->getId(),
             ],
@@ -75,7 +75,7 @@ class ExportDatagridListenerTest extends WebTestCase
         sort($expected);
         sort($ids);
 
-        $this->assertEquals($expected, $ids);
+        self::assertEquals($expected, $ids);
     }
 
     public function testFilteredEntityReader()
@@ -95,6 +95,6 @@ class ExportDatagridListenerTest extends WebTestCase
         sort($expected);
         sort($ids);
 
-        $this->assertEquals($expected, $ids);
+        self::assertEquals($expected, $ids);
     }
 }
