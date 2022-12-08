@@ -15,9 +15,52 @@ class UrlParameterHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedParams, $inputParams);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function paramProvider(): array
     {
         return [
+            [
+                [
+                    'id' => '000324',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '000324',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '123e1',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '123e1',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '0e1',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '0e1',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => 0e1,
+                    'type' => 'label'
+                ],
+                [
+                    'id' => 0e1,
+                    'type' => 'label',
+                ]
+            ],
             [
                 [
                     'id' => '324',
