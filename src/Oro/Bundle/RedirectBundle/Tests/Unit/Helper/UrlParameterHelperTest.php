@@ -8,21 +8,59 @@ class UrlParameterHelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider paramProvider
-     * @param array $inputParams
-     * @param array $expectedParams
      */
-    public function testNormalizeNumericTypes($inputParams, $expectedParams)
+    public function testNormalizeNumericTypes(array $inputParams, array $expectedParams)
     {
         UrlParameterHelper::normalizeNumericTypes($inputParams);
         $this->assertSame($expectedParams, $inputParams);
     }
 
     /**
-     * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function paramProvider()
+    public function paramProvider(): array
     {
         return [
+            [
+                [
+                    'id' => '000324',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '000324',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '123e1',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '123e1',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '0e1',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '0e1',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => 0e1,
+                    'type' => 'label'
+                ],
+                [
+                    'id' => 0e1,
+                    'type' => 'label',
+                ]
+            ],
             [
                 [
                     'id' => '324',

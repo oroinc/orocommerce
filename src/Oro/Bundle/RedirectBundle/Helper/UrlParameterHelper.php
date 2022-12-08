@@ -9,6 +9,7 @@ class UrlParameterHelper
 {
     /**
      * @param array|null $parameters
+     *
      * @return string
      */
     public static function hashParams(array $parameters = null)
@@ -21,7 +22,7 @@ class UrlParameterHelper
         array_walk_recursive(
             $data,
             static function (&$value) {
-                if (is_numeric($value)) {
+                if (is_numeric($value) && (mb_strlen((string) $value) === mb_strlen((string) (0 + $value)))) {
                     // if a string and numeric, will return int or float
                     $value += 0;
                 }
