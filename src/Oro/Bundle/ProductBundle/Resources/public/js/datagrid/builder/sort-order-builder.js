@@ -1,169 +1,94 @@
-define(['jquery', 'underscore', 'oroui/js/mediator', 'orolocale/js/formatter/number'
-], function($, _, mediator, NumberFormatter) {
-    'use strict';
+import $ from 'jquery';
+import {defaults} from 'underscore';
+import OrderInputValidationEditor from 'oroproduct/js/datagrid/editor/order-input-validation-editor';
+import DecimalFormatter from 'orodatagrid/js/datagrid/formatter/decimal-formatter';
+import numberFormatter from 'orolocale/js/formatter/number';
 
-    const SortOrder = function(options) {
-        this.initialize(options);
-    };
+const defaultsParams = {
+    /**
+     * @property {Object}
+     */
+    constraintNames: {
+        decimal: 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
+        range: 'Range'
+    },
 
-    _.extend(SortOrder.prototype, {
-        /**
-         * @property {Grid}
-         */
-        grid: null,
+    /**
+     * @property {Object}
+     */
+    options: {
+        sortOrderColumnName: 'categorySortOrder',
+        inCategoryColumnName: 'inCategory',
+        sortOrderConstraints: {}
+    }
+};
 
-        /**
-         * @property {Object}
-         */
-        constraintNames: {
-            decimal: 'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
-            range: 'Range'
-        },
+export default {
+    processDatagridOptions(deferred, options) {
+        const inputSelector = options.metadata.options.cellSelection.selector;
+        const params = defaults(
+            $(inputSelector).first().data('sort-order-options') || {},
+            defaultsParams.options
+        );
+        const {sortOrderColumnName, sortOrderConstraints} = params;
+        const {constraintNames} = defaultsParams;
 
-        /**
-         * @property {Object}
-         */
-        options: {
-            sortOrderColumnName: 'categorySortOrder',
-            inCategoryColumnName: 'inCategory',
-            sortOrderConstraints: {}
-        },
+        const constraints = {};
+        if (sortOrderConstraints[constraintNames.decimal]) {
+            constraints[constraintNames.decimal] = sortOrderConstraints[constraintNames.decimal];
+        }
+        if (sortOrderConstraints[constraintNames.range]) {
+            constraints[constraintNames.range] = sortOrderConstraints[constraintNames.range];
+        }
 
-        /**
-         * @param {Object} [options.grid] grid instance
-         * @param {Object} [options.options] grid initialization options
-         */
-        initialize: function(options) {
-            this.grid = options.grid;
+        const updateData = data => {
+            return data.map(item => {
+                const quantityValue = item[sortOrderColumnName];
 
-            const inputSelector = options.options.metadata.options.cellSelection.selector;
-            const sortOrderValidationOptions = $(inputSelector).first().data('sort-order-options');
-            this.options = _.defaults(sortOrderValidationOptions || {}, this.options);
-
-            this._formatInitialSortOrder();
-            this._applyValidationToGrid();
-
-            const sortOrderColumn = this.options.sortOrderColumnName;
-
-            this.grid.collection.on(`change:${sortOrderColumn}`, (model, value) => {
-                // validate input
-                this._applyValidationToModel(model);
-                // convert to numeric value to support correct grid sorting
-                if (!isNaN(value)) {
-                    model.set(sortOrderColumn, NumberFormatter.unformat(value), {silent: true});
-                }
-                const row = this.grid.body.rows.find(row => row.model === model);
-                if (row) {
-                    const cell = row.cells.find(cell => cell.column.get('name') === sortOrderColumn);
-                    if (cell && cell.currentEditor) {
-                        cell.currentEditor.render();
-                    }
-                }
-            });
-
-            this.grid.collection.on('sync', this._formatInitialSortOrder.bind(this));
-            this.grid.collection.on('sync', this._applyValidationToGrid.bind(this));
-            this.grid.collection.on('reset', this._applyValidationToGrid.bind(this));
-            this.grid.collection.on('backgrid:selected', this._applyValidationToGrid.bind(this));
-        },
-
-        /**
-         * Format sort order value to emulate number cell behaviour and value
-         */
-        _formatInitialSortOrder: function() {
-            const sortOrderColumn = this.options.sortOrderColumnName;
-            // apply rounding & validation
-            _.each(this.grid.collection.models, function(model) {
-                if (model.get(sortOrderColumn) !== null) {
-                    model.set(sortOrderColumn, NumberFormatter.formatDecimal(model.get(sortOrderColumn), {
+                if (quantityValue) {
+                    item[sortOrderColumnName] = numberFormatter.formatDecimal(quantityValue, {
                         grouping_used: false
-                    }));
+                    });
                 }
-            }, this);
-        },
+                item.constraints = constraints;
 
-        _validateInput: function(cell) {
-            const sortOrderConstraints = this.options.sortOrderConstraints;
-            const constraintNames = this.constraintNames;
-            const editorInput = cell.$el.find(':input').first();
-
-            const constraints = {};
-            if (sortOrderConstraints[constraintNames.decimal]) {
-                constraints[constraintNames.decimal] = sortOrderConstraints[constraintNames.decimal];
-            }
-            if (sortOrderConstraints[constraintNames.range]) {
-                constraints[constraintNames.range] = sortOrderConstraints[constraintNames.range];
-            }
-
-            editorInput.data('validation', constraints);
-            editorInput.valid();
-        },
-
-        /**
-         * Set validation to all rows and apply it to defined values
-         */
-        _applyValidationToGrid: function() {
-            _.each(this.grid.body.rows, function(row) {
-                _.each(row.cells, function(cell) {
-                    if (cell.column.get('name') === this.options.sortOrderColumnName) {
-                        this._applyValidationToCell(cell);
-                    }
-                }, this);
-            }, this);
-        },
-
-        /**
-         * Set validation to current model
-         */
-        _applyValidationToModel: function(model) {
-            _.each(this.grid.body.rows, function(row) {
-                _.each(row.cells, function(cell) {
-                    if (cell.column.get('name') === this.options.sortOrderColumnName && cell.model.cid === model.cid) {
-                        this._applyValidationToCell(cell);
-                    }
-                }, this);
-            }, this);
-        },
-
-        /**
-         * @param {Backgrid.Cell} cell
-         */
-        _applyValidationToCell: function(cell) {
-            const editorInput = cell.$el.find(':input').first();
-
-            if (!cell.model.has(this.options.inCategoryColumnName) ||
-                cell.model.get(this.options.inCategoryColumnName)) {
-                editorInput.show();
-                editorInput.siblings().show();
-                editorInput.prop('disabled', false);
-                editorInput.parent().addClass('controls').removeClass('editable');
-                editorInput.attr('name', 'sortOrder_' + cell.model.cid);
-                this._validateInput(cell);
-            } else {
-                editorInput.hide();
-                editorInput.siblings().hide();
-                editorInput.prop('disabled', true);
-                editorInput.parent().addClass('controls').removeClass('editable');
-                editorInput.attr('name', 'disabledSortOrder_' + cell.model.cid);
-            }
-        }
-    });
-
-    return {
-        /**
-         * @param {jQuery.Deferred} deferred
-         * @param {Object} options
-         */
-        init: function(deferred, options) {
-            options.gridPromise.done(function(grid) {
-                const validation = new SortOrder({
-                    grid: grid,
-                    options: options
-                });
-                deferred.resolve(validation);
-            }).fail(function() {
-                deferred.reject();
+                return item;
             });
-        }
-    };
-});
+        };
+        const updateColumns = columns => {
+            return columns.map(colum => {
+                if (colum.name === sortOrderColumnName && colum.editable && Object.keys(constraints).length) {
+                    colum.editor = OrderInputValidationEditor;
+                    colum.formatter = DecimalFormatter;
+                }
+
+                return colum;
+            });
+        };
+
+        options.metadata.columns = updateColumns(options.metadata.columns);
+        options.data.data = updateData(options.data.data);
+        Object.assign(options.metadata.options, {
+            parseResponseModels: resp => {
+                return 'data' in resp ? updateData(resp.data) : resp;
+            }
+        });
+        deferred.resolve();
+        return deferred;
+    },
+
+    /**
+     * Init() function is required
+     * @param {jQuery.Deferred} deferred
+     * @param {Object} options
+     */
+    init: function(deferred, options) {
+        options.gridPromise.done(function(grid) {
+            grid.collection.models.forEach(model => model.trigger('gridIsReady'));
+            deferred.resolve();
+        }).fail(function() {
+            deferred.reject();
+        });
+    }
+};
+

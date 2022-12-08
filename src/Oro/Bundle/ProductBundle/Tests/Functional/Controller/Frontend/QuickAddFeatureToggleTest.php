@@ -52,7 +52,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
             ['oro_product_frontend_quick_add'],
             ['oro_product_frontend_quick_add_import'],
             ['oro_product_frontend_quick_add_copy_paste'],
-            ['oro_product_frontend_quick_add_validation_result'],
+            ['oro_product_frontend_quick_add_import_help'],
         ];
     }
 

@@ -57,7 +57,6 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
         if ($productRowFrom->getProduct()) {
             $mergedProductRow->setProduct($productRowFrom->getProduct());
         }
-        $mergedProductRow->setValid($productRowFrom->isValid() && $productRowTo->isValid());
 
         $this->mergeErrors($productRowTo, $productRowFrom, $mergedProductRow);
         $this->mergeAdditionalFields($productRowTo, $productRowFrom, $mergedProductRow);

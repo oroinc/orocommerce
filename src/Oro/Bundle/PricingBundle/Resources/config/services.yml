@@ -1217,7 +1217,6 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.rounding.price_rounding_service'
-        public: false
 
     oro_pricing.provider.website_currency_provider:
         class: Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider
@@ -1645,3 +1644,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_pricing.default_price_list, method: beforeSave}
             - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
+
+    oro_pricing.datagrid.export.category_filter.price_attribute_product_price:
+        class: Oro\Bundle\PricingBundle\ImportExport\Datagrid\PriceAttributeProductPriceCategoryFilter

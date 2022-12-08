@@ -58,6 +58,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ExportDatagridListener'
         arguments:
             - '@doctrine'
+            - '@oro_catalog.datagrid.export.category_filter.registry'
         tags:
             - { name: kernel.event_listener, event: oro.import_export.before_get_ids, method: onBeforeExportGetIds }
 
@@ -360,3 +361,11 @@ services:
         class: Oro\Bundle\CatalogBundle\EventListener\FrontendCategorySortOrderDatagridListener
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.frontend-product-search-grid, method: onSearchResultBefore }
+
+    oro_catalog.datagrid.export.category_filter.registry:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Datagrid\CategoryFilterRegistry
+        calls:
+            - [add, ['@oro_catalog.datagrid.export.category_filter.default']]
+
+    oro_catalog.datagrid.export.category_filter.default:
+        class: Oro\Bundle\CatalogBundle\ImportExport\Datagrid\DefaultCategoryFilter

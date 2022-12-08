@@ -31,10 +31,10 @@ Feature: Default Checkout From Quick Order Form With Multi Currency
   Scenario: Create an order from quick order page
     Given I login as AmandaRCole@example.org buyer
     And I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | SKU123 |
     And I wait for products to load
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | QTY1 | 5 |
     When I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:

@@ -17,10 +17,10 @@ Feature: Quick order form
   Scenario: Check price changed on SKU changes
     Given I login as AmandaRCole@example.org buyer
     When I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | psku1 |
     Then "PSKU1" product should has "$45.00" value in price field
-    When I fill "QuickAddForm" with:
+    When I fill "Quick Order Form" with:
       | SKU1 | PSKUwithlowercase |
     Then "PSKUwithlowercase" product should has "N/A" value in price field
 
@@ -42,16 +42,16 @@ Feature: Quick order form
 
   Scenario: Check products subtotal calculation with minimal tier of quantity
     Given I click "Quick Order Form"
-    And I fill "QuickAddForm" with:
+    And I fill "Quick Order Form" with:
       | SKU1 | classPSKU |
     And I wait for products to load
     When I type "3" in "Quick Order Form > QTY1"
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1      | classPSKU - Product6Class |
       | QTY1      | 3                         |
       | SUBTOTAL1 | N/A                       |
     When I type "13" in "Quick Order Form > QTY1"
-    Then "QuickAddForm" must contains values:
+    Then "Quick Order Form" must contains values:
       | SKU1      | classPSKU - Product6Class |
       | QTY1      | 13                        |
       | SUBTOTAL1 | $130.00                   |

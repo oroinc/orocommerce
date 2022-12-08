@@ -82,7 +82,7 @@ Feature: Add Product to Customer User's Own Shopping List
   Scenario: To add a new product to shopping list in quick order form as the buyer
     Given I click "Quick Order Form"
     Then I should not see "Add to Shopping List 3"
-    When I type "BB04" in "SKU1" from "Quick Add Form"
+    When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load
     And I type "1" in "Quick Order Form > QTY1"
     When I click "Add to Shopping List"
@@ -141,7 +141,7 @@ Feature: Add Product to Customer User's Own Shopping List
   Scenario: To add a new product to shopping list in quick order form as the buyer with "Show All Lists In Shopping List Widgets" option on
     Given I click "Quick Order Form"
     Then I should see "Add to Shopping List 3"
-    When I type "BB04" in "SKU1" from "QuickAddForm"
+    When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load
     And I type "1" in "Quick Order Form > QTY1"
     And I click "Add to Shopping List 3"

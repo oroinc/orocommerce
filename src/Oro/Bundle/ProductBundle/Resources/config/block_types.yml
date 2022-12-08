@@ -108,15 +108,6 @@ services:
         tags:
             - { name: layout.block_type, alias: product_list_item_image }
 
-    oro_product.block_type.directions:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            - [setOptionsConfig, [{method: {required: true, default: 'GET'}}]]
-            - [setName, ['quick_add_form_directions']]
-            - [setParent, ['container']]
-        tags:
-            - { name: layout.block_type, alias: quick_add_form_directions }
-
     oro_product.block_type.product_listing_view:
         parent: oro_layout.block_type.abstract_configurable
         calls:

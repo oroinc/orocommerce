@@ -118,7 +118,7 @@ class QuickOrderFormContext extends OroFeatureContext implements OroPageObjectAw
     private function findProductRow($sku)
     {
         /** @var NodeElement[] $productRows */
-        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
+        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('Quick Order Form'));
 
         foreach ($productRows as $skuField) {
             if ($skuField->getValue() === $sku) {
@@ -143,9 +143,7 @@ class QuickOrderFormContext extends OroFeatureContext implements OroPageObjectAw
      */
     public function iImportUnsupportedFileForQuickOrder()
     {
-        $notSupportedFile = tempnam(sys_get_temp_dir(), 'quick_order_import_') . '.csv';
-        $fp = fopen($notSupportedFile, 'w');
-        fclose($fp);
+        $notSupportedFile = __DIR__ . '/../Features/Fixtures/files_import/000.jpg';
 
         $this->createElement('Quick Order Import File Field')->attachFile($notSupportedFile);
         $this->waitForAjax();

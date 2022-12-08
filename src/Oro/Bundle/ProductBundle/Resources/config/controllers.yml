@@ -57,8 +57,6 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: oro_product.form_handler.quick_add, key: Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler }
-            - { name: container.service_subscriber, id: oro_product.layout.data_provider.quick_add_collection, key: Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider }
 
     Oro\Bundle\ProductBundle\Controller\Frontend\AjaxProductController:
         calls:
@@ -79,4 +77,4 @@ services:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
-            - { name: 'container.service_subscriber' }
+            - { name: container.service_subscriber }

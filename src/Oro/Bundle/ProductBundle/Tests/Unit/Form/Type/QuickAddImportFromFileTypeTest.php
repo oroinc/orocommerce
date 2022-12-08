@@ -10,21 +10,18 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([], []),
-            $this->getValidatorExtension(true)
+            $this->getValidatorExtension(true),
         ];
     }
 
     /**
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $data, array $expectedData, bool $isValid)
+    public function testSubmit(array $data, array $expectedData, bool $isValid): void
     {
         $formBuilder = $this->factory->createBuilder(QuickAddImportFromFileType::class);
         $formBuilder->get(QuickAddImportFromFileType::FILE_FIELD_NAME)
@@ -32,9 +29,9 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
         $form = $formBuilder->getForm();
 
         $form->submit($data);
-        $this->assertEquals($isValid, $form->isValid());
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
     public function submitDataProvider(): array
@@ -45,39 +42,39 @@ class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
         return [
             'null' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => null
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => null,
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => null
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => null,
                 ],
-                'isValid' => false
+                'isValid' => false,
             ],
             'invalid value' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => 'abcdef'
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => 'abcdef',
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => null
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => null,
                 ],
-                'isValid' => false
+                'isValid' => false,
             ],
             'invalid file' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile,
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $invalidFile,
                 ],
-                'isValid' => false
+                'isValid' => false,
             ],
             'valid file' => [
                 'data' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile,
                 ],
                 'expectedData' => [
-                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile
+                    QuickAddImportFromFileType::FILE_FIELD_NAME => $validFile,
                 ],
-                'isValid' => true
+                'isValid' => true,
             ],
         ];
     }

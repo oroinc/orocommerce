@@ -107,13 +107,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
             - { name: oro_featuretogle.feature, feature: 'rfp' }
 
-    oro_rfp.layout.decider.rfp_action_decider:
-        class: 'Oro\Bundle\RFPBundle\Layout\Decider\RFPActionDecider'
-        public: true
-        arguments:
-            - '@event_dispatcher'
-            - '@request_stack'
-
     oro_rfp.provider.quote_currency_checker:
        class: Oro\Bundle\RFPBundle\Provider\CurrencyCheckerProvider
        public: false

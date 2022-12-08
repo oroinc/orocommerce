@@ -142,6 +142,8 @@ class OrmIndexer extends AbstractIndexer
             return [];
         }
 
+        [$newFields, $newRegexps, $fieldTypes] = $this->collectFieldNamesAndRegexps($context, $entityClass);
+
         // need to get data from index to index full document later
         $items = $this->loadItems($entityClass, array_keys($entitiesData), $context);
 
@@ -163,7 +165,7 @@ class OrmIndexer extends AbstractIndexer
                 continue;
             }
 
-            $this->processFieldsCollection($existingDocuments[$entityId], $entityData);
+            $this->processFieldsCollection($existingDocuments[$entityId], $newFields, $newRegexps, $entityData);
 
             $this->createAndWriteNewItem($entityClass, $entityId, $entityAliasTemp, $entityData);
         }
@@ -176,8 +178,12 @@ class OrmIndexer extends AbstractIndexer
         return $entityIds;
     }
 
-    private function processFieldsCollection(Item $item, array &$entityData): void
-    {
+    private function processFieldsCollection(
+        Item $item,
+        array $newFields,
+        array $newRegexps,
+        array &$entityData
+    ): void {
         /** @var Collection|ItemFieldInterface[] $collection */
         foreach ($item->getAllFields() as $fieldType => $collection) {
             foreach ($collection as $fieldItem) {
@@ -186,6 +192,10 @@ class OrmIndexer extends AbstractIndexer
                 // Skip update of fields if data is already in the index
                 if (isset($entityData[$fieldType][$name])
                     && $entityData[$fieldType][$name] === $fieldItem->getValue()) {
+                    continue;
+                }
+                if ($this->shouldBeRemoved($name, $newFields, $newRegexps)) {
+                    $collection->removeElement($fieldItem);
                     continue;
                 }
 
@@ -198,6 +208,21 @@ class OrmIndexer extends AbstractIndexer
                 }
             }
         }
+    }
+
+    private function shouldBeRemoved(string $fieldName, array $newFields, array $newRegexps): bool
+    {
+        if (in_array($fieldName, $newFields, true)) {
+            return true;
+        }
+
+        foreach ($newRegexps as $regexp) {
+            if (preg_match("~^$regexp$~", $fieldName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getIndexedEntities($entityClass, array $entities, array $context)
@@ -264,5 +289,35 @@ class OrmIndexer extends AbstractIndexer
             ->saveItemData($data);
 
         $this->getDriver()->writeItem($item);
+    }
+
+    private function collectFieldNamesAndRegexps(array $context, string $entityClass): array
+    {
+        $fields = $this->getFieldsForGroup($entityClass, $context);
+
+        $newFields = [];
+        $newRegexps = [];
+        $fieldTypes = [];
+
+        foreach ($fields as $field) {
+            $fieldTypes[$field['type']] = $field['type'];
+            $fieldName = $field['name'];
+            // Flattened fields contain dot and should be all replaced (visible_for_customer.CUSTOMER_ID)
+            if (str_contains($fieldName, '.')) {
+                $newRegexps[] = explode('.', $fieldName)[0] . '\.\w+';
+                continue;
+            }
+
+            $replacedField = $this->regexPlaceholder->replaceDefault($fieldName);
+            if ($replacedField === $fieldName) {
+                // Replace field if it is present in returned data (is_visible)
+                $newFields[] = $replacedField;
+            } else {
+                // Replace all fields containing placeholders by regexp (minimal_price_PRICE_LIST_ID)
+                $newRegexps[] = $replacedField;
+            }
+        }
+
+        return [array_unique($newFields), array_unique($newRegexps), $fieldTypes];
     }
 }

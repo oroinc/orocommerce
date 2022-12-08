@@ -292,8 +292,6 @@ class WebCatalogEntityIndexerListener
      */
     protected function addCollectionSortOrderInformation(IndexEntityEvent $event, array $relation): void
     {
-        $variantId = $relation['variantId'];
-
         $recordId = $this->contentVariantProvider->getRecordId($relation);
         if (!$recordId) {
             return;
@@ -310,7 +308,7 @@ class WebCatalogEntityIndexerListener
             $this->decimalValueFormatter->format($recordSortOrderValue),
             [
                 AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
-                AssignIdPlaceholder::NAME => $variantId,
+                AssignIdPlaceholder::NAME => $relation['variantId'],
             ]
         );
     }

@@ -24,20 +24,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $formFactory;
+    private FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject $formFactory;
 
-    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $router;
+    private UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $router;
 
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productVariantAvailabilityProvider;
+    private ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject
+        $productVariantAvailabilityProvider;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
 
-    /** @var ProductFormProvider */
-    private $provider;
+    private ProductFormProvider $provider;
 
     protected function setUp(): void
     {
@@ -62,134 +58,148 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    public function testGetQuickAddFormView()
+    public function testGetQuickAddFormView(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $expectedForm->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
-        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddFormView());
+        self::assertInstanceOf(FormView::class, $this->provider->getQuickAddFormView());
         // test memory cache
-        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddFormView());
+        self::assertInstanceOf(FormView::class, $this->provider->getQuickAddFormView());
     }
 
-    public function testGetQuickAddForm()
+    public function testGetQuickAddForm(): void
     {
         $expectedForm = $this->createMock(FormInterface::class);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(QuickAddType::class)
             ->willReturn($expectedForm);
 
-        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddForm());
+        self::assertInstanceOf(FormInterface::class, $this->provider->getQuickAddForm());
         // test memory cache
-        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddForm());
+        self::assertInstanceOf(FormInterface::class, $this->provider->getQuickAddForm());
     }
 
-    public function testGetQuickAddCopyPasteFormView()
+    public function testGetQuickAddCopyPasteFormView(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $expectedForm->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
-        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddCopyPasteFormView());
+        self::assertInstanceOf(FormView::class, $this->provider->getQuickAddCopyPasteFormView());
         // test memory cache
-        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddCopyPasteFormView());
+        self::assertInstanceOf(FormView::class, $this->provider->getQuickAddCopyPasteFormView());
     }
 
-    public function testGetQuickAddCopyPasteForm()
+    public function testGetQuickAddCopyPasteForm(): void
     {
         $expectedForm = $this->createMock(FormInterface::class);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(QuickAddCopyPasteType::class)
             ->willReturn($expectedForm);
 
-        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddCopyPasteForm());
+        self::assertInstanceOf(FormInterface::class, $this->provider->getQuickAddCopyPasteForm());
         // test memory cache
-        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddCopyPasteForm());
+        self::assertInstanceOf(FormInterface::class, $this->provider->getQuickAddCopyPasteForm());
     }
 
-    public function testGetQuickAddImportFormView()
+    public function testGetQuickAddImportFormView(): void
+    {
+        $action = '/import';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with('oro_product_frontend_quick_add_import')
+            ->willReturn($action);
+
+        $formView = $this->createMock(FormView::class);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+        $expectedForm->expects(self::once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->willReturn($expectedForm);
+
+        self::assertInstanceOf(FormView::class, $this->provider->getQuickAddImportFormView());
+        // test memory cache
+        self::assertInstanceOf(FormView::class, $this->provider->getQuickAddImportFormView());
+    }
+
+    public function testGetQuickAddImportForm(): void
+    {
+        $action = '/import';
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->with('oro_product_frontend_quick_add_import')
+            ->willReturn($action);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+
+        $this->formFactory->expects(self::once())
+            ->method('create')
+            ->with(QuickAddImportFromFileType::class, null, ['action' => $action])
+            ->willReturn($expectedForm);
+
+        self::assertInstanceOf(FormInterface::class, $this->provider->getQuickAddImportForm());
+        // test memory cache
+        self::assertInstanceOf(FormInterface::class, $this->provider->getQuickAddImportForm());
+    }
+
+    public function testGetLineItemFormView(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $expectedForm->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddImportFromFileType::class)
-            ->willReturn($expectedForm);
-
-        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddImportFormView());
-        // test memory cache
-        $this->assertInstanceOf(FormView::class, $this->provider->getQuickAddImportFormView());
-    }
-
-    public function testGetQuickAddImportForm()
-    {
-        $expectedForm = $this->createMock(FormInterface::class);
-
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->with(QuickAddImportFromFileType::class)
-            ->willReturn($expectedForm);
-
-        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddImportForm());
-        // test memory cache
-        $this->assertInstanceOf(FormInterface::class, $this->provider->getQuickAddImportForm());
-    }
-
-    public function testGetLineItemFormView()
-    {
-        $formView = $this->createMock(FormView::class);
-
-        $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
-            ->method('createView')
-            ->willReturn($formView);
-
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
-        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView(null));
+        self::assertInstanceOf(FormView::class, $this->provider->getLineItemFormView(null));
         // test memory cache
-        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView(null));
+        self::assertInstanceOf(FormView::class, $this->provider->getLineItemFormView(null));
     }
 
-    public function testGetLineItemFormViewWithInstanceName()
+    public function testGetLineItemFormViewWithInstanceName(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->exactly(2))
+        $expectedForm->expects(self::exactly(2))
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->exactly(2))
+        $this->formFactory->expects(self::exactly(2))
             ->method('create')
             ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
@@ -197,48 +207,48 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $data1 = $this->provider->getLineItemFormView(null, 'form1');
 
         // test memory cache
-        $this->assertSame($data1, $this->provider->getLineItemFormView(null, 'form1'));
+        self::assertSame($data1, $this->provider->getLineItemFormView(null, 'form1'));
 
         // get new form instance
         $data2 = $this->provider->getLineItemFormView(null, 'form2');
-        $this->assertSame($data1, $data2);
-        $this->assertEquals($data1, $data2);
+        self::assertSame($data1, $data2);
+        self::assertEquals($data1, $data2);
     }
 
-    public function testGetLineItemFormViewWithProduct()
+    public function testGetLineItemFormViewWithProduct(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $expectedForm->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
 
         $product = $this->createMock(Product::class);
-        $product->expects($this->any())
+        $product->expects(self::any())
             ->method('getId')
             ->willReturn(1);
 
-        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+        self::assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
         // test memory cache
-        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+        self::assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
     }
 
-    public function testGetLineItemFormViewWithProductView()
+    public function testGetLineItemFormViewWithProductView(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $expectedForm->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(FrontendLineItemType::class)
             ->willReturn($expectedForm);
@@ -247,38 +257,38 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $product->set('id', 1);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->exactly(2))
+        $this->doctrine->expects(self::exactly(2))
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($em);
-        $em->expects($this->exactly(2))
+        $em->expects(self::exactly(2))
             ->method('getReference')
             ->with(Product::class, 1)
             ->willReturn($this->createMock(Product::class));
 
-        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+        self::assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
         // test memory cache
-        $this->assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
+        self::assertInstanceOf(FormView::class, $this->provider->getLineItemFormView($product));
     }
 
-    public function testGetVariantFieldsFormView()
+    public function testGetVariantFieldsFormView(): void
     {
         $formView = $this->createMock(FormView::class);
 
         $product = $this->getProduct(1001);
         $productVariant = $this->getProduct(2002);
 
-        $this->productVariantAvailabilityProvider->expects($this->atLeastOnce())
+        $this->productVariantAvailabilityProvider->expects(self::atLeastOnce())
             ->method('getSimpleProductByVariantFields')
             ->with($product, [], false)
             ->willReturn($productVariant);
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())
+        $form->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(
                 FrontendVariantFiledType::class,
@@ -287,12 +297,12 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($form);
 
-        $this->assertSame($formView, $this->provider->getVariantFieldsFormView($product));
+        self::assertSame($formView, $this->provider->getVariantFieldsFormView($product));
         // test memory cache
-        $this->assertSame($formView, $this->provider->getVariantFieldsFormView($product));
+        self::assertSame($formView, $this->provider->getVariantFieldsFormView($product));
     }
 
-    public function testGetVariantFieldsFormViewByVariantProduct()
+    public function testGetVariantFieldsFormViewByVariantProduct(): void
     {
         $formView = $this->createMock(FormView::class);
 
@@ -300,11 +310,11 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         $variantProduct = $this->getProduct(1003);
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())
+        $form->expects(self::once())
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(
                 FrontendVariantFiledType::class,
@@ -314,25 +324,25 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($form);
 
         $formView1 = $this->provider->getVariantFieldsFormViewByVariantProduct($product, $variantProduct);
-        $this->assertSame($formView, $formView1);
+        self::assertSame($formView, $formView1);
         // test memory cache
         $formView2 = $this->provider->getVariantFieldsFormViewByVariantProduct($product, $variantProduct);
-        $this->assertSame($formView1, $formView2);
+        self::assertSame($formView1, $formView2);
     }
 
-    public function testGetVariantFieldsForm()
+    public function testGetVariantFieldsForm(): void
     {
         $product = $this->getProduct(1001);
         $productVariant = $this->getProduct(2002);
 
-        $this->productVariantAvailabilityProvider->expects($this->atLeastOnce())
+        $this->productVariantAvailabilityProvider->expects(self::atLeastOnce())
             ->method('getSimpleProductByVariantFields')
             ->with($product, [], false)
             ->willReturn($productVariant);
 
         $form = $this->createMock(FormInterface::class);
 
-        $this->formFactory->expects($this->once())
+        $this->formFactory->expects(self::once())
             ->method('create')
             ->with(
                 FrontendVariantFiledType::class,
@@ -341,14 +351,14 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($form);
 
-        $this->assertSame($form, $this->provider->getVariantFieldsForm($product));
+        self::assertSame($form, $this->provider->getVariantFieldsForm($product));
         // test memory cache
-        $this->assertSame($form, $this->provider->getVariantFieldsForm($product));
+        self::assertSame($form, $this->provider->getVariantFieldsForm($product));
     }
 
     private function getProductVariantExpectedOptions(Product $product, int $expects = 1): array
     {
-        $this->router->expects($this->exactly($expects))
+        $this->router->expects(self::exactly($expects))
             ->method('generate')
             ->with('oro_product_frontend_ajax_product_variant_get_available', ['id' => $product->getId()])
             ->willReturn('product_variants_get_available_variants_url');
@@ -356,7 +366,7 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
         return [
             'action' => 'product_variants_get_available_variants_url',
             'parentProduct' => $product,
-            'dynamic_fields_disabled' => true
+            'dynamic_fields_disabled' => true,
         ];
     }
 }

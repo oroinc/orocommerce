@@ -7,11 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
-use Oro\Bundle\ProductBundle\Model\QuickAddRow;
-use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -111,31 +107,6 @@ class QuantityToOrderConditionListener
         $checkout = $context->getEntity();
         if (!$this->isLineItemListValid($checkout, $checkout->getSourceEntity())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
-        }
-    }
-
-    public function onQuickAddRowCollectionValidate(QuickAddRowCollectionValidateEvent $event)
-    {
-        $collection = $event->getQuickAddRowCollection();
-        if (!$collection instanceof QuickAddRowCollection) {
-            return;
-        }
-
-        /** @var QuickAddRow $quickAddRow */
-        foreach ($collection as $quickAddRow) {
-            $product = $quickAddRow->getProduct();
-            if (!$product instanceof Product) {
-                continue;
-            }
-
-            if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $quickAddRow->getQuantity())) {
-                $quickAddRow->addError($maxError, ['allowedRFP' => true]);
-                continue;
-            }
-
-            if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $quickAddRow->getQuantity())) {
-                $quickAddRow->addError($minError, ['allowedRFP' => true]);
-            }
         }
     }
 
