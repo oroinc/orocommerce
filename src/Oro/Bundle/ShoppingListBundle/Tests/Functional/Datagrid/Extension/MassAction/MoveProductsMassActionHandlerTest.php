@@ -144,8 +144,9 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
 
         self::assertInstanceOf(MassActionResponse::class, $result);
         self::assertTrue($result->isSuccessful());
-        self::assertEquals('5 items have been moved successfully.', $result->getMessage());
-        self::assertEquals(['count' => 5], $result->getOptions());
+        // product-5 is disabled and auth. checker in class FrontendLineItemsGridVisibilityExtension will filter it out.
+        self::assertEquals('4 items have been moved successfully.', $result->getMessage());
+        self::assertEquals(['count' => 4], $result->getOptions());
 
         $lineItem = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_10);
 

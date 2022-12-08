@@ -36,6 +36,9 @@ oro_behat_extension:
           Visibility To Customer First Group:
             locator: '#product-visibility-customer-group tr:contains(first) .grid-body-cell-visibility select'
             type: css
+          Active Tab Visibility To All:
+            locator: 'div.tab-pane.active select[name^="oro_scoped_data_type"]'
+            type: css
 
     Short Description English (United States) fallback selector:
       selector: 'select[name="oro_catalog_category[shortDescriptions][values][localizations][1][fallback]"]'

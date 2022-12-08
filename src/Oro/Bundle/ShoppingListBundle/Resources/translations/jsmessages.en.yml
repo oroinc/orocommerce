@@ -50,6 +50,7 @@ oro:
             product_variants: 'Product Variants'
             messages:
                 delete_title: Delete Confirmation
+                line_items_not_available: 'Some of the items in this shopping list are no longer available and have been removed ({{ skus }}).'
             matrix_grid_order:
                 item_number: 'Item #'
             dropdown:

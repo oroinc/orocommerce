@@ -32,7 +32,7 @@ class ShoppingListController extends AbstractController
      * @param ShoppingList|null $shoppingList
      * @return array
      */
-    public function viewAction(ShoppingList $shoppingList = null)
+    public function viewAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
             $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
