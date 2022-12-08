@@ -41,6 +41,10 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if (!$this->getPriceListShippingCostAttribute()) {
+            return;
+        }
+
         $builder->add(LoadPriceAttributePriceListData::SHIPPING_COST_FIELD, CollectionType::class, [
             'mapped' => false,
             'entry_type' => ProductAttributePriceCollectionType::class,
@@ -139,7 +143,7 @@ class ProductFormExtension extends AbstractTypeExtension
         return $formData;
     }
 
-    private function getPriceListShippingCostAttribute(): PriceAttributePriceList
+    private function getPriceListShippingCostAttribute(): ?PriceAttributePriceList
     {
         return $this->registry->getRepository(PriceAttributePriceList::class)
             ->findOneBy(['name' => LoadPriceAttributePriceListData::SHIPPING_COST_NAME]);
