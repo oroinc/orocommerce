@@ -1,0 +1,6 @@
+styles:
+    inputs:
+        - 'bundles/oroshipping/default/scss/variables/multishipping-methods-grid.scss'
+
+        - 'bundles/oroshipping/default/scss/components/multishipping-methods-grid.scss'
+        - 'bundles/oroshipping/default/scss/components/grid-shipping-methods.scss'

@@ -2,7 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -11,6 +15,13 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 class CheckoutLineItemsProvider
 {
+    private CheckoutLineItemsManager $checkoutLineItemsManager;
+
+    public function setCheckoutLineItemsManager(CheckoutLineItemsManager $checkoutLineItemsManager)
+    {
+        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+    }
+
     /**
      * Returns an array of ProductSku which were removed or have different quantity or unit
      *
@@ -41,5 +52,29 @@ class CheckoutLineItemsProvider
         }
 
         return $changed;
+    }
+
+    /**
+     * Get checkout line items which expected to be converted into OrderLineItems filtering items which could not be
+     * ordered.
+     *
+     * @param Checkout $checkout
+     * @return ArrayCollection
+     */
+    public function getCheckoutLineItems(Checkout $checkout): ArrayCollection
+    {
+        $lineItems = $checkout->getLineItems();
+        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
+
+        $orderLineItemsKeys = array_map([$this, 'getLineItemKey'], $orderLineItems->toArray());
+
+        return $lineItems->filter(
+            fn (CheckoutLineItem $lineItem) => in_array($this->getLineItemKey($lineItem), $orderLineItemsKeys)
+        );
+    }
+
+    private function getLineItemKey(ProductLineItemInterface $item): string
+    {
+        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
     }
 }

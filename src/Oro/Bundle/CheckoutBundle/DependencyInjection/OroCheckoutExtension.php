@@ -28,6 +28,7 @@ class OroCheckoutExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('form_types.yml');
         $loader->load('controllers.yml');
+        $loader->load('multiple_shipping.yml');
         $loader->load('mq_topics.yml');
 
         $this->registerSaleBundleDependencies($loader, $container);

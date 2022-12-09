@@ -51,6 +51,11 @@ interface PaymentMethodInterface
     const CANCEL = 'cancel';
 
     /**
+     * Refund captured amount
+     */
+    const REFUND = 'refund';
+
+    /**
      * @param string $action
      * @param PaymentTransaction $paymentTransaction
      * @return array

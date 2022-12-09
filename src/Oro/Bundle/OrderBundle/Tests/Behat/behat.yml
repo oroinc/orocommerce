@@ -88,6 +88,14 @@ oro_behat_extension:
       selector: "div[id^='grid-order-payment-transactions-grid']"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    First Sub Order Payment Transaction Grid:
+      selector: "div[data-page-component-name='order-payment-transactions-grid:2']"
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Second Sub Order Payment Transaction Grid:
+      selector: "div[data-page-component-name='order-payment-transactions-grid:3']"
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     Calculate Shipping Button:
       selector: 'span[id="possible_shipping_methods_btn"]'
 

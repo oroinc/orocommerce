@@ -5,22 +5,45 @@ const ShoppingListRow = Row.extend({
         ShoppingListRow.__super__.constructor.call(this, options);
     },
 
+    initialize(options) {
+        // let descendants override itemView
+        if (!this.itemView) {
+            // itemView function is called as new this.itemView
+            // it is placed here to pass THIS within closure
+            const rowView = this;
+            this.itemView = function(options) {
+                const renderColumnName = rowView.model.get('renderColumnName');
+                const definitionColumnName = rowView.model.get('definitionColumnName');
+                const definitionColumn =
+                    renderColumnName && options.model.get('name') === renderColumnName &&
+                    definitionColumnName && rowView.columns.find(column => column.get('name') === definitionColumnName);
+                // substitute current column with definition column if it's available
+                const column = definitionColumn || options.model;
+                const cellOptions = rowView.getConfiguredCellOptions(column);
+                cellOptions.model = rowView.model;
+                const Cell = column.get('cell');
+                return new Cell(cellOptions);
+            };
+        }
+
+        ShoppingListRow.__super__.initialize.call(this, options);
+    },
+
     filterer(item) {
-        if (!this.model.get('notificationCell')) {
+        if (!this.model.get('renderColumnName')) {
             return true;
         }
 
-        return this.model.get('notificationCell') === item.get('name');
+        return this.model.get('renderColumnName') === item.get('name');
     },
 
     filterCallback(view, included) {
         const {$el} = view;
-
-        if (view.model.get('isMessage')) {
+        if (view.model.get('renderColumnName')) {
             if (included) {
                 const visibleColumns = this.columns.filter(column => column.get('renderable'));
                 const start = visibleColumns.findIndex(
-                    column => column.get('name') === view.model.get('notificationCell')
+                    column => column.get('name') === view.model.get('renderColumnName')
                 );
 
                 $el.attr('colspan', visibleColumns.length - start);
@@ -36,11 +59,11 @@ const ShoppingListRow = Row.extend({
         const subviews = [...this.subviews];
         subviews.pop();
 
-        const messageCell = subviews.find(
-            subview => subview.column.get('name') === this.model.get('notificationCell')
-        );
+        const columnName = this.model.get('definitionColumnName') || this.model.get('renderColumnName');
 
-        if (messageCell) {
+        const cellView = subviews.find(subview => subview.column.get('name') === columnName);
+
+        if (cellView) {
             return;
         }
 

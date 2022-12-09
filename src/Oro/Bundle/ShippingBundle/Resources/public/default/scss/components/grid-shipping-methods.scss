@@ -1,0 +1,15 @@
+/* @theme: default; */
+
+.grid-shipping-methods {
+    display: flex;
+    flex-direction: column;
+    row-gap: $offset-y-s;
+
+    @include list-normalize();
+}
+
+@include breakpoint('mobile-landscape') {
+    .grid-shipping-methods {
+        padding-left: $responsive-shopping-body-cell-offset-x-mobile;
+    }
+}

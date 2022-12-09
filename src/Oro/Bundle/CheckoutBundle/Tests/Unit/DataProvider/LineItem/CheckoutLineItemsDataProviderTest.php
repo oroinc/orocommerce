@@ -79,6 +79,7 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
      * @param bool $isPriceFixed
      *
      * @dataProvider priceDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testGetData(Price $price = null, $isPriceFixed = false)
     {
@@ -119,6 +120,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'price' => $price,
                 'fromExternalSource' => true,
                 'comment' => 'line item comment',
+                'shippingMethod' => 'flat_rate_1',
+                'shippingMethodType' => 'primary',
+                'shippingEstimateAmount' => 5.0,
             ]
         );
         $lineItem1->setPriceFixed($isPriceFixed)
@@ -135,6 +139,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'price' => $price,
                 'fromExternalSource' => true,
                 'comment' => 'line item comment',
+                'shippingMethod' => 'flat_rate_2',
+                'shippingMethodType' => 'primary',
+                'shippingEstimateAmount' => 3.0,
             ]
         );
         $lineItem2->setPriceFixed($isPriceFixed)
@@ -159,6 +166,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                     'productUnitCode' => 'code',
                     'price' => $expectedPrice,
                     'fromExternalSource' => true,
+                    'shippingMethod' => 'flat_rate_1',
+                    'shippingMethodType' => 'primary',
+                    'shippingEstimateAmount' => 5.0,
                 ],
                 [
                     'product' => $product2,
@@ -171,6 +181,9 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                     'productUnitCode' => 'code',
                     'price' => $price,
                     'fromExternalSource' => true,
+                    'shippingMethod' => 'flat_rate_2',
+                    'shippingMethodType' => 'primary',
+                    'shippingEstimateAmount' => 3.0,
                 ],
             ],
             $this->provider->getData($checkout)
@@ -194,7 +207,10 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'productUnit' => null,
                 'productUnitCode' => null,
                 'price' => null,
-                'fromExternalSource' => false
+                'fromExternalSource' => false,
+                'shippingMethod' => null,
+                'shippingMethodType' => null,
+                'shippingEstimateAmount' => null,
             ]
         ];
         $this->assertEquals($expected, $this->provider->getData($checkout));
@@ -257,7 +273,10 @@ class CheckoutLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
                 'parentProduct' => null,
                 'freeFormProduct' => null,
                 'fromExternalSource' => false,
-                'price' => null
+                'price' => null,
+                'shippingMethod' => null,
+                'shippingMethodType' => null,
+                'shippingEstimateAmount' => null,
             ]
         ];
 

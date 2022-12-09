@@ -56,6 +56,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ['totalDiscounts', new Price()],
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
+            ['parent', new Order],
         ];
 
         $order = new Order();
@@ -63,6 +64,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
         $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
         $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
+        $this->assertPropertyCollection($order, 'subOrders', new Order());
     }
 
     public function testSourceDocument()

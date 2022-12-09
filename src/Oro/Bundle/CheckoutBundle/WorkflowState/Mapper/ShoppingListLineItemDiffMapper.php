@@ -101,6 +101,14 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
      */
     private function getCheckoutConfig(mixed $entity): ?bool
     {
+        /**
+         * Ignore "new_checkout_shopping_list_item_changed" config option if multi shipping functionality is enabled and
+         * perform line items changes comparison.
+         */
+        if ($this->isMultiShippingEnabled()) {
+            return true;
+        }
+
         $originalScopeId = $this->configManager->getScopeId();
         if ($entity instanceof Checkout) {
             $organization = $entity->getOrganization();
@@ -110,5 +118,10 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
         $this->configManager->setScopeId($originalScopeId);
 
         return $config;
+    }
+
+    private function isMultiShippingEnabled(): bool
+    {
+        return (bool)$this->configManager->get('oro_checkout.enable_shipping_method_selection_per_line_item');
     }
 }

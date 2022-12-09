@@ -22,6 +22,11 @@ workflows:
             payment_error:
                 step_to: enter_payment
 
+            paid_partially:
+                step_to: enter_payment
+                transition_definition: paid_partially_definition
+                is_hidden: true
+
             continue_to_billing_address_as_guest:
                 step_to: enter_billing_address
                 transition_definition: continue_to_billing_address_as_guest_definition
@@ -152,6 +157,11 @@ workflows:
                     page_component_module: 'orocheckout/js/app/components/shipping-transition-button-component'
                 form_options:
                     form_init:
+                        - '@call_service_method':
+                            service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
+                            method: getCheckoutLineItemsShippingData
+                            method_parameters: [$checkout]
+                            attribute: $line_items_shipping_methods
                         - '@run_action_group':
                             action_group: update_checkout_state
                             parameters_mapping:
@@ -169,6 +179,10 @@ workflows:
                             options:
                                 constraints:
                                     - NotBlank: ~
+                        line_items_shipping_methods:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemShippingMethodsType
+                            options:
+                                checkout: $checkout
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 

@@ -180,10 +180,32 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->configManager->expects($this->once())
             ->method('setScopeIdFromEntity')
             ->with($organization);
+
         $this->getConfigManagerReturn(null);
+
         $this->configManager->expects($this->once())
             ->method('setScopeId')
             ->with(1);
+
+        $this->assertTrue($this->mapper->isStatesEqual($this->checkout, $state1, $state2));
+    }
+
+    public function testIsStatesEqualIfMultiShippingEnabled(): void
+    {
+        $state1 = [
+            'sSKU123-uset-q1-pUSD120-w10kg-d1x1x1cm-iin_stock',
+            'sSKU123-uitem-q1-pUSD10-w1kg-d1x1x1cm-iin_stock'
+        ];
+
+        $state2 = [
+            'sSKU123-uset-q1-pUSD120-w10kg-d1x1x1cm-iin_stock',
+            'sSKU123-uitem-q1-pUSD10-w1kg-d1x1x1cm-iin_stock'
+        ];
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_checkout.enable_shipping_method_selection_per_line_item')
+            ->willReturn(true);
 
         $this->assertTrue($this->mapper->isStatesEqual($this->checkout, $state1, $state2));
     }
@@ -350,9 +372,11 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     private function getConfigManagerReturn(?bool $return): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_checkout.new_checkout_shopping_list_item_changed')
-            ->willReturn($return);
+            ->willReturnMap([
+                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, false],
+                ['oro_checkout.new_checkout_shopping_list_item_changed', false, false, null, $return]
+            ]);
     }
 }
