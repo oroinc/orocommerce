@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -24,8 +25,13 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class CheckoutLineItem implements PriceAwareInterface, PriceTypeAwareInterface, ProductLineItemInterface
+class CheckoutLineItem implements
+    PriceAwareInterface,
+    PriceTypeAwareInterface,
+    ProductLineItemInterface,
+    ShippingAwareInterface
 {
     /**
      * @var int
@@ -144,6 +150,27 @@ class CheckoutLineItem implements PriceAwareInterface, PriceTypeAwareInterface, 
      * @ORM\Column(name="is_price_fixed", type="boolean")
      */
     protected $priceFixed = false;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method", type="string", nullable=true)
+     */
+    protected $shippingMethod;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
+     */
+    protected $shippingMethodType;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     */
+    protected $shippingEstimateAmount;
 
     /**
      * @return string
@@ -493,6 +520,77 @@ class CheckoutLineItem implements PriceAwareInterface, PriceTypeAwareInterface, 
     }
 
     /**
+     * @return null|string
+     */
+    public function getShippingMethod(): ?string
+    {
+        return $this->shippingMethod;
+    }
+
+    /**
+     * @param null|string $shippingMethod
+     * @return CheckoutLineItem
+     */
+    public function setShippingMethod(?string $shippingMethod): CheckoutLineItem
+    {
+        $this->shippingMethod = $shippingMethod;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShippingMethodType(): ?string
+    {
+        return $this->shippingMethodType;
+    }
+
+    /**
+     * @param null|string $shippingMethodType
+     * @return CheckoutLineItem
+     */
+    public function setShippingMethodType(?string $shippingMethodType): CheckoutLineItem
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getShippingEstimateAmount(): ?float
+    {
+        return $this->shippingEstimateAmount;
+    }
+
+    /**
+     * @param null|float $shippingEstimateAmount
+     * @return CheckoutLineItem
+     */
+    public function setShippingEstimateAmount(?float $shippingEstimateAmount): CheckoutLineItem
+    {
+        $this->shippingEstimateAmount = $shippingEstimateAmount;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getShippingCost(): ?Price
+    {
+        $amount = $this->shippingEstimateAmount;
+
+        if (null !== $amount && $this->currency) {
+            return Price::create($amount, $this->currency);
+        }
+
+        return null;
+    }
+
+    /**
      * @ORM\PostLoad
      */
     public function createPrice()
@@ -527,5 +625,10 @@ class CheckoutLineItem implements PriceAwareInterface, PriceTypeAwareInterface, 
         if ($this->getProductUnit()) {
             $this->productUnitCode = $this->getProductUnit()->getCode();
         }
+    }
+
+    public function hasShippingMethodData(): bool
+    {
+        return (bool)$this->getShippingMethod() && (bool)$this->getShippingMethodType();
     }
 }

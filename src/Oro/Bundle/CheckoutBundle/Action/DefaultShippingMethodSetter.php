@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Action;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
+/**
+ * Set default shipping method and shipping cost for checkout.
+ */
 class DefaultShippingMethodSetter
 {
     /**

@@ -11,8 +11,9 @@ const messageModel = item => {
     const messageItem = {
         ...item,
         id: item.id + _.uniqueId('-bind-'),
-        notificationCell: 'item',
-        row_class_name: item.row_class_name + ' notification-row',
+        renderColumnName: 'item',
+        row_class_name: item.row_class_name + ' extension-row notification-row',
+        _templateKey: 'message',
         isMessage: true,
         isAuxiliary: true,
         row_attributes: {
@@ -137,11 +138,22 @@ export const flattenData = data => {
 
 const shoppingListFlatDataBuilder = {
     processDatagridOptions(deferred, options) {
+        const {
+            parseResponseModels,
+            parseResponseOptions
+        } = options.metadata.options;
+
         Object.assign(options.metadata.options, {
             parseResponseModels: resp => {
+                if (parseResponseModels) {
+                    resp = parseResponseModels(resp);
+                }
                 return 'data' in resp ? flattenData(resp.data) : resp;
             },
             parseResponseOptions: (resp = {}) => {
+                if (parseResponseOptions) {
+                    resp = parseResponseOptions(resp);
+                }
                 const {options = {}} = resp;
                 return {
                     reset: false,
@@ -164,14 +176,13 @@ const shoppingListFlatDataBuilder = {
             rowView: ShoppingListRow
         };
 
-        deferred.resolve();
-        return deferred;
+        return deferred.resolve();
     },
 
     /**
      * Init() function is required
      */
-    init: (deferred, options) => {
+    init(deferred, options) {
         options.gridPromise.done(grid => {
             grid.collection.on('beforeRemove', (modelToRemove, collection, options) => {
                 if (modelToRemove.get('_isVariant')) {

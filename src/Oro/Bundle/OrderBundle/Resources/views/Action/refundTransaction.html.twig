@@ -1,0 +1,8 @@
+{% extends '@OroAction/Operation/form.html.twig' %}
+
+{% block widget_content_inner %}
+    <div class="alert alert-info" role="alert">
+        {{ 'oro.order.payment_transaction.refund.message'|trans({'%amount%': context.amountWithCurrency}) }}
+    </div>
+    {{ parent() }}
+{% endblock %}

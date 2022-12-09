@@ -78,6 +78,14 @@
         'subblocks': [{'data' : [dataGrid.renderGrid('order-line-items-grid', { order_id: entity.id })], spanClass: 'order-line-items'}]
     }]) %}
 
+    {% if entity.subOrders is not empty %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.sections.sub_orders'|trans,
+            'priority': -150,
+            'subblocks': [{'data' : [dataGrid.renderGrid('suborders-grid', { order_id: entity.id })], spanClass: 'order-suborders'}]
+        }]) %}
+    {% endif %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.shipping_information'|trans,
         'priority': -100,
@@ -104,8 +112,20 @@
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.sections.payment_history'|trans,
             'priority': -20,
-            'subblocks': [{'data' : [dataGrid.renderGrid('order-payment-transactions-grid', { order_id: entity.id })]}]
+            'subblocks': [{'data' : [
+                dataGrid.renderGrid('order-payment-transactions-grid', { order_id: entity.id })
+            ]}]
         }]) %}
+
+        {% if entity.subOrders is not empty %}
+            {% set dataBlocks = dataBlocks|merge([{
+                'title': 'oro.order.sections.sub_orders_payment_history'|trans,
+                'priority': -20,
+                'subblocks': [{'data' : [
+                    oro_order_get_template_content('@OroOrder/Order/Datagrid/subOrderPaymentTransactions.html.twig', {entity: entity})
+                ]}]
+            }]) %}
+        {% endif %}
     {% endif %}
 
     {% set id = 'order-view' %}

@@ -66,6 +66,9 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
                     'freeFormProduct' => $lineItem->getFreeFormProduct(),
                     'fromExternalSource' => $lineItem->isFromExternalSource(),
                     'price' => $lineItem->getPrice() ?: ($lineItemsPrices[$productId][$unitCode] ?? null),
+                    'shippingMethod' => $lineItem->getShippingMethod(),
+                    'shippingMethodType' => $lineItem->getShippingMethodType(),
+                    'shippingEstimateAmount' => $lineItem->getShippingEstimateAmount(),
                 ];
             }
         }

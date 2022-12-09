@@ -42,6 +42,13 @@
             {{ UI.renderProperty('oro.order.internal_status.label'|trans, order.internalStatus.name|default('')) }}
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
             {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}
+
+            {% if order.parent %}
+                {{ UI.renderHtmlProperty(
+                    'oro.order.parent.label'|trans,
+                    UI.entityViewLink(order.parent, '#' ~ order.parent.identifier, 'oro_order_view')
+                ) }}
+            {% endif %}
         </div>
 
         <div class="responsive-block">

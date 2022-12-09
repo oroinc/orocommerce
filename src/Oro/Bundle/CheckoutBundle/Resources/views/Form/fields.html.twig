@@ -1,0 +1,21 @@
+{% block _multishipping_options_oro_checkout___create_multishipping_integration_value_row %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% if not multi_shipping_integration_exists() %}
+        <div class="control-group">
+            <div class="controls" {{ UI.attributes(attr) }}>
+                <div class="container-fluid">
+                    <p class="warning">{{ 'oro.checkout.system_configuration.fields.create_multi_shipping_integration.description'|trans }}</p>
+                </div>
+                <span class="form-text">
+                    <button class="btn btn-primary"
+                        data-role="create-multishipping-integration"
+                        data-page-component-module="oroshipping/js/app/components/create-multishipping-integration-component"
+                        {% if not is_granted('oro_integration_create') %}
+                            disabled = "disabled"
+                        {% endif %}
+                    >{{ 'oro.checkout.system_configuration.fields.create_multi_shipping_integration.label'|trans }}</button>
+                </span>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

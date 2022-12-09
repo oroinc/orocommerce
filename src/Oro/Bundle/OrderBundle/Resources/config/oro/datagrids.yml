@@ -203,6 +203,7 @@ datagrids:
                     - SUM(appliedDiscount.amount) as promotionalDiscountsAmount
                     - internalStatus.name as internalStatusName
                     - internalStatus.id as internalStatusId
+                    - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 'oro.order.order_type.primary_order' ELSE 'oro.order.order_type.sub_order' END as orderType
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
@@ -219,6 +220,12 @@ datagrids:
                 label:         oro.order.identifier.label
             poNumber:
                 label:         oro.order.po_number.label
+            orderType:
+                label: oro.order.order_type.label
+                type: twig
+                frontend_type: html
+                template: '@OroOrder/Order/Datagrid/orderType.html.twig'
+                renderable: false
             shipUntil:
                 label:         oro.order.ship_until.label
                 frontend_type: date
@@ -292,6 +299,8 @@ datagrids:
                     data_name: order1.identifier
                 poNumber:
                     data_name: order1.poNumber
+                orderType:
+                    data_name: orderType
                 shipUntil:
                     data_name: order1.shipUntil
                 currency:
@@ -324,6 +333,15 @@ datagrids:
                 poNumber:
                     type:      string
                     data_name: order1.poNumber
+                orderType:
+                    type:      single_choice
+                    data_name: orderType
+                    enabled:   false
+                    options:
+                        field_options:
+                            choices:
+                                oro.order.order_type.primary_order: oro.order.order_type.primary_order
+                                oro.order.order_type.sub_order: oro.order.order_type.sub_order
                 shipUntil:
                     type:      date
                     data_name: order1.shipUntil
@@ -379,6 +397,17 @@ datagrids:
                 acl_resource:  oro_order_view
 
         views_list: '@oro_order.datagrid.orders_view_list'
+
+    suborders-grid:
+        extends: orders-grid
+        source:
+            query:
+                where:
+                    and:
+                        - order1.parent = :order_id
+            bind_parameters:
+                - order_id
+        views_list: ~
 
     embed-orders-grid:
         extends: base-orders-grid
@@ -639,6 +668,9 @@ datagrids:
                     - order_item.comment
                     - order_item.productName
                     - order_item.productVariantFields
+                    - order_item.shippingMethod
+                    - order_item.shippingMethodType
+                    - order_item.shippingEstimateAmount
                 from:
                     - { table: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', alias: order_item }
                 join:
@@ -679,6 +711,18 @@ datagrids:
                 frontend_type: date
             comment:
                 label: oro.order.orderlineitem.comment.label
+            shippingMethod:
+                label:         oro.order.datagrid.orderlineitems.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
+                renderable:    false
+            shippingEstimateAmount:
+                label:         oro.order.datagrid.orderlineitems.shipping_cost.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/lineItemShippingCost.html.twig'
+                renderable:    false
 
     order-line-items-grid-frontend:
         extends: base-order-line-items-grid

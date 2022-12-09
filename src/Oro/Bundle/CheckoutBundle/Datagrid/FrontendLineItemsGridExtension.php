@@ -127,6 +127,14 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $this->parameters->set('unacceptable_ids', $ids);
+
+        if ($this->parameters->get('acceptable_ids')) {
+            $config->offsetAddToArrayByPath(
+                OrmQueryConfiguration::WHERE_AND_PATH,
+                ['lineItem.id IN (:acceptable_ids)']
+            );
+            $config->offsetAddToArrayByPath('[source][bind_parameters]', ['acceptable_ids']);
+        }
     }
 
     private function getDataKey(ProductLineItemInterface $item): string

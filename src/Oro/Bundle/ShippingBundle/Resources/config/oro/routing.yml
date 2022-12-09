@@ -8,6 +8,11 @@ oro_shipping_product_shipping_options_ajax:
     type:         annotation
     prefix:       /shipping/product-shipping
 
+oro_shipping_multishipping:
+    resource:     "@OroShippingBundle/Controller/MultiShippingController.php"
+    type:         annotation
+    prefix:       /multishipping
+
 
 #
 # OLD REST API ROUTES

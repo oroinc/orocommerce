@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -59,9 +60,18 @@ class AjaxCheckoutController extends AbstractController
             return $checkout;
         }
 
-        return $checkout
+        if (isset($workflowTransitionData['line_items_shipping_methods'])) {
+            $lineItemsShippingMethods = json_decode($workflowTransitionData['line_items_shipping_methods'], true);
+
+            $this->container->get(CheckoutLineItemsShippingManager::class)
+                ->updateLineItemsShippingMethods($lineItemsShippingMethods, $checkout);
+        }
+
+        $checkout
             ->setShippingMethod($workflowTransitionData['shipping_method'])
             ->setShippingMethodType($workflowTransitionData['shipping_method_type']);
+
+        return $checkout;
     }
 
     /**
@@ -73,6 +83,7 @@ class AjaxCheckoutController extends AbstractController
             parent::getSubscribedServices(),
             [
                 CheckoutTotalsProvider::class,
+                CheckoutLineItemsShippingManager::class
             ]
         );
     }

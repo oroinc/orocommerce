@@ -152,6 +152,7 @@ oro:
             total_qty: Total QTY
             note: Note
             notes: Notes
+            shipping_methods: Shipping
 
         title:
             step.label: '%step_label%'
@@ -248,6 +249,8 @@ oro:
             payment_has_not_been_processed.message: |-
                 Payment has not been processed. If you have already submitted this order and believe it is a mistake,
                 please contact us for assistance. Otherwise, please click on "Submit" to proceed with the order submission.
+            payment_has_not_fully_been_processed.message: |-
+                We have not been able to place one or more authorization holds on the provided payment card. Order <a href="%orderViewLink%" target="_blank">#%orderIdentifier%</a> has been created and successfully processed items have been removed. To finish the order submission please review the remaining unprocessed items and the payment information and try again, or contact us at 1-800-555-5555.
             payment_method_is_not_applicable.message: |
                 The selected payment method is not available.
                 Please return to the payment method selection step and select a different one.
@@ -295,6 +298,26 @@ oro:
                 checkout_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'Set the value to be used as the implied maximum number of checkout line items to be displayed per page. If the number of checkout line items exceeds this limit, the Show All Items button hides, and this number is displayed as the maximum pager value.'
+                enable_line_item_grouping:
+                    label: 'Enable grouping of line items during checkout'
+                    tooltip: 'When enabled, line items during checkout are displayed in groups with separate subtotals. This may affect shipping rules and discount calculations (see other configuration options).'
+                group_line_items_by:
+                    label: 'Group line items by'
+                create_suborders_for_each_group:
+                    label: 'Create Sub-Orders for each group'
+                    tooltip: 'When enabled, in addition to the main order, the system will create additional sub-orders for each group of line items.'
+                show_suborders_in_order_history:
+                    label: 'Show Sub-Orders in order history'
+                    tooltip: 'When enabled, customers can see only sub-orders in their order history. Primary orders will be hidden.'
+                show_main_orders_in_order_history:
+                    label: 'Show Main Orders in order history'
+                    tooltip: 'When enabled, customers will be able to see both the primary order and its sub-orders in their order history.'
+                enable_shipping_method_selection_per_line_item:
+                    label: 'Enable shipping method selection per line item'
+                    tooltip: 'When enabled, customers are allowed to select different shipping methods per line item. Please note that the shipping rules are calculated and applied separately for each line item. For example, subtotal, shipment weight, etc., will represent a single line item for which the shipping rules are calculated.'
+                create_multi_shipping_integration:
+                    label: 'Create Multi Shipping Integration'
+                    description: 'Make sure to create Multi Shipping integration when enabling Shipping method selection per line item, otherwise it will break the checkout flow.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'
@@ -302,6 +325,10 @@ oro:
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
                 customer_users_registration.title: 'Customer Users Registration'
                 checkout_options.title: 'Checkout Options'
+                multishipping_options.title: 'Multi Shipping Options'
+                multishipping_general_options:
+                    title: 'General Options'
+                multishipping_line_items_grouping_options.title: 'Line Items Grouping Options'
 
         privilege:
             category.checkout.label: 'Checkout'
@@ -332,6 +359,8 @@ oro:
             payment:
                   error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
                   error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
-
         subtotals:
             checkout_subtotal.label: Subtotal
+        line_items_grouping:
+            other_items_group:
+                title: Other Items

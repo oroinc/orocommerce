@@ -147,6 +147,10 @@ api:
                 productUnitCode:
                     form_options:
                         mapped: false
+                shippingMethod:
+                    exclude: true
+                shippingMethodType:
+                    exclude: true
             actions:
                 create:
                     status_codes:

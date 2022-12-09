@@ -1,0 +1,38 @@
+/* @theme: default; */
+
+.responsive-checkout-grid {
+    .grid-body-cell-shippingMethods {
+        width: $grid-body-cell-shipping-methods-width;
+    }
+}
+
+@include breakpoint('tablet') {
+    .responsive-checkout-grid {
+        .grid-body {
+            .group-row-has-children .grid-body-cell {
+                // reduce offset between rows
+                padding-bottom: $responsive-shopping-extension-row-offset-top-mobile;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .responsive-checkout-grid {
+        .grid-header-cell-shippingMethods {
+            display: none;
+        }
+
+        .grid-body {
+            .group-row-has-children {
+                // reduce offset between rows
+                padding-bottom: $responsive-shopping-extension-row-offset-top-mobile;
+
+                .grid-body-cell:last-child {
+                    // reduce offset between rows
+                    padding-bottom: $responsive-shopping-extension-row-offset-top-mobile;
+                }
+            }
+        }
+    }
+}

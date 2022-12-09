@@ -17,6 +17,7 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
     {
         /** @var PaymentTransaction $authorizationPaymentTransaction */
         $authorizationPaymentTransaction = $data['options']['paymentTransaction'];
+        /** @var PaymentTransaction $cancelPaymentTransaction */
         $cancelPaymentTransaction = $data['cancelPaymentTransaction'];
         $options = $data['options'];
         $context = [];
@@ -30,10 +31,10 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
             ->with(PaymentMethodInterface::CANCEL, $authorizationPaymentTransaction)
             ->willReturn($cancelPaymentTransaction);
 
-        $responseValue = $this->returnValue($data['response']);
-
         if ($data['response'] instanceof \Exception) {
             $responseValue = $this->throwException($data['response']);
+        } else {
+            $responseValue = $this->returnValue($data['response']);
         }
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
@@ -65,20 +66,17 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
 
         $this->action->initialize($options);
         $this->action->execute($context);
+        $this->assertEquals(!$cancelPaymentTransaction->isSuccessful(), $authorizationPaymentTransaction->isActive());
     }
 
     public function executeDataProvider(): array
     {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
-
         return [
             'default' => [
                 'data' => [
-                    'cancelPaymentTransaction' => $paymentTransaction
-                        ->setAction(PaymentMethodInterface::CANCEL),
+                    'cancelPaymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::CANCEL, true),
                     'options' => [
-                        'paymentTransaction' => $paymentTransaction,
+                        'paymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::AUTHORIZE, true),
                         'attribute' => new PropertyPath('test'),
                         'transactionOptions' => [
                             'testOption' => 'testOption',
@@ -88,18 +86,17 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'transaction' => null,
-                    'successful' => false,
-                    'message' => 'oro.payment.message.error',
+                    'successful' => true,
+                    'message' => null,
                     'testOption' => 'testOption',
                     'testResponse' => 'testResponse',
                 ],
             ],
             'throw exception' => [
                 'data' => [
-                    'cancelPaymentTransaction' => $paymentTransaction
-                        ->setAction(PaymentMethodInterface::CANCEL),
+                    'cancelPaymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::CANCEL, false),
                     'options' => [
-                        'paymentTransaction' => $paymentTransaction,
+                        'paymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::AUTHORIZE, true),
                         'attribute' => new PropertyPath('test'),
                         'transactionOptions' => [
                             'testOption' => 'testOption',
@@ -115,6 +112,18 @@ class PaymentTransactionCancelActionTest extends AbstractActionTest
                 ],
             ],
         ];
+    }
+
+    private function getPaymentTransaction(string $action, bool $successful): PaymentTransaction
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setAction($action);
+        $paymentTransaction->setAmount(100);
+        $paymentTransaction->setActive(true);
+        $paymentTransaction->setSuccessful($successful);
+        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
+
+        return $paymentTransaction;
     }
 
     /**
