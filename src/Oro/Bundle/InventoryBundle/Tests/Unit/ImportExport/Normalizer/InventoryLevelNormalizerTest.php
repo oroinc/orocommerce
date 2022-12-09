@@ -18,7 +18,7 @@ class InventoryLevelNormalizerTest extends BaseInventoryLevelNormalizerTestCase
             ->method('format')
             ->willReturn('testCode');
         $this->roundingService->expects($this->any())
-            ->method('roundQuantity')
+            ->method('round')
             ->willReturn($quantity);
 
         $results = $this->inventoryLevelNormalizer->normalize($object);
