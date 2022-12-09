@@ -133,6 +133,10 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     'value' => true,
                     'scope' => 'app'
                 ],
+                'enable_quick_order_form_optimized' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
                 'product_direct_url_prefix' => [
                     'value' => '',
                     'scope' => 'app'

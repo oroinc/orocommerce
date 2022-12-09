@@ -18,7 +18,9 @@ const QuickAddModel = BaseModel.extend({
             quantity_changed_manually: false,
 
             unit_label: null,
-            unit_placeholder: __('oro.product.frontend.quick_add.form.unit.default')
+            unit_placeholder: __('oro.product.frontend.quick_add.form.unit.default'),
+
+            errors: []
         };
     },
 
@@ -50,14 +52,28 @@ const QuickAddModel = BaseModel.extend({
 
     /**
      * Getter for `display_name` attribute
-     *
+     * @deprecated
      * @return {string|*}
      */
     get_display_name() {
+        return this.get_product();
+    },
+
+    /**
+     * Getter for `product` attribute
+     *
+     * @return {string|*}
+     */
+    get_product() {
         const sku = this.get('sku');
         const productName = this.get('product_name');
 
         return productName ? `${sku} - ${productName}` : sku;
+    },
+
+    toBackendJSON() {
+        const {sku, unit, quantity, _order: index} = this.getAttributes();
+        return {sku, unit, quantity, index};
     },
 
     onUnitsLoaded() {
@@ -95,7 +111,7 @@ const QuickAddModel = BaseModel.extend({
         this.set(defaults);
     },
 
-    isValidUnit: function() {
+    isValidUnit() {
         return !this.get('units_loaded') || _.has(this.get('product_units'), this.get('unit'));
     }
 });

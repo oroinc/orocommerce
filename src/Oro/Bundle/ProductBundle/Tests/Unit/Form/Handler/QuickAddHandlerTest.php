@@ -16,11 +16,8 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Component\Testing\TempDirExtension;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -33,53 +30,89 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use TempDirExtension;
 
-    private const PRODUCT_CLASS = Product::class;
+    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
-    private const COMPONENT_NAME = 'component';
+    const COMPONENT_NAME = 'component';
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface */
-    private $router;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface
+     */
+    protected $translator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductFormProvider */
-    private $productFormProvider;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|UrlGeneratorInterface
+     */
+    protected $router;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuickAddRowCollectionBuilder */
-    private $quickAddRowCollectionBuilder;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|ProductFormProvider
+     */
+    protected $productFormProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry */
-    private $componentRegistry;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|QuickAddRowCollectionBuilder
+     */
+    protected $quickAddRowCollectionBuilder;
 
-    /** @var QuickAddHandler */
-    private $handler;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorRegistry
+     */
+    protected $componentRegistry;
 
-    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $validator;
+    /**
+     * @var QuickAddHandler
+     */
+    protected $handler;
 
-    /** @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    /**
+     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $validator;
+
+    /**
+     * @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $eventDispatcher;
 
     protected function setUp(): void
     {
-        $this->productFormProvider = $this->createMock(ProductFormProvider::class);
-        $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);
-        $this->router = $this->createMock(UrlGeneratorInterface::class);
-        $this->componentRegistry = $this->createMock(ComponentProcessorRegistry::class);
-        $this->validator = $this->createMock(ValidatorInterface::class);
-        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-
-        $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->any())
+        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
+        $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(function ($message) {
-                return $message . '.trans';
-            });
+            ->willReturnCallback(
+                function ($message) {
+                    return $message.'.trans';
+                }
+            );
+
+        $this->productFormProvider = $this->getMockBuilder(
+            'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->quickAddRowCollectionBuilder = $this->getMockBuilder(
+            'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
+        $this->componentRegistry = $this
+            ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->validator = $this->createMock(ValidatorInterface::class);
+
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $this->handler = new QuickAddHandler(
             $this->productFormProvider,
             $this->quickAddRowCollectionBuilder,
             $this->componentRegistry,
             $this->router,
-            $translator,
+            $this->translator,
             $this->validator,
             new ProductsGrouperFactory(),
             $this->eventDispatcher
@@ -98,7 +131,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
         $request = Request::create('/post/no-processor', 'POST');
         $request->setSession($this->getSessionWithErrorMessage());
 
-        $form = $this->createMock(FormInterface::class);
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('handleRequest')
             ->with($request);
@@ -123,7 +156,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
         $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
         $request->setSession($this->getSessionWithErrorMessage());
 
-        $form = $this->createMock(FormInterface::class);
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('handleRequest')
             ->with($request);
@@ -166,7 +199,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
         $product = new Product();
         $product->setSku('SKU1');
 
-        $form = $this->createMock(FormInterface::class);
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('handleRequest')
             ->with($request);
@@ -189,7 +222,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturn($form);
 
-        $collection = $this->createMock(QuickAddRowCollection::class);
+        $collection = $this->createMock('Oro\Bundle\ProductBundle\Model\QuickAddRowCollection');
         $collection->expects($this->once())
             ->method('getProducts')
             ->willReturn(['SKU1' => $product]);
@@ -230,12 +263,12 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $productsForm = $this->createMock(FormInterface::class);
+        $productsForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $productsForm->expects($this->once())
             ->method('getData')
             ->willReturn($productRows);
 
-        $mainForm = $this->createMock(FormInterface::class);
+        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->once())
             ->method('handleRequest')
             ->with($request);
@@ -250,7 +283,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(QuickAddType::PRODUCTS_FIELD_NAME)
             ->willReturn($productsForm);
 
-        $this->productFormProvider->expects($this->once())
+        $this->productFormProvider->expects($this->at(0))
             ->method('getQuickAddForm')
             ->with(
                 [],
@@ -284,7 +317,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
 
         /** @var RedirectResponse $response */
         $response = $this->handler->process($request, 'reload');
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
         $this->assertEquals('/reload', $response->getTargetUrl());
     }
 
@@ -316,12 +349,12 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        $productsForm = $this->createMock(FormInterface::class);
+        $productsForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $productsForm->expects($this->once())
             ->method('getData')
             ->willReturn($productRows);
 
-        $form = $this->createMock(FormInterface::class);
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('handleRequest')
             ->with($request);
@@ -373,13 +406,13 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
     public function testProcessImport()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $form = $this->getMockForAbstractClass(FormInterface::class);
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
 
-        $this->productFormProvider->expects($this->once())
+        $this->productFormProvider->expects($this->at(0))
             ->method('getQuickAddImportForm')
             ->willReturn($form);
 
-        $this->productFormProvider->expects($this->once())
+        $this->productFormProvider->expects($this->at(1))
             ->method('getQuickAddForm')
             ->willReturn($form);
 
@@ -394,8 +427,8 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $fileForm = $this->getMockForAbstractClass(FormInterface::class);
-        $file = $this->getMockBuilder(UploadedFile::class)
+        $fileForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
+        $file = $this->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
             ->enableOriginalConstructor()
             ->setConstructorArgs([tempnam($this->getTempDir('quick_add_handler'), ''), 'dummy'])
             ->getMock();
@@ -421,7 +454,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
     public function testProcessImportNotValid()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $form = $this->getMockForAbstractClass(FormInterface::class);
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddImportForm')
@@ -446,7 +479,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
     public function testProcessCopyPaste()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $form = $this->getMockForAbstractClass(FormInterface::class);
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddCopyPasteForm')
@@ -464,7 +497,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $text = 'SKU1, 1';
-        $copyPasteForm = $this->getMockForAbstractClass(FormInterface::class);
+        $copyPasteForm = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('get')
             ->with('copyPaste')
@@ -489,7 +522,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
     public function testProcessCopyPasteNotValid()
     {
         $request = Request::create('/post/valid-without-response', 'POST');
-        $form = $this->getMockForAbstractClass(FormInterface::class);
+        $form = $this->getMockForAbstractClass('Symfony\Component\Form\FormInterface');
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddCopyPasteForm')
@@ -513,14 +546,16 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject|Session
      */
-    private function getSessionWithErrorMessage()
+    protected function getSessionWithErrorMessage()
     {
-        $flashBag = $this->createMock(FlashBag::class);
+        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBag');
         $flashBag->expects($this->once())
             ->method('add')
             ->with('error', 'oro.product.frontend.quick_add.messages.component_not_accessible.trans');
 
-        $session = $this->createMock(Session::class);
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+            ->disableOriginalConstructor()
+            ->getMock();
         $session->expects($this->any())
             ->method('getFlashBag')
             ->willReturn($flashBag);
@@ -533,9 +568,9 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
      * @param bool $isAllowed
      * @return \PHPUnit\Framework\MockObject\MockObject|ComponentProcessorInterface
      */
-    private function getProcessor($isValidationRequired = true, $isAllowed = true)
+    protected function getProcessor($isValidationRequired = true, $isAllowed = true)
     {
-        $processor = $this->createMock(ComponentProcessorInterface::class);
+        $processor = $this->createMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
         $processor->expects($this->any())
             ->method('isValidationRequired')
             ->willReturn($isValidationRequired);
@@ -557,7 +592,7 @@ class QuickAddHandlerTest extends \PHPUnit\Framework\TestCase
      * @param string $unit
      * @return ProductRow
      */
-    private function createProductRow($sku, $qty, $unit)
+    protected function createProductRow($sku, $qty, $unit)
     {
         $row = new ProductRow();
         $row->productSku = $sku;

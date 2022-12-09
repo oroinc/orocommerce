@@ -1,4 +1,5 @@
 {% block _quick_add_subtotal_widget %}
+    {% use "@OroPricing/layouts/default/layout.html.twig" %}
     <div class="quick-order-add__col quick-order-add__subtotal"
          data-page-component-module="oroproduct/js/app/components/quick-add-row-extension-view-component"
          data-page-component-options="{{ {
@@ -13,5 +14,9 @@
     >
         <input type="text" class="input input--full quick-order-add__subtotal-input"
                data-name="field__product-subtotal" disabled aria-label="{{ 'oro.pricing.productprice.price_input.aria_label'|trans }}">
+        {# to prevent popover from instant initialization toggleAttrValue is set to empty string #}
+        {% set toggleAttrValue = '' %}
+        {% set productTierClass = productTierClass|default('btn btn--default btn--size-s product-tier-prices hidden') %}
+        {{ block('product_price_hint_trigger_info_js_widget') }}
     </div>
 {% endblock %}

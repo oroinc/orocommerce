@@ -143,6 +143,7 @@ oro:
             unit:
                 required: Unit is required
                 invalid: 'Unit {{ unit }} is invalid for this product'
+                invalid_for_sku: 'Unit ''{{ unit }}'' doesn''t exist for product {{ sku }}.'
             quantity:
                 required: Quantity is required
                 greaterThanZero: Quantity should be greater than 0

@@ -8,6 +8,9 @@ define(function(require) {
     const formToAjaxOptions = require('oroui/js/tools/form-to-ajax-options');
     const DialogWidget = require('oro/dialog-widget');
 
+    /**
+     * @deprecated widget
+     */
     const QuickAddImportWidget = DialogWidget.extend({
         /**
          * @inheritdoc
@@ -61,6 +64,7 @@ define(function(require) {
          *
          * @param {File} file
          * @param {jQuery} $form
+         * @deprecated methods is not in use
          */
         loadContentWithFileUpload: function(file, $form) {
             const arrayData = $form.formToArray();

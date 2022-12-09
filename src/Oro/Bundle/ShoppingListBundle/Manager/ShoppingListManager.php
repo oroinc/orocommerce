@@ -128,6 +128,8 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
+
         if ($flush) {
             $this->getEntityManager()->flush();
         }
@@ -147,6 +149,7 @@ class ShoppingListManager
             ->prepareLineItem($lineItem, $shoppingList)
             ->handleLineItem($lineItem, $shoppingList, $func);
 
+        $this->totalManager->recalculateTotals($shoppingList, false);
         $this->getEntityManager()->flush();
     }
 
@@ -217,8 +220,23 @@ class ShoppingListManager
     {
         $lineItemsCount = count($lineItems);
         for ($iteration = 1; $iteration <= $lineItemsCount; $iteration++) {
-            $flush = $iteration % $batchSize === 0 || $lineItemsCount === $iteration;
-            $this->addLineItem($lineItems[$iteration - 1], $shoppingList, $flush);
+            $lineItem = $lineItems[$iteration - 1];
+
+            $this
+                ->prepareLineItem($lineItem, $shoppingList)
+                ->handleLineItem($lineItem, $shoppingList, function (LineItem $duplicate) use ($lineItem) {
+                    $this->mergeLineItems($lineItem, $duplicate, false);
+                });
+
+            if ($lineItemsCount === $iteration) {
+                // Recalculates totals on last iteration.
+                $this->totalManager->recalculateTotals($shoppingList, false);
+            }
+
+            if ($iteration % $batchSize === 0 || $lineItemsCount === $iteration) {
+                // Flushes entity manager once batch is ready or it the last iteration.
+                $this->getEntityManager()->flush();
+            }
         }
 
         return $lineItemsCount;
@@ -341,8 +359,6 @@ class ShoppingListManager
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
-
-        $this->totalManager->recalculateTotals($shoppingList, false);
 
         return $this;
     }
