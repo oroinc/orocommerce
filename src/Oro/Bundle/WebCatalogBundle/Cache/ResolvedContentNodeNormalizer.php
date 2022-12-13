@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Cache;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 
 /**
@@ -17,9 +17,12 @@ class ResolvedContentNodeNormalizer
 {
     private DoctrineHelper $doctrineHelper;
 
-    public function __construct(DoctrineHelper $doctrineHelper)
+    private ResolvedContentNodeFactory $resolvedContentNodeFactory;
+
+    public function __construct(DoctrineHelper $doctrineHelper, ResolvedContentNodeFactory $resolvedContentNodeFactory)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->resolvedContentNodeFactory = $resolvedContentNodeFactory;
     }
 
     /**
@@ -34,7 +37,7 @@ class ResolvedContentNodeNormalizer
             'id' => $resolvedNode->getId(),
             'priority' => $resolvedNode->getPriority(),
             'identifier' => $resolvedNode->getIdentifier(),
-            'resolveVariantTitle' => $resolvedNode->isRewriteVariantTitle(),
+            'rewriteVariantTitle' => $resolvedNode->isRewriteVariantTitle(),
             'titles' => $this->normalizeLocalizedValuesArray($resolvedNode->getTitles()),
             'contentVariant' => $this->normalizeResolvedContentVariant($resolvedNode->getResolvedContentVariant()),
             'childNodes' => $this->normalizeArray($resolvedNode->getChildNodes()),
@@ -63,28 +66,7 @@ class ResolvedContentNodeNormalizer
             );
         }
 
-        $this->resolveReferences($data);
-
-        $resolvedVariant = new ResolvedContentVariant();
-        $resolvedVariant->setData($data['contentVariant']['data'] ?? []);
-
-        foreach ($data['contentVariant']['localizedUrls'] ?? [] as $localizedUrl) {
-            $resolvedVariant->addLocalizedUrl($this->getLocalizedValue($localizedUrl));
-        }
-
-        $titles = new ArrayCollection();
-        foreach ($data['titles'] ?? [] as $title) {
-            $titles->add($this->getLocalizedValue($title));
-        }
-
-        $resolvedNode = new ResolvedContentNode(
-            $data['id'],
-            $data['identifier'],
-            $data['priority'] ?? 0,
-            $titles,
-            $resolvedVariant,
-            $data['resolveVariantTitle'] ?? true
-        );
+        $resolvedNode = $this->resolvedContentNodeFactory->createFromArray($data);
 
         if ($treeDepth === 0) {
             return $resolvedNode;
@@ -99,39 +81,6 @@ class ResolvedContentNodeNormalizer
         return $resolvedNode;
     }
 
-    private function resolveReferences(array &$data): void
-    {
-        foreach ($data as $key => &$value) {
-            if ($key === 'childNodes') {
-                continue;
-            }
-
-            if (is_array($value)) {
-                if (array_key_exists('entity_class', $value)) {
-                    $value = $this->doctrineHelper->getEntityReference($value['entity_class'], $value['entity_id']);
-                } else {
-                    $this->resolveReferences($value);
-                }
-            }
-        }
-    }
-
-    private function getLocalizedValue(array $localizedData): LocalizedFallbackValue
-    {
-        if (!isset($localizedData['string'])) {
-            throw new InvalidArgumentException(
-                'Element "string" is required for the denormalization of title for ResolvedContentNode'
-            );
-        }
-
-        $value = new LocalizedFallbackValue();
-        $value->setString($localizedData['string']);
-        $value->setLocalization($localizedData['localization'] ?? null);
-        $value->setFallback($localizedData['fallback'] ?? null);
-
-        return $value;
-    }
-
     private function normalizeLocalizedFallbackValue(LocalizedFallbackValue $value): array
     {
         return [
@@ -143,10 +92,17 @@ class ResolvedContentNodeNormalizer
 
     private function normalizeResolvedContentVariant(ResolvedContentVariant $resolvedVariant): array
     {
-        return [
-            'data' => $this->normalizeArray($resolvedVariant->getData(), true),
-            'localizedUrls' => $this->normalizeArray($resolvedVariant->getLocalizedUrls()),
-        ];
+        $normalized = $this->normalizeArray($resolvedVariant->getData(), true);
+        $normalized['slugs'] = [];
+        foreach ($resolvedVariant->getLocalizedUrls() as $localizedFallbackValue) {
+            $slugData = $this->normalizeLocalizedFallbackValue($localizedFallbackValue);
+            $slugData['url'] = $slugData['string'];
+            unset($slugData['string']);
+
+            $normalized['slugs'][] = $slugData;
+        }
+
+        return $normalized;
     }
 
     private function getEntityReference($object): ?array
@@ -156,8 +112,8 @@ class ResolvedContentNodeNormalizer
         }
 
         return [
-            'entity_class' => $this->doctrineHelper->getEntityClass($object),
-            'entity_id' => $this->doctrineHelper->getSingleEntityIdentifier($object),
+            'class' => $this->doctrineHelper->getEntityClass($object),
+            'id' => $this->doctrineHelper->getSingleEntityIdentifier($object),
         ];
     }
 
@@ -197,12 +153,15 @@ class ResolvedContentNodeNormalizer
         if ($value instanceof LocalizedFallbackValue) {
             return $this->normalizeLocalizedFallbackValue($value);
         }
+
         if ($value instanceof ResolvedContentNode) {
             return $this->normalize($value);
         }
+
         if ($value instanceof \Traversable) {
             return $this->normalizeArray($value);
         }
+
         if ($this->doctrineHelper->isManageableEntity($value)) {
             return $this->getEntityReference($value);
         }

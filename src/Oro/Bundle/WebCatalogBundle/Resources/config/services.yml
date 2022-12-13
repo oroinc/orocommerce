@@ -284,6 +284,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_web_catalog.content_node_provider'
             - '@oro_scope.scope_manager'
+            - '@oro_web_catalog.resolved_content_nodes_loader'
 
     oro_web_catalog.content_node_tree_resolver.caching:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCachingResolver
@@ -312,6 +313,34 @@ services:
         parent: oro.data.cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_web_catalog_merged' }
+
+    oro_web_catalog.resolved_content_variants_loader:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentVariantsLoader
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_variant_factory'
+
+    oro_web_catalog.resolved_content_nodes_loader:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Loader\ResolvedContentNodesLoader
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_variants_loader'
+            - '@oro_web_catalog.resolved_content_node_factory'
+
+    oro_web_catalog.resolved_content_variant_factory:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentVariantFactory
+        arguments:
+            - '@doctrine'
+
+    oro_web_catalog.resolved_content_node_factory:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_identifier_generator'
+            - '@oro_web_catalog.resolved_content_variant_factory'
+
+    oro_web_catalog.resolved_content_identifier_generator:
+        class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeIdentifierGenerator
 
     oro_web_catalog.cache.content_node_tree_cache_warmer:
         class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
@@ -462,3 +491,23 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_web_catalog.resolved_content_node_factory'
+
+    oro_web_catalog.menu.content_nodes_provider:
+        class: Oro\Bundle\WebCatalogBundle\Menu\CompositeMenuContentNodesProvider
+        arguments:
+            - '@oro_web_catalog.menu.content_nodes_provider.backoffice'
+            - '@oro_web_catalog.menu.content_nodes_provider.storefront'
+            - '@oro_frontend.request.frontend_helper'
+
+    oro_web_catalog.menu.content_nodes_provider.backoffice:
+        class: Oro\Bundle\WebCatalogBundle\Menu\MenuContentNodesProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.resolved_content_nodes_loader'
+
+    oro_web_catalog.menu.content_nodes_provider.storefront:
+        class: Oro\Bundle\WebCatalogBundle\Menu\StorefrontMenuContentNodesProvider
+        arguments:
+            - '@oro_web_catalog.request_web_content_scope_provider'
+            - '@oro_web_catalog.content_node_tree_resolver'

@@ -149,7 +149,13 @@ class ContentNodeRepositoryTest extends WebTestCase
 
         $qb = $this->repository->getContentNodePlainTreeQueryBuilder($contentNode1);
         self::assertEquals(
-            [$contentNode2->getId(), $contentNode3->getId(), $contentNode4->getId(), $contentNode5->getId()],
+            [
+                $contentNode1->getId(),
+                $contentNode2->getId(),
+                $contentNode3->getId(),
+                $contentNode4->getId(),
+                $contentNode5->getId(),
+            ],
             $qb->select('node.id')->getQuery()->execute([], AbstractQuery::HYDRATE_SCALAR_COLUMN)
         );
     }
@@ -162,8 +168,35 @@ class ContentNodeRepositoryTest extends WebTestCase
 
         $qb = $this->repository->getContentNodePlainTreeQueryBuilder($contentNode1, 1);
         self::assertEquals(
-            [$contentNode2->getId(), $contentNode3->getId()],
+            [$contentNode1->getId(), $contentNode2->getId(), $contentNode3->getId()],
             $qb->select('node.id')->getQuery()->execute([], AbstractQuery::HYDRATE_SCALAR_COLUMN)
         );
+    }
+
+    public function testGetContentNodesDataWhenEmpty(): void
+    {
+        self::assertEquals(
+            [],
+            $this->repository->getContentNodesData([PHP_INT_MAX])
+        );
+    }
+
+    public function testGetContentNodesData(): void
+    {
+        $contentNode1 = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
+        $contentNode2 = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+
+        $result = $this->repository->getContentNodesData([$contentNode1->getId(), $contentNode2->getId()]);
+
+        self::assertContentNodeData($contentNode1, $result[0]);
+        self::assertContentNodeData($contentNode2, $result[1]);
+    }
+
+    private static function assertContentNodeData(ContentNode $contentNode, array $data): void
+    {
+        self::assertSame($contentNode->getParentNode()?->getId(), $data['parentNode']['id'] ?? null);
+        self::assertSame($contentNode->getId(), $data['id']);
+        self::assertEquals($contentNode->getTitles()[0]?->getString(), $data['titles'][0]['string']);
+        self::assertEquals($contentNode->getLocalizedUrls()[0]?->getText(), $data['localizedUrls'][0]['text']);
     }
 }

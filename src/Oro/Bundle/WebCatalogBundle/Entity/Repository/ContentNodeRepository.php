@@ -131,10 +131,11 @@ class ContentNodeRepository extends NestedTreeRepository
             ->setParameter('webCatalog', $contentNode->getWebCatalog()->getId())
             ->andWhere($queryBuilder->expr()->eq('node.root', ':root'))
             ->setParameter('root', $contentNode->getRoot())
-            ->andWhere($queryBuilder->expr()->gt('node.left', ':left'))
+            ->andWhere($queryBuilder->expr()->gte('node.left', ':left'))
             ->setParameter('left', $contentNode->getLeft())
             ->andWhere($queryBuilder->expr()->lte('node.right', ':right'))
-            ->setParameter('right', $contentNode->getRight());
+            ->setParameter('right', $contentNode->getRight())
+            ->orderBy('node.left');
 
         if ($treeDepth > -1) {
             $queryBuilder
@@ -143,5 +144,66 @@ class ContentNodeRepository extends NestedTreeRepository
         }
 
         return $queryBuilder;
+    }
+
+    /**
+     * @param int[] $contentNodeIds
+     *
+     * @return array<array>
+     *  [
+     *      [
+     *          'id' => int,
+     *          'parentNode' => ?array [
+     *              'id' => int,
+     *          ],
+     *          'titles' => [
+     *              [
+     *                  'id' => int,
+     *                  'string' => ?string,
+     *                  'fallback' => ?string,
+     *                  'localization' => ?array [
+     *                      'id' => int,
+     *                  ],
+     *              ]
+     *          ],
+     *          'localizedUrls' => [
+     *              [
+     *                  'id' => int,
+     *                  'text' => ?string,
+     *                  'fallback' => ?string,
+     *                  'localization' => ?array [
+     *                      'id' => int,
+     *                  ],
+     *              ]
+     *          ],
+     *          'rewriteVariantTitle' => bool,
+     *          'left' => int,
+     *          'right' => int,
+     *          'root' => int,
+     *          'level' => int,
+     *          // ... Other scalar fields of the ContentNode entity class
+     *      ],
+     *      // ...
+     *  ]
+     */
+    public function getContentNodesData(array $contentNodeIds): array
+    {
+        $queryBuilder = $this->createQueryBuilder('node');
+
+        return $queryBuilder
+            ->where($queryBuilder->expr()->in('node.id', $contentNodeIds))
+            ->leftJoin('node.parentNode', 'parentNode')
+            ->addSelect('PARTIAL parentNode.{id}')
+            ->innerJoin('node.titles', 'title')
+            ->addSelect('PARTIAL title.{id,string,fallback}')
+            ->leftJoin('title.localization', 'titleLocalization')
+            ->addSelect('PARTIAL titleLocalization.{id}')
+            ->leftJoin('node.localizedUrls', 'localizedUrl')
+            ->addSelect('PARTIAL localizedUrl.{id,text,fallback}')
+            ->leftJoin('localizedUrl.localization', 'urlLocalization')
+            ->addSelect('PARTIAL urlLocalization.{id}')
+            ->orderBy('node.left')
+            ->getQuery()
+            ->getArrayResult();
     }
 }

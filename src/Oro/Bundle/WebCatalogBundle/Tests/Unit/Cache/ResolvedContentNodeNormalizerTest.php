@@ -10,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -19,13 +20,16 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
 
     private DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper;
 
+    private ResolvedContentNodeFactory|\PHPUnit\Framework\MockObject\MockObject $resolvedContentNodeFactory;
+
     private ResolvedContentNodeNormalizer $normalizer;
 
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->resolvedContentNodeFactory = $this->createMock(ResolvedContentNodeFactory::class);
 
-        $this->normalizer = new ResolvedContentNodeNormalizer($this->doctrineHelper);
+        $this->normalizer = new ResolvedContentNodeNormalizer($this->doctrineHelper, $this->resolvedContentNodeFactory);
     }
 
     /**
@@ -105,11 +109,10 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'identifier' => 'sample',
                     'priority' => 1,
-                    'resolveVariantTitle' => true,
+                    'rewriteVariantTitle' => true,
                     'titles' => [],
                     'contentVariant' => [
-                        'data' => [],
-                        'localizedUrls' => [],
+                        'slugs' => [],
                     ],
                     'childNodes' => [],
                 ],
@@ -120,41 +123,41 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     'id' => $resolvedNode->getId(),
                     'identifier' => $resolvedNode->getIdentifier(),
                     'priority' => 1,
-                    'resolveVariantTitle' => true,
+                    'rewriteVariantTitle' => true,
                     'titles' => [
                         ['string' => 'Title 1', 'localization' => null, 'fallback' => null],
                         [
                             'string' => 'Title 1 EN',
-                            'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
+                            'localization' => ['class' => Localization::class, 'id' => 5],
                             'fallback' => 'parent_localization',
                         ],
                     ],
                     'contentVariant' => [
-                        'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                        'localizedUrls' => [['string' => '/test', 'localization' => null, 'fallback' => null]],
+                        'id' => 3,
+                        'type' => 'test_type',
+                        'test' => 1,
+                        'slugs' => [['url' => '/test', 'localization' => null, 'fallback' => null]],
                     ],
                     'childNodes' => [
                         [
                             'id' => 2,
                             'identifier' => 'root__second',
                             'priority' => 2,
-                            'resolveVariantTitle' => false,
+                            'rewriteVariantTitle' => false,
                             'titles' => [['string' => 'Child Title 1', 'localization' => null, 'fallback' => null]],
                             'contentVariant' => [
-                                'data' => [
-                                    'id' => 7,
-                                    'type' => 'test_type',
-                                    'sub_array' => ['a' => 'b'],
-                                    'sub_iterator' => [
-                                        'c' => [
-                                            'entity_class' => Localization::class,
-                                            'entity_id' => 3,
-                                        ],
+                                'id' => 7,
+                                'type' => 'test_type',
+                                'sub_array' => ['a' => 'b'],
+                                'sub_iterator' => [
+                                    'c' => [
+                                        'class' => Localization::class,
+                                        'id' => 3,
                                     ],
                                 ],
-                                'localizedUrls' => [
+                                'slugs' => [
                                     [
-                                        'string' => '/test/c',
+                                        'url' => '/test/c',
                                         'localization' => null,
                                         'fallback' => null,
                                     ],
@@ -184,310 +187,75 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     public function testDenormalize(array $cachedData, array $context, ?ResolvedContentNode $expected): void
     {
-        $this->doctrineHelper->expects(self::any())
-            ->method('getEntityReference')
-            ->willReturnCallback(fn ($className, $id) => $this->getEntity($className, ['id' => $id]));
+        $this->resolvedContentNodeFactory
+            ->expects(self::any())
+            ->method('createFromArray')
+            ->willReturnCallback(fn (array $data) => $this->createResolvedNode($data));
 
         self::assertEquals($expected, $this->normalizer->denormalize($cachedData, $context));
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function denormalizeDataProvider(): array
     {
-        $withTitlesContentVariantAndChildNodes = new ResolvedContentNode(
-            1,
-            'root',
-            1,
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Title 1'),
-                    (new LocalizedFallbackValue())
-                        ->setString('Title 1 EN')
-                        ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                        ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
-                ]
-            ),
-            (new ResolvedContentVariant())
-                ->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
-                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
-            true
-        );
-        $childResolvedNode = new ResolvedContentNode(
-            2,
-            'root__second',
-            2,
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Child Title 1'),
-                ]
-            ),
-            (new ResolvedContentVariant())
-                ->setData(['id' => 7, 'type' => 'test_type', 'test' => 2])
-                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content')),
-            false
-        );
-
-        $childResolvedNodeWithoutChildren = clone $childResolvedNode;
-        $childResolvedNodeWithoutChildren->setChildNodes(new ArrayCollection());
-
-        $innerChildResolvedNode = new ResolvedContentNode(
-            3,
-            'root__second__third',
-            3,
-            new ArrayCollection(
-                [
-                    (new LocalizedFallbackValue())->setString('Inner Child Title 1'),
-                ]
-            ),
-            (new ResolvedContentVariant())
-                ->setData(['id' => 8, 'type' => 'test_type', 'test' => 3])
-                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content/inner')),
-            false
-        );
-        $childResolvedNode->addChildNode($innerChildResolvedNode);
-
-        $withTitlesContentVariantChildNodesAndDepth = clone $withTitlesContentVariantAndChildNodes;
-        $withTitlesContentVariantChildNodesAndDepth->setChildNodes(
-            new ArrayCollection([$childResolvedNodeWithoutChildren])
-        );
-
-        $withTitlesContentVariantAndChildNodes->addChildNode($childResolvedNode);
-
         return [
-            'without titles, content variant and child nodes' => [
+            'without child nodes' => [
+                'cachedData' => ['id' => 1, 'identifier' => 'root'],
+                'context' => [],
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root']),
+            ],
+            'with child nodes' => [
                 'cachedData' => [
                     'id' => 1,
                     'identifier' => 'root',
-                    'priority' => 1,
+                    'childNodes' => [['id' => 11, 'identifier' => 'root__node11']],
                 ],
                 'context' => [],
-                'expected' => new ResolvedContentNode(
-                    1,
-                    'root',
-                    1,
-                    new ArrayCollection(),
-                    new ResolvedContentVariant(),
-                    true
-                ),
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
+                    ->addChildNode($this->createResolvedNode(['id' => 11, 'identifier' => 'root__node11'])),
             ],
-            'with titles' => [
+            'with tree depth' => [
                 'cachedData' => [
                     'id' => 1,
                     'identifier' => 'root',
-                    'priority' => 1,
-                    'resolveVariantTitle' => true,
-                    'titles' => [
-                        ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        [
-                            'string' => 'Title 1 EN',
-                            'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                            'fallback' => FallbackType::PARENT_LOCALIZATION,
-                        ],
-                    ],
-                ],
-                'context' => [],
-                'expected' => new ResolvedContentNode(
-                    1,
-                    'root',
-                    1,
-                    new ArrayCollection(
-                        [
-                            (new LocalizedFallbackValue())->setString('Title 1'),
-                            (new LocalizedFallbackValue())
-                                ->setString('Title 1 EN')
-                                ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                                ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
-                        ]
-                    ),
-                    new ResolvedContentVariant(),
-                    true
-                ),
-            ],
-            'with titles, content variant' => [
-                'cachedData' => [
-                    'id' => 1,
-                    'identifier' => 'root',
-                    'priority' => 1,
-                    'resolveVariantTitle' => true,
-                    'titles' => [
-                        ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        [
-                            'string' => 'Title 1 EN',
-                            'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                            'fallback' => FallbackType::PARENT_LOCALIZATION,
-                        ],
-                    ],
-                    'contentVariant' => [
-                        'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                        'localizedUrls' => [
-                            ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        ],
-                    ],
-                ],
-                'context' => [],
-                'expected' => new ResolvedContentNode(
-                    1,
-                    'root',
-                    1,
-                    new ArrayCollection(
-                        [
-                            (new LocalizedFallbackValue())->setString('Title 1'),
-                            (new LocalizedFallbackValue())
-                                ->setString('Title 1 EN')
-                                ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                                ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
-                        ]
-                    ),
-                    (new ResolvedContentVariant())
-                        ->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
-                        ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
-                    true
-                ),
-            ],
-            'with titles, content variant, child nodes' => [
-                'cachedData' => [
-                    'id' => 1,
-                    'identifier' => 'root',
-                    'priority' => 1,
-                    'resolveVariantTitle' => true,
-                    'titles' => [
-                        ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        [
-                            'string' => 'Title 1 EN',
-                            'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                            'fallback' => FallbackType::PARENT_LOCALIZATION,
-                        ],
-                    ],
-                    'contentVariant' => [
-                        'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                        'localizedUrls' => [
-                            ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        ],
-                    ],
                     'childNodes' => [
                         [
-                            'id' => 2,
-                            'priority' => 2,
-                            'identifier' => 'root__second',
-                            'resolveVariantTitle' => false,
-                            'titles' => [
-                                ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                            ],
-                            'contentVariant' => [
-                                'data' => ['id' => 7, 'type' => 'test_type', 'test' => 2],
-                                'localizedUrls' => [
-                                    [
-                                        'string' => '/test/content',
-                                        'localization' => null,
-                                        'fallback' => FallbackType::NONE,
-                                    ],
-                                ],
-                            ],
+                            'id' => 11,
+                            'identifier' => 'root__node11',
                             'childNodes' => [
                                 [
-                                    'id' => 3,
-                                    'priority' => 3,
-                                    'identifier' => 'root__second__third',
-                                    'resolveVariantTitle' => false,
-                                    'titles' => [
+                                    'id' => 111,
+                                    'identifier' => 'root__node11__node111',
+                                    'childNodes' => [
                                         [
-                                            'string' => 'Inner Child Title 1',
-                                            'localization' => null,
-                                            'fallback' => FallbackType::NONE,
+                                            'id' => 1111,
+                                            'identifier' => 'root__node11__node_111__node_1111',
                                         ],
                                     ],
-                                    'contentVariant' => [
-                                        'data' => ['id' => 8, 'type' => 'test_type', 'test' => 3],
-                                        'localizedUrls' => [
-                                            [
-                                                'string' => '/test/content/inner',
-                                                'localization' => null,
-                                                'fallback' => FallbackType::NONE,
-                                            ],
-                                        ],
-                                    ],
-                                    'childNodes' => [],
                                 ],
                             ],
                         ],
                     ],
                 ],
-                'context' => [],
-                'expected' => $withTitlesContentVariantAndChildNodes,
-            ],
-            'with titles, content variant, child nodes, tree depth' => [
-                'cachedData' => [
-                    'id' => 1,
-                    'identifier' => 'root',
-                    'priority' => 1,
-                    'resolveVariantTitle' => true,
-                    'titles' => [
-                        ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        [
-                            'string' => 'Title 1 EN',
-                            'localization' => ['entity_class' => Localization::class, 'entity_id' => 5],
-                            'fallback' => FallbackType::PARENT_LOCALIZATION,
-                        ],
-                    ],
-                    'contentVariant' => [
-                        'data' => ['id' => 3, 'type' => 'test_type', 'test' => 1],
-                        'localizedUrls' => [
-                            ['string' => '/test', 'localization' => null, 'fallback' => FallbackType::NONE],
-                        ],
-                    ],
-                    'childNodes' => [
-                        [
-                            'id' => 2,
-                            'priority' => 2,
-                            'identifier' => 'root__second',
-                            'resolveVariantTitle' => false,
-                            'titles' => [
-                                ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
-                            ],
-                            'contentVariant' => [
-                                'data' => ['id' => 7, 'type' => 'test_type', 'test' => 2],
-                                'localizedUrls' => [
-                                    [
-                                        'string' => '/test/content',
-                                        'localization' => null,
-                                        'fallback' => FallbackType::NONE,
-                                    ],
-                                ],
-                            ],
-                            'childNodes' => [
-                                [
-                                    'id' => 3,
-                                    'priority' => 3,
-                                    'identifier' => 'root__second__third',
-                                    'resolveVariantTitle' => false,
-                                    'titles' => [
-                                        [
-                                            'string' => 'Inner Child Title 1',
-                                            'localization' => null,
-                                            'fallback' => FallbackType::NONE,
-                                        ],
-                                    ],
-                                    'contentVariant' => [
-                                        'data' => ['id' => 8, 'type' => 'test_type', 'test' => 3],
-                                        'localizedUrls' => [
-                                            [
-                                                'string' => '/test/content/inner',
-                                                'localization' => null,
-                                                'fallback' => FallbackType::NONE,
-                                            ],
-                                        ],
-                                    ],
-                                    'childNodes' => [],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                'context' => ['tree_depth' => 1],
-                'expected' => $withTitlesContentVariantChildNodesAndDepth,
+                'context' => ['tree_depth' => 2],
+                'expected' => $this->createResolvedNode(['id' => 1, 'identifier' => 'root'])
+                    ->addChildNode(
+                        $this->createResolvedNode(['id' => 11, 'identifier' => 'root__node11'])
+                            ->addChildNode(
+                                $this->createResolvedNode(['id' => 111, 'identifier' => 'root__node11__node111'])
+                            )
+                    ),
             ],
         ];
+    }
+
+    private function createResolvedNode(array $data): ResolvedContentNode
+    {
+        return new ResolvedContentNode(
+            $data['id'],
+            $data['identifier'],
+            0,
+            new ArrayCollection(),
+            new ResolvedContentVariant()
+        );
     }
 }
