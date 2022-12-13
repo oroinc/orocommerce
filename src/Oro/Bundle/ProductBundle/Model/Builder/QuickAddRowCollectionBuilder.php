@@ -100,7 +100,7 @@ class QuickAddRowCollectionBuilder
                 if ($delimiter === null) {
                     $delimiter = $this->detectDelimiter($line);
                 }
-                $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line);
+                $data = preg_split('/' . preg_quote($delimiter, '/') . '(?=([^\"]*\"[^\"]*\")*[^\"]*$)/', $line);
                 $collection->add(
                     $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
                 );
@@ -114,8 +114,9 @@ class QuickAddRowCollectionBuilder
 
     private function detectDelimiter(string $line): string
     {
-        foreach (["\t", ';', ' ',  ','] as $delimiter) {
+        foreach (["\t", ';', ' ', ','] as $delimiter) {
             $data = preg_split('/' . preg_quote($delimiter, '/') . '+/', $line, 2);
+
             if ($data[0] !== $line) {
                 break;
             }

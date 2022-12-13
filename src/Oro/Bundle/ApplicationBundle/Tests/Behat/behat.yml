@@ -266,6 +266,9 @@ oro_behat_extension:
     Matrix Grid Popup:
       selector: 'div.matrix-order-widget--dialog'
 
+    Matrix Grid Popup Header:
+      selector: 'div.matrix-order-widget--dialog div.product-popup__header'
+
     Matrix Grid Form:
       selector:
         type: xpath
@@ -416,6 +419,18 @@ oro_behat_extension:
           SKU:
             type: 'xpath'
             locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_1_product-uid")]//input'
+          Quantity: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][quantity]'
+          Unit: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][productUnit]'
+          Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'
+
+    Frontstore RFQ Line Item Form3:
+      selector: 'form[name="oro_rfp_frontend_request"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_rfp_frontend_request_requestProducts_2_product-uid")]//input'
           Quantity: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][quantity]'
           Unit: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][productUnit]'
           Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'

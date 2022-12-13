@@ -52,6 +52,7 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
                 'sku' => $sku,
                 'index' => $index,
                 'product_name' => '',
+                'organization' => $quickAddRow->getOrganization(),
                 'quantity' => $quickAddRow->getQuantity(),
                 'errors' => array_map(
                     fn (array $error) => [

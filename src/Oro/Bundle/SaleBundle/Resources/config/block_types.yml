@@ -8,7 +8,7 @@ services:
              - { name: layout.block_type, alias: quote_view_information }
 
     oro_sale.layout.type.quote_products_container:
-        parent: oro_layout.block_type.abstract_configurable
+        parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{quoteProducts: {required: true}}]]
             - [setName, ['quote_products_container']]

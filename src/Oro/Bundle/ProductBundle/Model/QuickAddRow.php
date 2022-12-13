@@ -42,6 +42,11 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
     protected $unit;
 
     /**
+     * @var string
+     */
+    protected $organization;
+
+    /**
      * @var array
      */
     protected $errors = [];
@@ -51,13 +56,15 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
      * @param string $sku
      * @param float $quantity
      * @param string $unit
+     * @param string $organization
      */
-    public function __construct($index, $sku, $quantity, $unit = null)
+    public function __construct($index, $sku, $quantity, $unit = null, $organization = null)
     {
         $this->index = $index;
         $this->sku = $sku;
         $this->quantity = $quantity;
         $this->unit = $unit;
+        $this->organization = $organization;
         $this->errors = [];
     }
 
@@ -93,6 +100,16 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
     public function getProductSku(): ?string
     {
         return $this->product?->getSku();
+    }
+
+    public function getOrganization(): ?string
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(string $organization): void
+    {
+        $this->organization = $organization;
     }
 
     /**

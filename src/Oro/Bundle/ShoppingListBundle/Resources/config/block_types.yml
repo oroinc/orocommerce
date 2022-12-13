@@ -45,7 +45,7 @@ services:
              - { name: layout.block_type, alias: product_shopping_lists }
 
     oro_shopping_list.layout.type.shopping_list_dropdown_item:
-        parent: oro_layout.block_type.abstract_configurable
+        parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setName, ['shopping_list_dropdown_item']]
         tags:

@@ -15,7 +15,8 @@
           "bottle": 2
         },
         "index": 1,
-        "unit_label": "milliliter"
+        "unit_label": "milliliter",
+        "organization": ""
       },
       {
         "sku": "product-1",
@@ -29,7 +30,8 @@
           "bottle": 2
         },
         "index": 2,
-        "unit_label": "liter"
+        "unit_label": "liter",
+        "organization": ""
       },
       {
         "sku": "product-1",
@@ -48,7 +50,8 @@
           "bottle": 2
         },
         "index": 3,
-        "unit_label": "box"
+        "unit_label": "box",
+        "organization": ""
       },
       {
         "sku": "product-2",
@@ -68,7 +71,8 @@
           "box": 1
         },
         "index": 4,
-        "unit_label": "milliliter"
+        "unit_label": "milliliter",
+        "organization": ""
       },
       {
         "sku": "product-3",
@@ -81,7 +85,8 @@
           "liter": 3
         },
         "index": 5,
-        "unit_label": "milliliter"
+        "unit_label": "milliliter",
+        "organization": ""
       },
       {
         "sku": "product-3",
@@ -99,7 +104,8 @@
           "liter": 3
         },
         "index": 6,
-        "unit_label": "liter5"
+        "unit_label": "liter5",
+        "organization": ""
       },
       {
         "sku": "SKU1",
@@ -117,7 +123,8 @@
         ],
         "additional": [],
         "index": 7,
-        "unit_label": ""
+        "unit_label": "",
+        "organization": ""
       },
       {
         "sku": "SKU2",
@@ -139,7 +146,8 @@
         ],
         "additional": [],
         "index": 8,
-        "unit_label": ""
+        "unit_label": "",
+        "organization": ""
       },
       {
         "sku": "SKU3",
@@ -161,7 +169,8 @@
         ],
         "additional": [],
         "index": 9,
-        "unit_label": ""
+        "unit_label": "",
+        "organization": ""
       }
     ]
   }

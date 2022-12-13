@@ -23,10 +23,10 @@
             <% } %>
             <div class="grid-line-items__row-item height-as-image-mobile">
                 <% if (name.length <= clipLength) { %>
-                    <%= oroshoppinglist.renderProductItemName({link: productUrl(productId, variantId), name: name}) %>
+                    <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId, variantId)}) %>
                 <% } else { %>
                 <div class="grid-line-items__clip-container">
-                    <%= oroshoppinglist.renderProductItemName({clip: true, link: productUrl(productId, variantId), name: name}) %>
+                    <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId, variantId)}) %>
                 </div>
                 <% } %>
             </div>

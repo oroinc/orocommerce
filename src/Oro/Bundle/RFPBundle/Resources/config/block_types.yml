@@ -16,7 +16,7 @@ services:
              - { name: layout.block_type, alias: rfp_additional_notes }
 
     oro_rfp.layout.type.rfp_request_line_items:
-        parent: oro_layout.block_type.abstract_configurable
+        parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{requestProducts: {required: true}}]]
             - [setName, ['rfp_request_line_items']]

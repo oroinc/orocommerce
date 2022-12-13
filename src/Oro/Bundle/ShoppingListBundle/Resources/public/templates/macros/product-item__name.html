@@ -15,4 +15,7 @@
     <% } else { %>
     <p<% if (obj.clip) { %> class="<%- 'grid-line-items__title-content grid-line-items__ellipsis' %>"<% } %>><%- name %></p>
     <% } %>
+    <% if (obj.subTitle) { %>
+        <%= obj.subTitle %>
+    <% } %>
 </h3>

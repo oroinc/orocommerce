@@ -10,6 +10,7 @@ const QuickAddModel = BaseModel.extend({
 
             sku: '',
             product_name: '',
+            organization: '',
             quantity: null,
             unit: '',
 
@@ -58,8 +59,11 @@ const QuickAddModel = BaseModel.extend({
     get_product() {
         const sku = this.get('sku');
         const productName = this.get('product_name');
+        const productOrganization = this.get('organization');
 
-        return productName ? `${sku} - ${productName}` : sku;
+        return productName
+            ? `${sku}` + (productOrganization ? `, ` + productOrganization : ``) + ` - ${productName}`
+            : sku;
     },
 
     toBackendJSON() {
