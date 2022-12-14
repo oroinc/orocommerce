@@ -3,25 +3,27 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\ProductEntityListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductEntityListenerTest extends AbstractRuleEntityListenerTest
 {
-    /**
-     * @var ProductEntityListener
-     */
+    /** @var ProductEntityListener */
     protected $listener;
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getEntityClassName()
+    protected function getEntityClassName(): string
     {
         return Product::class;
     }
 
-    protected function getListener()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getListener(): AbstractRuleEntityListener
     {
         return new ProductEntityListener(
             $this->priceRuleLexemeTriggerHandler,
@@ -70,16 +72,14 @@ class ProductEntityListenerTest extends AbstractRuleEntityListenerTest
     public function testPreUpdateFeatureDisabled()
     {
         $event = $this->createMock(PreUpdateEventArgs::class);
-        $event->expects($this->never())->method('getEntityChangeSet');
+        $event->expects($this->never())
+            ->method('getEntityChangeSet');
 
         $this->assertFeatureChecker('feature1', false)
             ->preUpdate($this->getProduct(), $event);
     }
 
-    /**
-     * @return Product
-     */
-    protected function getProduct()
+    private function getProduct(): Product
     {
         return $this->getEntity(Product::class, ['id' => 42]);
     }

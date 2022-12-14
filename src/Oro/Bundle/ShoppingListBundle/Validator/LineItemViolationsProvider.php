@@ -19,9 +19,9 @@ class LineItemViolationsProvider
     protected $validator;
 
     /**
-     * @var ConstraintViolationListInterface
+     * @var ConstraintViolationListInterface[]
      */
-    protected $violations;
+    protected $violations = [];
 
     public function __construct(ValidatorInterface $validator)
     {
@@ -90,17 +90,19 @@ class LineItemViolationsProvider
      */
     protected function getLineItemViolations($lineItems, $additionalContext = null)
     {
-        if (!$this->violations) {
+        $cacheKey = $this->getViolationsCacheKey($lineItems);
+
+        if (!isset($this->violations[$cacheKey])) {
             $constraint = new LineItemCollectionConstraint();
             $constraint->setAdditionalContext($additionalContext);
 
             if (is_array($lineItems)) {
                 $lineItems = new ArrayCollection($lineItems);
             }
-            $this->violations = $this->validator->validate($lineItems, [$constraint]);
+            $this->violations[$cacheKey] = $this->validator->validate($lineItems, [$constraint]);
         }
 
-        return $this->violations;
+        return $this->violations[$cacheKey];
     }
 
     /**
@@ -115,5 +117,21 @@ class LineItemViolationsProvider
         }
 
         return count($this->validator->validate($lineItems, [new LineItemCollectionConstraint()])) === 0;
+    }
+
+    /**
+     * @param LineItem[] $lineItems
+     *
+     * @return string
+     */
+    private function getViolationsCacheKey(array $lineItems): string
+    {
+        $lineItemIds = array_map(function ($lineItem) {
+            return $lineItem->getId();
+        }, $lineItems);
+
+        sort($lineItemIds);
+
+        return crc32(implode('-', $lineItemIds));
     }
 }

@@ -7,35 +7,54 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 
 class QuickAddRowTest extends \PHPUnit\Framework\TestCase
 {
-    const INDEX = 1;
-    const SKU = 'SKU1';
-    const QUANTITY = 1.00;
-    const UNIT = 'item';
+    private const INDEX = 1;
+    private const SKU = 'SKU1';
+    private const QUANTITY = 1.00;
+    private const UNIT = 'item';
 
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $row = new QuickAddRow(self::INDEX, self::SKU, self::QUANTITY, self::UNIT);
-        $this->assertEquals(self::INDEX, $row->getIndex());
-        $this->assertEquals(self::SKU, $row->getSku());
-        $this->assertEquals(self::QUANTITY, $row->getQuantity());
-        $this->assertEquals(self::UNIT, $row->getUnit());
-        $this->assertFalse($row->isValid());
+        self::assertEquals(self::INDEX, $row->getIndex());
+        self::assertEquals(self::INDEX, $row->getEntityIdentifier());
+        self::assertEquals(self::SKU, $row->getSku());
+        self::assertEquals(self::QUANTITY, $row->getQuantity());
+        self::assertEquals(self::UNIT, $row->getUnit());
     }
 
-    public function testProductGetterSetter()
+    public function testProductGetterSetter(): void
     {
-        $product = new Product();
+        $product = (new Product())
+            ->setSku(self::SKU);
 
-        $row = new QuickAddRow(self::INDEX, self::SKU, null, self::UNIT);
+        $row = new QuickAddRow(self::INDEX, self::SKU, 0, self::UNIT);
         $row->setProduct($product);
 
-        $this->assertEquals($product, $row->getProduct());
+        self::assertEquals($product, $row->getProduct());
+        self::assertEquals(self::SKU, $row->getProductSku());
     }
 
-    public function testSetValid()
+    public function testAddError(): void
     {
-        $row = new QuickAddRow(self::INDEX, self::SKU, null, self::UNIT);
-        $row->setValid(true);
-        $this->assertTrue($row->isValid());
+        $row = new QuickAddRow(self::INDEX, self::SKU, self::QUANTITY, self::UNIT);
+
+        $message = 'sample message';
+        $additionalParameters = ['sample_key' => 'sample_value'];
+        $propertyPath = 'samplePath';
+        $row->addError($message, $additionalParameters, $propertyPath);
+
+        self::assertEquals(
+            [
+                [
+                    'message' => $message,
+                    'parameters' => array_merge(
+                        $additionalParameters,
+                        ['{{ sku }}' => $row->getSku(), '{{ index }}' => $row->getIndex()]
+                    ),
+                    'propertyPath' => $propertyPath,
+                ],
+            ],
+            $row->getErrors()
+        );
     }
 }

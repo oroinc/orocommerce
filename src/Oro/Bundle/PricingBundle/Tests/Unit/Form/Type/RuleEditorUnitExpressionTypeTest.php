@@ -8,30 +8,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RuleEditorUnitExpressionTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject */
     private $configurator;
 
-    /**
-     * @var RuleEditorUnitExpressionType
-     */
+    /** @var RuleEditorUnitExpressionType */
     private $type;
 
     protected function setUp(): void
     {
-        $this->configurator = $this->getMockBuilder(PriceRuleEditorOptionsConfigurator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configurator = $this->createMock(PriceRuleEditorOptionsConfigurator::class);
+
         $this->type = new RuleEditorUnitExpressionType($this->configurator);
     }
 
     public function testConfigureOptions()
     {
-        /** @var OptionsResolver|\PHPUnit\Framework\MockObject\MockObject $resolver */
-        $resolver = $this->getMockBuilder(OptionsResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $this->configurator->expects($this->once())
             ->method('configureOptions')
             ->with($resolver);

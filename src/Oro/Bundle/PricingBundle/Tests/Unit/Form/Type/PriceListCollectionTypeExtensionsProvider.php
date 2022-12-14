@@ -18,24 +18,19 @@ use Symfony\Component\Validator\Validation;
 
 class PriceListCollectionTypeExtensionsProvider extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @return array
-     */
-    public function getExtensions()
+    public function getExtensions(): array
     {
-        $entityType = new EntityTypeStub([]);
-        $configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
             ->method('get')
             ->with('oro_pricing.price_strategy')
             ->willReturn(MergePricesCombiningStrategy::NAME);
+
         return [
             new PreloadedExtension(
                 [
                     PriceListSelectType::class => new PriceListSelectTypeStub(),
-                    EntityType::class => $entityType,
+                    EntityType::class => new EntityTypeStub([]),
                 ],
                 [
                     FormType::class => [new SortableExtension()],

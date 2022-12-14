@@ -9,16 +9,16 @@ use Symfony\Component\Routing\RouterInterface;
 class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DatagridRouteHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $datagridRouteHelper;
+    private $datagridRouteHelper;
 
     /** @var string */
-    protected $gridRouteName;
+    private $gridRouteName;
 
     /** @var string $gridName */
-    protected $gridName;
+    private $gridName;
 
     /** @var FilteredDatagridRouteHelper */
-    protected $helper;
+    private $helper;
 
     protected function setUp(): void
     {
@@ -34,22 +34,16 @@ class FilteredDatagridRouteHelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        unset($this->datagridRouteHelper, $this->helper);
-    }
-
     public function testGenerate()
     {
-        $this->datagridRouteHelper->expects($this->once())->method('generate')->with(
-            $this->gridRouteName,
-            $this->gridName,
-            ['f' => ['filterName' => ['value' => ['' => '10']]]],
-            RouterInterface::ABSOLUTE_PATH
-        )->willReturn('generatedURL');
+        $this->datagridRouteHelper->expects($this->once())
+            ->method('generate')
+            ->with(
+                $this->gridRouteName,
+                $this->gridName,
+                ['f' => ['filterName' => ['value' => ['' => '10']]]],
+                RouterInterface::ABSOLUTE_PATH
+            )->willReturn('generatedURL');
 
         $this->assertEquals('generatedURL', $this->helper->generate(['filterName' => 10]));
     }

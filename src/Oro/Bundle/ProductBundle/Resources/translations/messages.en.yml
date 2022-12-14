@@ -717,7 +717,7 @@ oro:
                 clear: Clear All
                 copy_paste:
                     title: 'Paste your order'
-                    description: 'Copy and paste your order with the item #, quantity (and optionally units), separated by spaces, semicolons or commas.'
+                    description: 'Copy and paste your order with the item number, quantity (and optionally units), separated by spaces, semicolons or commas.'
                     placeholder: 'Copy and paste your order.'
                     continue:
                         label: Continue
@@ -857,6 +857,21 @@ oro:
                     messages:
                         saved:      'Brand has been saved'
                         notBlank:   'This field cannot be blank'
+
+        collectionsortorder:
+            label:                Collection Sort Order
+            description:          Sort Order values for Product Collections (Segments)
+            entity_label:         Collection Sort Order
+            entity_plural_label:  Collection Sort Orders
+            entity_grid_all_view_label: All %entity_plural_label%
+            id:
+                label: Id
+            product:
+                label: Product
+            segment:
+                label: Segment
+            sort_order:
+                label: Sort Order
 
         override_variant_configuration:
             label: Override Product Variant Configuration

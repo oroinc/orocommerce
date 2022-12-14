@@ -4,9 +4,6 @@ namespace Oro\Bundle\ProductBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
-use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Collection of QuickAddRow models.
@@ -14,64 +11,31 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class QuickAddRowCollection extends ArrayCollection
 {
     use QuickAddFieldTrait;
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @return $this
-     */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    protected array $errors = [];
 
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return implode(PHP_EOL, $this->map(function (QuickAddRow $row) {
             return sprintf('%s, %s', $row->getSku(), $row->getQuantity());
         })->toArray());
     }
 
-    /**
-     * @return QuickAddRowCollection|QuickAddRow[]
-     */
-    public function getValidRows()
+    public function getValidRows(): QuickAddRowCollection
     {
         return $this->filter(function (QuickAddRow $row) {
-            return $row->isValid();
+            return !$row->hasErrors();
         });
     }
 
-    /**
-     * @return QuickAddRowCollection|QuickAddRow[]
-     */
-    public function getInvalidRows()
+    public function getInvalidRows(): QuickAddRowCollection
     {
         return $this->filter(function (QuickAddRow $row) {
-            return !$row->isValid();
+            return $row->hasErrors();
         });
     }
 
-    /**
-     * @return bool
-     */
-    public function hasValidRows()
-    {
-        return count($this->getValidRows()) > 0;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSkus()
+    public function getSkus(): array
     {
         $skus = [];
 
@@ -87,9 +51,10 @@ class QuickAddRowCollection extends ArrayCollection
 
     /**
      * @param Product[] $products
+     *
      * @return QuickAddRowCollection
      */
-    public function mapProducts(array $products)
+    public function mapProducts(array $products): QuickAddRowCollection
     {
         /** @var QuickAddRow $row */
         foreach ($this->getIterator() as $row) {
@@ -103,10 +68,7 @@ class QuickAddRowCollection extends ArrayCollection
         return $this;
     }
 
-    /**
-     * @return Product[]
-     */
-    public function getProducts()
+    public function getProducts(): array
     {
         $products = [];
 
@@ -120,32 +82,39 @@ class QuickAddRowCollection extends ArrayCollection
         return $products;
     }
 
-    public function validateEventDispatcher()
+    protected function createFrom(array $elements): QuickAddRowCollection
     {
-        if ($this->eventDispatcher instanceof EventDispatcherInterface) {
-            $event = new QuickAddRowCollectionValidateEvent($this);
-            $this->eventDispatcher->dispatch($event, $event::NAME);
-        }
+        $quickAddRowCollection = parent::createFrom($elements);
+        $quickAddRowCollection->errors = $this->errors;
+
+        return $quickAddRowCollection;
+    }
+
+    public function addError(string $message, array $parameters = []): self
+    {
+        $this->errors[] = [
+            'message' => $message,
+            'parameters' => $parameters,
+        ];
+
+        return $this;
     }
 
     /**
-     * Prepares data for QuickAddType
-     *
-     * @return array
+     * @return array<array{message: string, parameters: array}>
      */
-    public function getFormData()
+    public function getErrors(): array
     {
-        $data = [QuickAddType::PRODUCTS_FIELD_NAME => []];
+        return $this->errors;
+    }
 
-        foreach ($this->getValidRows() as $row) {
-            $productRow = new ProductRow();
-            $productRow->productSku = $row->getSku();
-            $productRow->productQuantity = $row->getQuantity();
-            $productRow->productUnit = $row->getUnit();
+    public function hasErrors(): bool
+    {
+        return count($this->errors) > 0;
+    }
 
-            $data[QuickAddType::PRODUCTS_FIELD_NAME][] = $productRow;
-        }
-
-        return $data;
+    public function isValid(): bool
+    {
+        return !$this->hasErrors() && $this->forAll(static fn ($key, QuickAddRow $element) => !$element->hasErrors());
     }
 }

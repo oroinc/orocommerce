@@ -10,41 +10,24 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Price|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $priceMock;
+    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
+    private $price;
 
-    /**
-     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productUnitMock;
+    /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnit;
 
-    /**
-     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productHolderMock;
+    /** @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productHolder;
 
-    /**
-     * @var Product
-     */
-    private $productMock;
+    /** @var Product|\PHPUnit\Framework\MockObject\MockObject */
+    private $product;
 
     protected function setUp(): void
     {
-        $this->priceMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitMock = $this->getMockBuilder(ProductUnit::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productHolderMock = $this->createMock(ProductHolderInterface::class);
-
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->price = $this->createMock(Price::class);
+        $this->productUnit = $this->createMock(ProductUnit::class);
+        $this->productHolder = $this->createMock(ProductHolderInterface::class);
+        $this->product = $this->createMock(Product::class);
     }
 
     public function testGetters()
@@ -55,41 +38,41 @@ class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
         $entityIdentifier = 'someId';
 
         $paymentLineItemParams = [
-            PaymentLineItem::FIELD_PRICE => $this->priceMock,
-            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+            PaymentLineItem::FIELD_PRICE => $this->price,
+            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnit,
             PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
             PaymentLineItem::FIELD_QUANTITY => $quantity,
-            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
-            PaymentLineItem::FIELD_PRODUCT => $this->productMock,
+            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
+            PaymentLineItem::FIELD_PRODUCT => $this->product,
             PaymentLineItem::FIELD_PRODUCT_SKU => $productSku,
             PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier,
         ];
 
         $paymentLineItem = new PaymentLineItem($paymentLineItemParams);
 
-        static::assertEquals($paymentLineItemParams[PaymentLineItem::FIELD_PRICE], $paymentLineItem->getPrice());
-        static::assertEquals(
+        self::assertEquals($paymentLineItemParams[PaymentLineItem::FIELD_PRICE], $paymentLineItem->getPrice());
+        self::assertEquals(
             $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_UNIT],
             $paymentLineItem->getProductUnit()
         );
-        static::assertEquals(
+        self::assertEquals(
             $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_UNIT_CODE],
             $paymentLineItem->getProductUnitCode()
         );
-        static::assertEquals(
+        self::assertEquals(
             $paymentLineItemParams[PaymentLineItem::FIELD_QUANTITY],
             $paymentLineItem->getQuantity()
         );
-        static::assertEquals(
+        self::assertEquals(
             $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_HOLDER],
             $paymentLineItem->getProductHolder()
         );
-        static::assertEquals($paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT], $paymentLineItem->getProduct());
-        static::assertEquals(
+        self::assertEquals($paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT], $paymentLineItem->getProduct());
+        self::assertEquals(
             $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT_SKU],
             $paymentLineItem->getProductSku()
         );
-        static::assertEquals(
+        self::assertEquals(
             $paymentLineItemParams[PaymentLineItem::FIELD_ENTITY_IDENTIFIER],
             $paymentLineItem->getEntityIdentifier()
         );

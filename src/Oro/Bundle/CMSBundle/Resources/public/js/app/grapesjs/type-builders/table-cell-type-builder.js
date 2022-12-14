@@ -9,7 +9,8 @@ const TableCellTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             removable: false,
             copyable: false,
-            draggable: false
+            draggable: false,
+            name: __('oro.cms.wysiwyg.component.table_cell.label')
         },
 
         ...TableTypeDecorator,

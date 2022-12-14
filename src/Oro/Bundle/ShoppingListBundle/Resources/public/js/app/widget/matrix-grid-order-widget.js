@@ -3,7 +3,6 @@ define(function(require) {
 
     const routing = require('routing');
     const FrontendDialogWidget = require('orofrontend/js/app/components/frontend-dialog-widget');
-    const headerTemplate = require('tpl-loader!oroproduct/templates/product-popup-header.html');
     const mediator = require('oroui/js/mediator');
     const _ = require('underscore');
 
@@ -51,9 +50,6 @@ define(function(require) {
             options.initLayoutOptions = {
                 productModel: this.model
             };
-            options.header = headerTemplate({
-                product: this.model.attributes
-            });
 
             MatrixGridOrderWidget.__super__.initialize.call(this, options);
         },

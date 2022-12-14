@@ -18,29 +18,30 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FrontendShoppingListsViewsListTest extends \PHPUnit\Framework\TestCase
 {
-    private AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject $authorizationChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    private AclVoterInterface|\PHPUnit\Framework\MockObject\MockObject $aclVoter;
+    /** @var AclVoterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $aclVoter;
 
-    private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    private FrontendShoppingListsViewsList $provider;
+    /** @var FrontendShoppingListsViewsList */
+    private $provider;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->aclVoter = $this->createMock(AclVoterInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator
-            ->expects(self::any())
+        $translator->expects(self::any())
             ->method('trans')
-            ->willReturnCallback(
-                static function ($id) {
-                    return 'trans_' . $id;
-                }
-            );
+            ->willReturnCallback(static function ($id) {
+                return 'trans_' . $id;
+            });
 
         $this->provider = new FrontendShoppingListsViewsList(
             $translator,
@@ -57,17 +58,13 @@ class FrontendShoppingListsViewsListTest extends \PHPUnit\Framework\TestCase
 
     public function testGetListWhenBasicAccessLevel(): void
     {
-        $this->aclVoter
-            ->expects(self::once())
+        $this->aclVoter->expects(self::once())
             ->method('addOneShotIsGrantedObserver')
-            ->willReturnCallback(
-                static function (OneShotIsGrantedObserver $observer) {
-                    $observer->setAccessLevel(AccessLevel::BASIC_LEVEL);
-                }
-            );
+            ->willReturnCallback(function (OneShotIsGrantedObserver $observer) {
+                $observer->setAccessLevel(AccessLevel::BASIC_LEVEL);
+            });
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with('oro_shopping_list_frontend_view');
 
@@ -76,23 +73,18 @@ class FrontendShoppingListsViewsListTest extends \PHPUnit\Framework\TestCase
 
     public function testGetListWhenNotCustomerUser(): void
     {
-        $this->aclVoter
-            ->expects(self::once())
+        $this->aclVoter->expects(self::once())
             ->method('addOneShotIsGrantedObserver')
-            ->willReturnCallback(
-                static function (OneShotIsGrantedObserver $observer) {
-                    $observer->setAccessLevel(AccessLevel::DEEP_LEVEL);
-                }
-            );
+            ->willReturnCallback(function (OneShotIsGrantedObserver $observer) {
+                $observer->setAccessLevel(AccessLevel::DEEP_LEVEL);
+            });
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with('oro_shopping_list_frontend_view');
 
         $customerUser = $this->createMock(\stdClass::class);
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
@@ -104,29 +96,23 @@ class FrontendShoppingListsViewsListTest extends \PHPUnit\Framework\TestCase
 
     public function testGetListWhenNotBasicAccessLevel(): void
     {
-        $this->aclVoter
-            ->expects(self::once())
+        $this->aclVoter->expects(self::once())
             ->method('addOneShotIsGrantedObserver')
-            ->willReturnCallback(
-                static function (OneShotIsGrantedObserver $observer) {
-                    $observer->setAccessLevel(AccessLevel::DEEP_LEVEL);
-                }
-            );
+            ->willReturnCallback(function (OneShotIsGrantedObserver $observer) {
+                $observer->setAccessLevel(AccessLevel::DEEP_LEVEL);
+            });
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with('oro_shopping_list_frontend_view');
 
         $fullName = 'Sample Fullname';
         $customerUser = $this->createMock(CustomerUser::class);
-        $customerUser
-            ->expects(self::once())
+        $customerUser->expects(self::once())
             ->method('getFullName')
             ->willReturn($fullName);
 
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 

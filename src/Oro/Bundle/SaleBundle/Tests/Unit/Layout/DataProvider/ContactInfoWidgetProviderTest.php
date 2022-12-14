@@ -9,25 +9,20 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ContactInfoWidgetProvider
-     */
-    private $widgetProvider;
-
-    /**
-     * @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /**
-     * @var ContactInfoProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ContactInfoProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $contactInfoProvider;
+
+    /** @var ContactInfoWidgetProvider */
+    private $widgetProvider;
 
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->contactInfoProvider = $this->createMock(ContactInfoProviderInterface::class);
+
         $this->widgetProvider = new ContactInfoWidgetProvider(
             $this->tokenAccessor,
             $this->contactInfoProvider
@@ -39,15 +34,15 @@ class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetContactInfoBlock(ContactInfo $contactInfo, array $expectedResult)
     {
-        $this->contactInfoProvider
+        $this->contactInfoProvider->expects(self::any())
             ->method('getContactInfo')
             ->willReturn($contactInfo);
 
         $result = $this->widgetProvider->getContactInfoBlock();
-        static::assertEquals($expectedResult, $result);
+        self::assertEquals($expectedResult, $result);
     }
 
-    public function contactInfoBlockDataProvider()
+    public function contactInfoBlockDataProvider(): array
     {
         $contactInfo = new ContactInfo();
         $contactInfo->setName('User name');

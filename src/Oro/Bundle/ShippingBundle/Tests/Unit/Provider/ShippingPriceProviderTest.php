@@ -396,7 +396,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPriceDataProvider
      */
-    public function testGetPrice(string $methodId, string $typeId, array $shippingRules, Price $expectedPrice = null)
+    public function testGetPrice(?string $methodId, string $typeId, array $shippingRules, Price $expectedPrice = null)
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -543,6 +543,24 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedData' => Price::create(1, 'USD'),
             ],
         ];
+    }
+
+    public function testGetPriceWhenNoMethodId()
+    {
+        $shippingLineItems = [new ShippingLineItem([])];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
+        ]);
+
+        $this->shippingRulesProvider->expects($this->never())
+            ->method('getShippingMethodsConfigsRules');
+
+        $this->priceCache->expects($this->never())
+            ->method('savePrice');
+
+        $this->assertNull($this->shippingPriceProvider->getPrice($context, null, 'ground'));
     }
 
     public function testGetPriceCache()

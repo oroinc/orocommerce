@@ -26,35 +26,17 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $transport;
+    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
+    private $transport;
 
-    /**
-     * @var ShippingService|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shippingService;
+    /** @var ShippingService|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingService;
 
-    /**
-     * @var MeasureUnitConversion|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $measureUnitConversion;
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $symmetricCrypter;
 
-    /**
-     * @var UnitsMapper|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $unitsMapper;
-
-    /**
-     * @var PriceRequestFactory
-     */
-    protected $priceRequestFactory;
-
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $symmetricCrypter;
+    /** @var PriceRequestFactory */
+    private $priceRequestFactory;
 
     protected function setUp(): void
     {
@@ -74,43 +56,39 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->measureUnitConversion = $this->getMockBuilder(MeasureUnitConversion::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->measureUnitConversion->expects(static::any())->method('convert')->willReturnCallback(
-            function () {
+        $measureUnitConversion = $this->createMock(MeasureUnitConversion::class);
+        $measureUnitConversion->expects(self::any())
+            ->method('convert')
+            ->willReturnCallback(function () {
                 $args = func_get_args();
 
                 return $args[0];
-            }
-        );
+            });
 
-        $this->unitsMapper = $this->getMockBuilder(UnitsMapper::class)
-            ->disableOriginalConstructor()->getMock();
-        $this->unitsMapper->expects(static::any())->method('getShippingUnitCode')->willReturn('lbs');
+        $unitsMapper = $this->createMock(UnitsMapper::class);
+        $unitsMapper->expects(self::any())
+            ->method('getShippingUnitCode')
+            ->willReturn('lbs');
 
-        $this->symmetricCrypter = $this
-            ->getMockBuilder(SymmetricCrypterInterface::class)
-            ->getMock();
+        $this->symmetricCrypter = $this->createMock(SymmetricCrypterInterface::class);
 
         $this->priceRequestFactory = new PriceRequestFactory(
-            $this->measureUnitConversion,
-            $this->unitsMapper,
+            $measureUnitConversion,
+            $unitsMapper,
             $this->symmetricCrypter
         );
     }
 
     /**
-     * @param int               $lineItemCnt
-     * @param int               $productWeight
-     * @param string            $unitOfWeight
-     * @param PriceRequest|null $expectedRequest
-     *
      * @dataProvider packagesDataProvider
      */
-    public function testCreate($lineItemCnt, $productWeight, $unitOfWeight, $expectedRequest)
-    {
-        $this->symmetricCrypter
-            ->expects($this->once())
+    public function testCreate(
+        int $lineItemCnt,
+        int $productWeight,
+        string $unitOfWeight,
+        ?PriceRequest $expectedRequest
+    ) {
+        $this->symmetricCrypter->expects(self::once())
             ->method('decryptData')
             ->with('some password')
             ->willReturn('some password');
@@ -119,7 +97,6 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
 
         $lineItems = [];
         for ($i = 1; $i <= $lineItemCnt; $i++) {
-            /** @var Product $product */
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
             $lineItems[] = new ShippingLineItem([
@@ -150,13 +127,10 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
 
         $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
 
-        static::assertEquals($expectedRequest, $request);
+        self::assertEquals($expectedRequest, $request);
     }
 
-    /**
-     * @return array
-     */
-    public function packagesDataProvider()
+    public function packagesDataProvider(): array
     {
         return [
             'OnePackage-LBS' => [
@@ -208,13 +182,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         self::assertNull($priceRequest);
     }
 
-    /**
-     * @param int    $weight
-     * @param string $unitOfWeight
-     *
-     * @return Package
-     */
-    protected function createPackage($weight, $unitOfWeight)
+    private function createPackage(int $weight, string $unitOfWeight): Package
     {
         $expectedPackage = new Package();
         $expectedPackage
@@ -225,12 +193,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         return $expectedPackage;
     }
 
-    /**
-     * @param array $expectedPackages
-     *
-     * @return PriceRequest
-     */
-    protected function createRequest($expectedPackages)
+    private function createRequest(array $expectedPackages): PriceRequest
     {
         $expectedRequest = new PriceRequest();
         $expectedRequest

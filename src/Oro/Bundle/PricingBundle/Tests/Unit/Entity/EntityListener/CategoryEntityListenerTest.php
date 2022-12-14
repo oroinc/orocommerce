@@ -5,22 +5,23 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
+use Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener;
 
 class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
 {
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getEntityClassName()
+    protected function getEntityClassName(): string
     {
         return Category::class;
     }
 
     /**
-     * @return CategoryEntityListener
+     * {@inheritDoc}
      */
-    protected function getListener()
+    protected function getListener(): AbstractRuleEntityListener
     {
         return new CategoryEntityListener(
             $this->priceRuleLexemeTriggerHandler,
@@ -29,10 +30,7 @@ class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
         );
     }
 
-    /**
-     * @return array
-     */
-    public function preUpdateData()
+    public function preUpdateData(): array
     {
         return [
             [
@@ -59,10 +57,8 @@ class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
      */
     public function testPreUpdate(array $changeSet, array $expectedFields, int $numberOfCalls)
     {
-        /** @var Category $category */
         $category = $this->getEntity($this->getEntityClassName(), ['id' => 1]);
 
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')
@@ -80,10 +76,8 @@ class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
 
     public function testPreUpdateFeatureEnabled()
     {
-        /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 42]);
 
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->once())
             ->method('hasChangedField')
@@ -100,10 +94,8 @@ class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
 
     public function testPreUpdateFeatureDisabled()
     {
-        /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 42]);
 
-        /** @var PreUpdateEventArgs|\PHPUnit\Framework\MockObject\MockObject $event */
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->never())->method('hasChangedField');
 

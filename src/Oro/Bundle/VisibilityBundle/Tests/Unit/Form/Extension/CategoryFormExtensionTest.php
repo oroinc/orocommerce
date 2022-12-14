@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type\Stub\CategorySortOrderGridTypeStub;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\CMSBundle\Tests\Unit\Form\Type\WysiwygAwareTestTrait;
@@ -27,6 +28,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
@@ -95,6 +97,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     ),
                     CategoryType::class => new CategoryType($router),
                     CategoryDefaultProductOptionsType::class => $defaultProductOptions,
+                    CategorySortOrderGridType::class => new CategorySortOrderGridTypeStub(),
                     CategoryUnitPrecisionType::class => $categoryUnitPrecision,
                     ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
                         [

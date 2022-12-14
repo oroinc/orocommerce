@@ -7,10 +7,8 @@ use Oro\Bundle\ProductBundle\Expression\Autocomplete\UnitFieldsProvider;
 
 class UnitFieldsProviderTest extends AbstractFieldsProviderTest
 {
-    /**
-     * @var UnitFieldsProvider
-     */
-    protected $provider;
+    /** @var UnitFieldsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -71,12 +69,9 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
     }
 
     /**
-     * @param array $fieldsData
-     * @param bool $numericalOnly
-     * @param bool $withRelations
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getMap(array $fieldsData, $numericalOnly, $withRelations)
+    protected function getMap(array $fieldsData, bool $numericalOnly, bool $withRelations): array
     {
         $map = [];
         foreach ($fieldsData as $data) {
@@ -91,10 +86,7 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
         return $map;
     }
 
-    /**
-     * @return array
-     */
-    public function getFieldsDataProvider()
+    public function getFieldsDataProvider(): array
     {
         return [
             [

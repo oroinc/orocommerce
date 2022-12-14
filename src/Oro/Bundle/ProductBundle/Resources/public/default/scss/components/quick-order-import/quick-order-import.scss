@@ -42,53 +42,8 @@
     }
 }
 
-.quick-add-validation {
-    .quick-order-add-widget-subtitle {
-        font-size: 16px;
-        margin-left: 16px;
-    }
-
-    .quick-order-import-validation {
+.quick_add_import_help {
+    ol {
         padding-bottom: 40px;
-
-        &__buttons {
-            .btn-group {
-                // platform styles override
-                margin-left: 10px;
-
-                .btn-group {
-                    margin: 0;
-                }
-            }
-        }
-
-        .hidden-form {
-            .quick-order-import-validation__form__row,
-            form {
-                display: none;
-            }
-        }
-
-        .notification--error {
-            margin: 0 0 10px;
-        }
-
-        &__subtotal {
-            float: right;
-            padding: 20px 9px 0;
-
-            font-weight: font-weight('bold');
-        }
-    }
-
-    .quick_add_validation_items {
-        border-collapse: separate;
-        border-spacing: 0;
-
-        &__container {
-            .notification--error {
-                margin: $quick-order-import-validation-error-margin;
-            }
-        }
     }
 }

@@ -12,21 +12,16 @@ class ShippingOriginTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var ShippingOrigin */
-    protected $shippingOrigin;
+    private $shippingOrigin;
 
     protected function setUp(): void
     {
         $this->shippingOrigin = new ShippingOrigin();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->shippingOrigin);
-    }
-
     public function testGettersAndSetters()
     {
-        static::assertPropertyAccessors(
+        self::assertPropertyAccessors(
             $this->shippingOrigin,
             [
                 ['country', new Country('US')],

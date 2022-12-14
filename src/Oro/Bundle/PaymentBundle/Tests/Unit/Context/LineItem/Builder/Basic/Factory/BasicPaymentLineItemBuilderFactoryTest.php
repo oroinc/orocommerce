@@ -9,23 +9,16 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 class BasicPaymentLineItemBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productUnitMock;
+    /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnit;
 
-    /**
-     * @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $productHolderMock;
+    /** @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productHolder;
 
     protected function setUp(): void
     {
-        $this->productUnitMock = $this->getMockBuilder(ProductUnit::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productHolderMock = $this->createMock(ProductHolderInterface::class);
+        $this->productUnit = $this->createMock(ProductUnit::class);
+        $this->productHolder = $this->createMock(ProductHolderInterface::class);
     }
 
     public function testCreate()
@@ -36,19 +29,19 @@ class BasicPaymentLineItemBuilderFactoryTest extends \PHPUnit\Framework\TestCase
         $builderFactory = new BasicPaymentLineItemBuilderFactory();
 
         $builder = $builderFactory->createBuilder(
-            $this->productUnitMock,
+            $this->productUnit,
             $unitCode,
             $quantity,
-            $this->productHolderMock
+            $this->productHolder
         );
 
         $expectedBuilder = new BasicPaymentLineItemBuilder(
-            $this->productUnitMock,
+            $this->productUnit,
             $unitCode,
             $quantity,
-            $this->productHolderMock
+            $this->productHolder
         );
 
-        static::assertEquals($expectedBuilder, $builder);
+        self::assertEquals($expectedBuilder, $builder);
     }
 }

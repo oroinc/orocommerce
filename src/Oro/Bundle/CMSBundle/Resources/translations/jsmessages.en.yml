@@ -62,6 +62,16 @@ oro.cms:
                 label: 'Table'
                 header_cell_label: 'Header Cell'
                 body_cell_label: 'Body Cell'
+            table_responsive:
+                label: 'Table Responsive'
+            table_head:
+                label: 'Table Head'
+            table_body:
+                label: 'Table Body'
+            table_row:
+                label: 'Table Row'
+            table_cell:
+                label: 'Table Cell'
             digital_asset:
                 image: 'Image'
                 file: 'File'

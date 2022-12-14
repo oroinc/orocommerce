@@ -16,36 +16,35 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    private SessionInterface|MockObject $session;
+    /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $session;
 
-    private JobRunner|MockObject $jobRunner;
+    /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
+    private $jobRunner;
 
-    private SegmentMessageFactory|MockObject $messageFactory;
+    /** @var SegmentMessageFactory|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageFactory;
 
-    private MessageInterface|MockObject $message;
+    /** @var MessageInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $message;
 
-    private ReindexProductCollectionProcessor $processor;
+    /** @var ReindexProductCollectionProcessor */
+    private $processor;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);
-
         $this->jobRunner = $this->createMock(JobRunner::class);
-
         $this->messageFactory = $this->createMock(SegmentMessageFactory::class);
-
         $segmentSnapshotDeltaProvider = $this->createMock(SegmentSnapshotDeltaProvider::class);
-
         $websiteReindexRequestDataStorage = $this->createMock(
             ProductWebsiteReindexRequestDataStorageInterface::class
         );
-
         $this->message = $this->createMock(MessageInterface::class);
 
         $this->processor = new ReindexProductCollectionProcessor(
@@ -62,51 +61,41 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $body = $this->getMessageBody();
 
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn($body);
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getMessageId')
             ->willReturn((string)$body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_JOB_ID]);
 
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getJobIdFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_JOB_ID]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getSegmentFromMessage')
             ->with($body)
             ->willReturn($this->getSegment($body));
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getWebsiteIdsFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getIsFull')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getAdditionalProductsFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS]);
 
-        $this->jobRunner
-            ->expects(self::once())
+        $this->jobRunner->expects(self::once())
             ->method('runDelayed')
-            ->willReturnCallback(
-                function (int $jobId, callable $callback) {
-                    self::assertEquals($this->message->getMessageId(), (string)$jobId);
+            ->willReturnCallback(function (int $jobId, callable $callback) {
+                self::assertEquals($this->message->getMessageId(), (string)$jobId);
 
-                    return $callback($this->jobRunner, $this->getJob());
-                }
-            );
+                return $callback($this->jobRunner, $this->getJob());
+            });
 
         $result = $this->processor->process($this->message, $this->session);
 
@@ -117,39 +106,32 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $body = $this->getMessageBody();
 
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn($body);
 
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getJobIdFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_JOB_ID]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getSegmentFromMessage')
             ->with($body)
             ->willReturn($this->getSegment($body));
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getWebsiteIdsFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getIsFull')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getAdditionalProductsFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS]);
 
-        $this->jobRunner
-            ->expects(self::once())
+        $this->jobRunner->expects(self::once())
             ->method('runDelayed')
             ->willReturn(false);
 
@@ -162,13 +144,11 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $body = $this->getMessageBody();
 
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn($body);
 
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getJobIdFromMessage')
             ->with($body)
             ->willThrowException(new InvalidArgumentException());
@@ -184,33 +164,28 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     {
         $body = $this->getMessageBody();
 
-        $this->message
-            ->expects(self::once())
+        $this->message->expects(self::once())
             ->method('getBody')
             ->willReturn($body);
 
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getSegmentFromMessage')
             ->with($body)
             ->willReturn($this->getSegment($body));
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getWebsiteIdsFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_WEBSITE_IDS]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getIsFull')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_IS_FULL]);
-        $this->messageFactory
-            ->expects(self::once())
+        $this->messageFactory->expects(self::once())
             ->method('getAdditionalProductsFromMessage')
             ->with($body)
             ->willReturn($body[ReindexProductCollectionBySegmentTopic::OPTION_NAME_ADDITIONAL_PRODUCTS]);
 
-        $this->jobRunner
+        $this->jobRunner->expects(self::once())
             ->method('runDelayed')
             ->willThrowException(new \Exception());
 

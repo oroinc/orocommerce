@@ -68,6 +68,13 @@ class Subtotal
     protected $data;
 
     /**
+     * Remove after total calculation.
+     *
+     * @var bool
+     */
+    protected $removable = false;
+
+    /**
      * @return string
      */
     public function getType()
@@ -286,5 +293,27 @@ class Subtotal
         }
 
         return $this->amount;
+    }
+
+    /**
+     * Check after total calculation.
+     *
+     * @return bool
+     */
+    public function isRemovable(): bool
+    {
+        return $this->removable;
+    }
+
+    /**
+     * @param bool $removable
+     *
+     * @return Subtotal
+     */
+    public function setRemovable(bool $removable): Subtotal
+    {
+        $this->removable = $removable;
+
+        return $this;
     }
 }

@@ -37,3 +37,36 @@ api:
         Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
             documentation_resource: '@OroTaxBundle/Resources/doc/api/customer_group.md'
 
+        Oro\Bundle\TaxBundle\Entity\Tax:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/tax.md'
+
+        Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/tax_jurisdiction.md'
+            fields:
+                zipCodes:
+                    data_type: array
+                    property_path: _
+                    depends_on: [ zipCodes.zipCode, zipCodes.zipRangeStart, zipCodes.zipRangeEnd ]
+                    form_type: Symfony\Component\Form\Extension\Core\Type\CollectionType
+                    form_options:
+                        property_path: zipCodes
+                        entry_type: Oro\Bundle\TaxBundle\Api\Form\Type\ZipCodeType
+                        allow_add: true
+                        allow_delete: true
+                        by_reference: false
+                # declare excluded field for "zipCodes" entity property
+                # to be able to use "zipCodes" property in "depends_on" option
+                _zipCodes:
+                    property_path: zipCodes
+                    exclude: true
+
+        Oro\Bundle\TaxBundle\Entity\TaxRule:
+            documentation_resource: '@OroTaxBundle/Resources/doc/api/tax_rule.md'
+            fields:
+                organization:
+                    form_options:
+                        mapped: false
+            subresources:
+                organization:
+                    actions:
+                        update_relationship: false

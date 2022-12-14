@@ -6,7 +6,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 
 /**
- * Tax provider allows to use built-in TAX logic.
+ * Tax provider allows to use built-in tax logic.
  */
 class BuiltInTaxProvider implements TaxProviderInterface
 {

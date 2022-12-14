@@ -19,17 +19,14 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
     use PriceRuleEditorAwareTestTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject|CurrencyProviderInterface $currencyProvider */
-        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
-        $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
-
-        /** @var \PHPUnit\Framework\MockObject\MockObject|LocaleSettings $localeSettings */
-        $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
+        $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
+        $currencyProvider->expects($this->any())
+            ->method('getCurrencyList')
+            ->willReturn(['USD', 'EUR']);
 
         return [
             new PreloadedExtension(
@@ -37,8 +34,8 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
                     [
                         CurrencySelectionType::class => new CurrencySelectionType(
                             $currencyProvider,
-                            $localeSettings,
-                            $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                            $this->createMock(LocaleSettings::class),
+                            $this->createMock(CurrencyNameHelper::class)
                         ),
                         EntityType::class => new EntityTypeStub(['item' => (new ProductUnit())->setCode('item')])
                     ],

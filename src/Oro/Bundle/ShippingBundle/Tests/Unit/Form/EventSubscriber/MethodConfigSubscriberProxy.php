@@ -6,38 +6,19 @@ use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class MethodConfigSubscriberProxy extends MethodConfigSubscriber implements
-    ConfigSubscriberProxyInterface
+class MethodConfigSubscriberProxy extends MethodConfigSubscriber
 {
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $factory;
-
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    protected $shippingMethodProvider;
-
     public function __construct()
     {
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setFactory(FormFactoryInterface $factory)
+    public function setFactory(FormFactoryInterface $factory): void
     {
         $this->factory = $factory;
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setMethodRegistry(ShippingMethodProviderInterface $shippingMethodProvider)
+    public function setShippingMethodProvider(ShippingMethodProviderInterface $shippingMethodProvider): void
     {
         $this->shippingMethodProvider = $shippingMethodProvider;
-        return $this;
     }
 }

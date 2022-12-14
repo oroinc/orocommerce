@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 use Oro\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use Oro\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
@@ -130,15 +129,12 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
      */
     protected function getExtensions(): array
     {
-        $zipCodeType = new ZipCodeType();
-        $zipCodeType->setDataClass(ZipCode::class);
-
         return array_merge([
             new PreloadedExtension(
                 [
                     $this->formType,
                     TaxJurisdictionType::class => $this->formType,
-                    $zipCodeType
+                    new ZipCodeType()
                 ],
                 [
                     HiddenType::class => [new AdditionalAttrExtension()],

@@ -82,6 +82,7 @@ services:
             - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@oro_message_queue.client.message_producer'
             - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
+            - '@oro_product.handler.collection_sort_order'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode', event: preUpdate }
@@ -269,6 +270,7 @@ services:
             - '@oro_website_search.manager.website_context_manager'
             - '@oro_web_catalog.content_variant_provider'
             - '@oro_locale.helper.localization'
+            - '@oro_website_search.formatter.decimal_flat_value_formatter'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
 

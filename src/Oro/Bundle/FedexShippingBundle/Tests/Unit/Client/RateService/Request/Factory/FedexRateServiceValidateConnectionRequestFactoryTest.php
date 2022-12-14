@@ -10,35 +10,28 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use PHPUnit\Framework\TestCase;
 
-class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
+class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    const KEY = 'key';
-    const PASS = 'pass';
-    const ACCOUNT_NUMBER = 'account';
-    const METER_NUMBER = 'meter';
-    const UNIT_OF_WEIGHT = 'unit';
-    const PICKUP_TYPE = 'pickup';
-    const STREET = 'street';
-    const CITY = 'city';
-    const REGION = 'region';
-    const POSTAL_CODE = 'postal';
-    const COUNTRY = 'country';
+    private const KEY = 'key';
+    private const PASS = 'pass';
+    private const ACCOUNT_NUMBER = 'account';
+    private const METER_NUMBER = 'meter';
+    private const UNIT_OF_WEIGHT = 'unit';
+    private const PICKUP_TYPE = 'pickup';
+    private const STREET = 'street';
+    private const CITY = 'city';
+    private const REGION = 'region';
+    private const POSTAL_CODE = 'postal';
+    private const COUNTRY = 'country';
 
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $crypter;
 
-    /**
-     * @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingOriginProvider;
 
-    /**
-     * @var FedexRateServiceValidateConnectionRequestFactory
-     */
+    /** @var FedexRateServiceValidateConnectionRequestFactory */
     private $factory;
 
     protected function setUp(): void
@@ -57,17 +50,15 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
         $settings = $this->createSettings();
         $shippingOrigin = $this->createShippingOrigin();
 
-        $this->crypter
-            ->expects(static::once())
+        $this->crypter->expects(self::once())
             ->method('decryptData')
             ->willReturn(self::PASS);
 
-        $this->shippingOriginProvider
-            ->expects(static::once())
+        $this->shippingOriginProvider->expects(self::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
-        static::assertEquals(
+        self::assertEquals(
             $this->getExpectedRequest(),
             $this->factory->create($settings)
         );

@@ -268,32 +268,25 @@ oro_behat_extension:
         locator: '//div[contains(@id,"oro_sale_quote_customerUser-uid")]/div/button[contains(@class, "entity-select-btn")]'
         type: xpath
 
-    Product Line Item Input Field:
-      selector:
-        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productDisplayName-uid")]'
-        type: xpath
-
-    Qty Line Item Input Field:
-      selector:
-        locator: '//input[contains(@id,"oro_product_quick_add_products_1_productQuantity-uid")]'
-        type: xpath
-
     Paste Your Order Input Field:
       selector:
         locator: '//textarea[contains(@id,"oro_product_quick_add_copy_paste_copyPaste")]'
+        type: xpath
+
+    Quick Add Row Product Field:
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_product-uid")]'
+        type: xpath
+
+    Quick Add Row Quantity Field:
+      selector:
+        locator: '//input[contains(@id,"oro_product_quick_add_products_1_quantity-uid")]'
         type: xpath
 
     Assigned To Input Field:
       selector:
         locator: '//input[contains(@id,"oro_rfp_frontend_request_assignedCustomerUsers-uid")]'
         type: xpath
-
-    Quick Order Import Validation:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: 'table.quick_add_validation_items'
-
-    Quick Order Add Form:
-      selector: 'form[name="oro_product_quick_add"]'
 
     Customers Address Book Paginator:
       selector: 'div[data-page-component-name="frontend-customer-customer-address-grid"] div.visible-items-counter'
@@ -392,6 +385,100 @@ oro_behat_extension:
 
     Checkout Line Item Product Link:
       selector: 'h3.grid-line-items__title a[title]'
+
+    Multi Shipping Shopping List:
+      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridRowStrict: CheckoutMultiShippingGridRow
+
+    MultiShipping Checkout Line Items Grid:
+      selector: 'div[data-page-component-name="frontend-checkout-line-items-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridRowStrict: CheckoutMultiShippingGridRow
+
+    First Checkout Shipping Grid Title:
+      selector:
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]/preceding-sibling::h3[1]'
+        type: 'xpath'
+
+    First Checkout Shipping Grid:
+      selector: 'div[data-page-component-name="frontend-checkout-line-items-grid:1"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridRowStrict: CheckoutMultiShippingGridRow
+
+    Second Checkout Shipping Grid Title:
+      selector:
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]/preceding-sibling::h3[1]'
+        type: 'xpath'
+
+    Second Checkout Shipping Grid:
+      selector: 'div[data-page-component-name="frontend-checkout-line-items-grid:2"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridRowStrict: CheckoutMultiShippingGridRow
+
+    Third Checkout Shipping Grid Title:
+      selector:
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:3"]/preceding-sibling::h3[1]'
+        type: 'xpath'
+
+    Third Checkout Shipping Grid:
+      selector: 'div[data-page-component-name="frontend-checkout-line-items-grid:3"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+      options:
+        mapping:
+          GridRowStrict: CheckoutMultiShippingGridRow
+
+    CheckoutMultiShippingGridRow:
+      selector: 'tbody tr[aria-rowindex]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridRow
+
+    Second Line Item Flat Rate Shipping Method:
+      selector:
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
+        type: 'xpath'
+
+    Third Line Item Flat Rate Shipping Method:
+      selector:
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="3"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
+        type: 'xpath'
+
+    Lighting Products Checkout Category Name:
+      selector:
+        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Lighting Products"]'
+        type: 'xpath'
+
+    Phones Checkout Category Name:
+      selector:
+        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Phones"]'
+        type: 'xpath'
+
+    Common Business Unit Name:
+      selector:
+        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Common Business Unit"]'
+        type: 'xpath'
+
+    Second Business Unit:
+      selector:
+        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Second Business Unit"]'
+        type: 'xpath'
+
+    SubOrders Grid:
+      selector: 'div[data-page-component-name="suborders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Checkout Line Item:
+      selector: 'tbody.grid-body tr.grid-row'
+
+    After Validation Buttons Controls Group:
+      selector: '.quick-order-add__buttons-wrapper:last-child'
   pages:
     Checkout:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage

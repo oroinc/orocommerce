@@ -1,3 +1,4 @@
+import __ from 'orotranslation/js/translator';
 import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
 import TableTypeDecorator from '../controls/table-edit/table-type-decorator';
 
@@ -8,7 +9,8 @@ const TableRowTypeBuilder = BaseTypeBuilder.extend({
         defaults: {
             removable: false,
             copyable: false,
-            draggable: ['tbody', 'thead', 'tfoot']
+            draggable: ['tbody', 'thead', 'tfoot'],
+            name: __('oro.cms.wysiwyg.component.table_row.label')
         },
 
         ...TableTypeDecorator

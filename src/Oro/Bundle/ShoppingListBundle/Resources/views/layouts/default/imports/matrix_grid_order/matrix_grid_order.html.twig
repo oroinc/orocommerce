@@ -33,6 +33,42 @@
     </div>
 {% endblock %}
 
+{% block __matrix_grid_order__header_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header',
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_picture_widget %}
+    <picture {{ block('block_attributes') }}>
+        {% set productImage = product.imagesByType('listing').first.image|default(null) %}
+        {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
+        <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-popup__header-img" />
+    </picture>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_attributes_widget %}
+    <section {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </section>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_name_widget %}
+    <h4 {{ block('block_attributes') }}>
+        {{ product.names|localized_value|e }}
+    </h4>
+{% endblock %}
+
+{% block __matrix_grid_order__header_product_sku_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.product.frontend.index.item'|trans }}
+        <span class="product-item__sku-value">{{ product.sku|e }}</span>
+    </div>
+{% endblock %}
+
 {% block __matrix_grid_order__form_start_widget %}
     {% set form_route_name = 'oro_shopping_list_frontend_matrix_grid_order' %}
     {% set form_route_parameters = form_route_parameters|merge({

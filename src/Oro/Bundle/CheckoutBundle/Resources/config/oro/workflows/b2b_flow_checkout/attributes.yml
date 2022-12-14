@@ -1,0 +1,7 @@
+workflows:
+    b2b_flow_checkout:
+        attributes:
+            line_items_shipping_methods:
+                type: array
+            grouped_line_items:
+                type: array

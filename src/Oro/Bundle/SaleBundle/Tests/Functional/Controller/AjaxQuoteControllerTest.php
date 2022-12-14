@@ -16,21 +16,13 @@ class AjaxQuoteControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
-        $this->loadFixtures(
-            [
-                LoadQuoteData::class
-            ]
-        );
+        $this->loadFixtures([LoadQuoteData::class]);
     }
 
     /**
      * @dataProvider getRelatedDataActionDataProvider
-     *
-     * @param string|null $customer
-     * @param string|null $customerUser
      */
-    public function testGetRelatedDataAction($customer, $customerUser = null)
+    public function testGetRelatedDataAction(?string $customer, ?string $customerUser)
     {
         /** @var Customer $order */
         $customerEntity = $customer ? $this->getReference($customer) : null;
@@ -43,8 +35,8 @@ class AjaxQuoteControllerTest extends WebTestCase
             $this->getUrl('oro_quote_related_data'),
             [
                 QuoteType::NAME => [
-                    'customer' => $customerEntity ? $customerEntity->getId() : null,
-                    'customerUser' => $customerUserEntity ? $customerUserEntity->getId() : null
+                    'customer' => $customerEntity?->getId(),
+                    'customerUser' => $customerUserEntity?->getId()
                 ]
             ]
         );
@@ -59,10 +51,7 @@ class AjaxQuoteControllerTest extends WebTestCase
         $this->assertArrayHasKey('customerGroupPaymentTerm', $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getRelatedDataActionDataProvider()
+    public function getRelatedDataActionDataProvider(): array
     {
         return [
             [
@@ -110,7 +99,7 @@ class AjaxQuoteControllerTest extends WebTestCase
         $this->ajaxRequest('POST', $this->getUrl('oro_quote_entry_point'));
         $response = $this->client->getResponse();
 
-        static::assertInstanceOf(JsonResponse::class, $response);
+        self::assertInstanceOf(JsonResponse::class, $response);
     }
 
     public function testEntryPointAction()

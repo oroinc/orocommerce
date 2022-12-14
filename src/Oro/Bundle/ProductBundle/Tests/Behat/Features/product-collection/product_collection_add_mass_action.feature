@@ -41,9 +41,9 @@ Feature: Product collection add mass action
     And I click "Add" in "UiDialog ActionPanel" element
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU11 | Product 11 |
-      | PSKU4  | Product 4  |
       | PSKU2  | Product 2  |
+      | PSKU4  | Product 4  |
+      | PSKU11 | Product 11 |
 
   Scenario: Check "add" mass action for Manually Added tab popup grid when no products selected
     When I click "Manually Added"
@@ -74,6 +74,6 @@ Feature: Product collection add mass action
     And I click Add mass action in "Add Products Popup" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
-      | PSKU12 | Product 12 |
-      | PSKU7  | Product 7  |
       | PSKU1  | Product 1  |
+      | PSKU7  | Product 7  |
+      | PSKU12 | Product 12 |

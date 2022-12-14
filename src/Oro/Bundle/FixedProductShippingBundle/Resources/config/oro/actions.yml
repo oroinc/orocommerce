@@ -1,4 +1,46 @@
 operations:
+    oro_fixed_product_integration_price_attribute_delete:
+        extends: DELETE
+        substitute_operation: DELETE
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - actions
+        datagrids:
+            - pricing-price-attribute-price-list-grid
+        entities:
+            - Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList
+        actions:
+            - '@call_service_method':
+                    attribute: $.result
+                    service: oro_fixed_product_shipping.handler.shipping_cost_attribute_delete_handler
+                    method: isAttributeFixed
+                    method_parameters: [$.data]
+            - '@flash_message':
+                    conditions:
+                        '@equal': [$.result, true]
+                    message: oro.fixed_product.action.delete.fixed.message
+                    type: 'error'
+            - '@tree':
+                conditions:
+                    '@equal': [$.result, false]
+                actions:
+                    - '@run_action_group':
+                        action_group: DELETE
+                        parameters_mapping:
+                            data: $.data
+                    - '@flash_message':
+                        message: oro.action.delete_message
+                        type: 'success'
+                        message_parameters:
+                            entityLabel: $.entityLabel
+                    - '@refresh_grid':
+                        conditions:
+                            '@and':
+                                - '@empty': $.routes[name]
+                                - '@not_empty': $.gridName
+                        parameters: [$.gridName]
+
     oro_integration_deactivate:
         preactions:
             - '@assign_constant_value':

@@ -17,18 +17,6 @@ services:
         tags:
             - { name: form.type, alias: oro_product_step_one }
 
-    oro_product.form.type.product_row:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductRowType'
-        arguments:
-            - "@oro_product.provider.product_units_provider"
-        tags:
-            - { name: form.type, alias: oro_product_row }
-
-    oro_product.form.type.product_row_collection:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType'
-        tags:
-            - { name: form.type, alias: oro_product_row_collection }
-
     oro_product.form.type.product_unit_selection:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
         arguments:
@@ -89,8 +77,7 @@ services:
             - { name: form.type, alias: oro_product_autocomplete }
 
     oro_product.form.type.quick_add:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\QuickAddType'
-        arguments: ['@oro_product.helper.product_grouper.factory']
+        class: Oro\Bundle\ProductBundle\Form\Type\QuickAddType
         tags:
             - { name: form.type, alias: 'oro_product_quick_add' }
 
@@ -268,5 +255,35 @@ services:
 
     oro_product.form.type.product_segment_content_widget_settings:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType'
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.collection_sort_order_grid:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\CollectionSortOrderGridType'
+        arguments:
+            - '@form.factory'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_collection_sort_order_grid }
+
+    oro_product.form.type.category_sort_order_grid:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\CategorySortOrderGridType'
+        arguments:
+            - '@form.factory'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_category_sort_order_grid }
+
+    oro_product.form.type.quick_add_row_collection:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\QuickAddRowCollectionType'
+        arguments:
+            - '@oro_product.form.data_transformer.quick_add_row_collection'
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.quick_add_row:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\QuickAddRowType'
+        arguments:
+            - '@oro_product.provider.product_units_provider'
         tags:
             - { name: form.type }

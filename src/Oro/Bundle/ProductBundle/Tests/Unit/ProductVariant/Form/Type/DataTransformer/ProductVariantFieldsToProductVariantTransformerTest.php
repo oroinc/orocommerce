@@ -8,23 +8,21 @@ use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
 class ProductVariantFieldsToProductVariantTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_CLASS = Product::class;
+    private const PRODUCT_CLASS = Product::class;
 
     /** @var Product */
-    protected $parentProduct;
+    private $parentProduct;
 
     /** @var ProductVariantFieldsToProductVariantTransformer */
-    protected $dataTransformer;
+    private $dataTransformer;
 
     /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $productVariantAvailabilityProvider;
+    private $productVariantAvailabilityProvider;
 
     protected function setUp(): void
     {
         $this->parentProduct = new Product();
-        $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
 
         $this->dataTransformer = new ProductVariantFieldsToProductVariantTransformer(
             $this->parentProduct,

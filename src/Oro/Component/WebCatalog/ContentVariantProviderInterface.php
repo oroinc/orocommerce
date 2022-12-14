@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
+/**
+ * Interface for the providers of each type of ContentVariants in WebCatalog
+ */
 interface ContentVariantProviderInterface
 {
     /**
@@ -38,4 +41,10 @@ interface ContentVariantProviderInterface
      * @return mixed
      */
     public function getRecordId(array $item);
+
+    /**
+     * @param array $item
+     * @return mixed
+     */
+    public function getRecordSortOrder(array $item);
 }

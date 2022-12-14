@@ -154,17 +154,6 @@ Oro\Bundle\ProductBundle\Entity\ProductImageType:
         type:
             - NotBlank: ~
 
-Oro\Bundle\ProductBundle\Model\ProductRow:
-    properties:
-        productSku:
-            - NotBlank: ~
-        productQuantity:
-            - Range:
-                min: 0
-                max: 999999999
-                notInRangeMessage: oro.product.frontend.quick_add.validation.not_in_range
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-
 Oro\Bundle\ProductBundle\Model\ProductLineItem:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
@@ -191,10 +180,6 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantField: ~
 
-Oro\Bundle\ProductBundle\Model\QuickAddRowCollection:
-    constraints:
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection: ~
-
 Oro\Bundle\ProductBundle\Model\QuickAddRow:
     group_sequence:
         - QuickAddRow
@@ -204,14 +189,13 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
             sell: true
             message: oro.product.frontend.quick_add.validation.invalid_unit
+            path: 'unit'
             groups: [ProductUnit]
         - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
             message: oro.product.frontend.quick_add.validation.invalid_precision
+            path: 'quantity'
             groups: [QuantityUnitPrecision]
     properties:
-        sku:
-            - NotBlank:
-                message: oro.product.frontend.quick_add.validation.not_found
         product:
             - NotNull:
                 message: oro.product.frontend.quick_add.validation.product_not_found
@@ -220,9 +204,13 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
             - Range:
                 min: 0
                 max: 999999999
-                notInRangeMessage: oro.product.frontend.quick_add.validation.not_in_range
+                minMessage: oro.product.frontend.quick_add.validation.quantity_min
+                maxMessage: oro.product.frontend.quick_add.validation.quantity_max
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                  message: oro.product.frontend.quick_add.validation.quantity_min
         unit:
-            - NotBlank: ~
+            - NotBlank:
+                message: oro.product.frontend.quick_add.validation.unit_not_blank
 
 Oro\Bundle\ProductBundle\Entity\Brand:
     properties:

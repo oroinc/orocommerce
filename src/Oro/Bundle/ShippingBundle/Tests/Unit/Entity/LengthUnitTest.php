@@ -10,19 +10,14 @@ class LengthUnitTest extends \PHPUnit\Framework\TestCase
     use EntityTestCaseTrait;
 
     /** @var LengthUnit */
-    protected $entity;
+    private $entity;
 
     protected function setUp(): void
     {
         $this->entity = new LengthUnit();
     }
 
-    protected function tearDown(): void
-    {
-        unset($this->entity);
-    }
-
-    public function testAccessors()
+    public function testGettersAndSetters()
     {
         $properties = [
             ['code', '123'],

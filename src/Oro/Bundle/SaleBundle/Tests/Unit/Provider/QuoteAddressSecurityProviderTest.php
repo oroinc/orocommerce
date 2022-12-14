@@ -17,9 +17,6 @@ use Symfony\Component\Yaml\Parser;
 
 class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var QuoteAddressSecurityProvider */
-    private $provider;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
     private $authorizationChecker;
 
@@ -28,6 +25,9 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressProvider */
     private $quoteAddressProvider;
+
+    /** @var QuoteAddressSecurityProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -46,11 +46,8 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider manualEditDataProvider
-     * @param string $type
-     * @param string $permissionName
-     * @param bool $permission
      */
-    public function testIsManualEditGranted($type, $permissionName, $permission)
+    public function testIsManualEditGranted(string $type, string $permissionName, bool $permission)
     {
         $this->authorizationChecker->expects($this->atLeastOnce())
             ->method('isGranted')
@@ -60,10 +57,7 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($permission, $this->provider->isManualEditGranted($type));
     }
 
-    /**
-     * @return array
-     */
-    public function manualEditDataProvider()
+    public function manualEditDataProvider(): array
     {
         return [
             ['shipping', 'oro_quote_address_shipping_allow_manual_backend', true],
@@ -73,10 +67,8 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider userDataProvider
-     * @param object|null $user
-     * @param string $permissionPostfix
      */
-    public function testIsAddressGrantedWithManualAllowed($user, $permissionPostfix)
+    public function testIsAddressGrantedWithManualAllowed(?object $user, string $permissionPostfix)
     {
         $this->quoteAddressProvider->expects($this->never())
             ->method($this->anything());
@@ -98,24 +90,15 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider permissionsDataProvider
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     *
-     * @param object|null $user
-     * @param array|null $permissions
-     * @param bool $hasCustomer
-     * @param bool $hasCustomerUser
-     * @param bool $hasCustomerAddresses
-     * @param bool $hasCustomerUserAddresses
-     * @param bool $expected
      */
     public function testIsAddressGranted(
-        $user,
-        $permissions,
-        $hasCustomer,
-        $hasCustomerUser,
-        $hasCustomerAddresses,
-        $hasCustomerUserAddresses,
-        $expected
+        ?object $user,
+        ?array $permissions,
+        bool $hasCustomer,
+        bool $hasCustomerUser,
+        bool $hasCustomerAddresses,
+        bool $hasCustomerUserAddresses,
+        bool $expected
     ) {
         $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
@@ -144,11 +127,9 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function permissionsDataProvider()
+    public function permissionsDataProvider(): array
     {
         $finder = new Finder();
         $yaml = new Parser();

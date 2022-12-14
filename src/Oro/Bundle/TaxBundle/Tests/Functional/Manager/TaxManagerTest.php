@@ -14,12 +14,10 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
-use Oro\Bundle\TaxBundle\Matcher\AbstractMatcher;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderItems;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadOrderWithLineItemsAndTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -27,6 +25,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -199,7 +198,7 @@ class TaxManagerTest extends WebTestCase
         $initialTaxes = [
             [
                 'tax' => LoadProductTaxCodes::TAX_1,
-                'rate' => LoadTaxes::RATE_1,
+                'rate' => 0.104,
                 'taxableAmount' => '66.6',
                 'taxAmount' => 6.92,
                 'currency' => 'USD'
@@ -539,8 +538,8 @@ class TaxManagerTest extends WebTestCase
         $this->getContainer()->get('oro_tax.taxation_provider.cache')->clear();
         $matchers = self::getContainer()->get('oro_tax.address_matcher_registry')->getMatchers();
         foreach ($matchers as $matcher) {
-            if ($matcher instanceof AbstractMatcher) {
-                $matcher->clearRulesCache();
+            if ($matcher instanceof ResetInterface) {
+                $matcher->reset();
             }
         }
     }
@@ -567,7 +566,7 @@ class TaxManagerTest extends WebTestCase
         $initialTaxes = [
             [
                 'tax' => LoadProductTaxCodes::TAX_1,
-                'rate' => LoadTaxes::RATE_1,
+                'rate' => 0.104,
                 'taxableAmount' => '66.6',
                 'taxAmount' => 6.92,
                 'currency' => 'USD'

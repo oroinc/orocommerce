@@ -5,12 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\Action;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 
+/**
+ * Set shipping methods for checkout from source entity.
+ */
 class DefaultShippingMethodSetterDecorator
 {
-    /**
-     * @var DefaultShippingMethodSetter
-     */
-    private $defaultShippingMethodSetter;
+    private DefaultShippingMethodSetter $defaultShippingMethodSetter;
 
     public function __construct(DefaultShippingMethodSetter $defaultShippingMethodSetter)
     {

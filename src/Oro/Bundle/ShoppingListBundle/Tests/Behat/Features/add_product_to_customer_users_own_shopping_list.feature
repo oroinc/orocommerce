@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-20791
+@ticket-BB-21934
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 Feature: Add Product to Customer User's Own Shopping List
   In order not to add product to customer's sharing shopping list
@@ -8,8 +9,9 @@ Feature: Add Product to Customer User's Own Shopping List
 
   Scenario: Create different window session
     Given sessions active:
-      | Admin | first_session  |
-      | Buyer | second_session |
+      | Admin  | first_session  |
+      | Buyer  | second_session |
+      | Buyer2 | second_session |
 
   Scenario: Prepare product attributes/ products/ price lists
     Given I proceed as the Admin
@@ -45,6 +47,13 @@ Feature: Add Product to Customer User's Own Shopping List
     And I upload "configurable_products_for_matrix_forms/products_prices.csv" file to "Shopping List Import File Field"
     And I click "Import file"
 
+  Scenario: Check the second buyer's shopping list
+    Given I proceed as the Buyer2
+    And I signed in as AmandaRCole@example.org on the store frontend
+    And I type "CC38" in "search"
+    And I click "Search Button"
+    Then I should see "Add to Shopping List"
+
   Scenario: Clear the buyer's shopping list at first
     Given I proceed as the Buyer
     And I signed in as NancyJSallee@example.org on the store frontend
@@ -73,7 +82,7 @@ Feature: Add Product to Customer User's Own Shopping List
   Scenario: To add a new product to shopping list in quick order form as the buyer
     Given I click "Quick Order Form"
     Then I should not see "Add to Shopping List 3"
-    When I type "BB04" in "SKU1" from "Quick Add Form"
+    When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load
     And I type "1" in "Quick Order Form > QTY1"
     When I click "Add to Shopping List"
@@ -132,7 +141,7 @@ Feature: Add Product to Customer User's Own Shopping List
   Scenario: To add a new product to shopping list in quick order form as the buyer with "Show All Lists In Shopping List Widgets" option on
     Given I click "Quick Order Form"
     Then I should see "Add to Shopping List 3"
-    When I type "BB04" in "SKU1" from "QuickAddForm"
+    When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load
     And I type "1" in "Quick Order Form > QTY1"
     And I click "Add to Shopping List 3"

@@ -2,31 +2,52 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Matcher;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Matcher\RegionMatcher;
 use Oro\Bundle\TaxBundle\Matcher\ZipCodeMatcher;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
+use Oro\Component\Testing\ReflectionUtil;
 
-class ZipCodeMatcherTest extends AbstractMatcherTest
+class ZipCodeMatcherTest extends \PHPUnit\Framework\TestCase
 {
     private const POSTAL_CODE = '02097';
+
+    /** @var TaxRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $taxRuleRepository;
 
     /** @var RegionMatcher|\PHPUnit\Framework\MockObject\MockObject */
     private $regionMatcher;
 
+    /** @var ZipCodeMatcher */
+    private $matcher;
+
     protected function setUp(): void
     {
-        parent::setUp();
-
+        $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);
         $this->regionMatcher = $this->createMock(RegionMatcher::class);
 
-        $this->matcher = new ZipCodeMatcher($this->doctrineHelper, TaxRule::class);
-        $this->matcher->setRegionMatcher($this->regionMatcher);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(TaxRule::class)
+            ->willReturn($this->taxRuleRepository);
+
+        $this->matcher = new ZipCodeMatcher($doctrine, $this->regionMatcher);
+    }
+
+    private function getTaxRule(int $id): TaxRule
+    {
+        $taxRule = new TaxRule();
+        ReflectionUtil::setId($taxRule, $id);
+
+        return $taxRule;
     }
 
     /**

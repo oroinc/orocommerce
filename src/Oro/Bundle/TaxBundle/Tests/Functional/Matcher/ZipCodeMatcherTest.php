@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AddressBundle\Entity\Address;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
@@ -16,43 +18,27 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ZipCodeMatcherTest extends WebTestCase
 {
-    const ZIP_US_NY_RANGE_INSIDE = '00200';
-    const ZIP_UNUSED_CODE = '00001';
+    private const ZIP_US_NY_RANGE_INSIDE = '00200';
+    private const ZIP_UNUSED_CODE = '00001';
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules',
-            ]
-        );
+        $this->loadFixtures([LoadTaxRules::class]);
     }
 
     /**
      * @dataProvider matchProvider
-     *
-     * @param array $expectedRuleReferences
-     * @param string $postalCode
-     * @param string $country
-     * @param string $region
-     * @param string $regionText
      */
-    public function testMatch($expectedRuleReferences, $postalCode, $country = null, $region = null, $regionText = null)
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-
-        $address = (new Address())
-            ->setPostalCode($postalCode)
-            ->setCountry(LoadTaxJurisdictions::getCountryByCode($em, $country));
-
-        if ($region) {
-            $address->setRegion(LoadTaxJurisdictions::getRegionByCode($em, $region));
-        } elseif ($regionText) {
-            $address->setRegionText($regionText);
-        }
+    public function testMatch(
+        array $expectedRuleReferences,
+        ?string $postalCode,
+        ?string $country,
+        ?string $region,
+        ?string $regionText = null
+    ) {
+        $address = $this->createAddress($postalCode, $country, $region, $regionText);
 
         /** @var TaxCodeInterface $productTaxCode */
         $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX.'.'.LoadProductTaxCodes::TAX_1);
@@ -64,12 +50,10 @@ class ZipCodeMatcherTest extends WebTestCase
         /** @var TaxRule[] $rules */
         $rules = $zipCodeMatcher->match(
             $address,
-            TaxCodes::create(
-                [
-                    TaxCode::create($productTaxCode->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($customerTaxCode->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
-                ]
-            )
+            TaxCodes::create([
+                TaxCode::create($productTaxCode->getCode(), TaxCodeInterface::TYPE_PRODUCT),
+                TaxCode::create($customerTaxCode->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+            ])
         );
 
         $actualRules = [];
@@ -78,19 +62,18 @@ class ZipCodeMatcherTest extends WebTestCase
         }
 
         foreach ($expectedRuleReferences as $reference) {
-            $expectedRule = $this->getTaxRuleByReference($reference);
-            $this->assertTrue(
-                array_key_exists($expectedRule->getId(), $actualRules),
+            /** @var TaxRule $expectedRule */
+            $expectedRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . $reference);
+            $this->assertArrayHasKey(
+                $expectedRule->getId(),
+                $actualRules,
                 sprintf('Can\'t find expected reference with id "%s" in actual rules', $expectedRule->getId())
             );
             $this->assertEquals($expectedRule, $actualRules[$expectedRule->getId()]);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function matchProvider()
+    public function matchProvider(): array
     {
         return [
             'Match by country, region and range' => [
@@ -121,12 +104,24 @@ class ZipCodeMatcherTest extends WebTestCase
         ];
     }
 
-    /**
-     * @param string $reference
-     * @return TaxRule
-     */
-    protected function getTaxRuleByReference($reference)
-    {
-        return $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . $reference);
+    private function createAddress(
+        ?string $postalCode,
+        ?string $country,
+        ?string $region,
+        ?string $regionText
+    ): Address {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $address = new Address();
+        $address->setPostalCode($postalCode);
+        $address->setCountry($em->getReference(Country::class, $country));
+        if ($region) {
+            $address->setRegion($em->getReference(Region::class, $region));
+        } elseif ($regionText) {
+            $address->setRegionText($regionText);
+        }
+
+        return $address;
     }
 }

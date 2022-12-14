@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
 class ShippingOriginModelFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
     /** @var ShippingOriginModelFactory */
@@ -30,15 +30,14 @@ class ShippingOriginModelFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
-            ->willReturnCallback(function ($classAlias, $id) {
-                if (str_contains($classAlias, 'Country')) {
+            ->willReturnCallback(function ($entityClass, $id) {
+                if (Country::class === $entityClass) {
                     return new Country($id);
                 }
-                if (str_contains($classAlias, 'Region')) {
+                if (Region::class === $entityClass) {
                     return new Region($id);
                 }
-
-                return null;
+                throw new \LogicException(sprintf('Unexpected entity class: %s.', $entityClass));
             });
         $this->assertEquals($expected, $this->factory->create($values));
     }

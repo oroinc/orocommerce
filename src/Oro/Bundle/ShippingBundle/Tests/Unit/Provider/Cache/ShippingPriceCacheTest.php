@@ -16,31 +16,29 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ShippingPriceCache */
-    private $cache;
-
     /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheProvider;
 
     /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $cacheItem;
+    private $cacheItem;
 
-    /** @var ShippingContextCacheKeyGenerator|\PHPUnit\Framework\MockObject\MockObject */
-    private $keyGenerator;
+    /** @var ShippingPriceCache */
+    private $cache;
 
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);
         $this->cacheItem = $this->createMock(CacheItemInterface::class);
-        $this->keyGenerator = $this->createMock(ShippingContextCacheKeyGenerator::class);
-        $this->keyGenerator->expects(self::any())
+
+        $keyGenerator = $this->createMock(ShippingContextCacheKeyGenerator::class);
+        $keyGenerator->expects(self::any())
             ->method('generateKey')
             ->willReturnCallback(function (ShippingContextInterface $context) {
                 return ($context->getSourceEntity() ? get_class($context->getSourceEntity()) : '')
                     . '_' . $context->getSourceEntityIdentifier();
             });
 
-        $this->cache = new ShippingPriceCache($this->cacheProvider, $this->keyGenerator);
+        $this->cache = new ShippingPriceCache($this->cacheProvider, $keyGenerator);
     }
 
     /**
@@ -60,7 +58,7 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($hasPrice, $this->cache->hasPrice($context, 'flat_rate', 'primary'));
     }
 
-    public function hasPriceDataProvider()
+    public function hasPriceDataProvider(): array
     {
         return [
             [
@@ -95,7 +93,7 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
         self::assertSame($price, $this->cache->getPrice($context, 'flat_rate', 'primary'));
     }
 
-    public function getPriceDataProvider()
+    public function getPriceDataProvider(): array
     {
         return [
             [

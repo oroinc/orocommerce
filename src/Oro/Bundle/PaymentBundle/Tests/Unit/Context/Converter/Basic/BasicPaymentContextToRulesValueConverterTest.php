@@ -19,50 +19,32 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
 {
     use EntityTrait;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingAddressMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingAddress;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $billingAddressMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $billingAddress;
 
-    /**
-     * @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $shippingOriginMock;
+    /** @var AddressInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingOrigin;
 
-    /**
-     * @var Customer|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $customerMock;
+    /** @var Customer|\PHPUnit\Framework\MockObject\MockObject */
+    private $customer;
 
-    /**
-     * @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $customerUserMock;
+    /** @var CustomerUser|\PHPUnit\Framework\MockObject\MockObject */
+    private $customerUser;
 
-    /**
-     * @var Price|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $subtotalMock;
+    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
+    private $subtotal;
 
     protected function setUp(): void
     {
-        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
-        $this->billingAddressMock = $this->createMock(AddressInterface::class);
-        $this->shippingOriginMock = $this->createMock(AddressInterface::class);
-        $this->customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subtotalMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingAddress = $this->createMock(AddressInterface::class);
+        $this->billingAddress = $this->createMock(AddressInterface::class);
+        $this->shippingOrigin = $this->createMock(AddressInterface::class);
+        $this->customer = $this->createMock(Customer::class);
+        $this->customerUser = $this->createMock(CustomerUser::class);
+        $this->subtotal = $this->createMock(Price::class);
     }
 
     public function testConvert(): void
@@ -80,14 +62,14 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
                 new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $product1]),
                 new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $product2])
             ]),
-            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddressMock,
-            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddressMock,
-            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOriginMock,
+            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddress,
+            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddress,
+            PaymentContext::FIELD_SHIPPING_ORIGIN => $this->shippingOrigin,
             PaymentContext::FIELD_SHIPPING_METHOD => 'someMethod',
             PaymentContext::FIELD_CURRENCY => 'USD',
-            PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
-            PaymentContext::FIELD_CUSTOMER => $this->customerMock,
-            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUserMock,
+            PaymentContext::FIELD_SUBTOTAL => $this->subtotal,
+            PaymentContext::FIELD_CUSTOMER => $this->customer,
+            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
             PaymentContext::FIELD_TOTAL => $totalAmount
         ]);
 
@@ -98,14 +80,14 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit\Framework\Te
                 return $factory
                     ->createPaymentLineItemWithDecoratedProduct($lineItem, [$product1, $product2]);
             }, $paymentContext->getLineItems()->toArray()),
-            'billingAddress' =>  $this->billingAddressMock,
-            'shippingAddress' => $this->shippingAddressMock,
-            'shippingOrigin' => $this->shippingOriginMock,
+            'billingAddress' =>  $this->billingAddress,
+            'shippingAddress' => $this->shippingAddress,
+            'shippingOrigin' => $this->shippingOrigin,
             'shippingMethod' => 'someMethod',
             'currency' => 'USD',
-            'subtotal' => $this->subtotalMock,
-            'customer' => $this->customerMock,
-            'customerUser' => $this->customerUserMock,
+            'subtotal' => $this->subtotal,
+            'customer' => $this->customer,
+            'customerUser' => $this->customerUser,
             'total' => $totalAmount
         ], $converter->convert($paymentContext));
     }

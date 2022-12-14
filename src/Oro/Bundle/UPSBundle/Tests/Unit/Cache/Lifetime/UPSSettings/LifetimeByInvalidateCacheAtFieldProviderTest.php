@@ -7,19 +7,10 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 
 class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const PROCESSING_TIME_ERROR_VALUE = 3;
+    private const PROCESSING_TIME_ERROR_VALUE = 3;
+    private const LIFETIME = 86400;
 
-    /**
-     * @internal
-     */
-    const LIFETIME = 86400;
-
-    /**
-     * @var LifetimeByInvalidateCacheAtFieldProvider
-     */
+    /** @var LifetimeByInvalidateCacheAtFieldProvider */
     private $provider;
 
     protected function setUp(): void
@@ -32,22 +23,20 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
      */
     public function testGetLifetime(string $invalidateCacheAtModifier, int $expectedLifetime)
     {
-        $settings = $this->createSettingsMock();
+        $settings = $this->createMock(UPSSettings::class);
 
         $datetime = new \DateTime($invalidateCacheAtModifier);
 
-        $settings->method('getUpsInvalidateCacheAt')
+        $settings->expects(self::any())
+            ->method('getUpsInvalidateCacheAt')
             ->willReturn($datetime);
 
         $actualLifetime = $this->provider->getLifetime($settings, self::LIFETIME);
 
-        static::assertLessThan(self::PROCESSING_TIME_ERROR_VALUE, abs($expectedLifetime - $actualLifetime));
+        self::assertLessThan(self::PROCESSING_TIME_ERROR_VALUE, abs($expectedLifetime - $actualLifetime));
     }
 
-    /**
-     * @return array
-     */
-    public function savePriceDataProvider()
+    public function savePriceDataProvider(): array
     {
         return [
             'earlier than lifetime' => [
@@ -67,42 +56,37 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
 
     public function testGenerateLifetimeAwareKey()
     {
-        $settings = $this->createSettingsMock();
+        $settings = $this->createMock(UPSSettings::class);
         $settingId = 1;
 
         $datetime = $this->createMock(\DateTime::class);
 
-        $datetime->method('getTimestamp')
+        $datetime->expects(self::any())
+            ->method('getTimestamp')
             ->willReturn(1000);
 
-        $settings->method('getUpsInvalidateCacheAt')
+        $settings->expects(self::any())
+            ->method('getUpsInvalidateCacheAt')
             ->willReturn($datetime);
-        $settings->method('getId')
+        $settings->expects(self::any())
+            ->method('getId')
             ->willReturn($settingId);
 
         $key = 'cache_key';
 
         $expectedKey = 'transport_' . $settingId . '_cache_key_1000';
 
-        static::assertEquals($expectedKey, $this->provider->generateLifetimeAwareKey($settings, $key));
+        self::assertEquals($expectedKey, $this->provider->generateLifetimeAwareKey($settings, $key));
     }
 
     public function testGenerateLifetimeAwareKeyNull()
     {
-        $settings = $this->createSettingsMock();
+        $settings = $this->createMock(UPSSettings::class);
 
         $key = 'cache_key';
 
         $expectedKey = 'transport__cache_key_';
 
-        static::assertEquals($expectedKey, $this->provider->generateLifetimeAwareKey($settings, $key));
-    }
-
-    /**
-     * @return UPSSettings|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createSettingsMock()
-    {
-        return $this->createMock(UPSSettings::class);
+        self::assertEquals($expectedKey, $this->provider->generateLifetimeAwareKey($settings, $key));
     }
 }

@@ -46,6 +46,7 @@ define(function(require) {
                 currentShippingMethodType: this.options.data.currentShippingMethodType,
                 formatter: NumberFormatter
             }));
+
             this.$el.html($el);
         }
     });

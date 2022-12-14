@@ -9,16 +9,11 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 class ProductDataConverterEventListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ProductDataConverterEventListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
         $this->listener = new ProductDataConverterEventListener();
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->listener);
     }
 
     public function testOnBackendHeader()

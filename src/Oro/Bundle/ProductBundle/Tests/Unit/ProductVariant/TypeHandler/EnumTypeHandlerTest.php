@@ -12,24 +12,20 @@ use Symfony\Component\Form\FormFactory;
 
 class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const PRODUCT_CLASS = Product::class;
+    private const PRODUCT_CLASS = Product::class;
 
     /** @var FormFactory|\PHPUnit\Framework\MockObject\MockObject */
-    protected $formFactory;
+    private $formFactory;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
     /** @var EnumTypeHandler */
-    protected $handler;
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->formFactory = $this->getMockBuilder(FormFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formFactory = $this->createMock(FormFactory::class);
         $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->handler = new EnumTypeHandler($this->formFactory, self::PRODUCT_CLASS, $this->configManager);
@@ -52,15 +48,13 @@ class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
         $fieldConfig->expects($this->once())
             ->method('toArray')
             ->with('extend')
-            ->willReturn(['target_entity' => '\stdClass']);
+            ->willReturn(['target_entity' => \stdClass::class]);
         $this->configManager->expects($this->once())
             ->method('getConfigFieldModel')
             ->with(Product::class, $fieldName)
             ->willReturn($fieldConfig);
 
-        $form = $this->getMockBuilder(Form::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
 
         $this->formFactory->expects($this->once())
             ->method('createNamed')
@@ -68,7 +62,7 @@ class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
                 $disabledValues = ['red', 'yellow', '10'];
 
                 $this->assertEquals([
-                    'class' => '\stdClass',
+                    'class' => \stdClass::class,
                     'configs' => ['allowClear' => false],
                     'disabled_values' => $disabledValues,
                     'auto_initialize' => false,

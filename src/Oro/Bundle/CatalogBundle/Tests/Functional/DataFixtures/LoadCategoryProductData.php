@@ -22,6 +22,11 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         LoadCategoryData::FOURTH_LEVEL2 => [LoadProductData::PRODUCT_7, LoadProductData::PRODUCT_8],
     ];
 
+    protected static $categorySortOrder = [
+        LoadProductData::PRODUCT_2 => 1,
+        LoadProductData::PRODUCT_5 => 0.2
+    ];
+
     /** {@inheritdoc} */
     public function getDependencies()
     {
@@ -38,7 +43,12 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
     {
         foreach (self::$relations as $categoryReference => $productsReference) {
             foreach ($productsReference as $productReference) {
-                $this->getReference($categoryReference)->addProduct($this->getReference($productReference));
+                if (array_key_exists($productReference, self::$categorySortOrder)) {
+                    $this->getReference($productReference)
+                        ->setCategorySortOrder(self::$categorySortOrder[$productReference]);
+                }
+                $this->getReference($categoryReference)
+                    ->addProduct($this->getReference($productReference));
             }
         }
 

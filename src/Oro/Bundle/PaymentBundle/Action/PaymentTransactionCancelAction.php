@@ -82,6 +82,9 @@ class PaymentTransactionCancelAction extends AbstractPaymentMethodAction
 
         $response = $this->executePaymentTransaction($cancelPaymentTransaction);
 
+        if ($cancelPaymentTransaction->isSuccessful()) {
+            $authorizePaymentTransaction->setActive(false);
+        }
         $this->paymentTransactionProvider->savePaymentTransaction($cancelPaymentTransaction);
         $this->paymentTransactionProvider->savePaymentTransaction($authorizePaymentTransaction);
 

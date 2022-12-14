@@ -51,6 +51,11 @@ class Product extends BaseProduct
     private $category;
 
     /**
+     * @var float
+     */
+    private $categorySortOrder;
+
+    /**
      * @var array
      */
     private $localizedFields = [
@@ -248,6 +253,19 @@ class Product extends BaseProduct
     public function setCategory(Category $category)
     {
         $this->category = $category;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getCategorySortOrder()
+    {
+        return $this->categorySortOrder;
+    }
+
+    public function setCategorySortOrder(float $categorySortOrder)
+    {
+        $this->categorySortOrder = $categorySortOrder;
     }
 
     public function setParentVariantLinks(Collection $collection)

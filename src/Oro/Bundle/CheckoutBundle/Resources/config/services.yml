@@ -9,6 +9,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.mapper.order_mapper'
             - '@oro_checkout.payment_methods_provider'
+            - '@oro_checkout.provider.multi_shipping.promotion.split_checkout'
         calls:
             - [setMemoryCacheProvider, ['@oro_checkout.data_provider.converter.checkout_to_order.memory_cache']]
 
@@ -398,8 +399,8 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.provider.checkout_subtotal'
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
+            - '@oro_shipping.shipping_origin.provider'
             - '@?oro_shipping.context.builder_factory_basic'
 
     oro_checkout.factory.payment_context_factory:
@@ -664,6 +665,8 @@ services:
     oro_checkout.provider.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider'
         public: true
+        arguments:
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
 
     oro_checkout.event_listener.login_on_checkout:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'

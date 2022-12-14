@@ -5,80 +5,63 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
 
-    const TAX_1 = 'TAX1';
-    const TAX_2 = 'TAX2';
-    const TAX_3 = 'TAX3';
+    public const REFERENCE_PREFIX = 'product_tax_code';
 
-    const DESCRIPTION_1 = 'Tax description 1';
-    const DESCRIPTION_2 = 'Tax description 2';
-    const DESCRIPTION_3 = 'Tax description 3';
+    public const TAX_1 = 'TAX1';
+    public const TAX_2 = 'TAX2';
+    public const TAX_3 = 'TAX3';
 
-    const REFERENCE_PREFIX = 'product_tax_code';
+    private const DATA = [
+        self::TAX_1 => [
+            'description' => 'Tax description 1',
+            'products'    => [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
+        ],
+        self::TAX_2 => [
+            'description' => 'Tax description 2',
+            'products'    => [LoadProductData::PRODUCT_3]
+        ],
+        self::TAX_3 => [
+            'description' => 'Tax description 3',
+            'products'    => []
+        ]
+    ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return ['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'];
+        return [LoadProductData::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $this->createProductTaxCode(
-            $manager,
-            self::TAX_1,
-            self::DESCRIPTION_1,
-            [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
-        );
-        $this->createProductTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, [LoadProductData::PRODUCT_3]);
-        $this->createProductTaxCode($manager, self::TAX_3, self::DESCRIPTION_3, []);
-
-        $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $code
-     * @param string $description
-     * @param array $productRefs
-     * @return ProductTaxCode
-     */
-    protected function createProductTaxCode(ObjectManager $manager, $code, $description, $productRefs)
-    {
-        /** @var User $user */
-        $user = $this->getFirstUser($manager);
-
-        /** @var OrganizationInterface $organization */
-        $organization = $user->getOrganization();
-
-        $productTaxCode = new ProductTaxCode();
-        $productTaxCode->setCode($code);
-        $productTaxCode->setDescription($description);
-        $productTaxCode->setOrganization($organization);
-        foreach ($productRefs as $productRef) {
-            /** @var Product $product */
-            $product = $this->getReference($productRef);
-            $product->setTaxCode($productTaxCode);
+        $organization = $this->getFirstUser($manager)->getOrganization();
+        foreach (self::DATA as $code => $item) {
+            $productTaxCode = new ProductTaxCode();
+            $productTaxCode->setCode($code);
+            $productTaxCode->setDescription($item['description']);
+            $productTaxCode->setOrganization($organization);
+            foreach ($item['products'] as $productRef) {
+                /** @var Product $product */
+                $product = $this->getReference($productRef);
+                $product->setTaxCode($productTaxCode);
+            }
+            $manager->persist($productTaxCode);
+            $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $productTaxCode);
         }
-
-        $manager->persist($productTaxCode);
-        $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $productTaxCode);
-
-        return $productTaxCode;
+        $manager->flush();
     }
 }

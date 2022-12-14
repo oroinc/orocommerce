@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultBefore;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -124,6 +125,17 @@ class ProductCollectionContentVariantFilteringEventListener
                     Criteria::expr()->eq(sprintf('integer.manually_added_to.variant_%s', $contentVariantId), 1),
                     Criteria::expr()->eq('integer.is_variant', 0)
                 ));
+        }
+    }
+
+    public function onSearchResultBefore(SearchResultBefore $event)
+    {
+        // Adds collection sort order info to the product collection datagrid
+        $contentVariantId = $event->getDatagrid()->getConfig()->offsetGetByPath(self::CONTENT_VARIANT_ID_CONFIG_PATH);
+        if ($contentVariantId) {
+            if (!$event->getQuery()->getSortOrder()) {
+                $event->getQuery()->setOrderBy(sprintf('decimal.assigned_to_sort_order.variant_%s', $contentVariantId));
+            }
         }
     }
 

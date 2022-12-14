@@ -153,6 +153,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $subtotal->setLabel($this->translator->trans(self::LABEL));
         $subtotal->setVisible(false);
         $subtotal->setType(self::TYPE);
+        $subtotal->setRemovable(false);
 
         return $subtotal;
     }

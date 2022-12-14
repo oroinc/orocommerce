@@ -8,7 +8,7 @@ use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
 {
-    private const REGION  = 'region';
+    private const REGION = 'region';
     private const COUNTRY = 'country';
 
     /** @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject */

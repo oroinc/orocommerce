@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -20,31 +19,20 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const TEST_CURRENCY = 'USD';
+    private const TEST_CURRENCY = 'USD';
 
-    /**
-     * @var FrontendProductPricesDataProvider
-     */
-    protected $provider;
+    /** @var ProductPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productPriceProvider;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceProviderInterface
-     */
-    protected $productPriceProvider;
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $userCurrencyManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|UserCurrencyManager
-     */
-    protected $userCurrencyManager;
+    /** @var ProductPriceScopeCriteriaRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $scopeCriteriaRequestHandler;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaRequestHandler
-     */
-    protected $scopeCriteriaRequestHandler;
+    /** @var FrontendProductPricesDataProvider */
+    private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
@@ -59,26 +47,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
-    {
-        unset(
-            $this->productPriceProvider,
-            $this->userCurrencyManager,
-            $this->scopeCriteriaRequestHandler,
-            $this->scopeCriteriaRequestHandle,
-            $this->provider
-        );
-    }
-
-    /**
      * @dataProvider getDataDataProvider
-     *
-     * @param ProductPriceCriteria[] $criteriaArray
-     * @param array $matchedPrices
-     * @param array $lineItems
-     * @param array $expectedResult
      */
     public function testGetProductsPrices(
         array $criteriaArray,
@@ -87,13 +56,11 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         array $expectedResult
     ) {
         $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->scopeCriteriaRequestHandler
-            ->expects($this->any())
+        $this->scopeCriteriaRequestHandler->expects($this->any())
             ->method('getPriceScopeCriteria')
             ->willReturn($scopeCriteria);
 
-        $this->userCurrencyManager
-            ->expects($this->once())
+        $this->userCurrencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn(self::TEST_CURRENCY);
 
@@ -106,12 +73,8 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getDataDataProvider()
+    public function getDataDataProvider(): array
     {
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 42]);
         $productUnit = new ProductUnit();
         $productUnit->setCode('test');
@@ -152,22 +115,15 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getProductsAllPricesProvider
-     *
-     * @param ProductHolderInterface[] $lineItems
-     * @param Product[] $products
-     * @param array $prices
-     * @param array $expectedPrices
      */
     public function testGetProductsAllPrices(array $lineItems, array $products, array $prices, array $expectedPrices)
     {
         $scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->scopeCriteriaRequestHandler
-            ->expects($this->any())
+        $this->scopeCriteriaRequestHandler->expects($this->any())
             ->method('getPriceScopeCriteria')
             ->willReturn($scopeCriteria);
 
-        $this->userCurrencyManager
-            ->expects($this->once())
+        $this->userCurrencyManager->expects($this->once())
             ->method('getUserCurrency')
             ->willReturn(self::TEST_CURRENCY);
 
@@ -180,12 +136,8 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedPrices, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getProductsAllPricesProvider()
+    public function getProductsAllPricesProvider(): array
     {
-        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 42]);
         $productUnit = new ProductUnit();
         $productUnit->setCode('item');
@@ -224,28 +176,14 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param float $price
-     * @param int $quantity
-     * @param string $currency
-     * @param array $unitCodes
-     * @return array
-     */
-    private function getPricesArray($price, $quantity, $currency, array $unitCodes)
+    private function getPricesArray(float $price, int $quantity, string $currency, array $unitCodes): array
     {
         return array_map(function ($unitCode) use ($price, $quantity, $currency) {
             return $this->createPrice($price, $currency, $quantity, $unitCode);
         }, $unitCodes);
     }
 
-    /**
-     * @param float $price
-     * @param int $quantity
-     * @param string $currency
-     * @param string $unitCode
-     * @return ProductPriceDTO
-     */
-    private function createPrice($price, $currency, $quantity, $unitCode)
+    private function createPrice(float $price, string $currency, int $quantity, string $unitCode): ProductPriceDTO
     {
         return new ProductPriceDTO(
             $this->getEntity(Product::class, ['id' => 1]),

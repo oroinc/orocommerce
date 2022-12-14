@@ -11,21 +11,16 @@ use Symfony\Component\Form\FormView;
 
 class PriceRuleEditorTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceRuleEditorOptionsConfigurator|\PHPUnit\Framework\MockObject\MockObject */
     private $optionsConfigurator;
 
-    /**
-     * @var PriceRuleEditorType
-     */
+    /** @var PriceRuleEditorType */
     private $type;
 
     protected function setUp(): void
     {
-        $this->optionsConfigurator = $this->getMockBuilder(PriceRuleEditorOptionsConfigurator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->optionsConfigurator = $this->createMock(PriceRuleEditorOptionsConfigurator::class);
+
         $this->type = new PriceRuleEditorType($this->optionsConfigurator);
     }
 
@@ -41,7 +36,6 @@ class PriceRuleEditorTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testFinishView()
     {
-        /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
 

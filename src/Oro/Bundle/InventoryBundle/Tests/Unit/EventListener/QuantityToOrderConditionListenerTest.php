@@ -12,10 +12,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
-use Oro\Bundle\ProductBundle\Model\QuickAddRow;
-use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -268,27 +264,6 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit\Framework\TestCase
 
         // check local cache
         $this->quantityToOrderConditionListener->onCheckoutConditionCheck($event);
-    }
-
-    public function testOnQuickAddRowCollectionValidate()
-    {
-        $event = new QuickAddRowCollectionValidateEvent();
-        $row = new QuickAddRow(1, 'testSKu', 2);
-        $row->setProduct(new Product());
-        $collection = new QuickAddRowCollection();
-        $collection->add($row);
-        $event->setQuickAddRowCollection($collection);
-        $this->validatorService->expects($this->once())
-            ->method('getMaximumErrorIfInvalid')
-            ->willReturn('errorString');
-        $this->quantityToOrderConditionListener->onQuickAddRowCollectionValidate($event);
-        $errors = $row->getErrors();
-        $this->assertCount(1, $errors);
-        $this->assertArrayHasKey('message', $errors[0]);
-        $this->assertArrayHasKey('parameters', $errors[0]);
-        $this->assertArrayHasKey('allowedRFP', $errors[0]['parameters']);
-        $this->assertEquals('errorString', $errors[0]['message']);
-        $this->assertTrue($errors[0]['parameters']['allowedRFP']);
     }
 
     public function testOnShoppingListStart()

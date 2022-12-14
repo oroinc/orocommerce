@@ -6,14 +6,18 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
+/**
+ * Represents a service to finds tax rules by an address.
+ */
 interface MatcherInterface
 {
     /**
-     * Find TaxRules by address
+     * Finds tax rules by an address.
      *
      * @param AbstractAddress $address
-     * @param TaxCodes $taxCodes
+     * @param TaxCodes        $taxCodes
+     *
      * @return TaxRule[]
      */
-    public function match(AbstractAddress $address, TaxCodes $taxCodes);
+    public function match(AbstractAddress $address, TaxCodes $taxCodes): array;
 }

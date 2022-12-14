@@ -351,6 +351,7 @@ datagrids:
                         - 100
                 placement:
                     bottom: true
+            hiddenLineItems: null
         source:
             type: orm
             query:

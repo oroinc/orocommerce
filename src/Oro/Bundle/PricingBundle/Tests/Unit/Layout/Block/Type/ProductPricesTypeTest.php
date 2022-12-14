@@ -18,23 +18,20 @@ use Symfony\Component\ExpressionLanguage\Expression;
 class ProductPricesTypeTest extends BlockTypeTestCase
 {
     /** @var AttributeRenderRegistry */
-    protected $attributeRenderRegistry;
+    private $attributeRenderRegistry;
 
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attributeManager;
+    private $attributeManager;
 
     protected function initializeLayoutFactoryBuilder(LayoutFactoryBuilderInterface $layoutFactoryBuilder)
     {
         $this->attributeRenderRegistry = new AttributeRenderRegistry();
 
-        $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeManager = $this->createMock(AttributeManager::class);
 
-        $ProductPricesType = new ProductPricesType($this->attributeRenderRegistry, $this->attributeManager);
-
-        $layoutFactoryBuilder
-            ->addType($ProductPricesType);
+        $layoutFactoryBuilder->addType(
+            new ProductPricesType($this->attributeRenderRegistry, $this->attributeManager)
+        );
 
         parent::initializeLayoutFactoryBuilder($layoutFactoryBuilder);
     }

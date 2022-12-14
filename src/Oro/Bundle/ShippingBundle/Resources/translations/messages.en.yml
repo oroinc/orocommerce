@@ -210,3 +210,11 @@ oro:
             full_plural: parcels
             short: pel
             short_plural: pels
+
+    multi_shipping_method:
+        label: Multi Shipping
+        settings:
+            label: Multi Shipping Transport Settings
+            create_integration.not_authorized.error: Current user doesn't have permissions to create integration
+        channel_type:
+            label: Multi Shipping Cost

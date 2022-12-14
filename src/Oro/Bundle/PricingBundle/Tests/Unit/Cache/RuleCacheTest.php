@@ -19,30 +19,20 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     private const PARAMETERS_KEY = 'parameters';
     private const HASH = 'hash';
 
-    /**
-     * @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cache;
+    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cache;
 
-    /**
-     * @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cacheItem;
+    /** @var CacheItemInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $cacheItem;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $crypter;
+    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $crypter;
 
-    /**
-     * @var RuleCache
-     */
-    protected $ruleCache;
+    /** @var RuleCache */
+    private $ruleCache;
 
     protected function setUp(): void
     {
@@ -56,7 +46,6 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     public function testFetchCorrectHash()
     {
         $id = 'test';
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 
@@ -177,9 +166,7 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     public function testSave()
     {
         $id = 'test';
-        $data = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $data = $this->createMock(QueryBuilder::class);
         $dqlParts = [
             'select' => new Expr\Select(['test.id']),
             'from' => new Expr\From('TestEntity', 'test')

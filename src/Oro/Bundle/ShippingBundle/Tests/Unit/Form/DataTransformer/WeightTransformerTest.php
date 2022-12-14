@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 class WeightTransformerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var WeightTransformer */
-    protected $transformer;
+    private $transformer;
 
     protected function setUp(): void
     {
@@ -17,20 +17,14 @@ class WeightTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Weight|null $value
-     * @param Weight|null $expected
-     *
      * @dataProvider reverseTransformDataProvider
      */
-    public function testReverseTransform($value, $expected)
+    public function testReverseTransform(Weight|string|null $value, ?Weight $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function reverseTransformDataProvider()
+    public function reverseTransformDataProvider(): array
     {
         $weight = $this->getWeight($this->getWeightUnit('kg'), 2);
 
@@ -63,20 +57,14 @@ class WeightTransformerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param Weight|null $value
-     * @param Weight|null $expected
-     *
      * @dataProvider transformDataProvider
      */
-    public function testTransform($value, $expected)
+    public function testTransform(Weight|string|null $value, Weight|string|null $expected)
     {
         $this->assertEquals($expected, $this->transformer->transform($value));
     }
 
-    /**
-     * @return array
-     */
-    public function transformDataProvider()
+    public function transformDataProvider(): array
     {
         $weight = $this->getWeight($this->getWeightUnit('kg'), 2);
 
@@ -100,11 +88,7 @@ class WeightTransformerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $code
-     * @return WeightUnit
-     */
-    protected function getWeightUnit($code)
+    private function getWeightUnit(string $code): WeightUnit
     {
         $weightUnit = new WeightUnit();
         $weightUnit->setCode($code);
@@ -112,12 +96,7 @@ class WeightTransformerTest extends \PHPUnit\Framework\TestCase
         return $weightUnit;
     }
 
-    /**
-     * @param null|WeightUnit $weightUnit
-     * @param float $value
-     * @return Weight
-     */
-    protected function getWeight($weightUnit, $value)
+    private function getWeight(?WeightUnit $weightUnit, int|string|null $value): Weight
     {
         return Weight::create($value, $weightUnit);
     }

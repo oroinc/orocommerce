@@ -62,9 +62,10 @@ class CheckoutCompareHelper
             }
 
             $workflowItem = reset($items);
+            $workflowData = $workflowItem->getData();
 
-            if ($workflowItem->getData()->has('state_token')) {
-                $stateToken = $workflowItem->getData()->get('state_token');
+            if ($workflowData->has('state_token')) {
+                $stateToken = $workflowData->get('state_token');
 
                 $diffKey = $this->diffMapper->getName();
                 $state1 = $this->diffStorage->getState($checkout, $stateToken);

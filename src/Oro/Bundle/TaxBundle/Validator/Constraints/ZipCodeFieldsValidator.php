@@ -6,74 +6,68 @@ use Oro\Bundle\TaxBundle\Entity\ZipCode;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * This validator is used to check tax jurisdiction zip codes.
+ */
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_tax_zip_code_fields';
-
     /**
      * {@inheritdoc}
-     * @param ZipCodeFields $constraint
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function validate($entity, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        if (!$entity instanceof ZipCode) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Entity must be instance of "%s", "%s" given',
-                    'Oro\Bundle\TaxBundle\Entity\ZipCode',
-                    is_object($entity) ? get_class($entity) : gettype($entity)
-                )
-            );
+        if (!$constraint instanceof ZipCodeFields) {
+            throw new UnexpectedTypeException($constraint, ZipCodeFields::class);
         }
 
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-
-        if ($entity->getZipCode() && ($entity->getZipRangeStart() || $entity->getZipRangeEnd())) {
-            $context->buildViolation($constraint->onlyOneTypeMessage)->atPath('zipCode')->addViolation();
+        if (null === $value) {
+            return;
         }
 
-        if (!$entity->getZipRangeStart() && $entity->getZipRangeEnd()) {
-            $context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
+        if (!$value instanceof ZipCode) {
+            throw new UnexpectedTypeException($value, ZipCode::class);
+        }
+
+        if ($value->getZipCode() && ($value->getZipRangeStart() || $value->getZipRangeEnd())) {
+            $this->context->buildViolation($constraint->onlyOneTypeMessage)
+                ->atPath('zipCode')
+                ->addViolation();
+        }
+
+        if (!$value->getZipRangeStart() && $value->getZipRangeEnd()) {
+            $this->context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
                 ->atPath('zipRangeStart')
                 ->addViolation();
         }
 
-        if ($entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
-            $context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
+        if ($value->getZipRangeStart() && !$value->getZipRangeEnd()) {
+            $this->context->buildViolation($constraint->rangeShouldHaveBothFieldMessage)
                 ->atPath('zipRangeEnd')
                 ->addViolation();
         }
 
-        if ($entity->getZipRangeStart() && $entity->getZipRangeEnd() && (
-            !$this->isInteger($entity->getZipRangeStart()) ||
-            !$this->isInteger($entity->getZipRangeEnd())
-        )
+        if ($value->getZipRangeStart()
+            && $value->getZipRangeEnd()
+            && (!$this->isInteger($value->getZipRangeStart()) || !$this->isInteger($value->getZipRangeEnd()))
         ) {
-            $context->buildViolation($constraint->onlyNumericRangesSupported)->atPath('zipRangeStart')->addViolation();
+            $this->context->buildViolation($constraint->onlyNumericRangesSupported)
+                ->atPath('zipRangeStart')
+                ->addViolation();
         }
 
-        if (!$entity->getZipCode() && !$entity->getZipRangeStart() && !$entity->getZipRangeEnd()) {
-            $context->buildViolation($constraint->zipCodeCanNotBeEmpty)->atPath('zipRangeStart')->addViolation();
+        if (!$value->getZipCode() && !$value->getZipRangeStart() && !$value->getZipRangeEnd()) {
+            $this->context->buildViolation($constraint->zipCodeCanNotBeEmpty)
+                ->atPath('zipRangeStart')
+                ->addViolation();
         }
     }
 
-    /**
-     * @param string $value
-     * @return bool
-     */
-    protected function isInteger($value)
+    protected function isInteger(mixed $value): bool
     {
-        /** @var ExecutionContextInterface $context */
-        $context = $this->context;
-
-        $violations = $context->getValidator()->validate($value, new Integer());
-
-        return $violations->count() === 0;
+        return $this->context->getValidator()->validate($value, new Integer())->count() === 0;
     }
 }

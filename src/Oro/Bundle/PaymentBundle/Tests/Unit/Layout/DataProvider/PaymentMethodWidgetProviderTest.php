@@ -9,25 +9,18 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class PaymentMethodWidgetProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const PAYMENT_METHOD_IDENTIFIER = 'payment_method_identifier';
-    const PAYMENT_METHOD_WIDGET = '_payment_method_widget';
+    private const PAYMENT_METHOD_IDENTIFIER = 'payment_method_identifier';
+    private const PAYMENT_METHOD_WIDGET = '_payment_method_widget';
 
-    /**
-     * @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $paymentMethodViewProvider;
+    /** @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodViewProvider;
 
-    /**
-     * @var PaymentMethodWidgetProvider
-     */
+    /** @var PaymentMethodWidgetProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        $this->paymentMethodViewProvider = $this
-            ->getMockBuilder(CompositePaymentMethodViewProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
 
         $this->provider = new PaymentMethodWidgetProvider($this->paymentMethodViewProvider);
     }
@@ -35,23 +28,23 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetPaymentMethodWidgetName()
     {
         $entity = $this->createMock(PaymentMethodAwareInterface::class);
-        $entity->expects(static::once())
+        $entity->expects(self::once())
             ->method('getPaymentMethod')
             ->willReturn(self::PAYMENT_METHOD_IDENTIFIER);
 
         $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
-        $paymentMethodView->expects(static::once())
+        $paymentMethodView->expects(self::once())
             ->method('getBlock')
             ->willReturn(self::PAYMENT_METHOD_WIDGET);
 
-        $this->paymentMethodViewProvider->expects(static::once())
+        $this->paymentMethodViewProvider->expects(self::once())
             ->method('getPaymentMethodView')
             ->with(self::PAYMENT_METHOD_IDENTIFIER)
             ->willReturn($paymentMethodView);
 
         $prefix = 'test_prefix';
 
-        static::assertSame(
+        self::assertSame(
             sprintf('_%s%s', $prefix, self::PAYMENT_METHOD_WIDGET),
             $this->provider->getPaymentMethodWidgetName($entity, $prefix)
         );

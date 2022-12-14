@@ -2,14 +2,35 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## UNRELEASED
+## 5.1.0-beta.2 (2022-11-30)
+[Show detailed list of changes](incompatibilities-5-1-beta-2.md)
+
+## 5.1.0-beta.1 (2022-09-30)
+[Show detailed list of changes](incompatibilities-5-1-beta-1.md)
 
 ### Added
+
+#### CatalogBundle
+* Category. Added sort order management for Products in categories:
+    - New field `category_sort_order` in Product entity & website search index to manage sort orders in Categories
+    - New input fields in Category edition grid in backend
+    - New default ordering behaviour for related frontend grids  (`frontend-product-search-grid` based on Category)
 
 #### CMSBundle
 * Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
   See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
   for more information.
+
+#### ProductBundle
+* `relevance_weight` field is added to the website search mapping for the Product entity 
+
+* Product Collections. Added sort order management for Products in Product Collections:
+    - New entity `ProductCollectionSortOrder` and website search field `assigned_to_sort_order.ASSIGN_TYPE_ASSIGN_ID` have been added to link Products to Segments with a SortOrder to manage sort orders in Product Collections
+    - New default ordering behaviour added for related frontend grids (`frontend-product-search-grid` based on ProductCollection)
+
+#### WebCatalogBundle
+* ProductCollection ContentVariant. Added sort order management for Products in categories
+    - New input fields in ProductCollection ContentVariant edition grid
 
 ### Changed
 
