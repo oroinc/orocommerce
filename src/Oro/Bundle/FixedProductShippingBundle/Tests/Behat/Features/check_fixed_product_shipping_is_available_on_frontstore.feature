@@ -1,3 +1,4 @@
+@ticket-BB-12789
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroFixedProductShippingBundle:FixedProductIntegration.yml
 @fixture-OroFixedProductShippingBundle:Checkout.yml
@@ -46,4 +47,37 @@ Feature: Check Fixed Product Shipping is available on frontstore
     And I should see "Fixed Product: $28.20"
     And I check "Fixed Product" on the "Shipping Method" checkout step and press Continue
     And on the "Payment" checkout step I press Continue
-    And I should see "Shipping $28.20"
+    Then I should see Checkout Totals with data:
+      | Subtotal | $10.00 |
+      | Shipping | $28.20  |
+    And I should see "Total $38.20"
+    When I proceed as the Admin
+    And I go to Products/ Products
+    And click edit "SKU123" in grid
+    When I click "Shipping Options"
+    Then I should see "Shipping Cost"
+    And fill "Shipping Cost Attribute Product Form" with:
+      | Shipping Cost USD | 6.00 |
+      | Shipping Cost EUR | 6.00 |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+    When I proceed as the Buyer
+    And I reload the page
+    Then I should see Checkout Totals with data:
+      | Subtotal | $10.00 |
+      | Shipping | $31.00  |
+    And I should see "Total $41.00"
+    When I proceed as the Admin
+    And go to System/ Shipping Rules
+    And I click "edit" on first row in grid
+    And I fill "Shipping Rule Fixed Product" with:
+      | Surcharge Amount | 1 |
+    And I save and close form
+    Then I should see "Shipping rule has been saved" flash message
+    When I proceed as the Buyer
+    And I reload the page
+    Then I should see Checkout Totals with data:
+      | Subtotal | $10.00 |
+      | Shipping | $30.10  |
+    And I should see "Total $40.10"
+    

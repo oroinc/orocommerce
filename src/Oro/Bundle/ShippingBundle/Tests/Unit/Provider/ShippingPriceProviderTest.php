@@ -22,24 +22,25 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodS
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class ShippingPriceProviderTest extends TestCase
 {
     use EntityTrait;
     use MemoryCacheProviderAwareTestTrait;
 
-    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingRulesProvider;
+    private MethodsConfigsRulesByContextProviderInterface|MockObject $shippingRulesProvider;
 
-    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceCache;
+    private ShippingPriceCache|MockObject $priceCache;
 
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
+    private EventDispatcherInterface|MockObject $eventDispatcher;
 
-    /** @var ShippingPriceProvider */
-    private $shippingPriceProvider;
+    private ShippingPriceProvider $shippingPriceProvider;
 
     protected function setUp(): void
     {
@@ -106,7 +107,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getApplicableShippingMethodsConfigsRulesProvider
      */
-    public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData)
+    public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData): void
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -155,6 +156,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             'one rule' => [
                 'shippingRule' => [
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 111,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'flat_rate',
@@ -171,6 +173,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]),
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 222,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'integration_method',
@@ -187,6 +190,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]),
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 333,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'unknown_method',
@@ -214,6 +218,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             'several rules with same methods ans diff types' => [
                 'shippingRule' => [
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 1234,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'integration_method',
@@ -230,6 +235,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]),
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 2345,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'flat_rate',
@@ -246,6 +252,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]),
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 4567,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'integration_method',
@@ -321,7 +328,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetApplicableMethodsViewsCache()
+    public function testGetApplicableMethodsViewsCache(): void
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -330,11 +337,13 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
+        $ruleId = 111;
         $this->shippingRulesProvider->expects(self::exactly(2))
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
                 $this->getEntity(ShippingMethodsConfigsRule::class, [
+                    'id' => $ruleId,
                     'methodConfigs' => [
                         $this->getEntity(ShippingMethodConfig::class, [
                             'method' => 'flat_rate',
@@ -372,14 +381,14 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceCache->expects(self::exactly(2))
             ->method('hasPrice')
-            ->with($context, 'flat_rate', 'primary')
+            ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturnOnConsecutiveCalls(false, true);
         $this->priceCache->expects(self::once())
             ->method('savePrice')
-            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'));
+            ->with($context, 'flat_rate', 'primary', $ruleId, Price::create(1, 'USD'));
         $this->priceCache->expects(self::once())
             ->method('getPrice')
-            ->with($context, 'flat_rate', 'primary')
+            ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturn(Price::create(2, 'USD'));
 
         $this->assertEquals(
@@ -427,6 +436,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'typeId' => 'ground',
                 'shippingRules' => [
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 111,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'flat_rate',
@@ -450,6 +460,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'typeId' => 'primary',
                 'shippingRules' => [
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 222,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'flat_rate',
@@ -473,6 +484,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'typeId' => 'primary',
                 'shippingRules' => [
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 333,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'flat_rate',
@@ -496,6 +508,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                 'typeId' => 'ground',
                 'shippingRules' => [
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 444,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'integration_method',
@@ -512,6 +525,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]),
                     $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'id' => 1234,
                         'methodConfigs' => [
                             $this->getEntity(ShippingMethodConfig::class, [
                                 'method' => 'integration_method',
@@ -545,7 +559,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetPriceWhenNoMethodId()
+    public function testGetPriceWhenNoMethodId(): void
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -563,7 +577,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->shippingPriceProvider->getPrice($context, null, 'ground'));
     }
 
-    public function testGetPriceCache()
+    public function testGetPriceCache(): void
     {
         $methodId = 'flat_rate';
         $typeId = 'primary';
@@ -575,11 +589,13 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->shippingRulesProvider->expects($this->once())
+        $ruleId = 222;
+        $this->shippingRulesProvider->expects(self::exactly(2))
             ->method('getShippingMethodsConfigsRules')
             ->with($context)
             ->willReturn([
                 $this->getEntity(ShippingMethodsConfigsRule::class, [
+                    'id' => $ruleId,
                     'methodConfigs' => [
                         $this->getEntity(ShippingMethodConfig::class, [
                             'method' => $methodId,
@@ -601,14 +617,14 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->priceCache->expects(self::exactly(2))
             ->method('hasPrice')
-            ->with($context, 'flat_rate', 'primary')
+            ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturnOnConsecutiveCalls(false, true);
         $this->priceCache->expects(self::once())
             ->method('savePrice')
-            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'));
+            ->with($context, 'flat_rate', 'primary', $ruleId, Price::create(1, 'USD'));
         $this->priceCache->expects(self::once())
             ->method('getPrice')
-            ->with($context, 'flat_rate', 'primary')
+            ->with($context, 'flat_rate', 'primary', $ruleId)
             ->willReturn(Price::create(2, 'USD'));
 
         $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
@@ -616,7 +632,7 @@ class ShippingPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
     }
 
-    public function testGetPriceNoMethodAndType()
+    public function testGetPriceNoMethodAndType(): void
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
