@@ -49,7 +49,20 @@ class ShippingPriceCache
         return false !== $value ? $value : null;
     }
 
+    public function getRulePrice(
+        ShippingContextInterface $context,
+        string $methodId,
+        string $typeId,
+        int $ruleId
+    ): ?Price {
+        $key = $this->generateCacheKey($context, $methodId, $typeId, $ruleId);
+        $value = $this->cache->fetch($key);
+
+        return false !== $value ? $value : null;
+    }
+
     /**
+     * @deprecated
      * @param ShippingContextInterface $context
      * @param string $methodId
      * @param string $typeId
@@ -61,6 +74,19 @@ class ShippingPriceCache
     }
 
     /**
+     * @param ShippingContextInterface $context
+     * @param string $methodId
+     * @param string $typeId
+     * @param $ruleId
+     * @return bool
+     */
+    public function hasRulePrice(ShippingContextInterface $context, $methodId, $typeId, $ruleId): bool
+    {
+        return $this->cache->contains($this->generateCacheKey($context, $methodId, $typeId, $ruleId));
+    }
+
+    /**
+     * @deprecated
      * @param ShippingContextInterface $context
      * @param string $methodId
      * @param string $typeId
@@ -78,6 +104,22 @@ class ShippingPriceCache
      * @param ShippingContextInterface $context
      * @param string $methodId
      * @param string $typeId
+     * @param int $ruleId
+     * @param Price $price
+     * @return $this
+     */
+    public function saveRulePrice(ShippingContextInterface $context, $methodId, $typeId, $ruleId, Price $price)
+    {
+        $key = $this->generateCacheKey($context, $methodId, $typeId, $ruleId);
+        $this->cache->save($key, $price, static::CACHE_LIFETIME);
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     * @param ShippingContextInterface $context
+     * @param string $methodId
+     * @param string $typeId
      * @return string
      */
     protected function generateKey(ShippingContextInterface $context, $methodId, $typeId)
@@ -85,7 +127,18 @@ class ShippingPriceCache
         return $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId;
     }
 
-    public function deleteAllPrices()
+    /**
+     * @param ShippingContextInterface $context
+     * @param string[] $identifiers
+     * @return string
+     */
+    protected function generateCacheKey(ShippingContextInterface $context, ...$identifiers): string
+    {
+        array_unshift($identifiers, $this->cacheKeyGenerator->generateKey($context));
+        return implode("|", $identifiers);
+    }
+
+    public function deleteAllPrices(): void
     {
         $this->cache->deleteAll();
     }

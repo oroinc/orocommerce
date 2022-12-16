@@ -134,12 +134,12 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
             return null;
         }
 
-        if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
-            return $this->priceCache->getPrice($context, $methodId, $typeId);
-        }
-
         $rules = $this->shippingRulesProvider->getShippingMethodsConfigsRules($context);
         foreach ($rules as $rule) {
+            if ($this->priceCache->hasRulePrice($context, $methodId, $typeId, $rule->getId())) {
+                return $this->priceCache->getRulePrice($context, $methodId, $typeId, $rule->getId());
+            }
+
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 if ($methodConfig->getMethod() !== $methodId) {
                     continue;
@@ -154,7 +154,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
                     );
 
                     if ($price) {
-                        $this->priceCache->savePrice($context, $methodId, $typeId, $price);
+                        $this->priceCache->saveRulePrice($context, $methodId, $typeId, $rule->getId(), $price);
                     }
 
                     return $price;
@@ -175,14 +175,15 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         ShippingMethodConfig $methodConfig
     ) {
         $method = $this->shippingMethodProvider->getShippingMethod($methodConfig->getMethod());
+        $rule = $methodConfig->getMethodConfigsRule();
         $methodId = $method->getIdentifier();
         $methodOptions = $methodConfig->getOptions();
         $typesOptions = $this->getEnabledTypesOptions($methodConfig->getTypeConfigs()->toArray());
 
         $prices = [];
         foreach ($typesOptions as $typeId => $typeOptions) {
-            if ($this->priceCache->hasPrice($context, $methodId, $typeId)) {
-                $prices[$typeId] = $this->priceCache->getPrice($context, $methodId, $typeId);
+            if ($this->priceCache->hasRulePrice($context, $methodId, $typeId, $rule->getId())) {
+                $prices[$typeId] = $this->priceCache->getRulePrice($context, $methodId, $typeId, $rule->getId());
             }
         }
         $requestedTypesOptions = array_diff_key($typesOptions, $prices);
@@ -204,7 +205,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         $types = [];
         foreach (array_filter($prices) as $typeId => $price) {
             if (array_key_exists($typeId, $requestedTypesOptions)) {
-                $this->priceCache->savePrice($context, $methodId, $typeId, $price);
+                $this->priceCache->saveRulePrice($context, $methodId, $typeId, $rule->getId(), $price);
             }
             $type = $method->getType($typeId);
             $types[$typeId] = $this->shippingMethodViewFactory
