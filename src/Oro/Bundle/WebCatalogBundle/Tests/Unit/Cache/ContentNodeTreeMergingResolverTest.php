@@ -384,7 +384,7 @@ class ContentNodeTreeMergingResolverTest extends \PHPUnit\Framework\TestCase
             ->expects(self::once())
             ->method('getResolvedContentNode')
             ->with($node, [$scope1], ['tree_depth' => -1])
-            ->willReturnOnConsecutiveCalls($resolvedNodeFromScope1);
+            ->willReturn($resolvedNodeFromScope1);
 
         $this->resolvedContentNodesMerger
             ->expects(self::never())
@@ -417,13 +417,15 @@ class ContentNodeTreeMergingResolverTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->mergedContentNodeTreeCache
-            ->expects(self::never())
-            ->method('fetch');
+            ->expects(self::once())
+            ->method('fetch')
+            ->with($nodeId, [$scopeId1], -1)
+            ->willReturn(false);
 
         $this->innerResolver
             ->expects(self::once())
             ->method('getResolvedContentNode')
-            ->withConsecutive([$node, [$scope1], ['tree_depth' => -1]])
+            ->with($node, [$scope1], ['tree_depth' => -1])
             ->willReturn($resolvedNodeFromScope1);
 
         $this->resolvedContentNodesMerger
@@ -431,8 +433,10 @@ class ContentNodeTreeMergingResolverTest extends \PHPUnit\Framework\TestCase
             ->method('mergeResolvedNodes');
 
         $this->mergedContentNodeTreeCache
-            ->expects(self::never())
-            ->method('save');
+            ->expects(self::once())
+            ->method('save')
+            ->with($nodeId, [$scopeId1], $resolvedNodeFromScope1)
+            ->willReturn(true);
 
         self::assertEquals(
             $resolvedNodeFromScope1,
@@ -455,8 +459,10 @@ class ContentNodeTreeMergingResolverTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->mergedContentNodeTreeCache
-            ->expects(self::never())
-            ->method('fetch');
+            ->expects(self::once())
+            ->method('fetch')
+            ->with($nodeId, [$scopeId1], 1)
+            ->willReturn(false);
 
         $this->innerResolver
             ->expects(self::once())
@@ -469,8 +475,10 @@ class ContentNodeTreeMergingResolverTest extends \PHPUnit\Framework\TestCase
             ->method('mergeResolvedNodes');
 
         $this->mergedContentNodeTreeCache
-            ->expects(self::never())
-            ->method('save');
+            ->expects(self::once())
+            ->method('save')
+            ->with($nodeId, [$scopeId1], $resolvedNodeFromScope1)
+            ->willReturn(true);
 
         self::assertEquals(
             $resolvedNodeFromScope1,

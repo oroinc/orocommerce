@@ -123,10 +123,24 @@ services:
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
         arguments:
-            - '@oro_message_queue.client.message_producer'
             - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
+
+    oro_web_catalog.event_listener.webcatalog_cache_config:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogCacheConfigChangeListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
+
+    oro_web_catalog.migration.demo_data_fixtures_listener.disable_webcatalog_cache_config_listener:
+        parent: oro_platform.event_listener.demo_data_fixtures_listener.abstract
+        calls:
+            - [disableListener, ['oro_web_catalog.event_listener.webcatalog_cache_config']]
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
+            - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
 
     oro_web_catalog.request_web_content_variant_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider

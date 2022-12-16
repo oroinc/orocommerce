@@ -3,9 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -15,13 +13,13 @@ class WebCatalogConfigChangeListener
 {
     const WEB_CATALOG_CONFIGURATION_NAME = 'oro_web_catalog.web_catalog';
 
-    private MessageProducerInterface $messageProducer;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
 
-    private EventDispatcherInterface $dispatcher;
-
-    public function __construct(MessageProducerInterface $messageProducer, EventDispatcherInterface $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
-        $this->messageProducer = $messageProducer;
         $this->dispatcher = $dispatcher;
     }
 
@@ -33,14 +31,6 @@ class WebCatalogConfigChangeListener
 
         $reindexationEvent = $this->getReindexationRequestEvent($event);
         $this->dispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
-
-        $webCatalogId = (int)$event->getNewValue(self::WEB_CATALOG_CONFIGURATION_NAME);
-        if ($webCatalogId) {
-            $this->messageProducer->send(
-                WebCatalogCalculateCacheTopic::getName(),
-                [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => $webCatalogId]
-            );
-        }
     }
 
     /**

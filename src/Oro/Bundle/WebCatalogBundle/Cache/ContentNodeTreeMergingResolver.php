@@ -52,12 +52,8 @@ class ContentNodeTreeMergingResolver implements ContentNodeTreeResolverInterface
         $treeDepth = (int)($context['tree_depth'] ?? -1);
 
         $nodeId = $node->getId();
-        $rootNodeId = $node->getRoot();
-        $applyMergedContentNodeTreeCache = $nodeId !== $rootNodeId || count($scopeIds) > 1;
 
-        $resolvedNode = $applyMergedContentNodeTreeCache
-            ? $this->mergedContentNodeTreeCache->fetch($nodeId, $scopeIds, $treeDepth)
-            : false;
+        $resolvedNode = $this->mergedContentNodeTreeCache->fetch($nodeId, $scopeIds, $treeDepth);
         if ($resolvedNode === false) {
             /** @var array<ResolvedContentNode|null> $resolvedNodes */
             $resolvedNodes = [];
@@ -68,9 +64,7 @@ class ContentNodeTreeMergingResolver implements ContentNodeTreeResolverInterface
 
             $resolvedNode = $this->mergeResolvedNodes($resolvedNodes, $nodeId);
 
-            if ($applyMergedContentNodeTreeCache) {
-                $this->mergedContentNodeTreeCache->save($nodeId, $scopeIds, $resolvedNode);
-            }
+            $this->mergedContentNodeTreeCache->save($nodeId, $scopeIds, $resolvedNode);
 
             if ($resolvedNode) {
                 $this->applyTreeDepth($resolvedNode, $treeDepth);
