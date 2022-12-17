@@ -36,8 +36,8 @@ datagrids:
                 label:         oro.consent.type.label
                 frontend_type: select
                 choices:
-                    oro.consent.type.optional: false
-                    oro.consent.type.mandatory: true
+                    oro.consent.type.optional: 0
+                    oro.consent.type.mandatory: 1
             node_title:
                 label:         oro.consent.content_node.label
                 type:          twig
@@ -56,8 +56,8 @@ datagrids:
                 inline_editing:
                     enable: false
                 choices:
-                    oro.consent.declined_notification.no.label: false
-                    oro.consent.declined_notification.yes.label: true
+                    oro.consent.declined_notification.no.label: 0
+                    oro.consent.declined_notification.yes.label: 1
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -97,8 +97,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                oro.consent.type.optional: false
-                                oro.consent.type.mandatory: true
+                                oro.consent.type.optional: 0
+                                oro.consent.type.mandatory: 1
                 node_title:
                     type:       string
                     data_name:  node_title_localized
@@ -108,8 +108,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                oro.consent.declined_notification.no.label: false
-                                oro.consent.declined_notification.yes.label: true
+                                oro.consent.declined_notification.no.label: 0
+                                oro.consent.declined_notification.yes.label: 1
                 createdAt:
                     type:       datetime
                     data_name:  consent.createdAt
