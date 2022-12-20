@@ -5,14 +5,18 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
     owner: '@admin'
     createdAt: '<(new DateTime("2017-10-01 12:00:00 UTC"))>'
     updatedAt: '<(new DateTime("2017-10-01 13:00:00 UTC"))>'
+    vatId: 'TESTVATID'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   customer_user{1..2}:
-    email: 'customer_user_email_<current()>\@example.com'
+    __calls:
+      - setEmail: [ 'customer_user_email_<current()>\@example.com' ]
+    emailLowercase: 'customer_user_email@example.com<current()>'
     username: 'Acme_user_<current()>'
     password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
     salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
     firstName: 'Acme_User_<current()>'
+    lastName: 'Acme_User_<current()>'
     enabled: true
     confirmed: true
     customer: '@customer<current()>'
@@ -33,7 +37,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     owner: '@admin'
     systemOrganization: '@organization'
     primary: true
-    organization: '@organization'
+    organization: 'ORO'
   customer_address2:
     country: '@germany'
     region: '@berlin'
@@ -45,7 +49,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     owner: '@admin'
     systemOrganization: '@organization'
     primary: true
-    organization: '@organization'
+    organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
   customer_user_address1:
@@ -59,7 +63,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     owner: '@admin'
     systemOrganization: '@organization'
     primary: true
-    organization: '@organization'
+    organization: 'ORO'
   customer_user_address2:
     country: '@germany'
     region: '@berlin'
@@ -71,7 +75,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     owner: '@admin'
     systemOrganization: '@organization'
     primary: true
-    organization: '@organization'
+    organization: 'ORO'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customerAddress1ShippingDefault:

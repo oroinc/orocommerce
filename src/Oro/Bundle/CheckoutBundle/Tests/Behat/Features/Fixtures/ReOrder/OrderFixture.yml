@@ -7,7 +7,7 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         street: '34500 Capitol Avenue'
         city: 'Romney'
         postalCode: '47981'
-        organization: '@organization'
+        organization: 'ORO'
     shippingAddress1:
         region: '@new_york'
         country: '@united_states'
@@ -15,7 +15,7 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         street: '23401 Caldwell Road'
         city: 'Rochester'
         postalCode: '14609'
-        organization: '@organization'
+        organization: 'ORO'
     billingAddress2:
         customerUserAddress: '@amandaAddress3'
         region: '@indiana'
@@ -24,7 +24,7 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         street: '34500 Capitol Avenue'
         city: 'Romney'
         postalCode: '47981'
-        organization: '@organization'
+        organization: 'ORO'
     shippingAddress2:
         region: '@new_york'
         country: '@united_states'
@@ -32,7 +32,7 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         street: '23401 Caldwell Road'
         city: 'Rochester'
         postalCode: '14609'
-        organization: '@organization'
+        organization: 'ORO'
 
 Oro\Bundle\CurrencyBundle\Entity\MultiCurrency:
     subtotal1:
@@ -54,6 +54,7 @@ Oro\Bundle\CurrencyBundle\Entity\MultiCurrency:
 
 Oro\Bundle\OrderBundle\Entity\Order:
     order1:
+        lineItems: [ '@orderLineItem1', '@orderLineItem2', '@orderLineItem3', '@orderLineItem4' ]
         identifier: 'FirstOrder'
         billingAddress: '@billingAddress1'
         shippingAddress: '@shippingAddress1'
@@ -74,6 +75,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         customerUser: '@amanda'
         payment_term_7c4f1e8e: '@paymentTerm2'
     order2:
+        lineItems: [ '@orderLineItem5', '@orderLineItem6' ]
         identifier: 'SecondOrder'
         billingAddress: '@billingAddress2'
         shippingAddress: '@shippingAddress2'

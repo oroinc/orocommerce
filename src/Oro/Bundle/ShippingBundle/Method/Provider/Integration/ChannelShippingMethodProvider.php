@@ -36,7 +36,7 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
      * We need only non dirty channels for creating methods.
      * For example if entity was changed on form submit, we will have dirty channel in Unit of work.
      */
-    public function postLoad(Channel $channel): void
+    public function registerShippingMethod(Channel $channel): void
     {
         if ($channel->getType() === $this->channelType) {
             $this->loadedChannels[] = $channel;

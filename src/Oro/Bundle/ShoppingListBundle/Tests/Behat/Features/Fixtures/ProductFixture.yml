@@ -1,6 +1,5 @@
 include:
     - '@OroProductBundle:ConfigurableProductFixtures.yml'
-    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:

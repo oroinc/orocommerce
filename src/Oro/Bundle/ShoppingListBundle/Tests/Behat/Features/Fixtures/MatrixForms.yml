@@ -1,6 +1,8 @@
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
   attribute_family_label:
     string: 'Attribute Family'
+  attribute_group_label:
+    string: 'General'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
   attribute_family:
@@ -9,3 +11,66 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     __calls:
       - addLabel: ['@attribute_family_label']
     owner: '@organization'
+    attributeGroups: [ '@attribute_group_general' ]
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
+  attribute_group_general:
+    __calls:
+      - addLabel: ['@attribute_group_label']
+      - addAttributeRelation: [ '@attribute_group_elation_images' ]
+      - addAttributeRelation: [ '@attribute_group_elation_name' ]
+      - addAttributeRelation: [ '@attribute_group_elation_sku' ]
+      - addAttributeRelation: [ '@attribute_group_elation_description' ]
+      - addAttributeRelation: [ '@attribute_group_elation_short_description' ]
+      - addAttributeRelation: [ '@attribute_group_elation_brand' ]
+      - addAttributeRelation: [ '@attribute_group_elation_is_featured' ]
+      - addAttributeRelation: [ '@attribute_group_elation_new_arrival' ]
+      - addAttributeRelation: [ '@attribute_group_elation_inventory_status' ]
+      - addAttributeRelation: [ '@attribute_group_elation_meta_titles' ]
+      - addAttributeRelation: [ '@attribute_group_elation_meta_descriptions' ]
+      - addAttributeRelation: [ '@attribute_group_elation_meta_keywords' ]
+      - addAttributeRelation: [ '@attribute_group_elation_product_prices' ]
+    code: 'general'
+    attributeFamily: '@attribute_family'
+    isVisible: true
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
+  attribute_group_elation_sku:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_sku->id'
+  attribute_group_elation_name:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_names->id'
+  attribute_group_elation_description:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_descriptions->id'
+  attribute_group_elation_short_description:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_shortDescriptions->id'
+  attribute_group_elation_brand:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_brand->id'
+  attribute_group_elation_is_featured:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_featured->id'
+  attribute_group_elation_new_arrival:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_newArrival->id'
+  attribute_group_elation_images:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_images->id'
+  attribute_group_elation_inventory_status:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_inventory_status->id'
+  attribute_group_elation_meta_titles:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_metaTitles->id'
+  attribute_group_elation_meta_descriptions:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_metaDescriptions->id'
+  attribute_group_elation_meta_keywords:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_metaKeywords->id'
+  attribute_group_elation_product_prices:
+    attributeGroup: '@attribute_group_general'
+    entityConfigFieldId: '@attribute_productPriceAttributesPrices->id'

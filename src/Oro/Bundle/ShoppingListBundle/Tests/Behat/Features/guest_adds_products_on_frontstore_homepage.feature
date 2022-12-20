@@ -1,5 +1,6 @@
 @container-incompatible
 @ticket-BB-15962
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml
 # Important! This scenario is added in separate feature (file) because related bug reproduced only on first page request
 # per user session.

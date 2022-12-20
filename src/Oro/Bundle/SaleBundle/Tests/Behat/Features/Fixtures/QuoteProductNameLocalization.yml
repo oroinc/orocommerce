@@ -22,6 +22,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
+        unitPrecisions: [ '@precision1' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - setNames: [['@locvalue1' , '@locvalue1_loc1']]
@@ -41,6 +42,8 @@ Oro\Bundle\SaleBundle\Entity\Quote:
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quote1Product:
+        __calls:
+            - addQuoteProductOffer: [ '@quote1ProductOffer' ]
         product: '@product1'
         quote: '@quote1'
 

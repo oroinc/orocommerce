@@ -10,7 +10,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@precision<current()>'
-        unitPrecisions: []
+        unitPrecisions: [ '@precision<current()>' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@localValueProduct<current()>']

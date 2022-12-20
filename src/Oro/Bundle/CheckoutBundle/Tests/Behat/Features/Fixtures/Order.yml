@@ -9,6 +9,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: USD
         poNumber: 'ORD1'
         shipUntil: '<(new DateTime("2022-09-26T19:27:00Z"))>'
+        lineItems: [ '@simpleOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:

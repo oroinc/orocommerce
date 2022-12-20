@@ -85,16 +85,6 @@ Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
         weight: '@weight10'
         dimensions: '@dimensions'
 
-Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
-    inventoryLevel1:
-        product: '@product'
-        productUnitPrecision: '@precision1'
-        quantity: 100
-    inventoryLevel2:
-        product: '@product-add'
-        productUnitPrecision: '@precision1'
-        quantity: 10
-
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelationSku123ToPriceListDefault:
         product: '@product'

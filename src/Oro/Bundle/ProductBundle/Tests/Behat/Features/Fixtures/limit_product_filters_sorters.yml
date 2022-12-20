@@ -1,11 +1,14 @@
 include:
     - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     locValue1:
         string: 'Product1'
     locValue2:
         string: 'Product2'
+    locValue3:
+        string: 'Product3'
 
 Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
     categoryTitle:
@@ -14,6 +17,8 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     secondFamilyLabel:
         string: 'Second family'
+    secondFamilyAttributeGroupLabel:
+        string: 'General'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     secondFamily:
@@ -22,6 +27,80 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         __calls:
             - addLabel: ['@secondFamilyLabel']
         owner: '@organization'
+        attributeGroups: [ '@secondFamilyAttributeGroup' ]
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
+    secondFamilyAttributeGroup:
+        __calls:
+            - addLabel: ['@secondFamilyAttributeGroupLabel']
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationImages' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationName' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationSku' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationDescription' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationShortDescription' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationBrand' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationIsFeatured' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationNewArrival' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationInventoryStatus' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationMetaTitles' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationMetaDescriptions' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationMetaKeywords' ]
+            - addAttributeRelation: [ '@secondFamilyAttributeGroupRelationProductPrices' ]
+        code: 'general'
+        attributeFamily: '@secondFamily'
+        isVisible: true
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
+    secondFamilyAttributeGroupRelationSku:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_sku->id'
+    secondFamilyAttributeGroupRelationName:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_names->id'
+    secondFamilyAttributeGroupRelationDescription:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_descriptions->id'
+    secondFamilyAttributeGroupRelationShortDescription:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_shortDescriptions->id'
+    secondFamilyAttributeGroupRelationBrand:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_brand->id'
+    secondFamilyAttributeGroupRelationIsFeatured:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_featured->id'
+    secondFamilyAttributeGroupRelationNewArrival:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_newArrival->id'
+    secondFamilyAttributeGroupRelationImages:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_images->id'
+    secondFamilyAttributeGroupRelationInventoryStatus:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_inventory_status->id'
+    secondFamilyAttributeGroupRelationMetaTitles:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_metaTitles->id'
+    secondFamilyAttributeGroupRelationMetaDescriptions:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_metaDescriptions->id'
+    secondFamilyAttributeGroupRelationMetaKeywords:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_metaKeywords->id'
+    secondFamilyAttributeGroupRelationProductPrices:
+        attributeGroup: '@secondFamilyAttributeGroup'
+        entityConfigFieldId: '@attribute_productPriceAttributesPrices->id'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product1_precision:
+        unit: '@item'
+        precision: 0
+    product2_precision:
+        unit: '@set'
+        precision: 1
+    product3precision:
+        unit: '@item'
+        precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -29,17 +108,31 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
+        primaryUnitPrecision: '@product1_precision'
+        unitPrecisions: [ '@product1_precision' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locValue1']
     product2:
         sku: 'SKU2'
         inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
+        status: 'disabled'
         organization: '@organization'
+        primaryUnitPrecision: '@product2_precision'
+        unitPrecisions: [ '@product2_precision' ]
         attributeFamily: '@secondFamily'
         __calls:
             - addName: ['@locValue2']
+    product3:
+        sku: 'SKU3'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        primaryUnitPrecision: '@product3precision'
+        unitPrecisions: [ '@product3precision' ]
+        attributeFamily: '@secondFamily'
+        __calls:
+            - addName: ['@locValue3']
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     category:

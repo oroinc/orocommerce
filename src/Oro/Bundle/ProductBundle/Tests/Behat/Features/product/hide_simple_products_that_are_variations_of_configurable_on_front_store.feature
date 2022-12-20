@@ -43,7 +43,7 @@ Feature: Hide simple products that are variations of configurable on front store
     And I click Edit Attribute Family in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes                                                                                                                                                                       |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Attribute_1] |
+      | Attribute group | true    | [Attribute_1] |
     And I save form
     Then I should see "Successfully updated" flash message
 

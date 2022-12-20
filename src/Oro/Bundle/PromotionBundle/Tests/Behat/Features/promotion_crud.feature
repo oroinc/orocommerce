@@ -1,3 +1,4 @@
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPromotionBundle:promotion_crud.yml
 Feature: Promotion CRUD
   In order to use promotions on front store

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -13,6 +14,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loading shopping list demo data.
+ */
 class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     /** @var array */
@@ -104,12 +108,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $manager->persist($shoppingList);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return Website
-     */
-    protected function getWebsite(EntityManager $manager, $name)
+    protected function getWebsite(EntityManagerInterface $manager, string $name): Website
     {
         if (!array_key_exists($name, $this->websites)) {
             $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')

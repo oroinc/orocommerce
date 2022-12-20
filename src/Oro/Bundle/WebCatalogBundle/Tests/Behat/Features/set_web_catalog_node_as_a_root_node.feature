@@ -15,30 +15,11 @@ Feature: Set web catalog node as a root node
     Given I proceed as the Admin
     And I login as administrator
     And I set "Default Web Catalog" as default web catalog
-    And I go to Marketing/Web Catalogs
+    When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
-    When I save form
-    Then I should see "Content Node has been saved" flash message
-    And I click on "Products"
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
-    When I save form
-    Then I should see "Content Node has been saved" flash message
-    And I click on "Clearance"
-    When I save form
-    Then I should see "Content Node has been saved" flash message
-    When I click on "By Brand"
     And I click on "First Content Variant Expand Button"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
-    And I save form
-    Then I should see "Content Node has been saved" flash message
+    And I click on "Clearance"
+    And I click on "By Brand"
     And I click "Create Content Node"
     And I fill "Content Node" with:
       | Title      | Test |
@@ -141,19 +122,8 @@ Feature: Set web catalog node as a root node
   Scenario: Change web catalog
     Given I proceed as the Admin
     And I set "Additional Web Catalog" as default web catalog
-    And I go to Marketing/Web Catalogs
+    When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Additional Web Catalog" in grid
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
-    When I save form
-    Then I should see "Content Node has been saved" flash message
-    And I click on "On Sale"
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     When I save form
     Then I should see "Content Node has been saved" flash message
 

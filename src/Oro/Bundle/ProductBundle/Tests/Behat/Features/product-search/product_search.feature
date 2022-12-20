@@ -3,7 +3,6 @@
 @ticket-BB-16275
 @ticket-BB-17352
 @ticket-BB-21709
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
 Feature: Product search

@@ -48,10 +48,10 @@ Feature: Unique SKU in shopping list
 
     ## Update attribute family
     And I go to Products / Product Families
-    And I click Edit T_shirt in grid
+    And I click Edit Product Attribute Family in grid
     And set Attribute Groups with:
-      | Label         | Visible | Attributes |
-      | T-shirt group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Color Attribute, Size Attribute] |
+      | Label         | Visible | Attributes                        |
+      | T-shirt group | true    | [Color Attribute, Size Attribute] |
     And I save form
     Then I should see "Successfully updated" flash message
 

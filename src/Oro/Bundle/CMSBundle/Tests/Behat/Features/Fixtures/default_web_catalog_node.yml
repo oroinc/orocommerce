@@ -1,0 +1,11 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  localValueDefaultWebCatalog:
+    string: 'Default Web Catalog'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+  nodeDefaultWebCatalog:
+    __calls:
+      - addTitle: ['@localValueDefaultWebCatalog']
+      - addContentVariant: ['@pageVariant']
+      - addScope: ['@defaultWebCatalogScope']
+    webCatalog: '@webCatalog'

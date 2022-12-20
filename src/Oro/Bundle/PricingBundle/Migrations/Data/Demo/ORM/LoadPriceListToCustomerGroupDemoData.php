@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
+/**
+ * Loading price list for customer group demo data.
+ */
 class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
@@ -25,7 +28,7 @@ class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemo
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        /** @var EntityManager $manager */
+        /** @var EntityManagerInterface $manager */
         $website = $this->getWebsiteByName($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -47,12 +50,7 @@ class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemo
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return CustomerGroup
-     */
-    protected function getCustomerGroupByName(EntityManager $manager, $name)
+    protected function getCustomerGroupByName(EntityManagerInterface $manager, string $name): CustomerGroup
     {
         $website = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneBy(['name' => $name]);
 

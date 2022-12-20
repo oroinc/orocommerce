@@ -9,6 +9,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@item'
         precision: '1'
+    precision2:
+        unit: '@each'
+        precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -18,6 +21,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@precision1'
+        unitPrecisions: [ '@precision1', '@precision2' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue1']

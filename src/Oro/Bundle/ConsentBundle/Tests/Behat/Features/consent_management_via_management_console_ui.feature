@@ -108,11 +108,11 @@ Feature: Consent management via Management Console UI
     When I click "Delete"
     Then I should see "Are you sure you want to delete this consent?"
     And I click "Cancel"
+    And I set "Store and Process" as default web catalog
     When go to System/ Consent Management
     Then I should see following grid:
       | Name                     | Type      | Content Node           | Content Source  |
       | Presenting Personal Data | Mandatory | Store and Process Node | Consent Landing |
-    And I set "Store and Process" as default web catalog
     And click "Create Consent"
     And fill "Consent Form" with:
       | Name | Email Newsletters |

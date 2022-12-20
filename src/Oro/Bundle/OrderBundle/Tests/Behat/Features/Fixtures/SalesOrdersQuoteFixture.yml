@@ -1,3 +1,68 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product1precision1:
+        unit: '@item'
+        precision: '1'
+    product1precision2:
+        unit: '@set'
+        precision: '1'
+    product2precision1:
+        unit: '@item'
+        precision: '1'
+    product2precision2:
+        unit: '@set'
+        precision: '1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 3
+        currency: USD
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue1:
+        string: 'Physician’s 5-Pocket Lab'
+        text: 'Physician’s 5-Pocket Lab'
+    locValue2:
+        string: 'Women’s White Slip-On'
+        text: 'Women’s White Slip-On'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'ORD1'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product1precision1'
+        __calls:
+            - addUnitPrecision: ['@product1precision1', '@product1precision2']
+            - addName: ['@locValue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+    product2:
+        sku: 'ORD2'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product2precision2'
+        __calls:
+            - addUnitPrecision: ['@product2precision1', '@product2precision2']
+            - addName: ['@locValue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    lineitem1:
+        product: '@product1'
+        productSku: 'ORD1'
+        quantity: '20'
+        productUnit: '@item'
+        order: '@firstOrder'
+        price: '@price1'
+    lineitem2:
+        product: '@product2'
+        productSku: 'ORD2'
+        quantity: '15'
+        productUnit: '@set'
+        order: '@secondOrder'
+        price: '@price1'
+
 Oro\Bundle\OrderBundle\Entity\Order:
     firstOrder:
         organization: '@organization'
@@ -11,6 +76,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         sourceEntityId: '@firstQuote->id'
         sourceEntityIdentifier: 'Quote'
         poNumber: 'ORD1'
+        lineItems: [ '@lineitem1' ]
     secondOrder:
         organization: '@organization'
         owner: '@admin'
@@ -23,3 +89,4 @@ Oro\Bundle\OrderBundle\Entity\Order:
         sourceEntityId: '@secondQuote->id'
         sourceEntityIdentifier: 'Quote'
         poNumber: 'ORD2'
+        lineItems: [ '@lineitem2' ]

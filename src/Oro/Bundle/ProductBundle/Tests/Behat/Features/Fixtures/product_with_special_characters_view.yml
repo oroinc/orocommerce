@@ -1,5 +1,6 @@
 include:
     - '@OroShoppingListBundle:ProductFixture.yml'
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:

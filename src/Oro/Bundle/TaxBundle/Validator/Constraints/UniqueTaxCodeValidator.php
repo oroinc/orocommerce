@@ -63,11 +63,17 @@ class UniqueTaxCodeValidator extends ConstraintValidator
 
     protected function getTaxCodeIdsQueryBuilder(AbstractTaxCode $taxCode): QueryBuilder
     {
-        return $this->getRepository(\get_class($taxCode))
+        $qb = $this->getRepository(\get_class($taxCode))
             ->createQueryBuilder('e')
             ->select('e.id')
             ->where('e.code = :code')
             ->setParameter('code', $taxCode->getCode());
+        if ($taxCode->getId() !== null) {
+            $qb->andWhere('e.id != :id')
+                ->setParameter('id', $taxCode->getId());
+        }
+
+        return $qb;
     }
 
     private function getRepository(string $taxCodeEntityClass): EntityRepository

@@ -18,6 +18,8 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
         method: '<("flat_rate_".@flatRateIntegration->getId())>'
         typeConfigs: ['@shippingMethodTypeConfig']
         methodConfigsRule: '@shippingMethodsConfigsRule'
+        __calls:
+            - addTypeConfig: [ '@shippingMethodTypeConfig' ]
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shippingMethodsConfigsRule:
@@ -25,6 +27,9 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
         currency: 'USD'
         organization: '@organization'
         destinations: ['@shippingMethodsConfigsRuleDestination']
+        __calls:
+            - addMethodConfig: [ '@shippingMethodConfig' ]
+            - addDestination: [ '@shippingMethodsConfigsRuleDestination' ]
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     shippingMethodsConfigsRuleDestination:

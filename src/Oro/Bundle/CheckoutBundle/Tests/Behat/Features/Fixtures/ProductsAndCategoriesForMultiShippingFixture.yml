@@ -50,9 +50,9 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
 
 Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
     isUpcoming1:
-        scalarValue: true
+        scalarValue: 1
     isUpcoming2:
-        scalarValue: true
+        scalarValue: 1
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
