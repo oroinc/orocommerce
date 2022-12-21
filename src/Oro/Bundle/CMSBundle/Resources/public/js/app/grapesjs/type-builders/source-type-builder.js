@@ -13,7 +13,7 @@ const SourceTypeBuilder = BaseTypeBuilder.extend({
         },
 
         getAttributes(opts = {}) {
-            const attr = this.constructor.__super__.getAttributes.call(this, opts);
+            const attr = SourceTypeBuilder.TypeModel.__super__.getAttributes.call(this, opts);
 
             for (const [key, value] of Object.entries(attr)) {
                 if (!value) {
@@ -30,11 +30,7 @@ const SourceTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        if (el.nodeType === Node.ELEMENT_NODE && el.tagName.toLowerCase() === 'source') {
-            return {
-                type: this.componentType
-            };
-        }
+        return el.nodeType === Node.ELEMENT_NODE && el.tagName.toLowerCase() === 'source';
     }
 });
 

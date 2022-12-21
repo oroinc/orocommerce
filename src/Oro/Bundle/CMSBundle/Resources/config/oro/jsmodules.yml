@@ -2,8 +2,8 @@ aliases:
     codemirror/lib/codemirror$: codemirror/lib/codemirror.css
     codemirror/theme/hopscotch$: codemirror/theme/hopscotch.css
     grapesjs$: grapesjs/dist/grapes.min
-    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
-    grapesjs-preset-webpage$: grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
+    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist
+    grapesjs-plugin-export$: grapesjs-plugin-export/dist
     spectrum-colorpicker/spectrum$: spectrum-colorpicker/spectrum.css
 app-modules:
     - orocms/js/app/modules/grapesjs-module

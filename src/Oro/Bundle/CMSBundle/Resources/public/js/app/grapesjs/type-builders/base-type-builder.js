@@ -1,30 +1,8 @@
-import _ from 'underscore';
+import {pick, omit} from 'underscore';
 import BaseClass from 'oroui/js/base-class';
 
 const BaseTypeBuilder = BaseClass.extend({
-    /**
-     * @property
-     */
-    editor: null,
-
-    /**
-     * @property
-     */
-    parentType: null,
-
-    /**
-     * @property
-     */
-    componentType: null,
-
-    /**
-     * @property
-     */
-    button: null,
-
-    template: null,
-
-    usedTags: [],
+    optionNames: ['editor', 'componentType', 'usedTags', 'template'],
 
     /**
      * wysiwyg model props and methods
@@ -40,40 +18,28 @@ const BaseTypeBuilder = BaseClass.extend({
      */
     viewMixin: {},
 
-    Model: null,
-
-    View: null,
-
-    /**
-     * wysiwyg commands list
-     */
-    commands: {},
-
-    /**
-     * wysiwyg events list
-     */
-    editorEvents: {},
-
     constructor: function BaseTypeBuilder(options) {
+        this.usedTags = [];
+
         BaseTypeBuilder.__super__.constructor.call(this, options);
     },
 
     /**
-      * @inheritdoc
-      */
+     * @inheritdoc
+     */
     initialize(options) {
         BaseTypeBuilder.__super__.initialize.call(this, options);
 
-        _.extend(this, _.pick(options, 'editor', 'componentType', 'usedTags', 'template'));
+        Object.assign(this, pick(options, this.optionNames));
 
         if (!this.componentType) {
             throw new Error('Option "componentType" is required');
         }
 
-        const parentTypeComponent = this.editor.Components.getType(this.parentType || 'default');
+        const {model, view} = this.editor.Components.getType(this.parentType || 'default');
 
-        this.Model = this.createModelConstructor(parentTypeComponent.model);
-        this.View = this.createViewConstructor(parentTypeComponent.view);
+        this.Model = this.createModelConstructor(model);
+        this.View = this.createViewConstructor(view);
 
         this.onInit(options);
     },
@@ -134,11 +100,21 @@ const BaseTypeBuilder = BaseClass.extend({
      * @returns {Backbone.Model}
      */
     createModelConstructor(BaseModel) {
-        return BaseModel.extend({// eslint-disable-line oro/named-constructor
-            defaults: {...BaseModel.prototype.defaults, ...this.modelMixin.defaults},
-            ..._.omit(this.modelMixin, 'defaults'),
+        const TypeModel = BaseModel.extend({// eslint-disable-line oro/named-constructor
+            ...omit(this.modelMixin, 'defaults'),
             editor: this.editor
-        }, _.pick(this, 'componentType', 'isComponent'));
+        }, pick(this, 'componentType', 'isComponent'));
+
+        Object.defineProperty(TypeModel.prototype, 'defaults', {
+            value: {
+                ...TypeModel.prototype.defaults,
+                ...this.modelMixin.defaults,
+                type: this.componentType
+            }
+        });
+
+        this.constructor.TypeModel = TypeModel;
+        return TypeModel;
     },
 
     /**
@@ -146,10 +122,13 @@ const BaseTypeBuilder = BaseClass.extend({
      * @returns {Backbone.View}
      */
     createViewConstructor(BaseView) {
-        return BaseView.extend({// eslint-disable-line oro/named-constructor
+        const TypeView = BaseView.extend({// eslint-disable-line oro/named-constructor
             ...this.viewMixin,
             editor: this.editor
         });
+
+        this.constructor.TypeView = TypeView;
+        return TypeView;
     },
 
     /**
@@ -170,6 +149,10 @@ const BaseTypeBuilder = BaseClass.extend({
      * Binds editor events
      */
     bindEditorEvents() {
+        if (!this.editorEvents) {
+            return;
+        }
+
         for (const [event, callback] of Object.entries(this.editorEvents)) {
             this.listenTo(this.editor, event, this[callback].bind(this));
         }
@@ -179,12 +162,26 @@ const BaseTypeBuilder = BaseClass.extend({
      * Registers editor commands
      */
     registerEditorCommands() {
+        if (!this.commands) {
+            return;
+        }
+
         for (const [command, callback] of Object.entries(this.commands)) {
             if (this.editor.Commands.has(command)) {
                 throw new Error(`Command "${command}" is already registered`);
             }
             this.editor.Commands.add(command, callback);
         }
+    },
+
+    /**
+     * Check if component owner the model
+     * @param {Model} model
+     * @returns {boolean}
+     */
+    isOwnModel(model) {
+        const {model: ownModel} = this.editor.Components.getType(this.componentType);
+        return model instanceof ownModel;
     }
 });
 

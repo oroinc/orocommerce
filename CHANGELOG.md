@@ -49,6 +49,9 @@ The current file describes significant changes in the code that may affect the u
 
 #### CMSBundle
 * Update Grapesjs to 0.19.5 version
+* Updated WYSIWYG editor to v0.20.1
+  Added the possibility to define a model and a view for WYSIWYG component types with a function and an object.
+* Change call super in `modelMixin` and `viewMixin`. Changed from `this.constructor.__super__` to `TypeBuilderClass.TypeModel.__super__`, `TypeBuilderClass.TypeView.__super__`
 
 #### ProductBundle
 * `Oro\Bundle\ProductBundle\Provider\ProductImageFileNameProvider` is applicable if `product_original_filenames` feature is enabled.

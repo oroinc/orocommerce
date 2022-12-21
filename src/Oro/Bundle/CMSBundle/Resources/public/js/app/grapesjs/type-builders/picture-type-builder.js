@@ -11,9 +11,7 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
         attributes: {
             'class': 'fa fa-picture-o'
         },
-        options: {
-            at: 6
-        }
+        order: 50
     },
 
     editorEvents: {
@@ -49,7 +47,7 @@ const PictureTypeBuilder = BaseTypeBuilder.extend({
         },
 
         initialize(...args) {
-            this.constructor.__super__.initialize.apply(this, args);
+            PictureTypeBuilder.TypeModel.__super__.initialize.apply(this, args);
 
             const components = this.get('components');
             if (!this.findType('image').length) {

@@ -1,18 +1,33 @@
 import __ from 'orotranslation/js/translator';
-import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
+import BaseTypeBuilder from './base-type-builder';
 
-const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
+const QuiteBasicTypeBuilder = BaseTypeBuilder.extend({
     parentType: 'text',
 
     button: {
-        label: __('oro.cms.wysiwyg.component.quote.label')
+        label: __('oro.cms.wysiwyg.component.quote.label'),
+        category: 'Basic',
+        order: 20,
+        attributes: {
+            'class': 'fa fa-quote-right'
+        }
     },
 
     modelMixin: {
         defaults: {
             tagName: 'blockquote',
-            classes: ['quote'],
-            content: __('oro.cms.wysiwyg.component.quote.content')
+            classes: ['quote']
+        },
+
+        init() {
+            const components = this.get('components');
+
+            if (!components.length) {
+                components.add([{
+                    type: 'textnode',
+                    content: __('oro.cms.wysiwyg.component.quote.content')
+                }]);
+            }
         }
     },
 
@@ -21,12 +36,15 @@ const QuiteBasicTypeBuilder = TextTypeBuilder.extend({
     },
 
     isComponent(el) {
+        let result = '';
         if (el.nodeType === Node.ELEMENT_NODE && el.tagName.toLowerCase() === 'blockquote') {
-            return {
+            result = {
                 type: this.componentType,
                 textComponent: true
             };
         }
+
+        return result;
     }
 });
 

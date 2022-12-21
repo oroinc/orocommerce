@@ -8,7 +8,8 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-file-code-o'
-        }
+        },
+        order: 75
     },
 
     modelMixin: {
@@ -70,18 +71,8 @@ const CodeTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        let result = null;
-
-        if (
-            (el.nodeType === Node.ELEMENT_NODE && el.tagName === 'PRE') &&
-            (el.firstChild.nodeType === Node.ELEMENT_NODE && el.firstChild.tagName === 'CODE')
-        ) {
-            result = {
-                type: this.componentType
-            };
-        }
-
-        return result;
+        return (el.nodeType === Node.ELEMENT_NODE && el.tagName === 'PRE') &&
+            (el.firstChild.nodeType === Node.ELEMENT_NODE && el.firstChild.tagName === 'CODE');
     }
 });
 

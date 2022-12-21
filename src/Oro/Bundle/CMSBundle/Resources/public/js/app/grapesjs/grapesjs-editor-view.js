@@ -2,6 +2,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import grapesJS from 'grapesjs';
+import tools from 'oroui/js/tools';
 
 import BaseView from 'oroui/js/app/views/base/view';
 import styleManagerModule from 'orocms/js/app/grapesjs/modules/style-manager-module';
@@ -11,12 +12,12 @@ import mediator from 'oroui/js/mediator';
 import canvasStyle from 'orocms/js/app/grapesjs/modules/canvas-style';
 import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
-import 'grapesjs-preset-webpage';
 import parserPostCSS from 'grapesjs-parser-postcss';
 import 'orocms/js/app/grapesjs/plugins/components/sorter-hints';
 import 'orocms/js/app/grapesjs/plugins/components/grapesjs-components';
 import 'orocms/js/app/grapesjs/plugins/grapesjs-style-isolation';
 import 'orocms/js/app/grapesjs/plugins/import/import';
+import 'orocms/js/app/grapesjs/plugins/export';
 import 'orocms/js/app/grapesjs/plugins/code/code';
 import 'orocms/js/app/grapesjs/plugins/panel-scrolling-hints';
 import 'orocms/js/app/grapesjs/plugins/code-mode';
@@ -107,6 +108,8 @@ const GrapesjsEditorView = BaseView.extend({
         requestParams: {},
         noticeOnUnload: false,
         cssIcons: false,
+        showDevices: false,
+        log: tools.debug ? ['warning', 'error'] : [],
         selectorManager: {
             // This option allows to apply styles by id attribute, therefore will affect only actual element
             componentFirst: true
@@ -290,38 +293,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @property {Object}
      */
     builderPlugins: {
-        'gjs-preset-webpage': {
-            aviaryOpts: false,
-            filestackOpts: null,
-            formsOpts: {
-                labelInputName: __('oro.cms.wysiwyg.forms.label_input_name'),
-                labelTextareaName: __('oro.cms.wysiwyg.forms.label_textarea_name'),
-                labelSelectName: __('oro.cms.wysiwyg.forms.label_select_name'),
-                labelCheckboxName: __('oro.cms.wysiwyg.forms.label_checkbox_name'),
-                labelRadioName: __('oro.cms.wysiwyg.forms.label_radio_name'),
-                labelButtonName: __('oro.cms.wysiwyg.forms.label_button_name'),
-                labelTypeText: __('oro.cms.wysiwyg.forms.label_type_text'),
-                labelTypeEmail: __('oro.cms.wysiwyg.forms.label_type_email'),
-                labelTypePassword: __('oro.cms.wysiwyg.forms.label_type_password'),
-                labelTypeNumber: __('oro.cms.wysiwyg.forms.label_type_number'),
-                labelTypeSubmit: __('oro.cms.wysiwyg.forms.label_type_submit'),
-                labelTypeReset: __('oro.cms.wysiwyg.forms.label_type_reset'),
-                labelTypeButton: __('oro.cms.wysiwyg.forms.label_type_button'),
-                labelNameLabel: __('oro.cms.wysiwyg.forms.label_name_label'),
-                labelForm: __('oro.cms.wysiwyg.forms.label_form'),
-                labelSelectOption: __('oro.cms.wysiwyg.forms.label_select_option'),
-                labelOption: __('oro.cms.wysiwyg.forms.label_option'),
-                labelStateNormal: __('oro.cms.wysiwyg.forms.label_state_normal'),
-                labelStateSuccess: __('oro.cms.wysiwyg.forms.label_state_success'),
-                labelStateError: __('oro.cms.wysiwyg.forms.label_state_error')
-            },
-            navbarOpts: false,
-            countdownOpts: false,
-            importViewerOptions: {},
-            codeViewerOptions: {},
-            exportOpts: {
-                btnLabel: __('oro.cms.wysiwyg.export.btn_label')
-            }
+        'grapesjs-export': {
+            btnLabel: __('oro.cms.wysiwyg.export.btn_label')
         },
         'sorter-hints': {},
         'grapesjs-components': {},
@@ -791,6 +764,7 @@ const GrapesjsEditorView = BaseView.extend({
             model.set('toolbar', toolbar);
 
             model.trigger('model:selected', model);
+            this.builder.Panels.getButton('views', 'open-sm').set('active', true);
         }
 
         this.builder.editor.view.$el.find('.gjs-toolbar')

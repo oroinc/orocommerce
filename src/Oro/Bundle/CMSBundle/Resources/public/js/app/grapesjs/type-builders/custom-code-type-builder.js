@@ -62,7 +62,7 @@ const CustomCodeTypeBuilder = BaseTypeBuilder.extend({
         attributes: {
             'class': 'fa fa-code'
         },
-        order: 0,
+        order: 70,
         activate: true
     },
 

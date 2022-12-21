@@ -51,7 +51,7 @@ const ColumnTypeBuilder = BaseTypeBuilder.extend({
 
         clone(...args) {
             const {unitWidth} = this.get('resizable');
-            const cloned = this.constructor.__super__.clone.apply(this, args);
+            const cloned = ColumnTypeBuilder.TypeModel.__super__.clone.apply(this, args);
 
             const originWidth = this.getStyle().width;
 
@@ -82,7 +82,7 @@ const ColumnTypeBuilder = BaseTypeBuilder.extend({
                 referenceModel = this.collection.at(index + 1);
             }
 
-            const removed = this.constructor.__super__.remove.apply(this, args);
+            const removed = ColumnTypeBuilder.TypeModel.__super__.remove.apply(this, args);
 
             if (referenceModel) {
                 referenceModel.setStyle({
