@@ -73,9 +73,8 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with([
                 'page-component' => [
-                    'module' => 'oroui/js/app/components/view-component',
+                    'module' => 'orocms/js/app/grapesjs/grapesjs-editor-component',
                     'options' => [
-                        'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
                         'allow_tags' => [],
                     ],
                 ],
@@ -89,6 +88,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 'error_bubbling' => true,
                 'entity_class' => null,
                 'disable_isolation' => false,
+                'jsmodules' => [],
             ])
             ->willReturnSelf();
 
@@ -148,7 +148,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -157,13 +156,15 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'disable_isolation' => true,
+            'jsmodules' => [],
         ]);
 
         self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            '{"allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
+            . ',"jsmodules":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"disableIsolation":true'
@@ -198,7 +199,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -207,13 +207,15 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'disable_isolation' => true,
+            'jsmodules' => [],
         ]);
 
         self::assertEquals('wysiwyg', $view->vars['attr']['data-grapesjs-field']);
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":["h1","h2","h3"]'
+            '{"allow_tags":["h1","h2","h3"]'
             . ',"allowed_iframe_domains":[]'
+            . ',"jsmodules":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"disableIsolation":true'
@@ -246,7 +248,6 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         $type->finishView($view, $form, [
             'page-component' => [
                 'module' => 'component/module',
-                'options' => ['view' => 'app/view'],
             ],
             'auto_render' => true,
             'builder_plugins' => [
@@ -255,12 +256,14 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'disable_isolation' => true,
+            'jsmodules' => [],
         ]);
 
         self::assertEquals('component/module', $view->vars['attr']['data-page-component-module']);
         self::assertEquals(
-            '{"view":"app\/view","allow_tags":false'
+            '{"allow_tags":false'
             . ',"allowed_iframe_domains":false'
+            . ',"jsmodules":[]'
             . ',"autoRender":true'
             . ',"builderPlugins":{"bar-plugin":{"foo":"baz"}}'
             . ',"disableIsolation":true'

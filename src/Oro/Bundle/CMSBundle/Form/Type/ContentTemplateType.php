@@ -47,6 +47,7 @@ class ContentTemplateType extends AbstractType
                     'disable_isolation' => true,
                     'builder_plugins' => [
                         'template-screenshot-plugin' => [
+                            'jsmodule' => 'orocms/js/app/grapesjs/plugins/screenshot',
                             'previewFieldName' => 'oro_cms_content_template[previewImage][file]',
                             'width' => 1100,
                             'height' => 450

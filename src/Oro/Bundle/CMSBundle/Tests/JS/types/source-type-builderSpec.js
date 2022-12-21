@@ -1,17 +1,20 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import SourceTypeBuilder from 'orocms/js/app/grapesjs/type-builders/source-type-builder';
+import SourceTypeBuilder from 'orocms/js/app/grapesjs/types/source-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/source-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/source-type', () => {
     let sourceTypeBuilder;
     let editor;
 
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -51,9 +54,7 @@ describe('orocms/js/app/grapesjs/type-builders/source-type-builder', () => {
         it('check base model extend', () => {
             const mockElement = document.createElement('SOURCE');
             expect(sourceTypeBuilder.Model.isComponent).toBeDefined();
-            expect(sourceTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: sourceTypeBuilder.componentType
-            });
+            expect(sourceTypeBuilder.Model.isComponent(mockElement)).toBe(true);
 
             expect(sourceTypeBuilder.Model.componentType).toEqual(sourceTypeBuilder.componentType);
             expect(sourceTypeBuilder.Model.prototype.defaults.tagName).toEqual('source');

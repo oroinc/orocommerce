@@ -592,6 +592,9 @@ oro.cms:
             reset_search: 'Reset search field'
             content_template:
                 not_found: 'Content template {{ name }} could not load'
+        commands:
+            clear_canvas:
+                confirm: 'Are you sure to clean the canvas?'
     change_type:
         confirmation:
             title: 'Change Type'

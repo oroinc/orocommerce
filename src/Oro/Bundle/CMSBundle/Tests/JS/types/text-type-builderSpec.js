@@ -1,11 +1,11 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import TextTypeBuilder from 'orocms/js/app/grapesjs/type-builders/text-type-builder';
+import TextTypeBuilder from 'orocms/js/app/grapesjs/types/text';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 import ContentParser from 'orocms/js/app/grapesjs/plugins/grapesjs-content-parser';
 
-describe('orocms/js/app/grapesjs/type-builders/text-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/text-type', () => {
     let textTypeBuilder;
     let editor;
 
@@ -13,7 +13,10 @@ describe('orocms/js/app/grapesjs/type-builders/text-type-builder', () => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor'),
-            plugins: [ContentParser]
+            plugins: [ContentParser],
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -91,7 +94,7 @@ describe('orocms/js/app/grapesjs/type-builders/text-type-builder', () => {
             });
 
             it('is single line', () => {
-                expect(textComponent.view.isSingleLine()).toBeFalsy();
+                expect(textComponent.view.isSingleLine()).toBe(false);
             });
 
             it('set simple content', () => {

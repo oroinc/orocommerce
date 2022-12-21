@@ -2,6 +2,7 @@ import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import TableModify from 'orocms/js/app/grapesjs/controls/table-edit/table-modify';
 import html from 'text-loader!../../fixtures/grapesjs-editor-view-fixture.html';
+import '../../fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/controls/table-edit', () => {
     let grapesjsEditorView;

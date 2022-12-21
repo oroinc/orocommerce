@@ -25,7 +25,7 @@ const PanelManagerModule = BaseClass.extend({
     /**
      * @inheritdoc
      */
-    initialize: function(options) {
+    initialize(options) {
         _.extend(this, _.pick(options, ['builder', 'themes']));
 
         if (!this.builder) {
@@ -56,7 +56,7 @@ const PanelManagerModule = BaseClass.extend({
         });
     },
 
-    createThemeSelector: function() {
+    createThemeSelector() {
         const pn = this.builder.Panels.getPanel('options');
 
         this.themeSelector = new ThemeSelectorView({
@@ -67,7 +67,7 @@ const PanelManagerModule = BaseClass.extend({
         pn.view.$el.prepend(this.themeSelector.$el);
     },
 
-    _addOptionButtonTooltips: function() {
+    _addOptionButtonTooltips() {
         const pn = this.builder.Panels.getPanel('options');
 
         pn.buttons.each(function(button) {
@@ -83,7 +83,7 @@ const PanelManagerModule = BaseClass.extend({
      * Move settings tab to style manager above style property
      * @private
      */
-    _moveSettings: function() {
+    _moveSettings() {
         const Panels = this.builder.Panels;
         const builderEl = this.builder.editor.view.$el;
 
