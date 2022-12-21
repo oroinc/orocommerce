@@ -49,13 +49,13 @@ class MultiShippingMethodFromChannelFactoryTest extends TestCase
 
         $this->translator->expects($this->once())
             ->method('trans')
-            ->willReturn('oro.multi_shipping_method.label');
+            ->willReturn('oro.shipping.multi_shipping_method.label');
 
         $method = $this->factory->create($channel);
 
         $this->assertInstanceOf(MultiShippingMethod::class, $method);
         $this->assertEquals('test_type_1', $method->getIdentifier());
-        $this->assertEquals('oro.multi_shipping_method.label', $method->getLabel());
+        $this->assertEquals('oro.shipping.multi_shipping_method.label', $method->getLabel());
         $this->assertEquals('bundles/oroshipping/img/multi-shipping-logo.png', $method->getIcon());
         $this->assertTrue($method->isEnabled());
     }

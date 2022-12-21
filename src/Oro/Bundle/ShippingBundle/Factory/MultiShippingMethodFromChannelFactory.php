@@ -50,7 +50,7 @@ class MultiShippingMethodFromChannelFactory implements IntegrationShippingMethod
 
     protected function getChannelLabel(): string
     {
-        return $this->translator->trans('oro.multi_shipping_method.label');
+        return $this->translator->trans('oro.shipping.multi_shipping_method.label');
     }
 
     protected function getIcon(): string
