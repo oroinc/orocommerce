@@ -14,7 +14,7 @@ class MultiShippingChannelType implements ChannelInterface, IconAwareIntegration
 
     public function getLabel(): string
     {
-        return 'oro.multi_shipping_method.channel_type.label';
+        return 'oro.shipping.multi_shipping_method.channel_type.label';
     }
 
     public function getIcon(): string

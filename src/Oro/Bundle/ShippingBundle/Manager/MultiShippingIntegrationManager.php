@@ -12,26 +12,28 @@ use Oro\Bundle\ShippingBundle\Integration\MultiShippingChannelType;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Manager for creating Multi Shipping integration
  */
 class MultiShippingIntegrationManager
 {
-    public const DEFAULT_MULTI_SHIPPING_INTEGRATION_NAME = 'Multi Shipping';
-
     private ManagerRegistry $doctrine;
     private TokenAccessorInterface $tokenAccessor;
     private AuthorizationCheckerInterface $authorizationChecker;
+    private TranslatorInterface $translator;
 
     public function __construct(
         ManagerRegistry $doctrine,
         TokenAccessorInterface $tokenAccessor,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        TranslatorInterface $translator
     ) {
         $this->doctrine = $doctrine;
         $this->tokenAccessor = $tokenAccessor;
         $this->authorizationChecker = $authorizationChecker;
+        $this->translator = $translator;
     }
 
     public function createIntegration(): Channel
@@ -50,7 +52,9 @@ class MultiShippingIntegrationManager
 
         $channel = new Channel();
         $channel->setType(MultiShippingChannelType::TYPE)
-            ->setName(self::DEFAULT_MULTI_SHIPPING_INTEGRATION_NAME)
+            ->setName(
+                $this->translator->trans('oro.shipping.multi_shipping_method.label')
+            )
             ->setEnabled(true)
             ->setOrganization($this->getOrganization())
             ->setDefaultUserOwner($this->getMainUser())
