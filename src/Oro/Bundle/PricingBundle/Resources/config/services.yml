@@ -211,6 +211,7 @@ services:
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - ['setNativeQueryExecutorHelper', ['@oro_entity.orm.native_query_executor_helper']]
+            - ['setLogger', ['@logger']]
 
     oro_pricing.builder.abstract_combined_price_list_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\AbstractCombinedPriceListBuilder'
