@@ -20,10 +20,12 @@ class RunCombinedPriceListPostProcessingStepsTopic implements TopicInterface
 
     public function configureMessageBody(OptionsResolver $resolver): void
     {
-        $resolver->setRequired([
-            'relatedJobId'
-        ]);
+        $resolver->setDefined(['relatedJobId', 'cpls']);
 
-        $resolver->setAllowedTypes('relatedJobId', ['int']);
+        $resolver->setRequired('relatedJobId');
+        $resolver->setAllowedTypes('relatedJobId', 'int');
+
+        $resolver->setDefault('cpls', []);
+        $resolver->setAllowedTypes('cpls', 'int[]');
     }
 }

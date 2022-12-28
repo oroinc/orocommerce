@@ -65,7 +65,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn(JSON::encode(['relatedJobId' => $jobId]));
+            ->willReturn(JSON::encode(['relatedJobId' => $jobId, 'cpls' => [1]]));
 
         $this->triggerHandler->expects($this->once())
             ->method('startCollectVersioned')
@@ -74,7 +74,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('commit');
 
         $this->garbageCollector->expects($this->once())
-            ->method('cleanCombinedPriceLists');
+            ->method('cleanCombinedPriceListsByCpls');
 
         $this->producer->expects($this->once())
             ->method('send')
@@ -98,7 +98,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn(JSON::encode(['relatedJobId' => $jobId]));
+            ->willReturn(JSON::encode(['relatedJobId' => $jobId, 'cpls' => [1]]));
 
         $e = new \Exception('Cpl GC error');
 
@@ -124,7 +124,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
             ->method('rollback');
 
         $this->garbageCollector->expects($this->once())
-            ->method('cleanCombinedPriceLists')
+            ->method('cleanCombinedPriceListsByCpls')
             ->willThrowException($e);
 
         $this->producer->expects($this->once())
