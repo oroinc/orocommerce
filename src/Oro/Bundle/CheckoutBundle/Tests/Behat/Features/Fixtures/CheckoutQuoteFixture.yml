@@ -13,10 +13,12 @@ Oro\Bundle\SaleBundle\Entity\Quote:
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     quoteProduct1:
+        __calls:
+            - addQuoteProductOffer: [ '@quoteProductOffer1' ]
         product: '@product'
         quote: '@quote1'
 
-Oro\Bundle\CurrencyBundle\Entity\Price :
+Oro\Bundle\CurrencyBundle\Entity\Price:
     quoteProductPrice1:
         value: 5
         currency: USD

@@ -17,16 +17,6 @@ Oro\Bundle\CatalogBundle\Entity\Category:
             - setParentCategory: ['@categoryRetailSupplies']
         organization: '@organization'
         slugPrototypes: [ '@categoryPrintersSlugPrototype' ]
-        slugs: [ '@categoryPrintersSlug' ]
-
-Oro\Bundle\RedirectBundle\Entity\Slug:
-    categoryPrintersSlug:
-        url: 'printers'
-        slugPrototype: '@categoryPrintersSlugPrototype'
-        routeName: 'oro_product_frontend_product_index'
-        routeParameters:
-            categoryId: '@categoryPrinters->id'
-            includeSubcategories: true
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     categoryPrintersSlugPrototype:

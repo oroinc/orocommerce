@@ -153,6 +153,7 @@ Oro\Bundle\RFPBundle\Entity\RequestProduct:
         request: '@request1'
         product: '@product3'
         product_sku: 'SKU3'
+        requestProductItems: [ '@requestproductitem1' ]
 
 Oro\Bundle\RFPBundle\Entity\RequestProductItem:
     requestproductitem1:

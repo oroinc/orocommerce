@@ -11,6 +11,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
     currency: USD
     subtotalObject: '@subtotal1'
     totalObject: '@total1'
+    lineItems: [ '@simpleOrderLineItem' ]
   secondOrder:
     organization: '@organization'
     owner: '@admin'
@@ -20,6 +21,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
     currency: USD
     subtotalObject: '@subtotal2'
     totalObject: '@total2'
+    lineItems: [ '@secondOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price :
   price1:

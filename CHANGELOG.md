@@ -20,6 +20,8 @@ The current file describes significant changes in the code that may affect the u
 * Added `renderWysiwygContent` TWIG macro and a layout block type `wysiwyg_content` for rendering WYSIWYG content on storefront.
   See article [How to Display WYSIWYG Field](https://doc.oroinc.com/bundles/commerce/CMSBundle/WYSIWYG-field/how-to-display-wysiwyg-field/)
   for more information.
+* Updated WYSIWYG editor to v0.20.1.
+  Added the possibility to define a model and a view for WYSIWYG component types with a function and an object. 
 
 #### ProductBundle
 * `relevance_weight` field is added to the website search mapping for the Product entity 
@@ -33,6 +35,12 @@ The current file describes significant changes in the code that may affect the u
     - New input fields in ProductCollection ContentVariant edition grid
 
 ### Changed
+
+#### CMSBundle
+
+* Changed the base-type component. Changed `modelMixin` to `modelProps` and `viewMixin` to `viewProps`.  An object definition of the editor type model/view was passed.
+    Added `ModelType` and ViewType properties to pass the constructor function
+* Changed component types naming from `text-type-builder.js` to `text-type.js`. Removed `-builder` in file names
 
 #### InventoryBundle
 
@@ -48,6 +56,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### CMSBundle
 * Removed `text_with_placeholders`, `wysiwyg_style` layout block types. Use `wysiwyg_content` instead.
+* Removed app module `grapesjs-module.js`.
 
 ## 5.1.0-alpha.2 (2022-08-01)
 [Show detailed list of changes](incompatibilities-5-1-alpha-2.md)

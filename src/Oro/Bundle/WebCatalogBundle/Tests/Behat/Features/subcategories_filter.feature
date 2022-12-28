@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-12111
+@fixture-OroWebCatalogBundle:empty_web_catalog.yml
 @fixture-OroWebCatalogBundle:subcategories-filter.yml
 Feature: Sub-Categories filter
   In order to see products from multiple selected sub-categories at once
@@ -14,21 +15,16 @@ Feature: Sub-Categories filter
   Scenario: Prepare Web Catalog
     Given I proceed as the Admin
     And I login as administrator
-
-    And I go to System/ Configuration
-    And follow "Commerce/Catalog/Special Pages" on configuration sidebar
-    And uncheck "Use default" for "Enable all products page" field
-    And I check "Enable all products page"
-    And save form
-
-    And I go to Marketing/Web Catalogs
-    And I click "Create Web Catalog"
-    And I fill form with:
-      | Name | Default Web Catalog |
-    And I save and close form
     And I set "Default Web Catalog" as default web catalog
 
-    And I click "Edit Content Tree"
+    When I go to System/ Configuration
+    And follow "Commerce/Catalog/Special Pages" on configuration sidebar
+    And uncheck "Use default" for "Enable all products page" field
+    Then I check "Enable all products page"
+    And save form
+    And I go to Marketing/Web Catalogs
+
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
 
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"

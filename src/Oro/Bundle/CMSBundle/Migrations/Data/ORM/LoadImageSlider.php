@@ -13,6 +13,7 @@ use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
@@ -105,6 +106,9 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         );
         $manager->persist($widget);
         $manager->flush();
+        $organization = $this->hasReference('default_organization')
+            ? $this->getReference('default_organization')
+            : $manager->getRepository(Organization::class)->getFirst();
 
         foreach ($this->slides as $order => $data) {
             $slide = new ImageSlide();
@@ -118,6 +122,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $slide->setTitle($data['title']);
             $slide->setTextAlignment($data['textAlignment']);
             $slide->setText($data['text']);
+            $slide->setOrganization($organization);
 
             $manager->persist($slide);
             $manager->flush();

@@ -1,5 +1,6 @@
 @regression
 @feature-BB-19874
+@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:ProductsGridFrontendLocalized.yml
 
 Feature: Products grid frontend export localized

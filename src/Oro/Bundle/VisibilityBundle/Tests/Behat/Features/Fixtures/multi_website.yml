@@ -3,3 +3,5 @@ Oro\Bundle\WebsiteBundle\Entity\Website:
         name: Europe
         organization: '@organization'
         owner: '@business_unit'
+        guest_role: '@non_authenticated_visitors'
+        default_role: '@buyer'

@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-16135
 @ticket-BB-16669
+@fixture-OroCustomerBundle:CustomerUserFixture.yml
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Category Image Placeholder in system configuration
   In order to manage category images

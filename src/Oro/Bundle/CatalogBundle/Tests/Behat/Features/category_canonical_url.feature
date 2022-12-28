@@ -11,15 +11,14 @@ Feature: Category canonical url
       | Buyer | second_session |
 
   Scenario: Create content node for web catalog
-    Given I set "Default Web Catalog" as default web catalog
     And I proceed as the Admin
     And I login as administrator
+    Given I set "Default Web Catalog" as default web catalog
     And I go to Marketing/ Web Catalogs
     And I click view Default Web Catalog in grid
     And I click "Edit Content Tree"
     And I fill "Content Node" with:
       | Title | Default Web Catalog |
-    And I click "Add System Page"
     And I click "Save"
     And I should see "Content Node has been saved" flash message
     When I click "Create Content Node"

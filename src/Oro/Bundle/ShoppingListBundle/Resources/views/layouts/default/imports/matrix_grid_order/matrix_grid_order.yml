@@ -34,6 +34,20 @@ layout:
                         totals:
                             quantity: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(product)'
                             price: '=data.offsetExists("product") ? data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(product)'
+                __header_wrapper:
+                    blockType: container
+                    options:
+                        visible: '=context["is_xml_http_request"] && context["route_name"]=="oro_shopping_list_frontend_matrix_grid_order" '
+                        vars:
+                            product: '=data.offsetExists("product") ? data["product"]'
+                __header_product_picture:
+                    blockType: block
+                __header_product_attributes:
+                    blockType: container
+                __header_product_name:
+                    blockType: block
+                __header_product_sku:
+                    blockType: block
                 __form_start:
                     blockType: form_start
                 __form_fields:
@@ -47,6 +61,11 @@ layout:
             tree:
                 __root:
                     __wrapper:
+                        __header_wrapper:
+                            __header_product_picture: ~
+                            __header_product_attributes:
+                                __header_product_name: ~
+                                __header_product_sku: ~
                         __form_start: ~
                         __form_fields: ~
                         __form_summary: ~

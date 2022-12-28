@@ -1,3 +1,4 @@
+@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:products_grid_frontend.yml
 @ticket-BB-20374
 

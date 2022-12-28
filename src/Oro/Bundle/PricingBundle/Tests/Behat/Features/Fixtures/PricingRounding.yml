@@ -38,6 +38,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     attributeFamily: '@defaultProductFamily'
     inventoryStatus: '@enumInventoryStatuses'
     organization: '@organization'
+    unitPrecisions: [ '@precision1' ]
     owner: '@businessUnit'
     status: 'enabled'
     __calls:

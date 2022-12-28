@@ -33,6 +33,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
+        unitPrecisions: [ '@unitPrecision<current()>' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@locvalue<current()>']

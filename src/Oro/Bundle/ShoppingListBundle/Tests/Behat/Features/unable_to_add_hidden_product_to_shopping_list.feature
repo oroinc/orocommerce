@@ -1,4 +1,5 @@
 @regression
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Unable to add hidden product to shopping list
 

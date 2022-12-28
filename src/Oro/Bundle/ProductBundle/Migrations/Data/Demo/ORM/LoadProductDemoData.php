@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
@@ -290,7 +291,7 @@ class LoadProductDemoData extends AbstractFixture implements
      * @param string $code
      * @return ProductUnit|null
      */
-    protected function getProductUnit(EntityManager $manager, $code)
+    protected function getProductUnit(EntityManagerInterface $manager, $code)
     {
         if (!array_key_exists($code, $this->productUnits)) {
             $this->productUnits[$code] = $manager->getRepository(ProductUnit::class)->find($code);

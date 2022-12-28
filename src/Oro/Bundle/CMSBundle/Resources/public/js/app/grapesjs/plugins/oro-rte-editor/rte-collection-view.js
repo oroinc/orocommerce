@@ -43,7 +43,7 @@ const RteCollectionView = BaseCollectionView.extend({
      * @param {DOM.Event} events
      * @returns {RteCollectionView}
      */
-    delegateEvents: function(events) {
+    delegateEvents(events) {
         RteCollectionView.__super__.delegateEvents.call(this, events);
 
         this.$editableEl.on(`mouseup${this.eventNamespace()} keyup${this.eventNamespace()}`,
@@ -62,7 +62,7 @@ const RteCollectionView = BaseCollectionView.extend({
      * @inheritdoc
      * @returns {RteCollectionView}
      */
-    undelegateEvents: function() {
+    undelegateEvents() {
         if (this.observer) {
             this.observer.disconnect();
         }

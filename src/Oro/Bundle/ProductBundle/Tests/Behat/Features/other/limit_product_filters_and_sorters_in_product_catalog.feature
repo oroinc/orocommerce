@@ -43,7 +43,6 @@ Feature: Limit product filters and sorters in product catalog
     When I click "Edit" on row "second_family_code" in grid
     And set Attribute Groups with:
       | Label          | Visible | Attributes                                                                                                                                                          |
-      | system group   | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices] |
       | New attributes | true    | [SecondFamilyAttribute]                                                                                                                                             |
     And save and close form
     Then I should see "Successfully updated" flash message

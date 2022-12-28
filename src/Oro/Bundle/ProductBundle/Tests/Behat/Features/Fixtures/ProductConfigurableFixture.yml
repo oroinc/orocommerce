@@ -31,6 +31,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision1'
+        unitPrecisions: [ '@unit_precision1' ]
         __calls:
             - addName: ['@product1_name']
             - addUnitPrecision: ['@unit_precision1_1']
@@ -43,6 +44,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision2'
+        unitPrecisions: [ '@unit_precision2' ]
         __calls:
             - addName: ['@product2_name']
         status: 'enabled'
@@ -54,6 +56,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         owner: '@business_unit'
         attributeFamily: '@defaultProductFamily'
         primaryUnitPrecision: '@unit_precision3'
+        unitPrecisions: [ '@unit_precision3' ]
         __calls:
             - addName: ['@configurable_product_name']
         status: 'enabled'

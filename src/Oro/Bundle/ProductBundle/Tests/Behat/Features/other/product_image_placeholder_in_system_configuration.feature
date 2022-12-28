@@ -2,6 +2,7 @@
 @ticket-BB-16135
 @ticket-BB-16669
 @feature-BAP-19790
+@fixture-OroCustomerBundle:CustomerUserFixture.yml
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Product Image Placeholder in system configuration
   In order to manage product images

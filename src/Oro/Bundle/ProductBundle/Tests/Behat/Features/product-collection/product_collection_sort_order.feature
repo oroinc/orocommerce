@@ -15,6 +15,7 @@ Feature: Product collection sort order
     And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click on "Remove Variant Button"
     And I click "Content Variants"
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"

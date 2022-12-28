@@ -125,6 +125,7 @@ const QuickAddCollection = BaseCollection.extend({
             } = attrs;
             const unitsLoaded = attrs.units !== undefined;
             const sku = attrs.sku.toUpperCase();
+            const organization = attrs.organization || '';
             let model;
 
             if (attrs.index) {
@@ -143,6 +144,7 @@ const QuickAddCollection = BaseCollection.extend({
                 // update existing model
                 model.set({
                     product_name: productName,
+                    organization: organization,
                     product_units: units,
                     units_loaded: unitsLoaded,
                     quantity
@@ -152,6 +154,7 @@ const QuickAddCollection = BaseCollection.extend({
                 model.set({
                     sku,
                     product_name: productName,
+                    organization: organization,
                     product_units: units,
                     units_loaded: unitsLoaded,
                     unit_label: unitLabel,

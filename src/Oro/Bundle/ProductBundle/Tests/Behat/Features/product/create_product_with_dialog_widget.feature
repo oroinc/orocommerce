@@ -97,6 +97,11 @@ Feature: Create product with dialog widget
     Given I proceed as the Admin
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I save form
+    And click "Create Content Node"
+    And I fill "Content Node Form" with:
+      | Titles   | Collection1 |
+      | Url Slug | collection1 |
     And I click on "Show Variants Dropdown"
     And I click "Add Product Page"
     And I click "Content Variants"
@@ -144,6 +149,7 @@ Feature: Create product with dialog widget
   Scenario: Check simple product is shown in the front office
     Given I proceed as the Buyer
     When I am on the homepage
+    And I click "Collection1"
     Then I should see "Item #: 1GB81"
 
   Scenario: Select configurable product using select autocomplete
@@ -158,4 +164,5 @@ Feature: Create product with dialog widget
   Scenario: Check configurable product is shown in the front office
     Given I proceed as the Buyer
     When I am on the homepage
+    And I click "Collection1"
     Then I should see "Item #: 1GB83"

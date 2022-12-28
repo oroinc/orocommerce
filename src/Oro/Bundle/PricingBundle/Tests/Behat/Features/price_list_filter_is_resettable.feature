@@ -1,3 +1,4 @@
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroPricingBundle:PriceListFilter.yml
 
 Feature: Price list filter is resettable

@@ -90,7 +90,7 @@ Feature: WYSIWYG links
       | 7 | <a href="http://test-url.com" title="Test title" target="_blank" class="btn btn--info">Test text</a> |
     And I clear canvas in WYSIWYG
 
-  Scenario: Add/update/delete link button type
+  Scenario: Add/update/delete link block type
     When I add new component "2 Columns" from panel to editor area
     And I add new component "Link Block" from panel to:
       | grid-row    | 1 |

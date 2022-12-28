@@ -1,4 +1,5 @@
 @regression
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPromotionBundle:promotion_crud.yml
 Feature: Managing promotions
   In order to use configure promotions discounts

@@ -32,10 +32,6 @@ Feature: Create Content Node under Organization with Global Access
     And click "Apply"
     And I go to Marketing/ Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
-    And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
-    And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     When I save form
     Then I should see "Content Node has been saved" flash message
 

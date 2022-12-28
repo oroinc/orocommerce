@@ -115,6 +115,30 @@ TEXT;
         self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
     }
 
+    /**
+     * @dataProvider delimiterDataProvider
+     */
+    public function testBuildFromCopyPasteTextWithOrganization(string $delimiter): void
+    {
+        $text = <<<TEXT
+"1ABSC,Organization"${delimiter}1${delimiter}item
+"2ABSC,2nd Organization"${delimiter}2${delimiter}item
+TEXT;
+
+        $quickAddRowCollection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($text);
+
+        self::assertEquals('1ABSC', $quickAddRowCollection->get(0)->getSku());
+        self::assertEquals('Organization', $quickAddRowCollection->get(0)->getOrganization());
+        self::assertEquals('1', $quickAddRowCollection->get(0)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(0)->getUnit());
+
+        self::assertEquals('2ABSC', $quickAddRowCollection->get(1)->getSku());
+        self::assertEquals('2nd Organization', $quickAddRowCollection->get(1)->getOrganization());
+        self::assertEquals('2', $quickAddRowCollection->get(1)->getQuantity());
+        self::assertEquals('item', $quickAddRowCollection->get(1)->getUnit());
+    }
+
+
     public function delimiterDataProvider(): array
     {
         return [

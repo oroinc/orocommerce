@@ -25,7 +25,7 @@ const openDigitalAssetsCommand = {
      * @param {object} options
      * @returns {openDigitalAssetsCommand}
      */
-    run: function(editor, sender, options) {
+    run(editor, sender, options) {
         this.options = {
             ...this.options,
             ...options
@@ -43,7 +43,7 @@ const openDigitalAssetsCommand = {
         return this;
     },
 
-    stop: function(editor) {
+    stop(editor) {
         this.dialog.dispose();
 
         return this;
@@ -58,12 +58,12 @@ const openDigitalAssetsCommand = {
      * @param {object} data
      * @private
      */
-    _onGridRowSelect: function(editor, data) {
+    _onGridRowSelect(editor, data) {
         this.options.onSelect(data.model, this);
         editor.stopCommand(this.id);
     },
 
-    _openChooseDialog: function(editor) {
+    _openChooseDialog(editor) {
         const options = {
             title: this.options.title,
             url: routing.generate(

@@ -1,7 +1,6 @@
 @regression
 @ticket-BB-21241
 @pricing-storage-flat
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/pricelists.yml
 @fixture-OroProductBundle:single_product.yml
 

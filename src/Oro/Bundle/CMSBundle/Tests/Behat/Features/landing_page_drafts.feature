@@ -67,7 +67,6 @@ Feature: Landing Page Drafts
     Given I set "Default Web Catalog" as default web catalog
     When I go to Marketing/ Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
-    And I click "Add System Page"
     And I click "Save"
     Then I should see "Content Node has been saved" flash message
     When I click "Create Content Node"

@@ -24,7 +24,10 @@ class QuickAddCopyPasteType extends AbstractType
     /**
      * The regex for extract item sku, quantity, unit name from one line
      */
-    const ITEM_PARSE_REGEX = '/^([^\s,;]+)(?:[\t,; ](\d{1,32}(?:[.,]\d{1,32})?)(?:[\t,; ]([^\s,;]+))?)?$/';
+    const ITEM_PARSE_REGEX =
+        '/^(?<sku>([^\s,;]+))(?:[\t,; ]'
+        . '(?<quantity>(\d{1,32}(?:[.,]\d{1,32})?))(?:[\t,; ]'
+        . '(?<unit>([^\s,;]+)))?)?$/';
 
     /**
      * {@inheritdoc}

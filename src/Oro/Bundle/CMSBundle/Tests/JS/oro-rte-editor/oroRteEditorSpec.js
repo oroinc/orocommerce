@@ -11,7 +11,10 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor'),
-            plugins: [GrapesjsRteEditor]
+            plugins: [GrapesjsRteEditor],
+            deviceManager: {
+                devices: []
+            }
         });
 
         rteEditor = editor.RteEditor;

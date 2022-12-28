@@ -1,5 +1,4 @@
 @ticket-BB-20787
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:products.yml
 
 Feature: Quick order form

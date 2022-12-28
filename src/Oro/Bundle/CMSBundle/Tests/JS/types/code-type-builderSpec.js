@@ -1,17 +1,20 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import CodeTypeBuilder from 'orocms/js/app/grapesjs/type-builders/code-type-builder';
+import CodeTypeBuilder from 'orocms/js/app/grapesjs/types/code-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/code-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/code-type', () => {
     let codeTypeBuilder;
     let editor;
 
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -65,9 +68,7 @@ describe('orocms/js/app/grapesjs/type-builders/code-type-builder', () => {
             mockElement.innerHTML = '<code>Code</code>';
 
             expect(codeTypeBuilder.Model.isComponent).toBeDefined();
-            expect(codeTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: codeTypeBuilder.componentType
-            });
+            expect(codeTypeBuilder.Model.isComponent(mockElement)).toBe(true);
             expect(codeTypeBuilder.Model.componentType).toEqual(codeTypeBuilder.componentType);
 
             expect(codeTypeBuilder.Model.prototype.editor).toEqual(editor);

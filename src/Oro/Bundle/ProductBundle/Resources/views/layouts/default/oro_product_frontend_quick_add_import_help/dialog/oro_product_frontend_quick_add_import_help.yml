@@ -6,10 +6,14 @@ layout:
             id: widget_content
             optionName: 'attr.data-page-component-module'
             optionValue: 'orofrontend/js/app/components/widget-form-component'
+        - '@setOption':
+            id: widget_content
+            optionName: class_prefix
+            optionValue: 'quick_add_import_help'
         - '@addTree':
             items:
                 quick_add_import_help:
-                    blockType: block
+                    blockType: container
             tree:
                 widget_content:
                     quick_add_import_help: ~

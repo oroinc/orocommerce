@@ -46,10 +46,10 @@ Feature: Previously purchased configurable products
     Then I should see "Schema updated" flash message
 
     Then I go to Products / Product Families
-    When I click Edit "Attribute Family" in grid
+    When I click Edit "Default" in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes                                                                                                                                                                            |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, BooleanAttribute] |
+      | Attribute group | true    | [BooleanAttribute] |
     And I save form
     Then I should see "Successfully updated" flash message
 

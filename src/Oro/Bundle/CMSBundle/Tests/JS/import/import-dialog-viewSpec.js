@@ -2,6 +2,7 @@ import 'jasmine-jquery';
 import ImportDialogView from 'orocms/js/app/grapesjs/plugins/import/import-dialog-view';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
+import '../fixtures/load-plugin-modules';
 
 describe('orocms/js/app/grapesjs/plugins/import/import-dialog-view', () => {
     let editor;
@@ -78,7 +79,7 @@ describe('orocms/js/app/grapesjs/plugins/import/import-dialog-view', () => {
         });
 
         it('check "isChange"', () => {
-            expect(importDialogView.isChange()).toBeTruthy();
+            expect(importDialogView.isChange()).toBe(true);
         });
 
         it('check "validationMessage"', () => {

@@ -124,10 +124,10 @@ Feature: Validate unique variant field values when changing simple products
 
     # Update attribute family
     And I go to Products / Product Families
-    And I click Edit T_shirt in grid
+    And I click Edit Product Attribute Family in grid
     And set Attribute Groups with:
       | Label         | Visible | Attributes |
-      | T-shirt group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Color, Size] |
+      | T-shirt group | true    | [Color, Size] |
     And I save form
     Then I should see "Successfully updated" flash message
 
@@ -185,7 +185,7 @@ Feature: Validate unique variant field values when changing simple products
 
   Scenario: Check if Attribute not deleted from Product Family if it contained unique values
     And I go to Products / Product Families
-    And I click Edit T_shirt in grid
+    And I click Edit Product Attribute Family in grid
     And I unselect "Color" option from "T_shirt attribute group"
     And I save form
     Then I should see "Attributes Color used as configurable attributes in products: shirt_101" error message

@@ -16,6 +16,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
@@ -27,11 +28,12 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loading customer order demo data.
+ */
 class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    use ContainerAwareTrait;
-
-    const REFERENCE_NAME = 'customer_orders';
+    use ContainerAwareTrait, OrderLineItemsDemoDataTrait;
 
     /** @var array */
     private $countries = [];
@@ -77,7 +79,6 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $website = $this->getWebsite($manager);
 
         $index = 0;
-
         $timeZone = new \DateTimeZone('UTC');
         foreach ($customerUsers as $customerUser) {
             /** @var User $user */
@@ -98,6 +99,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
                     ->setBillingAddress($orderAddress)
                     ->setShippingAddress($orderAddress)
                     ->setWebsite($website)
+                    ->addLineItem($this->getOrderLineItem($manager))
                     ->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY)
                     ->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone));
 

@@ -10,6 +10,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SimpleOrder'
         website: '@website1'
         currency: USD
+        lineItems: [ '@simpleOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:

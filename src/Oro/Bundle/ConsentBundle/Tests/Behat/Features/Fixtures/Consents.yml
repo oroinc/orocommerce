@@ -1,0 +1,19 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  consent_name_{1..10}:
+    string: 'Consent <current()>'
+
+Oro\Bundle\ConsentBundle\Entity\Consent:
+  consent_entity_mandatory_{1..5}:
+    __calls:
+      - addName: ['@consent_name_<current()>']
+    mandatory: true
+    declinedNotification: true
+    organization: '@organization'
+    owner: '@admin'
+  consent_entity_non_mandatory_{6..10}:
+    __calls:
+      - addName: [ '@consent_name_<current()>' ]
+    mandatory: false
+    declinedNotification: false
+    organization: '@organization'
+    owner: '@admin'

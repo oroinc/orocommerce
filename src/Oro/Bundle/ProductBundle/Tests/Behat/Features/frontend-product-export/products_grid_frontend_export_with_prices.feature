@@ -1,5 +1,6 @@
 @regression
 @feature-BB-19874
+@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:products_grid_frontend.yml
 
 Feature: Products grid frontend export with prices

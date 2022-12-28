@@ -717,7 +717,7 @@ oro:
                 clear: Clear All
                 copy_paste:
                     title: 'Paste your order'
-                    description: 'Copy and paste your order with the item #, quantity (and optionally units), separated by spaces, semicolons or commas.'
+                    description: 'Copy and paste your order with the item number, quantity (and optionally units), separated by spaces, semicolons or commas.'
                     placeholder: 'Copy and paste your order.'
                     continue:
                         label: Continue

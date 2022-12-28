@@ -4,12 +4,15 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Provides demo fixture loading for price list relation.
+ */
 abstract class LoadBasePriceListRelationDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
@@ -37,12 +40,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
         $this->container = $container;
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return PriceList
-     */
-    protected function getPriceListByName(EntityManager $manager, $name)
+    protected function getPriceListByName(EntityManagerInterface $manager, string $name): PriceList
     {
         foreach ($this->getPriceLists($manager) as $priceList) {
             if ($priceList->getName() === $name) {
@@ -53,12 +51,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
         throw new \LogicException(sprintf('There is no priceList with name "%s" .', $name));
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $name
-     * @return Website
-     */
-    protected function getWebsiteByName(EntityManager $manager, $name)
+    protected function getWebsiteByName(EntityManagerInterface $manager, string $name): Website
     {
         foreach ($this->getWebsites($manager) as $website) {
             if ($website->getName() === $name) {
@@ -69,11 +62,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
         throw new \LogicException(sprintf('There is no website with name "%s" .', $name));
     }
 
-    /**
-     * @param EntityManager $manager
-     * @return Website[]
-     */
-    protected function getWebsites(EntityManager $manager)
+    protected function getWebsites(EntityManagerInterface $manager): array
     {
         if (!$this->websites) {
             $this->websites = $manager->getRepository('OroWebsiteBundle:Website')->findAll();
@@ -82,11 +71,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
         return $this->websites;
     }
 
-    /**
-     * @param EntityManager $manager
-     * @return PriceList[]
-     */
-    protected function getPriceLists(EntityManager $manager)
+    protected function getPriceLists(EntityManagerInterface $manager): array
     {
         if (!$this->priceLists) {
             $this->priceLists = $manager->getRepository('OroPricingBundle:PriceList')->findAll();
