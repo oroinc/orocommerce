@@ -7,6 +7,8 @@ use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\Event\CollectAutocompleteFieldsEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\WebpAwareProductAutocompleteListener;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -72,10 +74,12 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
     public function testOnProcessAutocompleteDataDefaultImage(): void
     {
         $data = [
-            'SKU1' => [],
-            'SKU2' => ['imageWebp' => ''],
+            'products' => [
+                [],
+                ['imageWebp' => ''],
+            ]
         ];
-        $event = new ProcessAutocompleteDataEvent($data);
+        $event = new ProcessAutocompleteDataEvent($data, 'request', new Result(new Query()));
 
         $requestStack = new RequestStack();
         $request = Request::create('https://localhost/');
@@ -95,7 +99,7 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
         $listener->onProcessAutocompleteData($event);
 
         $expectedData = $data;
-        $expectedData['SKU2']['imageWebp'] = $defaultImageUrl;
+        $expectedData['products'][1]['imageWebp'] = $defaultImageUrl;
 
         self::assertEquals($expectedData, $event->getData());
     }
@@ -104,10 +108,12 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
     {
         $imageUrl = '/image/webp';
         $data = [
-            'SKU1' => [],
-            'SKU2' => ['imageWebp' => $imageUrl],
+            'products' => [
+                [],
+                ['imageWebp' => $imageUrl],
+            ]
         ];
-        $event = new ProcessAutocompleteDataEvent($data);
+        $event = new ProcessAutocompleteDataEvent($data, 'request', new Result(new Query()));
 
         $listener = new WebpAwareProductAutocompleteListener(
             $this->webpConfiguration,
@@ -117,7 +123,7 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
         $listener->onProcessAutocompleteData($event);
 
         $expectedData = $data;
-        $expectedData['SKU2']['imageWebp'] = '/absolute' . $imageUrl;
+        $expectedData['products'][1]['imageWebp'] = '/absolute' . $imageUrl;
 
         self::assertEquals($expectedData, $event->getData());
     }

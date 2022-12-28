@@ -6,8 +6,9 @@ namespace Oro\Bundle\ProductBundle\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration as ProductConfiguration;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
+use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\UIBundle\Tools\UrlHelper;
@@ -52,21 +53,33 @@ class ProductAutocompleteProvider
 
     /**
      * @param string $queryString
-     * @return array ['total_count' => int, 'products' => [<productSku> => ...]]
+     * @return array ['total_count' => int, 'products' => [<productData>, ...], 'categories' => [<categoryData>, ...]]
      */
-    public function getAutocompleteData(Request $request, $queryString): array
+    public function getAutocompleteData(string $queryString): array
     {
         $numberOfProducts = $this->configManager
-            ->get(Configuration::getConfigKeyByName(Configuration::SEARCH_AUTOCOMPLETE_MAX_PRODUCTS));
+            ->get(ProductConfiguration::getConfigKeyByName(ProductConfiguration::SEARCH_AUTOCOMPLETE_MAX_PRODUCTS));
 
-        $result = $this->searchRepository
-            ->getAutocompleteSearchQuery($queryString, $numberOfProducts)
-            ->getResult();
+        $query = $this->searchRepository->getAutocompleteSearchQuery($queryString, $numberOfProducts);
 
-        return [
+        $event = new ProcessAutocompleteQueryEvent($query, $queryString);
+        $this->eventDispatcher->dispatch($event);
+
+        $result = $event->getQuery()->getResult();
+
+        $data = [
             'total_count' => $result->getRecordsCount(),
-            'products' => $this->getProductData($result->getElements(), $request),
+            'products' => $this->getProductData($result->getElements()),
         ];
+
+        $event = new ProcessAutocompleteDataEvent($data, $queryString, $result);
+        $this->eventDispatcher->dispatch($event);
+
+        $data = $event->getData();
+
+        $data['products'] = $this->sanitize($data, 'products');
+
+        return $data;
     }
 
     /**
@@ -75,7 +88,7 @@ class ProductAutocompleteProvider
      *
      * @return array
      */
-    protected function getProductData(array $productItems, Request $request): array
+    protected function getProductData(array $productItems): array
     {
         $defaultImage = $this->imagePlaceholderProvider->getPath('product_small');
         $inventoryStatuses = array_flip($this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status'));
@@ -103,14 +116,11 @@ class ProductAutocompleteProvider
             $inventoryStatus = $productData['inventory_status'];
             $productData['inventory_status_label'] = $inventoryStatuses[$inventoryStatus] ?? $inventoryStatus;
 
-            $sku = $productData['sku'];
-            $data[$sku] = $productData;
+            // product ID or SKU are not used as a key to keep proper order at the storefront
+            $data[] = $productData;
         }
 
-        $event = new ProcessAutocompleteDataEvent($data);
-        $this->eventDispatcher->dispatch($event);
-
-        return $this->sanitize($event->getData(), 'products');
+        return $data;
     }
 
     /**

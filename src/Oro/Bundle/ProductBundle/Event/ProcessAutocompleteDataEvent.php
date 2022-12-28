@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Oro\Bundle\ProductBundle\Event;
 
+use Oro\Bundle\SearchBundle\Query\Result;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -10,11 +11,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProcessAutocompleteDataEvent extends Event
 {
-    protected array $data;
-
-    public function __construct(array $data)
+    public function __construct(protected array $data, protected string $queryString, protected Result $result)
     {
-        $this->data = $data;
     }
 
     public function getData(): array
@@ -25,5 +23,29 @@ class ProcessAutocompleteDataEvent extends Event
     public function setData(array $data): void
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryString(): string
+    {
+        return $this->queryString;
+    }
+
+    /**
+     * @return Result
+     */
+    public function getResult(): Result
+    {
+        return $this->result;
+    }
+
+    /**
+     * @param Result $result
+     */
+    public function setResult(Result $result): void
+    {
+        $this->result = $result;
     }
 }

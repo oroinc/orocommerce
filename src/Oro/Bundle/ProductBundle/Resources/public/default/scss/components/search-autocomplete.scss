@@ -100,6 +100,57 @@
     }
 }
 
+.search-autocomplete-category {
+    text-decoration: $search-autocomplete-category-text-decoration;
+    display: $search-autocomplete-category-display;
+    color: $search-autocomplete-category-color;
+
+    &:hover {
+        text-decoration: $search-autocomplete-category-text-decoration;
+        color: $search-autocomplete-category-color;
+    }
+
+    &__image {
+        width: $search-autocomplete-category-image-width;
+        height: $search-autocomplete-category-image-height;
+        display: $search-autocomplete-category-image-display;
+        border: $search-autocomplete-category-image-border;
+        margin-right: $search-autocomplete-category-image-offset-right;
+        font-size: $search-autocomplete-category-image-font-size;
+        text-align: $search-autocomplete-category-image-text-align;
+
+        span {
+            vertical-align: $search-autocomplete-category-image-span-vertical-align;
+        }
+    }
+
+    &__info {
+        width: $search-autocomplete-category-info-width;
+        flex-grow: $search-autocomplete-category-info-flex-grow;
+        flex-shrink: $search-autocomplete-category-info-flex-shrink;
+    }
+
+    &__head {
+        margin-bottom: $search-autocomplete-category-head-offset-bottom;
+        color: $search-autocomplete-category-head-color;
+    }
+
+    &__body {
+        font-size: $search-autocomplete-category-body-font-size;
+        color: $search-autocomplete-category-body-color;
+        line-height: $search-autocomplete-category-body-line-height;
+
+        span {
+            white-space: $search-autocomplete-category-body-span-white-space;
+        }
+
+        .last-category {
+            color: $search-autocomplete-category-body-last-category-color;
+            font-weight: $search-autocomplete-category-body-last-category-font-weight;
+        }
+    }
+}
+
 @include breakpoint('tablet') {
     .search-autocomplete {
         margin-bottom: $search-autocomplete-tablet-offset-bottom;

@@ -70,3 +70,15 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency:
     priceAttributeCurrency:
         priceList: '@priceAttributePriceList'
         currency: 'USD'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localValueRetailSupplies:
+        string: 'Retail Supplies'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryRetailSupplies:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localValueRetailSupplies']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']

@@ -3,5 +3,9 @@
         '~class': ' category-title'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ 'oro.product.search.search_title.title'|trans({'%count%': text|length, '%text%': text})|e }}</h1>
+    {% if category_title is defined and category_title is not empty %}
+        <h1 {{ block('block_attributes') }}>{{ 'oro.product.search.search_in_category.title'|trans({'%count%': text|length, '%text%': text, '%category%': category_title})|e }}</h1>
+    {% else %}
+        <h1 {{ block('block_attributes') }}>{{ 'oro.product.search.search_title.title'|trans({'%count%': text|length, '%text%': text})|e }}</h1>
+    {% endif %}
 {% endblock %}
