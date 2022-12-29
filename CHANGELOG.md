@@ -2,6 +2,12 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+### Removed
+#### CatalogBundle
+* Removed block type `category_list`
+#### WebCatalogBundle
+* Removed block type `menu_item`; It was updated and moved to `CommerceMenuBundle`
+
 ## 5.1.0-beta.2 (2022-11-30)
 [Show detailed list of changes](incompatibilities-5-1-beta-2.md)
 
