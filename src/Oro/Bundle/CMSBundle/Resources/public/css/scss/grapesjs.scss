@@ -31,6 +31,7 @@
         .gjs-highlighter-sel {
             margin-left: -2px;
             margin-top: -2px;
+            outline-offset: 0;
         }
 
         ##{$app-prefix}tools,
@@ -371,6 +372,10 @@
     // Place some actions above some elements that overlap them, like CodeMirror container
     &action {
         position: relative;
+    }
+
+    &resizer-h-cl {
+        margin: auto -8px;
     }
 }
 
