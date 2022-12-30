@@ -465,7 +465,7 @@ oro_behat_extension:
 
     Add Another Line2:
       selector:
-        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//a[text()="Add Another Line"]'
+        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//button[text()="Add Another Line"]'
         type: xpath
 
     Quotes Role Tab:
