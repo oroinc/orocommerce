@@ -47,8 +47,8 @@
     border: 3px dashed $secondary;
     border-left: none;
     position: absolute;
-    top: -3px;
-    bottom: 1px;
+    top: -5px;
+    bottom: -1px;
     left: 0;
     pointer-events: none;
 
@@ -68,5 +68,6 @@
         border-left: 3px dashed $secondary;
         left: auto;
         right: 0;
+        margin-left: -5px;
     }
 }
