@@ -16,15 +16,18 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var SegmentRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private SegmentRepository $segmentRepository;
+    private $segmentRepository;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private ManagerRegistry $registry;
-    private SegmentMessageFactory $factory;
+    private $registry;
+
+    /** @var SegmentMessageFactory */
+    private $factory;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
+
         $this->factory = new SegmentMessageFactory($this->registry);
     }
 
@@ -170,8 +173,6 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getIsFullProvider
-     * @param bool $isFull
-     * @param bool $expectedIsFull
      */
     public function testGetIsFull(bool $isFull, bool $expectedIsFull)
     {
@@ -186,10 +187,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedIsFull, $segment);
     }
 
-    /**
-     * @return array
-     */
-    public function getIsFullProvider()
+    public function getIsFullProvider(): array
     {
         return [
             'is full true' => [
@@ -203,11 +201,10 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    private function expectsRegistryGetRepository()
+    private function expectsRegistryGetRepository(): void
     {
         $this->segmentRepository = $this->createMock(SegmentRepository::class);
-        $this->registry
-            ->expects($this->any())
+        $this->registry->expects($this->any())
             ->method('getRepository')
             ->with(Segment::class)
             ->willReturn($this->segmentRepository);

@@ -13,6 +13,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -23,60 +24,35 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var ObjectManager
-     */
-    protected $manager;
+    protected ObjectManager $manager;
+    protected ContainerInterface $container;
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * @return array
-     */
-    abstract protected function getData();
+    abstract protected function getData(): array;
 
-    /**
-     * @return string
-     */
-    abstract protected function getWorkflowName();
+    abstract protected function getWorkflowName(): string;
 
-    /**
-     * @return Checkout
-     */
-    abstract protected function createCheckout();
+    abstract protected function createCheckout(): Checkout;
 
-    /**
-     * @return string
-     */
-    abstract protected function getCheckoutSourceName();
+    abstract protected function getCheckoutSourceName(): string;
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return CustomerUser
-     */
-    protected function getDefaultCustomerUser(ObjectManager $manager)
+    protected function getDefaultCustomerUser(ObjectManager $manager): CustomerUser
     {
-        return $manager
-            ->getRepository('OroCustomerBundle:CustomerUser')
+        return $manager->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->manager = $manager;
         /* @var User $owner */
@@ -85,6 +61,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         $workflowManager = $this->container->get('oro_workflow.manager');
         $this->clearPreconditions();
         $defaultCustomerUser = $this->getDefaultCustomerUser($manager);
+        /* @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
             /* @var CustomerUser $customerUser */
@@ -138,7 +115,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         }
     }
 
-    protected function clearPreconditions()
+    protected function clearPreconditions(): void
     {
         $workflowDefinition = $this->manager
             ->getRepository('OroWorkflowBundle:WorkflowDefinition')
@@ -149,9 +126,9 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadOrderAddressData::class,

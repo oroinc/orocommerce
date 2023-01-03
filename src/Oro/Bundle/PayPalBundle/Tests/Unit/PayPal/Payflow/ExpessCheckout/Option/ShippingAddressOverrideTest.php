@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Optio
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class ShippingAddressOverrideTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ECOption\ShippingAddressOverride(), new ECOption\Action()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -22,7 +27,7 @@ class ShippingAddressOverrideTest extends AbstractOptionTest
                 ['ADDROVERRIDE' => true, ECOption\Action::ACTION => ECOption\Action::DO_EC],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
+                    UndefinedOptionsException::class,
                     'The option "ADDROVERRIDE" does not exist. Defined options are: "ACTION".'
                 ]
             ],
@@ -30,7 +35,7 @@ class ShippingAddressOverrideTest extends AbstractOptionTest
                 ['ADDROVERRIDE' => true, ECOption\Action::ACTION => ECOption\Action::GET_EC_DETAILS],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
+                    UndefinedOptionsException::class,
                     'The option "ADDROVERRIDE" does not exist. Defined options are: "ACTION".'
                 ]
             ],

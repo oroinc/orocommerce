@@ -14,19 +14,13 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $relationsProvider;
 
-    /**
-     * @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteManager;
 
-    /**
-     * @var CriteriaDataProvider
-     */
+    /** @var CriteriaDataProvider */
     private $provider;
 
     protected function setUp(): void
@@ -42,7 +36,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerUser()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -55,7 +48,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerFromRelationProvider()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -75,7 +67,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerFromEntity()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -96,7 +87,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerGroupFromCustomer()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -122,7 +112,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCustomerGroupFromRelationProvider()
     {
-        /** @var CustomerOwnerAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(CustomerOwnerAwareInterface::class);
 
         $customerUser = $this->createMock(CustomerUser::class);
@@ -150,7 +139,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetWebsiteFromEntity()
     {
-        /** @var WebsiteAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(WebsiteAwareInterface::class);
         $website = new Website();
         $entity->expects($this->once())
@@ -164,7 +152,6 @@ class CriteriaDataProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetWebsiteFromWebsiteManager()
     {
-        /** @var WebsiteAwareInterface|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->createMock(WebsiteAwareInterface::class);
         $website = new Website();
         $entity->expects($this->once())

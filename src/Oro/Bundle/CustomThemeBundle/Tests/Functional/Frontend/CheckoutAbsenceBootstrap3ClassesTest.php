@@ -10,9 +10,7 @@ use Symfony\Component\DomCrawler\Form;
 class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
 {
     use AbsenceBootstrap3ClassesTrait;
-    use EnabledPaymentMethodIdentifierTrait {
-        getReference as protected;
-    }
+    use EnabledPaymentMethodIdentifierTrait;
 
     public function testStartCheckout()
     {
@@ -102,28 +100,23 @@ class CheckoutAbsenceBootstrap3ClassesTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getInventoryFixtures()
+    protected function getInventoryFixtures(): array
     {
         return [];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function tearDown(): void
     {
-        $config = self::getConfigManager('global');
+        $config = self::getConfigManager();
         $config->reset('oro_frontend.frontend_theme');
     }
 
-    /**
-     * @param int $addressId
-     * @param Form $form
-     * @param string $addressType
-     */
-    private function setCustomerAddress($addressId, Form $form, $addressType)
+    private function setCustomerAddress(int $addressId, Form $form, string $addressType): void
     {
         $addressId = $addressId === 0 ? '0' : 'a_' . $addressId;
 

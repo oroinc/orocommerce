@@ -9,9 +9,9 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension([], []),
@@ -21,10 +21,8 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param array $data
-     * @param bool $isValid
      */
-    public function testSubmit(array $data, $isValid)
+    public function testSubmit(array $data, bool $isValid)
     {
         $form = $this->factory->create(QuickAddCopyPasteType::class);
 
@@ -38,10 +36,9 @@ class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty string' => [

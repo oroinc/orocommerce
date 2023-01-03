@@ -13,64 +13,35 @@ use Oro\Bundle\UPSBundle\TimeInTransit\TimeInTransitProviderInterface;
 
 class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
-    const PICKUP_DATE = '01.01.2018 12:00';
+    private const PICKUP_DATE = '01.01.2018 12:00';
 
-    /**
-     * @internal
-     */
-    const TRANSPORT_ID = 1;
-
-    /**
-     * @var TimeInTransitResultInterface
-     */
+    /** @var TimeInTransitResultInterface */
     private $timeInTransitResult;
 
-    /**
-     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
     private $upsTransport;
 
-    /**
-     * @var TimeInTransitCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $timeInTransitCacheProvider;
 
-    /**
-     * @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitCacheProviderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $timeInTransitCacheProviderFactory;
 
-    /**
-     * @var TimeInTransitProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $timeInTransit;
 
-    /**
-     * @var CacheableTimeInTransitProvider
-     */
+    /** @var CacheableTimeInTransitProvider */
     private $cacheableTimeInTransit;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $pickupDate;
 
-    /**
-     * @var AddressStub
-     */
+    /** @var AddressStub */
     private $address;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $weight;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->address = new AddressStub();
@@ -87,33 +58,26 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider timeInTransitResultStatusDataProvider
-     *
-     * @param bool $status
-     * @param int  $saveCache
      */
-    public function testGetTimeInTransitResult($status, $saveCache)
+    public function testGetTimeInTransitResult(bool $status, int $saveCache)
     {
         $this->mockTimeInTransitCacheProviderFactory();
 
-        $this->timeInTransitCacheProvider
-            ->expects(static::once())
+        $this->timeInTransitCacheProvider->expects(self::once())
             ->method('contains')
             ->with($this->address, $this->address, $this->pickupDate)
             ->willReturn(false);
 
-        $this->timeInTransit
-            ->expects(static::once())
+        $this->timeInTransit->expects(self::once())
             ->method('getTimeInTransitResult')
             ->with($this->upsTransport, $this->address, $this->address, $this->pickupDate)
             ->willReturn($this->timeInTransitResult);
 
-        $this->timeInTransitResult
-            ->expects(static::once())
+        $this->timeInTransitResult->expects(self::once())
             ->method('getStatus')
             ->willReturn($status);
 
-        $this->timeInTransitCacheProvider
-            ->expects(static::exactly($saveCache))
+        $this->timeInTransitCacheProvider->expects(self::exactly($saveCache))
             ->method('save')
             ->with($this->address, $this->address, $this->pickupDate, $this->timeInTransitResult);
 
@@ -127,13 +91,10 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
                 $this->weight
             );
 
-        static::assertEquals($this->timeInTransitResult, $result);
+        self::assertEquals($this->timeInTransitResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function timeInTransitResultStatusDataProvider()
+    public function timeInTransitResultStatusDataProvider(): array
     {
         return [
             'result should be cached' => [
@@ -151,18 +112,15 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->mockTimeInTransitCacheProviderFactory();
 
-        $this->timeInTransitCacheProvider
-            ->expects(static::once())
+        $this->timeInTransitCacheProvider->expects(self::once())
             ->method('contains')
             ->with($this->address, $this->address, $this->pickupDate)
             ->willReturn(true);
 
-        $this->timeInTransit
-            ->expects(static::never())
+        $this->timeInTransit->expects(self::never())
             ->method('getTimeInTransitResult');
 
-        $this->timeInTransitCacheProvider
-            ->expects(static::once())
+        $this->timeInTransitCacheProvider->expects(self::once())
             ->method('fetch')
             ->with($this->address, $this->address, $this->pickupDate)
             ->willReturn($this->timeInTransitResult);
@@ -177,13 +135,12 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
                 $this->weight
             );
 
-        static::assertEquals($this->timeInTransitResult, $result);
+        self::assertEquals($this->timeInTransitResult, $result);
     }
 
     private function mockTimeInTransitCacheProviderFactory()
     {
-        $this->timeInTransitCacheProviderFactory
-            ->expects(static::once())
+        $this->timeInTransitCacheProviderFactory->expects(self::once())
             ->method('createCacheProviderForTransport')
             ->with($this->upsTransport)
             ->willReturn($this->timeInTransitCacheProvider);

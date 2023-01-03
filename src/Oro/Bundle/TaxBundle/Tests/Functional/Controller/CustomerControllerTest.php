@@ -220,16 +220,13 @@ class CustomerControllerTest extends WebTestCase
         self::assertStringContainsString($customerTaxCode->getCode(), $html);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getFormValues(
-        $name,
+        string $name,
         Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating,
         CustomerTaxCode $customerTaxCode
-    ) {
+    ): array {
         return [
             'oro_customer_type[name]' => $name,
             'oro_customer_type[parent]' => $parent->getId(),
@@ -239,10 +236,7 @@ class CustomerControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFixtureList()
+    protected function getFixtureList(): array
     {
         return [
             LoadCustomers::class,

@@ -20,9 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
-    use EnabledPaymentMethodIdentifierTrait {
-        getReference as private;
-    }
+    use EnabledPaymentMethodIdentifierTrait;
 
     public function testStartCheckout()
     {

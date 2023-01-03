@@ -8,10 +8,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 class ProductInventoryStatusSelectTypeTest extends WebTestCase
 {
-    /**
-     * @var FormFactoryInterface
-     */
-    protected $formFactory;
+    private FormFactoryInterface $formFactory;
 
     protected function setUp(): void
     {
@@ -23,11 +20,8 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param array $submitData
-     * @param bool $isValid
      */
-    public function testSubmit(array $submitData, $isValid)
+    public function testSubmit(array $submitData, bool $isValid)
     {
         // submit form
         $form = $this->formFactory->create(ProductInventoryStatusSelectType::class, []);
@@ -39,10 +33,7 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'empty data' => [

@@ -15,23 +15,16 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class RelatedProductRepositoryTest extends WebTestCase
 {
-    /**
-     * @var RelatedProductRepository
-     */
-    protected $repository;
+    private RelatedProductRepository $repository;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures([
-            LoadRelatedProductData::class
-        ]);
+        $this->loadFixtures([LoadRelatedProductData::class]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository(
-            RelatedProduct::class
-        );
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(RelatedProduct::class);
     }
 
     public function testExistsReturnTrue()
@@ -51,11 +44,9 @@ class RelatedProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param string $productSku
-     * @param int $numberOfRelations
      * @dataProvider countRelationsForProductDataProvider
      */
-    public function testCountRelationsForProduct($productSku, $numberOfRelations)
+    public function testCountRelationsForProduct(string $productSku, int $numberOfRelations)
     {
         /** @var Product $product */
         $product = $this->getProductRepository()->findOneBySku($productSku);
@@ -179,10 +170,7 @@ class RelatedProductRepositoryTest extends WebTestCase
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
     }
 
-    /**
-     * @return array
-     */
-    public function countRelationsForProductDataProvider()
+    public function countRelationsForProductDataProvider(): array
     {
         return [
             ['product-1', 0],
@@ -191,10 +179,7 @@ class RelatedProductRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return ProductRepository
-     */
-    private function getProductRepository()
+    private function getProductRepository(): ProductRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(Product::class);
     }
@@ -214,6 +199,7 @@ class RelatedProductRepositoryTest extends WebTestCase
         foreach ($expected as &$item) {
             $item['id'] = $this->getReference($item['id'])->getId();
         }
+        unset($item);
 
         $this->assertEquals($expected, $actual);
     }

@@ -16,25 +16,20 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CheckoutToOrderConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutToOrderConverter;
 
-    /**
-     * @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $orderDiscountContextConverter;
 
-    /**
-     * @var CheckoutDiscountContextConverter
-     */
+    /** @var CheckoutDiscountContextConverter */
     private $converter;
 
     protected function setUp(): void
     {
         $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);
         $this->orderDiscountContextConverter = $this->createMock(DiscountContextConverterInterface::class);
+
         $this->converter = new CheckoutDiscountContextConverter(
             $this->checkoutToOrderConverter,
             $this->orderDiscountContextConverter
@@ -50,14 +45,12 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
         $discountContext->setSubtotal(100.0);
         $discountContext->setLineItems([new DiscountLineItem()]);
 
-        $this->checkoutToOrderConverter
-            ->expects($this->any())
+        $this->checkoutToOrderConverter->expects($this->any())
             ->method('getOrder')
             ->with($sourceEntity)
             ->willReturn($order);
 
-        $this->orderDiscountContextConverter
-            ->expects($this->any())
+        $this->orderDiscountContextConverter->expects($this->any())
             ->method('convert')
             ->with($order)
             ->willReturn($discountContext);
@@ -76,18 +69,13 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider supportsDataProvider
-     * @param object $entity
-     * @param boolean $isSupported
      */
-    public function testSupports($entity, $isSupported)
+    public function testSupports(object $entity, bool $isSupported)
     {
         $this->assertSame($isSupported, $this->converter->supports($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function supportsDataProvider()
+    public function supportsDataProvider(): array
     {
         return [
             'supported entity' => [
@@ -113,13 +101,8 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $sourceEntityClass
-     * @return Checkout
-     */
-    private function getCheckout($sourceEntityClass = ShoppingList::class)
+    private function getCheckout(?string $sourceEntityClass = ShoppingList::class): Checkout
     {
-        /** @var CheckoutSource|\PHPUnit\Framework\MockObject\MockObject $checkoutSource */
         $checkoutSource = $this->createMock(CheckoutSource::class);
         $checkoutSource->expects($this->any())
             ->method('getEntity')

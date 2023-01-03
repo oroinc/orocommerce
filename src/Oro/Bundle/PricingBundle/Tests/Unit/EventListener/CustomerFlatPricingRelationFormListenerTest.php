@@ -16,14 +16,8 @@ use Symfony\Component\Form\FormInterface;
 
 class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRelationFormListenerTest
 {
-    /**
-     * @var CustomerFlatPricingRelationFormListener
-     */
-    protected $listener;
+    private CustomerFlatPricingRelationFormListener $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,11 +50,8 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSetData()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Customer $targetEntity */
         $targetEntity = $this->getEntity(Customer::class, ['id' => 1]);
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
 
         $this->featureChecker->expects($this->once())
@@ -74,7 +65,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
         $relation->setCustomer($targetEntity);
         $this->assertGetPriceListRelation($website, $targetEntity, $relation);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $this->assertPostSetDataFormCalls($targetEntity, $website, $formEvent, $priceList);
 
@@ -96,7 +86,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
             ->method('getData')
             ->willReturn($entity);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $formEvent->expects($this->once())
             ->method('getForm')
@@ -105,10 +94,7 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
         $this->listener->onPostSetData($formEvent);
     }
 
-    /**
-     * @return array
-     */
-    public function wrongEntityDataProvider()
+    public function wrongEntityDataProvider(): array
     {
         return [
             'none' => [null],
@@ -123,7 +109,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
             ->with('feature1')
             ->willReturn(false);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $formEvent->expects($this->never())
             ->method('getForm');
@@ -133,9 +118,7 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSubmitNoRelationNoPriceList()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Customer $targetEntity */
         $targetEntity = $this->getEntity(Customer::class, ['id' => 1]);
 
         $this->featureChecker->expects($this->once())
@@ -145,7 +128,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
         $this->assertGetPriceListRelation($website, $targetEntity, null);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($website, $targetEntity, $formEvent, null);
 
@@ -159,11 +141,8 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSubmitNoRelationNewPriceList()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Customer $targetEntity */
         $targetEntity = $this->getEntity(Customer::class, ['id' => 1]);
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
 
         $this->featureChecker->expects($this->once())
@@ -171,7 +150,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
             ->with('feature1')
             ->willReturn(true);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($website, $targetEntity, $formEvent, $priceList);
 
@@ -198,11 +176,8 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSubmitHasRelationNoPriceListChanges()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Customer $targetEntity */
         $targetEntity = $this->getEntity(Customer::class, ['id' => 1]);
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
 
         $this->featureChecker->expects($this->once())
@@ -210,7 +185,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
             ->with('feature1')
             ->willReturn(true);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($website, $targetEntity, $formEvent, $priceList);
 
@@ -236,11 +210,8 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSubmitHasRelationNoPriceList()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Customer $targetEntity */
         $targetEntity = $this->getEntity(Customer::class, ['id' => 1]);
-        /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 2]);
 
         $this->featureChecker->expects($this->once())
@@ -248,7 +219,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
             ->with('feature1')
             ->willReturn(true);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($website, $targetEntity, $formEvent, null);
 
@@ -275,13 +245,9 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSubmitHasRelationNewPriceListSet()
     {
-        /** @var Website $website */
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Customer $targetEntity */
         $targetEntity = $this->getEntity(Customer::class, ['id' => 1]);
-        /** @var PriceList $priceList1 */
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
-        /** @var PriceList $priceList2 */
         $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
 
         $this->featureChecker->expects($this->once())
@@ -289,7 +255,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
             ->with('feature1')
             ->willReturn(true);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($website, $targetEntity, $formEvent, $priceList2);
 
@@ -316,7 +281,6 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 
     public function testOnPostSubmitFeatureDisabled()
     {
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $formEvent->expects($this->never())
             ->method('getForm');

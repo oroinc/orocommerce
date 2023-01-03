@@ -8,22 +8,15 @@ use Oro\Bundle\QueryDesignerBundle\QueryDesigner\SegmentFiltersPurifier;
 
 class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCase
 {
-    const EXCLUDED_IDS = '1,111';
-    const INCLUDED_IDS = '2,7';
+    private const EXCLUDED_IDS = '1,111';
+    private const INCLUDED_IDS = '2,7';
 
-    /**
-     * @var SegmentFiltersPurifier|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SegmentFiltersPurifier|\PHPUnit\Framework\MockObject\MockObject */
     private $filtersPurifier;
 
-    /**
-     * @var ProductCollectionDefinitionConverter
-     */
+    /** @var ProductCollectionDefinitionConverter */
     private $definitionConverter;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->filtersPurifier = $this->createMock(SegmentFiltersPurifier::class);
@@ -32,8 +25,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     public function testPutDefinitionPartsWithPurifiedDefinition()
     {
-        $this->filtersPurifier
-            ->expects($this->once())
+        $this->filtersPurifier->expects($this->once())
             ->method('purifyFilters')
             ->willReturn([]);
 
@@ -87,8 +79,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     public function testPutDefinitionPartsWithEmptyDefinition()
     {
-        $this->filtersPurifier
-            ->expects($this->never())
+        $this->filtersPurifier->expects($this->never())
             ->method('purifyFilters');
 
         $resultDefinition = $this->definitionConverter->putConditionsInDefinition(
@@ -130,20 +121,14 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider putDefinitionsDataProvider
-     *
-     * @param array $definition
-     * @param string $includedIds
-     * @param string $excludedIds
-     * @param array $expectedDefinition
      */
     public function testPutDefinitionParts(
         array $definition,
-        $includedIds,
-        $excludedIds,
+        ?string $includedIds,
+        ?string $excludedIds,
         array $expectedDefinition
     ) {
-        $this->filtersPurifier
-            ->expects($this->once())
+        $this->filtersPurifier->expects($this->once())
             ->method('purifyFilters')
             ->willReturnArgument(0);
 
@@ -157,19 +142,17 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function putDefinitionsDataProvider()
+    public function putDefinitionsDataProvider(): array
     {
         return [
             'definition with filters' => [
                 'definition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -192,8 +175,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'expectedDefinition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -357,9 +340,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider notNormalizedDefinitionDataProvider
-     * @param string $definition
      */
-    public function testPutConditionsInDefinitionWithNotNormalizedDefinition($definition)
+    public function testPutConditionsInDefinitionWithNotNormalizedDefinition(string $definition)
     {
         $includedIds = '1,3,5';
         $excludedIds = '7,9';
@@ -391,8 +373,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
             ]
         ];
 
-        $this->filtersPurifier
-            ->expects($this->never())
+        $this->filtersPurifier->expects($this->never())
             ->method('purifyFilters');
 
         $resultDefinition = $this->definitionConverter->putConditionsInDefinition(
@@ -404,10 +385,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals($expectedDefinition, json_decode($resultDefinition, true));
     }
 
-    /**
-     * @return array
-     */
-    public function notNormalizedDefinitionDataProvider()
+    public function notNormalizedDefinitionDataProvider(): array
     {
         return [
             'empty string' => [
@@ -427,9 +405,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider notNormalizedDefinitionDataProvider
-     * @param string $definition
      */
-    public function testGetDefinitionPartsWithNotNormalizedDefinition($definition)
+    public function testGetDefinitionPartsWithNotNormalizedDefinition(string $definition)
     {
         $expectedParts = [
             'definition' => '[]',
@@ -437,8 +414,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
             'excluded' => null
         ];
 
-        $this->filtersPurifier
-            ->expects($this->never())
+        $this->filtersPurifier->expects($this->never())
             ->method('purifyFilters');
 
         $this->assertEquals($expectedParts, $this->definitionConverter->getDefinitionParts($definition));
@@ -446,20 +422,14 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider getDefinitionsDataProvider
-     *
-     * @param array $definition
-     * @param array $expectedDefinition
-     * @param string $expectedIncluded
-     * @param string $expectedExcluded
      */
     public function testGetDefinitionParts(
         array $definition,
         array $expectedDefinition,
-        $expectedIncluded,
-        $expectedExcluded
+        ?string $expectedIncluded,
+        ?string $expectedExcluded
     ) {
-        $this->filtersPurifier
-            ->expects($this->never())
+        $this->filtersPurifier->expects($this->never())
             ->method('purifyFilters');
 
         $definitionParts = $this->definitionConverter->getDefinitionParts(json_encode($definition));
@@ -479,11 +449,9 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getDefinitionsDataProvider()
+    public function getDefinitionsDataProvider(): array
     {
         $definitionWithoutIncludedExcludedFilters = [
             'filters' => [
@@ -513,8 +481,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'definition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -523,8 +491,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'expectedDefinition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -556,8 +524,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'definition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -591,8 +559,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'expectedDefinition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -606,8 +574,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'definition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -665,8 +633,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
                 'expectedDefinition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => 'sku',
+                            'label' => 'sku',
                             'sorting' => 'DESC',
                             'func' => null
                         ],
@@ -703,22 +671,16 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit\Framework\TestCa
 
     /**
      * @dataProvider hasFiltersProvider
-     * @param mixed $definition
-     * @param bool $expectedResult
      */
-    public function testHasFilters($definition, $expectedResult)
+    public function testHasFilters(mixed $definition, bool $expectedResult)
     {
-        $this->filtersPurifier
-            ->expects($this->never())
+        $this->filtersPurifier->expects($this->never())
             ->method('purifyFilters');
         $result = $this->definitionConverter->hasFilters($definition);
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function hasFiltersProvider()
+    public function hasFiltersProvider(): array
     {
         return [
             'when definition is array without filters' => [

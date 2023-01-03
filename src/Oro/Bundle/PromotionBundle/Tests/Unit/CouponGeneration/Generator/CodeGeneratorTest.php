@@ -7,10 +7,7 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
 class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CodeGenerator
-     */
-    protected $generator;
+    private CodeGenerator $generator;
 
     protected function setUp(): void
     {
@@ -33,7 +30,7 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $codes = $this->generator->generateUnique($options, 20);
         $this->assertCount(20, $codes);
-        foreach ($codes as $index => $code) {
+        foreach ($codes as $code) {
             $this->assertMatchesRegularExpression('/^[a-zA-Z]{5}$/', $code);
         }
 
@@ -44,15 +41,12 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
         $codes = $this->generator->generateUnique($options, 100000);
         $this->assertCount(100, $codes);
 
-        foreach ($codes as $index => $code) {
+        foreach ($codes as $code) {
             $this->assertMatchesRegularExpression('/^[0-9]{2}$/', $code);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function generateOneDataProvider()
+    public function generateOneDataProvider(): array
     {
         return [
             [

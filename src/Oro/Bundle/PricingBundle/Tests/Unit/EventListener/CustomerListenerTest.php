@@ -19,14 +19,8 @@ use Symfony\Component\Form\FormInterface;
 
 class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
 {
-    /**
-     * @var CustomerListener
-     */
-    protected $listener;
+    private CustomerListener $listener;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,7 +30,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             $this->doctrineHelper,
             $this->triggerHandler
         );
-
         $this->listener->setFeatureChecker($this->featureChecker);
         $this->listener->addFeature('feature1');
     }
@@ -67,14 +60,13 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
 
     /**
      * @dataProvider getPostSetData
-     * @param Customer $targetEntity
-     * @param Website $website
-     * @param PriceListFallback $priceListFallback
-     * @param int $numberOfCalls
      */
-    public function testOnPostSetData($targetEntity, $website, $priceListFallback, $numberOfCalls)
-    {
-        /** @var BasePriceList $priceList */
+    public function testOnPostSetData(
+        Customer $targetEntity,
+        Website $website,
+        PriceListFallback $priceListFallback,
+        int $numberOfCalls
+    ) {
         $priceList = $this->getEntity(BasePriceList::class, ['id' => 2]);
         $priceLists = [$priceList];
         $priceListsFallback = [$priceListFallback];
@@ -84,7 +76,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             ->with('feature1')
             ->willReturn(true);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $this->assertPostSetDataFormCalls($targetEntity, $website, $numberOfCalls, $formEvent);
         $this->assertRepositoryCalls($targetEntity, $website, $priceLists, $priceListsFallback, 1);
@@ -92,19 +83,12 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
         $this->listener->onPostSetData($formEvent);
     }
 
-    /**
-     * @return array
-     */
-    public function getPostSetData()
+    public function getPostSetData(): array
     {
-        /** @var Website $website1 */
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Website $website2 */
         $website2 = $this->getEntity(Website::class, ['id' => 2]);
-        /** @var PriceListFallback $priceListFallback1 */
         $priceListFallback1 = $this->getEntity(PriceListFallback::class, ['id' => 3]);
         $priceListFallback1->setWebsite($website1);
-        /** @var PriceListFallback $priceListFallback2 */
         $priceListFallback2 = $this->getEntity(PriceListFallback::class, ['id' => 4]);
         $priceListFallback2->setWebsite($website2);
 
@@ -139,7 +123,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             ->method('getData')
             ->willReturn($entity);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $formEvent->expects($this->once())
             ->method('getForm')
@@ -148,10 +131,7 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
         $this->listener->onPostSetData($formEvent);
     }
 
-    /**
-     * @return array
-     */
-    public function wrongEntityDataProvider()
+    public function wrongEntityDataProvider(): array
     {
         return [
             'none' => [null],
@@ -166,7 +146,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             ->with('feature1')
             ->willReturn(false);
 
-        /** @var FormEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(FormEvent::class);
         $formEvent->expects($this->never())
             ->method('getForm');
@@ -176,23 +155,15 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
 
     /**
      * @dataProvider getOnPostSubmitData
-     *
-     * @param Customer $targetEntity
-     * @param BasePriceList[] $priceLists
-     * @param Website $website
-     * @param PriceListFallback[] $priceListsFallback
-     * @param int $fallbackData
-     * @param int $numberOfEmCalls
-     * @param int $numberOfRepoCalls
      */
     public function testOnPostSubmit(
-        $targetEntity,
-        $priceLists,
-        $website,
-        $priceListsFallback,
-        $fallbackData,
-        $numberOfEmCalls,
-        $numberOfRepoCalls
+        Customer $targetEntity,
+        array $priceLists,
+        Website $website,
+        array $priceListsFallback,
+        int $fallbackData,
+        int $numberOfEmCalls,
+        int $numberOfRepoCalls
     ) {
         $submitted = [];
 
@@ -201,7 +172,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             ->with('feature1')
             ->willReturn(true);
 
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $this->assertPostSubmitFormCalls($targetEntity, $website, $fallbackData, $submitted, $formEvent);
         $this->assertRepositoryCalls($targetEntity, $website, $priceLists, $priceListsFallback, $numberOfRepoCalls);
@@ -211,7 +181,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
             ->with($submitted, $priceLists, $targetEntity, $website)
             ->willReturn(true);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $priceListByWebsiteForm */
         $entityManager = $this->createMock(EntityManager::class);
         $this->doctrineHelper->expects($this->exactly($numberOfEmCalls))
             ->method('getEntityManager')
@@ -223,21 +192,13 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
         $this->listener->onPostSubmit($formEvent);
     }
 
-    /**
-     * @return array
-     */
-    public function getOnPostSubmitData()
+    public function getOnPostSubmitData(): array
     {
-        /** @var BasePriceList $priceList */
         $priceList = $this->getEntity(BasePriceList::class, ['id' => 3]);
-        /** @var Website $website1 */
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
-        /** @var Website $website2 */
         $website2 = $this->getEntity(Website::class, ['id' => 2]);
-        /** @var PriceListFallback $priceListFallback1 */
         $priceListFallback1 = $this->getEntity(PriceListFallback::class, ['id' => 3]);
         $priceListFallback1->setWebsite($website1);
-        /** @var PriceListFallback $priceListFallback2 */
         $priceListFallback2 = $this->getEntity(PriceListFallback::class, ['id' => 4]);
         $priceListFallback2->setWebsite($website2);
 
@@ -274,7 +235,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
 
     public function testOnPostSubmitFeatureDisabled()
     {
-        /** @var AfterFormProcessEvent|\PHPUnit\Framework\MockObject\MockObject $formEvent */
         $formEvent = $this->createMock(AfterFormProcessEvent::class);
         $formEvent->expects($this->never())
             ->method('getForm');
@@ -288,7 +248,6 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
 
     public function testOnCustomerGroupChange()
     {
-        /** @var CustomerEvent|\PHPUnit\Framework\MockObject\MockObject $customerEvent */
         $customerEvent = $this->createMock(CustomerEvent::class);
         $customer = $this->getEntity(Customer::class, ['id' => 1]);
         $website = new Website();

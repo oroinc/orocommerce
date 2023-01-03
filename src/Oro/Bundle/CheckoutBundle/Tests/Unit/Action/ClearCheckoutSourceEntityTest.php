@@ -42,9 +42,6 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
         $this->action->initialize($options);
     }
 
-    /**
-     * @return array
-     */
     public function invalidOptionsDataProvider(): array
     {
         return [

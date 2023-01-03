@@ -37,9 +37,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CategoryTypeTest extends FormIntegrationTestCase
 {
-    private UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject $urlGenerator;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
 
-    private CategoryType $type;
+    /** @var CategoryType */
+    private $type;
 
     protected function setUp(): void
     {
@@ -156,8 +158,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
     public function testGenerateChangedSlugsUrlOnPresetData(): void
     {
         $generatedUrl = '/some/url';
-        $this->urlGenerator
-            ->expects(self::once())
+        $this->urlGenerator->expects(self::once())
             ->method('generate')
             ->with('oro_catalog_category_get_changed_slugs', ['id' => 1])
             ->willReturn($generatedUrl);
@@ -178,9 +179,9 @@ class CategoryTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(

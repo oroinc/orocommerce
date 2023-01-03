@@ -17,11 +17,8 @@ class QuantityTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var QuantityType */
-    private $formType;
-
-    /** @var QuantityParentTypeStub */
-    private $parentType;
+    private QuantityType $formType;
+    private QuantityParentTypeStub $parentType;
 
     protected function setUp(): void
     {
@@ -33,13 +30,13 @@ class QuantityTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider defaultDataProvider
-     * @param array $options
-     * @param mixed $expectedBefore
-     * @param mixed $submittedData
-     * @param mixed $expectedAfter
      */
-    public function testSetDefaultData(array $options, $expectedBefore, $submittedData, $expectedAfter)
-    {
+    public function testSetDefaultData(
+        array $options,
+        mixed $expectedBefore,
+        mixed $submittedData,
+        mixed $expectedAfter
+    ) {
         $form = $this->factory->create(QuantityType::class, null, $options);
         $this->assertEquals($expectedBefore, $form->getData());
         $form->submit($submittedData);
@@ -48,10 +45,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedAfter, $form->getData());
     }
 
-    /**
-     * @return array
-     */
-    public function defaultDataProvider()
+    public function defaultDataProvider(): array
     {
         return [
             'submit empty should leave default' => [['default_data' => '42'], 42, null, 42],
@@ -62,9 +56,9 @@ class QuantityTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $productUnit1 = new ProductUnit();
         $productUnit1->setCode('kg');
@@ -88,20 +82,16 @@ class QuantityTypeTest extends FormIntegrationTestCase
         $productUnit3->setCode('item');
         $productUnit3->setDefaultPrecision(5);
 
-        $entityType = new EntityTypeStub(
-            [
-                1 => $product1,
-                2 => $product2,
-                3 => $product3,
-                'kg' => $productUnit2,
-                'item' => $productUnit3
-            ]
-        );
-
         return [
             new PreloadedExtension([
                 QuantityParentTypeStub::class => $this->parentType,
-                EntityType::class => $entityType,
+                EntityType::class => new EntityTypeStub([
+                    1 => $product1,
+                    2 => $product2,
+                    3 => $product3,
+                    'kg' => $productUnit2,
+                    'item' => $productUnit3
+                ]),
                 $this->getQuantityType()
             ], []),
         ];

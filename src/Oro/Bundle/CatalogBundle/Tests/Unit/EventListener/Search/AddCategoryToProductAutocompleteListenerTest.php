@@ -59,7 +59,7 @@ class AddCategoryToProductAutocompleteListenerTest extends \PHPUnit\Framework\Te
         $this->assertEquals($aggregations, $event->getQuery()->getAggregations());
     }
 
-    public function onProcessAutocompleteQueryDataProvider()
+    public function onProcessAutocompleteQueryDataProvider(): array
     {
         return [
             'zero categories' => [

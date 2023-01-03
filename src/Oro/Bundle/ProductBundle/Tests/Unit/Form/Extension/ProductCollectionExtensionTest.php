@@ -14,33 +14,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * @var |\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $extendedType;
-
-    /**
-     * @var ProductCollectionExtension
-     */
+    /** @var ProductCollectionExtension */
     private $productCollectionExtension;
 
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->productCollectionExtension = new ProductCollectionExtension($this->translator, $this->extendedType);
+        $this->productCollectionExtension = new ProductCollectionExtension($this->translator);
     }
 
     public function testBuildForm()
     {
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder **/
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder
-            ->expects($this->once())
+        $builder->expects($this->once())
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->productCollectionExtension, 'onPostSubmit']);
 
@@ -52,15 +41,12 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnPostSubmitNoValidationError(array $forms)
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form **/
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects($this->once())
+        $form->expects($this->once())
             ->method('all')
             ->willReturn($forms);
 
-        $this->translator
-            ->expects($this->never())
+        $this->translator->expects($this->never())
             ->method('trans');
 
         $event = new FormEvent($form, []);
@@ -68,10 +54,7 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         $this->productCollectionExtension->onPostSubmit($event);
     }
 
-    /**
-     * @return array
-     */
-    public function productCollectionFormsDataProvider()
+    public function productCollectionFormsDataProvider(): array
     {
         return [
             'no content variants' => [
@@ -120,23 +103,19 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         );
 
         $validationMessage = 'There is another segment with a similar name.';
-        $this->translator
-            ->expects($this->once())
+        $this->translator->expects($this->once())
             ->method('trans')
             ->with('oro.product.product_collection.unique_segment_name.message', [], 'validators')
             ->willReturn($validationMessage);
 
         $expectedFormError = new FormError($validationMessage);
 
-        $nameForm
-            ->expects($this->once())
+        $nameForm->expects($this->once())
             ->method('addError')
             ->with($expectedFormError);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects($this->any())
+        $form->expects($this->any())
             ->method('all')
             ->willReturn([$firstProductCollectionForm, $secondProductCollectionForm]);
 
@@ -148,36 +127,27 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([ContentVariantCollectionType::class], ProductCollectionExtension::getExtendedTypes());
     }
 
-    /**
-     * @param string $segmentName
-     * @param \PHPUnit\Framework\MockObject\MockObject|null $productCollectionSegmentNameForm
-     * @param Segment|null $segment
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
     private function createProductCollectionForm(
-        $segmentName,
-        \PHPUnit\Framework\MockObject\MockObject $productCollectionSegmentNameForm = null,
-        Segment $segment = null
-    ) {
+        string $segmentName,
+        FormInterface|\PHPUnit\Framework\MockObject\MockObject|null $productCollectionSegmentNameForm = null,
+        ?Segment $segment = null
+    ): FormInterface {
         if (!$productCollectionSegmentNameForm) {
             $productCollectionSegmentNameForm = $this->createMock(FormInterface::class);
         }
 
-        $productCollectionSegmentNameForm
-            ->expects($this->any())
+        $productCollectionSegmentNameForm->expects($this->any())
             ->method('getData')
             ->willReturn($segmentName);
 
         $productCollectionSegmentForm = $this->createMock(FormInterface::class);
-        $productCollectionSegmentForm
-            ->expects($this->any())
+        $productCollectionSegmentForm->expects($this->any())
             ->method('has')
             ->willReturnMap([
                 ['name', true]
             ]);
 
-        $productCollectionSegmentForm
-            ->expects($this->any())
+        $productCollectionSegmentForm->expects($this->any())
             ->method('get')
             ->willReturnMap([
                 ['name', $productCollectionSegmentNameForm]
@@ -188,15 +158,13 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($segment ?? new Segment());
 
         $productCollectionForm = $this->createMock(FormInterface::class);
-        $productCollectionForm
-            ->expects($this->any())
+        $productCollectionForm->expects($this->any())
             ->method('has')
             ->willReturnMap([
                 ['productCollectionSegment', true]
             ]);
 
-        $productCollectionForm
-            ->expects($this->any())
+        $productCollectionForm->expects($this->any())
             ->method('get')
             ->willReturnMap([
                 ['productCollectionSegment', $productCollectionSegmentForm]
@@ -205,15 +173,10 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         return $productCollectionForm;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    private function createNoProductCollectionSegmentChildForm()
+    private function createNoProductCollectionSegmentChildForm(): FormInterface
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects($this->any())
+        $form->expects($this->any())
             ->method('has')
             ->willReturnMap([
                 ['productCollectionSegment', false]
@@ -222,31 +185,23 @@ class ProductCollectionExtensionTest extends \PHPUnit\Framework\TestCase
         return $form;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    private function createNoProductCollectionSegmentNameChildForm()
+    private function createNoProductCollectionSegmentNameChildForm(): FormInterface
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $noProductCollectionSegmentChildForm */
         $productCollectionSegmentForm = $this->createMock(FormInterface::class);
-        $productCollectionSegmentForm
-            ->expects($this->any())
+        $productCollectionSegmentForm->expects($this->any())
             ->method('has')
             ->willReturnMap([
                 ['name', false]
             ]);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $noProductCollectionSegmentChildForm */
         $form = $this->createMock(FormInterface::class);
-        $form
-            ->expects($this->any())
+        $form->expects($this->any())
             ->method('has')
             ->willReturnMap([
                 ['productCollectionSegment', true]
             ]);
 
-        $form
-            ->expects($this->any())
+        $form->expects($this->any())
             ->method('get')
             ->willReturnMap([
                 ['productCollectionSegment', $productCollectionSegmentForm]

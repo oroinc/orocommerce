@@ -19,12 +19,10 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures(
-            [
-                LoadPriceListRelations::class,
-                LoadPriceListFallbackSettings::class,
-            ]
-        );
+        $this->loadFixtures([
+            LoadPriceListRelations::class,
+            LoadPriceListFallbackSettings::class,
+        ]);
     }
 
     public function testFindByPrimaryKey()
@@ -44,10 +42,8 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getPriceListDataProvider
-     * @param string $website
-     * @param array $expectedPriceLists
      */
-    public function testGetPriceLists($website, array $expectedPriceLists)
+    public function testGetPriceLists(string $website, array $expectedPriceLists)
     {
         /** @var Website $website */
         $website = $this->getReference($website);
@@ -64,10 +60,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         $this->assertEquals($expectedPriceLists, $actualPriceLists);
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceListDataProvider()
+    public function getPriceListDataProvider(): array
     {
         return [
             [
@@ -106,9 +99,8 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getWebsiteIteratorDataProvider
-     * @param array $expectedWebsites
      */
-    public function testGetWebsiteIteratorWithDefaultFallback($expectedWebsites)
+    public function testGetWebsiteIteratorWithDefaultFallback(array $expectedWebsites)
     {
         $iterator = $this->getRepository()->getWebsiteIteratorWithDefaultFallback();
 
@@ -119,10 +111,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         $this->assertSame($expectedWebsites, $actualSiteMap);
     }
 
-    /**
-     * @return array
-     */
-    public function getWebsiteIteratorDataProvider()
+    public function getWebsiteIteratorDataProvider(): array
     {
         return [
             [
@@ -131,10 +120,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return PriceListToWebsiteRepository
-     */
-    protected function getRepository()
+    private function getRepository(): PriceListToWebsiteRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(PriceListToWebsite::class);
     }
@@ -152,10 +138,8 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider assignedPriceListsDataProvider
-     * @param string $websiteReference
-     * @param bool $expected
      */
-    public function testHasAssignedPriceLists($websiteReference, $expected)
+    public function testHasAssignedPriceLists(string $websiteReference, bool $expected)
     {
         /** @var Website $website */
         $website = $this->getReference($websiteReference);

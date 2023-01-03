@@ -7,9 +7,9 @@ use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Request\RequestTest as Bas
 class RequestTest extends BaseRequestTest
 {
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getTestCasesDir()
+    protected function getTestCasesDir(): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'requests';
     }

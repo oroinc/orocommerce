@@ -38,6 +38,7 @@ use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type as SearchableType;
+use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -109,24 +110,19 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $entityConfigProvider = $this->createMock(ConfigProvider::class);
         $entityConfigProvider->expects($this->any())
             ->method('getConfig')
-            ->willReturn(
-                $this->getConfig(['label' => self::LABEL])
-            );
+            ->willReturn($this->getConfig(['label' => self::LABEL]));
 
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);
 
-        /** @var EntityConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
         $configManager = $this->createMock(EntityConfigManager::class);
         $configManager->expects($this->any())
             ->method('getProvider')
-            ->willReturnMap(
-                [
-                    ['entity', $entityConfigProvider],
-                    ['extend', $this->extendConfigProvider],
-                    ['attribute', $this->attributeConfigProvider],
-                ]
-            );
+            ->willReturnMap([
+                ['entity', $entityConfigProvider],
+                ['extend', $this->extendConfigProvider],
+                ['attribute', $this->attributeConfigProvider],
+            ]);
 
         $this->productRepository = $this->createMock(ProductRepository::class);
 
@@ -137,7 +133,6 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->attributeFamilyRepository = $this->createMock(AttributeFamilyRepository::class);
 
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityMetadata')
@@ -170,32 +165,22 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @dataProvider onPreBuildDataProvider
-     *
-     * @param FieldConfigModel $attribute
-     * @param $attributeType
-     * @param ConfigInterface $extendConfig
-     * @param ConfigInterface $attributeConfig
-     * @param bool $hasAssociation
-     * @param bool $limitFiltersSorters
-     * @param array $aggregatedData
-     * @param array $expected
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testOnPreBuild(
         ?FieldConfigModel $attribute,
-        $attributeType,
+        ?SearchAttributeTypeInterface $attributeType,
         ConfigInterface $extendConfig,
         ConfigInterface $attributeConfig,
-        $hasAssociation = true,
-        $limitFiltersSorters = false,
+        bool $hasAssociation = true,
+        bool $limitFiltersSorters = false,
         array $aggregatedData = [],
         array $expected = []
     ) {
         $attributes = $attribute && false === $limitFiltersSorters ? [$attribute] : [];
 
-        $this->attributeManager
-            ->expects($this->any())
+        $this->attributeManager->expects($this->any())
             ->method('getSortableOrFilterableAttributesByClass')
             ->willReturn($attributes);
 
@@ -204,8 +189,12 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->with($attribute)
             ->willReturn($attributeType);
 
-        $this->extendConfigProvider->expects($this->any())->method('getConfig')->willReturn($extendConfig);
-        $this->attributeConfigProvider->expects($this->any())->method('getConfig')->willReturn($attributeConfig);
+        $this->extendConfigProvider->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($extendConfig);
+        $this->attributeConfigProvider->expects($this->any())
+            ->method('getConfig')
+            ->willReturn($attributeConfig);
 
         $this->metadata->expects($this->any())
             ->method('hasAssociation')
@@ -221,8 +210,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getFamilyAttributeCounts')
             ->willReturn($aggregatedData);
 
-        $this->datagridParametersHelper
-            ->expects($this->atLeastOnce())
+        $this->datagridParametersHelper->expects($this->atLeastOnce())
             ->method('isDatagridExtensionSkipped')
             ->willReturn(false);
 
@@ -241,10 +229,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function onPreBuildDataProvider()
+    public function onPreBuildDataProvider(): array
     {
         $stringAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 101, 'fieldName' => 'sku']);
         $stringAttribute->setEntity(new EntityConfigModel(Product::class));
@@ -258,7 +244,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $decimalAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 303, 'fieldName' => 'weight']);
         $decimalAttribute->setEntity(new EntityConfigModel(Product::class));
         $decimalSearchAttributeType = new SearchableType\DecimalSearchableAttributeType(
-            new Type\DecimalAttributeType('decimal')
+            new Type\DecimalAttributeType()
         );
 
         $multiEnumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 404, 'fieldName' => 'internalStatus']);
@@ -267,17 +253,13 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             new Type\MultiEnumAttributeType()
         );
 
-        /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject $entityNameResolver */
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $entityNameResolver->expects($this->any())
             ->method('getName')
-            ->willReturnCallback(
-                function ($entity, $format, $locale) {
-                    return (string)$entity . '_' . $locale;
-                }
-            );
+            ->willReturnCallback(function ($entity, $format, $locale) {
+                return (string)$entity . '_' . $locale;
+            });
 
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $manyToManyAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 505, 'fieldName' => 'names']);
@@ -299,7 +281,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         $fileAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 707, 'fieldName' => 'image']);
         $fileAttribute->setEntity(new EntityConfigModel(Product::class));
 
-        $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType('file'));
+        $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType());
 
         return [
             'no attribute type' => [
@@ -638,15 +620,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param array $values
-     * @return ConfigInterface
-     */
-    protected function getConfig(array $values = [])
+    private function getConfig(array $values = []): ConfigInterface
     {
-        /** @var ConfigIdInterface $id */
-        $id = $this->createMock(ConfigIdInterface::class);
-
-        return new Config($id, $values);
+        return new Config($this->createMock(ConfigIdInterface::class), $values);
     }
 }

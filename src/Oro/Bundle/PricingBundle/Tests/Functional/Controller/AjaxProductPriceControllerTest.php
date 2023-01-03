@@ -15,19 +15,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 {
     use ProductPriceReference;
 
-    /**
-     * @var string
-     */
-    protected $pricesByCustomerActionUrl = 'oro_pricing_price_by_customer';
+    protected string $pricesByCustomerActionUrl = 'oro_pricing_price_by_customer';
+    protected string $matchingPriceActionUrl = 'oro_pricing_matching_price';
 
-    /**
-     * @var string
-     */
-    protected $matchingPriceActionUrl = 'oro_pricing_matching_price';
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -41,9 +31,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     public function testUpdate()
     {
-        $this->loadFixtures([
-            LoadProductPrices::class
-        ]);
+        $this->loadFixtures([LoadProductPrices::class]);
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReferenceRepository()->getReferences()[LoadProductPrices::PRODUCT_PRICE_3];
         /** @var ProductUnit $unit */
@@ -58,10 +46,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 '_wid' => 'test-uuid'
             ]
         );
-        $crawler = $this->client->request(
-            'GET',
-            $url
-        );
+        $crawler = $this->client->request('GET', $url);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -79,10 +64,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     public function testUpdateDuplicateEntry()
     {
-        $this->loadFixtures([
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
-        ]);
-        /** @var ProductPrice $productPrice */
+        $this->loadFixtures([LoadProductPrices::class]);
 
         $productPrice = $this->getPriceByReference(LoadProductPrices::PRODUCT_PRICE_1);
         $productPriceEUR = $this->getPriceByReference(LoadProductPrices::PRODUCT_PRICE_2);
@@ -114,11 +96,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertSubmitError($form, 'oro.pricing.validators.product_price.unique_entity.message');
     }
 
-    /**
-     * @param Form $form
-     * @param string $message
-     */
-    protected function assertSubmitError(Form $form, $message)
+    protected function assertSubmitError(Form $form, string $message): void
     {
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -130,7 +108,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertMatchesRegularExpression('/"savedId":[\s\d-]*/i', $html);
         $error = $this->getContainer()->get('translator')
             ->trans($message, [], 'validators');
-        static::assertStringContainsString($error, $html);
+        self::assertStringContainsString($error, $html);
     }
 
     protected function assertSaved(Form $form)
@@ -146,9 +124,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function getProductPricesByCustomerActionDataProvider()
+    public function getProductPricesByCustomerActionDataProvider(): array
     {
         return [
             'with customer and website' => [

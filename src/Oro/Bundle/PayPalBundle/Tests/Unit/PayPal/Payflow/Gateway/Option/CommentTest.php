@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Gateway\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\Comment;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class CommentTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new Comment()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -22,18 +27,16 @@ class CommentTest extends AbstractOptionTest
                 ['COMMENT1' => 123, 'COMMENT2' => 321],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "COMMENT1" with value 123 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "COMMENT1" with value 123 is expected to be of type "string", but is of type "int".',
                 ],
             ],
             'invalid comment2' => [
                 ['COMMENT1' => '123', 'COMMENT2' => 321],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "COMMENT2" with value 321 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "COMMENT2" with value 321 is expected to be of type "string", but is of type "int".',
                 ],
             ],
             'valid' => [['COMMENT1' => '123', 'COMMENT2' => '321'], ['COMMENT1' => '123', 'COMMENT2' => '321']],

@@ -143,9 +143,6 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertFalse($this->mapper->isStatesEqual($this->checkout, $state1, $state2));
     }
 
-    /**
-     * @return array
-     */
     public function isStatesEqualFalseProvider(): array
     {
         return [

@@ -12,9 +12,9 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 class CmsPageVariantTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -29,7 +29,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create(CmsPageVariantType::class, null);
+        $form = $this->factory->create(CmsPageVariantType::class);
         $this->assertTrue($form->has('cmsPage'));
         $this->assertEquals(
             CmsPageContentVariantType::TYPE,

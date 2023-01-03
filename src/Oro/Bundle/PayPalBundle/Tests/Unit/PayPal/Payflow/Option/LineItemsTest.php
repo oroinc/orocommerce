@@ -3,11 +3,14 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\LineItems;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class LineItemsTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new LineItems()];
     }
@@ -69,8 +72,10 @@ class LineItemsTest extends AbstractOptionTest
         ]));
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -111,7 +116,7 @@ class LineItemsTest extends AbstractOptionTest
                 ],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
+                    InvalidOptionsException::class,
                     'The option "L_NAME1" with value 123 is expected to be of type "string", but is of type "int".'
                 ],
             ],
@@ -124,7 +129,7 @@ class LineItemsTest extends AbstractOptionTest
                 ],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
+                    InvalidOptionsException::class,
                     'The option "L_DESC1" with value 123 is expected to be of type "string", but is of type "int".'
                 ],
             ],
@@ -137,7 +142,7 @@ class LineItemsTest extends AbstractOptionTest
                 ],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
+                    InvalidOptionsException::class,
                     'The option "L_QTY1" with value 0.5 is expected to be of type "integer", but is of type "float".'
                 ],
             ],

@@ -10,18 +10,13 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([
-            LoadProductData::class
-        ]);
+        $this->loadFixtures([LoadProductData::class]);
     }
 
     /**
      * @dataProvider requestAndResultDataProvider
-     *
-     * @param array $request
-     * @param array $expectedFilteredProducts
      */
-    public function testOnBuildAfter($request, $expectedFilteredProducts)
+    public function testOnBuildAfter(array $request, array $expectedFilteredProducts)
     {
         // convert reference names array into string with Ids, in order to support exclude&include args
         $request = array_map(
@@ -41,7 +36,7 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_datagrid_index', $request));
         $result = $this->client->getResponse();
 
-        $data = json_decode($result->getContent(), true);
+        $data = self::jsonToArray($result->getContent());
         $filteredProductsSku = array_map(
             function (array $item) {
                 return $item['sku'];
@@ -60,7 +55,7 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
         $this->assertEquals($expectedFilteredProductsSku, $filteredProductsSku);
     }
 
-    public function requestAndResultDataProvider()
+    public function requestAndResultDataProvider(): array
     {
         $gridName = 'product-collection-grid:scope_0';
         $segmentDefinition = '{

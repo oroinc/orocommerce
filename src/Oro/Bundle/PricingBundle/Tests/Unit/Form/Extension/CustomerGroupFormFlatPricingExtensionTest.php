@@ -31,18 +31,16 @@ class CustomerGroupFormFlatPricingExtensionTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);
 
-        /** @var CustomerGroupFlatPricingRelationFormListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerGroupFlatPricingRelationFormListener::class);
 
         $formExtension = new CustomerGroupFormFlatPricingExtension($listener);
@@ -69,18 +67,16 @@ class CustomerGroupFormFlatPricingExtensionTest extends FormIntegrationTestCase
 
     public function testBuildFormFeatureDisabled()
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
 
-        /** @var CustomerGroupFlatPricingRelationFormListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerGroupFlatPricingRelationFormListener::class);
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->never())->method('add');
+        $builder->expects($this->never())
+            ->method('add');
 
         $formExtension = new CustomerGroupFormFlatPricingExtension($listener);
         $formExtension->setFeatureChecker($featureChecker);
@@ -101,10 +97,7 @@ class CustomerGroupFormFlatPricingExtensionTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [

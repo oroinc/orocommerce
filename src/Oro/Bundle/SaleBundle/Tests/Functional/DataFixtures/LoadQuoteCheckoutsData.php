@@ -11,15 +11,15 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 
 class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
 {
-    const CHECKOUT_1 = 'quote.checkout.1';
-    const CHECKOUT_2 = 'quote.checkout.2';
+    public const CHECKOUT_1 = 'quote.checkout.1';
+    public const CHECKOUT_2 = 'quote.checkout.2';
 
-    const PAYMENT_METHOD = 'payment_term';
+    public const PAYMENT_METHOD = 'payment_term';
 
     /**
      * {@inheritDoc}
      */
-    protected function getData()
+    protected function getData(): array
     {
         $lineItem1 = (new CheckoutLineItem())
             ->setQuantity(10)
@@ -44,17 +44,17 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getWorkflowName()
+    protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
 
     /**
-     * @return Checkout
+     * {@inheritDoc}
      */
-    protected function createCheckout()
+    protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
@@ -62,7 +62,7 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    protected function getCheckoutSourceName()
+    protected function getCheckoutSourceName(): string
     {
         return 'quoteDemand';
     }
@@ -70,7 +70,7 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),

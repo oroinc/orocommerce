@@ -12,21 +12,16 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class UpsellProductRepositoryTest extends WebTestCase
 {
-    /**
-     * @var UpsellProductRepository
-     */
-    protected $repository;
+    private UpsellProductRepository $repository;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadUpsellProductData::class
-        ]);
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository(
-            UpsellProduct::class
-        );
+
+        $this->loadFixtures([LoadUpsellProductData::class]);
+
+        $this->repository = $this->getContainer()->get('doctrine')->getRepository(UpsellProduct::class);
     }
 
     public function testExistsReturnTrue()
@@ -44,11 +39,9 @@ class UpsellProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param string $productSku
-     * @param int $numberOfRelations
      * @dataProvider countRelationsForProductDataProvider
      */
-    public function testCountRelationsForProduct($productSku, $numberOfRelations)
+    public function testCountRelationsForProduct(string $productSku, int $numberOfRelations)
     {
         /** @var Product $product */
         $product = $this->getProductRepository()->findOneBySku($productSku);
@@ -101,10 +94,7 @@ class UpsellProductRepositoryTest extends WebTestCase
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
     }
 
-    /**
-     * @return array
-     */
-    public function countRelationsForProductDataProvider()
+    public function countRelationsForProductDataProvider(): array
     {
         return [
             ['product-1', 0],
@@ -113,10 +103,7 @@ class UpsellProductRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @return ProductRepository
-     */
-    private function getProductRepository()
+    private function getProductRepository(): ProductRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(Product::class);
     }

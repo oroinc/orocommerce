@@ -11,19 +11,29 @@ use Symfony\Component\Yaml\Yaml;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Finder */
-    protected $finder;
+    private ?Finder $finder = null;
+
+    private function getFinder(): Finder
+    {
+        if (null === $this->finder) {
+            $this->finder = new Finder();
+        }
+
+        return $this->finder;
+    }
+
+    protected function getTestCasesDir(): string
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'requests';
+    }
 
     /**
-     * @param string $requestClass
-     * @param string $requestString
-     * @param string|array $error
      * @dataProvider requestDataProvider
      */
-    public function testRequest($requestClass, $requestString, $error = [])
+    public function testRequest(string $requestClass, string $requestString, array $error = [])
     {
         if ($error) {
-            list($exception, $message) = $error;
+            [$exception, $message] = $error;
             $this->expectException($exception);
             $this->expectExceptionMessage($message);
         }
@@ -39,10 +49,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($resolver->resolve($options));
     }
 
-    /**
-     * @return array
-     */
-    public function requestDataProvider()
+    public function requestDataProvider(): array
     {
         $this->getFinder()
             ->files()
@@ -50,7 +57,6 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->name('*.yml');
 
         $cases = [];
-
         /** @var SplFileInfo $file */
         foreach ($this->getFinder() as $file) {
             foreach (Yaml::parse($file->getContents()) as $testCaseName => $testCase) {
@@ -59,25 +65,5 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         }
 
         return $cases;
-    }
-
-    /**
-     * @return Finder
-     */
-    protected function getFinder()
-    {
-        if (!$this->finder) {
-            $this->finder = new Finder();
-        }
-
-        return $this->finder;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getTestCasesDir()
-    {
-        return __DIR__ . DIRECTORY_SEPARATOR . 'requests';
     }
 }
