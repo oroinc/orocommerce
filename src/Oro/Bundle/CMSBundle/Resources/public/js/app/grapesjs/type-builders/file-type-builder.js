@@ -47,7 +47,8 @@ const FileTypeBuilder = BaseTypeBuilder.extend({
         category: 'Basic',
         attributes: {
             'class': 'fa fa-file-o'
-        }
+        },
+        activate: true
     },
 
     modelMixin: {
