@@ -1,140 +1,93 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\WebCatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryBasedSegmentsDemoData;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads sort order demo data for ProductCollection ContentVariants in WebCatalog
  */
 class LoadSortOrderForProductCollectionsContentVariantsDemoData extends AbstractFixture implements
+    ContainerAwareInterface,
     DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
+    use ContainerAwareTrait;
+
+    public function getDependencies(): array
     {
         return [
             LoadProductDemoData::class,
-            LoadSegmentsForWebCatalogDemoData::class,
+            LoadCategoryBasedSegmentsDemoData::class,
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function load(ObjectManager $manager): void
     {
-        $sortOrders = $this->getCollectionSortOrders();
-        $products = $manager
-            ->getRepository(Product::class)
-            ->findBy(['sku' => array_column($sortOrders, 'productSku')]);
-        $segments = $manager
-            ->getRepository(Segment::class)
-            ->findBy(['name' => array_column($sortOrders, 'segmentName')]);
+        // Set sort order for category-based product segment the same as for products in the original category
 
-        foreach ($sortOrders as $sortOrder) {
-            $collectionSortOrder = new CollectionSortOrder();
-            foreach ($segments as $segment) {
-                if ($segment->getName() === $sortOrder['segmentName']) {
-                    $collectionSortOrder->setSegment($segment);
+        $segmentsByCategoryName = [];
+        $allSegments = $manager->getRepository(Segment::class)->findByNameStartsWith(
+            LoadCategoryBasedSegmentsDemoData::NEW_ARRIVALS_PREFIX,
+            Product::class
+        );
+        foreach ($allSegments as $segment) {
+            $categoryName = \str_replace(
+                LoadCategoryBasedSegmentsDemoData::NEW_ARRIVALS_PREFIX,
+                '',
+                $segment->getName()
+            );
+            $segmentsByCategoryName[$categoryName] = $segment;
+        }
+
+        $productData = $this->getAllProductData();
+        foreach ($productData as $row) {
+            if ($row['new_arrival'] && $segmentsByCategoryName[$row['category']]) {
+                $product = $manager->getRepository(Product::class)->findOneBySku($row['sku']);
+                if ($product) {
+                    $collectionSortOrder = (new CollectionSortOrder())
+                        ->setSegment($segmentsByCategoryName[$row['category']])
+                        ->setProduct($product)
+                        ->setSortOrder((float)$row['category_sort_order'])
+                    ;
+                    $manager->persist($collectionSortOrder);
                 }
             }
-            foreach ($products as $product) {
-                if ($product->getSku() === $sortOrder['productSku']) {
-                    $collectionSortOrder->setProduct($product);
-                }
-            }
-            $collectionSortOrder->setSortOrder($sortOrder['sortOrder']);
-            $manager->persist($collectionSortOrder);
         }
 
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    private function getCollectionSortOrders(): array
+    private function getAllProductData(): array
     {
-        return [
-            [
-                'segmentName' => 'New Arrivals / Lighting Products',
-                'productSku' => '2CF67',
-                'sortOrder' => 6,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Lighting Products',
-                'productSku' => '2JD90',
-                'sortOrder' => 9,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Lighting Products',
-                'productSku' => '3UK92',
-                'sortOrder' => 21,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Architectural Floodlighting',
-                'productSku' => '3TU20',
-                'sortOrder' => 20,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Architectural Floodlighting',
-                'productSku' => '4HJ92',
-                'sortOrder' => 24,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Architectural Floodlighting',
-                'productSku' => '5TU10',
-                'sortOrder' => 34,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Office Furniture',
-                'productSku' => '3ET67',
-                'sortOrder' => 15,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Office Furniture',
-                'productSku' => '4KL66',
-                'sortOrder' => 25,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Office Furniture',
-                'productSku' => '6GH85',
-                'sortOrder' => 38,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Office Furniture',
-                'productSku' => '6PM40',
-                'sortOrder' => 40,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Retail Supplies',
-                'productSku' => '1AB92',
-                'sortOrder' => 2,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Retail Supplies',
-                'productSku' => '2LM04',
-                'sortOrder' => 11,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Retail Supplies',
-                'productSku' => '4PJ19',
-                'sortOrder' => 26,
-            ],
-            [
-                'segmentName' => 'New Arrivals / Retail Supplies',
-                'productSku' => '7TY55',
-                'sortOrder' => 48,
-            ],
-        ];
+        $products = [];
+
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+            $products[] = $row;
+        }
+
+        fclose($handler);
+
+        return $products;
     }
 }
