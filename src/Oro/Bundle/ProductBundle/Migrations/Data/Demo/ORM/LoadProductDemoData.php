@@ -1,10 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
@@ -28,7 +28,7 @@ use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loads demo products with images.
@@ -37,27 +37,16 @@ class LoadProductDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
+    use ContainerAwareTrait;
     use UserUtilityTrait;
 
-    /**
-     * @var string
-     */
-    const ENUM_CODE_INVENTORY_STATUS = 'prod_inventory_status';
+    public const ENUM_CODE_INVENTORY_STATUS = 'prod_inventory_status';
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    public const OUT_OF_STOCK_SKUS = ['0RT28', '1AB92', '1GB82', '1GS46', '1TB10'];
 
-    /**
-     * @var array
-     */
-    protected $productUnits = [];
+    protected array $productUnits = [];
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadBrandDemoData::class,
@@ -65,24 +54,19 @@ class LoadProductDemoData extends AbstractFixture implements
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        /** @var EntityManager $manager */
         $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
+
+        $inStockStatus = static::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_IN_STOCK);
+        $outOfStockStatus = static::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_OUT_OF_STOCK);
+        $allImageTypes = $this->getImageTypes();
+        $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
@@ -92,11 +76,6 @@ class LoadProductDemoData extends AbstractFixture implements
 
         $handler = fopen($filePath, 'rb');
         $headers = fgetcsv($handler, 1000, ',');
-
-        $inStockStatus = static::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_IN_STOCK);
-
-        $allImageTypes = $this->getImageTypes();
-        $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
         $loadedProducts = [];
@@ -135,7 +114,9 @@ class LoadProductDemoData extends AbstractFixture implements
                 ->setOrganization($organization)
                 ->setAttributeFamily($defaultAttributeFamily)
                 ->setSku($row['sku'])
-                ->setInventoryStatus($inStockStatus)
+                ->setInventoryStatus(
+                    \in_array($row['sku'], static::OUT_OF_STOCK_SKUS) ? $outOfStockStatus : $inStockStatus
+                )
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description)
@@ -187,7 +168,7 @@ class LoadProductDemoData extends AbstractFixture implements
      * @param array|Product[] $products
      * @param ObjectManager $manager
      */
-    private function createSlugs(array $products, ObjectManager $manager)
+    private function createSlugs(array $products, ObjectManager $manager): void
     {
         $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
 
@@ -219,16 +200,13 @@ class LoadProductDemoData extends AbstractFixture implements
         ]);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param FileLocator $locator
-     * @param string $sku
-     * @param string $name
-     * @param array|null $types
-     * @return null|ProductImage
-     */
-    protected function getProductImageForProductSku(ObjectManager $manager, FileLocator $locator, $sku, $name, $types)
-    {
+    protected function getProductImageForProductSku(
+        ObjectManager $manager,
+        FileLocator $locator,
+        string $sku,
+        string $name,
+        ?array $types
+    ): ?ProductImage {
         $productImage = null;
 
         $user = $this->getFirstUser($manager);
@@ -276,22 +254,14 @@ class LoadProductDemoData extends AbstractFixture implements
         return $productImage;
     }
 
-    /**
-     * @return array
-     */
-    protected function getImageTypes()
+    protected function getImageTypes(): array
     {
         $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
 
         return array_keys($imageTypeProvider->getImageTypes());
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $code
-     * @return ProductUnit|null
-     */
-    protected function getProductUnit(EntityManagerInterface $manager, $code)
+    protected function getProductUnit(EntityManagerInterface $manager, string $code): ?ProductUnit
     {
         if (!array_key_exists($code, $this->productUnits)) {
             $this->productUnits[$code] = $manager->getRepository(ProductUnit::class)->find($code);
@@ -300,33 +270,21 @@ class LoadProductDemoData extends AbstractFixture implements
         return $this->productUnits[$code];
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return AttributeFamily|null
-     */
-    private function getDefaultAttributeFamily(ObjectManager $manager)
+    private function getDefaultAttributeFamily(ObjectManager $manager): ?AttributeFamily
     {
         $familyRepository = $manager->getRepository(AttributeFamily::class);
 
         return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
     }
 
-    /**
-     * @param Product $product
-     * @param ObjectManager $manager
-     * @param FileLocator $locator
-     * @param string $sku
-     * @param string $name
-     * @param array $allImageTypes
-     */
     private function addImageToProduct(
-        $product,
-        $manager,
-        $locator,
-        $sku,
-        $name,
-        $allImageTypes
-    ) {
+        Product $product,
+        ObjectManager $manager,
+        FileLocator $locator,
+        string $sku,
+        string $name,
+        array $allImageTypes
+    ): void {
         $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $name, $allImageTypes);
         if ($productImage) {
             $product->addImage($productImage);
@@ -350,12 +308,7 @@ class LoadProductDemoData extends AbstractFixture implements
         return $this;
     }
 
-    /**
-     * @param string $sku
-     * @param string $name
-     * @return string
-     */
-    protected function getImageFileName($sku, $name): string
+    protected function getImageFileName(string $sku, string $name): string
     {
         return trim($sku . '-' . preg_replace('/\W+/', '-', $name), '-');
     }
