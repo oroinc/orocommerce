@@ -1,4 +1,5 @@
 @ticket-BAP-20454
+@ticket-BB-15279
 @regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
@@ -21,9 +22,6 @@ Feature: Matrix form product with decimal prices
       | Field Name | Attribute_1 |
       | Type       | Select      |
     And click "Continue"
-    And set Options with:
-      | Label |
-      | Value |
     And save and close form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -32,14 +30,15 @@ Feature: Matrix form product with decimal prices
       | Field Name | Attribute_2 |
       | Type       | Select      |
     And I click "Continue"
-    And set Options with:
-      | Label   |
-      | Value 1 |
-      | Value 2 |
     And save and close form
     Then I should see "Attribute was successfully saved" flash message
     When I confirm schema update
     Then I should see "Schema updated" flash message
+
+  Scenario: Upload attributes options
+    And I click "Import file"
+    And I upload "enum_attribute_options.csv" file to "Import Choose File"
+    And I click "Import file"
 
   Scenario: Added product attributes to product family
     Given I go to Products / Product Families
@@ -61,7 +60,7 @@ Feature: Matrix form product with decimal prices
       | Name             | Simple_1 |
       | Status           | Enable   |
       | Unit Of Quantity | item     |
-    And I fill in product attribute "Attribute_1" with "Value"
+    And I fill in product attribute "Attribute_1" with "Value 301"
     And I fill in product attribute "Attribute_2" with "Value 1"
     And click "Add Product Price"
     And fill "Product Price Form" with:

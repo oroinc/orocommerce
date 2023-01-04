@@ -33,6 +33,8 @@ class MatrixCollectionType extends AbstractType
         /** @var MatrixCollection $matrixCollection */
         $matrixCollection = $form->getData();
         $this->addQtyData($view, $matrixCollection);
+        $view->vars['columns'] = $matrixCollection?->columns;
+        $view->vars['dimensions'] = $matrixCollection?->dimensions;
     }
 
     /**
