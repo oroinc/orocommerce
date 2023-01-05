@@ -36,17 +36,31 @@ $cms-typography-img-max-width: 100% !default;
 $cms-typography-img-offset: 0 !default;
 $cms-typography-img-border: 1px solid get-color('additional', 'light') !default;
 
+$cms-typography-figure-display: grid !default;
 $cms-typography-figure-offset: 0 auto $offset-default !default;
+
+$cms-typography-figure-picture-grid-column: 1 !default;
+$cms-typography-figure-picture-grid-row: 1 !default;
+
+// deprecated
+$cms-typography-figcaption-position: absolute !default;
+$cms-typography-figure-img-width: 100% !default;
+$cms-typography-figure-img-height: 100% !default;
+$cms-typography-figure-img-object-fit: cover !default;
+
 $cms-typography-figcaption-font-size: 55px !default;
 $cms-typography-figcaption-text-align: center !default;
 $cms-typography-figcaption-text-transform: uppercase !default;
 $cms-typography-figcaption-align-items: center !default;
 $cms-typography-figcaption-justify-content: center !default;
-$cms-typography-figcaption-position: absolute !default;
 $cms-typography-figcaption-color: get-color('additional', 'ultra') !default;
+$cms-typography-figcaption-grid-column: 1 !default;
+$cms-typography-figcaption-grid-row: 1 !default;
+$cms-typography-figcaption-display: flex !default;
 $cms-typography-figcaption-offset: auto !default;
 $cms-typography-figcaption-offset-left: 20px !default;
 $cms-typography-figcaption-offset-right: 18px !default;
+$cms-typography-figcaption-padding: $offset-y $offset-x !default;
 
 // Heading
 $cms-typography-heading-offset: $headline-bottom-offset !default;
