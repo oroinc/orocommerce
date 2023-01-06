@@ -1,10 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\FixedProductShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
@@ -19,10 +19,10 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * The fixture created Fixed Product Shipping integration and shipping rules for demo data.
@@ -31,19 +31,11 @@ class LoadFixedProductIntegration extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    private ?ContainerInterface $container;
+    use ContainerAwareTrait;
+    use UserUtilityTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
+    public const PRODUCT_ID_THRESHOLD = 21;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDependencies(): array
     {
         return [
@@ -52,9 +44,6 @@ class LoadFixedProductIntegration extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function load(ObjectManager $manager): void
     {
         if (!$this->container) {
@@ -77,7 +66,7 @@ class LoadFixedProductIntegration extends AbstractFixture implements
             ->setName('Fixed Product')
             ->setEnabled(true)
             ->setOrganization($this->getOrganization($manager))
-            ->setDefaultUserOwner($this->getMainUser($manager))
+            ->setDefaultUserOwner($this->getFirstUser($manager))
             ->setTransport($transport);
 
         $manager->persist($channel);
@@ -102,7 +91,10 @@ class LoadFixedProductIntegration extends AbstractFixture implements
 
         $rule = new Rule();
         $rule->setName('Fixed Product Shipping')
-            ->setExpression('lineItems.any(lineItem.product.id <= 21)')
+            ->setExpression(\sprintf(
+                'lineItems.any(lineItem.product.id <= %d)',
+                static::PRODUCT_ID_THRESHOLD
+            ))
             ->setEnabled(true)
             ->setSortOrder(1);
 
@@ -124,22 +116,6 @@ class LoadFixedProductIntegration extends AbstractFixture implements
         }
 
         return $manager->getRepository(Organization::class)->getFirst();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return User
-     * @throws EntityNotFoundException
-     */
-    public function getMainUser(ObjectManager $manager): User
-    {
-        /** @var User $entity */
-        $entity = $manager->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
-        if (!$entity) {
-            throw new EntityNotFoundException('Main user does not exist.');
-        }
-
-        return $entity;
     }
 
     private function getFixedProductIdentifier(Channel $channel): string

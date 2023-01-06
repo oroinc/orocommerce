@@ -56,9 +56,10 @@
                                     defaultSlugPrototype: industrial
                                     contentVariants:
                                         -
-                                            type: cms_page
+                                            type: category_page
                                             params:
-                                                title: "Haec quo modo conveniant"
+                                                title: "Lighting Products"
+                                                excludeSubcategories: false
                                             isDefault: true
                                     parentScopeUsed: true
                                     children:
@@ -189,9 +190,10 @@
                                     defaultSlugPrototype: Retail
                                     contentVariants:
                                         -
-                                            type: cms_page
+                                            type: category_page
                                             params:
-                                                title: "Haec quo modo conveniant"
+                                                title: "Retail Supplies"
+                                                excludeSubcategories: false
                                             isDefault: true
                                     parentScopeUsed: true
                                     children: ~
@@ -200,9 +202,10 @@
                             defaultSlugPrototype: "clearance"
                             contentVariants:
                                 -
-                                    type: cms_page
+                                    type: category_page
                                     params:
-                                        title: "Bonum negas esse divitias"
+                                        title: "Office Furniture"
+                                        excludeSubcategories: false
                                     isDefault: true
                             parentScopeUsed: true
                             children:
@@ -266,9 +269,9 @@
                     defaultSlugPrototype: "new-arrivals"
                     contentVariants:
                         -
-                            type: cms_page
+                            type: product_collection
                             params:
-                                title: "Bonum negas esse divitias"
+                                title: "New Arrivals"
                             isDefault: true
                     parentScopeUsed: true
                     children:
@@ -332,9 +335,9 @@
                     defaultSlugPrototype: "clearance"
                     contentVariants:
                         -
-                            type: cms_page
+                            type: product_collection
                             params:
-                                title: "Bonum negas esse divitias"
+                                title: "All Products"
                             isDefault: true
                     parentScopeUsed: true
                     children:

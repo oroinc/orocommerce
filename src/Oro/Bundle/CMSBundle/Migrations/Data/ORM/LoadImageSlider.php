@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
@@ -28,71 +29,68 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
     use ContainerAwareTrait;
     use UserUtilityTrait;
 
-    /** @var string */
-    private const HOME_PAGE_SLIDER_ALIAS = 'home-page-slider';
+    public const HOME_PAGE_SLIDER_ALIAS = 'home-page-slider';
 
-    /** @var array */
-    private $slides = [
+    public const SLIDES = [
         [
             'url' => '/product/',
             'displayInSameWindow' => true,
-            'title' => 'Lorem ipsum',
+            'title' => 'Seasonal Sale',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_RIGHT,
-            'text' => '<h2 style="color: #fff;text-transform: uppercase;">Lorem ipsum</h2>
-                <p style="color: #fff;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
-                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
-                <p><a href="/product/">Call to action</a></p>',
-            'mainImage' => 'promo-slider-1',
-            'mediumImage' => 'promo-slider-medium-1',
-            'smallImage' => 'promo-slider-small-1',
+            'text' => '<h2 style="color:#34495e;text-transform:uppercase;">Seasonal Sale</h2>
+<h4></h4>
+<p style="color:#34495e;">Get <strong><span style="color:#e67e23;">25 Percent Off the Order Total</span></strong>
+ With a Coupon Code <span style="color:#e67e23;"><b>SALE25</b></span></p>
+<p></p>
+<p style="color:#34495e;">Explore our bestselling collections of industrial, medical, and furniture supplies.</p>
+<p></p>
+<p></p>
+<p><a href="/product/">Browse</a></p>',
+            'mainImage' => 'promo-slider-4',
+            'mediumImage' => 'promo-slider-medium-4',
+            'smallImage' => 'promo-slider-small-4',
         ],
         [
-            'url' => '/product/?categoryId=2&includeSubcategories=1',
+            'url' => '/navigation-root/new-arrivals/lighting-products',
             'displayInSameWindow' => true,
-            'title' => 'Lorem ipsum',
+            'title' => 'Bright New Day In Lighting',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_LEFT,
-            'text' => '<h2 style="color: #fff;text-transform: uppercase;">Lorem ipsum</h2>
-                <p style="color: #fff;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
-                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
-                <p><a href="/product/?categoryId=2&includeSubcategories=1">Call to action</a></p>',
-            'mainImage' => 'promo-slider-2',
-            'mediumImage' => 'promo-slider-medium-2',
-            'smallImage' => 'promo-slider-small-2',
+            'text' => '<h3 style="text-transform:uppercase;color:#34495e;">Bright New Day In Lighting</h3>
+<p style="color:#34495e;">Explore our new-season collection of models and brands</p>
+<p><a href="/navigation-root/new-arrivals/lighting-products">Browse</a></p>',
+            'mainImage' => 'promo-slider-5',
+            'mediumImage' => 'promo-slider-medium-5',
+            'smallImage' => 'promo-slider-small-6',
         ],
         [
-            'url' => '/product/?categoryId=7&includeSubcategories=1',
+            'url' => '/medical/medical-apparel',
             'displayInSameWindow' => true,
-            'title' => 'Lorem ipsum',
-            'textAlignment' => ImageSlide::TEXT_ALIGNMENT_CENTER,
-            'text' => '<h2 style="text-align: center;text-transform: uppercase;">Lorem ipsum</h2>
-                <p style="text-align: center;">Praesent magna arcu, placerat id purus vel, facilisis posuere augue.
-                Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.</p>
-                <p style="text-align: center;">
-                <a href="/product/?categoryId=7&includeSubcategories=1">Call to action</a></p>',
-            'mainImage' => 'promo-slider-3',
-            'mediumImage' => 'promo-slider-medium-3',
-            'smallImage' => 'promo-slider-small-3',
+            'title' => 'Best-Priced Medical Supplies',
+            'textAlignment' => ImageSlide::TEXT_ALIGNMENT_RIGHT,
+            'text' => '<h3 style="text-transform:uppercase;text-align:left;">Best-Priced Medical Supplies</h3>
+<p>Find and buy quality medical equipment and home healthcare supplies</p>
+<p style="text-align:left;"><a href="/medical/medical-apparel">Browse</a></p>',
+            'mainImage' => 'promo-slider-6',
+            'mediumImage' => 'promo-slider-medium-6',
+            'smallImage' => 'promo-slider-small-6',
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadAdminUserData::class
         ];
     }
 
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);
 
         $widget = new ContentWidget();
         $widget->setWidgetType(ImageSliderContentWidgetType::getName());
-        $widget->setName(self::HOME_PAGE_SLIDER_ALIAS);
-        $widget->setOrganization($user->getOrganization());
+        $widget->setName(static::HOME_PAGE_SLIDER_ALIAS);
+        $widget->setOrganization($this->getOrganization($manager));
         $widget->setSettings(
             [
                 'slidesToShow' => 1,
@@ -110,7 +108,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             ? $this->getReference('default_organization')
             : $manager->getRepository(Organization::class)->getFirst();
 
-        foreach ($this->slides as $order => $data) {
+        foreach (static::SLIDES as $order => $data) {
             $slide = new ImageSlide();
             $slide->setMainImage($this->createImage($manager, $user, $data['mainImage']));
             $slide->setMediumImage($this->createImage($manager, $user, $data['mediumImage']));
@@ -137,10 +135,15 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         );
     }
 
-    private function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
+    protected function getOrganization(ObjectManager $manager): Organization
+    {
+        return $this->getFirstUser($manager)->getOrganization();
+    }
+
+    protected function updateOrCreateContentBlock(ObjectManager $manager, User $user, string $content): void
     {
         $contentBlock = $manager->getRepository(ContentBlock::class)
-            ->findOneBy(['alias' => self::HOME_PAGE_SLIDER_ALIAS]);
+            ->findOneBy(['alias' => static::HOME_PAGE_SLIDER_ALIAS]);
 
         if (!$contentBlock instanceof ContentBlock) {
             $title = new LocalizedFallbackValue();
@@ -153,9 +156,9 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
             $manager->persist($variant);
 
             $slider = new ContentBlock();
-            $slider->setOrganization($user->getOrganization());
+            $slider->setOrganization($this->getOrganization($manager));
             $slider->setOwner($user->getOwner());
-            $slider->setAlias(self::HOME_PAGE_SLIDER_ALIAS);
+            $slider->setAlias(static::HOME_PAGE_SLIDER_ALIAS);
             $slider->addTitle($title);
             $slider->addContentVariant($variant);
             $manager->persist($slider);
@@ -173,7 +176,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         $manager->flush();
     }
 
-    private function createImage(ObjectManager $manager, User $user, string $filename): AttachmentFile
+    protected function createImage(ObjectManager $manager, User $user, string $filename): AttachmentFile
     {
         $locator = $this->container->get('file_locator');
 
@@ -194,7 +197,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         $digitalAsset->addTitle($imageTitle)
             ->setSourceFile($file)
             ->setOwner($user)
-            ->setOrganization($user->getOrganization());
+            ->setOrganization($this->getOrganization($manager));
         $manager->persist($digitalAsset);
 
         $image = new AttachmentFile();
