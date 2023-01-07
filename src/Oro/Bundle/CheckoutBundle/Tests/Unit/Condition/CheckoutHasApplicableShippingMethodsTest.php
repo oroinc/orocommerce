@@ -8,12 +8,9 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const METHOD = 'Method';
 
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -33,7 +30,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
 
     public function testGetName()
     {
-        $this->assertEquals(CheckoutHasApplicableShippingMethods::NAME, $this->condition->getName());
+        $this->assertEquals('checkout_has_applicable_shipping_methods', $this->condition->getName());
     }
 
     public function testInitializeInvalid()
@@ -91,7 +88,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
         $this->condition->initialize(['checkout' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@'.CheckoutHasApplicableShippingMethods::NAME;
+        $key = '@checkout_has_applicable_shipping_methods';
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
@@ -112,7 +109,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
         $this->assertEquals(
             sprintf(
                 '$factory->create(\'%s\', [%s])',
-                CheckoutHasApplicableShippingMethods::NAME,
+                'checkout_has_applicable_shipping_methods',
                 $toStringStub
             ),
             $result

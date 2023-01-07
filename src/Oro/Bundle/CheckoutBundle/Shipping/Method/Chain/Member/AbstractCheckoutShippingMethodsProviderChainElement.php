@@ -4,33 +4,31 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
+/**
+ * The base class for services that provide views for all applicable shipping methods and calculate a shipping price
+ * for a specific checkout.
+ */
 abstract class AbstractCheckoutShippingMethodsProviderChainElement implements CheckoutShippingMethodsProviderInterface
 {
-    /**
-     * @var CheckoutShippingMethodsProviderInterface|null
-     */
-    private $checkoutShippingMethodsProvider;
+    private ?CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider = null;
 
-    public function setSuccessor(
-        CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-    ) {
+    public function setSuccessor(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider): void
+    {
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
-    /**
-     * @return CheckoutShippingMethodsProviderInterface|null
-     */
-    protected function getSuccessor()
+    protected function getSuccessor(): ?CheckoutShippingMethodsProviderInterface
     {
         return $this->checkoutShippingMethodsProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getApplicableMethodsViews(Checkout $checkout)
+    public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         if (null === $this->getSuccessor()) {
             return new ShippingMethodViewCollection();
@@ -40,9 +38,9 @@ abstract class AbstractCheckoutShippingMethodsProviderChainElement implements Ch
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getPrice(Checkout $checkout)
+    public function getPrice(Checkout $checkout): ?Price
     {
         if (null === $this->getSuccessor()) {
             return null;

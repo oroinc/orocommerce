@@ -5,432 +5,339 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
 /**
-* @SuppressWarnings(PHPMD.TooManyMethods)
 * @SuppressWarnings(PHPMD.TooManyPublicMethods)
-* @SuppressWarnings(PHPMD.ExcessivePublicCount)
 */
 class ShippingMethodViewCollectionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @return ShippingMethodViewCollection
-     */
-    private function createCollection()
+    private ShippingMethodViewCollection $collection;
+
+    protected function setUp(): void
     {
-        return new ShippingMethodViewCollection();
+        $this->collection = new ShippingMethodViewCollection();
     }
 
     public function testAddAndGetMethodView()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-
         $view = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
+        $addResult = $this->collection->addMethodView($methodId, $view);
 
-        $addResult = $collection->addMethodView($methodId, $view);
+        $actualView = $this->collection->getMethodView($methodId);
 
-        $actualView = $collection->getMethodView($methodId);
-
-        $this->assertEquals($collection, $addResult);
+        $this->assertEquals($this->collection, $addResult);
         $this->assertNotNull($actualView);
         $this->assertEquals($view, $actualView);
     }
 
     public function testGetMethodViewWhenNotExists()
     {
-        $collection = $this->createCollection();
-
-        $methodId = 'someMethodId';
-
-        $actualView = $collection->getMethodView($methodId);
-
-        $this->assertNull($actualView);
+        $this->assertNull($this->collection->getMethodView('someMethodId'));
     }
 
     public function testAddMethodViewWhenAlreadyExists()
     {
         $methodId = 'someMethodId';
 
-        $collection = $this->createCollection();
-
         $view = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId, $view);
+        $this->collection->addMethodView($methodId, $view);
 
         $view2 = [
             'someField3' => 'someValue4',
             'someField4' => 'someValue4',
             'sortOrder' => 1
         ];
+        $addMethodViewResult = $this->collection->addMethodView($methodId, $view2);
 
-        $addMethodViewResult = $collection->addMethodView($methodId, $view2);
-
-        $actualView = $collection->getMethodView($methodId);
+        $actualView = $this->collection->getMethodView($methodId);
 
         $this->assertNotNull($actualView);
         $this->assertEquals($view, $actualView);
-        $this->assertEquals($collection, $addMethodViewResult);
+        $this->assertEquals($this->collection, $addMethodViewResult);
     }
 
     public function testHasMethodView()
     {
         $methodId = 'someMethodId';
-        $collection = $this->createCollection();
 
-        $collection->addMethodView($methodId, []);
+        $this->collection->addMethodView($methodId, []);
 
-        $this->assertTrue($collection->hasMethodView($methodId));
+        $this->assertTrue($this->collection->hasMethodView($methodId));
     }
 
     public function testHasMethodViewNotExists()
     {
-        $collection = $this->createCollection();
-
-        $this->assertFalse($collection->hasMethodView('someMethodId'));
+        $this->assertFalse($this->collection->hasMethodView('someMethodId'));
     }
 
     public function testRemoveMethodView()
     {
         $methodId = 'someMethodId';
-        $collection = $this->createCollection();
 
-        $collection->addMethodView($methodId, []);
+        $this->collection->addMethodView($methodId, []);
+        $this->assertTrue($this->collection->hasMethodView($methodId));
 
-        $this->assertTrue($collection->hasMethodView($methodId));
-
-        $removeResult = $collection->removeMethodView($methodId);
-
-        $this->assertEquals($collection, $removeResult);
-        $this->assertFalse($collection->hasMethodView($methodId));
+        $removeResult = $this->collection->removeMethodView($methodId);
+        $this->assertEquals($this->collection, $removeResult);
+        $this->assertFalse($this->collection->hasMethodView($methodId));
     }
 
     public function testRemoveMethodViewWhenNotExists()
     {
         $methodId = 'someMethodId';
-        $collection = $this->createCollection();
 
-        $removeResult = $collection->removeMethodView($methodId);
-
-        $this->assertEquals($collection, $removeResult);
-        $this->assertFalse($collection->hasMethodView($methodId));
+        $removeResult = $this->collection->removeMethodView($methodId);
+        $this->assertEquals($this->collection, $removeResult);
+        $this->assertFalse($this->collection->hasMethodView($methodId));
     }
 
     public function testAddAndGetMethodTypeView()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-        $methodTypeId = 'someMethodTypeId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
+        $this->collection->addMethodView($methodId, $methodView);
 
-        $collection->addMethodView($methodId, $methodView);
-
+        $methodTypeId = 'someMethodTypeId';
         $methodTypeView = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
+        $addMethodTypeViewResult = $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView);
 
-        $addMethodTypeViewResult = $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView);
+        $actualMethodTypeView = $this->collection->getMethodTypeView($methodId, $methodTypeId);
 
-        $actualMethodTypeView = $collection->getMethodTypeView($methodId, $methodTypeId);
-
-        $this->assertEquals($collection, $addMethodTypeViewResult);
+        $this->assertEquals($this->collection, $addMethodTypeViewResult);
         $this->assertEquals($methodTypeView, $actualMethodTypeView);
     }
 
     public function testGetMethodTypeViewWhenNotExists()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-        $methodTypeId = 'someMethodTypeId';
 
-        $collection->addMethodView($methodId, []);
+        $this->collection->addMethodView($methodId, []);
 
-        $actualMethodTypeView = $collection->getMethodTypeView($methodId, $methodTypeId);
+        $actualMethodTypeView = $this->collection->getMethodTypeView($methodId, 'someMethodTypeId');
 
         $this->assertNull($actualMethodTypeView);
     }
 
     public function testGetMethodTypeViewWhenMethodTypeNotExists()
     {
-        $collection = $this->createCollection();
-
-        $methodId = 'someMethodId';
-        $methodTypeId = 'someMethodTypeId';
-
-        $actualMethodTypeView = $collection->getMethodTypeView($methodId, $methodTypeId);
-
-        $this->assertNull($actualMethodTypeView);
+        $this->assertNull($this->collection->getMethodTypeView('someMethodId', 'someMethodTypeId'));
     }
 
     public function testAddMethodTypeViewWhenAlreadyExists()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-        $methodTypeId = 'someMethodTypeId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
+        $this->collection->addMethodView($methodId, $methodView);
 
-        $collection->addMethodView($methodId, $methodView);
-
+        $methodTypeId = 'someMethodTypeId';
         $methodTypeView1 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
 
         $methodTypeView2 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView2);
 
-        $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView2);
-
-        $actualMethodTypeView = $collection->getMethodTypeView($methodId, $methodTypeId);
+        $actualMethodTypeView = $this->collection->getMethodTypeView($methodId, $methodTypeId);
         $this->assertEquals($methodTypeView1, $actualMethodTypeView);
     }
 
     public function testAddMethodTypesViews()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId, $methodView);
+        $this->collection->addMethodView($methodId, $methodView);
 
         $methodTypeId = 'someMethodTypeId';
-
         $methodTypeView1 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
 
         $methodTypeId2 = 'someOtherMethodTypeId';
-
         $methodTypeView2 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
+        $this->collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
 
-        $collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
-
-        $this->assertEquals($methodTypeView1, $collection->getMethodTypeView($methodId, $methodTypeId));
-        $this->assertEquals($methodTypeView2, $collection->getMethodTypeView($methodId, $methodTypeId2));
+        $this->assertEquals($methodTypeView1, $this->collection->getMethodTypeView($methodId, $methodTypeId));
+        $this->assertEquals($methodTypeView2, $this->collection->getMethodTypeView($methodId, $methodTypeId2));
     }
 
     public function testHasMethodTypeView()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
         $methodTypeId = 'someMethodTypeId';
 
-        $collection->addMethodView($methodId, []);
-        $collection->addMethodTypeView($methodId, $methodTypeId, []);
+        $this->collection->addMethodView($methodId, []);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, []);
 
-        $this->assertTrue($collection->hasMethodTypeView($methodId, $methodTypeId));
+        $this->assertTrue($this->collection->hasMethodTypeView($methodId, $methodTypeId));
     }
 
     public function testHasMethodTypeViewWhenNotExists()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
         $methodTypeId = 'someMethodTypeId';
 
-        $collection->addMethodView($methodId, []);
+        $this->collection->addMethodView($methodId, []);
 
-        $this->assertFalse($collection->hasMethodTypeView($methodId, $methodTypeId));
+        $this->assertFalse($this->collection->hasMethodTypeView($methodId, $methodTypeId));
     }
 
     public function testHasMethodTypeViewWhenMethodNotExists()
     {
-        $collection = $this->createCollection();
-
-        $methodId = 'someMethodId';
-        $methodTypeId = 'someMethodTypeId';
-
-        $this->assertFalse($collection->hasMethodTypeView($methodId, $methodTypeId));
+        $this->assertFalse($this->collection->hasMethodTypeView('someMethodId', 'someMethodTypeId'));
     }
 
     public function testRemoveMethodTypeView()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
         $methodTypeId = 'someMethodTypeId';
 
-        $collection->addMethodView($methodId, []);
-        $collection->addMethodTypeView($methodId, $methodTypeId, []);
+        $this->collection->addMethodView($methodId, []);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, []);
+        $this->assertTrue($this->collection->hasMethodTypeView($methodId, $methodTypeId));
 
-        $this->assertTrue($collection->hasMethodTypeView($methodId, $methodTypeId));
-
-        $removeResult = $collection->removeMethodTypeView($methodId, $methodTypeId);
-
-        $this->assertEquals($collection, $removeResult);
-        $this->assertNull($collection->getMethodTypeView($methodId, $methodTypeId));
+        $removeResult = $this->collection->removeMethodTypeView($methodId, $methodTypeId);
+        $this->assertEquals($this->collection, $removeResult);
+        $this->assertNull($this->collection->getMethodTypeView($methodId, $methodTypeId));
     }
 
     public function testRemoveMethodTypeViewWhenNotExists()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
         $methodTypeId = 'someMethodTypeId';
 
-        $collection->addMethodView($methodId, []);
+        $this->collection->addMethodView($methodId, []);
+        $this->assertFalse($this->collection->hasMethodTypeView($methodId, $methodTypeId));
 
-        $this->assertFalse($collection->hasMethodTypeView($methodId, $methodTypeId));
-
-        $removeResult = $collection->removeMethodTypeView($methodId, $methodTypeId);
-
-        $this->assertEquals($collection, $removeResult);
-        $this->assertNull($collection->getMethodTypeView($methodId, $methodTypeId));
+        $removeResult = $this->collection->removeMethodTypeView($methodId, $methodTypeId);
+        $this->assertEquals($this->collection, $removeResult);
+        $this->assertNull($this->collection->getMethodTypeView($methodId, $methodTypeId));
     }
 
     public function testRemoveMethodTypeViewWhenMethodNotExists()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
         $methodTypeId = 'someMethodTypeId';
 
-        $this->assertFalse($collection->hasMethodTypeView($methodId, $methodTypeId));
+        $this->assertFalse($this->collection->hasMethodTypeView($methodId, $methodTypeId));
 
-        $removeResult = $collection->removeMethodTypeView($methodId, $methodTypeId);
-
-        $this->assertEquals($collection, $removeResult);
-        $this->assertNull($collection->getMethodTypeView($methodId, $methodTypeId));
+        $removeResult = $this->collection->removeMethodTypeView($methodId, $methodTypeId);
+        $this->assertEquals($this->collection, $removeResult);
+        $this->assertNull($this->collection->getMethodTypeView($methodId, $methodTypeId));
     }
 
     public function testGetAllMethodsViews()
     {
-        $collection = $this->createCollection();
-
-        $this->assertEquals([], $collection->getAllMethodsViews());
+        $this->assertEquals([], $this->collection->getAllMethodsViews());
 
         $methodId = 'someMethodId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId, $methodView);
+        $this->collection->addMethodView($methodId, $methodView);
 
         $methodTypeId = 'someMethodTypeId';
-
         $methodTypeView1 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
 
         $methodTypeId2 = 'someMethodTypeId2';
-
         $methodTypeView2 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
+        $this->collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
 
-        $collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
-
-        $this->assertEquals([$methodId => $methodView], $collection->getAllMethodsViews());
+        $this->assertEquals([$methodId => $methodView], $this->collection->getAllMethodsViews());
 
         $methodId2 = 'someOtherMethodId';
-
         $methodView2 = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId2, $methodView2);
+        $this->collection->addMethodView($methodId2, $methodView2);
 
         $methodTypeId3 = 'someMethodTypeId3';
-
         $methodTypeView3 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId2, $methodTypeId3, $methodTypeView3);
+        $this->collection->addMethodTypeView($methodId2, $methodTypeId3, $methodTypeView3);
 
         $methodTypeId4 = 'someMethodTypeId4';
-
         $methodTypeView4 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
+        $this->collection->addMethodTypeView($methodId2, $methodTypeId4, $methodTypeView4);
 
-        $collection->addMethodTypeView($methodId2, $methodTypeId4, $methodTypeView4);
-
-        $this->assertEquals([$methodId => $methodView, $methodId2 => $methodView2], $collection->getAllMethodsViews());
+        $this->assertEquals(
+            [$methodId => $methodView, $methodId2 => $methodView2],
+            $this->collection->getAllMethodsViews()
+        );
     }
 
     public function testGetAllMethodsTypesViews()
     {
-        $collection = $this->createCollection();
-
-        $this->assertEquals([], $collection->getAllMethodsViews());
+        $this->assertEquals([], $this->collection->getAllMethodsViews());
 
         $methodId = 'someMethodId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId, $methodView);
+        $this->collection->addMethodView($methodId, $methodView);
 
         $methodTypeId = 'someMethodTypeId';
-
         $methodTypeView1 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
 
         $methodTypeId2 = 'someMethodTypeId2';
-
         $methodTypeView2 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
 
         $this->assertEquals(
             [
@@ -439,36 +346,30 @@ class ShippingMethodViewCollectionTest extends \PHPUnit\Framework\TestCase
                     $methodTypeId2 => $methodTypeView2,
                 ],
             ],
-            $collection->getAllMethodsTypesViews()
+            $this->collection->getAllMethodsTypesViews()
         );
 
         $methodId2 = 'someOtherMethodId';
-
         $methodView2 = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId2, $methodView2);
+        $this->collection->addMethodView($methodId2, $methodView2);
 
         $methodTypeId3 = 'someMethodTypeId3';
-
         $methodTypeView3 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId2, $methodTypeId3, $methodTypeView3);
+        $this->collection->addMethodTypeView($methodId2, $methodTypeId3, $methodTypeView3);
 
         $methodTypeId4 = 'someMethodTypeId4';
-
         $methodTypeView4 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
-
-        $collection->addMethodTypeView($methodId2, $methodTypeId4, $methodTypeView4);
+        $this->collection->addMethodTypeView($methodId2, $methodTypeId4, $methodTypeView4);
 
         $this->assertEquals(
             [
@@ -481,99 +382,72 @@ class ShippingMethodViewCollectionTest extends \PHPUnit\Framework\TestCase
                     $methodTypeId4 => $methodTypeView4,
                 ],
             ],
-            $collection->getAllMethodsTypesViews()
+            $this->collection->getAllMethodsTypesViews()
         );
 
-        $collection->clear();
-
-        $this->assertEquals([], $collection->getAllMethodsTypesViews());
-        $this->assertEquals([], $collection->getAllMethodsViews());
+        $this->collection->clear();
+        $this->assertEquals([], $this->collection->getAllMethodsTypesViews());
+        $this->assertEquals([], $this->collection->getAllMethodsViews());
     }
 
     public function testToArray()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId, $methodView);
+        $this->collection->addMethodView($methodId, $methodView);
 
         $methodTypeId = 'someMethodTypeId';
-
         $methodTypeView1 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId, $methodTypeView1);
 
         $methodTypeId2 = 'someMethodTypeId2';
-
         $methodTypeView2 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
-
-        $collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
+        $this->collection->addMethodTypeView($methodId, $methodTypeId2, $methodTypeView2);
 
         $methodId2 = 'someOtherMethodId';
-
         $methodView2 = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
             'sortOrder' => 1
         ];
-
-        $collection->addMethodView($methodId2, $methodView2);
+        $this->collection->addMethodView($methodId2, $methodView2);
 
         $methodTypeId3 = 'someMethodTypeId3';
-
         $methodTypeView3 = [
             'someTypeField1' => 'someTypeValue1',
             'someTypeField2' => 'someTypeValue2',
         ];
-
-        $collection->addMethodTypeView($methodId2, $methodTypeId3, $methodTypeView3);
+        $this->collection->addMethodTypeView($methodId2, $methodTypeId3, $methodTypeView3);
 
         $methodTypeId4 = 'someMethodTypeId4';
-
         $methodTypeView4 = [
             'someTypeField3' => 'someTypeValue3',
             'someTypeField4' => 'someTypeValue4',
         ];
+        $this->collection->addMethodTypeView($methodId2, $methodTypeId4, $methodTypeView4);
 
-        $collection->addMethodTypeView($methodId2, $methodTypeId4, $methodTypeView4);
-
-        $methodView[ShippingMethodViewCollection::TYPES_FIELD] = [
-            $methodTypeId => $methodTypeView1,
-            $methodTypeId2 => $methodTypeView2,
-        ];
-        $methodView2[ShippingMethodViewCollection::TYPES_FIELD] = [
-            $methodTypeId3 => $methodTypeView3,
-            $methodTypeId4 => $methodTypeView4,
-        ];
+        $methodView['types'] = [$methodTypeId => $methodTypeView1, $methodTypeId2 => $methodTypeView2];
+        $methodView2['types'] = [$methodTypeId3 => $methodTypeView3, $methodTypeId4 => $methodTypeView4];
 
         $this->assertEquals(
-            [
-                $methodId => $methodView,
-                $methodId2 => $methodView2
-            ],
-            $collection->toArray()
+            [$methodId => $methodView, $methodId2 => $methodView2],
+            $this->collection->toArray()
         );
     }
 
     public function testIsEmpty()
     {
-        $collection = $this->createCollection();
-
         $methodId = 'someMethodId';
-
         $methodView = [
             'someField1' => 'someValue1',
             'someField2' => 'someValue2',
@@ -584,16 +458,13 @@ class ShippingMethodViewCollectionTest extends \PHPUnit\Framework\TestCase
             'someTypeField2' => 'someTypeValue2',
         ];
 
-        $collection->addMethodView($methodId, $methodView);
+        $this->collection->addMethodView($methodId, $methodView);
+        $this->assertTrue($this->collection->isEmpty());
 
-        $this->assertTrue($collection->isEmpty());
+        $this->collection->addMethodTypeView($methodId, 'someMethodTypeId', $methodTypeView);
+        $this->assertFalse($this->collection->isEmpty());
 
-        $collection->addMethodTypeView($methodId, 'someMethodTypeId', $methodTypeView);
-
-        $this->assertFalse($collection->isEmpty());
-
-        $collection->clear();
-
-        $this->assertTrue($collection->isEmpty());
+        $this->collection->clear();
+        $this->assertTrue($this->collection->isEmpty());
     }
 }

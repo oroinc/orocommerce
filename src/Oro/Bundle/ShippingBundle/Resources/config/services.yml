@@ -289,7 +289,6 @@ services:
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
         arguments:
-            - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider'
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
