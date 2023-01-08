@@ -21,22 +21,26 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
         type: 'system_page'
         node: '@nodeRoot'
         systemPageRoute: 'oro_customer_frontend_customer_user_index'
+        scopes: [ '@default_scope' ]
     productCollectionContentVariant:
         node: '@nodeProductCollection'
         type: 'product_collection'
         default: true
         productCollectionSegment: '@productCollectionSegment'
+        scopes: [ '@default_scope' ]
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeRoot:
         __calls:
             - addTitle: ['@localValueRootNode']
             - addScope: ['@first_website_scope']
+            - addContentVariant: ['@systemPageVariant']
         webCatalog: '@webCatalog'
     nodeProductCollection:
         __calls:
             - addTitle: ['@localValueNodeProductCollection']
             - addSlugPrototype: ['@localValueProductCollectionNodeSlug']
             - addContentVariant: ['@productCollectionContentVariant']
+            - addScope: ['@first_website_scope']
         parentNode: '@nodeRoot'
         webCatalog: '@webCatalog'

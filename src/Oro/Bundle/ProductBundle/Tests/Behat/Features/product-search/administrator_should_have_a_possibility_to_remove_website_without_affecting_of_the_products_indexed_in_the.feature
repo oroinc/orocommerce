@@ -1,5 +1,4 @@
 @ticket-BB-18497
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
 Feature: Administrator should have a possibility to remove website without affecting of the products indexed in the

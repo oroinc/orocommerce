@@ -7,19 +7,14 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 class ResponseStatusMapTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @dataProvider testGetMessageByStatusDataProvider
-     * @param string $status
-     * @param string $message
+     * @dataProvider getMessageByStatusDataProvider
      */
-    public function testGetMessageByStatus($status, $message)
+    public function testGetMessageByStatus(string $status, string $message)
     {
         $this->assertSame($message, ResponseStatusMap::getMessage($status));
     }
 
-    /**
-     * @return array
-     */
-    public function testGetMessageByStatusDataProvider()
+    public function getMessageByStatusDataProvider(): array
     {
         return [
             [

@@ -9,13 +9,17 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\RuleFiltration\SubOrdersPromotionsFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\ReflectionUtil;
-use PHPUnit\Framework\MockObject\MockObject;
 
-class SubOrdersPromotionsFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class SubOrdersPromotionsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    private RuleFiltrationServiceInterface|MockObject  $filtrationService;
-    private ContextDataConverterInterface|MockObject  $contextDataConverter;
-    private SubOrdersPromotionsFiltrationService $subOrdersFiltrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    private $filtrationService;
+
+    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    private $contextDataConverter;
+
+    /** @var SubOrdersPromotionsFiltrationService  */
+    private $subOrdersFiltrationService;
 
     protected function setUp(): void
     {
@@ -28,13 +32,18 @@ class SubOrdersPromotionsFiltrationServiceTest extends AbstractSkippableFiltrati
         );
     }
 
+    private function getPromotion(int $id): Promotion
+    {
+        $promotion = new Promotion();
+        ReflectionUtil::setId($promotion, $id);
+
+        return $promotion;
+    }
+
     public function testFilterRuleOwners()
     {
-        $promotion1 = new Promotion();
-        ReflectionUtil::setId($promotion1, 1);
-
-        $promotion2 = new Promotion();
-        ReflectionUtil::setId($promotion2, 2);
+        $promotion1 = $this->getPromotion(1);
+        $promotion2 = $this->getPromotion(2);
 
         $subOrder1 = new Order();
         $subOrder2 = new Order();
@@ -59,16 +68,12 @@ class SubOrdersPromotionsFiltrationServiceTest extends AbstractSkippableFiltrati
     }
 
     /**
-     * @param array $context
      * @dataProvider getTestFilterRuleOwnersWithoutSubOrdersData
      */
     public function testFilterRuleOwnersWithoutSubOrders(array $context)
     {
-        $promotion1 = new Promotion();
-        ReflectionUtil::setId($promotion1, 1);
-
-        $promotion2 = new Promotion();
-        ReflectionUtil::setId($promotion2, 2);
+        $promotion1 = $this->getPromotion(1);
+        $promotion2 = $this->getPromotion(2);
 
         $this->contextDataConverter->expects($this->never())
             ->method('getContextData');
@@ -82,7 +87,7 @@ class SubOrdersPromotionsFiltrationServiceTest extends AbstractSkippableFiltrati
         $this->assertContains($promotion2, $promotions);
     }
 
-    public function getTestFilterRuleOwnersWithoutSubOrdersData()
+    public function getTestFilterRuleOwnersWithoutSubOrdersData(): array
     {
         return [
             'Context without subOrders param' => [

@@ -2,7 +2,6 @@
 @elasticsearch
 @ticket-BB-20073
 @feature-BAP-19790
-@fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:product_search/products.yml
 
 Feature: Product search autocomplete
@@ -25,7 +24,9 @@ Feature: Product search autocomplete
   Scenario: Check the search autocomplete when products found
     When I type "Product" in "search"
     Then I should see an "Search Autocomplete" element
-    And I should see "Product" in the "Search Autocomplete Highlight" element
+    And I should see an "Search Autocomplete Category Image" element
+    And I should see "Product" in the "Search Autocomplete Category Head" element
+    And I should see "Retail Supplies" in the "Search Autocomplete Category Body" element
     And I should see an "Search Autocomplete Product Image" element
     And I should see picture "Search Autocomplete Product Picture" element
     And I should see "In Stock" in the "Search Autocomplete Inventory Status" element
@@ -34,6 +35,9 @@ Feature: Product search autocomplete
     And I should see "See All 3 Results" in the "Search Autocomplete Submit" element
 
   Scenario: Check the search autocomplete navigation by ArrowDown key
+    When I press "ArrowDown" key on "Search Form Field" element
+    Then I should see "Search Form Field" element focused
+    And I should see "Search Autocomplete Item Selected" element with text "Retail Supplies" inside "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
     And I should see "Search Autocomplete Item Selected" element with text "Product2" inside "Search Autocomplete" element
@@ -48,9 +52,12 @@ Feature: Product search autocomplete
     And I should see "Search Autocomplete Item Selected" element with text "See All 3 Results" inside "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
-    And I should see "Search Autocomplete Item Selected" element with text "Product2" inside "Search Autocomplete" element
+    And I should see "Search Autocomplete Item Selected" element with text "Retail Supplies" inside "Search Autocomplete" element
     When I press "Esc" key on "Search Form Field" element
     Then I should not see an "Search Autocomplete" element
+    When I press "ArrowDown" key on "Search Form Field" element
+    Then I should see "Search Form Field" element focused
+    And I should see "Search Autocomplete Item Selected" element with text "Retail Supplies" inside "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
     And I should see "Search Autocomplete Item Selected" element with text "Product2" inside "Search Autocomplete" element
@@ -72,6 +79,9 @@ Feature: Product search autocomplete
     When I press "ArrowUp" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
     And I should see "Search Autocomplete Item Selected" element with text "Product2" inside "Search Autocomplete" element
+    When I press "ArrowUp" key on "Search Form Field" element
+    Then I should see "Search Form Field" element focused
+    And I should see "Search Autocomplete Item Selected" element with text "Retail Supplies" inside "Search Autocomplete" element
     When I press "ArrowUp" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
     And I should see "Search Autocomplete Item Selected" element with text "See All 3 Results" inside "Search Autocomplete" element

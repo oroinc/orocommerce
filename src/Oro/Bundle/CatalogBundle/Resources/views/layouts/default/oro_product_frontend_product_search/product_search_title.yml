@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+              id: search_title
+              optionName: vars.category_title
+              optionValue: '=data["category"].getCurrentCategory().getLevel() > 0 ? data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles()) : null'

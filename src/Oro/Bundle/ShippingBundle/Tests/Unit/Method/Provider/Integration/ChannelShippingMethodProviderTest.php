@@ -43,7 +43,7 @@ class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
         $repository->expects(self::any())
             ->method('findByTypeAndExclude')
             ->willReturnCallback(function () use ($fetchedChannel) {
-                $this->provider->postLoad($fetchedChannel);
+                $this->provider->registerShippingMethod($fetchedChannel);
 
                 return [$fetchedChannel];
             });
@@ -55,7 +55,7 @@ class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($repository);
 
         $this->provider = new ChannelShippingMethodProvider(self::TYPE, $doctrineHelper, $methodFactory);
-        $this->provider->postLoad($loadedChannel);
+        $this->provider->registerShippingMethod($loadedChannel);
     }
 
     private function getChannel(string $name): Channel

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\InventoryBundle\Migrations\Data\Demo\ORM;
 
@@ -21,26 +22,23 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [LoadProductCategoryDemoData::class];
+        return [
+            LoadProductDemoData::class,
+            LoadProductCategoryDemoData::class
+        ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $accessor = PropertyAccess::createPropertyAccessor();
 
         /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
+        $categoryRepository = $manager->getRepository(Category::class);
 
         /** @var Product[] $products */
-        $products = $manager->getRepository('OroProductBundle:Product')->findAll();
+        $products = $manager->getRepository(Product::class)->findAll();
 
         /** @var Category[] $categories */
         $categories = $categoryRepository->findAll();
@@ -48,27 +46,19 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
             $this->addFallbacksToEntity($manager, ParentCategoryFallbackProvider::FALLBACK_ID, $category);
         }
 
-        $outOfStockStatus = LoadProductDemoData::getProductInventoryStatus(
-            $manager,
-            Product::INVENTORY_STATUS_OUT_OF_STOCK
-        );
+        $outOfStock = LoadProductDemoData::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_OUT_OF_STOCK);
 
-        $i = 0;
-        $proportion = floor(count($products) / 10);
         foreach ($products as $product) {
             if ($categoryRepository->findOneByProduct($product)) {
-                // we are set data to every 10`th product from parent category
-                if ($i++ % $proportion !== 0) {
-                    $this->addFallbacksToEntity($manager, CategoryFallbackProvider::FALLBACK_ID, $product);
-                } else {
+                // It is not always the case in real life, but for the demo purposes we will mark
+                // all out-of-stock products as upcoming.
+                if ($product->getInventoryStatus() === $outOfStock) {
                     $fallbackEntity = new EntityFieldFallbackValue();
                     $fallbackEntity->setScalarValue(1);
                     $manager->persist($fallbackEntity);
                     $accessor->setValue($product, UpcomingProductProvider::IS_UPCOMING, $fallbackEntity);
-
-                    // It is not always the case, but generally it makes more sense that the products marked as upcoming
-                    // are also set to "Out of Stock".
-                    $product->setInventoryStatus($outOfStockStatus);
+                } else {
+                    $this->addFallbacksToEntity($manager, CategoryFallbackProvider::FALLBACK_ID, $product);
                 }
             }
         }
@@ -90,12 +80,7 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
         return $entity;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $fallbackId
-     * @return EntityFieldFallbackValue
-     */
-    protected function createFallbackEntity(ObjectManager $manager, $fallbackId)
+    protected function createFallbackEntity(ObjectManager $manager, string $fallbackId): EntityFieldFallbackValue
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setFallback($fallbackId);

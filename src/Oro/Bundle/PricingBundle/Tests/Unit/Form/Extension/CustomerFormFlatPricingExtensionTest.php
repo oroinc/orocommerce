@@ -29,18 +29,16 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->any())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);
 
-        /** @var CustomerFlatPricingRelationFormListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerFlatPricingRelationFormListener::class);
 
         $formExtension = new CustomerFormFlatPricingExtension($listener);
@@ -67,18 +65,16 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
 
     public function testBuildFormFeatureDisabled()
     {
-        /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject $featureChecker */
         $featureChecker = $this->createMock(FeatureChecker::class);
         $featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
 
-        /** @var CustomerFlatPricingRelationFormListener|\PHPUnit\Framework\MockObject\MockObject $listener */
         $listener = $this->createMock(CustomerFlatPricingRelationFormListener::class);
-        /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->never())->method('add');
+        $builder->expects($this->never())
+            ->method('add');
 
         $formExtension = new CustomerFormFlatPricingExtension($listener);
         $formExtension->setFeatureChecker($featureChecker);
@@ -99,10 +95,7 @@ class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
         $this->assertEquals($expected, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             [

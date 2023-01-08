@@ -4,24 +4,19 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\PropertyPathTitleDataConverter;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PropertyPathTitleDataConverterTest extends WebTestCase
 {
-    /**
-     * @var PropertyPathTitleDataConverter
-     */
-    protected $converter;
+    private PropertyPathTitleDataConverter $converter;
 
-    /** {@inheritdoc} */
     protected function setUp(): void
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            ['Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData']
-        );
+        $this->loadFixtures([LoadLocalizationData::class]);
 
         $container = $this->getContainer();
 
@@ -43,10 +38,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
         $this->assertEquals($expected, $this->converter->convertToImportFormat($data));
     }
 
-    /**
-     * @return array
-     */
-    public function importDataProvider()
+    public function importDataProvider(): array
     {
         return [
             [
@@ -74,10 +66,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
         $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
-    /**
-     * @return array
-     */
-    public function exportDataProvider()
+    public function exportDataProvider(): array
     {
         return [
             [

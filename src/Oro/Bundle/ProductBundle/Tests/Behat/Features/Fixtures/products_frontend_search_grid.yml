@@ -13,6 +13,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         type: 'simple'
         sku: 'PSKU<current()>'
         primaryUnitPrecision: '@productUnitPrecision<current()>'
+        unitPrecisions: [ '@productUnitPrecision<current()>' ]
         __calls:
             - addName: ['@localProductName<current()>']
         inventoryStatus: '@enumInventoryStatuses'

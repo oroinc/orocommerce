@@ -248,7 +248,7 @@ const ImportDialogView = BaseView.extend({
     /**
      * Unbinding event listeners
      */
-    unbindEvents: function() {
+    unbindEvents() {
         this.viewerEditor.off();
         this.importButton.off();
     },
@@ -256,7 +256,7 @@ const ImportDialogView = BaseView.extend({
     /**
      * @inheritdoc
      */
-    dispose: function() {
+    dispose() {
         if (this.disposed) {
             return;
         }

@@ -9,6 +9,12 @@ Feature: Product collection validation
     Given I login as administrator
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
+    And I click "Root Node"
+    And I save form
+    And click "Create Content Node"
+    And I fill "Content Node Form" with:
+      | Titles   | Collection First |
+      | Url Slug | collection-first |
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"

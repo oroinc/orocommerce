@@ -1,17 +1,20 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import GridColumnTypeBuilder from 'orocms/js/app/grapesjs/type-builders/grid-column-type-builder';
+import GridColumnTypeBuilder from 'orocms/js/app/grapesjs/types/grid-column-type';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/column-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/column-type', () => {
     let gridColumnTypeBuilder;
     let editor;
 
     beforeEach(done => {
         window.setFixtures(html);
         editor = grapesJS.init({
-            container: document.querySelector('.page-content-editor')
+            container: document.querySelector('.page-content-editor'),
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -53,9 +56,7 @@ describe('orocms/js/app/grapesjs/type-builders/column-type-builder', () => {
             mockElement.classList.add('grid-cell');
 
             expect(gridColumnTypeBuilder.Model.isComponent).toBeDefined();
-            expect(gridColumnTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: gridColumnTypeBuilder.componentType
-            });
+            expect(gridColumnTypeBuilder.Model.isComponent(mockElement)).toBe(true);
 
             expect(gridColumnTypeBuilder.Model.componentType).toEqual(gridColumnTypeBuilder.componentType);
             expect(gridColumnTypeBuilder.Model.prototype.defaults.classes).toEqual(['grid-cell']);

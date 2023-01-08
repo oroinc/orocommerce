@@ -1,5 +1,8 @@
 oro:
     product:
+        search:
+            search_in_category:
+                tooltip: '{0} All Products in {{ category }}|[1,Inf] Search for "{{ text }}" in {{ category }}'
         grid:
             delete_entity_title: Delete Product
             delete_success: Product deleted

@@ -3,17 +3,22 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Verbosity;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class VerbosityTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new Verbosity()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -21,7 +26,7 @@ class VerbosityTest extends AbstractOptionTest
                 ['VERBOSITY' => true],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
+                    InvalidOptionsException::class,
                     'The option "VERBOSITY" with value true is invalid. Accepted values are: "HIGH".',
                 ],
             ],

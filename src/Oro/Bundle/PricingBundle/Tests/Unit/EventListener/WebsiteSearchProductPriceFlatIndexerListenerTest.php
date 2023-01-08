@@ -23,34 +23,22 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
 {
     use EntityTrait;
 
-    /**
-     * @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteContextManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var AbstractPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AbstractPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $priceListTreeHandler;
 
-    /**
-     * @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /**
-     * @var WebsiteSearchProductPriceFlatIndexerListener
-     */
+    /** @var WebsiteSearchProductPriceFlatIndexerListener */
     private $listener;
 
     protected function setUp(): void
@@ -84,7 +72,8 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
             ->method('getContext')
             ->willReturn([]);
 
-        $this->websiteContextManager->expects($this->never())->method($this->anything());
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
 
         $this->listener->onWebsiteSearchIndex($event);
     }
@@ -99,7 +88,8 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
             ->method('getContext')
             ->willReturn([AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]);
 
-        $this->websiteContextManager->expects($this->never())->method($this->anything());
+        $this->websiteContextManager->expects($this->never())
+            ->method($this->anything());
 
         $this->listener->onWebsiteSearchIndex($event);
     }
@@ -107,7 +97,9 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
     public function testOnWebsiteSearchIndexWithoutWebsite()
     {
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->method('getContext')->willReturn([]);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn([]);
         $this->websiteContextManager->expects($this->once())
             ->method('getWebsite')
             ->willReturn(null);
@@ -124,6 +116,7 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
 
     /**
      * @dataProvider contextDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testOnWebsiteSearchIndex(array $context)
     {
@@ -132,8 +125,12 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
         $products = [new Product()];
         $website = $this->getEntity(Website::class, ['id' => 1]);
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->method('getContext')->willReturn($context);
-        $event->method('getEntities')->willReturn($products);
+        $event->expects($this->any())
+            ->method('getContext')
+            ->willReturn($context);
+        $event->expects($this->any())
+            ->method('getEntities')
+            ->willReturn($products);
 
         $this->featureChecker->expects($this->once())
             ->method('isFeatureEnabled')
@@ -152,7 +149,8 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
             ->willReturn($basePriceList);
 
         $repo = $this->createMock(ProductPriceRepository::class);
-        $repo->method('findMinByWebsiteForFilter')
+        $repo->expects($this->once())
+            ->method('findMinByWebsiteForFilter')
             ->with($website, $products, $basePriceList, $accuracy)
             ->willReturn([
                 [
@@ -170,7 +168,8 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
                     'price_list_id' => 1,
                 ],
             ]);
-        $repo->method('findMinByWebsiteForSort')
+        $repo->expects($this->once())
+            ->method('findMinByWebsiteForSort')
             ->with($website, $products, $basePriceList, $accuracy)
             ->willReturn([
                 [
@@ -187,46 +186,53 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends \PHPUnit\Framewor
                 ],
             ]);
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->method('getRepository')->with(ProductPrice::class)->willReturn($repo);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(ProductPrice::class)
+            ->willReturn($repo);
 
         $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with(ProductPrice::class)
             ->willReturn($em);
 
-        $event->expects($this->exactly(4))->method('addPlaceholderField')->withConsecutive(
-            [
-                1,
-                'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT',
-                '10.0000',
-                ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'USD', 'UNIT' => 'liter']
-            ],
-            [
-                2,
-                'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT',
-                '11.0000',
-                ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'EUR', 'UNIT' => 'box']
-            ],
-            [
-                1,
-                'minimal_price.PRICE_LIST_ID_CURRENCY',
-                '10.0000',
-                ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'USD']
-            ],
-            [
-                2,
-                'minimal_price.PRICE_LIST_ID_CURRENCY',
-                '11.0000',
-                ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'EUR']
-            ]
-        );
+        $event->expects($this->exactly(4))
+            ->method('addPlaceholderField')
+            ->withConsecutive(
+                [
+                    1,
+                    'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT',
+                    '10.0000',
+                    ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'USD', 'UNIT' => 'liter']
+                ],
+                [
+                    2,
+                    'minimal_price.PRICE_LIST_ID_CURRENCY_UNIT',
+                    '11.0000',
+                    ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'EUR', 'UNIT' => 'box']
+                ],
+                [
+                    1,
+                    'minimal_price.PRICE_LIST_ID_CURRENCY',
+                    '10.0000',
+                    ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'USD']
+                ],
+                [
+                    2,
+                    'minimal_price.PRICE_LIST_ID_CURRENCY',
+                    '11.0000',
+                    ['PRICE_LIST_ID' => 1, 'CURRENCY' => 'EUR']
+                ]
+            );
 
         $this->listener->onWebsiteSearchIndex($event);
     }
 
-    public function contextDataProvider()
+    public function contextDataProvider(): array
     {
-        yield [[]];
-        yield [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']]];
+        return [
+            [[]],
+            [[AbstractIndexer::CONTEXT_FIELD_GROUPS => ['pricing']]]
+        ];
     }
 }

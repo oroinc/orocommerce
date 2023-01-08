@@ -6,6 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
+use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\LoadUserData;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,7 +34,10 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
     /** {@inheritdoc} */
     public function getDependencies()
     {
-        return ['Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\LoadUserData'];
+        return [
+            LoadUserData::class,
+            LoadCustomerUserRoles::class
+        ];
     }
 
     /**

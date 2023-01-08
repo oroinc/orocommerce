@@ -157,7 +157,7 @@ abstract class AbstractEngineTest extends WebTestCase
     /**
      * @dataProvider aggregationDataProvider
      */
-    public function testAggregateWithCriteria(string $function, mixed $expected)
+    public function testAggregateWithCriteria(string $function, array $parameters, mixed $expected)
     {
         $expr = new Comparison('integer.integerValue', '>', 5000);
         $criteria = new Criteria($expr);
@@ -166,7 +166,7 @@ abstract class AbstractEngineTest extends WebTestCase
 
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID')
-            ->addAggregate($field, 'integer.integerValue', $function)
+            ->addAggregate($field, 'integer.integerValue', $function, $parameters)
             ->setCriteria($criteria);
 
         $results = $this->engine->search($query);
@@ -180,8 +180,9 @@ abstract class AbstractEngineTest extends WebTestCase
     public function aggregationDataProvider(): array
     {
         return [
-            'count' => [
+            'count without parameters' => [
                 'function' => Query::AGGREGATE_FUNCTION_COUNT,
+                'parameters' => [],
                 'expected' => [
                     6000 => 1,
                     7000 => 1,
@@ -189,20 +190,32 @@ abstract class AbstractEngineTest extends WebTestCase
                     9000 => 1,
                 ]
             ],
+            'count with max parameter' => [
+                'function' => Query::AGGREGATE_FUNCTION_COUNT,
+                'parameters' => ['max' => 2],
+                'expected' => [
+                    6000 => 1,
+                    7000 => 1,
+                ]
+            ],
             'sum' => [
                 'function' => Query::AGGREGATE_FUNCTION_SUM,
+                'parameters' => [],
                 'expected' => 30000.0
             ],
             'min' => [
                 'function' => Query::AGGREGATE_FUNCTION_MIN,
+                'parameters' => [],
                 'expected' => 6000.0
             ],
             'max' => [
                 'function' => Query::AGGREGATE_FUNCTION_MAX,
+                'parameters' => [],
                 'expected' => 9000.0
             ],
             'avg' => [
                 'function' => Query::AGGREGATE_FUNCTION_AVG,
+                'parameters' => [],
                 'expected' => 7500.0
             ],
         ];

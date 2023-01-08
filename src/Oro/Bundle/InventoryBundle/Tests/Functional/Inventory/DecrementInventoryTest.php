@@ -23,38 +23,25 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class DecrementInventoryTest extends CheckoutControllerTestCase
 {
-    use EnabledPaymentMethodIdentifierTrait {
-        getReference as protected;
-    }
+    use EnabledPaymentMethodIdentifierTrait;
     use ConfigManagerAwareTestTrait;
 
-    const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
-    const PRODUCT_ERROR_TEXT = "There is not enough quantity for this product";
+    private const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
+    private const PRODUCT_ERROR_TEXT = 'There is not enough quantity for this product';
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emFallback;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var int
-     */
-    protected $precisionBottleQuantity;
+    private EntityManagerInterface $emFallback;
+    private DoctrineHelper $doctrineHelper;
+    private int $precisionBottleQuantity;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->doctrineHelper = static::getContainer()->get('oro_entity.doctrine_helper');
+        $this->doctrineHelper = self::getContainer()->get('oro_entity.doctrine_helper');
         $this->emFallback = $this->doctrineHelper->getEntityManager(EntityFieldFallbackValue::class);
         $this->precisionBottleQuantity = self::processTemplateData(
             '@inventory_level.product_unit_precision.product-1.bottle->quantity'
         );
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_inventory.manage_inventory', true);
         $configManager->flush();
     }
@@ -72,13 +59,13 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-        $data = static::getJsonResponseContent($this->client->getResponse(), 200);
-        static::assertArrayHasKey('successUrl', $data['responseData']);
-        static::assertNotEmpty($data['responseData']['successUrl']);
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertArrayHasKey('successUrl', $data['responseData']);
+        self::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
-        static::assertNull(
+        self::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
+        self::assertNull(
             $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList)
         );
         $inventoryLevel = $this->getInventoryLevel($shoppingList);
@@ -86,7 +73,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $inventoryLevel = $this->doctrineHelper
             ->getEntityRepositoryForClass(InventoryLevel::class)
             ->find($inventoryLevel);
-        static::assertEquals($initialQuantity, $inventoryLevel->getQuantity());
+        self::assertEquals($initialQuantity, $inventoryLevel->getQuantity());
     }
 
     public function testCheckProductHaveEnoughQuantity()
@@ -94,7 +81,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->prepareShoppingList($this->precisionBottleQuantity + 1);
 
         $crawler = $this->navigateThroughCheckout();
-        static::assertStringContainsString(self::PRODUCT_ERROR_TEXT, $crawler->html());
+        self::assertStringContainsString(self::PRODUCT_ERROR_TEXT, $crawler->html());
     }
 
     public function testProductDecrementWithBackorder()
@@ -110,17 +97,17 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-        $data = static::getJsonResponseContent($this->client->getResponse(), 200);
-        static::assertArrayHasKey('successUrl', $data['responseData']);
-        static::assertNotEmpty($data['responseData']['successUrl']);
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertArrayHasKey('successUrl', $data['responseData']);
+        self::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
-        static::assertNull(
+        self::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
+        self::assertNull(
             $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList)
         );
         $inventoryLevel = $this->getInventoryLevel($shoppingList);
-        static::assertLessThan(0, $inventoryLevel->getQuantity());
+        self::assertLessThan(0, $inventoryLevel->getQuantity());
     }
 
     public function testDecrementWithInventoryThreshold()
@@ -129,7 +116,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->initProductInventoryThreshold($shoppingList->getLineItems()[0]->getProduct());
 
         $crawler = $this->navigateThroughCheckout();
-        static::assertStringContainsString(self::PRODUCT_ERROR_TEXT, $crawler->html());
+        self::assertStringContainsString(self::PRODUCT_ERROR_TEXT, $crawler->html());
     }
 
     public function testCreateOrderWithInventoryThreshold()
@@ -147,36 +134,30 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-        $data = static::getJsonResponseContent($this->client->getResponse(), 200);
-        static::assertArrayHasKey('successUrl', $data['responseData']);
-        static::assertNotEmpty($data['responseData']['successUrl']);
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertArrayHasKey('successUrl', $data['responseData']);
+        self::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        static::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
-        static::assertNull(
+        self::assertStringContainsString(self::FINISH_SIGN, $crawler->html());
+        self::assertNull(
             $this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList)
         );
         $inventoryLevel = $this->getInventoryLevel($shoppingList);
-        static::assertEquals($inventoryThreshold, $inventoryLevel->getQuantity());
+        self::assertEquals($inventoryThreshold, $inventoryLevel->getQuantity());
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param string  $textToCheck
-     */
-    protected function assertCurrentStep(Crawler $crawler, $textToCheck)
+    private function assertCurrentStep(Crawler $crawler, string $textToCheck): void
     {
         $stepLabel = $crawler->filterXPath(self::CHECKOUT_STEP_LABEL)->text();
-        static::assertStringContainsString($textToCheck, $stepLabel);
+        self::assertStringContainsString($textToCheck, $stepLabel);
     }
 
-    /**
-     * @param Product $product
-     * @param string  $decrementQuantity
-     * @param string  $allowBackOrder
-     */
-    protected function initProductDecrementFallback(Product $product, $decrementQuantity = '1', $allowBackOrder = '0')
-    {
+    private function initProductDecrementFallback(
+        Product $product,
+        string $decrementQuantity = '1',
+        string $allowBackOrder = '0'
+    ): void {
         $decrementFallback = new EntityFieldFallbackValue();
         $backOrderFallback = new EntityFieldFallbackValue();
         $decrementFallback->setScalarValue($decrementQuantity);
@@ -189,11 +170,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->emFallback->flush();
     }
 
-    /**
-     * @param Product $product
-     * @param string  $inventoryThreshold
-     */
-    protected function initProductInventoryThreshold(Product $product, $inventoryThreshold = '5')
+    private function initProductInventoryThreshold(Product $product, string $inventoryThreshold = '5'): void
     {
         $inventoryThresholdFallback = new EntityFieldFallbackValue();
         $inventoryThresholdFallback->setScalarValue($inventoryThreshold);
@@ -203,25 +180,12 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->emFallback->flush();
     }
 
-    /**
-     * @param Crawler $crawler
-     *
-     * @return Crawler
-     */
-    protected function goToNextStep(Crawler $crawler)
+    private function goToNextStep(Crawler $crawler): Crawler
     {
-        $form = $this->getTransitionForm($crawler);
-        $crawler = $this->client->submit($form);
-
-        return $crawler;
+        return $this->client->submit($this->getTransitionForm($crawler));
     }
 
-    /**
-     * @param Crawler $crawler
-     *
-     * @return Crawler
-     */
-    protected function submitPaymentTransitionForm(Crawler $crawler)
+    private function submitPaymentTransitionForm(Crawler $crawler): Crawler
     {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
@@ -239,15 +203,11 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         );
     }
 
-    /**
-     * @param int    $quantityToOrder
-     * @param string $decrementQuantity
-     * @param string $allowBackorder
-     *
-     * @return ShoppingList
-     */
-    protected function prepareShoppingList($quantityToOrder = 5, $decrementQuantity = '1', $allowBackorder = '0')
-    {
+    private function prepareShoppingList(
+        int $quantityToOrder = 5,
+        string $decrementQuantity = '1',
+        string $allowBackorder = '0'
+    ): ShoppingList {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $lineItem = $shoppingList->getLineItems()[0];
@@ -261,43 +221,34 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         return $shoppingList;
     }
 
-    /**
-     * @return null|Crawler
-     */
-    protected function navigateThroughCheckout()
+    private function navigateThroughCheckout(): Crawler
     {
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        static::assertCurrentStep($crawler, 'Billing Information');
+        $this->assertCurrentStep($crawler, 'Billing Information');
         $crawler = $this->goToNextStep($crawler);
-        static::assertCurrentStep($crawler, 'Shipping Information');
+        $this->assertCurrentStep($crawler, 'Shipping Information');
         $crawler = $this->goToNextStep($crawler);
-        static::assertCurrentStep($crawler, 'Shipping Method');
+        $this->assertCurrentStep($crawler, 'Shipping Method');
         $crawler = $this->goToNextStep($crawler);
-        static::assertCurrentStep($crawler, 'Payment');
+        $this->assertCurrentStep($crawler, 'Payment');
         $crawler = $this->submitPaymentTransitionForm($crawler);
-        static::assertCurrentStep($crawler, 'Order Review');
+        $this->assertCurrentStep($crawler, 'Order Review');
 
         return $crawler;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     *
-     * @return InventoryLevel
-     */
-    protected function getInventoryLevel(ShoppingList $shoppingList)
+    private function getInventoryLevel(ShoppingList $shoppingList): InventoryLevel
     {
         $lineItem = $shoppingList->getLineItems()[0];
         $productUnitPrecision = $this->doctrineHelper
             ->getEntityRepositoryForClass(ProductUnitPrecision::class)
             ->findOneBy(['product' => $lineItem->getProduct(), 'unit' => $lineItem->getUnit()]);
-        $inventoryLevel = $this->doctrineHelper
+
+        return $this->doctrineHelper
             ->getEntityRepositoryForClass(InventoryLevel::class)
             ->findOneBy([
                 'product' => $lineItem->getProduct(),
                 'productUnitPrecision' => $productUnitPrecision
             ]);
-
-        return $inventoryLevel;
     }
 }

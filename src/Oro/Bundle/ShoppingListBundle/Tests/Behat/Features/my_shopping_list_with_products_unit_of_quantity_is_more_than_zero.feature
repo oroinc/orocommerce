@@ -57,7 +57,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     When I click Edit Attribute Family in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes                                                                                                                                                                       |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Color, Size] |
+      | Attribute group | true    | [Color, Size] |
     And I save form
     Then I should see "Successfully updated" flash message
 

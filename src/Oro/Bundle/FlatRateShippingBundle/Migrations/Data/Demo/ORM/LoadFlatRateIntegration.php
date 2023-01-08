@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
+use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\Demo\ORM\LoadFixedProductIntegration;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
@@ -20,10 +21,10 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Configures an integration instance and adds a shipping rule to enable flat rate shipping ($10 per order).
@@ -33,23 +34,10 @@ class LoadFlatRateIntegration extends AbstractFixture implements
     ContainerAwareInterface,
     RenamedFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
+    use UserUtilityTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadOrganizationAndBusinessUnitData::class,
@@ -57,9 +45,6 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPreviousClassNames(): array
     {
         return [
@@ -67,10 +52,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         if (!$this->container) {
             return;
@@ -81,12 +63,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         $this->loadShippingRule($manager, $channel);
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Channel
-     */
-    private function loadIntegration(ObjectManager $manager)
+    private function loadIntegration(ObjectManager $manager): Channel
     {
         $label = (new LocalizedFallbackValue())->setString('Flat Rate');
 
@@ -98,7 +75,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             ->setName('Flat Rate')
             ->setEnabled(true)
             ->setOrganization($this->getOrganization($manager))
-            ->setDefaultUserOwner($this->getMainUser($manager))
+            ->setDefaultUserOwner($this->getFirstUser($manager))
             ->setTransport($transport);
 
         $manager->persist($channel);
@@ -123,7 +100,10 @@ class LoadFlatRateIntegration extends AbstractFixture implements
 
         $rule = new Rule();
         $rule->setName('Default')
-            ->setExpression('lineItems.all(lineItem.product.id > 21)')
+            ->setExpression(\sprintf(
+                'lineItems.all(lineItem.product.id > %s)',
+                LoadFixedProductIntegration::PRODUCT_ID_THRESHOLD
+            ))
             ->setEnabled(true)
             ->setSortOrder(1);
 
@@ -138,54 +118,24 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Organization|object
-     */
-    private function getOrganization(ObjectManager $manager)
+    private function getOrganization(ObjectManager $manager): Organization
     {
         if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
         }
 
         return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return User
-     *
-     * @throws EntityNotFoundException
-     */
-    public function getMainUser(ObjectManager $manager)
-    {
-        /** @var User $entity */
-        $entity = $manager->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
-        if (!$entity) {
-            throw new EntityNotFoundException('Main user does not exist.');
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return int|string
-     */
-    private function getFlatRateIdentifier(Channel $channel)
+    private function getFlatRateIdentifier(Channel $channel): string
     {
         return $this->container
             ->get('oro_flat_rate_shipping.method.identifier_generator.method')
             ->generateIdentifier($channel);
     }
 
-    /**
-     * @return string
-     */
-    private function getDefaultCurrency()
+    private function getDefaultCurrency(): string
     {
         /** @var ConfigManager $configManager * */
         $configManager = $this->container->get('oro_config.global');

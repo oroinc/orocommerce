@@ -5,30 +5,22 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
 /**
- * Provides applicable shipping methods views and shipping prices for checkout created from Quote.
+ * Provides views for all applicable shipping methods and calculate a shipping price
+ * for a checkout created from a quote.
  */
 class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
 {
-    /**
-     * @var CheckoutShippingContextProvider
-     */
-    private $checkoutShippingContextProvider;
-
-    /**
-     * @var ShippingConfiguredPriceProviderInterface
-     */
-    private $shippingConfiguredPriceProvider;
-
-    /**
-     * @var QuoteShippingConfigurationFactory
-     */
-    private $quoteShippingConfigurationFactory;
+    private CheckoutShippingContextProvider $checkoutShippingContextProvider;
+    private ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider;
+    private QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory;
 
     public function __construct(
         CheckoutShippingContextProvider $checkoutShippingContextProvider,
@@ -41,65 +33,53 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     }
 
     /**
-     * @param Checkout $checkout
-     *
-     * @return null|Quote
+     * {@inheritDoc}
      */
-    private function extractQuoteFromCheckout(Checkout $checkout)
-    {
-        $sourceEntity = $checkout->getSourceEntity();
-
-        return $sourceEntity instanceof QuoteDemand ? $sourceEntity->getQuote() : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getApplicableMethodsViews(Checkout $checkout)
+    public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         $successorViews = parent::getApplicableMethodsViews($checkout);
-
-        if (false === $successorViews->isEmpty()) {
+        if (!$successorViews->isEmpty()) {
             return $successorViews;
         }
 
         $quote = $this->extractQuoteFromCheckout($checkout);
-
         if (null === $quote) {
             return $successorViews;
         }
 
-        $configuration = $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote);
-        $context = $this->checkoutShippingContextProvider->getContext($checkout);
-
-        return $this->shippingConfiguredPriceProvider->getApplicableMethodsViews($configuration, $context);
+        return $this->shippingConfiguredPriceProvider->getApplicableMethodsViews(
+            $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote),
+            $this->checkoutShippingContextProvider->getContext($checkout)
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getPrice(Checkout $checkout)
+    public function getPrice(Checkout $checkout): ?Price
     {
         $successorPrice = parent::getPrice($checkout);
-
         if (null !== $successorPrice) {
             return $successorPrice;
         }
 
         $quote = $this->extractQuoteFromCheckout($checkout);
-
         if (null === $quote) {
-            return $successorPrice;
+            return null;
         }
-
-        $configuration = $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote);
-        $context = $this->checkoutShippingContextProvider->getContext($checkout);
 
         return $this->shippingConfiguredPriceProvider->getPrice(
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType(),
-            $configuration,
-            $context
+            $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote),
+            $this->checkoutShippingContextProvider->getContext($checkout)
         );
+    }
+
+    private function extractQuoteFromCheckout(Checkout $checkout): ?Quote
+    {
+        $sourceEntity = $checkout->getSourceEntity();
+
+        return $sourceEntity instanceof QuoteDemand ? $sourceEntity->getQuote() : null;
     }
 }

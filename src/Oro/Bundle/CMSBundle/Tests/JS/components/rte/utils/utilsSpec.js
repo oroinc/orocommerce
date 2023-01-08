@@ -29,24 +29,24 @@ describe('orocms/js/app/grapesjs/plugins/components/rte/utils/utils', () => {
     });
 
     it('check "isBlockFormatted"', () => {
-        expect(utils.isBlockFormatted(nodesCollection.h1)).toBeTruthy();
-        expect(utils.isBlockFormatted(nodesCollection.p)).toBeTruthy();
-        expect(utils.isBlockFormatted(nodesCollection.span)).toBeFalsy();
-        expect(utils.isBlockFormatted(nodesCollection.text)).toBeFalsy();
+        expect(utils.isBlockFormatted(nodesCollection.h1)).toBe(true);
+        expect(utils.isBlockFormatted(nodesCollection.p)).toBe(true);
+        expect(utils.isBlockFormatted(nodesCollection.span)).toBe(false);
+        expect(utils.isBlockFormatted(nodesCollection.text)).toBe(false);
     });
 
     it('check "isFormattedText"', () => {
-        expect(utils.isFormattedText(nodesCollection.b)).toBeTruthy();
-        expect(utils.isFormattedText(nodesCollection.strike)).toBeTruthy();
-        expect(utils.isFormattedText(nodesCollection.span)).toBeFalsy();
-        expect(utils.isFormattedText(nodesCollection.text)).toBeFalsy();
+        expect(utils.isFormattedText(nodesCollection.b)).toBe(true);
+        expect(utils.isFormattedText(nodesCollection.strike)).toBe(true);
+        expect(utils.isFormattedText(nodesCollection.span)).toBe(false);
+        expect(utils.isFormattedText(nodesCollection.text)).toBe(false);
     });
 
     it('check "isContainLists"', () => {
-        expect(utils.isContainLists(nodesCollection.ul)).toBeTruthy();
-        expect(utils.isContainLists(nodesCollection.ol)).toBeTruthy();
-        expect(utils.isContainLists(nodesCollection.span)).toBeFalsy();
-        expect(utils.isContainLists(nodesCollection.text)).toBeFalsy();
+        expect(utils.isContainLists(nodesCollection.ul)).toBe(true);
+        expect(utils.isContainLists(nodesCollection.ol)).toBe(true);
+        expect(utils.isContainLists(nodesCollection.span)).toBe(false);
+        expect(utils.isContainLists(nodesCollection.text)).toBe(false);
     });
 
     it('check "surroundContent"', () => {

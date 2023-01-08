@@ -37,7 +37,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click Edit Attribute Family in grid
     And set Attribute Groups with:
       | Label           | Visible | Attributes |
-      | Attribute group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Attribute 1, Attribute 2, Attribute 3] |
+      | Attribute group | true    | [Attribute 1, Attribute 2, Attribute 3] |
     And I save form
     Then I should see "Successfully updated" flash message
 

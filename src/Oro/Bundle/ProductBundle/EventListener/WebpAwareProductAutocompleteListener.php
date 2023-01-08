@@ -42,7 +42,7 @@ class WebpAwareProductAutocompleteListener
     {
         $defaultImage = $this->imagePlaceholderProvider->getPath('product_small', 'webp');
         $data = $event->getData();
-        foreach ($data as $sku => $productData) {
+        foreach ($data['products'] as $key => $productData) {
             if (isset($productData['imageWebp'])) {
                 if ($productData['imageWebp']) {
                     $productData['imageWebp'] = $this->urlHelper->getAbsolutePath($productData['imageWebp']);
@@ -50,7 +50,7 @@ class WebpAwareProductAutocompleteListener
                     $productData['imageWebp'] = $defaultImage;
                 }
 
-                $data[$sku] = $productData;
+                $data['products'][$key] = $productData;
             }
         }
 

@@ -1,13 +1,13 @@
 import __ from 'orotranslation/js/translator';
-import BaseTypeBuilder from 'orocms/js/app/grapesjs/type-builders/base-type-builder';
+import BaseType from 'orocms/js/app/grapesjs/types/base-type';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 
-const ContentTemplateType = BaseTypeBuilder.extend({
+const ContentTemplateType = BaseType.extend({
     constructor: function ContentTemplateType(...args) {
         ContentTemplateType.__super__.constructor.apply(this, args);
     },
 
-    viewMixin: {
+    viewProps: {
         async onActive() {
             const loaderMask = new LoadingMaskView({
                 container: this.$el,
@@ -47,6 +47,8 @@ const ContentTemplateType = BaseTypeBuilder.extend({
     isComponent() {
         return false;
     }
+}, {
+    type: 'content-template'
 });
 
 export default ContentTemplateType;

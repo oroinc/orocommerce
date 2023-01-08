@@ -5,22 +5,18 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 /**
- * Provides applicable shipping methods views and shipping prices.
+ * The default implementation of the service that provides views for all applicable shipping methods
+ * and calculates a shipping price for a specific checkout.
  */
 class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
 {
-    /**
-     * @var ShippingPriceProviderInterface
-     */
-    private $shippingPriceProvider;
-
-    /**
-     * @var CheckoutShippingContextProvider
-     */
-    private $checkoutShippingContextProvider;
+    private ShippingPriceProviderInterface $shippingPriceProvider;
+    private CheckoutShippingContextProvider $checkoutShippingContextProvider;
 
     public function __construct(
         ShippingPriceProviderInterface $shippingPriceProvider,
@@ -31,36 +27,32 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getApplicableMethodsViews(Checkout $checkout)
+    public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         $successorViews = parent::getApplicableMethodsViews($checkout);
-
-        if (false === $successorViews->isEmpty()) {
+        if (!$successorViews->isEmpty()) {
             return $successorViews;
         }
 
-        $context = $this->checkoutShippingContextProvider->getContext($checkout);
-
-        return $this->shippingPriceProvider->getApplicableMethodsViews($context);
+        return $this->shippingPriceProvider->getApplicableMethodsViews(
+            $this->checkoutShippingContextProvider->getContext($checkout)
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getPrice(Checkout $checkout)
+    public function getPrice(Checkout $checkout): ?Price
     {
         $successorPrice = parent::getPrice($checkout);
-
         if (null !== $successorPrice) {
             return $successorPrice;
         }
 
-        $context = $this->checkoutShippingContextProvider->getContext($checkout);
-
         return $this->shippingPriceProvider->getPrice(
-            $context,
+            $this->checkoutShippingContextProvider->getContext($checkout),
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType()
         );

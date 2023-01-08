@@ -7,7 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Search\ProductIndexFieldsProvider;
+use Oro\Bundle\ProductBundle\Search\ProductIndexAttributeProviderInterface;
 use Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\SearchableInformationProvider;
@@ -30,7 +30,7 @@ class WebsiteSearchMappingListener
     /** @var AttributeConfigurationProviderInterface */
     protected $configurationProvider;
 
-    /** @var ProductIndexFieldsProvider */
+    /** @var ProductIndexAttributeProviderInterface */
     protected $fieldsProvider;
 
     /** @var SearchableInformationProvider */
@@ -40,7 +40,7 @@ class WebsiteSearchMappingListener
         AttributeManager $attributeManager,
         AttributeTypeRegistry $attributeTypeRegistry,
         AttributeConfigurationProviderInterface $configurationProvider,
-        ProductIndexFieldsProvider $fieldsProvider,
+        ProductIndexAttributeProviderInterface $fieldsProvider,
         SearchableInformationProvider $searchableProvider
     ) {
         $this->attributeManager = $attributeManager;

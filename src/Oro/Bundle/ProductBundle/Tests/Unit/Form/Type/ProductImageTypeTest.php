@@ -14,9 +14,9 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 class ProductImageTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -29,13 +29,9 @@ class ProductImageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array|null $defaultData
-     * @param array|null $submittedData
-     * @param array $expectedTypes
-     * @param array $options
      * @dataProvider submitDataProvider
      */
-    public function testSubmit($defaultData, $submittedData, $expectedTypes, array $options)
+    public function testSubmit(?ProductImage $defaultData, ?array $submittedData, array $expectedTypes, array $options)
     {
         $form = $this->factory->create(ProductImageType::class, $defaultData, $options);
         $form->remove('image');
@@ -50,15 +46,13 @@ class ProductImageTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedTypes, array_keys($productImage->getTypes()->toArray()));
     }
 
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         $imageTypes = [
             new ThemeImageType('main', 'Main', []),
             new ThemeImageType('listing', 'Listing', []),
             new ThemeImageType('additional', 'Additional', []),
         ];
-
-        $defaultProductImage = new StubProductImage();
 
         return [
             'without default data' => [
@@ -70,7 +64,7 @@ class ProductImageTypeTest extends FormIntegrationTestCase
                 'options' => ['image_types' => $imageTypes]
             ],
             'with default data' => [
-                'defaultData' => $defaultProductImage,
+                'defaultData' => new StubProductImage(),
                 'submittedData' => [
                     'main' => true,
                     'listing' => true,

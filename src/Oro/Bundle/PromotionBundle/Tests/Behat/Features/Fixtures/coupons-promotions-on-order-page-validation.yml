@@ -167,6 +167,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'FirstOrder'
         website: '@website1'
         currency: USD
+        lineItems: [ '@firstOrderLineItem' ]
     secondOrder:
         organization: '@organization'
         owner: '@admin'
@@ -175,6 +176,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SecondOrder'
         website: '@website1'
         currency: USD
+        lineItems: [ '@secondOrderLineItem' ]
     thirdOrder:
         organization: '@organization'
         owner: '@admin'
@@ -183,6 +185,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'ThirdOrder'
         website: '@website1'
         currency: USD
+        lineItems: [ '@thirdOrderLineItem' ]
 
 Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:

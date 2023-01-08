@@ -289,7 +289,6 @@ services:
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
         arguments:
-            - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider'
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
@@ -375,6 +374,9 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice', event: postRemove }
 
     oro_shipping.method.view_factory:
         class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory'
@@ -563,7 +565,8 @@ services:
             - '@oro_shipping.multi_shipping.factory.method'
         tags:
             - { name: oro_shipping_method_provider }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postPersist }
 
     oro_shipping.multi_shipping.integration.transport:
         class: Oro\Bundle\ShippingBundle\Integration\MultiShippingTransport

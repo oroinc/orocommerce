@@ -102,7 +102,7 @@ define(function(require) {
          * @inheritdoc
          * @param options
          */
-        initialize: function(options) {
+        initialize(options) {
             this.codeViewer = this.editor.CodeManager.getViewer('CodeMirror').clone();
             this.codeViewer.set(this.codeViewerOptions);
             this.content = _.unescape(this.editor.getSelected().getContent());
@@ -114,7 +114,7 @@ define(function(require) {
          *
          * @returns {{modalCodeButton: CodeDialogView.modalCodeButton}}
          */
-        getTemplateData: function() {
+        getTemplateData() {
             return {
                 modalCodeButton: this.modalCodeButton
             };
@@ -123,7 +123,7 @@ define(function(require) {
         /**
          * @inheritdoc
          */
-        render: function() {
+        render() {
             CodeDialogView.__super__.render.call(this);
 
             this.importButton = this.$el.find('[data-role="code-edit"]');
@@ -164,7 +164,7 @@ define(function(require) {
         /**
          * @inheritdoc
          */
-        dispose: function() {
+        dispose() {
             if (this.disposed) {
                 return;
             }
@@ -178,7 +178,7 @@ define(function(require) {
             CodeDialogView.__super__.dispose.call(this);
         },
 
-        onSave: function() {
+        onSave() {
             if (!this.disabled) {
                 const codeContent = _.escape(this.viewerEditor.getValue().trim());
                 this.editor.getSelected().setContent(codeContent);

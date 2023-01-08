@@ -50,7 +50,10 @@ Feature: Override product variations functionality
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
 
     When I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click on "First Content Variant Expand Button"
+    And I fill "Content Node Form" with:
+      | Titles            | Home page                               |
+      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     And I save form
     Then I should see "Content Node has been saved" flash message
     When I click "Create Content Node"

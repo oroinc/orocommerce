@@ -1,4 +1,5 @@
 @ticket-BB-10050-limit
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Shopping list limit
   As Administrator I have a possibility to restrict limit of shopping lists for customer in configuration

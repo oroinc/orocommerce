@@ -86,7 +86,7 @@ class ProductController extends AbstractController
         $searchString = trim($request->get('search'));
 
         $autocompleteData = $this->get(ProductAutocompleteProvider::class)
-            ->getAutocompleteData($request, $searchString);
+            ->getAutocompleteData($searchString);
 
         return new JsonResponse($autocompleteData);
     }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Monolog\Logger;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
@@ -11,9 +12,12 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Psr\Log\LoggerInterface;
 
 /**
  * Remove unused Combined Price Lists.
@@ -25,18 +29,22 @@ class CombinedPriceListGarbageCollector
     private ManagerRegistry $registry;
     private ConfigManager $configManager;
     private NativeQueryExecutorHelper $nativeQueryExecutorHelper;
+    private LoggerInterface $logger;
+    private int $logLevel = Logger::WARNING;
     private int $gcOffsetMinutes = 60;
 
     public function __construct(
         ManagerRegistry $registry,
         ConfigManager $configManager,
         CombinedPriceListTriggerHandler $triggerHandler,
-        NativeQueryExecutorHelper $nativeQueryExecutorHelper
+        NativeQueryExecutorHelper $nativeQueryExecutorHelper,
+        LoggerInterface $logger
     ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
         $this->triggerHandler = $triggerHandler;
         $this->nativeQueryExecutorHelper = $nativeQueryExecutorHelper;
+        $this->logger = $logger;
     }
 
     public function setGcOffsetMinutes(int $offsetMinutes): void
@@ -44,12 +52,19 @@ class CombinedPriceListGarbageCollector
         $this->gcOffsetMinutes = $offsetMinutes;
     }
 
-    public function cleanCombinedPriceLists(): void
+    public function setLogLevel(int $logLevel): self
+    {
+        $this->logLevel = $logLevel;
+
+        return $this;
+    }
+
+    public function cleanCombinedPriceLists(array $cpls = []): void
     {
         $this->deleteInvalidRelations();
         $this->cleanActivationRules();
         $this->scheduleUnusedPriceListsRemoval();
-        $this->removeDuplicatePrices();
+        $this->removeDuplicatePrices($cpls);
     }
 
     private function deleteInvalidRelations(): void
@@ -148,10 +163,24 @@ class CombinedPriceListGarbageCollector
         );
     }
 
-    private function removeDuplicatePrices()
+    private function removeDuplicatePrices(array $cpls = []): void
     {
-        /** @var CombinedPriceListRepository $cplRepository */
-        $cplRepository = $this->registry->getRepository(CombinedPriceList::class);
-        $cplRepository->removeDuplicatePrices();
+        /** @var CombinedProductPriceRepository $repository */
+        $repository = $this->registry->getRepository(CombinedProductPrice::class);
+        if ($repository->hasDuplicatePrices($cpls)) {
+            $start = microtime(true);
+            $removedRows = $repository->deleteDuplicatePrices($cpls);
+            $end = microtime(true);
+            if ($removedRows) {
+                $this->logDuplicatePrices($end - $start, $removedRows);
+            }
+        }
+    }
+
+    private function logDuplicatePrices(float $time, int $removedRows): void
+    {
+        $time = \DateTime::createFromFormat('U.u', sprintf('%.6F', $time))->format('H:m:s');
+        $message = sprintf('Removed %s duplicate combined prices. Spent time: %s.', $removedRows, $time);
+        $this->logger->log($this->logLevel, $message);
     }
 }

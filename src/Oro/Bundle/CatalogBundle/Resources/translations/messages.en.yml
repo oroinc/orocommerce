@@ -216,6 +216,9 @@ oro:
                 category_image_placeholder:
                     label: 'Category Image Placeholder'
                     tooltip: 'Select the image file to be used in various category widgets (e.g., Featured Categories) for the categories that have no associated images.'
+                search_autocomplete_max_categories:
+                    label: 'Number Of Categories In Search Autocomplete'
+                    tooltip: 'Set the maximum number of categories displayed in the storefront autocomplete dropdown.'
 
         featured_categories:
             label: 'Featured Categories'

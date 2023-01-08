@@ -58,6 +58,7 @@ class WYSIWYGType extends AbstractType
 
         $options['page-component']['options']['allow_tags'] = $allowedElements;
         $options['page-component']['options']['allowed_iframe_domains'] = $allowedIframeDomains;
+        $options['page-component']['options']['jsmodules'] = $options['jsmodules'];
         $options['page-component']['options']['autoRender'] = $options['auto_render'];
         $options['page-component']['options']['builderPlugins'] = $options['builder_plugins'];
         $options['page-component']['options']['disableIsolation'] = $options['disable_isolation'];
@@ -85,9 +86,8 @@ class WYSIWYGType extends AbstractType
     {
         $resolver->setDefaults([
             'page-component' => [
-                'module' => 'oroui/js/app/components/view-component',
+                'module' => 'orocms/js/app/grapesjs/grapesjs-editor-component',
                 'options' => [
-                    'view' => 'orocms/js/app/grapesjs/grapesjs-editor-view',
                     'allow_tags' => [],
                 ],
             ],
@@ -101,6 +101,7 @@ class WYSIWYGType extends AbstractType
             'disable_isolation' => false,
             'error_bubbling' => true,
             'entity_class' => null,
+            'jsmodules' => [],
         ]);
     }
 

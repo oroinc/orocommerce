@@ -4,21 +4,14 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const METHOD = 'Method';
-
-    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodProvider;
 
     /** @var ShippingPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceProvider;
@@ -28,18 +21,14 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->shippingPriceProvider = $this->createMock(ShippingPriceProvider::class);
 
-        $this->condition = new HasApplicableShippingMethods(
-            $this->shippingMethodProvider,
-            $this->shippingPriceProvider
-        );
+        $this->condition = new HasApplicableShippingMethods($this->shippingPriceProvider);
     }
 
     public function testGetName()
     {
-        $this->assertEquals(HasApplicableShippingMethods::NAME, $this->condition->getName());
+        $this->assertEquals('has_applicable_shipping_methods', $this->condition->getName());
     }
 
     public function testInitializeInvalid()
@@ -64,13 +53,8 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider evaluateProvider
      */
-    public function testEvaluate(array $methods, bool $expected)
+    public function testEvaluate(ShippingMethodViewCollection $methods, bool $expected)
     {
-        $method = $this->createMock(ShippingMethodInterface::class);
-        $this->shippingMethodProvider->expects($this->any())
-            ->method('getShippingMethod')
-            ->willReturn($method);
-
         $this->shippingPriceProvider->expects($this->once())
             ->method('getApplicableMethodsViews')
             ->willReturn($methods);
@@ -83,15 +67,17 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'no_rules_no_methods' => [
-                'methods' => [],
+                'methods' => new ShippingMethodViewCollection(),
                 'expected' => false,
             ],
             'with_rules_no_methods' => [
-                'methods' => [],
+                'methods' => new ShippingMethodViewCollection(),
                 'expected' => false,
             ],
             'with_rules_and_methods' => [
-                'methods' => ['flat_rate'],
+                'methods' => (new ShippingMethodViewCollection())
+                    ->addMethodView('flat_rate', [])
+                    ->addMethodTypeView('flat_rate', 'flat_rate_1', []),
                 'expected' => true,
             ],
         ];
@@ -103,7 +89,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['shippingContext' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@' . HasApplicableShippingMethods::NAME;
+        $key = '@has_applicable_shipping_methods';
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey($key, $result);
@@ -124,7 +110,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             sprintf(
                 '$factory->create(\'%s\', [%s])',
-                HasApplicableShippingMethods::NAME,
+                'has_applicable_shipping_methods',
                 $toStringStub
             ),
             $result

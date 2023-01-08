@@ -47,7 +47,7 @@ class ProductAutocompleteListener implements FeatureToggleableInterface
         $currency = $this->currencyManager->getUserCurrency();
 
         $data = $event->getData();
-        foreach ($data as $sku => $productData) {
+        foreach ($data['products'] as $key => $productData) {
             $price = null;
             if (isset($productData['cpl_price']) && '' !== $productData['cpl_price']) {
                 $price = $productData['cpl_price'];
@@ -62,7 +62,7 @@ class ProductAutocompleteListener implements FeatureToggleableInterface
                 $productData['formatted_price'] = $this->numberFormatter->formatCurrency($price, $currency);
             }
 
-            $data[$sku] = $productData;
+            $data['products'][$key] = $productData;
         }
 
         $event->setData($data);

@@ -24,9 +24,9 @@ class PriceListTypeTest extends FormIntegrationTestCase
     use PriceRuleEditorAwareTestTrait;
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $localeSettings = $this->createMock(LocaleSettings::class);
@@ -116,12 +116,8 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     *
-     * @param mixed $defaultData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit(mixed $defaultData, mixed $submittedData, mixed $expectedData)
     {
         if ($defaultData) {
             $existingPriceList = new PriceList();
@@ -155,10 +151,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $this->assertSchedules($expectedData, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function submitDataProvider(): array
     {
         return [
             'new price list' => [

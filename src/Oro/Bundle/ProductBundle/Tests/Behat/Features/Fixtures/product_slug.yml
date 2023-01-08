@@ -1,5 +1,6 @@
 include:
     - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserFixture.yml'
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
   precision1:
@@ -16,8 +17,6 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
     string: 'Product1'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-  attribute_family_label:
-    string: 'Attribute Family'
   localValueProductSlug:
     string: 'acme'
   localValueDefaultWebCatalog:
@@ -31,21 +30,12 @@ Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
   localValueNewCategory:
     string: 'MyCategory'
 
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-  attribute_family:
-    entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-    code: 'family'
-    __calls:
-      - addLabel: ['@attribute_family_label']
-    owner: '@organization'
-
 Oro\Bundle\ProductBundle\Entity\Product:
   product1:
     sku: 'SKU1'
     type: 'simple'
     organization: '@organization'
     owner: '@businessUnit'
-    unitPrecisions: []
     attributeFamily: '@defaultProductFamily'
     __calls:
         - addName: ['@locvalue']
@@ -75,9 +65,11 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
   systemPageVariant:
+    scopes: [ '@default_scope' ]
     type: 'system_page'
     systemPageRoute: 'oro_customer_frontend_customer_user_index'
   categoryPageVariant:
+    scopes: [ '@default_scope' ]
     type: 'category_page'
     node: '@nodeNewCategory'
     categoryPageCategory: '@categoryLightingProducts'
@@ -87,6 +79,7 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     __calls:
         - addTitle: ['@localValueDefaultWebCatalog']
         - addContentVariant: ['@systemPageVariant']
+        - addScope: ['@default_scope']
     webCatalog: '@webCatalog'
 
   nodeNewCategory:
@@ -94,5 +87,6 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
         - addTitle: ['@localValueNewCategory']
         - addSlugPrototype: ['@localValueNewCategorySlug']
         - addContentVariant: ['@categoryPageVariant']
+        - addScope: ['@default_scope']
     parentNode: '@nodeDefaultWebCatalog'
     webCatalog: '@webCatalog'

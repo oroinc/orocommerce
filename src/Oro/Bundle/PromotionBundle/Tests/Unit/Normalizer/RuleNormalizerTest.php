@@ -8,10 +8,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class RuleNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleNormalizer
-     */
-    protected $normalizer;
+    private RuleNormalizer $normalizer;
 
     protected function setUp(): void
     {
@@ -41,13 +38,13 @@ class RuleNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider denormalizeDataProvider
      */
-    public function testDenormalize($ruleData, $expectedRule)
+    public function testDenormalize(array $ruleData, Rule $expectedRule)
     {
         $actualRule = $this->normalizer->denormalize($ruleData);
         $this->assertEquals($expectedRule, $actualRule);
     }
 
-    public function denormalizeDataProvider()
+    public function denormalizeDataProvider(): array
     {
         return [
             'usual case' => [
@@ -78,22 +75,19 @@ class RuleNormalizerTest extends \PHPUnit\Framework\TestCase
 
     public function testRequiredOptionsException()
     {
-        $ruleData = [];
-
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage(
             'The required options "isStopProcessing", "name", "sortOrder" are missing.'
         );
 
-        $this->normalizer->denormalize($ruleData);
+        $this->normalizer->denormalize([]);
     }
 
     public function testInvalidArgumentException()
     {
-        $object = new \stdClass();
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument rule should be instance of Rule entity');
 
-        $this->normalizer->normalize($object);
+        $this->normalizer->normalize(new \stdClass());
     }
 }

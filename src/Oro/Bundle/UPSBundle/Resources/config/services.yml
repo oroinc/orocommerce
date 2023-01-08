@@ -30,7 +30,8 @@ services:
             - '@oro_ups.method.factory.method'
         tags:
             - { name: oro_shipping_method_provider }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postLoad }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', method: registerShippingMethod, event: postPersist }
 
     oro_ups.method.identifier_generator.method:
         parent: oro_integration.generator.prefixed_identifier_generator

@@ -7,19 +7,16 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
-class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTest
+class CurrencyFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $filtrationService;
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $filtrationService;
 
-    /**
-     * @var CurrencyFiltrationService
-     */
-    protected $currencyFiltrationService;
+    /** @var CurrencyFiltrationService */
+    private $currencyFiltrationService;
 
     protected function setUp(): void
     {
@@ -104,6 +101,13 @@ class CurrencyFiltrationServiceTest extends AbstractSkippableFiltrationServiceTe
 
     public function testFilterIsSkippable()
     {
-        $this->assertServiceSkipped($this->currencyFiltrationService, $this->filtrationService);
+        $this->filtrationService->expects($this->never())
+            ->method('getFilteredRuleOwners');
+
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $this->currencyFiltrationService->getFilteredRuleOwners(
+            [$ruleOwner],
+            ['skip_filters' => [get_class($this->currencyFiltrationService) => true]]
+        );
     }
 }

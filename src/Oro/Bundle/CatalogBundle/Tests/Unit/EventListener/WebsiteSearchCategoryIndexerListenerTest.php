@@ -35,6 +35,12 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
     const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
     const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
+    const FIRST_PARENT_NAME_DEFAULT_LOCALE = 'first parent name default';
+    const FIRST_PARENT_NAME_CUSTOM_LOCALE = 'first parent name custom';
+
+    const SECOND_PARENT_NAME_DEFAULT_LOCALE = 'second parent name default';
+    const SECOND_PARENT_NAME_CUSTOM_LOCALE = 'second parent name custom';
+
     /**
      * @var WebsiteSearchCategoryIndexerListener
      */
@@ -98,13 +104,14 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
     private function prepareCategory(
         ?Localization $defaultLocale,
         ?Localization $customLocale,
-        Product $product
+        Product $product,
+        Category $parentCategory
     ): Category {
         $category = $this->getEntity(
             Category::class,
             [
                 'id' => 555,
-                'materializedPath' => '1_555'
+                'materializedPath' => '1_33_555'
             ]
         );
 
@@ -147,13 +154,84 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
                     CategoryShortDescription::class
                 )
             )
-            ->addProduct($product);
+            ->addProduct($product)
+            ->setParentCategory($parentCategory);
+
+        return $category;
+    }
+
+    private function prepareFirstParentCategory(
+        ?Localization $defaultLocale,
+        ?Localization $customLocale,
+        Category $parentCategory
+    ): Category {
+        $category = $this->getEntity(
+            Category::class,
+            [
+                'id' => 33,
+                'materializedPath' => '1_33'
+            ]
+        );
+
+        $category
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $defaultLocale,
+                    self::FIRST_PARENT_NAME_DEFAULT_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            )
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $customLocale,
+                    self::FIRST_PARENT_NAME_CUSTOM_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            )
+            ->setParentCategory($parentCategory);
+
+        return $category;
+    }
+
+    private function prepareSecondParentCategory(
+        ?Localization $defaultLocale,
+        ?Localization $customLocale
+    ): Category {
+        $category = $this->getEntity(
+            Category::class,
+            [
+                'id' => 1,
+                'materializedPath' => '1'
+            ]
+        );
+
+        $category
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $defaultLocale,
+                    self::SECOND_PARENT_NAME_DEFAULT_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            )
+            ->addTitle(
+                $this->prepareLocalizedValue(
+                    $customLocale,
+                    self::SECOND_PARENT_NAME_CUSTOM_LOCALE,
+                    null,
+                    CategoryTitle::class
+                )
+            );
 
         return $category;
     }
 
     /**
      * @dataProvider fieldsGroupDataProvider
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testOnWebsiteSearchIndexProductClass(?array $fieldsGroup)
     {
@@ -174,11 +252,19 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1, 'category_sort_order' => 1]);
-        $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product);
+        $secondParentCategory = $this->prepareSecondParentCategory($defaultValueLocale, $customLocale);
+        $firstParentCategory =
+            $this->prepareFirstParentCategory($defaultValueLocale, $customLocale, $secondParentCategory);
+        $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product, $firstParentCategory);
         $this->repository
             ->expects($this->once())
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
+        $this->repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1 => '33', 2 => '555']])
+            ->willReturn([$category, $firstParentCategory]);
 
         $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldsGroup];
         $event = new IndexEntityEvent(Product::class, [$product], $context);
@@ -196,7 +282,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
                 ['value' => 555, 'all_text' => false],
             ],
             'category_path' => [
-                ['value' => '1_555', 'all_text' => false],
+                ['value' => '1_33_555', 'all_text' => false],
             ],
             'category_paths.' . CategoryPathPlaceholder::NAME => [
                 [
@@ -204,7 +290,11 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
                     'all_text' => false,
                 ],
                 [
-                    'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1_555']),
+                    'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1_33']),
+                    'all_text' => false,
+                ],
+                [
+                    'value' => new PlaceholderValue(1, [CategoryPathPlaceholder::NAME => '1_33_555']),
                     'all_text' => false,
                 ],
             ],
@@ -231,6 +321,15 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
                         [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
                     ),
                     'all_text' => true,
+                ]
+            ],
+            'category_id_with_parent_categories_LOCALIZATION_ID'  => [
+                [
+                    'value' => new PlaceholderValue(
+                        sprintf('555|%s|%s', self::FIRST_PARENT_NAME_CUSTOM_LOCALE, self::NAME_CUSTOM_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                    'all_text' => false,
                 ]
             ],
         ];

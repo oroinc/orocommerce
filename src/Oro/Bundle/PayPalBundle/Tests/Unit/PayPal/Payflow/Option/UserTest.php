@@ -3,24 +3,30 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\User;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class UserTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new User()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [
                 [],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                    MissingOptionsException::class,
                     'The required option "USER" is missing.',
                 ],
             ],
@@ -28,9 +34,9 @@ class UserTest extends AbstractOptionTest
                 ['USER' => 123],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "USER" with value 123 is expected to be of type "string", but is of ' .
-                    'type "int".',
+                    InvalidOptionsException::class,
+                    'The option "USER" with value 123 is expected to be of type "string", but is of '
+                    . 'type "int".',
                 ],
             ],
             'valid' => [['USER' => 'username'], ['USER' => 'username']],

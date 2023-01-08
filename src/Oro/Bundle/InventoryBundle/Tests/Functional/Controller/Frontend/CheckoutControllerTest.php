@@ -27,35 +27,22 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    const CONTINUE_BUTTON = "//button[contains(text(), 'Continue')]";
-    const CHECKOUT_STEP_LABEL2 = "//h2[text()[contains(.,'%s')]]";
-    const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
-    const MIN_ERROR_MESSAGE = 'oro.inventory.product.error.quantity_below_min_limit';
-    const MAX_ERROR_MESSAGE = 'oro.inventory.product.error.quantity_over_max_limit';
+    private const CONTINUE_BUTTON = "//button[contains(text(), 'Continue')]";
+    private const CHECKOUT_STEP_LABEL2 = "//h2[text()[contains(.,'%s')]]";
+    private const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
+    private const MIN_ERROR_MESSAGE = 'oro.inventory.product.error.quantity_below_min_limit';
+    private const MAX_ERROR_MESSAGE = 'oro.inventory.product.error.quantity_over_max_limit';
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $emFallback;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    private EntityManagerInterface $emFallback;
+    private TranslatorInterface $translator;
+    private ConfigManager $configManager;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->emFallback = $this->registry->getManagerForClass(
-            EntityFieldFallbackValue::class
-        );
+        $this->emFallback = $this->registry->getManagerForClass(EntityFieldFallbackValue::class);
         $this->translator = $this->getContainer()->get('translator');
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
     }
 
     protected function tearDown(): void
@@ -156,43 +143,27 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->setInvalidLimitAndVerifyCheckoutRestarted($crawler, $product);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param bool $shouldBeFirstStep
-     */
-    protected function assertCurrentStep(Crawler $crawler, $shouldBeFirstStep = false)
+    private function assertCurrentStep(Crawler $crawler, bool $shouldBeFirstStep = false): void
     {
         $stepLabel = $crawler->filterXPath(self::CHECKOUT_STEP_LABEL)->text();
         if ($shouldBeFirstStep) {
-            static::assertStringContainsString('Billing Information', $stepLabel);
+            self::assertStringContainsString('Billing Information', $stepLabel);
         } else {
-            static::assertStringNotContainsString('Billing Information', $stepLabel);
+            self::assertStringNotContainsString('Billing Information', $stepLabel);
         }
     }
 
-    /**
-     * @param Crawler $crawler
-     * @return Crawler
-     */
-    protected function goToNextStep(Crawler $crawler)
+    private function goToNextStep(Crawler $crawler): Crawler
     {
-        $form = $this->getTransitionForm($crawler);
-        $crawler = $this->client->submit($form);
-
-        return $crawler;
+        return $this->client->submit($this->getTransitionForm($crawler));
     }
 
-    protected function validateStep(Crawler $crawler, Product $product)
+    private function validateStep(Crawler $crawler, Product $product): void
     {
-        $this->verifyQuantityError($crawler, $product, false, false, false, null);
+        $this->verifyQuantityError($crawler, $product, false);
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param Product $product
-     * @return Crawler
-     */
-    protected function setInvalidLimitAndVerifyCheckoutRestarted(Crawler $crawler, Product $product)
+    private function setInvalidLimitAndVerifyCheckoutRestarted(Crawler $crawler, Product $product): Crawler
     {
         $this->updateSystemQuantityLimits(1, 2);
         $form = $this->getTransitionForm($crawler);
@@ -202,56 +173,42 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         return $crawler;
     }
 
-    /**
-     * @param Crawler $crawler
-     * @param Product $product
-     * @param bool $minError
-     * @param bool $maxError
-     * @param bool $shouldBeFirstStep
-     * @param null|int $quantityLimit
-     */
-    protected function verifyQuantityError(
+    private function verifyQuantityError(
         Crawler $crawler,
         Product $product,
-        $minError = true,
-        $maxError = false,
-        $shouldBeFirstStep = false,
-        $quantityLimit = null
-    ) {
+        bool $minError = true,
+        bool $maxError = false,
+        bool $shouldBeFirstStep = false,
+        int $quantityLimit = null
+    ): void {
         $continueButton = $crawler->filterXPath(self::CONTINUE_BUTTON);
         $buttonClasses = $continueButton->attr('class');
 
         if ($minError || $maxError) {
-            static::assertStringContainsString('btn--disabled', $buttonClasses);
+            self::assertStringContainsString('btn--disabled', $buttonClasses);
         } else {
-            static::assertStringNotContainsString('btn--disabled', $buttonClasses);
+            self::assertStringNotContainsString('btn--disabled', $buttonClasses);
         }
 
         $this->assertCurrentStep($crawler, $shouldBeFirstStep);
 
         $content = $this->client->getResponse()->getContent();
-        $minMessage = $this->getErrorMessage($product, $quantityLimit, true);
+        $minMessage = $this->getErrorMessage($product, $quantityLimit);
         if ($minError) {
-            static::assertStringContainsString($minMessage, $content);
+            self::assertStringContainsString($minMessage, $content);
         } else {
-            static::assertStringNotContainsString($minMessage, $content);
+            self::assertStringNotContainsString($minMessage, $content);
         }
 
         $maxMessage = $this->getErrorMessage($product, $quantityLimit, false);
         if ($maxError) {
-            static::assertStringContainsString($maxMessage, $content);
+            self::assertStringContainsString($maxMessage, $content);
         } else {
-            static::assertStringNotContainsString($maxMessage, $content);
+            self::assertStringNotContainsString($maxMessage, $content);
         }
     }
 
-    /**
-     * @param Product $product
-     * @param int $quantityLimit
-     * @param bool $isMinMessage
-     * @return string
-     */
-    protected function getErrorMessage(Product $product, $quantityLimit, $isMinMessage = true)
+    private function getErrorMessage(Product $product, ?int $quantityLimit, bool $isMinMessage = true): string
     {
         if ($isMinMessage) {
             $message = 'oro.inventory.product.error.quantity_below_min_limit';
@@ -265,19 +222,15 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         );
     }
 
-    /**
-     * @param int $minLimit
-     * @param int $maxLimit
-     */
-    protected function updateSystemQuantityLimits($minLimit, $maxLimit)
+    private function updateSystemQuantityLimits(?int $minLimit, ?int $maxLimit): void
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_inventory.minimum_quantity_to_order', $minLimit);
         $configManager->set('oro_inventory.maximum_quantity_to_order', $maxLimit);
         $configManager->flush();
     }
 
-    protected function initProductLimitAsSystemFallback(Product $product)
+    private function initProductLimitAsSystemFallback(Product $product): void
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
@@ -291,16 +244,12 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->emFallback->flush();
     }
 
-    protected function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand)
+    private function startCheckoutFromQuoteDemand(QuoteDemand $quoteDemand): void
     {
         $this->startCheckoutByData($this->getCheckoutFromQuoteDemandData($quoteDemand));
     }
 
-    /**
-     * @param QuoteDemand $quoteDemand
-     * @return array
-     */
-    protected function getCheckoutFromQuoteDemandData(QuoteDemand $quoteDemand)
+    private function getCheckoutFromQuoteDemandData(QuoteDemand $quoteDemand): array
     {
         return [
             'context' => new ActionData([]),
@@ -319,9 +268,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getInventoryFixtures()
+    protected function getInventoryFixtures(): array
     {
         return [
             LoadQuoteProductDemandData::class,

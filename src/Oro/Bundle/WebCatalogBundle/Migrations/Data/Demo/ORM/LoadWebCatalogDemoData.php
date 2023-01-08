@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryBasedSegmentsDemoData;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM\LoadPageDemoData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -24,7 +25,7 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
     {
         return [
             LoadCategoryDemoData::class,
-            LoadSegmentsForWebCatalogDemoData::class,
+            LoadCategoryBasedSegmentsDemoData::class,
             LoadPageDemoData::class
         ];
     }

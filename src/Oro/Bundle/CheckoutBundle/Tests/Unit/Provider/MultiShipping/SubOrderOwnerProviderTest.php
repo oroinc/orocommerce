@@ -13,15 +13,18 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProviderInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
-class SubOrderOwnerProviderTest extends TestCase
+class SubOrderOwnerProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private PropertyAccessorInterface|MockObject $propertyAccessor;
-    private OwnershipMetadataProviderInterface|MockObject $metadataProvider;
-    private SubOrderOwnerProvider $provider;
+    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $propertyAccessor;
+
+    /** @var OwnershipMetadataProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $metadataProvider;
+
+    /** @var SubOrderOwnerProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -51,10 +54,10 @@ class SubOrderOwnerProviderTest extends TestCase
 
         $this->propertyAccessor->expects($this->exactly(2))
             ->method('getValue')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$lineItems->first(), 'product.category', $category],
                 [$category, 'organization', $organization]
-            ]));
+            ]);
 
         $owner = $this->provider->getOwner($lineItems, 'product.category:1');
         $this->assertEquals($user, $owner);
@@ -84,10 +87,10 @@ class SubOrderOwnerProviderTest extends TestCase
 
         $this->propertyAccessor->expects($this->exactly(2))
             ->method('getValue')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$lineItem, 'product.sku', 'SKU-TEST'],
                 [$product, 'owner', $businessUnit]
-            ]));
+            ]);
 
         $owner = $this->provider->getOwner($lineItems, 'product.sku:SKU-TEST');
         $this->assertEquals($user, $owner);
@@ -126,7 +129,7 @@ class SubOrderOwnerProviderTest extends TestCase
     public function testGetOwnerWhenOwnerSourceHasUserOwnership()
     {
         $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
-        $ownerSource = new \StdClass();
+        $ownerSource = new \stdClass();
         $user = new User();
 
         $ownershipMetadata = new OwnershipMetadata(
@@ -141,10 +144,10 @@ class SubOrderOwnerProviderTest extends TestCase
 
         $this->propertyAccessor->expects($this->exactly(2))
             ->method('getValue')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$lineItems->first(), 'dummyField', $ownerSource],
                 [$ownerSource, 'owner', $user]
-            ]));
+            ]);
 
         $owner = $this->provider->getOwner($lineItems, 'dummyField:1');
         $this->assertEquals($user, $owner);
@@ -153,7 +156,7 @@ class SubOrderOwnerProviderTest extends TestCase
     public function testGetOwnerWhenOwnerSourceHasNoneOwnership()
     {
         $lineItems = new ArrayCollection([new CheckoutLineItem(), new CheckoutLineItem()]);
-        $ownerSource = new \StdClass();
+        $ownerSource = new \stdClass();
 
         $ownershipMetadata = new OwnershipMetadata('NONE');
 
@@ -188,10 +191,10 @@ class SubOrderOwnerProviderTest extends TestCase
 
         $this->propertyAccessor->expects($this->exactly(2))
             ->method('getValue')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [$lineItems->first(), 'product.category', $category],
                 [$category, 'organization', null]
-            ]));
+            ]);
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Unable to determine order owner');
@@ -200,7 +203,6 @@ class SubOrderOwnerProviderTest extends TestCase
     }
 
     /**
-     * @param object $ownerSource
      * @dataProvider getOwnerEntitiesData
      */
     public function testGetOwnerWhenOwnerSourceIsOwnerEntity(object $ownerSource)
@@ -235,7 +237,7 @@ class SubOrderOwnerProviderTest extends TestCase
         $this->provider->getOwner($lineItems, 'product.testField:1');
     }
 
-    public function getOwnerEntitiesData()
+    public function getOwnerEntitiesData(): array
     {
         $user = new User();
 

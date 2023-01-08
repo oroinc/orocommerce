@@ -6,18 +6,10 @@ use Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function testSubmitParentFormWhenChecked()
     {
         $form = $this->createParentForm();
@@ -57,9 +49,9 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         return [
             new PreloadedExtension(
@@ -70,16 +62,11 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @return Form
-     */
-    protected function createParentForm()
+    private function createParentForm(): FormInterface
     {
-        $form = $this->factory->createBuilder()
+        return $this->factory->createBuilder()
             ->add('test_type', ShipToBillingAddressType::class)
             ->add(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD, TextType::class)
             ->getForm();
-
-        return $form;
     }
 }

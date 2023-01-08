@@ -254,6 +254,7 @@ class ContentTemplatesInWysiwygFormExtensionTest extends \PHPUnit\Framework\Test
                 'builderPlugins' => [
                     'content-templates' => [
                         'contentTemplatesData' => $contentTemplatesList,
+                        'jsmodule' => 'orocms/js/app/grapesjs/plugins/content-templates'
                     ],
                 ],
             ],

@@ -12,13 +12,19 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         expression: 'true'
         stopProcessing: false
 
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfig:
+        type: '<("flat_rate_".@flatRateIntegration->getId())>'
+
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     payment_methods_configs_rule1:
         rule: '@paymentRule1'
+        methodConfigs: ['@paymentMethodConfig']
         currency: 'USD'
         organization: '@organization'
     payment_methods_configs_rule2:
         rule: '@paymentRule2'
+        methodConfigs: ['@paymentMethodConfig']
         currency: 'EUR'
         organization: '@organization'
 

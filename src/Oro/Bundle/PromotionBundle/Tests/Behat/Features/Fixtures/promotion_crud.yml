@@ -1,5 +1,5 @@
 include:
-  - '@OroFlatRateShippingBundle:FlatRateIntegration.yml'
+  - '@OroProductBundle:ConfigurableAttributeFamily.yml'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     all_customers:
@@ -20,10 +20,6 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
     localProduct2Name:
         string: 'Product 2'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProductAttributeFamily:
-        string: 'Product Attribute Family'
-
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision1:
         unit: '@item'
@@ -32,14 +28,6 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision2:
         unit: '@item'
         precision: '1'
-
-Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
-    productAttributeFamily:
-        entityClass: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-        code: 'product_attribute_family_code'
-        __calls:
-            - addLabel: ['@localProductAttributeFamily']
-        owner: '@organization'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -83,14 +71,18 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     shippingMethodConfig:
         method: '<("flat_rate_".@flatRateIntegration->getId())>'
-        typeConfigs: ['@shippingMethodTypeConfig']
+        __calls:
+            - addTypeConfig: [ '@shippingMethodTypeConfig' ]
+        methodConfigsRule: '@shipping_methods_configs_rule1'
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shipping_methods_configs_rule1:
         rule: '@rule1'
         currency: 'EUR'
-        methodConfigs: ['@shippingMethodConfig']
         organization: '@organization'
+        __calls:
+            - addMethodConfig: ['@shippingMethodConfig']
+            - addDestination: ['@germany_destination']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     germany_destination:

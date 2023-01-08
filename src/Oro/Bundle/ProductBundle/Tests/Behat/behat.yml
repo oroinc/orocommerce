@@ -777,6 +777,15 @@ oro_behat_extension:
     Search Autocomplete Inventory Status:
       selector: '.search-autocomplete .search-autocomplete-product__status'
 
+    Search Autocomplete Category Image:
+      selector: '.search-autocomplete .search-autocomplete-category__image'
+
+    Search Autocomplete Category Head:
+      selector: '.search-autocomplete .search-autocomplete-category__head'
+
+    Search Autocomplete Category Body:
+      selector: '.search-autocomplete .search-autocomplete-category__body'
+
     Search Autocomplete Highlight:
       selector: '.search-autocomplete .search-autocomplete__highlight'
 
@@ -828,7 +837,7 @@ oro_behat_extension:
       selector: '.product-action-area .product-action > .btn'
 
     ProductFrontendMassActionButton:
-      selector: '.datagrid-massaction button.dropdown-toggle:contains("Choose Action")'
+      selector: '.datagrid-massaction button.dropdown-toggle'
 
     ProductFrontendGridMassActionMenu:
       selector: 'div.datagrid-massaction__dropdown-menu'

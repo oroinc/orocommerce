@@ -4,17 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\ExpessCheckout\Optio
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option\AbstractOptionTest;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class ShippingAddressTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new ECOption\ShippingAddress(), new ECOption\Action()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -31,9 +36,9 @@ class ShippingAddressTest extends AbstractOptionTest
                 ],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
-                    'The options "SHIPTOCITY", "SHIPTOCOUNTRY", "SHIPTOFIRSTNAME", "SHIPTOLASTNAME", "SHIPTOSTATE", ' .
-                    '"SHIPTOSTREET", "SHIPTOSTREET2", "SHIPTOZIP" do not exist. Defined options are: "ACTION".'
+                    UndefinedOptionsException::class,
+                    'The options "SHIPTOCITY", "SHIPTOCOUNTRY", "SHIPTOFIRSTNAME", "SHIPTOLASTNAME", "SHIPTOSTATE", '
+                    . '"SHIPTOSTREET", "SHIPTOSTREET2", "SHIPTOZIP" do not exist. Defined options are: "ACTION".'
                 ]
             ],
             'valid with GET_EC_DETAILS' => [
@@ -50,9 +55,9 @@ class ShippingAddressTest extends AbstractOptionTest
                 ],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException',
-                    'The options "SHIPTOCITY", "SHIPTOCOUNTRY", "SHIPTOFIRSTNAME", "SHIPTOLASTNAME", "SHIPTOSTATE", ' .
-                    '"SHIPTOSTREET", "SHIPTOSTREET2", "SHIPTOZIP" do not exist. Defined options are: "ACTION".'
+                    UndefinedOptionsException::class,
+                    'The options "SHIPTOCITY", "SHIPTOCOUNTRY", "SHIPTOFIRSTNAME", "SHIPTOLASTNAME", "SHIPTOSTATE", '
+                    . '"SHIPTOSTREET", "SHIPTOSTREET2", "SHIPTOZIP" do not exist. Defined options are: "ACTION".'
                 ]
             ],
             'valid with SET_EC' => [

@@ -2,10 +2,10 @@ import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
-import ContentWidgetTypeBuilder from 'orocms/js/app/grapesjs/type-builders/content-widget-type-builder';
+import ContentWidgetTypeBuilder from 'orocms/js/app/grapesjs/types/content-widget-type';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 
-describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () => {
+describe('orocms/js/app/grapesjs/types/content-widget-type', () => {
     let editor;
     let contentWidgetTypeBuilder;
     let mockElement;
@@ -17,7 +17,10 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
         window.setFixtures(html);
         editor = grapesJS.init({
             container: document.querySelector('.page-content-editor'),
-            plugins: [RteEditorPlugin]
+            plugins: [RteEditorPlugin],
+            deviceManager: {
+                devices: []
+            }
         });
 
         editor.ComponentRestriction = new ComponentRestriction(editor, {});
@@ -62,9 +65,7 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
 
         it('check base model extend', () => {
             expect(contentWidgetTypeBuilder.Model.isComponent).toBeDefined();
-            expect(contentWidgetTypeBuilder.Model.isComponent(mockElement)).toEqual({
-                type: contentWidgetTypeBuilder.componentType
-            });
+            expect(contentWidgetTypeBuilder.Model.isComponent(mockElement)).toBe(true);
             expect(contentWidgetTypeBuilder.Model.componentType).toEqual(contentWidgetTypeBuilder.componentType);
 
             expect(contentWidgetTypeBuilder.Model.prototype.defaults.tagName).toEqual('div');
@@ -72,9 +73,9 @@ describe('orocms/js/app/grapesjs/type-builders/content-widget-type-builder', () 
                 ['content-widget', 'content-placeholder']
             );
             expect(contentWidgetTypeBuilder.Model.prototype.defaults.contentWidget).toBeNull();
-            expect(contentWidgetTypeBuilder.Model.prototype.defaults.droppable).toBeFalsy();
-            expect(contentWidgetTypeBuilder.Model.prototype.defaults.editable).toBeFalsy();
-            expect(contentWidgetTypeBuilder.Model.prototype.defaults.stylable).toBeFalsy();
+            expect(contentWidgetTypeBuilder.Model.prototype.defaults.droppable).toBe(false);
+            expect(contentWidgetTypeBuilder.Model.prototype.defaults.editable).toBe(false);
+            expect(contentWidgetTypeBuilder.Model.prototype.defaults.stylable).toBe(false);
 
             expect(contentWidgetTypeBuilder.Model.prototype.editor).toEqual(editor);
         });

@@ -1,5 +1,6 @@
 @ticket-BB-12417
 @ticket-BB-18109
+@fixture-OroCustomerBundle:CustomerUserFixture.yml
 @fixture-OroProductBundle:highlighting_new_products.yml
 Feature: Change counting the number of products in featured categories widget
 

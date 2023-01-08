@@ -29,13 +29,17 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 {
     private const FIELD_NAME = 'test_field';
 
-    private RequestStack $requestStack;
+    /** @var RequestStack */
+    private $requestStack;
 
-    private AttributeChangesListener $listener;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $producer;
 
-    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $producer;
+    /** @var AttributeChangesListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -48,7 +52,8 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostFlushUnsupportedModel()
     {
-        $this->producer->expects(self::never())->method(self::anything());
+        $this->producer->expects(self::never())
+            ->method(self::anything());
 
         $model = new \stdClass();
 
@@ -61,7 +66,8 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostFlushUnsupportedModelEntityClass()
     {
-        $this->producer->expects(self::never())->method(self::anything());
+        $this->producer->expects(self::never())
+            ->method(self::anything());
 
         $model = $this->getFieldConfigModel(\stdClass::class);
 
@@ -79,11 +85,17 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreFlushAfterImportAttribute()
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects(self::once())->method('getFieldName')->willReturn('fieldName');
-        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(Product::class);
+        $fieldConfig->expects(self::once())
+            ->method('getFieldName')
+            ->willReturn('fieldName');
+        $fieldConfig->expects(self::once())
+            ->method('getClassName')
+            ->willReturn(Product::class);
 
         $config = $this->createMock(ConfigInterface::class);
-        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects(self::any())
+            ->method('getId')
+            ->willReturn($fieldConfig);
         $config->expects(self::once())
             ->method('get')
             ->with('request_search_indexation')
@@ -99,7 +111,9 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         $fieldConfig = $this->createMock(\stdClass::class);
 
         $config = $this->createMock(ConfigInterface::class);
-        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects(self::once())
+            ->method('getId')
+            ->willReturn($fieldConfig);
         $config->expects(self::never())
             ->method('get');
 
@@ -111,11 +125,16 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreFlushAfterImportAttributeNotProduct()
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(\stdClass::class);
-        $fieldConfig->expects(self::never())->method('getFieldName');
+        $fieldConfig->expects(self::once())
+            ->method('getClassName')
+            ->willReturn(\stdClass::class);
+        $fieldConfig->expects(self::never())
+            ->method('getFieldName');
 
         $config = $this->createMock(ConfigInterface::class);
-        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects(self::any())
+            ->method('getId')
+            ->willReturn($fieldConfig);
         $config->expects(self::never())
             ->method('get');
 
@@ -127,11 +146,16 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreFlushAfterImportAttributeWithoutAttributeMarker()
     {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(Product::class);
-        $fieldConfig->expects(self::never())->method('getFieldName');
+        $fieldConfig->expects(self::once())
+            ->method('getClassName')
+            ->willReturn(Product::class);
+        $fieldConfig->expects(self::never())
+            ->method('getFieldName');
 
         $config = $this->createMock(ConfigInterface::class);
-        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects(self::any())
+            ->method('getId')
+            ->willReturn($fieldConfig);
         $config->expects(self::once())
             ->method('get')
             ->with('request_search_indexation')
@@ -187,11 +211,17 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $frontendChangeSet = []
     ): void {
         $fieldConfig = $this->createMock(FieldConfigId::class);
-        $fieldConfig->expects(self::once())->method('getFieldName')->willReturn('test_field');
-        $fieldConfig->expects(self::once())->method('getClassName')->willReturn(Product::class);
+        $fieldConfig->expects(self::once())
+            ->method('getFieldName')
+            ->willReturn('test_field');
+        $fieldConfig->expects(self::once())
+            ->method('getClassName')
+            ->willReturn(Product::class);
 
         $config = $this->createMock(ConfigInterface::class);
-        $config->method('getId')->willReturn($fieldConfig);
+        $config->expects(self::any())
+            ->method('getId')
+            ->willReturn($fieldConfig);
         $config->expects(self::once())
             ->method('get')
             ->with('request_search_indexation')
@@ -221,10 +251,8 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return \Generator
      */
-    public function postFlushDataProvider()
+    public function postFlushDataProvider(): \Generator
     {
         yield 'state not active and not changed' => [
             'expected' => self::never(),
@@ -1127,11 +1155,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param string $className
-     * @return FieldConfigModel
-     */
-    protected function getFieldConfigModel($className)
+    private function getFieldConfigModel(string $className): FieldConfigModel
     {
         $entityModel = new EntityConfigModel();
         $entityModel->setClassName($className);
@@ -1143,7 +1167,7 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         return $fieldModel;
     }
 
-    protected function setUpConfigManager(
+    private function setUpConfigManager(
         array $extendConfigValues,
         array $extendChangeSet,
         array $attributeConfigValues,
@@ -1151,30 +1175,25 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
         array $frontendConfigValues,
         array $frontendChangeSet
     ): void {
-        /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $extendConfigId */
         $extendConfigId = $this->createMock(ConfigIdInterface::class);
         $extendConfig = new Config($extendConfigId, $extendConfigValues);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $extendConfigProvider */
         $extendConfigProvider = $this->createMock(ConfigProvider::class);
         $extendConfigProvider->expects(self::any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($extendConfig);
 
-        /** @var ConfigIdInterface|\PHPUnit\Framework\MockObject\MockObject $attributeConfigId */
         $attributeConfigId = $this->createMock(ConfigIdInterface::class);
         $attributeConfig = new Config($attributeConfigId, $attributeConfigValues);
         $frontendConfig = new Config($attributeConfigId, $frontendConfigValues);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
         $attributeConfigProvider = $this->createMock(ConfigProvider::class);
         $attributeConfigProvider->expects(self::any())
             ->method('getConfig')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($attributeConfig);
 
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $attributeConfigProvider */
         $frontendConfigProvider = $this->createMock(ConfigProvider::class);
         $frontendConfigProvider->expects(self::any())
             ->method('getConfig')
@@ -1183,21 +1202,17 @@ class AttributeChangesListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects(self::any())
             ->method('getProvider')
-            ->willReturnMap(
-                [
-                    ['extend', $extendConfigProvider],
-                    ['attribute', $attributeConfigProvider],
-                    ['frontend', $frontendConfigProvider]
-                ]
-            );
+            ->willReturnMap([
+                ['extend', $extendConfigProvider],
+                ['attribute', $attributeConfigProvider],
+                ['frontend', $frontendConfigProvider]
+            ]);
         $this->configManager->expects(self::any())
             ->method('getConfigChangeSet')
-            ->willReturnMap(
-                [
-                    [$extendConfig, $extendChangeSet],
-                    [$attributeConfig, $attributeChangeSet],
-                    [$frontendConfig, $frontendChangeSet]
-                ]
-            );
+            ->willReturnMap([
+                [$extendConfig, $extendChangeSet],
+                [$attributeConfig, $attributeChangeSet],
+                [$frontendConfig, $frontendChangeSet]
+            ]);
     }
 }

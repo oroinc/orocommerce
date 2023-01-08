@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
@@ -11,7 +12,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceList
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RequestContext;
@@ -42,7 +42,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->loadFixtures([
             LoadLocalizationData::class,
-            LoadFrontendProductData::class,
+            LoadFrontendCategoryProductData::class,
             LoadCombinedPriceLists::class,
         ]);
     }
@@ -107,36 +107,52 @@ class ProductControllerTest extends WebTestCase
         $product7 = $this->getReference(LoadProductData::PRODUCT_7);
         $product9 = $this->getReference(LoadProductData::PRODUCT_9);
 
-        self::assertArrayHasKey('products', $data);
-        self::assertArrayHasKey(LoadProductData::PRODUCT_7, $data['products']);
-        self::assertEquals(
+        $this->assertArrayHasKey('products', $data);
+        $this->assertEquals(
             [
-                'sku' => LoadProductData::PRODUCT_7,
-                'name' => 'продукт-7.names.default',
-                'image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
-                'imageWebp' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png.webp',
-                'inventory_status' => 'in_stock',
-                'id' => $product7->getId(),
-                'url' => '/product/view/' . $product7->getId(),
-                'default_image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
-                'inventory_status_label' => 'In Stock',
+                [
+                    'sku' => LoadProductData::PRODUCT_9,
+                    'name' => 'продукт-9.names.default',
+                    'image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                    'imageWebp' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png.webp',
+                    'inventory_status' => 'in_stock',
+                    'id' => $product9->getId(),
+                    'url' => '/product/view/' . $product9->getId(),
+                    'default_image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                    'inventory_status_label' => 'In Stock',
+                ],
+                [
+                    'sku' => LoadProductData::PRODUCT_7,
+                    'name' => 'продукт-7.names.default',
+                    'image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                    'imageWebp' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png.webp',
+                    'inventory_status' => 'in_stock',
+                    'id' => $product7->getId(),
+                    'url' => '/product/view/' . $product7->getId(),
+                    'default_image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
+                    'inventory_status_label' => 'In Stock',
+                ],
             ],
-            $data['products'][LoadProductData::PRODUCT_7]
+            $data['products']
         );
-        self::assertArrayHasKey(LoadProductData::PRODUCT_9, $data['products']);
-        self::assertEquals(
+
+        $categoryId = $product7->getCategory()->getId();
+        $this->assertArrayHasKey('categories', $data);
+        $this->assertEquals(
             [
-                'sku' => LoadProductData::PRODUCT_9,
-                'name' => 'продукт-9.names.default',
-                'image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
-                'imageWebp' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png.webp',
-                'inventory_status' => 'in_stock',
-                'id' => $product9->getId(),
-                'url' => '/product/view/' . $product9->getId(),
-                'default_image' => '/media/cache/resolve/product_small/bundles/oroproduct/images/no_image.png',
-                'inventory_status_label' => 'In Stock',
+                [
+                    'id' => $categoryId,
+                    'url' => '/product/search?search=' . urlencode('продукт') . '&categoryId=' . $categoryId,
+                    'tree' => [
+                        'category_1',
+                        'category_1_5',
+                        'category_1_5_6',
+                        'category_1_5_6_7',
+                    ],
+                    'count' => 1,
+                ],
             ],
-            $data['products'][LoadProductData::PRODUCT_9]
+            $data['categories']
         );
 
         $configManager->set($key, $originalValue);

@@ -19,46 +19,36 @@ use Symfony\Component\Validator\Validation;
 
 class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductUnitPrecisionType
-     */
-    protected $formType;
+    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productUnitLabelFormatter;
 
-    /**
-     * @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $productUnitLabelFormatter;
+    /** @var ProductUnitPrecisionType */
+    private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
+        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+
         $this->formType = new ProductUnitPrecisionType();
         $this->formType->setDataClass(ProductUnitPrecision::class);
-        $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
 
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $entityType = new EntityTypeStub(
-            [
-                'item' => (new ProductUnit())->setCode('item'),
-                'kg' => (new ProductUnit())->setCode('kg')
-            ]
-        );
-
         return [
             new PreloadedExtension(
                 [
                     ProductUnitPrecisionType::class => $this->formType,
                     ProductUnitSelectType::class => new ProductUnitSelectType($this->productUnitLabelFormatter),
-                    EntityType::class => $entityType
+                    EntityType::class => new EntityTypeStub([
+                        'item' => (new ProductUnit())->setCode('item'),
+                        'kg' => (new ProductUnit())->setCode('kg')
+                    ])
                 ],
                 [
                     FormType::class => [new IntegerExtension()]
@@ -69,16 +59,12 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param ProductUnitPrecision $defaultData
-     * @param array $expectedOptions
-     * @param array|ProductUnitPrecision $submittedData
-     * @param ProductUnitPrecision $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
         ProductUnitPrecision $defaultData,
         array $expectedOptions,
-        $submittedData,
+        array $submittedData,
         ProductUnitPrecision $expectedData
     ) {
         $form = $this->factory->create(ProductUnitPrecisionType::class, $defaultData, []);
@@ -100,7 +86,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    protected function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
+    private function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
     {
         foreach ($expectedConfig as $key => $value) {
             $this->assertTrue($actualConfig->hasOption($key));
@@ -108,10 +94,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    public function submitProvider()
+    public function submitProvider(): array
     {
         return [
             'existing unit precision' => [

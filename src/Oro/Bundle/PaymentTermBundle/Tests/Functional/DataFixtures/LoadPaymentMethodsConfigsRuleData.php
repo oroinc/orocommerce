@@ -5,18 +5,17 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData
-    as BasicLoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData as BaseFixture;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 
-class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRuleData
+class LoadPaymentMethodsConfigsRuleData extends BaseFixture
 {
     use EnabledPaymentMethodIdentifierTrait;
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         parent::load($manager);
 
@@ -33,7 +32,7 @@ class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRu
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),

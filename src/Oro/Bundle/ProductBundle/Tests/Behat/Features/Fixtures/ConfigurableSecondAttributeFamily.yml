@@ -1,0 +1,76 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    attribute_family_label:
+        string: 'Second Product Attribute Family'
+    attribute_group_1_label:
+        string: 'General'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    second_attribute_family:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'family'
+        __calls:
+            - addLabel: ['@attribute_family_label']
+        owner: '@second_organization'
+        attributeGroups: [ '@attribute_group_1' ]
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup:
+    attribute_group_1:
+        __calls:
+            - addLabel: ['@attribute_group_1_label']
+            - addAttributeRelation: [ '@attribute_group_1_relation_images' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_name' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_sku' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_description' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_short_description' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_brand' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_is_featured' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_new_arrival' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_inventory_status' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_meta_titles' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_meta_descriptions' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_meta_keywords' ]
+            - addAttributeRelation: [ '@attribute_group_1_relation_product_prices' ]
+        code: 'general'
+        attributeFamily: '@second_attribute_family'
+        isVisible: true
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation:
+    attribute_group_1_relation_sku:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_sku->id'
+    attribute_group_1_relation_name:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_names->id'
+    attribute_group_1_relation_description:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_descriptions->id'
+    attribute_group_1_relation_short_description:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_shortDescriptions->id'
+    attribute_group_1_relation_brand:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_brand->id'
+    attribute_group_1_relation_is_featured:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_featured->id'
+    attribute_group_1_relation_new_arrival:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_newArrival->id'
+    attribute_group_1_relation_images:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_images->id'
+    attribute_group_1_relation_inventory_status:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_inventory_status->id'
+    attribute_group_1_relation_meta_titles:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_metaTitles->id'
+    attribute_group_1_relation_meta_descriptions:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_metaDescriptions->id'
+    attribute_group_1_relation_meta_keywords:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_metaKeywords->id'
+    attribute_group_1_relation_product_prices:
+        attributeGroup: '@attribute_group_1'
+        entityConfigFieldId: '@attribute_productPriceAttributesPrices->id'

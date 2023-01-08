@@ -15,6 +15,27 @@ function highlightWords(inputString, value) {
     <div class="search-autocomplete__content dropdown-menu">
         <% if (total_count > 0) { %>
             <ul class="search-autocomplete__list" id="<%- comboboxId %>" role="listbox">
+                <%_.each(categories, function(category) { %>
+                <li class="search-autocomplete__item" role="option">
+                    <a href="<%- category.url %>" class="search-autocomplete-category" title="<%- _.__('oro.product.search.search_in_category.tooltip', { text: inputString, category: category.tree[category.tree.length - 1] }, category.count) %>">
+                        <div class="search-autocomplete-category__image">
+                            <span class="fa-search fa--no-offset"></span>
+                        </div>
+                        <div class="search-autocomplete-category__info">
+                            <div class="search-autocomplete-category__head">
+                                <%= inputString %>
+                            </div>
+                            <div class="search-autocomplete-category__body">
+                                <% let lastCategory = category.tree.pop(); %>
+                                <%_.each(category.tree, function(categoryLeaf) { %>
+                                    <span><%= categoryLeaf %> > </span>
+                                <% }) %>
+                                <span class="last-category"><%= lastCategory %></span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <% }) %>
                 <%_.each(products, function(product) { %>
                 <li class="search-autocomplete__item" role="option">
                     <a href="<%- product.url %>" class="search-autocomplete-product" title="<%- product.name %>">
@@ -44,7 +65,7 @@ function highlightWords(inputString, value) {
                 <li class="search-autocomplete__item" role="option">
                     <button class="btn btn--link btn--no-offset search-autocomplete__submit"
                             type="submit"
-                    ><%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count)  %> <span class="fa-angle-right" aria-hidden="true"></span>
+                    ><%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count) %> <span class="fa-angle-right" aria-hidden="true"></span>
                     </button>
                 </li>
             </ul>

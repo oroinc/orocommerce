@@ -22,35 +22,23 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    private $requestStack;
 
-    /**
-     * @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $segmentManager;
+    /** @var SegmentManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $segmentManager;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    /**
-     * @var NameStrategyInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $nameStrategy;
+    /** @var NameStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $nameStrategy;
 
-    /**
-     * @var ProductCollectionDefinitionConverter|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $definitionConverter;
+    /** @var ProductCollectionDefinitionConverter|\PHPUnit\Framework\MockObject\MockObject */
+    private $definitionConverter;
 
-    /**
-     * @var ProductCollectionDatagridListener
-     */
-    protected $listener;
+    /** @var ProductCollectionDatagridListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -73,10 +61,8 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $dataSource = $this->createMock(OrmDatasource::class);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
 
@@ -89,19 +75,16 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getParameters')
             ->willReturn($parameters);
 
-        $this->definitionConverter
-            ->expects($this->once())
+        $this->definitionConverter->expects($this->once())
             ->method('hasFilters')
             ->with([])
             ->willReturn(false);
 
-        $this->segmentManager
-            ->expects($this->never())
+        $this->segmentManager->expects($this->never())
             ->method($this->anything());
 
         $event = new BuildAfter($dataGrid);
@@ -111,10 +94,8 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnBuildAfterWithoutRequest()
     {
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getParameters')
             ->willReturn(new ParameterBag());
 
@@ -134,14 +115,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $dataSource = $this->createMock(DatasourceInterface::class);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
 
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getParameters')
             ->willReturn(new ParameterBag());
 
@@ -165,14 +144,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
 
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getParameters')
             ->willReturn(new ParameterBag());
 
@@ -192,11 +169,8 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider gridNameDataProvider
-     * @param string $gridName
-     * @param string $scope
-     * @param string $resolvedName
      */
-    public function testOnBuildAfterWhenDefinitionFromRequest($gridName, $scope, $resolvedName)
+    public function testOnBuildAfterWhenDefinitionFromRequest(string $gridName, ?string $scope, string $resolvedName)
     {
         $segmentType = new SegmentType(SegmentType::TYPE_DYNAMIC);
 
@@ -222,14 +196,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
 
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getParameters')
             ->willReturn(new ParameterBag());
 
@@ -285,13 +257,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        /** @var Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
              ->method('getDatasource')
              ->willReturn($dataSource);
-        $dataGrid
-            ->expects($this->once())
+        $dataGrid->expects($this->once())
             ->method('getParameters')
             ->willReturn(new ParameterBag());
 
@@ -308,10 +278,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    /**
-     * @return array
-     */
-    public function definitionEmptyAndNoIncludedProductsDataProvider()
+    public function definitionEmptyAndNoIncludedProductsDataProvider(): array
     {
         return [
             'empty request data' => [
@@ -334,13 +301,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid
-     * @param string $gridName
-     * @param string $gridScope
-     */
-    private function assertGetGridFullNameCalls(Datagrid $dataGrid, $gridName, $gridScope)
-    {
+    private function assertGetGridFullNameCalls(
+        Datagrid|\PHPUnit\Framework\MockObject\MockObject $dataGrid,
+        string $gridName,
+        ?string $gridScope
+    ): void {
         $gridFullName = $gridName;
         if ($gridScope !== null) {
             $gridFullName .= ':' . $gridScope;

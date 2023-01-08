@@ -9,11 +9,6 @@ use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
-
     protected function setUp(): void
     {
         $configuration = new Configuration();
@@ -25,16 +20,13 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider configurationDataProvider
      */
-    public function testProcessConfiguration($value, array $expected): void
+    public function testProcessConfiguration(array $value, array $expected): void
     {
         $configuration = new Configuration();
         $processor = new Processor();
         $this->assertEquals($expected, $processor->processConfiguration($configuration, $value));
     }
 
-    /**
-     * @return array[]
-     */
     public function configurationDataProvider(): array
     {
         return [

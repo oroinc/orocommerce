@@ -3,17 +3,22 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow\Option;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option\SilentPost;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class SilentPostTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
-    protected function getOptions()
+    /**
+     * {@inheritDoc}
+     */
+    protected function getOptions(): array
     {
         return [new SilentPost()];
     }
 
-    /** {@inheritdoc} */
-    public function configureOptionDataProvider()
+    /**
+     * {@inheritDoc}
+     */
+    public function configureOptionDataProvider(): array
     {
         return [
             'empty' => [],
@@ -21,9 +26,9 @@ class SilentPostTest extends AbstractOptionTest
                 ['SILENTPOSTURL' => new \stdClass()],
                 [],
                 [
-                    'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException',
-                    'The option "SILENTPOSTURL" with value stdClass is expected to be of type "string", but is of ' .
-                    'type "stdClass".',
+                    InvalidOptionsException::class,
+                    'The option "SILENTPOSTURL" with value stdClass is expected to be of type "string", but is of '
+                    . 'type "stdClass".',
                 ],
             ],
             'valid' => [

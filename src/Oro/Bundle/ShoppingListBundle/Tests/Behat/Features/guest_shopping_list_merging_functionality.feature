@@ -1,5 +1,6 @@
 @ticket-BB-10050-merge
 @ticket-BB-17042
+@fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Guest shopping list merging functionality
   As a guest I have a possibility to fill one shopping list and it should be added (or merged depending on limit)

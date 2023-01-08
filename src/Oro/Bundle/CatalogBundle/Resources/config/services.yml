@@ -370,6 +370,16 @@ services:
     oro_catalog.datagrid.export.category_filter.default:
         class: Oro\Bundle\CatalogBundle\ImportExport\Datagrid\DefaultCategoryFilter
 
+    oro_catalog.event_listener.search.add_category_to_product_autocomplete:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\Search\AddCategoryToProductAutocompleteListener'
+        arguments:
+            - '@router'
+            - '@oro_ui.twig.html_tag'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent, method: onProcessAutocompleteQuery }
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+
     oro_catalog.menu.menu_categories_provider:
         class: Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider
         arguments:

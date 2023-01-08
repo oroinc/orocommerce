@@ -96,8 +96,9 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         $newAggregations = [];
         foreach ($aggregations as $name => $item) {
             $newAggregations[$name] = [
-                'field'    => $this->placeholder->replaceDefault($item['field']),
-                'function' => $item['function']
+                'field' => $this->placeholder->replaceDefault($item['field']),
+                'function' => $item['function'],
+                'parameters' => $item['parameters']
             ];
         }
         $query->setAggregations($newAggregations);

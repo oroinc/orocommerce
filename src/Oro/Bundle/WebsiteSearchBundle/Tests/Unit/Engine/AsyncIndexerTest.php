@@ -13,7 +13,6 @@ use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchResetIndexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchSaveTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -21,11 +20,14 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
 {
     private const WEBSITE_ID = 1;
 
-    private AsyncIndexer $indexer;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
+    /** @var IndexerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $baseIndexer;
 
-    private IndexerInterface|\PHPUnit\Framework\MockObject\MockObject $baseIndexer;
+    /** @var AsyncIndexer */
+    private $indexer;
 
     protected function setUp(): void
     {
@@ -34,25 +36,22 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
         $this->baseIndexer = $this->createMock(IndexerInterface::class);
 
         $websiteRepository = $this->createMock(WebsiteRepository::class);
-        $websiteRepository->method('getWebsiteIdentifiers')
+        $websiteRepository->expects(self::any())
+            ->method('getWebsiteIdentifiers')
             ->willReturn([self::WEBSITE_ID]);
 
         $websiteProvider = $this->createMock(WebsiteProviderInterface::class);
-        $websiteProvider
-            ->expects(self::any())
+        $websiteProvider->expects(self::any())
             ->method('getWebsiteIds')
             ->willReturn([1]);
         $mappingProvider = $this->createMock(SearchMappingProvider::class);
-        $mappingProvider
-            ->expects(self::any())
+        $mappingProvider->expects(self::any())
             ->method('isClassSupported')
             ->willReturnCallback(fn ($class) => class_exists($class, true));
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
 
         $inputValidator = new IndexerInputValidator($websiteProvider, $mappingProvider, $managerRegistry);
-
-        $this->granularizer = $this->createMock(ReindexMessageGranularizer::class);
 
         $this->indexer = new AsyncIndexer(
             $this->baseIndexer,
@@ -64,7 +63,8 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     public function testSaveOne(): void
     {
         $entity = $this->createMock(Item::class);
-        $entity->method('getId')
+        $entity->expects(self::any())
+            ->method('getId')
             ->willReturn(101);
 
         $context = ['test'];
@@ -91,11 +91,13 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     public function testSaveMany(): void
     {
         $entity1 = $this->createMock(Item::class);
-        $entity1->method('getId')
+        $entity1->expects(self::any())
+            ->method('getId')
             ->willReturn(101);
 
         $entity2 = $this->createMock(Item::class);
-        $entity2->method('getId')
+        $entity2->expects(self::any())
+            ->method('getId')
             ->willReturn(102);
 
         $context = ['test'];
@@ -126,7 +128,8 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     public function testDeleteOne(): void
     {
         $entity = $this->createMock(Item::class);
-        $entity->method('getId')
+        $entity->expects(self::any())
+            ->method('getId')
             ->willReturn(101);
 
         $context = ['test'];
@@ -153,11 +156,13 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     public function testDeleteMany(): void
     {
         $entity1 = $this->createMock(Item::class);
-        $entity1->method('getId')
+        $entity1->expects(self::any())
+            ->method('getId')
             ->willReturn(101);
 
         $entity2 = $this->createMock(Item::class);
-        $entity2->method('getId')
+        $entity2->expects(self::any())
+            ->method('getId')
             ->willReturn(102);
 
         $context = ['test'];
@@ -187,7 +192,7 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetClassesForReindex(): void
     {
-        $class = '\StdClass';
+        $class = \stdClass::class;
         $context = ['foo', 'bar'];
 
         $this->baseIndexer->expects(self::once())
@@ -223,8 +228,7 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
             'granulize' => true,
         ];
 
-        $this->messageProducer
-            ->expects(self::atLeastOnce())
+        $this->messageProducer->expects(self::atLeastOnce())
             ->method('send')
             ->with(WebsiteSearchReindexTopic::getName(), $expectedParams);
 

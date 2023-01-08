@@ -4,7 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -100,26 +100,16 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         $manager->flush();
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string        $sku
-     *
-     * @return Product|null
-     */
-    protected function getProductBySku(EntityManager $manager, $sku)
+    protected function getProductBySku(EntityManagerInterface $manager, $sku): ?Product
     {
         return $this->getProductRepository($manager)->findOneBy(['sku' => $sku]);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $title
-     * @param Organization $organization
-     *
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle(EntityManager $manager, string $title, Organization $organization)
-    {
+    protected function getCategoryByDefaultTitle(
+        EntityManagerInterface $manager,
+        string $title,
+        Organization $organization
+    ): ?Category {
         if (!array_key_exists($title, $this->categories)) {
             $this->categories[$title] = $this->getCategory($manager, $organization, $title);
         }

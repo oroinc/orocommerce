@@ -31,14 +31,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     brandName{1..2}:
         string: 'Brand<current()>'
 
-Oro\Bundle\RedirectBundle\Entity\Slug:
-    productSlug1:
-        url: '/product1'
-        slugPrototype: 'product1'
-        routeName: 'oro_product_frontend_product_view'
-        routeParameters: []
-        organization: '@organization'
-
 Oro\Bundle\ProductBundle\Entity\Brand:
     brand{1..2}:
         owner: '@business_unit'
@@ -72,13 +64,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@primaryPrecision1'
+        unitPrecisions: [ '@primaryPrecision1' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@name1']
             - addAdditionalUnitPrecision: ['@additionalPrecision1']
             - addDescription: ['@description1']
             - addShortDescription: ['@shortDescription1']
-        slugs: ['@productSlug1']
         slugPrototypes: ['@productSlugPrototype1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
@@ -91,6 +83,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@primaryRelatedProductPrecision1'
+        unitPrecisions: [ '@primaryRelatedProductPrecision1' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@relatedProductName1']
@@ -101,6 +94,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@business_unit'
         primaryUnitPrecision: '@primaryUpsellProductPrecision1'
+        unitPrecisions: [ '@primaryUpsellProductPrecision1' ]
         attributeFamily: '@defaultProductFamily'
         __calls:
             - addName: ['@upsellProductName1']
