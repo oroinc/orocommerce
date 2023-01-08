@@ -53,16 +53,13 @@ class AvailableLineItemShippingMethodsProvider implements LineItemShippingMethod
     /**
      * Configured multi_shipping method should not be available for line items. It should be set for checkout entity
      * only.
-     *
-     * @param array $shippingMethods
-     * @return array
      */
     private function filterMultipleShippingMethods(array $shippingMethods): array
     {
         $multipleShippingMethods = $this->getMultipleShippingMethods();
         return array_filter(
             $shippingMethods,
-            fn ($identifier) => !in_array($identifier, $multipleShippingMethods),
+            fn ($identifier) => !\in_array($identifier, $multipleShippingMethods, true),
             ARRAY_FILTER_USE_KEY
         );
     }

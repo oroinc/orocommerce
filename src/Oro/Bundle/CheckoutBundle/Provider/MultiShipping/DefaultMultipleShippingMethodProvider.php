@@ -19,14 +19,11 @@ class DefaultMultipleShippingMethodProvider
     }
 
     /**
-     * Get first configured multishipping method.
-     *
-     * @return ShippingMethodInterface
+     * Gets the first configured multi shipping method.
      */
     public function getShippingMethod(): ShippingMethodInterface
     {
         $methods = $this->getCachedShippingMethods();
-
         if (!$methods) {
             throw new \LogicException('There are no enabled multi shipping methods');
         }
@@ -37,7 +34,6 @@ class DefaultMultipleShippingMethodProvider
     public function getShippingMethods(): array
     {
         $methods = $this->getCachedShippingMethods();
-
         if (!$methods) {
             throw new \LogicException('There are no enabled multi shipping methods');
         }

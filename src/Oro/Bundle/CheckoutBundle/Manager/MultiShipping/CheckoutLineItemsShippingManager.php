@@ -69,6 +69,7 @@ class CheckoutLineItemsShippingManager
      * Build lineItems shipping data.
      *
      * @param Checkout $checkout
+     *
      * @return array ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
      */
     public function getCheckoutLineItemsShippingData(Checkout $checkout): array
@@ -103,12 +104,6 @@ class CheckoutLineItemsShippingManager
         }
     }
 
-    /**
-     * Build line item key
-     *
-     * @param ProductLineItemInterface $lineItem
-     * @return string
-     */
     public function getLineItemIdentifier(ProductLineItemInterface $lineItem): string
     {
         return implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);

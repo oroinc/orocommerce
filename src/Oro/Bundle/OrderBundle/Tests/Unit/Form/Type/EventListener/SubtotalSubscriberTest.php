@@ -96,6 +96,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 
         $this->totalProvider->expects($this->any())
             ->method('getTotal')
+            ->with($order)
             ->willReturn(new Subtotal());
 
         $this->discountSubtotalProvider->expects($this->any())
@@ -152,7 +153,8 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
             ->method('getSubtotal')
             ->willReturn([$discountSubtotal, $discountSubtotal2]);
 
-        $this->priceMatcher->expects($this->any())->method('addMatchingPrices');
+        $this->priceMatcher->expects($this->any())
+            ->method('addMatchingPrices');
 
         $this->totalProvider->expects($this->any())
             ->method('enableRecalculation')

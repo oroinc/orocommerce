@@ -64,9 +64,9 @@ class TotalHelper
         $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
 
         $discountSubtotalAmount = new Price();
-        if (count($discountSubtotals) > 0) {
+        if (\count($discountSubtotals) > 0) {
             foreach ($discountSubtotals as $discount) {
-                $newAmount = $discount->getAmount() + (float) $discountSubtotalAmount->getValue();
+                $newAmount = $discount->getAmount() + (float)$discountSubtotalAmount->getValue();
                 $discountSubtotalAmount->setValue($newAmount);
             }
         }
@@ -84,6 +84,6 @@ class TotalHelper
 
     private function calculatePercent(Subtotal $subtotal, OrderDiscount $discount): float
     {
-        return (float) ($discount->getAmount() / $subtotal->getAmount() * 100);
+        return (float)($discount->getAmount() / $subtotal->getAmount() * 100);
     }
 }

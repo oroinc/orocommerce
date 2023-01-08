@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Handler;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
@@ -16,22 +15,22 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TotalProcessorProvider */
+    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $totalProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EventDispatcherInterface */
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationCheckerInterface */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|EntityRoutingHelper */
+    /** @var EntityRoutingHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $entityRoutingHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|RequestHandler */
+    /** @var RequestHandler */
     private $requestHandler;
 
     protected function setUp(): void
@@ -65,10 +64,13 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 
         $entity = new $correctEntityClass();
         if ($entityId > 0) {
-            $em = $this->expectsFindEntity($entity);
+            $repository = $this->createMock(EntityRepository::class);
+            $repository->expects($this->once())
+                ->method('find')
+                ->willReturn($entity);
             $this->doctrine->expects($this->once())
-                ->method('getManager')
-                ->willReturn($em);
+                ->method('getRepository')
+                ->willReturn($repository);
             $this->authorizationChecker->expects($this->once())
                 ->method('isGranted')
                 ->willReturn(true);
@@ -80,10 +82,13 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('dispatch')
             ->willReturn(new TotalCalculateBeforeEvent($entity, $request));
 
-        $this->prepareTotal();
-
         $this->totalProvider->expects($this->once())
-            ->method('enableRecalculation');
+            ->method('enableRecalculation')
+            ->willReturnSelf();
+        $this->totalProvider->expects($this->once())
+            ->method('getTotalWithSubtotalsAsArray')
+            ->with($entity)
+            ->willReturn($this->getExpectedTotal());
 
         $totals = $this->requestHandler->recalculateTotals($originalClassName, $entityId, $request);
         $expectedTotals = $this->getExpectedTotal();
@@ -123,25 +128,18 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('resolveEntityClass')
             ->willReturn($entityClassName);
 
-        $em = $this->expectsFindEntity(new $entityClassName());
+        $repository = $this->createMock(EntityRepository::class);
+        $repository->expects($this->once())
+            ->method('find')
+            ->willReturn(new $entityClassName());
         $this->doctrine->expects($this->once())
-            ->method('getManager')
-            ->willReturn($em);
+            ->method('getRepository')
+            ->willReturn($repository);
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);
 
         $this->requestHandler->recalculateTotals($entityClassName, $entityId);
-    }
-
-    private function prepareTotal(): void
-    {
-        $this->totalProvider->expects($this->once())
-            ->method('enableRecalculation')
-            ->willReturn($this->totalProvider);
-        $this->totalProvider->expects($this->once())
-            ->method('getTotalWithSubtotalsAsArray')
-            ->willReturn($this->getExpectedTotal());
     }
 
     private function getExpectedTotal(): array
@@ -167,20 +165,5 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 
             ]
         ];
-    }
-
-    private function expectsFindEntity(object $returnEntity): EntityManagerInterface
-    {
-        $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->once())
-            ->method('find')
-            ->willReturn($returnEntity);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        return $manager;
     }
 }
