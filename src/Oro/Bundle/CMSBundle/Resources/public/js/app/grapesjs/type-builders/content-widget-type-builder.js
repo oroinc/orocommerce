@@ -65,7 +65,7 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
                 this.set('classes', classes);
             }
 
-            this.constructor.__super__.initialize.call(this, ...args);
+            ContentWidgetTypeBuilder.TypeModel.__super__.initialize.call(this, ...args);
 
             const toolbar = this.get('toolbar');
             const commandName = this.getSettingsCommandName();
@@ -223,29 +223,20 @@ const ContentWidgetTypeBuilder = BaseTypeBuilder.extend({
     onDrop() {},
 
     onSelect(model) {
-        if (model instanceof this.Model) {
+        if (this.isOwnModel(model)) {
             this.editor.RichTextEditor.actionbar.hidden = true;
         }
     },
 
     onDeselect(model) {
-        if (model instanceof this.Model) {
+        if (this.isOwnModel(model)) {
             this.editor.RichTextEditor.actionbar.hidden = false;
         }
     },
 
     isComponent(el) {
-        let result = null;
-
-        if (el.nodeType === Node.ELEMENT_NODE &&
-            (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'))
-        ) {
-            result = {
-                type: this.componentType
-            };
-        }
-
-        return result;
+        return el.nodeType === Node.ELEMENT_NODE &&
+            (el.classList.contains('content-widget') || el.classList.contains('content-widget-inline'));
     }
 });
 

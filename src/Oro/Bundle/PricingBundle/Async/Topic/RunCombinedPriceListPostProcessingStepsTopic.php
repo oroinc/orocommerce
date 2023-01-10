@@ -26,10 +26,14 @@ class RunCombinedPriceListPostProcessingStepsTopic extends AbstractTopic
 
     public function configureMessageBody(OptionsResolver $resolver): void
     {
-        $resolver->setRequired([
-            'relatedJobId'
-        ]);
+        $resolver
+            ->define('relatedJobId')
+            ->required()
+            ->allowedTypes('int');
 
-        $resolver->setAllowedTypes('relatedJobId', ['int']);
+        $resolver
+            ->define('cpls')
+            ->default([])
+            ->allowedTypes('int[]');
     }
 }

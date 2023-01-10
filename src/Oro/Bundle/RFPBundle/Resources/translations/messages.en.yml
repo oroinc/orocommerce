@@ -58,10 +58,10 @@ oro:
                 description:            The IDs of the products that the RFQ is made for.
             assigned_users:
                 label:                  'Assigned To'
-                description:            The IDs of the customer users that will receive the order delivery.
+                description:            The ID of the user who acts as an order fulfillment officer.
             assigned_customer_users:
                 label:                  'Assigned Customer Users'
-                description:            The ID of the user who acts as an order fulfillment officer.
+                description:            The IDs of the customer users that will receive the order delivery.
             cancellation_reason:
                 label:                  'Cancelation reason'
                 description:            The reason for the RFQ cancellation.

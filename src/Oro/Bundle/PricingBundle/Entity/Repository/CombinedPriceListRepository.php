@@ -19,6 +19,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListRelationHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -143,36 +144,16 @@ class CombinedPriceListRepository extends BasePriceListRepository
         }
     }
 
+    /**
+     * This method removes all duplicates and can cause performance problems.
+     *
+     * @deprecated implementation will be replaced with CombinedProductPriceRepository::deleteDuplicatePrices
+     */
     public function removeDuplicatePrices()
     {
-        $connection = $this->_em->getConnection();
-        if ($connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
-            $sql = 'DELETE 
-                    FROM oro_price_product_combined p1
-                    USING oro_price_product_combined p2
-                    WHERE 
-                        p1.id < p2.id
-                        AND p1.combined_price_list_id = p2.combined_price_list_id
-                        AND p1.product_id = p2.product_id
-                        AND p1.value = p2.value
-                        AND p1.currency = p2.currency
-                        AND p1.quantity = p2.quantity
-                        AND p1.unit_code = p2.unit_code';
-        } else {
-            $sql = 'DELETE p1.*
-                FROM oro_price_product_combined p1 
-                INNER JOIN oro_price_product_combined p2
-                WHERE
-                    p1.id < p2.id
-                    AND p1.combined_price_list_id = p2.combined_price_list_id
-                    AND p1.product_id = p2.product_id
-                    AND p1.value = p2.value
-                    AND p1.currency = p2.currency
-                    AND p1.quantity = p2.quantity
-                    AND p1.unit_code = p2.unit_code';
-        }
-
-        $connection->executeQuery($sql);
+        /** @var CombinedProductPriceRepository $combinedProductPriceRepository */
+        $combinedProductPriceRepository = $this->getEntityManager()->getRepository(CombinedProductPrice::class);
+        $combinedProductPriceRepository->deleteDuplicatePrices();
     }
 
     /**

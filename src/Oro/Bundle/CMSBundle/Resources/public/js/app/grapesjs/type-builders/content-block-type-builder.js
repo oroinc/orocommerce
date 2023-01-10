@@ -102,7 +102,7 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
         },
 
         initialize(...args) {
-            this.constructor.__super__.initialize.call(this, ...args);
+            ContentBlockTypeBuilder.TypeModel.__super__.initialize.call(this, ...args);
 
             const toolbar = this.get('toolbar');
             const commandExists = _.some(toolbar, {
@@ -175,15 +175,7 @@ const ContentBlockTypeBuilder = BaseTypeBuilder.extend({
     onDrop() {},
 
     isComponent(el) {
-        let result = null;
-
-        if (el.tagName === 'DIV' && el.classList.contains('content-block')) {
-            result = {
-                type: this.componentType
-            };
-        }
-
-        return result;
+        return el.nodeType === el.ELEMENT_NODE && el.tagName === 'DIV' && el.classList.contains('content-block');
     }
 });
 

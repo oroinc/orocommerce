@@ -103,7 +103,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessException(): void
     {
-        $body = ['priceLists' => [1], 'version' => 1];
+        $body = ['priceLists' => [1], 'version' => 1, 'cpls' => [1]];
         $this->assertRepositories();
 
         $exception = new \Exception('Some error');
@@ -211,7 +211,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext = $this->createMock(DependentJobContext::class);
         $dependentContext->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => [10]]);
 
         $this->dependentJob
             ->expects($this->once())
@@ -316,7 +316,7 @@ class VersionedPriceListProcessorTest extends \PHPUnit\Framework\TestCase
         $dependentContext
             ->expects($this->once())
             ->method('addDependentJob')
-            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10]);
+            ->with(RunCombinedPriceListPostProcessingStepsTopic::getName(), ['relatedJobId' => 10, 'cpls' => [10]]);
 
         $this->dependentJob
             ->expects($this->once())

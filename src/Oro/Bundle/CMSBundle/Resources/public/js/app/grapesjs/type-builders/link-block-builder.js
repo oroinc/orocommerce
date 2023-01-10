@@ -44,11 +44,11 @@ const LinkButtonTypeBuilder = BaseTypeBuilder.extend({
             }
         });
 
-        this.editor.BlockManager.get(this.componentType).set({
+        this.editor.BlockManager.add(this.componentType, {
             category: 'Basic',
             label: __('oro.cms.wysiwyg.component.link_block.label'),
             attributes: {
-                'class': 'fa fa-link'
+                'class': 'fa fa-external-link'
             },
             content: {
                 type: this.componentType,

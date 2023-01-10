@@ -154,7 +154,7 @@ Feature: Guest Shopping Lists
       | Quantity | 10   |
       | Unit     | each |
     And I click "Update Shopping List"
-    Then I should see "Record has been successfully updated" flash message
+    Then I should see 'Product has been updated in "Shopping List"' flash message
     Then type "SKU003" in "search"
     And I click "Search Button"
     Then I should see "In shopping list"

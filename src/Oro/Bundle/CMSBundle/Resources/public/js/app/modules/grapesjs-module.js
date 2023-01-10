@@ -36,6 +36,9 @@ ComponentManager.registerComponentTypes({
     'wrapper': {
         Constructor: WrapperTypeBuilder
     },
+    'text': {
+        Constructor: TextTypeBuilder
+    },
     'text-style': {
         Constructor: TextWrapperTypeBuilder
     },
@@ -79,9 +82,6 @@ ComponentManager.registerComponentTypes({
     },
     'link-button': {
         Constructor: LinkButtonTypeBuilder
-    },
-    'text': {
-        Constructor: TextTypeBuilder
     },
     'text-basic': {
         Constructor: TextBasicTypeBuilder

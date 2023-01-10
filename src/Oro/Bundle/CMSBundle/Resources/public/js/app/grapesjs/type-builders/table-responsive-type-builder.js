@@ -10,6 +10,7 @@ const TableResponsiveTypeBuilder = BaseTypeBuilder.extend({
     button: {
         label: __('oro.cms.wysiwyg.component.table.label'),
         category: 'Basic',
+        order: 70,
         attributes: {
             'class': 'fa fa-table'
         }
@@ -60,15 +61,9 @@ const TableResponsiveTypeBuilder = BaseTypeBuilder.extend({
     },
 
     isComponent(el) {
-        let result = null;
-
-        if (el.tagName === 'DIV' && el.classList.contains(this.componentType)) {
-            result = {
-                type: this.componentType
-            };
-        }
-
-        return result;
+        return el.nodeType === Node.ELEMENT_NODE &&
+            el.tagName === 'DIV' &&
+            el.classList.contains(this.componentType);
     }
 });
 

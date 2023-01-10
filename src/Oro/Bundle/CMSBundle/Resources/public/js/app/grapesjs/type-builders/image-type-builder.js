@@ -18,7 +18,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
     },
 
     viewMixin: {
-        onActive: function(e) {
+        onActive(e) {
             if (e) {
                 e.stopPropagation();
             }
@@ -30,7 +30,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
             }
         },
 
-        _openDigitalAssetManager: function(digitalAssetImageComponentModel) {
+        _openDigitalAssetManager(digitalAssetImageComponentModel) {
             this.em.get('Commands').run(
                 'open-digital-assets',
                 {
@@ -60,7 +60,7 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
         },
 
         onError(...args) {
-            this.constructor.__super__.onError.apply(this, args);
+            ImageTypeBuilder.TypeView.__super__.onError.apply(this, args);
 
             const parent = this.el.parentNode;
             if (parent.tagName === 'PICTURE') {
@@ -87,6 +87,10 @@ const ImageTypeBuilder = BaseTypeBuilder.extend({
         }
 
         ImageTypeBuilder.__super__.registerEditorCommands.call(this);
+    },
+
+    isComponent(el) {
+        return el.nodeType === Node.ELEMENT_NODE && el.tagName.toLowerCase() === 'img';
     }
 });
 

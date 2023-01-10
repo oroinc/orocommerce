@@ -87,6 +87,7 @@ oro:
             actions:
                 update_all: Update All
             lineitem:
+                updated.label: 'Product has been updated in "<a href="{{ shoppinglistPath }}">{{ shoppinglistLabel }}</a>"'
                 dialog:
                     add.title: 'Add note to "{{ productName }}" product'
                     edit.title: 'Edit note for "{{ productName }}" product'

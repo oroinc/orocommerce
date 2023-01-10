@@ -161,8 +161,13 @@ const LinkTypeBuilder = BaseTypeBuilder.extend({
                 }
             }
         });
-        this.editor.BlockManager.get('link').set({
+
+        this.editor.BlockManager.add(this.componentType, {
             label: __('oro.cms.wysiwyg.component.link.label'),
+            category: 'Basic',
+            attributes: {
+                'class': 'fa fa-link'
+            },
             content: {
                 type: this.componentType,
                 components: [{

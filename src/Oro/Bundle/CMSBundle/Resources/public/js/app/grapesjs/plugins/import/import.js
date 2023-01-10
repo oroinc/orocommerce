@@ -2,8 +2,16 @@ import GrapesJS from 'grapesjs';
 import ImportDialogView from 'orocms/js/app/grapesjs/plugins/import/import-dialog-view';
 
 export default GrapesJS.plugins.add('grapesjs-import', function(editor, options = {}) {
-    const Commands = editor.Commands;
+    const {Commands, Panels} = editor;
     const commandId = 'gjs-open-import-webpage';
+
+    Panels.addButton('options', {
+        id: commandId,
+        className: 'fa fa-download',
+        command(editor) {
+            editor.runCommand(commandId);
+        }
+    });
 
     editor.importDialogView = new ImportDialogView({
         autoRender: false,

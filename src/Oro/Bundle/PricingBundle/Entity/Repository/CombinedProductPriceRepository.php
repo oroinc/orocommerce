@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -213,6 +215,77 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         }
 
         $qb->getQuery()->execute();
+    }
+
+    public function deleteDuplicatePrices(array $cpls = []): int
+    {
+        $connection = $this->_em->getConnection();
+        if ($connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+            $delete = <<<SQL
+                DELETE FROM oro_price_product_combined cpp1 
+                USING oro_price_product_combined cpp2
+                WHERE
+                    cpp1.id < cpp2.id
+                    AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                    AND cpp1.product_id = cpp2.product_id
+                    AND cpp1.value = cpp2.value
+                    AND cpp1.currency = cpp2.currency
+                    AND cpp1.quantity = cpp2.quantity
+                    AND cpp1.unit_code = cpp2.unit_code %s
+                RETURNING cpp1.id
+            SQL;
+            $sql = "WITH deleted_rows AS ($delete) SELECT COUNT(*) FROM deleted_rows";
+        } else {
+            $sql = <<<SQL
+                DELETE cpp1.*
+                FROM oro_price_product_combined cpp1
+                INNER JOIN oro_price_product_combined cpp2
+                WHERE
+                    cpp1.id < cpp2.id
+                    AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                    AND cpp1.product_id = cpp2.product_id
+                    AND cpp1.value = cpp2.value
+                    AND cpp1.currency = cpp2.currency
+                    AND cpp1.quantity = cpp2.quantity
+                    AND cpp1.unit_code = cpp2.unit_code %s
+            SQL;
+        }
+
+        return $this->executeDuplicatePricesQuery($sql, $cpls);
+    }
+
+    public function hasDuplicatePrices(array $cpls = []): bool
+    {
+        $sql = <<<SQL
+            SELECT cpp1.id
+            FROM oro_price_product_combined cpp1 
+            INNER JOIN oro_price_product_combined cpp2 ON 
+                cpp1.id < cpp2.id
+                AND cpp1.combined_price_list_id = cpp2.combined_price_list_id
+                AND cpp1.product_id = cpp2.product_id
+                AND cpp1.value = cpp2.value
+                AND cpp1.currency = cpp2.currency
+                AND cpp1.quantity = cpp2.quantity
+                AND cpp1.unit_code = cpp2.unit_code %s
+            LIMIT 1
+        SQL;
+
+        return (bool) $this->executeDuplicatePricesQuery($sql, $cpls);
+    }
+
+    private function executeDuplicatePricesQuery(string $sql, array $cpls = []): int
+    {
+        $connection = $this->_em->getConnection();
+        $parameters = $types = [];
+        if ($cpls) {
+            $sql = sprintf($sql, 'AND cpp1.combined_price_list_id IN (:combinedPriceLists)');
+            $parameters = ['combinedPriceLists' => $cpls];
+            $types = ['combinedPriceLists' => Connection::PARAM_INT_ARRAY];
+        } else {
+            $sql = sprintf($sql, '');
+        }
+
+        return (int) $connection->executeQuery($sql, $parameters, $types)->fetchOne();
     }
 
     /**
