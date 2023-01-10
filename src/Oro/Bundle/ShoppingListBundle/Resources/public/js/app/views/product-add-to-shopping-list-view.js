@@ -25,13 +25,14 @@ define(function(require) {
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
-                success: 'oro.form.inlineEditing.successMessage'
+                success: 'oro.frontend.shoppinglist.lineitem.updated.label'
             },
             save_api_accessor: {
                 http_method: 'PUT',
                 route: 'oro_api_shopping_list_frontend_put_line_item',
                 form_name: 'oro_product_frontend_line_item'
-            }
+            },
+            shoppingListRoute: 'oro_shopping_list_frontend_update'
         },
 
         dropdownWidget: null,
@@ -510,7 +511,11 @@ define(function(require) {
                         refresh: true
                     });
                     const messageOptions = {namespace: 'shopping_list'};
-                    mediator.execute('showFlashMessage', 'success', __(this.options.messages.success), messageOptions);
+                    const flashMsg = __(this.options.messages.success, {
+                        shoppinglistPath: routing.generate(this.options.shoppingListRoute, {id: shoppingList.id}),
+                        shoppinglistLabel: _.escape(shoppingList.label)
+                    });
+                    mediator.execute('showFlashMessage', 'success', flashMsg, messageOptions);
                 })
                 .always(() => {
                     mediator.execute('hideLoading');
