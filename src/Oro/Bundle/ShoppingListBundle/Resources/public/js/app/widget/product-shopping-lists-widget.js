@@ -199,9 +199,8 @@ define(function(require) {
 
             this.model.set('shopping_lists', shoppingLists, {silent: true});
             this.model.trigger('change:shopping_lists');
-            this.shoppingListCollection.trigger('change', {
-                refresh: true
-            });
+
+            this.shoppingListCollection.trigger('change');
         },
 
         onLineItemUpdate: function(updateData) {
