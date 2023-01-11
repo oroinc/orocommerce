@@ -8,13 +8,16 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ENGINE_KEY_DSN = 'engine_dsn';
-    const ENGINE_PARAMETERS_KEY = 'engine_parameters';
+    public const ENGINE_KEY_DSN = 'engine_dsn';
+    public const ENGINE_PARAMETERS_KEY = 'engine_parameters';
+    public const INDEXER_BATCH_SIZE = 'indexer_batch_size';
+
+    public const INDEXER_BATCH_SIZE_DEFAULT = 100;
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('oro_website_search');
         $rootNode = $treeBuilder->getRootNode();
@@ -26,7 +29,23 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->arrayNode(self::ENGINE_PARAMETERS_KEY)
                 ->prototype('variable')->end()
-            ->end();
+            ->end()
+            ->scalarNode(self::INDEXER_BATCH_SIZE)
+                ->defaultValue(self::INDEXER_BATCH_SIZE_DEFAULT)
+                ->validate()
+                    ->always(
+                        function ($v) {
+                            if (!is_int($v) || $v < 1 || $v > 100) {
+                                throw new \InvalidArgumentException(
+                                    'Expected an integer between 1 and 100.'
+                                );
+                            }
+
+                            return $v;
+                        }
+                    )
+            ->end()
+        ;
 
         return $treeBuilder;
     }
