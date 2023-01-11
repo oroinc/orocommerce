@@ -4,9 +4,11 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueNormalizer;
+use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
@@ -28,8 +30,37 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->resolvedContentNodeFactory = $this->createMock(ResolvedContentNodeFactory::class);
+        $localizedFallbackValueNormalizer = $this->createMock(LocalizedFallbackValueNormalizer::class);
 
-        $this->normalizer = new ResolvedContentNodeNormalizer($this->doctrineHelper, $this->resolvedContentNodeFactory);
+        $this->normalizer = new ResolvedContentNodeNormalizer(
+            $this->doctrineHelper,
+            $localizedFallbackValueNormalizer,
+            $this->resolvedContentNodeFactory
+        );
+
+        $localizedFallbackValueNormalizer
+            ->expects(self::any())
+            ->method('denormalize')
+            ->willReturnCallback(function (array $value, string $entityClass) {
+                self::assertEquals(LocalizedFallbackValue::class, $entityClass);
+
+                return (new LocalizedFallbackValue())
+                    ->setString($value['string'])
+                    ->setLocalization(
+                        isset($value['localization']['id']) ? new LocalizationStub($value['localization']['id']) : null
+                    );
+            });
+
+        $localizedFallbackValueNormalizer
+            ->expects(self::any())
+            ->method('normalize')
+            ->willReturnCallback(function (AbstractLocalizedFallbackValue $value) {
+                return [
+                    'string' => $value->getString(),
+                    'fallback' => $value->getFallback(),
+                    'localization' => $value->getLocalization() ? ['id' => $value->getLocalization()->getId()] : null,
+                ];
+            });
     }
 
     /**
@@ -69,7 +100,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     (new LocalizedFallbackValue())->setString('Title 1'),
                     (new LocalizedFallbackValue())->setString('Title 1 EN')
                         ->setFallback(FallbackType::PARENT_LOCALIZATION)
-                        ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
+                        ->setLocalization(new LocalizationStub(5)),
                 ]
             ),
             (new ResolvedContentVariant())->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
@@ -89,7 +120,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                     'skipped_null' => null,
                     'sub_array' => ['a' => 'b'],
                     'sub_iterator' => new ArrayCollection(
-                        ['c' => $this->getEntity(Localization::class, ['id' => 3])]
+                        ['c' => new LocalizationStub(3)]
                     ),
                 ]),
             false
@@ -128,7 +159,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                         ['string' => 'Title 1', 'localization' => null, 'fallback' => null],
                         [
                             'string' => 'Title 1 EN',
-                            'localization' => ['class' => Localization::class, 'id' => 5],
+                            'localization' => ['id' => 5],
                             'fallback' => 'parent_localization',
                         ],
                     ],
@@ -151,7 +182,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
                                 'sub_array' => ['a' => 'b'],
                                 'sub_iterator' => [
                                     'c' => [
-                                        'class' => Localization::class,
+                                        'class' => LocalizationStub::class,
                                         'id' => 3,
                                     ],
                                 ],

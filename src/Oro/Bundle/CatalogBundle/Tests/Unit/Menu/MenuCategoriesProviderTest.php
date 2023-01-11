@@ -7,8 +7,8 @@ use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
 use Oro\Bundle\CatalogBundle\Menu\MenuCategoriesProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Stub\CategoryStub;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Tools\LocalizedFallbackValueHelper;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 
 class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
@@ -20,16 +20,8 @@ class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
-        $localizationHelper = $this->createMock(LocalizationHelper::class);
 
-        $this->provider = new MenuCategoriesProvider($this->categoryTreeProvider, $localizationHelper);
-
-        $localizationHelper
-            ->expects(self::any())
-            ->method('getLocalizedValue')
-            ->willReturnCallback(
-                static fn ($values, $localization = null) => (string)($values[0] ?? null) . $localization?->getId()
-            );
+        $this->provider = new MenuCategoriesProvider($this->categoryTreeProvider);
     }
 
     public function testGetCategoriesWhenNoCategories(): void
@@ -48,7 +40,6 @@ class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCategoriesWhenSingleCategoryAndLocalization(): void
     {
         $user = $this->createMock(UserInterface::class);
-        $localization = new LocalizationStub(42);
         $category1 = $this->createCategory(1, null, 0);
 
         $this->categoryTreeProvider
@@ -62,11 +53,14 @@ class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 $category1->getId() => [
                     'id' => $category1->getId(),
                     'parentId' => null,
-                    'title' => (string)$category1->getTitles()[0] . $localization->getId(),
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category1->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category1->getLevel(),
                 ],
             ],
-            $this->provider->getCategories($category1, $user, $localization)
+            $this->provider->getCategories($category1, $user)
         );
     }
 
@@ -90,31 +84,46 @@ class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 $category1->getId() => [
                     'id' => $category1->getId(),
                     'parentId' => null,
-                    'title' => (string)$category1->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category1->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category1->getLevel(),
                 ],
                 $category12->getId() => [
                     'id' => $category12->getId(),
                     'parentId' => $category1->getId(),
-                    'title' => (string)$category12->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category12->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category12->getLevel(),
                 ],
                 $category13->getId() => [
                     'id' => $category13->getId(),
                     'parentId' => $category1->getId(),
-                    'title' => (string)$category13->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category13->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category13->getLevel(),
                 ],
                 $category131->getId() => [
                     'id' => $category131->getId(),
                     'parentId' => $category13->getId(),
-                    'title' => (string)$category131->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category131->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category131->getLevel(),
                 ],
                 $category14->getId() => [
                     'id' => $category14->getId(),
                     'parentId' => $category1->getId(),
-                    'title' => (string)$category14->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category14->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category14->getLevel(),
                 ],
             ],
@@ -152,29 +161,41 @@ class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 $category1->getId() => [
                     'id' => $category1->getId(),
                     'parentId' => null,
-                    'title' => (string)$category1->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category1->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category1->getLevel(),
                 ],
                 $category12->getId() => [
                     'id' => $category12->getId(),
                     'parentId' => $category1->getId(),
-                    'title' => (string)$category12->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category12->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category12->getLevel(),
                 ],
                 $category13->getId() => [
                     'id' => $category13->getId(),
                     'parentId' => $category1->getId(),
-                    'title' => (string)$category13->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category13->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category13->getLevel(),
                 ],
                 $category14->getId() => [
                     'id' => $category14->getId(),
                     'parentId' => $category1->getId(),
-                    'title' => (string)$category14->getTitles()[0],
+                    'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                        $category14->getTitles(),
+                        LocalizedFallbackValue::class
+                    ),
                     'level' => $category14->getLevel(),
                 ],
             ],
-            $this->provider->getCategories($category1, $user, null, ['tree_depth' => 1])
+            $this->provider->getCategories($category1, $user, ['tree_depth' => 1])
         );
     }
 

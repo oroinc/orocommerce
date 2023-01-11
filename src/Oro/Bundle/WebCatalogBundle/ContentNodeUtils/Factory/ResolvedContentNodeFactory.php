@@ -3,9 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueCollectionNormalizer;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
@@ -16,20 +15,20 @@ use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
  */
 class ResolvedContentNodeFactory
 {
-    private ManagerRegistry $managerRegistry;
-
     private ResolvedContentNodeIdentifierGenerator $resolvedContentNodeIdentifierGenerator;
 
     private ResolvedContentVariantFactory $resolvedContentVariantFactory;
 
+    private LocalizedFallbackValueCollectionNormalizer $localizedFallbackValueCollectionNormalizer;
+
     public function __construct(
-        ManagerRegistry $managerRegistry,
         ResolvedContentNodeIdentifierGenerator $resolvedContentNodeIdentifierGenerator,
-        ResolvedContentVariantFactory $resolvedContentVariantFactory
+        ResolvedContentVariantFactory $resolvedContentVariantFactory,
+        LocalizedFallbackValueCollectionNormalizer $localizedFallbackValueCollectionNormalizer
     ) {
-        $this->managerRegistry = $managerRegistry;
         $this->resolvedContentNodeIdentifierGenerator = $resolvedContentNodeIdentifierGenerator;
         $this->resolvedContentVariantFactory = $resolvedContentVariantFactory;
+        $this->localizedFallbackValueCollectionNormalizer = $localizedFallbackValueCollectionNormalizer;
     }
 
     /**
@@ -144,32 +143,19 @@ class ResolvedContentNodeFactory
      *          'localization' => ?array [
      *              'id' => int
      *          ],
+     *          // ...
      *      ],
      *      // ...
      *  ]
      *
-     * @return ArrayCollection<LocalizedFallbackValue>
+     * @return Collection<LocalizedFallbackValue>
      */
-    private function createTitles(array $titles): ArrayCollection
+    private function createTitles(array $titles): Collection
     {
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->managerRegistry->getManagerForClass(Localization::class);
-
-        foreach ($titles as $key => $title) {
-            $titles[$key] = (new LocalizedFallbackValue())
-                ->setString($title['string'] ?? '')
-                ->setFallback($title['fallback'] ?? null);
-
-            if (isset($title['localization']['id'])) {
-                $titles[$key]->setLocalization($this->getLocalization($entityManager, $title['localization']['id']));
-            }
+        if (!$titles) {
+            return new ArrayCollection();
         }
 
-        return new ArrayCollection($titles);
-    }
-
-    private function getLocalization(EntityManager $entityManager, int $localizationId): Localization
-    {
-        return $entityManager->getReference(Localization::class, $localizationId);
+        return $this->localizedFallbackValueCollectionNormalizer->denormalize($titles, LocalizedFallbackValue::class);
     }
 }

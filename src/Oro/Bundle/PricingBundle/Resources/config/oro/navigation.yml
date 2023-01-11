@@ -12,6 +12,7 @@ navigation:
             pricing_price_attribute_price_lists_list:
                 label:           'oro.pricing.priceattributepricelist.entity_plural_label'
                 route:           'oro_pricing_price_attribute_price_list_index'
+                position:        90
                 extras:
                     routes:      ['/^oro_pricing_price_attribute_price_list/']
                     description: 'oro.pricing.menu.price_attribute_price_lists_list.description'

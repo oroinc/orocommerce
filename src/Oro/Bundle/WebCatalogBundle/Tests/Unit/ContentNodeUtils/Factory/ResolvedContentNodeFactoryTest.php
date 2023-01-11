@@ -3,12 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentNodeUtils\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueCollectionNormalizer;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory;
@@ -22,14 +18,16 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $resolvedNodeIdentifierGenerator = $this->createMock(ResolvedContentNodeIdentifierGenerator::class);
         $resolvedContentVariantFactory = $this->createMock(ResolvedContentVariantFactory::class);
+        $localizedFallbackValueCollectionNormalizer = $this->createMock(
+            LocalizedFallbackValueCollectionNormalizer::class
+        );
 
         $this->factory = new ResolvedContentNodeFactory(
-            $managerRegistry,
             $resolvedNodeIdentifierGenerator,
-            $resolvedContentVariantFactory
+            $resolvedContentVariantFactory,
+            $localizedFallbackValueCollectionNormalizer
         );
 
         $resolvedNodeIdentifierGenerator
@@ -37,22 +35,24 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getIdentifierByUrl')
             ->willReturnCallback(static fn ($url) => 'identifier__' . $url);
 
-        $entityManager = $this->createMock(EntityManager::class);
-        $managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->with(Localization::class)
-            ->willReturn($entityManager);
-
-        $entityManager
-            ->expects(self::any())
-            ->method('getReference')
-            ->willReturnCallback(static fn ($class, $id) => new LocalizationStub($id));
-
         $resolvedContentVariantFactory
             ->expects(self::any())
             ->method('createFromArray')
             ->willReturnCallback(static fn ($data) => (new ResolvedContentVariant())->setData($data));
+
+        $localizedFallbackValueCollectionNormalizer
+            ->expects(self::any())
+            ->method('denormalize')
+            ->willReturnCallback(function (array $values, string $entityClass) {
+                self::assertEquals(LocalizedFallbackValue::class, $entityClass);
+
+                return new ArrayCollection(
+                    array_map(
+                        static fn ($value) => (new LocalizedFallbackValue())->setString($value['string']),
+                        $values
+                    )
+                );
+            });
     }
 
     public function testWhenEmptyArray(): void
@@ -214,9 +214,7 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
                     'id' => 42,
                     'identifier' => 'root__sample',
                     'priority' => 4,
-                    'titles' => [
-                        ['string' => 'Sample Title', 'fallback' => null],
-                    ],
+                    'titles' => [['string' => 'Sample Title']],
                     'contentVariant' => new ResolvedContentVariant(),
                     'rewriteVariantTitle' => false,
                 ],
@@ -229,38 +227,6 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
                     false
                 ),
             ],
-            'with multiple titles' => [
-                'data' => [
-                    'id' => 42,
-                    'identifier' => 'root__sample',
-                    'priority' => 4,
-                    'titles' => [
-                        ['string' => 'Sample Title', 'fallback' => null],
-                        ['string' => 'Sample Title US', 'fallback' => null, 'localization' => ['id' => 100]],
-                        ['fallback' => FallbackType::SYSTEM, 'localization' => ['id' => 101]],
-                    ],
-                    'contentVariant' => new ResolvedContentVariant(),
-                    'rewriteVariantTitle' => false,
-                ],
-                'expected' => new ResolvedContentNode(
-                    42,
-                    'root__sample',
-                    4,
-                    new ArrayCollection(
-                        [
-                            (new LocalizedFallbackValue())->setString('Sample Title'),
-                            (new LocalizedFallbackValue())
-                                ->setString('Sample Title US')
-                                ->setLocalization(new LocalizationStub(100)),
-                            (new LocalizedFallbackValue())
-                                ->setFallback(FallbackType::SYSTEM)
-                                ->setLocalization(new LocalizationStub(101)),
-                        ]
-                    ),
-                    new ResolvedContentVariant(),
-                    false
-                ),
-            ],
             'with localizedUrls' => [
                 'data' => [
                     'id' => 42,
@@ -269,11 +235,7 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
                         ['text' => 'sample'],
                     ],
                     'priority' => 4,
-                    'titles' => [
-                        ['string' => 'Sample Title', 'fallback' => null],
-                        ['string' => 'Sample Title US', 'fallback' => null, 'localization' => ['id' => 100]],
-                        ['fallback' => FallbackType::SYSTEM, 'localization' => ['id' => 101]],
-                    ],
+                    'titles' => [['string' => 'Sample Title']],
                     'contentVariant' => new ResolvedContentVariant(),
                     'rewriteVariantTitle' => false,
                 ],
@@ -281,17 +243,7 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
                     42,
                     'identifier__sample',
                     4,
-                    new ArrayCollection(
-                        [
-                            (new LocalizedFallbackValue())->setString('Sample Title'),
-                            (new LocalizedFallbackValue())
-                                ->setString('Sample Title US')
-                                ->setLocalization(new LocalizationStub(100)),
-                            (new LocalizedFallbackValue())
-                                ->setFallback(FallbackType::SYSTEM)
-                                ->setLocalization(new LocalizationStub(101)),
-                        ]
-                    ),
+                    new ArrayCollection([(new LocalizedFallbackValue())->setString('Sample Title')]),
                     new ResolvedContentVariant(),
                     false
                 ),
@@ -304,11 +256,7 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
                         ['text' => 'sample'],
                     ],
                     'priority' => 4,
-                    'titles' => [
-                        ['string' => 'Sample Title', 'fallback' => null],
-                        ['string' => 'Sample Title US', 'fallback' => null, 'localization' => ['id' => 100]],
-                        ['fallback' => FallbackType::SYSTEM, 'localization' => ['id' => 101]],
-                    ],
+                    'titles' => [['string' => 'Sample Title']],
                     'contentVariant' => ['id' => 1000],
                     'rewriteVariantTitle' => false,
                 ],
@@ -316,17 +264,7 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
                     42,
                     'identifier__sample',
                     4,
-                    new ArrayCollection(
-                        [
-                            (new LocalizedFallbackValue())->setString('Sample Title'),
-                            (new LocalizedFallbackValue())
-                                ->setString('Sample Title US')
-                                ->setLocalization(new LocalizationStub(100)),
-                            (new LocalizedFallbackValue())
-                                ->setFallback(FallbackType::SYSTEM)
-                                ->setLocalization(new LocalizationStub(101)),
-                        ]
-                    ),
+                    new ArrayCollection([(new LocalizedFallbackValue())->setString('Sample Title')]),
                     (new ResolvedContentVariant())->setData(['id' => 1000]),
                     false
                 ),

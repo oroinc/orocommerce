@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Cache;
 
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueNormalizer;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
@@ -11,17 +11,23 @@ use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFact
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 
 /**
- * The cache for web catalog content node tree.
+ * Normalizes {@see ResolvedContentNode} for usage in cache.
  */
 class ResolvedContentNodeNormalizer
 {
     private DoctrineHelper $doctrineHelper;
 
+    private LocalizedFallbackValueNormalizer $localizedFallbackValueNormalizer;
+
     private ResolvedContentNodeFactory $resolvedContentNodeFactory;
 
-    public function __construct(DoctrineHelper $doctrineHelper, ResolvedContentNodeFactory $resolvedContentNodeFactory)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        LocalizedFallbackValueNormalizer $localizedFallbackValueNormalizer,
+        ResolvedContentNodeFactory $resolvedContentNodeFactory
+    ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->localizedFallbackValueNormalizer = $localizedFallbackValueNormalizer;
         $this->resolvedContentNodeFactory = $resolvedContentNodeFactory;
     }
 
@@ -38,7 +44,10 @@ class ResolvedContentNodeNormalizer
             'priority' => $resolvedNode->getPriority(),
             'identifier' => $resolvedNode->getIdentifier(),
             'rewriteVariantTitle' => $resolvedNode->isRewriteVariantTitle(),
-            'titles' => $this->normalizeLocalizedValuesArray($resolvedNode->getTitles()),
+            'titles' => array_map(
+                [$this->localizedFallbackValueNormalizer, 'normalize'],
+                $resolvedNode->getTitles()->toArray()
+            ),
             'contentVariant' => $this->normalizeResolvedContentVariant($resolvedNode->getResolvedContentVariant()),
             'childNodes' => $this->normalizeArray($resolvedNode->getChildNodes()),
         ];
@@ -81,25 +90,16 @@ class ResolvedContentNodeNormalizer
         return $resolvedNode;
     }
 
-    private function normalizeLocalizedFallbackValue(LocalizedFallbackValue $value): array
-    {
-        return [
-            'string' => $value->getString() ?: $value->getText(),
-            'localization' => $this->getEntityReference($value->getLocalization()),
-            'fallback' => $value->getFallback(),
-        ];
-    }
-
     private function normalizeResolvedContentVariant(ResolvedContentVariant $resolvedVariant): array
     {
         $normalized = $this->normalizeArray($resolvedVariant->getData(), true);
         $normalized['slugs'] = [];
         foreach ($resolvedVariant->getLocalizedUrls() as $localizedFallbackValue) {
-            $slugData = $this->normalizeLocalizedFallbackValue($localizedFallbackValue);
-            $slugData['url'] = $slugData['string'];
-            unset($slugData['string']);
-
-            $normalized['slugs'][] = $slugData;
+            $normalized['slugs'][] = [
+                'url' => $localizedFallbackValue->getString() ?: $localizedFallbackValue->getText(),
+                'localization' => $this->getEntityReference($localizedFallbackValue->getLocalization()),
+                'fallback' => $localizedFallbackValue->getFallback(),
+            ];
         }
 
         return $normalized;
@@ -115,17 +115,6 @@ class ResolvedContentNodeNormalizer
             'class' => $this->doctrineHelper->getEntityClass($object),
             'id' => $this->doctrineHelper->getSingleEntityIdentifier($object),
         ];
-    }
-
-    private function normalizeLocalizedValuesArray(Collection $values): array
-    {
-        return $this->normalizeArray(
-            $values->filter(function (LocalizedFallbackValue $value) {
-                return
-                    ($value->getString() !== '' && $value->getString() !== null)
-                    || ($value->getText() !== '' && $value->getText() !== null);
-            })
-        );
     }
 
     private function normalizeArray(iterable $traversable, bool $skipNulls = false): array
@@ -151,7 +140,7 @@ class ResolvedContentNodeNormalizer
     private function convertObject($value): ?array
     {
         if ($value instanceof LocalizedFallbackValue) {
-            return $this->normalizeLocalizedFallbackValue($value);
+            return $this->localizedFallbackValueNormalizer->normalize($value);
         }
 
         if ($value instanceof ResolvedContentNode) {

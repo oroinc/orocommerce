@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Menu;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 
 /**
@@ -16,7 +15,6 @@ interface MenuCategoriesProviderInterface
      *
      * @param Category $category
      * @param UserInterface|null $user
-     * @param Localization|null $localization
      * @param array $context Arbitrary context options to take into account.
      *                       Look into specific provider for available options.
      *
@@ -25,7 +23,7 @@ interface MenuCategoriesProviderInterface
      *      int $categoryId => [
      *          'id' => int,
      *          'parentId' => int,
-     *          'title' => string,
+     *          'titles' => Collection<LocalizedFallbackValue>,
      *          'level' => int,
      *      ],
      *      // ...
@@ -34,7 +32,6 @@ interface MenuCategoriesProviderInterface
     public function getCategories(
         Category $category,
         ?UserInterface $user = null,
-        ?Localization $localization = null,
         array $context = []
     ): array;
 }

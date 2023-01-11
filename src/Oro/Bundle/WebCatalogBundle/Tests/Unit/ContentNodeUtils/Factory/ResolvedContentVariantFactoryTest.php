@@ -6,9 +6,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueNormalizer;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\PlatformBundle\Tests\Unit\Stub\ProxyStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -24,8 +23,9 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);
+        $localizedFallbackValueNormalizer = $this->createMock(LocalizedFallbackValueNormalizer::class);
 
-        $this->factory = new ResolvedContentVariantFactory($managerRegistry);
+        $this->factory = new ResolvedContentVariantFactory($managerRegistry, $localizedFallbackValueNormalizer);
 
         $entityManager = $this->createMock(EntityManager::class);
         $managerRegistry
@@ -37,11 +37,7 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
         $entityManager
             ->expects(self::any())
             ->method('getReference')
-            ->willReturnCallback(
-                static fn ($class, $id) => $class === Localization::class
-                    ? new LocalizationStub($id)
-                    : new ProxyStub($class, $id)
-            );
+            ->willReturnCallback(static fn ($class, $id) => new ProxyStub($class, $id));
 
         $classMetadata = new ClassMetadata(ContentVariant::class);
         $classMetadata->fieldMappings = ['id' => [], 'default' => []];
@@ -59,6 +55,15 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('getClassMetadata')
             ->with(ContentVariant::class)
             ->willReturn($classMetadata);
+
+        $localizedFallbackValueNormalizer
+            ->expects(self::any())
+            ->method('denormalize')
+            ->willReturnCallback(function (array $value, string $entityClass) {
+                self::assertEquals(LocalizedFallbackValue::class, $entityClass);
+
+                return (new LocalizedFallbackValue())->setString($value['string']);
+            });
     }
 
     /**
@@ -91,52 +96,16 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
                     ->setData(['id' => 42, 'default' => true])
                     ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url')),
             ],
-            'with multiple slugs' => [
-                'data' => [
-                    'id' => 42,
-                    'default' => true,
-                    'slugs' => [
-                        [
-                            'url' => '/sample/url',
-                        ],
-                        [
-                            'url' => '/sample/url/en',
-                            'localization' => ['id' => 100],
-                        ],
-                    ],
-                ],
-                'expected' => (new ResolvedContentVariant())
-                    ->setData(['id' => 42, 'default' => true])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url'))
-                    ->addLocalizedUrl(
-                        (new LocalizedFallbackValue())
-                            ->setString('/sample/url/en')
-                            ->setLocalization(new LocalizationStub(100))
-                    ),
-            ],
             'with to-one association' => [
                 'data' => [
                     'id' => 42,
                     'default' => true,
-                    'slugs' => [
-                        [
-                            'url' => '/sample/url',
-                        ],
-                        [
-                            'url' => '/sample/url/en',
-                            'localization' => ['id' => 100],
-                        ],
-                    ],
+                    'slugs' => [['url' => '/sample/url']],
                     'product' => ['id' => 1000],
                 ],
                 'expected' => (new ResolvedContentVariant())
                     ->setData(['id' => 42, 'default' => true, 'product' => new ProxyStub(Product::class, 1000)])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url'))
-                    ->addLocalizedUrl(
-                        (new LocalizedFallbackValue())
-                            ->setString('/sample/url/en')
-                            ->setLocalization(new LocalizationStub(100))
-                    ),
+                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/sample/url')),
             ],
         ];
     }

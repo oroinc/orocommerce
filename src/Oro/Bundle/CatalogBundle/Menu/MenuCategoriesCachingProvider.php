@@ -5,8 +5,6 @@ namespace Oro\Bundle\CatalogBundle\Menu;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserInterface;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Psr\Cache\CacheItemInterface;
@@ -20,8 +18,6 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
 {
     private MenuCategoriesProviderInterface $menuCategoriesProvider;
 
-    private LocalizationHelper $localizationHelper;
-
     private CustomerUserRelationsProvider $customerUserRelationsProvider;
 
     private TokenAccessorInterface $tokenAccessor;
@@ -32,12 +28,10 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
 
     public function __construct(
         MenuCategoriesProviderInterface $menuCategoriesProvider,
-        LocalizationHelper $localizationHelper,
         CustomerUserRelationsProvider $customerUserRelationsProvider,
         TokenAccessorInterface $tokenAccessor
     ) {
         $this->menuCategoriesProvider = $menuCategoriesProvider;
-        $this->localizationHelper = $localizationHelper;
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
         $this->tokenAccessor = $tokenAccessor;
         $this->cache = new ArrayAdapter();
@@ -61,18 +55,17 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
     public function getCategories(
         Category $category,
         ?UserInterface $user = null,
-        ?Localization $localization = null,
         array $context = []
     ): array {
         $treeDepth = $context['tree_depth'] ?? -1;
-        $cacheKey = $this->getCacheKey($category, $treeDepth, $user, $localization);
+        $cacheKey = $this->getCacheKey($category, $treeDepth, $user);
 
         return $this->cache->get(
             $cacheKey,
-            function (CacheItemInterface $cacheItem) use ($category, $user, $localization, $context) {
+            function (CacheItemInterface $cacheItem) use ($category, $user, $context) {
                 $cacheItem->expiresAfter($context['cache_lifetime'] ?? $this->cacheLifeTime);
 
-                return $this->menuCategoriesProvider->getCategories($category, $user, $localization, $context);
+                return $this->menuCategoriesProvider->getCategories($category, $user, $context);
             }
         );
     }
@@ -80,8 +73,7 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
     private function getCacheKey(
         Category $category,
         int $treeDepth,
-        ?UserInterface $user,
-        ?Localization $localization
+        ?UserInterface $user
     ): string {
         $customer = $customerGroup = null;
         if ($user instanceof CustomerUserInterface) {
@@ -92,7 +84,6 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
         $keyParts = [
             (int)$category->getId(),
             $treeDepth,
-            (int)($localization?->getId() ?? $this->localizationHelper->getCurrentLocalization()?->getId()),
             (int)$user?->getId(),
             (int)$customer?->getId(),
             (int)$customerGroup?->getId(),

@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Cache\Normalizer\LocalizedFallbackValueNormalizer;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -17,9 +17,14 @@ class ResolvedContentVariantFactory
 {
     private ManagerRegistry $managerRegistry;
 
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
+    private LocalizedFallbackValueNormalizer $localizedFallbackValueNormalizer;
+
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        LocalizedFallbackValueNormalizer $localizedFallbackValueNormalizer
+    ) {
         $this->managerRegistry = $managerRegistry;
+        $this->localizedFallbackValueNormalizer = $localizedFallbackValueNormalizer;
     }
 
     /**
@@ -52,7 +57,7 @@ class ResolvedContentVariantFactory
             }
         }
 
-        $this->addSlugs($entityManager, $contentVariantData['slugs'] ?? [], $resolvedVariant);
+        $this->addSlugs($contentVariantData['slugs'] ?? [], $resolvedVariant);
 
         foreach ($metadata->getAssociationNames() as $associationName) {
             if ($metadata->isCollectionValuedAssociation($associationName)) {
@@ -91,26 +96,17 @@ class ResolvedContentVariantFactory
      * @param ResolvedContentVariant $resolvedVariant
      */
     private function addSlugs(
-        EntityManager $entityManager,
         array $slugs,
         ResolvedContentVariant $resolvedVariant
     ): void {
         foreach ($slugs as $slugData) {
-            $localizedUrl = (new LocalizedFallbackValue())
-                ->setString($slugData['url'] ?? '');
+            $slugData['string'] = $slugData['url'];
+            unset($slugData['url']);
 
-            if (isset($slugData['localization']['id'])) {
-                $localizedUrl->setLocalization(
-                    $this->getLocalization($entityManager, $slugData['localization']['id'])
-                );
-            }
-
-            $resolvedVariant->addLocalizedUrl($localizedUrl);
+            /** @var LocalizedFallbackValue $localizedFallbackValue */
+            $localizedFallbackValue = $this->localizedFallbackValueNormalizer
+                ->denormalize($slugData, LocalizedFallbackValue::class);
+            $resolvedVariant->addLocalizedUrl($localizedFallbackValue);
         }
-    }
-
-    private function getLocalization(EntityManager $entityManager, int $localizationId): Localization
-    {
-        return $entityManager->getReference(Localization::class, $localizationId);
     }
 }

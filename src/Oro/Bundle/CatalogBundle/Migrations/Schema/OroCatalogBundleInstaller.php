@@ -511,7 +511,7 @@ class OroCatalogBundleInstaller implements
                 'extend' => [
                     'is_extend' => true,
                     'owner' => ExtendScope::OWNER_CUSTOM,
-                    'on_delete' => 'SET NULL',
+                    'on_delete' => 'CASCADE',
                 ],
                 'form' => ['is_enabled' => false],
             ]

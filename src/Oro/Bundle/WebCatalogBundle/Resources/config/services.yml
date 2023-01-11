@@ -347,13 +347,14 @@ services:
         class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentVariantFactory
         arguments:
             - '@doctrine'
+            - '@oro_locale.cache.normalizer.localized_fallback_value'
 
     oro_web_catalog.resolved_content_node_factory:
         class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeFactory
         arguments:
-            - '@doctrine'
             - '@oro_web_catalog.resolved_content_identifier_generator'
             - '@oro_web_catalog.resolved_content_variant_factory'
+            - '@oro_locale.cache.normalizer.localized_fallback_value_collection'
 
     oro_web_catalog.resolved_content_identifier_generator:
         class: Oro\Bundle\WebCatalogBundle\ContentNodeUtils\Factory\ResolvedContentNodeIdentifierGenerator
@@ -507,6 +508,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Cache\ResolvedContentNodeNormalizer
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_locale.cache.normalizer.localized_fallback_value'
             - '@oro_web_catalog.resolved_content_node_factory'
 
     oro_web_catalog.menu.content_nodes_provider:

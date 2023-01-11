@@ -4,8 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Menu;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Tools\LocalizedFallbackValueHelper;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 
 /**
@@ -15,14 +15,9 @@ class MenuCategoriesProvider implements MenuCategoriesProviderInterface
 {
     private CategoryTreeProvider $categoryTreeProvider;
 
-    private LocalizationHelper $localizationHelper;
-
-    public function __construct(
-        CategoryTreeProvider $categoryTreeProvider,
-        LocalizationHelper $localizationHelper
-    ) {
+    public function __construct(CategoryTreeProvider $categoryTreeProvider)
+    {
         $this->categoryTreeProvider = $categoryTreeProvider;
-        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -36,7 +31,6 @@ class MenuCategoriesProvider implements MenuCategoriesProviderInterface
     public function getCategories(
         Category $category,
         ?UserInterface $user = null,
-        ?Localization $localization = null,
         array $context = []
     ): array {
         $categories = $this->categoryTreeProvider->getCategories($user, $category, true);
@@ -46,8 +40,10 @@ class MenuCategoriesProvider implements MenuCategoriesProviderInterface
             $categoriesData[$categoryId] = [
                 'id' => $categoryId,
                 'parentId' => $eachCategory->getParentCategory()?->getId(),
-                'title' => $this->localizationHelper
-                    ->getLocalizedValue($eachCategory->getTitles(), $localization),
+                'titles' => LocalizedFallbackValueHelper::cloneCollection(
+                    $eachCategory->getTitles(),
+                    LocalizedFallbackValue::class
+                ),
                 'level' => $eachCategory->getLevel(),
             ];
         }
