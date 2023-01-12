@@ -1,4 +1,5 @@
 @fixture-OroCatalogBundle:category_products_sort_order.yml
+@elasticsearch
 Feature: Category products sort order
   In order to sort & prioritize products in a category
   As an Administrator

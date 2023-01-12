@@ -1,4 +1,5 @@
 @fixture-OroProductBundle:product_collection_sort_order.yml
+@elasticsearch
 Feature: Product collection sort order
   In order to sort & prioritize products in a collection
   As an Administrator
