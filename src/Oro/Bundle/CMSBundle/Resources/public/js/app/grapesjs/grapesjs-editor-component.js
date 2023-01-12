@@ -12,7 +12,8 @@ const GrapesjsEditorComponent = BaseComponent.extend({
         'orocms/js/app/grapesjs/plugins/code',
         'orocms/js/app/grapesjs/plugins/panel-scrolling-hints',
         'orocms/js/app/grapesjs/plugins/components/sorter-hints',
-        'orocms/js/app/grapesjs/plugins/code-mode'
+        'orocms/js/app/grapesjs/plugins/code-mode',
+        'orocms/js/app/grapesjs/plugins/settings'
     ],
 
     constructor: function GrapesjsEditorComponent(...args) {

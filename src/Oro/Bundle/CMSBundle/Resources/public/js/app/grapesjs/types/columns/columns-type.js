@@ -80,18 +80,27 @@ const ColumnsType = BaseType.extend({
                 };
 
                 if (col > 1) {
-                    child.style = {
-                        '--grid-column-span': col
-                    };
+                    if (this.getCodeModeState()) {
+                        child.classes = [`grid-col-${col}`];
+                    } else {
+                        child.style = {
+                            '--grid-column-span': col
+                        };
+                    }
                 }
+
                 return child;
             }));
 
-            this.setStyle({
-                '--grid-column-count': preset.count
-            }, {
-                mediaText: ''
-            });
+            if (this.getCodeModeState()) {
+                this.addClass(`grid-columns-${preset.count}`);
+            } else {
+                this.setStyle({
+                    '--grid-column-count': preset.count
+                }, {
+                    mediaText: ''
+                });
+            }
         },
 
         getColumnWidth() {
