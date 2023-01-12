@@ -10,8 +10,8 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
- * Service should provide some supporting information about line items
- * that will be helpful during checkout creation and processing
+ * This service provides some supporting information about line items
+ * that will be helpful during checkout creation and processing.
  */
 class CheckoutLineItemsProvider
 {
@@ -23,29 +23,27 @@ class CheckoutLineItemsProvider
     }
 
     /**
-     * Returns an array of ProductSku which were removed or have different quantity or unit
+     * Returns an array of product SKUs which were removed or have different quantity or unit.
      *
-     * @param Collection|ProductLineItemInterface[] $lineItems
-     * @param Collection|ProductLineItemInterface[] $sourceLineItems
-     * @return array
+     * @param Collection<ProductLineItemInterface> $lineItems
+     * @param Collection<ProductLineItemInterface> $sourceLineItems
+     *
+     * @return string[]
      */
-    public function getProductSkusWithDifferences(Collection $lineItems, Collection $sourceLineItems)
+    public function getProductSkusWithDifferences(Collection $lineItems, Collection $sourceLineItems): array
     {
         $changed = [];
-
         foreach ($sourceLineItems as $sourceLineItem) {
             $found = false;
-
             foreach ($lineItems as $lineItem) {
-                if ($sourceLineItem->getProductSku() === $lineItem->getProductSku() &&
-                    $sourceLineItem->getProductUnitCode() === $lineItem->getProductUnitCode() &&
-                    $sourceLineItem->getQuantity() === $lineItem->getQuantity()
+                if ($sourceLineItem->getProductSku() === $lineItem->getProductSku()
+                    && $sourceLineItem->getProductUnitCode() === $lineItem->getProductUnitCode()
+                    && $sourceLineItem->getQuantity() === $lineItem->getQuantity()
                 ) {
                     $found = true;
                     break;
                 }
             }
-
             if (!$found) {
                 $changed[] = $sourceLineItem->getProductSku();
             }
@@ -55,21 +53,18 @@ class CheckoutLineItemsProvider
     }
 
     /**
-     * Get checkout line items which expected to be converted into OrderLineItems filtering items which could not be
-     * ordered.
+     * Gets checkout line items which expected to be converted into OrderLineItems filtering items
+     * which could not be ordered.
      *
-     * @param Checkout $checkout
-     * @return ArrayCollection
+     * @psalm-return ArrayCollection<int, CheckoutLineItem>
      */
     public function getCheckoutLineItems(Checkout $checkout): ArrayCollection
     {
-        $lineItems = $checkout->getLineItems();
         $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
-
         $orderLineItemsKeys = array_map([$this, 'getLineItemKey'], $orderLineItems->toArray());
 
-        return $lineItems->filter(
-            fn (CheckoutLineItem $lineItem) => in_array($this->getLineItemKey($lineItem), $orderLineItemsKeys)
+        return $checkout->getLineItems()->filter(
+            fn (CheckoutLineItem $lineItem) => \in_array($this->getLineItemKey($lineItem), $orderLineItemsKeys, true)
         );
     }
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Factory\MultiShipping;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
@@ -12,19 +11,38 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
-use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class CheckoutFactoryTest extends TestCase
 {
-    use EntityTrait;
-
     private CheckoutFactory $checkoutFactory;
 
     protected function setUp(): void
     {
-        $this->checkoutFactory = new CheckoutFactory(PropertyAccess::createPropertyAccessor());
+        $this->checkoutFactory = new CheckoutFactory(
+            [
+                'owner',
+                'billingAddress',
+                'currency',
+                'customerNotes',
+                'customer',
+                'customerUser',
+                'deleted',
+                'completed',
+                'registeredCustomerUser',
+                'shippingAddress',
+                'source',
+                'website',
+                'shippingMethod',
+                'shippingMethodType',
+                'paymentMethod',
+                'poNumber',
+                'shipUntil',
+                'organization'
+            ],
+            PropertyAccess::createPropertyAccessor()
+        );
     }
 
     public function testCreateCheckout()
@@ -53,23 +71,23 @@ class CheckoutFactoryTest extends TestCase
         $checkoutSource = new CheckoutSource();
         $shipUntil = new \DateTime('now');
 
-        $checkout = $this->getEntity(Checkout::class, [
-            'id' => 1,
-            'paymentMethod' => 'PAYMENT',
-            'currency' => 'USD',
-            'source' => $checkoutSource,
-            'completed' => false,
-            'shippingMethod' => 'SHIPPING_METHOD',
-            'shippingMethodType' => 'SHIPPING_METHOD_TYPE',
-            'customerNotes' => 'Note',
-            'billingAddress' => $billingAddress,
-            'shippingAddress' => $shippingAddress,
-            'lineItems' => new ArrayCollection([$lineItem1, $lineItem2]),
-            'organization' => $organization,
-            'registeredCustomerUser' => $customerUser,
-            'poNumber' => '123',
-            'shipUntil' => $shipUntil,
-        ]);
+        $checkout = new Checkout();
+        ReflectionUtil::setId($checkout, 1);
+        $checkout->setPaymentMethod('PAYMENT');
+        $checkout->setCurrency('USD');
+        $checkout->setSource($checkoutSource);
+        $checkout->setCompleted(false);
+        $checkout->setShippingMethod('SHIPPING_METHOD');
+        $checkout->setShippingMethodType('SHIPPING_METHOD_TYPE');
+        $checkout->setCustomerNotes('Note');
+        $checkout->setBillingAddress($billingAddress);
+        $checkout->setShippingAddress($shippingAddress);
+        $checkout->addLineItem($lineItem1);
+        $checkout->addLineItem($lineItem2);
+        $checkout->setOrganization($organization);
+        $checkout->setRegisteredCustomerUser($customerUser);
+        $checkout->setPoNumber('123');
+        $checkout->setShipUntil($shipUntil);
 
         $lineItem3 = new CheckoutLineItem();
         ReflectionUtil::setId($lineItem3, 3);
@@ -79,26 +97,24 @@ class CheckoutFactoryTest extends TestCase
 
         $resultCheckout = $this->checkoutFactory->createCheckout($checkout, [$lineItem3, $lineItem4]);
 
-        $this->assertNull($resultCheckout->getId());
-        $this->assertEquals('PAYMENT', $resultCheckout->getPaymentMethod());
-        $this->assertEquals('USD', $resultCheckout->getCurrency());
-        $this->assertEquals('SHIPPING_METHOD', $resultCheckout->getShippingMethod());
-        $this->assertEquals('SHIPPING_METHOD_TYPE', $resultCheckout->getShippingMethodType());
-        $this->assertEquals('Note', $resultCheckout->getCustomerNotes());
-        $this->assertFalse($resultCheckout->isCompleted());
-        $this->assertEquals('123', $resultCheckout->getPoNumber());
-        $this->assertEquals($shipUntil, $resultCheckout->getShipUntil());
+        self::assertNull($resultCheckout->getId());
+        self::assertEquals('PAYMENT', $resultCheckout->getPaymentMethod());
+        self::assertEquals('USD', $resultCheckout->getCurrency());
+        self::assertEquals('SHIPPING_METHOD', $resultCheckout->getShippingMethod());
+        self::assertEquals('SHIPPING_METHOD_TYPE', $resultCheckout->getShippingMethodType());
+        self::assertEquals('Note', $resultCheckout->getCustomerNotes());
+        self::assertFalse($resultCheckout->isCompleted());
+        self::assertEquals('123', $resultCheckout->getPoNumber());
+        self::assertSame($shipUntil, $resultCheckout->getShipUntil());
 
-        $this->assertEquals(1, $resultCheckout->getBillingAddress()->getId());
-        $this->assertEquals(2, $resultCheckout->getShippingAddress()->getId());
-        $this->assertEquals(1, $resultCheckout->getOrganization()->getId());
-        $this->assertEquals(1, $resultCheckout->getRegisteredCustomerUser()->getId());
+        self::assertEquals(1, $resultCheckout->getBillingAddress()->getId());
+        self::assertEquals(2, $resultCheckout->getShippingAddress()->getId());
+        self::assertEquals(1, $resultCheckout->getOrganization()->getId());
+        self::assertEquals(1, $resultCheckout->getRegisteredCustomerUser()->getId());
 
         $resultLineItemsIds = $resultCheckout->getLineItems()
             ->map(fn (CheckoutLineItem $item) => $item->getId())
             ->toArray();
-
-        sort($resultLineItemsIds);
-        $this->assertEquals([3, 4], $resultLineItemsIds);
+        self::assertEquals([3, 4], $resultLineItemsIds);
     }
 }

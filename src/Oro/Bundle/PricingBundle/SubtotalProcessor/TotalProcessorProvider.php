@@ -100,7 +100,8 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
 
     /**
      * Collects all entity subtotals.
-     * @psalm-return ArrayCollection|Subtotal[]
+     *
+     * @psalm-return ArrayCollection<int, Subtotal>
      */
     public function getSubtotals(object $entity): ArrayCollection
     {

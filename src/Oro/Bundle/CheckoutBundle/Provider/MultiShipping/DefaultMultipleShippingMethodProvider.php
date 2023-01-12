@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
 /**
- * Provider for available shipping methods for checkout or main orders created during multiple shipping flow.
+ * Providers available shipping methods for a checkout or main orders created during multiple shipping flow.
  */
 class DefaultMultipleShippingMethodProvider
 {
@@ -31,6 +31,9 @@ class DefaultMultipleShippingMethodProvider
         return reset($methods);
     }
 
+    /**
+     * @return string[]
+     */
     public function getShippingMethods(): array
     {
         $methods = $this->getCachedShippingMethods();

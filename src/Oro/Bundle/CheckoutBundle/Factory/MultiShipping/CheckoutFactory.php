@@ -7,72 +7,43 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Create checkout with specific line items from the original checkout.
+ * Creates a checkout with specific line items from a specific checkout.
  */
 class CheckoutFactory implements CheckoutFactoryInterface
 {
+    private array $fields;
     private PropertyAccessorInterface $propertyAccessor;
-    protected array $fieldsMap = [
-        'owner',
-        'billingAddress',
-        'currency',
-        'customerNotes',
-        'customer',
-        'customerUser',
-        'deleted',
-        'completed',
-        'registeredCustomerUser',
-        'shippingAddress',
-        'source',
-        'website',
-        'shippingMethod',
-        'shippingMethodType',
-        'paymentMethod',
-        'poNumber',
-        'shipUntil',
-        'organization'
-    ];
 
-    public function __construct(PropertyAccessorInterface $propertyAccessor)
+    public function __construct(array $fields, PropertyAccessorInterface $propertyAccessor)
     {
+        $this->fields = $fields;
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    public function createCheckout(Checkout $checkoutSource, iterable $lineItems): Checkout
-    {
-        $checkout = $this->createCheckoutFromSource($checkoutSource);
-
-        foreach ($lineItems as $lineItem) {
-            $lineItemDuplicate = clone $lineItem;
-            $checkout->addLineItem($lineItemDuplicate);
-        }
-
-        return $checkout;
-    }
-
-    protected function getFieldsMap()
-    {
-        return $this->fieldsMap;
-    }
-
-    private function createCheckoutFromSource(Checkout $checkoutSource): Checkout
+    /**
+     * {@inheritDoc}
+     */
+    public function createCheckout(Checkout $source, iterable $lineItems): Checkout
     {
         $checkout = new Checkout();
-        $fieldsMap = $this->getFieldsMap();
-
-        foreach ($fieldsMap as $field) {
-            $this->copyFieldValues($checkoutSource, $checkout, $field);
+        foreach ($this->fields as $field) {
+            $this->copyFieldValue($source, $checkout, $field);
         }
-
+        foreach ($lineItems as $lineItem) {
+            $checkout->addLineItem(clone $lineItem);
+        }
 
         return $checkout;
     }
 
-    private function copyFieldValues(Checkout $checkoutSource, Checkout $checkout, string $field): void
+    private function copyFieldValue(Checkout $source, Checkout $checkout, string $field): void
     {
         try {
-            $fieldValue = $this->propertyAccessor->getValue($checkoutSource, $field);
-            $this->propertyAccessor->setValue($checkout, $field, $fieldValue);
+            $this->propertyAccessor->setValue(
+                $checkout,
+                $field,
+                $this->propertyAccessor->getValue($source, $field)
+            );
         } catch (NoSuchPropertyException $e) {
             // Skip field value copy.
         }
