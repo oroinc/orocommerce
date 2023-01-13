@@ -21,7 +21,8 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $processor = new Processor();
         $expected = [
             Configuration::ENGINE_KEY_DSN => SearchConfiguration::DEFAULT_ENGINE_DSN,
-            Configuration::ENGINE_PARAMETERS_KEY => []
+            Configuration::ENGINE_PARAMETERS_KEY => [],
+            Configuration::INDEXER_BATCH_SIZE => Configuration::INDEXER_BATCH_SIZE_DEFAULT
         ];
         $this->assertEquals($expected, $processor->processConfiguration(new Configuration(), []));
     }
